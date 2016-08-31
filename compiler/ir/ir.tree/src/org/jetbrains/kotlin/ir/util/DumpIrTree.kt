@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -50,6 +51,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
             declaration.members.forEach {
                 it.accept(this, "")
             }
+        }
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.initializerExpression.accept(this, "init")
+            declaration.correspondingClass?.accept(this, "class")
         }
     }
 

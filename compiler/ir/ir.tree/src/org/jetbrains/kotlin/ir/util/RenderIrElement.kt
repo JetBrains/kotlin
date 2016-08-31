@@ -60,6 +60,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
 
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
+            "ENUM_ENTRY ${declaration.descriptor.render()}"
+
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "EXPRESSION_BODY"
 
@@ -99,6 +102,13 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
             "DELEGATING_CONSTRUCTOR_CALL ${expression.descriptor.containingDeclaration.name}"
+
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
+            "ENUM_CONSTRUCTOR_CALL ${expression.descriptor.containingDeclaration.name} " +
+            expression.enumEntryDescriptor.let { enumEntryDescriptor ->
+                if (enumEntryDescriptor == null) "super"
+                else enumEntryDescriptor.name
+            }
 
     override fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: Nothing?): String =
             "NESTED_INITIALIZERS_CALL classDescriptor=${expression.classDescriptor.name}"

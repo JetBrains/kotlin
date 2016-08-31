@@ -27,12 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorExtension(statementGenerator) {
-    fun generateCall(
-            startOffset: Int,
-            endOffset: Int,
-            call: CallBuilder,
-            operator: IrOperator? = null
-    ): IrExpression {
+    fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, operator: IrOperator? = null): IrExpression {
         val descriptor = call.descriptor
 
         return when (descriptor) {
@@ -49,11 +44,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         }
     }
 
-    fun generateDelegatingConstructorCall(
-            startOffset: Int,
-            endOffset: Int,
-            call: CallBuilder
-    ) : IrExpression {
+    fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val descriptor = call.descriptor
         if (descriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $descriptor")
 
@@ -61,8 +52,21 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor)
-
             addParametersToCall(startOffset, endOffset, call, irCall, descriptor.returnType)
+        }
+    }
+
+    fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder, enumEntryDescriptor: ClassDescriptor) : IrExpression {
+        val constructorDescriptor = call.descriptor
+        if (constructorDescriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $constructorDescriptor")
+        val classDescriptor = constructorDescriptor.containingDeclaration
+        if (classDescriptor.kind != ClassKind.ENUM_CLASS) throw AssertionError("Enum class constructor expected: $classDescriptor")
+
+        return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
+            if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
+            if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
+            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorDescriptor, enumEntryDescriptor)
+            addParametersToCall(startOffset, endOffset, call, irCall, constructorDescriptor.returnType)
         }
     }
 

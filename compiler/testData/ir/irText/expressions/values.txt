@@ -2,9 +2,9 @@ FILE /values.kt
   CLASS ENUM_CLASS Enum
     FUN private constructor Enum()
       BLOCK_BODY
-    CLASS ENUM_ENTRY A
-      FUN private constructor A()
-        BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL Enum super
+    ENUM_ENTRY enum entry A
+      init: ENUM_CONSTRUCTOR_CALL Enum A
   CLASS OBJECT A
     FUN private constructor A()
       BLOCK_BODY

@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
@@ -104,5 +101,20 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                                                valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
         irProperty.valueInitializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
         return irProperty
+    }
+
+    fun generateEnumEntry(ktEnumEntry: KtEnumEntry): IrEnumEntry {
+        val enumEntryDescriptor = getOrFail(BindingContext.CLASS, ktEnumEntry)
+        val irEnumEntry = IrEnumEntryImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, IrDeclarationOrigin.DEFINED, enumEntryDescriptor)
+
+        irEnumEntry.initializerExpression =
+                BodyGenerator(enumEntryDescriptor.containingDeclaration, context)
+                        .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
+
+        ktEnumEntry.getBody()?.let { ktEnumEntryBody ->
+            // TODO
+        }
+
+        return irEnumEntry
     }
 }

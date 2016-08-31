@@ -1,0 +1,27 @@
+FILE /enum.kt
+  CLASS ENUM_CLASS TestEnum1
+    FUN private constructor TestEnum1()
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL Enum super
+    ENUM_ENTRY enum entry TEST1
+      init: ENUM_CONSTRUCTOR_CALL TestEnum1 TEST1
+    ENUM_ENTRY enum entry TEST2
+      init: ENUM_CONSTRUCTOR_CALL TestEnum1 TEST2
+  CLASS ENUM_CLASS TestEnum2
+    FUN private constructor TestEnum2(/*0*/ x: kotlin.Int)
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL Enum super
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    PROPERTY public final val x: kotlin.Int
+      EXPRESSION_BODY
+        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+    ENUM_ENTRY enum entry TEST1
+      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST1
+        x: CONST Int type=kotlin.Int value='1'
+    ENUM_ENTRY enum entry TEST2
+      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST2
+        x: CONST Int type=kotlin.Int value='2'
+    ENUM_ENTRY enum entry TEST3
+      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST3
+        x: CONST Int type=kotlin.Int value='3'

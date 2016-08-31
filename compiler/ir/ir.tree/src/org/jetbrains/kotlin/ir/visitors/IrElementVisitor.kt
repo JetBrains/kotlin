@@ -36,6 +36,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
     fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
+    fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
@@ -62,6 +63,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitGeneralCall(expression: IrGeneralCall, data: D) = visitDeclarationReference(expression, data)
     fun visitCall(expression: IrCall, data: D) = visitGeneralCall(expression, data)
     fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitGeneralCall(expression, data)
+    fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitGeneralCall(expression, data)
     fun visitCallableReference(expression: IrCallableReference, data: D) = visitDeclarationReference(expression, data)
 
     fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: D) = visitExpression(expression, data)

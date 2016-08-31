@@ -34,6 +34,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     generateSecondaryConstructor(ktDeclaration)
                 is KtProperty ->
                     generatePropertyDeclaration(ktDeclaration)
+                is KtEnumEntry ->
+                    generateEnumEntryDeclaration(ktDeclaration)
                 is KtClassOrObject ->
                     generateClassOrObjectDeclaration(ktDeclaration)
                 is KtTypeAlias ->
@@ -44,6 +46,9 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                             getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                     )
             }
+
+    private fun generateEnumEntryDeclaration(ktEnumEntry: KtEnumEntry): IrEnumEntry =
+            ClassGenerator(this).generateEnumEntry(ktEnumEntry)
 
     fun generateClassOrObjectDeclaration(ktClassOrObject: KtClassOrObject): IrClass =
             ClassGenerator(this).generateClass(ktClassOrObject)

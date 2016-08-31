@@ -12,3 +12,4 @@ FILE /classes.kt
   CLASS ENUM_CLASS TestEnumClass
     FUN private constructor TestEnumClass()
       BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL Enum super

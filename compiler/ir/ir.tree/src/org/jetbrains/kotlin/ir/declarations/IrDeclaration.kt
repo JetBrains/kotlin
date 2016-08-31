@@ -37,6 +37,7 @@ enum class IrDeclarationKind {
     VARIABLE,
     CLASS,
     TYPEALIAS,
+    ENUM_ENTRY,
     DUMMY;
 }
 
