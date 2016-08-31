@@ -14,50 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.LightCodeInsightTestCase;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException;
-import org.jetbrains.kotlin.idea.refactoring.ElementSelectionUtilsKt;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.testFramework.LightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
+import org.jetbrains.kotlin.idea.refactoring.selectElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
-import java.util.Collections;
+abstract class AbstractExpressionSelectionTest : LightCodeInsightTestCase() {
+    override fun getTestDataPath() = ""
 
-public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {
-
-    public void doTestExpressionSelection(@NotNull String path) throws Exception {
-        configureByFile(path);
-        final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
+    fun doTestExpressionSelection(path: String) {
+        configureByFile(path)
+        val expectedExpression = KotlinTestUtils.getLastCommentInFile(getFile() as KtFile)
 
         try {
-            ElementSelectionUtilsKt.selectElement(
+            selectElement(
                     getEditor(),
-                    (KtFile) getFile(),
-                    Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
-                    new Function1<PsiElement, Unit>() {
-                        @Override
-                        public Unit invoke(PsiElement element) {
-                            assertNotNull("Selected expression mustn't be null", element);
-                            assertEquals(expectedExpression, element.getText());
-                            return Unit.INSTANCE;
-                        }
-                    }
-            );
+                    getFile() as KtFile,
+                    listOf(CodeInsightUtils.ElementKind.EXPRESSION)
+            ) {
+                assertNotNull("Selected expression mustn't be null", it)
+                assertEquals(expectedExpression, it?.text)
+            }
         }
-        catch (IntroduceRefactoringException e) {
-            assertEquals(expectedExpression, "");
+        catch (e: IntroduceRefactoringException) {
+            assertEquals(expectedExpression, "")
         }
-    }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
     }
 }
