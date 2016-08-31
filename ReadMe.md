@@ -166,7 +166,7 @@ Some of the code in the standard library is created by generating code from temp
 ## Submitting patches
 
 The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
-[pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
+[pull request](https://help.github.com/articles/creating-a-pull-request/) via [github](http://github.com).
 
 If you create your own fork, it might help to enable rebase by default
 when you pull by executing `git config --global pull.rebase
