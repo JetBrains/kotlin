@@ -308,6 +308,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
                             @Override
                             public KtNamedFunction invoke(PsiMethod method) {
                                 if (!(method instanceof KtLightMethod)) return null;
+                                if (!method.getName().equals("main")) return null;
 
                                 KtDeclaration declaration = ((KtLightMethod) method).getKotlinOrigin();
                                 return declaration instanceof KtNamedFunction ? (KtNamedFunction) declaration : null;
