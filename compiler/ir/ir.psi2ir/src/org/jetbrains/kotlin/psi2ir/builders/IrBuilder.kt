@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.builders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -106,6 +107,12 @@ class IrBlockBuilder(
 fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int): T {
     this.startOffset = startOffset
     this.endOffset = endOffset
+    return this
+}
+
+fun <T : IrBuilder> T.at(psiElement: PsiElement): T {
+    this.startOffset = psiElement.startOffset
+    this.endOffset = psiElement.endOffset
     return this
 }
 

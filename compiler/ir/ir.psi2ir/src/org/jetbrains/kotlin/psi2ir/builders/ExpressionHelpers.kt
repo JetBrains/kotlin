@@ -62,6 +62,12 @@ fun IrBuilderWithScope.irIfThenElse(type: KotlinType, condition: IrExpression, t
 fun IrBuilderWithScope.irIfNull(type: KotlinType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
         irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
 
+fun IrBuilderWithScope.irThrowNpe(operator: IrOperator) =
+        IrNullaryPrimitiveImpl(startOffset, endOffset, operator, context.irBuiltIns.throwNpe)
+
+fun IrBlockBuilder.irThrowNpe() =
+        irThrowNpe(operator ?: IrOperator.EXCLEXCL)
+
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
         IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnTrue())
 

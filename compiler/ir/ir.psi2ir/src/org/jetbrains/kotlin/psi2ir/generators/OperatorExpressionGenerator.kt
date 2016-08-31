@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
+import org.jetbrains.kotlin.psi2ir.builders.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -109,19 +109,14 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
         val specialCallForElvis = getResolvedCall(expression)!!
-        val returnType = specialCallForElvis.resultingDescriptor.returnType!!
+        val resultType = specialCallForElvis.resultingDescriptor.returnType!!
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType, IrOperator.ELVIS)
-        val irArgument0Value = scope.createTemporaryVariableInBlock(irArgument0, irBlock, "elvis_lhs")
-        irBlock.addStatement(IrIfThenElseImpl(
-                expression.startOffset, expression.endOffset, returnType,
-                context.equalsNull(expression.startOffset, expression.endOffset, irArgument0Value.load()),
-                irArgument1,
-                irArgument0Value.load()
-        ))
-        return irBlock
+        return irBlock(expression, IrOperator.ELVIS, resultType) {
+            val temporary = defineTemporary(irArgument0, "elvis_lhs")
+            +irIfNull(resultType, irGet(temporary), irArgument1, irGet(temporary))
+        }
     }
 
     private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
@@ -209,29 +204,22 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, irOperator, compareToZeroDescriptor, irCompareToCall)
     }
 
-
-    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
-        val operatorCall = getResolvedCall(expression)!!
-        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
-    }
-
-
-
     private fun generateExclExclOperator(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
         val ktArgument = expression.baseExpression!!
         val irArgument = statementGenerator.generateExpression(ktArgument)
         val ktOperator = expression.operationReference
 
         val resultType = irArgument.type.makeNotNullable()
-        val irBlock = IrBlockImpl(ktOperator.startOffset, ktOperator.endOffset, resultType, irOperator)
-        val argumentValue = scope.createTemporaryVariableInBlock(irArgument, irBlock, "notnull")
-        val irIfThenElse = IrIfThenElseImpl(ktOperator.startOffset, ktOperator.endOffset, resultType,
-                                            context.equalsNull(ktOperator.startOffset, ktOperator.endOffset, argumentValue.load()),
-                                            context.throwNpe(ktOperator.startOffset, ktOperator.endOffset, irOperator),
-                                            argumentValue.load())
 
-        irBlock.addStatement(irIfThenElse)
-        return irBlock
+        return irBlock(ktOperator, irOperator, resultType) {
+            val temporary = defineTemporary(irArgument, "notnull")
+            +irIfNull(resultType, irGet(temporary), irThrowNpe(irOperator), irGet(temporary))
+        }
+    }
+
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
+        val operatorCall = getResolvedCall(expression)!!
+        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
     }
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
