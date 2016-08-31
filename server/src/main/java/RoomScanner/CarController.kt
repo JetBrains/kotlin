@@ -38,7 +38,7 @@ class CarController(var car: Car) {
     }
 
     fun scan(angles: IntArray): List<Pair<Double, Double>> {
-        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 10, SonarRequest.Smoothing.MEDIAN).build()
+        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 5 }), 3, SonarRequest.Smoothing.MEDIAN).build()
         val data = CarClient.serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
         val response = CarClient.sendRequest(car, CarClient.Request.SONAR, data).get().responseBodyAsBytes
 

@@ -13,6 +13,7 @@ object CarClient {
         ROUTE_METRIC("routeMetric"),
         SONAR("sonar"),
         DEBUG_MEMORY("debug/memory"),
+        DEBUG_SONAR("debug/sonar"),
         EXPLORE_ANGLE("sonarExplore");
     }
 

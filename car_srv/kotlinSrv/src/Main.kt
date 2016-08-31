@@ -4,6 +4,7 @@ import control.emulator.Rng
 import net.Client
 import net.server.handlers.AbstractHandler
 import net.server.handlers.debug.Memory
+import net.server.handlers.debug.Sonar
 import net.server.handlers.flash.LoadBin
 import net.server.handlers.main.*
 import net.server.handlers.rc.Control
@@ -61,6 +62,7 @@ fun main(args: Array<String>) {
     handlers.put("/routeMetric", SetRouteMetric(carController))
     handlers.put("/getLocation", GetLocation())
     handlers.put("/debug/memory", Memory())
+    handlers.put("/debug/sonar", Sonar())
 
     Client.instance.connectToServer(config.getCarIp(), carServerPort)
 

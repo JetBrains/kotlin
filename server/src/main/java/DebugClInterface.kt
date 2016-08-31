@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import objects.Car
 import objects.Environment
+import java.rmi.UnexpectedException
 import java.util.concurrent.Exchanger
 
 object DebugClInterface {
@@ -92,7 +93,7 @@ object DebugClInterface {
                 CarClient.serialize(request.getSizeNoTag(), { request.writeTo(it) })
         ).get().responseBodyAsBytes
 
-        val distances = SonarExploreAngleResponse.BuilderSonarExploreAngleResponse(IntArray(0)).parseFrom(CodedInputStream(responseData)).distances
+        val distances = SonarExploreAngleResponse.BuilderSonarExploreAngleResponse(IntArray(0)).parseFrom(CodedInputStream(responseData)).build().distances
 
         println("Received distances: [${distances.joinToString()}]")
     }
@@ -117,51 +118,38 @@ object DebugClInterface {
 
     private fun executeDebugInfoCommand(readString: String) {
         val params = readString.split(" ")
-        if (params.size != 3) {
-            println("incorrect args of command debug info.")
-            println(helpString)
-            return
+        val car = Environment.map[params[1].toInt()]!!
+        val type = DebugRequest.Type.fromIntToType(params[2].toInt())
+
+        val request = DebugRequest.BuilderDebugRequest(type).build()
+        val requestType = when (type) {
+            DebugRequest.Type.MEMORY_STATS -> CarClient.Request.DEBUG_MEMORY
+            DebugRequest.Type.SONAR_STATS -> CarClient.Request.DEBUG_SONAR
+            else -> throw UnexpectedException(type.toString())
         }
-        val id: Int
-        try {
-            id = params[1].toInt()
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
-            println("error in converting id to int type")
-            println(helpString)
-            return
-        }
-        val car: Car? =
-                synchronized(Environment, {
-                    Environment.map[id]
-                })
-        if (car == null) {
-            println("car with id=$id not found")
-            return
-        }
-        val paramType = params[2]//maybe string or int
-        val type: DebugRequest.Type
-        try {
-            type = DebugRequest.Type.fromIntToType(paramType.toInt())
-        } catch (e: NumberFormatException) {
-            try {
-                type = DebugRequest.Type.valueOf(paramType)
-            } catch (e: IllegalArgumentException) {
-                type = DebugRequest.Type.Unexpected
+
+        val responseData = CarClient.sendRequest(
+                car,
+                requestType,
+                CarClient.serialize(request.getSizeNoTag(), { request.writeTo(it) })
+        ).get().responseBodyAsBytes
+
+        when (type) {
+            DebugRequest.Type.MEMORY_STATS -> {
+                val data = DebugResponseMemoryStats.BuilderDebugResponseMemoryStats(0, 0, 0, 0).parseFrom(CodedInputStream(responseData)).build()
+                println("Heap static tail: ${data.heapStaticTail}")
+                println("Heap dynamic tail: ${data.heapDynamicTail}")
+                println("Heap dynamic max size: ${data.heapDynamicMaxBytes}")
+                println("Heap dynamic total size: ${data.heapDynamicTotalBytes}")
             }
-        }
-        if (type == DebugRequest.Type.Unexpected) {
-            println("type with name/id $paramType not found")
-            return
-        }
-        val requestObject = DebugRequest.BuilderDebugRequest(type).build()
-        val bytes = ByteArray(requestObject.getSizeNoTag())
-        requestObject.writeTo(CodedOutputStream(bytes))
-        val request = getDefaultHttpRequest(car.host, debugMemoryUrl, bytes)
-        try {
-            Client.sendRequest(request, car.host, car.port, getRequestOptionId(car.uid))
-        } catch (e: InactiveCarException) {
-            println("this car is inactive")
+            DebugRequest.Type.SONAR_STATS -> {
+                val data = DebugResponseSonarStats.BuilderDebugResponseSonarStats(0, 0, 0, 0).parseFrom(CodedInputStream(responseData)).build()
+                println("Sonar measurement total: ${data.measurementCount}")
+                println("Failed checksums: ${data.measurementFailedChecksum}")
+                println("Failed command: ${data.measurementFailedCommand}")
+                println("Failed distance: ${data.measurementFailedDistance}")
+            }
+            else -> throw UnexpectedException(type.toString())
         }
     }
 

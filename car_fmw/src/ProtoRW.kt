@@ -48,6 +48,12 @@ object Writer {
         Connection.sendByteArray(stream.buffer)
     }
 
+    fun writeSonarStats(stats: DebugResponseSonarStats) {
+        val stream = getOutputStream(stats.getSizeNoTag())
+        stats.writeTo(stream)
+        Connection.sendByteArray(stream.buffer)
+    }
+
     fun writeSonar(response: SonarResponse) {
         val stream = getOutputStream(response.getSizeNoTag())
         response.writeTo(stream)

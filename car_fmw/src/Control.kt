@@ -25,6 +25,7 @@ object Control {
 
         when (request.type.id) {
             DebugRequest.Type.MEMORY_STATS.id -> sendMemoryStats()
+            DebugRequest.Type.SONAR_STATS.id -> sendSonarStats()
         }
     }
 
@@ -128,5 +129,16 @@ object Control {
         ).build()
 
         Writer.writeMemoryStats(stats)
+    }
+
+    private fun sendSonarStats() {
+        val stats = DebugResponseSonarStats.BuilderDebugResponseSonarStats(
+                DebugSonarInfo.getMeasurementCount(),
+                DebugSonarInfo.getMeasurementFailedChecksum(),
+                DebugSonarInfo.getMeasurementFailedDistance(),
+                DebugSonarInfo.getMeasurementFailedCommand()
+        ).build()
+
+        Writer.writeSonarStats(stats)
     }
 }
