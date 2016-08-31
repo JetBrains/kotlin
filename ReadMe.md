@@ -28,7 +28,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
 In order to build Kotlin distribution you need to have:
 
-- Apache Ant 1.8 and higher
+- Apache Ant 1.9.4 and higher
 - JDK 1.6, 1.7 and 1.8
 - Setup environment variables as following:
 
