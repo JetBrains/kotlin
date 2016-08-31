@@ -110,7 +110,7 @@ class KotlinOverridingDialog extends DialogWrapper {
 
         assert element instanceof PsiMethod
                 : "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found";
-        return KotlinRefactoringUtil2.formatPsiMethod((PsiMethod) element, true, false);
+        return KotlinRefactoringUtil2.INSTANCE.formatPsiMethod((PsiMethod) element, true, false);
     }
 
     @Override

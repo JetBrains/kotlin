@@ -154,7 +154,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                                          : klass.getUserData(ORIGINAL_CLASS);
 
         if (originalClass != null) {
-            coloredComponent.append(KotlinRefactoringUtil2.formatClass(originalClass));
+            coloredComponent.append(KotlinRefactoringUtil2.INSTANCE.formatClass(originalClass));
         }
     }
 

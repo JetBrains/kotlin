@@ -34,12 +34,12 @@ public abstract class AbstractSmartSelectionTest extends LightCodeInsightTestCas
         configureByFile(path);
         String expectedResultText = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
-        List<KtElement> elements = KotlinRefactoringUtil2.getSmartSelectSuggestions(
+        List<KtElement> elements = KotlinRefactoringUtil2.INSTANCE.getSmartSelectSuggestions(
                 getFile(), getEditor().getCaretModel().getOffset(), CodeInsightUtils.ElementKind.EXPRESSION);
 
         List<String> textualExpressions = new ArrayList<String>();
         for (KtElement element : elements) {
-            textualExpressions.add(KotlinRefactoringUtil2.getExpressionShortText(element));
+            textualExpressions.add(KotlinRefactoringUtil2.INSTANCE.getExpressionShortText(element));
         }
         assertEquals(expectedResultText, StringUtil.join(textualExpressions, "\n"));
     }

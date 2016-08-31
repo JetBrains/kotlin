@@ -50,7 +50,7 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
 
     @Override
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
-        coloredComponent.append(KotlinRefactoringUtil2.formatJavaOrLightMethod((PsiMethod) myPsiElement));
+        coloredComponent.append(KotlinRefactoringUtil2.INSTANCE.formatJavaOrLightMethod((PsiMethod) myPsiElement));
     }
 
     @Override

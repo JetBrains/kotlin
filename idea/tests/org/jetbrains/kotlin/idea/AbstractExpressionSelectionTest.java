@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -34,15 +35,16 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil2.selectElement(
+            KotlinRefactoringUtil2.INSTANCE.selectElement(
                     getEditor(),
                     (KtFile) getFile(),
                     Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
-                    new KotlinRefactoringUtil2.SelectElementCallback() {
+                    new Function1<PsiElement, Unit>() {
                         @Override
-                        public void run(@Nullable PsiElement element) {
+                        public Unit invoke(PsiElement element) {
                             assertNotNull("Selected expression mustn't be null", element);
                             assertEquals(expectedExpression, element.getText());
+                            return Unit.INSTANCE;
                         }
                     }
             );
