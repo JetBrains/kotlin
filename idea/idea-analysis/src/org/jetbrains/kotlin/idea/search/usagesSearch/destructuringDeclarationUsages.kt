@@ -287,7 +287,7 @@ private class Processor(
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {
-        data class SamInterfaceTask(val psiClass: PsiClass) : Task {
+        data class ProcessSamInterfaceTask(val psiClass: PsiClass) : Task {
             override fun perform() {
                 //TODO: what about other JVM languages?
                 val scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), JavaFileType.INSTANCE)
@@ -302,7 +302,7 @@ private class Processor(
                 }
             }
         }
-        addTask(SamInterfaceTask(psiClass))
+        addTask(ProcessSamInterfaceTask(psiClass))
     }
 
     /**
@@ -474,28 +474,8 @@ private class Processor(
         for (parent in element.parents) {
             when (parent) {
                 is PsiCodeBlock,
-                is PsiExpression,
-                is PsiImportStatement ->
-                    break@ParentsLoop // ignore local usages and usages in imports
-
-                //TODO: if Java parameter has Kotlin functional type then we should process method usages
-                is PsiParameter -> {
-                    if (prev == parent.typeElement) {
-                        val method = parent.declarationScope as? PsiMethod
-                        if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
-                            val psiClass = method.containingClass
-                            if (psiClass != null) {
-                                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
-
-                                val classDescriptor = psiClass.resolveToDescriptor(target.getResolutionFacade())
-                                if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
-                                    addSamInterfaceToProcess(psiClass)
-                                }
-                            }
-                        }
-                    }
-                    break@ParentsLoop
-                }
+                is PsiExpression ->
+                    break@ParentsLoop // ignore local usages
 
                 is PsiMethod -> {
                     if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) {
@@ -516,6 +496,25 @@ private class Processor(
                         val psiClass = parent.parent as PsiClass
                         if (!psiClass.isPrivateOrLocal()) {
                             addClassToProcess(psiClass)
+                        }
+                    }
+                    break@ParentsLoop
+                }
+
+                //TODO: if Java parameter has Kotlin functional type then we should process method usages
+                is PsiParameter -> {
+                    if (prev == parent.typeElement) {
+                        val method = parent.declarationScope as? PsiMethod
+                        if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
+                            val psiClass = method.containingClass
+                            if (psiClass != null) {
+                                testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
+
+                                val classDescriptor = psiClass.resolveToDescriptor(target.getResolutionFacade())
+                                if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
+                                    addSamInterfaceToProcess(psiClass)
+                                }
+                            }
                         }
                     }
                     break@ParentsLoop
@@ -610,9 +609,9 @@ private class Processor(
         }
     }
 
-    private fun usePlainSearch(scopeElement: KtElement) {
-        val file = scopeElement.getContainingKtFile()
-        val restricted = LocalSearchScope(scopeElement).intersectWith(searchScope) as LocalSearchScope
+    private fun usePlainSearch(scope: KtElement) {
+        val file = scope.getContainingKtFile()
+        val restricted = LocalSearchScope(scope).intersectWith(searchScope) as LocalSearchScope
         ScopeLoop@
         for (element in restricted.scope) {
             val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
