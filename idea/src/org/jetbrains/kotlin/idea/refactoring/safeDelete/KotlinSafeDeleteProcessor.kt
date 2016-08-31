@@ -39,7 +39,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2
+import org.jetbrains.kotlin.idea.refactoring.checkParametersInMethodHierarchy
+import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
+import org.jetbrains.kotlin.idea.refactoring.formatClass
+import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -260,10 +263,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .mapTo(ArrayList<String>()) { overridenDescriptor ->
                         KotlinBundle.message(
                                 "x.implements.y",
-                                KotlinRefactoringUtil2.formatFunction(declarationDescriptor, true),
-                                KotlinRefactoringUtil2.formatClass(declarationDescriptor.containingDeclaration, true),
-                                KotlinRefactoringUtil2.formatFunction(overridenDescriptor, true),
-                                KotlinRefactoringUtil2.formatClass(overridenDescriptor.containingDeclaration, true)
+                                formatFunction(declarationDescriptor, true),
+                                formatClass(declarationDescriptor.containingDeclaration, true),
+                                formatFunction(overridenDescriptor, true),
+                                formatClass(overridenDescriptor.containingDeclaration, true)
                         )
                     }
         }
@@ -332,18 +335,18 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         when (element) {
             is KtParameter ->
                 return element.toPsiParameters().flatMap { psiParameter ->
-                    KotlinRefactoringUtil2.checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
+                    checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
                 }.ifEmpty { listOf(element) }
 
             is PsiParameter ->
-                return KotlinRefactoringUtil2.checkParametersInMethodHierarchy(element)
+                return checkParametersInMethodHierarchy(element)
         }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode) return Collections.singletonList(element)
 
         return when (element) {
             is KtNamedFunction, is KtProperty ->
-                KotlinRefactoringUtil2.checkSuperMethods(
+                checkSuperMethods(
                         element as KtDeclaration, allElementsToDelete, "super.methods.delete.with.usage.search"
                 )
 
