@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -35,7 +39,12 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 class ConvertLambdaToReferenceInspection() : IntentionBasedInspection<KtLambdaExpression>(
         ConvertLambdaToReferenceIntention::class,
         { it -> ConvertLambdaToReferenceIntention.shouldSuggestToConvert(it) }
-)
+) {
+    override fun inspectionRange(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()?.let {
+        val start = it.getStartOffsetIn(element)
+        TextRange(start, start + it.endOffset - it.startOffset)
+    }
+}
 
 class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(
         KtLambdaExpression::class.java, "Convert lambda to reference"
