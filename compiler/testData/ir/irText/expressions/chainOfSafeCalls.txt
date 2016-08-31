@@ -1,6 +1,6 @@
 FILE /chainOfSafeCalls.kt
   CLASS CLASS C
-    FUN public constructor C()
+    CONSTRUCTOR public constructor C()
       BLOCK_BODY
     FUN public final fun foo(): C
       BLOCK_BODY

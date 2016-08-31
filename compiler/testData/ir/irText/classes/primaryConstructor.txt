@@ -1,6 +1,6 @@
 FILE /primaryConstructor.kt
   CLASS CLASS Test1
-    FUN public constructor Test1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    CONSTRUCTOR public constructor Test1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -13,7 +13,7 @@ FILE /primaryConstructor.kt
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS Test2
-    FUN public constructor Test2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    CONSTRUCTOR public constructor Test2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -26,7 +26,7 @@ FILE /primaryConstructor.kt
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=null
   CLASS CLASS Test3
-    FUN public constructor Test3(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    CONSTRUCTOR public constructor Test3(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER

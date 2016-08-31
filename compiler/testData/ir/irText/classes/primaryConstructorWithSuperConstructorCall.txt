@@ -1,17 +1,17 @@
 FILE /primaryConstructorWithSuperConstructorCall.kt
   CLASS CLASS Base
-    FUN public constructor Base()
+    CONSTRUCTOR public constructor Base()
       BLOCK_BODY
   CLASS CLASS TestImplicitPrimaryConstructor
-    FUN public constructor TestImplicitPrimaryConstructor()
+    CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
       BLOCK_BODY
         CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
   CLASS CLASS TestExplicitPrimaryConstructor
-    FUN public constructor TestExplicitPrimaryConstructor()
+    CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
       BLOCK_BODY
         CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
   CLASS CLASS TestWithDelegatingConstructor
-    FUN public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    CONSTRUCTOR public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
         CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
@@ -24,7 +24,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     PROPERTY public final val y: kotlin.Int
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    FUN public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL TestWithDelegatingConstructor
           x: GET_VAR x type=kotlin.Int operator=null

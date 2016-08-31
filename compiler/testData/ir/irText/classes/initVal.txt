@@ -1,6 +1,6 @@
 FILE /initVal.kt
   CLASS CLASS TestInitValFromParameter
-    FUN public constructor TestInitValFromParameter(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor TestInitValFromParameter(/*0*/ x: kotlin.Int)
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -8,7 +8,7 @@ FILE /initVal.kt
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS TestInitValInClass
-    FUN public constructor TestInitValInClass()
+    CONSTRUCTOR public constructor TestInitValInClass()
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           CONST Int type=kotlin.Int value='0'
@@ -16,7 +16,7 @@ FILE /initVal.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitValInInitBlock
-    FUN public constructor TestInitValInInitBlock()
+    CONSTRUCTOR public constructor TestInitValInInitBlock()
       BLOCK_BODY
         BLOCK type=kotlin.Unit operator=null
           SET_BACKING_FIELD x type=kotlin.Unit operator=null

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrPropertyAccessor : IrFunction {
+interface IrPropertyAccessor : IrGeneralFunction {
     override val descriptor: PropertyAccessorDescriptor
 }
 
@@ -45,7 +45,7 @@ abstract class IrPropertyAccessorBase(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         body: IrBody
-) : IrFunctionBase(startOffset, endOffset, origin, body), IrPropertyAccessor
+) : IrGeneralFunctionBase(startOffset, endOffset, origin, body), IrPropertyAccessor
 
 class IrPropertyGetterImpl(
         startOffset: Int,

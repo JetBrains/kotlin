@@ -1,13 +1,13 @@
 FILE /companionObject.kt
   CLASS CLASS Test1
-    FUN public constructor Test1()
+    CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
     CLASS OBJECT Companion
-      FUN private constructor Companion()
+      CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
   CLASS CLASS Test2
-    FUN public constructor Test2()
+    CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
     CLASS OBJECT Named
-      FUN private constructor Named()
+      CONSTRUCTOR private constructor Named()
         BLOCK_BODY

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrGeneralFunction
 import org.jetbrains.kotlin.ir.declarations.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReferenceImpl
@@ -62,7 +62,7 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 irBlock
             }
 
-    private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction {
+    private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrGeneralFunction {
         val funDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
         val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.DEFINED, funDescriptor)
         irFun.body = BodyGenerator(funDescriptor, statementGenerator.context).generateFunctionBody(ktFun.bodyExpression!!)

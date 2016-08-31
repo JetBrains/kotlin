@@ -1,6 +1,6 @@
 FILE /argumentReorderingInDelegatingConstructorCall.kt
   CLASS CLASS Base
-    FUN public constructor Base(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    CONSTRUCTOR public constructor Base(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -13,7 +13,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS Test1
-    FUN public constructor Test1(/*0*/ xx: kotlin.Int, /*1*/ yy: kotlin.Int)
+    CONSTRUCTOR public constructor Test1(/*0*/ xx: kotlin.Int, /*1*/ yy: kotlin.Int)
       BLOCK_BODY
         BLOCK type=Base operator=ARGUMENTS_REORDERING_FOR_CALL
           VAR val tmp0_y: kotlin.Int
@@ -25,7 +25,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             y: GET_VAR tmp0_y type=kotlin.Int operator=null
   CLASS CLASS Test2
     nestedInitializers: BLOCK_BODY
-    FUN public constructor Test2(/*0*/ xx: kotlin.Int, /*1*/ yy: kotlin.Int)
+    CONSTRUCTOR public constructor Test2(/*0*/ xx: kotlin.Int, /*1*/ yy: kotlin.Int)
       BLOCK_BODY
         BLOCK type=Base operator=ARGUMENTS_REORDERING_FOR_CALL
           VAR val tmp0_y: kotlin.Int
@@ -37,7 +37,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
               x: GET_VAR tmp1_x type=kotlin.Int operator=null
               y: GET_VAR tmp0_y type=kotlin.Int operator=null
         NESTED_INITIALIZERS_CALL classDescriptor=Test2
-    FUN public constructor Test2(/*0*/ xxx: kotlin.Int, /*1*/ yyy: kotlin.Int, /*2*/ a: kotlin.Any)
+    CONSTRUCTOR public constructor Test2(/*0*/ xxx: kotlin.Int, /*1*/ yyy: kotlin.Int, /*2*/ a: kotlin.Any)
       BLOCK_BODY
         BLOCK type=Test2 operator=ARGUMENTS_REORDERING_FOR_CALL
           VAR val tmp0_yy: kotlin.Int

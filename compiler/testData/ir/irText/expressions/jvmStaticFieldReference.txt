@@ -21,7 +21,7 @@ FILE /jvmStaticFieldReference.kt
             CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/set'
   CLASS CLASS TestClass
-    FUN public constructor TestClass()
+    CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
         SET_BACKING_FIELD test type=kotlin.Unit operator=null
           WHEN type=kotlin.Int operator=WHEN

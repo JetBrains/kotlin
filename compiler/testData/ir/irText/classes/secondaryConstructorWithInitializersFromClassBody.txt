@@ -1,6 +1,6 @@
 FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
-    FUN public constructor Base()
+    CONSTRUCTOR public constructor Base()
       BLOCK_BODY
   CLASS CLASS TestProperty
     nestedInitializers: BLOCK_BODY
@@ -9,7 +9,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public constructor TestProperty()
+    CONSTRUCTOR public constructor TestProperty()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
         NESTED_INITIALIZERS_CALL classDescriptor=TestProperty
@@ -19,7 +19,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           CONST Int type=kotlin.Int value='0'
     PROPERTY public final val x: kotlin.Int
-    FUN public constructor TestInitBlock()
+    CONSTRUCTOR public constructor TestInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
         NESTED_INITIALIZERS_CALL classDescriptor=TestInitBlock

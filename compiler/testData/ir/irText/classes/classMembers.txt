@@ -1,6 +1,8 @@
 FILE /classMembers.kt
   CLASS CLASS C
-    FUN public constructor C(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int = ...)
+    CONSTRUCTOR public constructor C(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int = ...)
+      z: EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='1'
       BLOCK_BODY
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -14,7 +16,7 @@ FILE /classMembers.kt
     PROPERTY public final var z: kotlin.Int
       EXPRESSION_BODY
         GET_VAR z type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    FUN public constructor C()
+    CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL C
           x: CONST Int type=kotlin.Int value='0'
@@ -48,7 +50,7 @@ FILE /classMembers.kt
         CALL .println type=kotlin.Unit operator=null
           message: CONST String type=kotlin.String value='2'
     CLASS CLASS NestedClass
-      FUN public constructor NestedClass()
+      CONSTRUCTOR public constructor NestedClass()
         BLOCK_BODY
       FUN public final fun function(): kotlin.Unit
         BLOCK_BODY
@@ -66,5 +68,5 @@ FILE /classMembers.kt
             CALL .foo type=kotlin.Unit operator=null
               $this: THIS public interface NestedInterface type=C.NestedInterface
     CLASS OBJECT Companion
-      FUN private constructor Companion()
+      CONSTRUCTOR private constructor Companion()
         BLOCK_BODY

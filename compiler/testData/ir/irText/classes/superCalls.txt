@@ -1,6 +1,6 @@
 FILE /superCalls.kt
   CLASS CLASS Base
-    FUN public constructor Base()
+    CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         SET_BACKING_FIELD bar type=kotlin.Unit operator=null
           CONST String type=kotlin.String value=''
@@ -10,7 +10,7 @@ FILE /superCalls.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=''
   CLASS CLASS Derived
-    FUN public constructor Derived()
+    CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
         CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
     FUN public open override /*1*/ fun foo(): kotlin.Unit

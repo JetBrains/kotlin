@@ -1,6 +1,6 @@
 FILE /values.kt
   CLASS ENUM_CLASS Enum
-    FUN private constructor Enum()
+    CONSTRUCTOR private constructor Enum()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
     ENUM_ENTRY enum entry A
@@ -10,16 +10,16 @@ FILE /values.kt
     FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enum
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
-    FUN private constructor A()
+    CONSTRUCTOR private constructor A()
       BLOCK_BODY
   PROPERTY public val a: kotlin.Int = 0
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   CLASS CLASS Z
-    FUN public constructor Z()
+    CONSTRUCTOR public constructor Z()
       BLOCK_BODY
     CLASS OBJECT Companion
-      FUN private constructor Companion()
+      CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
   FUN public fun test1(): Enum
     BLOCK_BODY

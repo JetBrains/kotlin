@@ -42,6 +42,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
             "FUN ${declaration.descriptor.render()}"
 
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
+            "CONSTRUCTOR ${declaration.descriptor.render()}"
+
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
             "PROPERTY ${declaration.descriptor.render()}"
 

@@ -1,9 +1,9 @@
 FILE /multipleImplicitReceivers.kt
   CLASS OBJECT A
-    FUN private constructor A()
+    CONSTRUCTOR private constructor A()
       BLOCK_BODY
   CLASS OBJECT B
-    FUN private constructor B()
+    CONSTRUCTOR private constructor B()
       BLOCK_BODY
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B

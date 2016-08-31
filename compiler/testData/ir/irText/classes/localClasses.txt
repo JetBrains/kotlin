@@ -2,7 +2,7 @@ FILE /localClasses.kt
   FUN public fun outer(): kotlin.Unit
     BLOCK_BODY
       CLASS CLASS LocalClass
-        FUN public constructor LocalClass()
+        CONSTRUCTOR public constructor LocalClass()
           BLOCK_BODY
         FUN public final fun foo(): kotlin.Unit
           BLOCK_BODY

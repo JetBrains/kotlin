@@ -72,10 +72,14 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         val primaryConstructorDescriptor = irClass.descriptor.unsubstitutedPrimaryConstructor ?: return
 
-        val irPrimaryConstructor = IrFunctionImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
-                                                  primaryConstructorDescriptor)
+        val irPrimaryConstructor = IrConstructorImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
+                                                     primaryConstructorDescriptor)
 
-        irPrimaryConstructor.body = BodyGenerator(primaryConstructorDescriptor, context).generatePrimaryConstructorBody(ktClassOrObject)
+        val bodyGenerator = BodyGenerator(primaryConstructorDescriptor, context)
+        ktClassOrObject.getPrimaryConstructor()?.valueParameterList?.let { ktValueParameterList ->
+            bodyGenerator.generateDefaultParameters(ktValueParameterList, irPrimaryConstructor)
+        }
+        irPrimaryConstructor.body = bodyGenerator.generatePrimaryConstructorBody(ktClassOrObject)
 
         irClass.addMember(irPrimaryConstructor)
     }

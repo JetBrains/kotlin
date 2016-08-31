@@ -1,6 +1,6 @@
 FILE /when.kt
   CLASS OBJECT A
-    FUN private constructor A()
+    CONSTRUCTOR private constructor A()
       BLOCK_BODY
   FUN public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
     BLOCK_BODY

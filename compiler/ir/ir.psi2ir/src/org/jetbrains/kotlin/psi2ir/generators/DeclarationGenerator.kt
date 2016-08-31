@@ -57,29 +57,35 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
                             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
 
-    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction {
+    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrGeneralFunction {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
-        val body = ktFunction.bodyExpression?.let { generateFunctionBody(functionDescriptor, it) }
-        return IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset, IrDeclarationOrigin.DEFINED,
-                              functionDescriptor, body)
+        val irFunction = IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset, IrDeclarationOrigin.DEFINED, functionDescriptor)
+        val bodyGenerator = createBodyGenerator(functionDescriptor)
+        bodyGenerator.generateDefaultParameters(ktFunction, irFunction)
+        irFunction.body = ktFunction.bodyExpression?.let { bodyGenerator.generateFunctionBody(it) }
+        return irFunction
     }
 
-    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor) : IrFunction {
+    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor) : IrGeneralFunction {
         if (ktConstructor.isConstructorDelegatingToSuper(context.bindingContext)) {
             return generateSecondaryConstructorWithNestedInitializers(ktConstructor)
         }
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
-        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBody(ktConstructor)
-        return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
-                              constructorDescriptor, body)
+        val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
+        val bodyGenerator = createBodyGenerator(constructorDescriptor)
+        bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)
+        irConstructor.body = bodyGenerator.generateSecondaryConstructorBody(ktConstructor)
+        return irConstructor
     }
 
 
-    private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrFunction {
+    private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrGeneralFunction {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
-        val body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor)
-        return IrFunctionImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED,
-                              constructorDescriptor, body)
+        val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
+        val bodyGenerator = createBodyGenerator(constructorDescriptor)
+        bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)
+        irConstructor.body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor)
+        return irConstructor
     }
 
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {

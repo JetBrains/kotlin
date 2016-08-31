@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.*
 
-interface IrFunction : IrDeclaration {
+interface IrGeneralFunction : IrDeclaration {
     override val descriptor: FunctionDescriptor
     val body: IrBody?
 
@@ -29,11 +32,16 @@ interface IrFunction : IrDeclaration {
         get() = IrDeclarationKind.FUNCTION
 }
 
-abstract class IrFunctionBase(
+interface IrFunction : IrGeneralFunction {
+    fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody)
+    fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody?
+}
+
+abstract class IrGeneralFunctionBase(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin
-) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
+) : IrDeclarationBase(startOffset, endOffset, origin), IrGeneralFunction {
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -65,6 +73,29 @@ abstract class IrFunctionBase(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        body?.accept(visitor, data)
+    }
+}
+
+abstract class IrFunctionBase(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin
+) : IrGeneralFunctionBase(startOffset, endOffset, origin), IrFunction {
+    private val defaults = LinkedHashMap<ValueParameterDescriptor, IrExpressionBody>()
+
+    override fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
+            defaults[parameter]
+
+    override fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
+        expressionBody.assertDetached()
+        defaults[parameter]?.detach()
+        defaults[parameter] = expressionBody
+        expressionBody.setTreeLocation(this, parameter.index)
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        defaults.values.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 }

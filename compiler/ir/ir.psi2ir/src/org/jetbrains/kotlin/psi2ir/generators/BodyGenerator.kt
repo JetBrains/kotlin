@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -29,6 +30,20 @@ import java.util.*
 class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext): GeneratorWithScope {
     override val scope = Scope(scopeOwner)
     private val loopTable = HashMap<KtLoopExpression, IrLoop>()
+
+    fun generateDefaultParameters(ktFunction: KtFunction, irFunction: IrFunctionBase) {
+        generateDefaultParameters(ktFunction.valueParameterList ?: return, irFunction)
+    }
+
+    fun generateDefaultParameters(ktParameterList: KtParameterList, irFunction: IrFunctionBase) {
+        val statementGenerator = createStatementGenerator()
+        for (ktParameter in ktParameterList.parameters) {
+            val ktDefaultValue = ktParameter.defaultValue ?: continue
+            val valueParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter) as? ValueParameterDescriptor ?: continue
+            val irDefaultValue = statementGenerator.generateExpression(ktDefaultValue)
+            irFunction.putDefault(valueParameter, IrExpressionBodyImpl(ktDefaultValue.startOffset, ktDefaultValue.endOffset, irDefaultValue))
+        }
+    }
 
     fun generateFunctionBody(ktBody: KtExpression): IrBody {
         val statementGenerator = createStatementGenerator()

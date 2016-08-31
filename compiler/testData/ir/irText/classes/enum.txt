@@ -1,6 +1,6 @@
 FILE /enum.kt
   CLASS ENUM_CLASS TestEnum1
-    FUN private constructor TestEnum1()
+    CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
     ENUM_ENTRY enum entry TEST1
@@ -12,7 +12,7 @@ FILE /enum.kt
     FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
-    FUN private constructor TestEnum2(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR private constructor TestEnum2(/*0*/ x: kotlin.Int)
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
@@ -34,13 +34,13 @@ FILE /enum.kt
     FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum2
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum3
-    FUN private constructor TestEnum3()
+    CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
     ENUM_ENTRY enum entry TEST
       init: ENUM_CONSTRUCTOR_CALL TEST TEST
       class: CLASS ENUM_ENTRY TEST
-        FUN private constructor TEST()
+        CONSTRUCTOR private constructor TEST()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum3 super
         FUN public open override /*1*/ fun foo(): kotlin.Unit
@@ -53,7 +53,7 @@ FILE /enum.kt
     FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum3
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
-    FUN private constructor TestEnum4(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR private constructor TestEnum4(/*0*/ x: kotlin.Int)
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
@@ -64,7 +64,7 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL TEST1 TEST1
       class: CLASS ENUM_ENTRY TEST1
-        FUN private constructor TEST1()
+        CONSTRUCTOR private constructor TEST1()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum4 super
               x: CONST Int type=kotlin.Int value='1'
@@ -75,7 +75,7 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST2
       init: ENUM_CONSTRUCTOR_CALL TEST2 TEST2
       class: CLASS ENUM_ENTRY TEST2
-        FUN private constructor TEST2()
+        CONSTRUCTOR private constructor TEST2()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum4 super
               x: CONST Int type=kotlin.Int value='2'
