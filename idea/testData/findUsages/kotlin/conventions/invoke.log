@@ -1,7 +1,7 @@
 Checked type of f()
-Resolving call f(1)
-Resolving call f(2)
-Resolving call f(2)(2)
+Resolved f(1)
+Resolved f(2)
+Resolved f(2)(2)
 Searched references to B
 Searched references to f() in Kotlin files
 Used plain search in LocalSearchScope:

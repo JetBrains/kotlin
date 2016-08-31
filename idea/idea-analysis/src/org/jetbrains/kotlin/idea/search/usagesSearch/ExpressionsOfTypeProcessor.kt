@@ -74,16 +74,17 @@ class ExpressionsOfTypeProcessor(
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
         var testLog: MutableList<String>? = null
 
-        fun logPresentation(declaration: PsiElement): String? {
-            val fqName = declaration.getKotlinFqName()?.asString()
-                         ?: (declaration as? KtNamedDeclaration)?.name
-            return when (declaration) {
+        fun logPresentation(element: PsiElement): String? {
+            if (element !is KtDeclaration && element !is PsiMember) return element.text
+            val fqName = element.getKotlinFqName()?.asString()
+                         ?: (element as? KtNamedDeclaration)?.name
+            return when (element) {
                 is PsiMethod, is KtFunction -> fqName + "()"
                 is KtParameter -> {
-                    val owner = declaration.ownerFunction?.let { logPresentation(it) } ?: declaration.parent.toString()
-                    "parameter ${declaration.name} in $owner"
+                    val owner = element.ownerFunction?.let { logPresentation(it) } ?: element.parent.toString()
+                    "parameter ${element.name} in $owner"
                 }
-                is KtDestructuringDeclaration -> declaration.entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
+                is KtDestructuringDeclaration -> element.entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
                 else -> fqName
             }
         }

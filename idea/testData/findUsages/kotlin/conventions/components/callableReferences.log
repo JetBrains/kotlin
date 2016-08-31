@@ -1,11 +1,11 @@
-Checked type of (a1, b1)
-Checked type of (a2, b2)
-Checked type of (a3, b3)
-Checked type of (a4, b4)
 Checked type of X.f2()
 Checked type of constructor
 Checked type of fun2
 Checked type of fun3
+Resolved (a1, b1)
+Resolved (a2, b2)
+Resolved (a3, b3)
+Resolved (a4, b4)
 Searched references to A
 Searched references to X.f2() in Kotlin files
 Searched references to constructor in Kotlin files

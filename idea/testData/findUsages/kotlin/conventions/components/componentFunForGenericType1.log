@@ -1,5 +1,5 @@
-Checked type of (x, y)
 Checked type of f()
+Resolved (x, y)
 Searched references to X
 Searched references to f() in Kotlin files
 Used plain search in LocalSearchScope:

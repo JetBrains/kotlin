@@ -22,8 +22,8 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.idea.search.usagesSearch.findDestructuringDeclarationUsages
-import org.jetbrains.kotlin.idea.search.usagesSearch.findInvokeOperatorUsages
+import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationReferenceSearcher
+import org.jetbrains.kotlin.idea.search.usagesSearch.InvokeOperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -39,10 +39,10 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
         val identifier = Name.identifier(name)
 
         if (isComponentLike(identifier)) {
-            findDestructuringDeclarationUsages(method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
+            DestructuringDeclarationReferenceSearcher.runForPsiMethod(method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
         }
         else if (identifier == OperatorNameConventions.INVOKE) {
-            findInvokeOperatorUsages(method, queryParameters.effectiveSearchScope, consumer)
+            InvokeOperatorReferenceSearcher.runForPsiMethod(method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
         }
         else {
             val operationSymbolsToSearch = identifier.getOperationSymbolsToSearch()

@@ -1,5 +1,5 @@
-Checked type of (a1, s)
-Checked type of (b, n)
+Resolved (a1, s)
+Resolved (b, n)
 Searched references to A
 Searched references to B
 Searched references to a1 in Kotlin files

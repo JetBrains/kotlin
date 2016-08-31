@@ -1,5 +1,5 @@
-Checked type of (x1, y1)
 Checked type of y1()
+Resolved (x1, y1)
 Searched references to A
 Searched references to parameter a in condition() in Kotlin files
 Searched references to parameter a in x() in Kotlin files
