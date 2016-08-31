@@ -46,7 +46,15 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
             irClass.nestedInitializers = BodyGenerator(descriptor, context).generateNestedInitializersBody(ktClassOrObject)
         }
 
+        if (descriptor.isData) {
+            generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
+        }
+
         return irClass
+    }
+
+    private fun generateAdditionalMembersForDataClass(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+        DataClassMembersGenerator(ktClassOrObject, context, irClass).generate()
     }
 
     private fun shouldGenerateNestedInitializers(ktClassOrObject: KtClassOrObject): Boolean {

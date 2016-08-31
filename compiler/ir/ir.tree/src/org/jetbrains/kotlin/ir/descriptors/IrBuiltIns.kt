@@ -74,6 +74,4 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
 
     private fun ClassDescriptor.findSingleFunction(name: String): FunctionDescriptor =
             getMemberScope(TypeSubstitution.EMPTY).getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS).single()
-
-
 }

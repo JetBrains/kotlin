@@ -35,6 +35,9 @@ fun GeneratorContext.equalsNull(startOffset: Int, endOffset: Int, argument: IrEx
         primitiveOp2(startOffset, endOffset, irBuiltIns.eqeq, IrOperator.EQEQ,
                      argument, constNull(startOffset, endOffset))
 
+fun GeneratorContext.eqeqeq(startOffset: Int, endOffset: Int, argument1: IrExpression, argument2: IrExpression): IrExpression =
+        primitiveOp2(startOffset, endOffset, irBuiltIns.eqeqeq, IrOperator.EQEQEQ, argument1, argument2)
+
 fun GeneratorContext.throwNpe(startOffset: Int, endOffset: Int, operator: IrOperator): IrExpression =
         IrNullaryPrimitiveImpl(startOffset, endOffset, operator, irBuiltIns.throwNpe)
 

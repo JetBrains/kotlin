@@ -40,8 +40,8 @@ class VariableLValue(
             IrGetVariableImpl(startOffset, endOffset, descriptor, irOperator)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableImpl(startOffset, endOffset, descriptor.type.builtIns.unitType,
-                              descriptor, irExpression, irOperator)
+            IrSetVariableImpl(startOffset, endOffset, descriptor,
+                              irExpression, irOperator)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 interface IrVariableAccessExpression : IrDeclarationReference {
     override val descriptor: VariableDescriptor
@@ -50,18 +50,16 @@ class IrGetVariableImpl(
 class IrSetVariableImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
         override val descriptor: VariableDescriptor,
         override val operator: IrOperator?
-) : IrExpressionBase(startOffset, endOffset, type), IrSetVariable {
+) : IrExpressionBase(startOffset, endOffset, descriptor.builtIns.unitType), IrSetVariable {
     constructor(
             startOffset: Int,
             endOffset: Int,
-            type: KotlinType,
             descriptor: VariableDescriptor,
             value: IrExpression,
             operator: IrOperator?
-    ) : this(startOffset, endOffset, type, descriptor, operator) {
+    ) : this(startOffset, endOffset, descriptor, operator) {
         this.value = value
     }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.assertDetached
@@ -32,6 +33,20 @@ interface IrGeneralCall : IrMemberAccessExpression {
     fun getArgument(index: Int): IrExpression?
     fun putArgument(index: Int, valueArgument: IrExpression?)
     fun removeArgument(index: Int)
+}
+
+fun <T : IrGeneralCall> T.putArguments(arguments: List<IrExpression>): T {
+    arguments.forEachIndexed { i, irArgument ->
+        putArgument(i, irArgument)
+    }
+    return this
+}
+
+inline fun <T : IrGeneralCall> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression): T {
+    descriptor.valueParameters.forEach {
+        putArgument(it.index, transform(it))
+    }
+    return this
 }
 
 abstract class IrGeneralCallBase(
