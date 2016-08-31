@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -350,13 +351,17 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val selector = qualifiedExpression.selectorExpression ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
             val targets = callee.targets(bindingContext)
+            val varAsFunResolvedCall = callee.getResolvedCall(bindingContext) as? VariableAsFunctionResolvedCall
             if (targets.isEmpty()) return false
 
             val scope = qualifiedExpression.getResolutionScope(bindingContext, resolutionFacade)
             val selectorCopy = selector.copy() as KtReferenceExpression
             val newContext = selectorCopy.analyzeInContext(scope, selector)
-            val targetsWhenShort = (selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression).targets(newContext)
+            val newCallee = selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression
+            val targetsWhenShort = newCallee.targets(newContext)
+            val varAsFunResolvedCallWhenShort = newCallee.getResolvedCall(newContext) as? VariableAsFunctionResolvedCall
             val targetsMatch = targetsMatch(targets, targetsWhenShort)
+                               && (varAsFunResolvedCall == null || resolvedCallsMatch(varAsFunResolvedCall, varAsFunResolvedCallWhenShort))
 
             if (receiver is KtThisExpression) {
                 if (!targetsMatch) return false
@@ -390,6 +395,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             else {
                 return targets1.map { it.asString() }.toSet() == targets2.map { it.asString() }.toSet()
             }
+        }
+
+        private fun resolvedCallsMatch(rc1: VariableAsFunctionResolvedCall?, rc2: VariableAsFunctionResolvedCall?): Boolean {
+            return rc1?.variableCall?.candidateDescriptor?.asString() == rc2?.variableCall?.candidateDescriptor?.asString() &&
+                   rc1?.functionCall?.candidateDescriptor?.asString() == rc2?.functionCall?.candidateDescriptor?.asString()
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
