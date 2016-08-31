@@ -3087,6 +3087,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("assignedInFinally.kt")
+            public void testAssignedInFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignedInFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("backingFieldInsideGetter.kt")
             public void testBackingFieldInsideGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
@@ -3429,6 +3435,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("reassignmentInTryCatch.kt")
+            public void testReassignmentInTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInTryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reassignmentInTryCatchWithJumps.kt")
+            public void testReassignmentInTryCatchWithJumps() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInTryCatchWithJumps.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("referenceToPropertyInitializer.kt")
             public void testReferenceToPropertyInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/referenceToPropertyInitializer.kt");
@@ -3450,6 +3468,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("throwInLambda.kt")
             public void testThrowInLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryWithAssignmentUsedInCatch.kt")
+            public void testTryWithAssignmentUsedInCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
                 doTest(fileName);
             }
 
@@ -12180,6 +12204,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("localObjects.kt")
             public void testLocalObjects() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/localObjects.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedClassInAnonymousObject.kt")
+            public void testNestedClassInAnonymousObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/nestedClassInAnonymousObject.kt");
                 doTest(fileName);
             }
 
