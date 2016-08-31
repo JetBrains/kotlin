@@ -1,5 +1,5 @@
 FILE /augmentedAssignment1.kt
-  PROPERTY public var p: kotlin.Int getter=null setter=null
+  PROPERTY public var p: kotlin.Int
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   FUN public fun testVariable(): kotlin.Unit

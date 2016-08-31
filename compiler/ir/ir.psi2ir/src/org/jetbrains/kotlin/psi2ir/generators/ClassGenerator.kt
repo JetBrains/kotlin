@@ -92,10 +92,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                 val irMember = declarationGenerator.generateMemberDeclaration(ktDeclaration)
 
                 irClass.addMember(irMember)
-                if (irMember is IrProperty) {
-                    irMember.getter?.let { irClass.addMember(it) }
-                    irMember.setter?.let { irClass.addMember(it) }
-                }
             }
         }
     }

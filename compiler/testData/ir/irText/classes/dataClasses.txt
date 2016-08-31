@@ -8,13 +8,13 @@ FILE /dataClasses.kt
           GET_VAR y type=kotlin.String operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD z type=kotlin.Unit operator=null
           GET_VAR z type=kotlin.Any operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val y: kotlin.String getter=null setter=null
+    PROPERTY public final val y: kotlin.String
       EXPRESSION_BODY
         GET_VAR y type=kotlin.String operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val z: kotlin.Any getter=null setter=null
+    PROPERTY public final val z: kotlin.Any
       EXPRESSION_BODY
         GET_VAR z type=kotlin.Any operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     FUN public final operator /*synthesized*/ fun component1(): kotlin.Int

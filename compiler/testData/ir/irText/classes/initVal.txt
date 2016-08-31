@@ -4,7 +4,7 @@ FILE /initVal.kt
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS TestInitValInClass
@@ -12,7 +12,7 @@ FILE /initVal.kt
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val x: kotlin.Int = 0 getter=null setter=null
+    PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitValInInitBlock
@@ -21,4 +21,4 @@ FILE /initVal.kt
         BLOCK type=kotlin.Unit operator=null
           SET_BACKING_FIELD x type=kotlin.Unit operator=null
             CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int

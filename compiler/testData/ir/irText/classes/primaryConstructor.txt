@@ -6,10 +6,10 @@ FILE /primaryConstructor.kt
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val y: kotlin.Int getter=null setter=null
+    PROPERTY public final val y: kotlin.Int
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS Test2
@@ -19,10 +19,10 @@ FILE /primaryConstructor.kt
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=null
-    PROPERTY public final val y: kotlin.Int getter=null setter=null
+    PROPERTY public final val y: kotlin.Int
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=null
   CLASS CLASS Test3
@@ -33,7 +33,7 @@ FILE /primaryConstructor.kt
         BLOCK type=kotlin.Unit operator=null
           SET_BACKING_FIELD x type=kotlin.Unit operator=null
             GET_VAR x type=kotlin.Int operator=null
-    PROPERTY public final val y: kotlin.Int getter=null setter=null
+    PROPERTY public final val y: kotlin.Int
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final val x: kotlin.Int getter=null setter=null
+    PROPERTY public final val x: kotlin.Int

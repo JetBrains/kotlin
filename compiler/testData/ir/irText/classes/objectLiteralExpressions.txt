@@ -1,14 +1,14 @@
 FILE /objectLiteralExpressions.kt
   CLASS INTERFACE IFoo
     FUN public abstract fun foo(): kotlin.Unit
-  PROPERTY public val test1: kotlin.Any getter=null setter=null
+  PROPERTY public val test1: kotlin.Any
     EXPRESSION_BODY
       BLOCK type=test1.<no name provided> operator=OBJECT_LITERAL
         CLASS CLASS <no name provided>
           FUN public constructor <no name provided>()
             BLOCK_BODY
         CALL .<init> type=test1.<no name provided> operator=OBJECT_LITERAL
-  PROPERTY public val test2: IFoo getter=null setter=null
+  PROPERTY public val test2: IFoo
     EXPRESSION_BODY
       BLOCK type=test2.<no name provided> operator=OBJECT_LITERAL
         CLASS CLASS <no name provided>

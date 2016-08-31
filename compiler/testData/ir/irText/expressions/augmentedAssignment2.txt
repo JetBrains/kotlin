@@ -12,7 +12,7 @@ FILE /augmentedAssignment2.kt
     BLOCK_BODY
   FUN public operator fun A.modAssign(/*0*/ s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  PROPERTY public val p: A getter=null setter=null
+  PROPERTY public val p: A
     EXPRESSION_BODY
       CALL .<init> type=A operator=null
   FUN public fun testVariable(): kotlin.Unit

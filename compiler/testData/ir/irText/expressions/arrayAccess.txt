@@ -1,5 +1,5 @@
 FILE /arrayAccess.kt
-  PROPERTY public val p: kotlin.Int = 0 getter=null setter=null
+  PROPERTY public val p: kotlin.Int = 0
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   FUN public fun foo(): kotlin.Int

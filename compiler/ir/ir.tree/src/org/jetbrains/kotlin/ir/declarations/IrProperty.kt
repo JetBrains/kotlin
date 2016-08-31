@@ -28,8 +28,6 @@ interface IrProperty : IrDeclaration {
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.PROPERTY
-
-    fun <D> acceptAccessors(visitor: IrElementVisitor<Unit, D>, data: D)
 }
 
 interface IrSimpleProperty : IrProperty {
@@ -49,21 +47,33 @@ abstract class IrPropertyBase(
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
-            newGetter?.run { assert(property == null) { "$newGetter: should not have a property" } }
-            newGetter?.property = this
+            newGetter?.assertDetached()
+            field?.detach()
             field = newGetter
+            newGetter?.setTreeLocation(this, PROPERTY_GETTER_SLOT)
         }
 
     override var setter: IrPropertySetter? = null
         set(newSetter) {
-            newSetter?.run { assert(property == null) { "$newSetter: should not have a property" } }
-            newSetter?.property = this
+            newSetter?.assertDetached()
+            field?.detach()
             field = newSetter
+            newSetter?.setTreeLocation(this, PROPERTY_SETTER_SLOT)
         }
 
-    override fun <D> acceptAccessors(visitor: IrElementVisitor<Unit, D>, data: D) {
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                PROPERTY_GETTER_SLOT -> getter
+                PROPERTY_SETTER_SLOT -> setter
+                else -> null
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            PROPERTY_GETTER_SLOT -> getter = newChild.assertCast()
+            PROPERTY_SETTER_SLOT -> setter = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
+        }
     }
 }
 
@@ -85,13 +95,13 @@ class IrSimplePropertyImpl(
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
                 INITIALIZER_SLOT -> valueInitializer
-                else -> null
+                else -> super.getChild(slot)
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             INITIALIZER_SLOT -> valueInitializer = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
+            else -> super.replaceChild(slot, newChild)
         }
     }
 
@@ -100,6 +110,8 @@ class IrSimplePropertyImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         valueInitializer?.accept(visitor, data)
+        getter?.accept(visitor, data)
+        setter?.accept(visitor, data)
     }
 }
 
@@ -121,13 +133,13 @@ class IrDelegatedPropertyImpl(
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
                 INITIALIZER_SLOT -> delegateInitializer
-                else -> null
+                else -> super.getChild(slot)
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             INITIALIZER_SLOT -> delegateInitializer = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
+            else -> super.replaceChild(slot, newChild)
         }
     }
 
@@ -136,5 +148,7 @@ class IrDelegatedPropertyImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         delegateInitializer.accept(visitor, data)
+        getter?.accept(visitor, data)
+        setter?.accept(visitor, data)
     }
 }

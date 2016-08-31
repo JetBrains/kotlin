@@ -2,19 +2,19 @@ FILE /qualifiedSuperCalls.kt
   CLASS INTERFACE ILeft
     FUN public open fun foo(): kotlin.Unit
       BLOCK_BODY
-    PROPERTY public open val bar: kotlin.Int getter=<get-bar> setter=null
-    PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int property=bar
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-bar>
-          CONST Int type=kotlin.Int value='1'
+    PROPERTY public open val bar: kotlin.Int
+      PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-bar>
+            CONST Int type=kotlin.Int value='1'
   CLASS INTERFACE IRight
     FUN public open fun foo(): kotlin.Unit
       BLOCK_BODY
-    PROPERTY public open val bar: kotlin.Int getter=<get-bar> setter=null
-    PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int property=bar
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-bar>
-          CONST Int type=kotlin.Int value='2'
+    PROPERTY public open val bar: kotlin.Int
+      PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-bar>
+            CONST Int type=kotlin.Int value='2'
   CLASS CLASS CBoth
     FUN public constructor CBoth()
       BLOCK_BODY
@@ -24,12 +24,12 @@ FILE /qualifiedSuperCalls.kt
           $this: THIS public final class CBoth : ILeft, IRight type=ILeft
         CALL .foo superQualifier=IRight type=kotlin.Unit operator=null
           $this: THIS public final class CBoth : ILeft, IRight type=IRight
-    PROPERTY public open override /*2*/ val bar: kotlin.Int getter=<get-bar> setter=null
-    PROPERTY_GETTER public open override /*2*/ fun <get-bar>(): kotlin.Int property=bar
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-bar>
-          CALL .plus type=kotlin.Int operator=PLUS
-            $this: CALL .<get-bar> superQualifier=ILeft type=kotlin.Int operator=GET_PROPERTY
-              $this: THIS public final class CBoth : ILeft, IRight type=ILeft
-            other: CALL .<get-bar> superQualifier=IRight type=kotlin.Int operator=GET_PROPERTY
-              $this: THIS public final class CBoth : ILeft, IRight type=IRight
+    PROPERTY public open override /*2*/ val bar: kotlin.Int
+      PROPERTY_GETTER public open override /*2*/ fun <get-bar>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-bar>
+            CALL .plus type=kotlin.Int operator=PLUS
+              $this: CALL .<get-bar> superQualifier=ILeft type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS public final class CBoth : ILeft, IRight type=ILeft
+              other: CALL .<get-bar> superQualifier=IRight type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS public final class CBoth : ILeft, IRight type=IRight

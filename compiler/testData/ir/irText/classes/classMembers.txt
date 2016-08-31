@@ -8,10 +8,10 @@ FILE /classMembers.kt
           GET_VAR z type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD property type=kotlin.Unit operator=null
           CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val y: kotlin.Int getter=null setter=null
+    PROPERTY public final val y: kotlin.Int
       EXPRESSION_BODY
         GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-    PROPERTY public final var z: kotlin.Int getter=null setter=null
+    PROPERTY public final var z: kotlin.Int
       EXPRESSION_BODY
         GET_VAR z type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     FUN public constructor C()
@@ -20,25 +20,25 @@ FILE /classMembers.kt
           x: CONST Int type=kotlin.Int value='0'
           y: CONST Int type=kotlin.Int value='0'
           z: CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val property: kotlin.Int = 0 getter=null setter=null
+    PROPERTY public final val property: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val propertyWithGet: kotlin.Int getter=<get-propertyWithGet> setter=null
-    PROPERTY_GETTER public final fun <get-propertyWithGet>(): kotlin.Int property=propertyWithGet
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-propertyWithGet>
-          CONST Int type=kotlin.Int value='42'
-    PROPERTY public final var propertyWithGetAndSet: kotlin.Int getter=<get-propertyWithGetAndSet> setter=<set-propertyWithGetAndSet>
-    PROPERTY_GETTER public final fun <get-propertyWithGetAndSet>(): kotlin.Int property=propertyWithGetAndSet
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-propertyWithGetAndSet>
-          CALL .<get-z> type=kotlin.Int operator=GET_PROPERTY
+    PROPERTY public final val propertyWithGet: kotlin.Int
+      PROPERTY_GETTER public final fun <get-propertyWithGet>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-propertyWithGet>
+            CONST Int type=kotlin.Int value='42'
+    PROPERTY public final var propertyWithGetAndSet: kotlin.Int
+      PROPERTY_GETTER public final fun <get-propertyWithGetAndSet>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-propertyWithGetAndSet>
+            CALL .<get-z> type=kotlin.Int operator=GET_PROPERTY
+              $this: THIS public final class C type=C
+      PROPERTY_SETTER public final fun <set-propertyWithGetAndSet>(/*0*/ value: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          CALL .<set-z> type=kotlin.Unit operator=EQ
             $this: THIS public final class C type=C
-    PROPERTY_SETTER public final fun <set-propertyWithGetAndSet>(/*0*/ value: kotlin.Int): kotlin.Unit property=propertyWithGetAndSet
-      BLOCK_BODY
-        CALL .<set-z> type=kotlin.Unit operator=EQ
-          $this: THIS public final class C type=C
-          <set-?>: GET_VAR value type=kotlin.Int operator=null
+            <set-?>: GET_VAR value type=kotlin.Int operator=null
     FUN public final fun function(): kotlin.Unit
       BLOCK_BODY
         CALL .println type=kotlin.Unit operator=null

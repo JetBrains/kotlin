@@ -6,11 +6,11 @@ FILE /multipleImplicitReceivers.kt
     FUN private constructor B()
       BLOCK_BODY
   CLASS INTERFACE IFoo
-    PROPERTY public open val A.foo: B getter=<get-foo> setter=null
-    PROPERTY_GETTER public open fun A.<get-foo>(): B property=foo
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-foo>
-          GET_OBJECT B type=B
+    PROPERTY public open val A.foo: B
+      PROPERTY_GETTER public open fun A.<get-foo>(): B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-foo>
+            GET_OBJECT B type=B
   CLASS INTERFACE IInvoke
     FUN public open operator fun B.invoke(): kotlin.Int
       BLOCK_BODY

@@ -8,7 +8,7 @@ FILE /values.kt
   CLASS OBJECT A
     FUN private constructor A()
       BLOCK_BODY
-  PROPERTY public val a: kotlin.Int = 0 getter=null setter=null
+  PROPERTY public val a: kotlin.Int = 0
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   CLASS CLASS Z

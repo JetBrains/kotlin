@@ -1,15 +1,15 @@
 FILE /vararg.kt
-  PROPERTY public val test1: kotlin.Array<kotlin.String> getter=null setter=null
+  PROPERTY public val test1: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
       CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
-  PROPERTY public val test2: kotlin.Array<kotlin.String> getter=null setter=null
+  PROPERTY public val test2: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
       CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
         elements: VARARG type=Array<out String> varargElementType=String
           CONST String type=kotlin.String value='1'
           CONST String type=kotlin.String value='2'
           CONST String type=kotlin.String value='3'
-  PROPERTY public val test3: kotlin.Array<kotlin.String> getter=null setter=null
+  PROPERTY public val test3: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
       CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
         elements: VARARG type=Array<out String> varargElementType=String

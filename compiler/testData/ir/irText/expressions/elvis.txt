@@ -1,5 +1,5 @@
 FILE /elvis.kt
-  PROPERTY public val p: kotlin.Any? = null getter=null setter=null
+  PROPERTY public val p: kotlin.Any? = null
     EXPRESSION_BODY
       CONST Null type=kotlin.Nothing? value='null'
   FUN public fun foo(): kotlin.Any?

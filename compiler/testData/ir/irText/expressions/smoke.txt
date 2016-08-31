@@ -3,21 +3,21 @@ FILE /smoke.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=testFun
         CONST String type=kotlin.String value='OK'
-  PROPERTY public val testSimpleVal: kotlin.Int = 1 getter=null setter=null
+  PROPERTY public val testSimpleVal: kotlin.Int = 1
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='1'
-  PROPERTY public val testValWithGetter: kotlin.Int getter=<get-testValWithGetter> setter=null
-  PROPERTY_GETTER public fun <get-testValWithGetter>(): kotlin.Int property=testValWithGetter
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from=<get-testValWithGetter>
-        CONST Int type=kotlin.Int value='42'
-  PROPERTY public var testSimpleVar: kotlin.Int getter=null setter=null
+  PROPERTY public val testValWithGetter: kotlin.Int
+    PROPERTY_GETTER public fun <get-testValWithGetter>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=<get-testValWithGetter>
+          CONST Int type=kotlin.Int value='42'
+  PROPERTY public var testSimpleVar: kotlin.Int
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='2'
-  PROPERTY public var testVarWithAccessors: kotlin.Int getter=<get-testVarWithAccessors> setter=<set-testVarWithAccessors>
-  PROPERTY_GETTER public fun <get-testVarWithAccessors>(): kotlin.Int property=testVarWithAccessors
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from=<get-testVarWithAccessors>
-        CONST Int type=kotlin.Int value='42'
-  PROPERTY_SETTER public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit property=testVarWithAccessors
-    BLOCK_BODY
+  PROPERTY public var testVarWithAccessors: kotlin.Int
+    PROPERTY_GETTER public fun <get-testVarWithAccessors>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=<get-testVarWithAccessors>
+          CONST Int type=kotlin.Int value='42'
+    PROPERTY_SETTER public fun <set-testVarWithAccessors>(/*0*/ v: kotlin.Int): kotlin.Unit
+      BLOCK_BODY

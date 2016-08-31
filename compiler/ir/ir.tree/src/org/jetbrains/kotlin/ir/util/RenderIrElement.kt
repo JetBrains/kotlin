@@ -43,13 +43,13 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "FUN ${declaration.descriptor.render()}"
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-            "PROPERTY ${declaration.descriptor.render()} getter=${declaration.getter?.name()} setter=${declaration.setter?.name()}"
+            "PROPERTY ${declaration.descriptor.render()}"
 
     override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?): String =
-            "PROPERTY_GETTER ${declaration.descriptor.render()} property=${declaration.property?.name()}"
+            "PROPERTY_GETTER ${declaration.descriptor.render()}"
 
     override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
-            "PROPERTY_SETTER ${declaration.descriptor.render()} property=${declaration.property?.name()}"
+            "PROPERTY_SETTER ${declaration.descriptor.render()}"
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
             "CLASS ${declaration.descriptor.kind} ${declaration.descriptor.name}"

@@ -1,17 +1,17 @@
 FILE /field.kt
-  PROPERTY public var testSimple: kotlin.Int getter=null setter=<set-testSimple>
+  PROPERTY public var testSimple: kotlin.Int
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
-  PROPERTY_SETTER public fun <set-testSimple>(/*0*/ value: kotlin.Int): kotlin.Unit property=testSimple
-    BLOCK_BODY
-      SET_BACKING_FIELD testSimple type=kotlin.Unit operator=EQ
-        GET_VAR value type=kotlin.Int operator=null
-  PROPERTY public var testAugmented: kotlin.Int getter=null setter=<set-testAugmented>
+    PROPERTY_SETTER public fun <set-testSimple>(/*0*/ value: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+        SET_BACKING_FIELD testSimple type=kotlin.Unit operator=EQ
+          GET_VAR value type=kotlin.Int operator=null
+  PROPERTY public var testAugmented: kotlin.Int
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
-  PROPERTY_SETTER public fun <set-testAugmented>(/*0*/ value: kotlin.Int): kotlin.Unit property=testAugmented
-    BLOCK_BODY
-      SET_BACKING_FIELD testAugmented type=kotlin.Unit operator=PLUSEQ
-        CALL .plus type=kotlin.Int operator=PLUSEQ
-          $this: GET_BACKING_FIELD testAugmented type=kotlin.Int operator=PLUSEQ
-          other: GET_VAR value type=kotlin.Int operator=null
+    PROPERTY_SETTER public fun <set-testAugmented>(/*0*/ value: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+        SET_BACKING_FIELD testAugmented type=kotlin.Unit operator=PLUSEQ
+          CALL .plus type=kotlin.Int operator=PLUSEQ
+            $this: GET_BACKING_FIELD testAugmented type=kotlin.Int operator=PLUSEQ
+            other: GET_VAR value type=kotlin.Int operator=null

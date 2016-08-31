@@ -1,5 +1,5 @@
 FILE /justLambda.kt
-  PROPERTY public val lambda: () -> kotlin.Int getter=null setter=null
+  PROPERTY public val lambda: () -> kotlin.Int
     EXPRESSION_BODY
       BLOCK type=() -> kotlin.Int operator=LAMBDA
         FUN local final fun <anonymous>(): kotlin.Int

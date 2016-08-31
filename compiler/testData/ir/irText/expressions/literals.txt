@@ -1,40 +1,40 @@
 FILE /literals.kt
-  PROPERTY public val test1: kotlin.Int = 1 getter=null setter=null
+  PROPERTY public val test1: kotlin.Int = 1
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='1'
-  PROPERTY public val test2: kotlin.Int = -1 getter=null setter=null
+  PROPERTY public val test2: kotlin.Int = -1
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='-1'
-  PROPERTY public val test3: kotlin.Boolean = true getter=null setter=null
+  PROPERTY public val test3: kotlin.Boolean = true
     EXPRESSION_BODY
       CONST Boolean type=kotlin.Boolean value='true'
-  PROPERTY public val test4: kotlin.Boolean = false getter=null setter=null
+  PROPERTY public val test4: kotlin.Boolean = false
     EXPRESSION_BODY
       CONST Boolean type=kotlin.Boolean value='false'
-  PROPERTY public val test5: kotlin.String = "abc" getter=null setter=null
+  PROPERTY public val test5: kotlin.String = "abc"
     EXPRESSION_BODY
       CONST String type=kotlin.String value='abc'
-  PROPERTY public val test6: kotlin.Nothing? = null getter=null setter=null
+  PROPERTY public val test6: kotlin.Nothing? = null
     EXPRESSION_BODY
       CONST Null type=kotlin.Nothing? value='null'
-  PROPERTY public val test7: kotlin.Long = 1.toLong() getter=null setter=null
+  PROPERTY public val test7: kotlin.Long = 1.toLong()
     EXPRESSION_BODY
       CONST Long type=kotlin.Long value='1'
-  PROPERTY public val test8: kotlin.Long = -1.toLong() getter=null setter=null
+  PROPERTY public val test8: kotlin.Long = -1.toLong()
     EXPRESSION_BODY
       CONST Long type=kotlin.Long value='-1'
-  PROPERTY public val test9: kotlin.Double = 1.0.toDouble() getter=null setter=null
+  PROPERTY public val test9: kotlin.Double = 1.0.toDouble()
     EXPRESSION_BODY
       CONST Double type=kotlin.Double value='1.0'
-  PROPERTY public val test10: kotlin.Double = -1.0.toDouble() getter=null setter=null
+  PROPERTY public val test10: kotlin.Double = -1.0.toDouble()
     EXPRESSION_BODY
       CONST Double type=kotlin.Double value='-1.0'
-  PROPERTY public val test11: kotlin.Float = 1.0.toFloat() getter=null setter=null
+  PROPERTY public val test11: kotlin.Float = 1.0.toFloat()
     EXPRESSION_BODY
       CONST Float type=kotlin.Float value='1.0'
-  PROPERTY public val test12: kotlin.Float = -1.0.toFloat() getter=null setter=null
+  PROPERTY public val test12: kotlin.Float = -1.0.toFloat()
     EXPRESSION_BODY
       CONST Float type=kotlin.Float value='-1.0'
-  PROPERTY public val test13: kotlin.Char = \u0061 ('a') getter=null setter=null
+  PROPERTY public val test13: kotlin.Char = \u0061 ('a')
     EXPRESSION_BODY
       CONST Char type=kotlin.Char value='a'

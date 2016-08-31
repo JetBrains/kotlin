@@ -36,14 +36,6 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
             for (ktDeclaration in ktFile.declarations) {
                 val irDeclaration = irDeclarationGenerator.generateMemberDeclaration(ktDeclaration)
                 irFile.addDeclaration(irDeclaration)
-                if (irDeclaration is IrProperty) {
-                    irDeclaration.getter?.let {
-                        irFile.addDeclaration(it)
-                    }
-                    irDeclaration.setter?.let {
-                        irFile.addDeclaration(it)
-                    }
-                }
             }
 
             irModule.addFile(irFile)
