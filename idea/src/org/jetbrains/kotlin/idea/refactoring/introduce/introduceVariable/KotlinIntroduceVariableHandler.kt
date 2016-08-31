@@ -719,11 +719,11 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         if (file !is KtFile) return
 
         try {
-            KotlinRefactoringUtil.selectElement(editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) {
+            KotlinRefactoringUtil2.selectElement(editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) {
                 doRefactoring(project, editor, it as KtExpression?, null, null)
             }
         }
-        catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
+        catch (e: KotlinRefactoringUtil2.IntroduceRefactoringException) {
             showErrorHint(project, editor, e.message!!)
         }
     }

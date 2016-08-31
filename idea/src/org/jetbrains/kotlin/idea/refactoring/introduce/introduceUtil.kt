@@ -27,7 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -122,7 +122,7 @@ fun selectElementsWithTargetParent(
     }
 
     fun selectSingleElement() {
-        KotlinRefactoringUtil.selectElement(editor, file, false, elementKinds) { expr ->
+        KotlinRefactoringUtil2.selectElement(editor, file, false, elementKinds) { expr ->
             if (expr != null) {
                 selectTargetContainer(listOf(expr))
             }

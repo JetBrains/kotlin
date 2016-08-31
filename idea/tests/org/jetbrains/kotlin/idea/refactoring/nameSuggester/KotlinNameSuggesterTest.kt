@@ -22,7 +22,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
@@ -90,7 +90,7 @@ class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
             }
-            KotlinRefactoringUtil.selectElement(myFixture.editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION), object : KotlinRefactoringUtil.SelectElementCallback {
+            KotlinRefactoringUtil2.selectElement(myFixture.editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION), object : KotlinRefactoringUtil2.SelectElementCallback {
                 override fun run(element: PsiElement?) {
                     val names = KotlinNameSuggester
                             .suggestNamesByExpressionAndType(element as KtExpression,
@@ -104,7 +104,7 @@ class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
                 }
             })
         }
-        catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
+        catch (e: KotlinRefactoringUtil2.IntroduceRefactoringException) {
             throw AssertionError("Failed to find expression: " + e.message)
         }
         finally {
