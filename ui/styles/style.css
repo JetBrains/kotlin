@@ -3,6 +3,23 @@
 	height: 36em;
 }
 
+#control-tabs {
+	display: block;
+}
+
+.btn {
+	white-space: normal;
+}
+
+#coords-tooltip {
+	display: none;
+}
+
+#pathCanvas:hover + #coords-tooltip {
+	display: block;
+	position: fixed;
+	overflow: hidden;
+}
 
 /*#algos {
 	padding: 1em;

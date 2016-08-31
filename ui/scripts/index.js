@@ -18,7 +18,14 @@ var ProtoBuf = dcodeIO.ProtoBuf,
 
 	// serverAddress = "http://localhost:8000";
 	serverAddress = "http://localhost:7926",
-	remoteController = null;
+	remoteController = null,
+
+	// drawing-related objects
+	canvas = $( "#pathCanvas" )[0],
+	ctx = canvas.getContext('2d'),
+	tooltip = $( "#coords-tooltip");
+
+var currentActiveButton = null;
 
 var Commands = {
 	UP: 0,
@@ -118,28 +125,68 @@ $(document).keyup(function(event) {
 	return handleControlKeyup(event)
 });
 
-function changeMode(modeId) {
+$(document).ready(init)
+
+function init() {
+	$("#perimeter-mode-tab").hide()
+	$("#perimeter-debug-tab").hide()
+	$("#manual-mode-tab").hide()
+	$("#exit-btn").hide()
+
+	canvas.addEventListener('mousemove', function(evt) {
+    	var mousePos = getMousePos(evt);
+    	var message = "(" + mousePos.x + "," + mousePos.y + ")";
+    	tooltip[0].textContent = message;
+    	tooltip.offset( {top: (evt.clientY + 20), left: (evt.clientX + 20) } );
+	}, 
+	false
+);
+
+}
+
+function hideTabs() {
+	$("#perimeter-mode-tab").fadeOut()
+	$("#perimeter-debug-tab").fadeOut()
+	$("#manual-mode-tab").fadeOut()
+	$("#exit-btn").fadeOut()
+}
+
+
+function changeMode(modeId, button, associatedTab) {
 	console.log("Changing mode to mode #" + modeId)
+
+	// check for pressing wrong buttons
+	if (($(button).hasClass("disabled"))) {
+		alert("Exit current mode first!");
+		return;
+	}
+
+	if ($(button) == currentActiveButton) {
+		alert("Already in this mode!");
+	}
+
+	// if exit pressed
+	if (modeId == 0) {
+		currentActiveButton.siblings().removeClass("disabled")
+		currentActiveButton = null
+		hideTabs();
+	}
+	else {	// entering mode
+		$(button).siblings().addClass("disabled");
+		currentActiveButton = $(button);
+		$("#exit-btn").fadeIn();
+		$("#" + associatedTab).fadeIn();
+	}
+
+	console.log("Sending request to change mode to" + modeId.toString());
 	var msg = new ModeChange(modeId);
-	console.log("Sending request to change algorithm");
 	sendProtobuf(msg, serverAddress + "/change-mode", function(response) {
 		var response = GenericResponse.decode64(response);
-		if (response.result.errorCode != 0) {
+		if (response.result.error != 0) {
 			alert("Something went wrong!");
 			return;
 		}
 
 		console.log("Got OK for changing request")
-		// switch(modeId) {
-		// 	case 0:
-		// 		enterManualMode();
-		// 	break;
-		// 	case 1:
-		// 		buildPerimeter( debug =  false);
-		// 	break;
-		// 	case 2:
-		// 		buildPerimeter(/* debug = */ true);
-		// 	break;
-		// }
 	});
 }

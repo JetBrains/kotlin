@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 message DebugResponse {
-
     repeated int32 begin_x = 1 [packed = true];
     repeated int32 begin_y = 2 [packed = true];	
     repeated int32 end_x = 3 [packed = true];
@@ -15,4 +14,3 @@ message DebugResponse {
     repeated int32 y = 9 [packed = true];
 
 }
-
