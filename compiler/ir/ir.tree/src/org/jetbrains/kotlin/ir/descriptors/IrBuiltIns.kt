@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -28,40 +27,20 @@ import org.jetbrains.kotlin.types.TypeSubstitution
 class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule)
 
-    val eqeqeq: FunctionDescriptor
-    val eqeq: FunctionDescriptor
-    val lt0: FunctionDescriptor
-    val lteq0: FunctionDescriptor
-    val gt0: FunctionDescriptor
-    val gteq0: FunctionDescriptor
-    val notNull: FunctionDescriptor
-    val throwNpe: FunctionDescriptor
+    val bool = builtIns.booleanType
+    val any = builtIns.anyType
+    val anyN = builtIns.nullableAnyType
+    val int = builtIns.intType
+    val nothing = builtIns.nothingType
 
-    val booleanNot: FunctionDescriptor
-
-    val implicitNotNull: CallableDescriptor // TODO drop
-
-    init {
-        val bool = builtIns.booleanType
-        val any = builtIns.anyType
-        val anyN = builtIns.nullableAnyType
-        val int = builtIns.intType
-        val nothing = builtIns.nothingType
-
-        eqeqeq = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
-        eqeq = defineOperator("EQEQ", bool, listOf(anyN, anyN))
-        lt0 = defineOperator("LT0", bool, listOf(int))
-        lteq0 = defineOperator("LTEQ0", bool, listOf(int))
-        gt0 = defineOperator("GT0", bool, listOf(int))
-        gteq0 = defineOperator("GTEQ0", bool, listOf(int))
-        notNull = defineOperator("NOT_NULL", bool, listOf(anyN))
-        throwNpe = defineOperator("THROW_NPE", nothing, listOf())
-
-        implicitNotNull = defineOperator("IMPLICIT_NOT_NULL", any, listOf(anyN))
-
-        // booleanNot = builtIns.boolean.findSingleFunction("not") // TODO requires receiver
-        booleanNot = defineOperator("NOT", bool, listOf(bool))
-    }
+    val eqeqeq: FunctionDescriptor = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
+    val eqeq: FunctionDescriptor = defineOperator("EQEQ", bool, listOf(anyN, anyN))
+    val lt0: FunctionDescriptor = defineOperator("LT0", bool, listOf(int))
+    val lteq0: FunctionDescriptor = defineOperator("LTEQ0", bool, listOf(int))
+    val gt0: FunctionDescriptor = defineOperator("GT0", bool, listOf(int))
+    val gteq0: FunctionDescriptor = defineOperator("GTEQ0", bool, listOf(int))
+    val throwNpe: FunctionDescriptor = defineOperator("THROW_NPE", nothing, listOf())
+    val booleanNot: FunctionDescriptor = defineOperator("NOT", bool, listOf(bool))
 
     private fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrBuiltinOperatorDescriptor {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)

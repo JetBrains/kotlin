@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.psi2ir.builders
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.psi2ir.generators.eqeqeq
 import org.jetbrains.kotlin.psi2ir.generators.primitiveOp1
 import org.jetbrains.kotlin.psi2ir.generators.primitiveOp2
@@ -64,9 +64,6 @@ fun IrBuilderWithScope.irIfNull(type: KotlinType, subject: IrExpression, thenPar
 
 fun IrBuilderWithScope.irThrowNpe(operator: IrOperator) =
         IrNullaryPrimitiveImpl(startOffset, endOffset, operator, context.irBuiltIns.throwNpe)
-
-fun IrBlockBuilder.irThrowNpe() =
-        irThrowNpe(operator ?: IrOperator.EXCLEXCL)
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
         IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnTrue())
