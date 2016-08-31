@@ -30,10 +30,10 @@ class A2<T>(x: Int, y: Int, t: T) {
 //captured
 
 class B(
-        <info descr="Value captured in a closure">x</info>: Int,
-        <info descr="Value captured in a closure">y</info>: Int,
-        <info descr="Value captured in a closure">t</info>: Int,
-        <info descr="Value captured in a closure">d</info>: Int
+        x: Int,
+        y: Int,
+        t: Int,
+        d: Int
 ) {
     <info>init</info> {
         class C(<warning>a</warning>: Int = <info>x</info>): T <info>by</info> T1(<info>t</info>) {
@@ -43,7 +43,7 @@ class B(
     }
 }
 
-class B2(<info descr="Value captured in a closure">x</info>: Int, <info descr="Value captured in a closure">y</info>: Int) {
+class B2(x: Int, y: Int) {
 
     val x1 =  { <info>x</info> }()
     <info>init</info> {

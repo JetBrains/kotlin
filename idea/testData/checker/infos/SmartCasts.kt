@@ -184,11 +184,11 @@ fun vars(a: Any?) {
         <warning>b =</warning> <info descr="Smart cast to kotlin.Int">a</info>
     }
 }
-fun returnFunctionLiteralBlock(<info>a</info>: Any?): Function0<Int> {
+fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
     if (<info>a</info> is Int) return { <info descr="Smart cast to kotlin.Int"><info>a</info></info> }
     else return { 1 }
 }
-fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
+fun returnFunctionLiteral(a: Any?): Function0<Int> =
     if (<info>a</info> is Int) (fun (): Int = <info descr="Smart cast to kotlin.Int"><info>a</info></info>)
     else { -> 1 }
 
@@ -212,7 +212,7 @@ fun mergeSmartCasts(a: Any?) {
 
 //mutability
 fun f(): String {
-    var <info>a</info>: Any = 11
+    var a: Any = 11
     if (<info>a</info> is String) {
         val <warning>i</warning>: String = <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>
         <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>.compareTo("f")
