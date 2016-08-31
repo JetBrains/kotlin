@@ -21,6 +21,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -85,10 +86,25 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             else {
                 if (hasJavaFiles) {
                     pom.findExecutions(kotlinPlugin, PomFile.KotlinGoals.Compile).notAtPhase(PomFile.DefaultPhases.ProcessSources).forEach { badExecution ->
-                        holder.createProblem(badExecution.phase.createStableCopy(),
-                                             HighlightSeverity.WARNING,
-                                             "Kotlin plugin should run before javac so kotlin classes could be visible from Java",
-                                             FixExecutionPhaseLocalFix(badExecution, PomFile.DefaultPhases.ProcessSources))
+                        val javacPlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
+                        val existingJavac = pom.domModel.build.plugins.plugins.firstOrNull {
+                            it.groupId.stringValue == "org.apache.maven.plugins" &&
+                            it.artifactId.stringValue == "maven-compiler-plugin"
+                        }
+
+                        if (existingJavac == null
+                            || !pom.isPluginAfter(existingJavac, kotlinPlugin)
+                            || pom.isExecutionEnabled(javacPlugin, "default-compile")
+                            || pom.isExecutionEnabled(javacPlugin, "default-testCompile")
+                            || pom.isPluginExecutionMissing(javacPlugin, "default-compile", "compile")
+                            || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")) {
+
+                            holder.createProblem(badExecution.phase.createStableCopy(),
+                                                 HighlightSeverity.WARNING,
+                                                 "Kotlin plugin should run before javac so kotlin classes could be visible from Java",
+                                                 FixExecutionPhaseLocalFix(badExecution, PomFile.DefaultPhases.ProcessSources),
+                                                 AddJavaExecutionsLocalFix(module, domFileElement.file, kotlinPlugin))
+                        }
                     }
 
                     pom.findExecutions(kotlinPlugin, PomFile.KotlinGoals.Js, PomFile.KotlinGoals.TestJs).forEach { badExecution ->
@@ -98,8 +114,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                     }
                 }
 
-                val stdlibDependencies  = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID)
-                val jsDependencies  = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID)
+                val stdlibDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavaMavenConfigurator.STD_LIB_ID)
+                val jsDependencies = mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, KotlinJavascriptMavenConfigurator.STD_LIB_ID)
 
                 if (hasJvmExecution && stdlibDependencies.isEmpty()) {
                     holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
@@ -165,6 +181,15 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             execution.phase.value = newPhase
+        }
+    }
+
+    private class AddJavaExecutionsLocalFix(val module: Module, val file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
+        override fun getName() = "Configure maven-compiler-plugin executions in the right order"
+        override fun getFamilyName() = getName()
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            PomFile(file).addJavacExecutions(module, kotlinPlugin)
         }
     }
 

@@ -32,6 +32,8 @@ import org.jetbrains.idea.maven.dom.MavenDomElement
 import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.dom.model.*
 import org.jetbrains.idea.maven.model.MavenId
+import org.jetbrains.idea.maven.model.MavenPlugin
+import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription
@@ -40,7 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import java.util.*
 
 class PomFile(val xmlFile: XmlFile) {
-    private val domModel = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile) ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
+    val domModel = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile) ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
     private val nodesByName = HashMap<String, XmlTag>()
     private val projectElement: XmlTag
 
@@ -132,6 +134,34 @@ class PomFile(val xmlFile: XmlFile) {
         return plugin
     }
 
+    fun isPluginAfter(plugin: MavenDomPlugin, referencePlugin: MavenDomPlugin): Boolean {
+        require(plugin.parent === referencePlugin.parent) { "Plugins should be siblings" }
+        require(plugin !== referencePlugin)
+
+        val referenceElement = referencePlugin.xmlElement!!
+        var e: PsiElement = plugin.xmlElement!!
+
+        while (e !== referenceElement) {
+            val prev = e.prevSibling ?: return false
+            e = prev
+        }
+
+        return true
+    }
+
+    fun ensurePluginAfter(plugin: MavenDomPlugin, referencePlugin: MavenDomPlugin): MavenDomPlugin {
+        if (!isPluginAfter(plugin, referencePlugin)) {
+            // rearrange
+            val referenceElement = referencePlugin.xmlElement!!
+            val newElement = referenceElement.parent.addAfter(plugin.xmlElement!!, referenceElement)
+            plugin.xmlTag.delete()
+
+            return domModel.build.plugins.plugins.single { it.xmlElement == newElement }
+        }
+
+        return plugin
+    }
+
     fun findKotlinPlugins() = domModel.build.plugins.plugins.filter { it.isKotlinMavenPlugin() }
     fun findKotlinExecutions(vararg goals: String) = findKotlinExecutions().filter { it.goals.goals.any { it.rawText in goals } }
     fun findKotlinExecutions() = findKotlinPlugins().flatMap { it.executions.executions }
@@ -140,18 +170,16 @@ class PomFile(val xmlFile: XmlFile) {
     fun findExecutions(plugin: MavenDomPlugin, vararg goals: String) = findExecutions(plugin).filter { it.goals.goals.any { it.rawText in goals } }
 
     fun addExecution(plugin: MavenDomPlugin, executionId: String, phase: String, goals: List<String>): MavenDomPluginExecution {
-        require(goals.isNotEmpty()) { "Execution $executionId requires at least one goal but empty list has been provided" }
         require(executionId.isNotEmpty()) { "executionId shouldn't be empty" }
         require(phase.isNotEmpty()) { "phase shouldn't be empty" }
 
         val execution = plugin.executions.executions.firstOrNull { it.id.stringValue == executionId } ?: plugin.executions.addExecution()
         execution.id.stringValue = executionId
         execution.phase.stringValue = phase
-        execution.goals.ensureTagExists()
 
         val existingGoals = execution.goals.goals.mapNotNull { it.rawText }
         for (goal in goals.filter { it !in existingGoals }) {
-            val goalTag = execution.goals.xmlTag.createChildTag("goal", goal)
+            val goalTag = execution.goals.ensureTagExists().createChildTag("goal", goal)
             execution.goals.xmlTag.add(goalTag)
         }
 
@@ -170,10 +198,54 @@ class PomFile(val xmlFile: XmlFile) {
         executionSourceDirs(execution, sourceDirs)
     }
 
+    fun isPluginExecutionMissing(plugin: MavenPlugin?, excludedExecutionId: String, goal: String) = plugin == null || plugin.executions.none { it.executionId != excludedExecutionId && goal in it.goals }
+
+    fun addJavacExecutions(module: Module, kotlinPlugin: MavenDomPlugin) {
+        val javacPlugin = ensurePluginAfter(addPlugin(MavenId("org.apache.maven.plugins", "maven-compiler-plugin", null)), kotlinPlugin)
+
+        val project = MavenProjectsManager.getInstance(module.project).findProject(module)!!
+        val plugin = project.findPlugin("org.apache.maven.plugins", "maven-compiler-plugin")
+
+        if (isExecutionEnabled(plugin, "default-compile")) {
+            addExecution(javacPlugin, "default-compile", "none", emptyList())
+        }
+
+        if (isExecutionEnabled(plugin, "default-testCompile")) {
+            addExecution(javacPlugin, "default-testCompile", "none", emptyList())
+        }
+
+        if (isPluginExecutionMissing(plugin, "default-compile", "compile")) {
+            addExecution(javacPlugin, "compile", PomFile.DefaultPhases.Compile, listOf("compile"))
+        }
+
+        if (isPluginExecutionMissing(plugin, "default-testCompile", "testCompile")) {
+            addExecution(javacPlugin, "testCompile", PomFile.DefaultPhases.TestCompile, listOf("testCompile"))
+        }
+    }
+
+    fun isExecutionEnabled(plugin: MavenPlugin?, executionId: String): Boolean {
+        if (plugin == null) {
+            return true
+        }
+
+        if (domModel.build.plugins.plugins.any {
+            it.groupId.stringValue == "org.apache.maven.plugins"
+            && it.artifactId.stringValue == "maven-compiler-plugin"
+            && it.executions.executions.any { it.id.stringValue == executionId && it.phase.stringValue == DefaultPhases.None }
+        }) {
+            return false
+        }
+
+        // TODO: getPhase has been added as per https://youtrack.jetbrains.com/issue/IDEA-153582 and available only in latest IDEAs
+        return plugin.executions.filter { it.executionId == executionId }.all { execution ->
+            execution.javaClass.methods.filter { it.name == "getPhase" && it.parameterTypes.isEmpty() }.all { it.invoke(execution) == DefaultPhases.None }
+        }
+    }
+
     fun executionSourceDirs(execution: MavenDomPluginExecution, sourceDirs: List<String>, forceSingleSource: Boolean = false) {
         ensureBuild()
 
-        val isTest = execution.goals.goals.any { it.stringValue == KotlinGoals.TestCompile || it.stringValue == KotlinGoals.TestJs}
+        val isTest = execution.goals.goals.any { it.stringValue == KotlinGoals.TestCompile || it.stringValue == KotlinGoals.TestJs }
         val defaultDir = if (isTest) "test" else "main"
         val singleDirectoryElement = if (isTest) {
             domModel.build.testSourceDirectory
@@ -202,10 +274,10 @@ class PomFile(val xmlFile: XmlFile) {
 
     fun executionSourceDirs(execution: MavenDomPluginExecution): List<String> {
         return execution.configuration.xmlTag
-                .getChildrenOfType<XmlTag>().firstOrNull { it.localName == "sourceDirs" }
-                ?.getChildrenOfType<XmlTag>()
-                ?.map { it.getChildrenOfType<XmlText>().joinToString("") { it.text } }
-                ?: emptyList()
+                       .getChildrenOfType<XmlTag>().firstOrNull { it.localName == "sourceDirs" }
+                       ?.getChildrenOfType<XmlTag>()
+                       ?.map { it.getChildrenOfType<XmlText>().joinToString("") { it.text } }
+               ?: emptyList()
     }
 
     fun executionConfiguration(execution: MavenDomPluginExecution, name: String): XmlTag {
@@ -370,6 +442,7 @@ class PomFile(val xmlFile: XmlFile) {
 
     @Suppress("Unused")
     object DefaultPhases {
+        val None = "none"
         val Validate = "validate"
         val Initialize = "initialize"
         val GenerateSources = "generate-sources"
@@ -403,6 +476,7 @@ class PomFile(val xmlFile: XmlFile) {
     }
 
     companion object {
+        @Deprecated("We shouldn't use phase but additional compiler configuration in most cases")
         fun getPhase(hasJavaFiles: Boolean, isTest: Boolean) = when {
             hasJavaFiles -> when {
                 isTest -> DefaultPhases.ProcessTestSources

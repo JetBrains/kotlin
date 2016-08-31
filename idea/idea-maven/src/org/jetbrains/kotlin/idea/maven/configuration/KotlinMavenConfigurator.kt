@@ -150,7 +150,12 @@ abstract class KotlinMavenConfigurator protected constructor(private val stdlibA
             goalName: String,
             module: Module,
             isTest: Boolean) {
-        pomFile.addKotlinExecution(module, kotlinPlugin, executionId, PomFile.getPhase(hasJavaFiles(module), isTest), isTest, listOf(goalName))
+
+        pomFile.addKotlinExecution(module, kotlinPlugin, executionId, PomFile.getPhase(false, isTest), isTest, listOf(goalName))
+
+        if (hasJavaFiles(module)) {
+            pomFile.addJavacExecutions(module, kotlinPlugin)
+        }
     }
 
     companion object {
