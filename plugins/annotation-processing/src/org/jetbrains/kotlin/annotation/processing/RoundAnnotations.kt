@@ -22,12 +22,19 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-internal class RoundAnnotations() {
+internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
     private val mutableAnnotationsMap = mutableMapOf<String, MutableList<PsiModifierListOwner>>()
+    private val mutableAnalyzedClasses = mutableSetOf<String>()
+    
+    private val acceptsAnyAnnotation = "*" in supportedAnnotationFqNames
 
     val annotationsMap: Map<String, List<PsiModifierListOwner>>
         get() = mutableAnnotationsMap
+    
+    val analyzedClasses: Set<String>
+        get() = mutableAnalyzedClasses
 
     fun analyzeFiles(files: Collection<KtFile>) = files.forEach { analyzeFile(it) }
     
@@ -51,13 +58,28 @@ internal class RoundAnnotations() {
     fun analyzeFile(file: PsiJavaFile) {
         file.classes.forEach { analyzeDeclaration(it) }
     }
+    
+    fun PsiElement.getTopLevelClassParent(): PsiClass? = when (this) {
+        is PsiClass -> containingClass?.let { it.getTopLevelClassParent() } ?: this
+        else -> getParentOfType<PsiClass>(true)?.getTopLevelClassParent()
+    }
 
-    fun analyzeDeclaration(declaration: PsiElement) {
-        if (declaration !is PsiModifierListOwner) return
+    fun analyzeDeclaration(declaration: PsiElement): Boolean {
+        if (declaration !is PsiModifierListOwner) return false
+        
+        // Do not analyze classes twice (for incremental compilation data)
+        if (declaration is PsiClass && declaration.qualifiedName in analyzedClasses) return false
 
         for (annotation in declaration.getAnnotationsWithInherited()) {
-            val fqName = annotation.qualifiedName ?: return
+            val fqName = annotation.qualifiedName ?: continue
+            if (!acceptsAnyAnnotation && fqName !in supportedAnnotationFqNames) continue
             mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
+
+            // Add only top-level classes
+            val topLevelClassQualifiedName = declaration.getTopLevelClassParent()?.qualifiedName
+            if (topLevelClassQualifiedName != null) {
+                mutableAnalyzedClasses += topLevelClassQualifiedName
+            }
         }
 
         if (declaration is PsiClass) {
@@ -71,5 +93,7 @@ internal class RoundAnnotations() {
                 analyzeDeclaration(parameter)
             }
         }
+        
+        return true
     }
 }

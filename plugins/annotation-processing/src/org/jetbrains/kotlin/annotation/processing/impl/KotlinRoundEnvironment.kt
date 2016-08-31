@@ -33,6 +33,9 @@ internal class KotlinRoundEnvironment(
     internal val annotationsMap: Map<String, List<PsiModifierListOwner>>
         get() = roundAnnotations.annotationsMap
     
+    internal val supportedAnnotationFqNames: Set<String>
+        get() = roundAnnotations.supportedAnnotationFqNames
+    
     override fun getRootElements() = emptySet<Element>()
     
     override fun processingOver() = isProcessingOver

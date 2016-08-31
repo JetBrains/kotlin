@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.DeclaredType
@@ -183,5 +185,19 @@ class ProcessorTests : AbstractProcessorTest() {
         check("f", "(java.util.List,int)void", erasure)
         check("g", "<D>(D)void")
         check("g", "(java.lang.String)void", erasure)
+    }
+    
+    fun testIncrementalDataSimple() = incrementalDataTest(
+            "IncrementalDataSimple",
+            "i Intf, i Test, i Test2, i Test3, i Test8")
+    
+    private fun incrementalDataTest(fileName: String, @Language("TEXT") expectedText: String) {
+        test(fileName, "Anno", "Anno2", "Anno3") { set, roundEnv, env -> }
+        val ext = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
+                .firstIsInstance<AnnotationProcessingExtensionForTests>()
+        val incrementalDataFile = ext.incrementalDataFile
+        assertNotNull(incrementalDataFile)
+        val text = incrementalDataFile!!.readText().lines().sorted().joinToString(", ")
+        assertEquals(expectedText, text)
     }
 }
