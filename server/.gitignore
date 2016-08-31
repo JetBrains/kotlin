@@ -2,3 +2,4 @@
 .gradle
 build
 out
+*.log

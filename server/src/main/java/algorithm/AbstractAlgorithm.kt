@@ -30,7 +30,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     private var prevState: CarState? = null
 
     private var prevSonarDistances = mapOf<Angle, AngleData>()
-    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
+    private val defaultAngles = arrayOf(Angle(0), Angle(70), Angle(75), Angle(80), Angle(85), Angle(90), Angle(95), Angle(100), Angle(105), Angle(110), Angle(180))
+    //    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
     protected var requiredAngles = defaultAngles
 
     protected enum class CarState {
@@ -38,6 +39,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         INNER,
         OUTER
     }
+
+    private var iterationCounter = 0
 
     protected fun getData(angles: Array<Angle>): IntArray {
 
@@ -93,6 +96,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     }
 
     fun iterate() {
+        Logger.log("============= STARTING ITERATION ${iterationCounter} ============")
+        iterationCounter++
         if (RoomModel.finished) {
             return
         }
@@ -119,6 +124,9 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         }
 
         afterGetCommand(command)
+        Logger.log("Sending command:")
+        Logger.log("    Directions = ${Arrays.toString(command.directions)}")
+        Logger.log("    Distanced = ${Arrays.toString(command.distances)}")
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.distances))
 
@@ -126,6 +134,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         this.prevState = state
 
         moveCar(command)
+        Logger.log("============= FINISHING ITERATION ${iterationCounter} ============")
+        Logger.log("")
     }
 
 

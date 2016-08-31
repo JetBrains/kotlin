@@ -44,6 +44,7 @@ object DebugClInterface {
             try {
                 executeCommand(readString)
             } catch (exception: Exception) {
+                exception.printStackTrace()
                 println("Fail to execute command[$readString]: $exception")
             }
         }
