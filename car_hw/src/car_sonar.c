@@ -49,7 +49,7 @@ static uint16_t sonar_wait_dist_resp(void)
 
     size_t i = 0;
     uint8_t sum = 0;
-    uint32_t distance = 0;
+    int16_t distance = 0;
 
     usart_rcv_data(USART3_ID, sonar_resp, 4);
     sum = sonar_resp[0] + sonar_resp[1] + sonar_resp[2];
