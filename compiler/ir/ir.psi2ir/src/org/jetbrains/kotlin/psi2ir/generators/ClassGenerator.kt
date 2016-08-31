@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
@@ -47,11 +48,19 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
             generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
         }
 
+        if (descriptor.kind == ClassKind.ENUM_CLASS) {
+            generateAdditionalMembersForEnumClass(irClass)
+        }
+
         return irClass
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         DataClassMembersGenerator(ktClassOrObject, context, irClass).generate()
+    }
+
+    private fun generateAdditionalMembersForEnumClass(irClass: IrClassImpl) {
+        EnumClassMembersGenerator(context).generateSpecialMembers(irClass)
     }
 
     private fun shouldGenerateNestedInitializers(ktClassOrObject: KtClassOrObject): Boolean {

@@ -44,6 +44,7 @@ enum class IrDeclarationKind {
 enum class IrDeclarationOrigin {
     DEFINED,
     CLASS_FOR_ENUM_ENTRY,
+    ENUM_CLASS_SPECIAL_MEMBER,
     GENERATED_DATA_CLASS_MEMBER,
     LOCAL_FUNCTION_FOR_LAMBDA,
     IR_TEMPORARY_VARIABLE,

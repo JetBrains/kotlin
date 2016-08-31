@@ -5,6 +5,10 @@ FILE /values.kt
         ENUM_CONSTRUCTOR_CALL Enum super
     ENUM_ENTRY enum entry A
       init: ENUM_CONSTRUCTOR_CALL Enum A
+    FUN public final /*synthesized*/ fun values(): kotlin.Array<Enum>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enum
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
     FUN private constructor A()
       BLOCK_BODY

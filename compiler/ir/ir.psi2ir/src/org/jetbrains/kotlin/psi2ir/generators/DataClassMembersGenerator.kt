@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.builders.*
 import org.jetbrains.kotlin.psi2ir.containsNull
+import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -44,27 +44,11 @@ class DataClassMembersGenerator(
         override val context: GeneratorContext,
         val irClass: IrClassImpl
 ) : Generator, DataClassMethodGenerator(ktClassOrObject, context.bindingContext) {
-    private class IrMemberFunctionBuilder(
-            context: GeneratorContext,
-            val irClass: IrClassImpl,
-            val function: FunctionDescriptor,
-            startOffset: Int = UNDEFINED_OFFSET,
-            endOffset: Int = UNDEFINED_OFFSET
-    ) : IrBlockBodyBuilder(context, Scope(function), startOffset, endOffset){
-        inline fun addToClass(body: IrMemberFunctionBuilder.() -> Unit) {
-            val irFunction = IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER, function)
-            body()
-            irFunction.body = doBuild()
-            irClass.addMember(irFunction)
-        }
-    }
-
     private inline fun buildMember(function: FunctionDescriptor, psiElement: PsiElement? = null, body: IrMemberFunctionBuilder.() -> Unit) {
-        IrMemberFunctionBuilder(context, irClass, function,
-                                psiElement?.startOffset ?: UNDEFINED_OFFSET,
-                                psiElement?.endOffset ?: UNDEFINED_OFFSET
+        IrMemberFunctionBuilder(
+                context, irClass, function, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER,
+                psiElement?.startOffset ?: UNDEFINED_OFFSET, psiElement?.endOffset ?: UNDEFINED_OFFSET
         ).addToClass(body)
-
     }
 
     override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
@@ -103,9 +87,6 @@ class DataClassMembersGenerator(
 
     private val INT = context.builtIns.int
     private val INT_TYPE = context.builtIns.intType
-
-    private inline fun ClassDescriptor.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-            unsubstitutedMemberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
     private val IMUL = INT.findFirstFunction("times") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, INT_TYPE) }
     private val IADD = INT.findFirstFunction("plus") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, INT_TYPE) }

@@ -69,6 +69,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitBlockBody(body: IrBlockBody, data: Nothing?): String =
             "BLOCK_BODY"
 
+    override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?): String =
+            "SYNTHETIC_BODY kind=${body.kind}"
+
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
             "? ${expression.javaClass.simpleName} type=${expression.type.render()}"
 

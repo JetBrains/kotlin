@@ -13,3 +13,7 @@ FILE /classes.kt
     FUN private constructor TestEnumClass()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
+    FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnumClass>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnumClass
+      SYNTHETIC_BODY kind=ENUM_VALUEOF

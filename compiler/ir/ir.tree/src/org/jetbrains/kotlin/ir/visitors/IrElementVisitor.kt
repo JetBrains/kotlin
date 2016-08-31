@@ -41,6 +41,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
     fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
+    fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
     fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
     fun <T> visitConst(expression: IrConst<T>, data: D): R = visitExpression(expression, data)

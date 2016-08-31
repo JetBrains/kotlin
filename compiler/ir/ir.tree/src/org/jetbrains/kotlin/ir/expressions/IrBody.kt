@@ -30,6 +30,15 @@ interface IrBlockBody : IrBody {
     val statements: List<IrStatement>
 }
 
+interface IrSyntheticBody : IrBody {
+    val kind: IrSyntheticBodyKind
+}
+
+enum class IrSyntheticBodyKind {
+    ENUM_VALUES,
+    ENUM_VALUEOF
+}
+
 class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrExpressionBody {
     constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset) {
         this.expression = expression
@@ -93,6 +102,20 @@ class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOff
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }
+}
 
+class IrSyntheticBodyImpl(startOffset: Int, endOffset: Int, override val kind: IrSyntheticBodyKind) : IrElementBase(startOffset, endOffset), IrSyntheticBody {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitSyntheticBody(this, data)
+    }
 
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+
+    override fun getChild(slot: Int): IrElement? = null
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        throwNoSuchSlot(slot)
+    }
 }
