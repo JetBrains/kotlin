@@ -4051,6 +4051,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("typeFromJava.kt")
+        public void testTypeFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeFromJavaFlexibleRecursive.kt")
+        public void testTypeFromJavaFlexibleRecursive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJavaFlexibleRecursive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unit.kt")
         public void testUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/unit.kt");
