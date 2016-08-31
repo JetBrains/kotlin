@@ -122,7 +122,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
                 val rotationDirection = if (anglesDistances[Angle(120)]!!.distance > anglesDistances[Angle(60)]!!.distance) LEFT else RIGHT
                 resultBuilder.setDirections(getIntArray(rotationDirection))
-                resultBuilder.setDistances(getIntArray(5))
+                resultBuilder.setDistances(getIntArray(Math.min(Math.abs(dist60.distance - dist120.distance), 20)))
                 return resultBuilder.build()
             } else {
                 calibrateAfterRotate = false
