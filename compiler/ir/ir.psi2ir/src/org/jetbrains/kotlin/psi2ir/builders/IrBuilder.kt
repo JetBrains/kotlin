@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.psi2ir.builders
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
@@ -81,6 +84,11 @@ class IrBlockBuilder(
 ) : IrStatementsBuilder<IrBlock>(context, scope, startOffset, endOffset) {
     private val statements = ArrayList<IrStatement>()
 
+    inline fun block(body: IrBlockBuilder.() -> Unit): IrBlock {
+        body()
+        return doBuild()
+    }
+
     override fun addStatement(irStatement: IrStatement) {
         statements.add(irStatement)
     }
@@ -100,3 +108,12 @@ fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int): T {
     this.endOffset = endOffset
     return this
 }
+
+inline fun GeneratorWithScope.irBlock(ktElement: KtElement? = null, operator: IrOperator? = null, resultType: KotlinType? = null,
+                                      body: IrBlockBuilder.() -> Unit
+): IrExpression =
+        IrBlockBuilder(context, scope,
+                       ktElement?.startOffset ?: UNDEFINED_OFFSET,
+                       ktElement?.endOffset ?: UNDEFINED_OFFSET,
+                       operator, resultType
+        ).block(body)

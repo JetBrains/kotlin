@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.defaultLoad
+import org.jetbrains.kotlin.psi2ir.builders.defineTemporary
+import org.jetbrains.kotlin.psi2ir.builders.irBlock
+import org.jetbrains.kotlin.psi2ir.builders.irGet
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -72,22 +73,14 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
         return irAssignmentReceiver.assign { irLValue ->
-            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, irOperator)
-
-            // VAR tmp = [lhs].inc()
-            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
-            opCall.setExplicitReceiverValue(irLValue)
-            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
-            val irTmp = statementGenerator.scope.createTemporaryVariable(irOpCall)
-            irBlock.addStatement(irTmp)
-
-            // [lhs] = tmp
-            irBlock.addStatement(irLValue.store(irTmp.defaultLoad()))
-
-            // ^ tmp
-            irBlock.addStatement(irTmp.defaultLoad())
-
-            irBlock
+            irBlock(expression, irOperator, irLValue.type) {
+                val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+                opCall.setExplicitReceiverValue(irLValue)
+                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
+                val temporary = defineTemporary(irOpCall)
+                +irLValue.store(irGet(temporary))
+                +irGet(temporary)
+            }
         }
     }
 
@@ -97,22 +90,14 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
 
         return irAssignmentReceiver.assign { irLValue ->
-            val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irLValue.type, irOperator)
-
-            // VAR tmp = [lhs]
-            val irTmp = scope.createTemporaryVariable(irLValue.load())
-            irBlock.addStatement(irTmp)
-
-            // [lhs] = tmp.inc()
-            val opCall = statementGenerator.pregenerateCall(opResolvedCall)
-            opCall.setExplicitReceiverValue(VariableLValue(irTmp))
-            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
-            irBlock.addStatement(irLValue.store(irOpCall))
-
-            // ^ tmp
-            irBlock.addStatement(irTmp.defaultLoad())
-
-            irBlock
+            irBlock(expression, irOperator, irLValue.type) {
+                val temporary = defineTemporary(irLValue.load())
+                val opCall = statementGenerator.pregenerateCall(opResolvedCall)
+                opCall.setExplicitReceiverValue(VariableLValue(startOffset, endOffset, temporary))
+                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
+                +irLValue.store(irOpCall)
+                +irGet(temporary)
+            }
         }
     }
 
