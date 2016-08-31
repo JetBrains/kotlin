@@ -27,13 +27,13 @@ import java.util.*
 
 class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val mainFunction: String, arm: Boolean) {
     companion object {
-        var pointerAlign = 4
-        var pointerSize = 4
+        var POINTER_ALIGN = 4
+        var POINTER_SIZE = 4
     }
 
     init {
-        pointerAlign = if (arm) 4 else 8
-        pointerSize = if (arm) 4 else 8
+        POINTER_ALIGN = if (arm) 4 else 8
+        POINTER_SIZE = if (arm) 4 else 8
     }
 
     var externalFunctions = HashMap<String, FunctionCodegen>()

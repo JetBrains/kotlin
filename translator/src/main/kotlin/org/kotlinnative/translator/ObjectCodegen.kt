@@ -20,16 +20,15 @@ class ObjectCodegen(state: TranslationState,
     override val type: LLVMReferenceType
 
     init {
-        type = LLVMReferenceType(structName, "class", align = TranslationState.pointerAlign, size = TranslationState.pointerSize, byRef = true)
+        type = LLVMReferenceType(structName, "class", align = TranslationState.POINTER_ALIGN, size = TranslationState.POINTER_SIZE, byRef = true)
         primaryConstructorIndex = LLVMType.mangleFunctionArguments(emptyList())
         constructorFields.put(primaryConstructorIndex!!, arrayListOf())
     }
 
     override fun prepareForGenerate() {
         generateInnerFields(objectDeclaration.declarations)
-        calculateTypeSize()
-        type.size = size
-        type.align = TranslationState.pointerAlign
+        type.size = calculateTypeSize()
+        type.align = TranslationState.POINTER_ALIGN
 
         super.prepareForGenerate()
 

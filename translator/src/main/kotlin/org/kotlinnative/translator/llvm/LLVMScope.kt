@@ -1,6 +1,6 @@
 package org.kotlinnative.translator.llvm
 
-open class LLVMScope
+abstract class LLVMScope
 
 class LLVMVariableScope : LLVMScope() {
     override fun toString() = "@"

@@ -18,7 +18,7 @@ fun LLVMFunctionDescriptor(name: String, argTypes: List<LLVMVariable>?, returnTy
 
 fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope = LLVMRegisterScope(), state: TranslationState): LLVMVariable {
     val typeName = type.toString().dropLastWhile { it == '?' }
-    val pointerMark = if (type.toString().last() == '?') 1 else 0
+    val pointerMark = if (type.isMarkedNullable) 1 else 0
     return when {
         type.isFunctionTypeOrSubtype -> LLVMVariable(name, LLVMFunctionType(type, state), name, scope, pointer = 1)
         typeName == "Boolean" -> LLVMVariable(name, LLVMBooleanType(), name, scope, pointerMark)
@@ -36,7 +36,7 @@ fun LLVMInstanceOfStandardType(name: String, type: KotlinType, scope: LLVMScope 
         else -> {
             val declarationDescriptor = type.constructor.declarationDescriptor!!
             val refName = declarationDescriptor.fqNameSafe.asString()
-            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(refName, align = TranslationState.pointerAlign, prefix = "class")
+            val refType = state.classes[type.toString()]?.type ?: LLVMReferenceType(refName, align = TranslationState.POINTER_ALIGN, prefix = "class")
 
             LLVMVariable(name, refType, name, scope, pointer = 1)
         }
@@ -51,11 +51,6 @@ fun String.addBeforeIfNotEmpty(add: String): String =
 
 fun String.addAfterIfNotEmpty(add: String): String =
         if (this.length > 0) this + add else this
-
-fun String.indexOfOrLast(str: Char, startIndex: Int = 0): Int {
-    val pos = this.indexOf(str, startIndex)
-    return if (pos < 0) this.length else pos
-}
 
 fun FqName.convertToNativeName(): String =
         this.asString().replace(".<init>", "")

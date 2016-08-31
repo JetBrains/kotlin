@@ -12,7 +12,8 @@ class DefaultArguments(raw: RawArguments) : Arguments(raw, name = "default") {
     val arm = optionalFlag(
             name = "arm",
             description = "enable arm build",
-            aliasNames = listOf("arm")
+            aliasNames = listOf("arm"),
+            default = false
     )
 
     val output = optionalParameter(

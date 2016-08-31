@@ -8,10 +8,19 @@ import java.util.*
 class VariableManager(val globalVariableCollection: HashMap<String, LLVMVariable>) {
 
     private var fileVariableCollectionTree = HashMap<String, Stack<Pair<LLVMVariable, Int>>>()
-    private var variableVersion = HashMap<String, Int>()
+
+    private companion object UniqueGenerator {
+        private var unique = 0
+        fun generateUniqueString() =
+                ".unique." + unique++
+    }
 
     operator fun get(variableName: String): LLVMVariable? {
         return fileVariableCollectionTree[variableName]?.peek()?.first ?: globalVariableCollection[variableName]
+    }
+
+    operator fun contains(variableName: String): Boolean {
+        return (fileVariableCollectionTree.contains(variableName) && !fileVariableCollectionTree[variableName]!!.empty()) || globalVariableCollection.containsKey(variableName)
     }
 
     fun pullOneUpwardLevelVariable(variableName: String) {
@@ -33,9 +42,7 @@ class VariableManager(val globalVariableCollection: HashMap<String, LLVMVariable
     }
 
     fun receiveVariable(name: String, type: LLVMType, scope: LLVMScope, pointer: Int): LLVMVariable {
-        val ourVersion = variableVersion.getOrDefault(name, 0) + 1
-        variableVersion.put(name, ourVersion)
-        return LLVMVariable("managed.$name.$ourVersion", type, name, scope, pointer)
+        return LLVMVariable("managed${generateUniqueString()}.$name", type, name, scope, pointer)
     }
 
 }

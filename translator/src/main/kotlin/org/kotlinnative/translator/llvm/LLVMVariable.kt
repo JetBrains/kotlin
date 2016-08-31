@@ -8,6 +8,6 @@ open class LLVMVariable(val label: String,
                         val scope: LLVMScope = LLVMRegisterScope(),
                         pointer: Int = 0) : LLVMSingleValue(type, pointer) {
 
-    override fun toString(): String = "$scope$label"
+    override fun toString() = "$scope$label"
 
 }

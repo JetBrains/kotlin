@@ -33,20 +33,19 @@ abstract class StructCodegen(val state: TranslationState,
 
     open fun prepareForGenerate() {
         generateStruct()
-
-        for (declaration in classOrObject.declarations.filter { it is KtNamedFunction }) {
-            val function = FunctionCodegen(state, variableManager, declaration as KtNamedFunction, codeBuilder, this)
+        classOrObject.declarations.filter { it is KtNamedFunction }.map {
+            val function = FunctionCodegen(state, variableManager, it as KtNamedFunction, codeBuilder)
             methods.put(function.name, function)
         }
     }
 
-    fun calculateTypeSize() {
+    fun calculateTypeSize(): Int {
         val classAlignment = fields.map { it.type.align }.max()?.toInt() ?: 0
         var alignmentRemainder = 0
         size = 0
 
         for (item in fields) {
-            val currentFieldSize = if (item.pointer > 0) TranslationState.pointerAlign else item.type.align
+            val currentFieldSize = if (item.pointer > 0) TranslationState.POINTER_ALIGN else item.type.align
             alignmentRemainder -= (alignmentRemainder % currentFieldSize)
             if (alignmentRemainder < currentFieldSize) {
                 size += classAlignment
@@ -55,6 +54,7 @@ abstract class StructCodegen(val state: TranslationState,
                 alignmentRemainder -= currentFieldSize
             }
         }
+        return size
     }
 
     open fun generate() {
@@ -143,7 +143,7 @@ abstract class StructCodegen(val state: TranslationState,
         variableManager.addVariable("this", mainConstructorThis, 0)
 
         blockCodegen.evaluateCodeBlock(secondaryConstructor.bodyExpression, scopeDepth = 1)
-        generateReturn(codeBuilder.downLoadArgument(variableManager["this"]!!, 1) as LLVMVariable)
+        generateReturn(codeBuilder.receivePointedArgument(variableManager["this"]!!, 1) as LLVMVariable)
         codeBuilder.addAnyReturn(LLVMVoidType())
         codeBuilder.addEndExpression()
     }
@@ -170,11 +170,9 @@ abstract class StructCodegen(val state: TranslationState,
         val thisVariable = LLVMVariable(thisField.label, thisField.type, thisField.label, LLVMRegisterScope(), pointer = 0)
         codeBuilder.loadArgument(thisVariable, false)
 
-        constructorFields[primaryConstructorIndex]!!.forEach {
-            if (it.type !is LLVMReferenceType) {
-                val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope())
-                codeBuilder.loadArgument(loadVariable)
-            }
+        constructorFields[primaryConstructorIndex]!!.filter { it.type !is LLVMReferenceType }.forEach {
+            val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope())
+            codeBuilder.loadArgument(loadVariable)
         }
     }
 
@@ -187,7 +185,7 @@ abstract class StructCodegen(val state: TranslationState,
                     codeBuilder.storeVariable(classField, it)
                 }
                 else -> {
-                    val argument = codeBuilder.loadVariable(LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = it.pointer + 1))
+                    val argument = codeBuilder.loadAndGetVariable(LLVMVariable("${it.label}.addr", it.type, scope = LLVMRegisterScope(), pointer = it.pointer + 1))
                     val classField = codeBuilder.getNewVariable(it.type, pointer = 1)
                     codeBuilder.loadClassField(classField, LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1), (it as LLVMClassVariable).offset)
                     codeBuilder.storeVariable(classField, argument)
@@ -200,9 +198,9 @@ abstract class StructCodegen(val state: TranslationState,
         variableManager.addVariable("this", receiverThis, 2)
 
         for ((variable, initializer) in initializedFields) {
-            val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevel, call = null)!!
-            val right = blockCodegen.evaluateExpression(initializer, scopeDepth = blockCodegen.topLevel)!!
-            blockCodegen.executeBinaryExpression(KtTokens.EQ, referenceName = null, left = left, right = right)
+            val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevelScopeDepth, call = null)!!
+            val right = blockCodegen.evaluateExpression(initializer, scopeDepth = blockCodegen.topLevelScopeDepth)!!
+            blockCodegen.addPrimitiveBinaryOperation(KtTokens.EQ, left, right)
         }
 
         variableManager.pullOneUpwardLevelVariable("this")
@@ -220,14 +218,10 @@ abstract class StructCodegen(val state: TranslationState,
     protected fun resolveType(field: KtNamedDeclaration, ktType: KotlinType, offset: Int): LLVMClassVariable {
         val annotations = parseFieldAnnotations(field)
         val fieldName = state.bindingContext.get(BindingContext.VALUE_PARAMETER, field as?KtParameter)?.fqNameSafe?.convertToNativeName()
-                ?: field.fqName?.asString() ?: field.name!!
+                ?: field.fqName?.asString()
+                ?: field.name!!
 
         val result = LLVMInstanceOfStandardType(fieldName, ktType, LLVMRegisterScope(), state = state)
-
-        if (result.type is LLVMReferenceType) {
-            result.type.prefix = "class"
-            result.type.byRef = true
-        }
 
         if (state.classes.containsKey(field.name!!)) {
             return LLVMClassVariable(result.label, state.classes[fieldName]!!.type, result.pointer)
@@ -246,7 +240,7 @@ abstract class StructCodegen(val state: TranslationState,
     protected fun genClassInitializers() =
             classOrObject.getAnonymousInitializers().map {
                 object : BlockCodegen(state, variableManager, codeBuilder) {
-                    fun generate() = evaluateCodeBlock(it.body, scopeDepth = topLevel)
+                    fun generate() = evaluateCodeBlock(it.body, scopeDepth = topLevelScopeDepth)
                 }
             }.map { it.generate() }
 

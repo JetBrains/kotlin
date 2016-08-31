@@ -27,13 +27,13 @@ class ClassCodegen(state: TranslationState,
     override val type: LLVMReferenceType
 
     init {
-        type = LLVMReferenceType(structName, "class", align = TranslationState.pointerAlign, size = TranslationState.pointerSize, byRef = true)
+        type = LLVMReferenceType(structName, "class", align = TranslationState.POINTER_ALIGN, size = TranslationState.POINTER_SIZE, byRef = true)
         descriptor = state.bindingContext.get(BindingContext.CLASS, clazz) ?: throw TranslationException("Can't receive descriptor of class " + clazz.name)
 
         annotation = descriptor.kind == ClassKind.ANNOTATION_CLASS
         enum = descriptor.kind == ClassKind.ENUM_CLASS
 
-        type.align = TranslationState.pointerAlign
+        type.align = TranslationState.POINTER_ALIGN
     }
 
     private fun indexFields(parameters: MutableList<KtParameter>) {
@@ -53,8 +53,7 @@ class ClassCodegen(state: TranslationState,
         indexFields(parameterList)
         generateInnerFields(clazz.declarations)
 
-        calculateTypeSize()
-        type.size = size
+        type.size = calculateTypeSize()
 
         if (annotation) {
             return

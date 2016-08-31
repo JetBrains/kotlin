@@ -6,12 +6,8 @@ open class LLVMConstant(value: String,
                         type: LLVMType,
                         pointer: Int = 0) : LLVMSingleValue(type, pointer) {
 
-    val value: String
+    val value = type.parseArg(value)
 
-    init {
-        this.value = type.parseArg(value)
-    }
-
-    override fun toString(): String = value
+    override fun toString() = value
 
 }

@@ -19,18 +19,17 @@ import java.util.*
 class FunctionCodegen(state: TranslationState,
                       variableManager: VariableManager,
                       val function: KtNamedFunction,
-                      codeBuilder: LLVMBuilder,
-                      val parentCodegen: StructCodegen? = null) :
+                      codeBuilder: LLVMBuilder) :
         BlockCodegen(state, variableManager, codeBuilder) {
 
     var name: String
     var args = LinkedList<LLVMVariable>()
     val isExtensionDeclaration = function.isExtensionDeclaration()
     var functionNamePrefix = ""
-    val fullName: String
-        get() = functionNamePrefix + name
     val external: Boolean
     val defaultValues: List<KtExpression?>
+    val fullName: String
+        get() = functionNamePrefix + name
 
     init {
         val descriptor = state.bindingContext.get(BindingContext.FUNCTION, function)!!
@@ -58,9 +57,8 @@ class FunctionCodegen(state: TranslationState,
         }
 
         defaultValues = mutableListOf()
-        val valueParameters = descriptor.valueParameters
-        for (index in valueParameters.indices) {
-            val parameterDescriptor = valueParameters[index]
+        for (index in descriptor.valueParameters.indices) {
+            val parameterDescriptor = descriptor.valueParameters[index]
             if (parameterDescriptor.declaresDefaultValue()) {
                 val initializer = (parameterDescriptor.source as KotlinSourceElement).psi
                 val defaultValue = (initializer as KtParameter).defaultValue
@@ -68,21 +66,6 @@ class FunctionCodegen(state: TranslationState,
             } else {
                 defaultValues.add(null)
             }
-        }
-
-        val retType = returnType!!.type
-        when (retType) {
-            is LLVMReferenceType -> {
-                if (state.classes.containsKey(retType.type)) {
-                    retType.prefix = "class"
-                    returnType!!.pointer = 2
-                }
-
-                retType.byRef = true
-            }
-        }
-        if (retType is LLVMReferenceType && state.classes.containsKey(retType.type)) {
-            retType.prefix = "class"
         }
     }
 
@@ -95,7 +78,7 @@ class FunctionCodegen(state: TranslationState,
 
         codeBuilder.addStartExpression()
         generateLoadArguments()
-        evaluateCodeBlock(function.bodyExpression, scopeDepth = topLevel, isBlock = function.hasBlockBody())
+        evaluateCodeBlock(function.bodyExpression, scopeDepth = topLevelScopeDepth, isBlock = function.hasBlockBody())
 
         if (!wasReturnOnTopLevel)
             codeBuilder.addAnyReturn(returnType!!.type)
@@ -138,16 +121,16 @@ class FunctionCodegen(state: TranslationState,
     private fun generateLoadArguments() {
         args.forEach(fun(it: LLVMVariable) {
             if (it.type is LLVMFunctionType || (it.type is LLVMReferenceType && it.type.byRef)) {
-                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 1), topLevel)
+                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 1), topLevelScopeDepth)
                 return
             }
 
             if (it.type !is LLVMReferenceType || it.type.byRef) {
                 val loadVariable = LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = it.pointer)
                 val allocVar = codeBuilder.loadArgument(loadVariable)
-                variableManager.addVariable(it.label, allocVar, topLevel)
+                variableManager.addVariable(it.label, allocVar, topLevelScopeDepth)
             } else {
-                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 0), topLevel)
+                variableManager.addVariable(it.label, LLVMVariable(it.label, it.type, it.label, LLVMRegisterScope(), pointer = 0), topLevelScopeDepth)
             }
         })
     }

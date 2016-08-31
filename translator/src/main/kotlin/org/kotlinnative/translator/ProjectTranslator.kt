@@ -7,10 +7,12 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
 
     fun generateCode(): String {
         codeBuilder.clean()
-        files.map { addClassDeclarations(it) }
-        files.map { addObjectDeclarations(it) }
-        files.map { addFunctionDeclarations(it) }
-        files.map { addPropertyDeclarations(it) }
+        with(files) {
+            map { addClassDeclarations(it) }
+            map { addObjectDeclarations(it) }
+            map { addFunctionDeclarations(it) }
+            map { addPropertyDeclarations(it) }
+        }
         generateProjectBody()
         return codeBuilder.toString()
     }

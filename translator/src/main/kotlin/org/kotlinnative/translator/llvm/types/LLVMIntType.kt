@@ -19,7 +19,7 @@ class LLVMIntType() : LLVMType() {
                 is LLVMBooleanType,
                 is LLVMByteType,
                 is LLVMCharType,
-                is LLVMShortType -> LLVMExpression(LLVMBooleanType(), " sext ${source.type} $source to i32")
+                is LLVMShortType -> LLVMExpression(LLVMIntType(), " sext ${source.type} $source to i32")
                 else -> throw UnimplementedException()
             }
 

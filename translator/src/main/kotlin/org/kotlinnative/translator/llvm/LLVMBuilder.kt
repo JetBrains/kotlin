@@ -2,6 +2,7 @@ package org.kotlinnative.translator.llvm
 
 import org.kotlinnative.translator.TranslationState
 import org.kotlinnative.translator.llvm.types.*
+import java.rmi.UnexpectedException
 import java.util.*
 
 class LLVMBuilder(val arm: Boolean = false) {
@@ -12,33 +13,9 @@ class LLVMBuilder(val arm: Boolean = false) {
     private var labelCount = 0
     var exceptions: Map<String, LLVMVariable> = mapOf()
 
-    object UniqueGenerator {
-        private var unique = 0
-        fun generateUniqueString() =
-                ".unique." + unique++
-    }
 
     init {
         initBuilder()
-    }
-
-    private fun initBuilder() {
-        val declares = arrayOf(
-                "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @malloc_heap(i32)",
-                "declare i32 @printf(i8*, ...)",
-                "%class.Nothing = type { }",
-                "declare void @abort()")
-
-        declares.forEach { addLLVMCodeToGlobalPlace(it) }
-
-        exceptions = mapOf(
-                Pair("KotlinNullPointerException", initializeExceptionString("Exception in thread main kotlin.KotlinNullPointerException")))
-
-        if (arm) {
-            val functionAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
-            addLLVMCodeToGlobalPlace(functionAttributes)
-        }
     }
 
     fun getNewVariable(type: LLVMType, pointer: Int = 0, kotlinName: String? = null, scope: LLVMScope = LLVMRegisterScope(), prefix: String = "var"): LLVMVariable {
@@ -54,10 +31,8 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun addLLVMCodeToLocalPlace(code: String) =
             localCode.appendln(code)
 
-
     fun addLLVMCodeToGlobalPlace(code: String) =
             globalCode.appendln(code)
-
 
     fun addStartExpression() =
             addLLVMCodeToLocalPlace("{")
@@ -65,46 +40,34 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun addEndExpression() =
             addLLVMCodeToLocalPlace("}")
 
-
     fun receiveNativeValue(firstOp: LLVMSingleValue): LLVMSingleValue =
-            when (firstOp) {
-                is LLVMConstant -> firstOp
-                is LLVMVariable -> if (firstOp.pointer == 0) firstOp else loadAndGetVariable(firstOp)
-                else -> throw UnsupportedOperationException()
+            when {
+                firstOp is LLVMConstant || firstOp.pointer == 0 -> firstOp
+                firstOp is LLVMVariable -> loadAndGetVariable(firstOp)
+                else -> throw UnexpectedException("Unknown inheritor of LLVMSingleValue")
             }
-
-    fun receivePointedArgument(variable: LLVMSingleValue, pointer: Int): LLVMSingleValue {
-        var currentVariable = variable
-        while (currentVariable.pointer > pointer) {
-            currentVariable = receiveNativeValue(currentVariable)
-        }
-        return currentVariable
-    }
 
     fun loadArgsIfRequired(names: List<LLVMSingleValue>, args: List<LLVMVariable>) =
             names.mapIndexed(fun(i: Int, value: LLVMSingleValue): LLVMSingleValue {
-                return loadOneArgumentIfRequired(value, args[i])
+                return receivePointedArgument(value, args[i].pointer)
             }).toList()
 
-    fun loadOneArgumentIfRequired(value: LLVMSingleValue, argument: LLVMVariable): LLVMSingleValue {
+    fun receivePointedArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue {
         var result = value
 
-        while (argument.pointer < result.pointer) {
-            result = loadVariable(result as LLVMVariable)
+        while (result.pointer > pointer) {
+            result = receiveNativeValue(result)
         }
 
         if ((value.type is LLVMStringType) && !(value.type.isLoaded)) {
             val newVariable = getNewVariable(value.type, pointer = result.pointer + 1)
             allocStackVar(newVariable, asValue = true)
             copyVariable(result as LLVMVariable, newVariable)
-            result = loadVariable(newVariable)
+            result = loadAndGetVariable(newVariable)
         }
 
         return result
     }
-
-    fun downLoadArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue =
-            loadOneArgumentIfRequired(value, LLVMVariable("", value.type, pointer = pointer))
 
     fun clean() {
         localCode = StringBuilder()
@@ -115,31 +78,20 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun addAssignment(lhs: LLVMVariable, rhs: LLVMNode) =
             addLLVMCodeToLocalPlace("$lhs = $rhs")
 
-
     fun addReturnOperator(llvmVariable: LLVMSingleValue) =
             addLLVMCodeToLocalPlace("ret ${llvmVariable.type} $llvmVariable")
-
 
     fun addAnyReturn(type: LLVMType, value: String = type.defaultValue, pointer: Int = 0) =
             addLLVMCodeToLocalPlace("ret $type${"*".repeat(pointer)} $value")
 
-
-    private fun initializeExceptionString(string: String): LLVMVariable {
-        val result = getNewVariable(LLVMStringType(string.length), pointer = 0, scope = LLVMVariableScope(), prefix = "exceptions.str.")
-        addStringConstant(result, string)
-        return result
-    }
-
     fun addStringConstant(variable: LLVMVariable, value: String) =
             addLLVMCodeToGlobalPlace("$variable = private unnamed_addr constant  ${(variable.type as LLVMStringType).fullArrayType} c\"${value.replace("\"", "\\\"")}\\00\", align 1")
 
-
-    fun convertVariableToType(variable: LLVMSingleValue, tarpointedType: LLVMType): LLVMSingleValue {
+    fun convertVariableToType(variable: LLVMSingleValue, targetType: LLVMType): LLVMSingleValue {
         var resultVariable = variable
-        if (variable.type != tarpointedType) {
-            val convertedExpression = tarpointedType.convertFrom(variable)
-            resultVariable = getNewVariable(convertedExpression.variableType)
-            addAssignment(resultVariable, convertedExpression)
+        if (variable.type != targetType) {
+            val convertedExpression = targetType.convertFrom(variable)
+            resultVariable = storeExpression(convertedExpression)
         }
         return resultVariable
     }
@@ -174,21 +126,18 @@ class LLVMBuilder(val arm: Boolean = false) {
         }
     }
 
-
-    fun storeExpression(target: LLVMSingleValue, expression: LLVMExpression): LLVMVariable {
-        val resultOp = getNewVariable(expression.variableType)
+    fun storeExpression(expression: LLVMExpression): LLVMVariable {
+        val resultOp = getNewVariable(expression.variableType, pointer = expression.pointer)
         addAssignment(resultOp, expression)
-        storeVariable(target, resultOp)
         return resultOp
     }
 
     fun storeNull(result: LLVMVariable) =
-            addLLVMCodeToLocalPlace("store ${result.pointedType.dropLast(1)} null, ${result.pointedType} $result, align ${TranslationState.pointerAlign}")
+            addLLVMCodeToLocalPlace("store ${result.pointedType.dropLast(1)} null, ${result.pointedType} $result, align ${TranslationState.POINTER_ALIGN}")
 
     fun nullCheck(variable: LLVMVariable): LLVMVariable {
         val result = getNewVariable(LLVMBooleanType(), pointer = 0)
-        val loaded = loadVariable(variable)
-
+        val loaded = loadAndGetVariable(variable)
         addLLVMCodeToLocalPlace("$result = icmp eq ${loaded.pointedType} null, $loaded")
         return result
     }
@@ -199,31 +148,16 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun loadVariableOffset(target: LLVMVariable, source: LLVMVariable, index: LLVMConstant) =
             addLLVMCodeToLocalPlace("$target = getelementptr inbounds ${source.type} $source, ${index.type} ${index.value}")
 
-
-    private fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
-        var from = source
-        if (source.pointer > 0) {
-            from = getNewVariable(source.type, source.pointer)
-            addLLVMCodeToLocalPlace("$from = load ${source.pointedType} $source, align ${from.type.align}")
-        }
-        addLLVMCodeToLocalPlace("store ${target.type} $from, ${target.pointedType} $target, align ${from.type.align}")
-    }
-
-    fun copyVariable(from: LLVMVariable, to: LLVMVariable) = when (from.type) {
-        is LLVMStringType -> if (from.type.isLoaded) copyVariableValue(to, from) else storeString(to, from, 0)
-        else -> copyVariableValue(to, from)
-    }
+    fun copyVariable(from: LLVMVariable, to: LLVMVariable) =
+            when {
+                from.type is LLVMStringType && !from.type.isLoaded -> storeString(to, from, 0)
+                else -> copyVariableValue(to, from)
+            }
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
         val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = llvmVariable.pointer + 1)
         addVariableByRef(allocVar, llvmVariable, store)
         return allocVar
-    }
-
-    fun loadVariable(source: LLVMVariable): LLVMVariable {
-        val target = getNewVariable(source.type, pointer = source.pointer - 1)
-        addLLVMCodeToLocalPlace("$target = load ${source.pointedType} $source, align ${target.type.align}")
-        return target
     }
 
     fun allocStackVar(target: LLVMVariable, asValue: Boolean = false, pointer: Boolean = false) {
@@ -234,7 +168,7 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun allocStaticVar(target: LLVMVariable, asValue: Boolean = false, pointer: Boolean = false) {
         val allocated = getNewVariable(LLVMCharType(), pointer = 1)
 
-        val size = if ((target.pointer >= 2) || (target.pointer >= 1 && !pointer)) TranslationState.pointerSize else target.type.size
+        val size = if ((target.pointer >= 2) || (target.pointer >= 1 && !pointer)) TranslationState.POINTER_SIZE else target.type.size
         addLLVMCodeToLocalPlace("$allocated = call i8* @malloc_heap(i32 $size)")
 
         addLLVMCodeToLocalPlace("$target = bitcast ${allocated.pointedType} $allocated to ${if (asValue) target.type.toString() else target.pointedType}" + if (pointer) "" else "*")
@@ -251,7 +185,6 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun defineGlobalVariable(variable: LLVMVariable, defaultValue: String = variable.type.defaultValue) =
             addLLVMCodeToLocalPlace("$variable = global ${variable.pointedType} $defaultValue, align ${variable.type.align}")
 
-
     fun makeStructInitializer(args: List<LLVMVariable>, values: List<String>)
             = "{ ${args.mapIndexed { i: Int, variable: LLVMVariable -> "${variable.type} ${values[i]}" }.joinToString()} }"
 
@@ -265,14 +198,11 @@ class LLVMBuilder(val arm: Boolean = false) {
     fun addCondition(condition: LLVMSingleValue, thenLabel: LLVMLabel, elseLabel: LLVMLabel) =
             addLLVMCodeToLocalPlace("br ${condition.pointedType} $condition, label $thenLabel, label $elseLabel")
 
-
     fun addUnconditionalJump(label: LLVMLabel) =
             addLLVMCodeToLocalPlace("br label $label")
 
-
     fun createClass(name: String, fields: List<LLVMVariable>) =
             addLLVMCodeToGlobalPlace("%class.$name = type { ${fields.map { it.pointedType }.joinToString()} }")
-
 
     fun bitcast(src: LLVMVariable, llvmType: LLVMVariable): LLVMVariable {
         val empty = getNewVariable(llvmType.type, pointer = llvmType.pointer)
@@ -304,5 +234,39 @@ class LLVMBuilder(val arm: Boolean = false) {
     }
 
     override fun toString() = globalCode.toString() + localCode.toString()
+
+    private fun initBuilder() {
+        val declares = arrayOf(
+                "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
+                "declare i8* @malloc_heap(i32)",
+                "declare i32 @printf(i8*, ...)",
+                "%class.Nothing = type { }",
+                "declare void @abort()")
+
+        declares.forEach { addLLVMCodeToGlobalPlace(it) }
+
+        exceptions = mapOf(
+                Pair("KotlinNullPointerException", initializeExceptionString("Exception in thread main kotlin.KotlinNullPointerException")))
+
+        if (arm) {
+            val functionAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
+            addLLVMCodeToGlobalPlace(functionAttributes)
+        }
+    }
+
+    private fun initializeExceptionString(string: String): LLVMVariable {
+        val result = getNewVariable(LLVMStringType(string.length), pointer = 0, scope = LLVMVariableScope(), prefix = "exceptions.str.")
+        addStringConstant(result, string)
+        return result
+    }
+
+    private fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
+        var from = source
+        if (source.pointer > 0) {
+            from = getNewVariable(source.type, source.pointer)
+            addLLVMCodeToLocalPlace("$from = load ${source.pointedType} $source, align ${from.type.align}")
+        }
+        addLLVMCodeToLocalPlace("store ${target.type} $from, ${target.pointedType} $target, align ${from.type.align}")
+    }
 
 }

@@ -8,8 +8,8 @@ import org.kotlinnative.translator.llvm.addAfterIfNotEmpty
 
 class LLVMReferenceType(val type: String,
                         var prefix: String = "",
-                        override var align: Int = TranslationState.pointerAlign,
-                        override var size: Int = TranslationState.pointerSize,
+                        override var align: Int = TranslationState.POINTER_ALIGN,
+                        override var size: Int = TranslationState.POINTER_SIZE,
                         var byRef: Boolean = true) : LLVMType() {
 
     override val defaultValue: String = "null"
