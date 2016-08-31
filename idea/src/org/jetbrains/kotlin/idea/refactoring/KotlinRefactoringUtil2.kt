@@ -24,14 +24,12 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.util.PsiFormatUtilBase
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.components.JBList
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -41,16 +39,17 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.introduce.findExpressionOrStringFragment
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -60,51 +59,44 @@ import java.util.*
 import javax.swing.DefaultListCellRenderer
 import javax.swing.DefaultListModel
 import javax.swing.JList
-import javax.swing.event.ListSelectionListener
 
 object KotlinRefactoringUtil2 {
+    fun wrapOrSkip(s: String, inCode: Boolean) = if (inCode) "<code>$s</code>" else s
 
-    fun wrapOrSkip(s: String, inCode: Boolean): String {
-        return if (inCode) "<code>$s</code>" else s
-    }
-
-    fun formatClassDescriptor(classDescriptor: DeclarationDescriptor): String {
-        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor)
-    }
+    fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor)
 
     fun formatPsiClass(
             psiClass: PsiClass,
             markAsJava: Boolean,
-            inCode: Boolean): String {
+            inCode: Boolean
+    ): String {
         var description: String
 
         val kind = if (psiClass.isInterface) "interface " else "class "
         description = kind + PsiFormatUtil.formatClass(
                 psiClass,
-                PsiFormatUtilBase.SHOW_CONTAINING_CLASS or PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS or PsiFormatUtilBase.SHOW_TYPE)
+                PsiFormatUtilBase.SHOW_CONTAINING_CLASS or PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS or PsiFormatUtilBase.SHOW_TYPE
+        )
         description = wrapOrSkip(description, inCode)
 
-        return if (markAsJava) "[Java] " + description else description
+        return if (markAsJava) "[Java] $description" else description
     }
 
     fun checkSuperMethods(
             declaration: KtDeclaration,
             ignore: Collection<PsiElement>?,
-            actionStringKey: String): List<PsiElement> {
-        val bindingContext = declaration.analyze(BodyResolveMode.FULL)
+            actionStringKey: String
+    ): List<PsiElement> {
+        val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
 
-        val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) as CallableDescriptor?
-
-        if (declarationDescriptor == null || declarationDescriptor is LocalVariableDescriptor) {
-            return listOf(declaration)
-        }
+        if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
 
         val project = declaration.project
         val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
         for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
             val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
-            if (PsiTreeUtil.instanceOf(overriddenDeclaration, KtNamedFunction::class.java, KtProperty::class.java, PsiMethod::class.java)) {
-                overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor)
+            if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod) {
+                overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
             }
         }
         if (ignore != null) {
@@ -113,30 +105,29 @@ object KotlinRefactoringUtil2 {
 
         if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
 
-        val superClasses = getClassDescriptions(overriddenElementsToDescriptor)
-        return askUserForMethodsToSearch(declaration, declarationDescriptor, overriddenElementsToDescriptor, superClasses, actionStringKey)
+        return askUserForMethodsToSearch(declaration, declarationDescriptor, overriddenElementsToDescriptor, actionStringKey)
     }
 
     private fun askUserForMethodsToSearch(
             declaration: KtDeclaration,
             declarationDescriptor: CallableDescriptor,
             overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>,
-            superClasses: List<String>,
-            actionStringKey: String): List<PsiElement> {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            return ContainerUtil.newArrayList(overriddenElementsToDescriptor.keys)
-        }
+            actionStringKey: String
+    ): List<PsiElement> {
+        if (ApplicationManager.getApplication().isUnitTestMode) return overriddenElementsToDescriptor.keys.toList()
 
-        val superClassesStr = "\n" + StringUtil.join(superClasses, "")
+        val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
+
         val message = KotlinBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
-                superClassesStr,
-                KotlinBundle.message(actionStringKey))
+                "\n${superClassDescriptions.joinToString(separator = "")}",
+                KotlinBundle.message(actionStringKey)
+        )
 
         val exitCode = Messages.showYesNoCancelDialog(declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
         when (exitCode) {
-            Messages.YES -> return ContainerUtil.newArrayList(overriddenElementsToDescriptor.keys)
+            Messages.YES -> return overriddenElementsToDescriptor.keys.toList()
             Messages.NO -> return listOf(declaration)
             else -> return emptyList()
         }
@@ -144,51 +135,46 @@ object KotlinRefactoringUtil2 {
 
     private fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
-            val description: String
-
-            val element = entry.key
-            val descriptor = entry.value
-            if (element is KtNamedFunction || element is KtProperty) {
-                description = formatClassDescriptor(descriptor.getContainingDeclaration())
+            val (element, descriptor) = entry
+            val description = when (element) {
+                is KtNamedFunction, is KtProperty -> formatClassDescriptor(descriptor.containingDeclaration)
+                is PsiMethod -> {
+                    val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
+                    formatPsiClass(psiClass, true, false)
+                }
+                else -> error("Unexpected element: ${element.getElementTextWithContext()}")
             }
-            else {
-                assert(element is PsiMethod) { "Invalid element: " + element.getText() }
-
-                val psiClass = (element as PsiMethod).containingClass ?: error("Invalid element: " + element.getText())
-
-                description = formatPsiClass(psiClass, true, false)
-            }
-
-            "    " + description + "\n"
+            "    $description\n"
         }
     }
 
     fun formatClass(classDescriptor: DeclarationDescriptor, inCode: Boolean): String {
         val element = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor)
-        if (element is PsiClass) {
-            return formatPsiClass((element as PsiClass?)!!, false, inCode)
+        return if (element is PsiClass) {
+            formatPsiClass(element, false, inCode)
         }
-
-        return wrapOrSkip(formatClassDescriptor(classDescriptor), inCode)
+        else {
+            wrapOrSkip(formatClassDescriptor(classDescriptor), inCode)
+        }
     }
 
     fun formatFunction(functionDescriptor: DeclarationDescriptor, inCode: Boolean): String {
         val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
-        if (element is PsiMethod) {
-            return formatPsiMethod((element as PsiMethod?)!!, false, inCode)
+        return if (element is PsiMethod) {
+            formatPsiMethod(element, false, inCode)
         }
-
-        return wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode)
+        else {
+            wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode)
+        }
     }
 
-    private fun formatFunctionDescriptor(functionDescriptor: DeclarationDescriptor): String {
-        return DescriptorRenderer.COMPACT.render(functionDescriptor)
-    }
+    private fun formatFunctionDescriptor(functionDescriptor: DeclarationDescriptor) = DescriptorRenderer.COMPACT.render(functionDescriptor)
 
     fun formatPsiMethod(
             psiMethod: PsiMethod,
             showContainingClass: Boolean,
-            inCode: Boolean): String {
+            inCode: Boolean
+    ): String {
         var options = PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS or PsiFormatUtilBase.SHOW_TYPE
         if (showContainingClass) {
             //noinspection ConstantConditions
@@ -198,49 +184,30 @@ object KotlinRefactoringUtil2 {
         var description = PsiFormatUtil.formatMethod(psiMethod, PsiSubstitutor.EMPTY, options, PsiFormatUtilBase.SHOW_TYPE)
         description = wrapOrSkip(description, inCode)
 
-        return "[Java] " + description
+        return "[Java] $description"
     }
 
     fun formatJavaOrLightMethod(method: PsiMethod): String {
         val originalDeclaration = method.unwrapped
-        if (originalDeclaration is KtDeclaration) {
-            val bindingContext = originalDeclaration.analyze(BodyResolveMode.FULL)
-            val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, originalDeclaration)
-
-            if (descriptor != null) return formatFunctionDescriptor(descriptor)
+        return if (originalDeclaration is KtDeclaration) {
+            formatFunctionDescriptor(originalDeclaration.resolveToDescriptor())
         }
-        return formatPsiMethod(method, false, false)
+        else {
+            formatPsiMethod(method, false, false)
+        }
     }
 
-    fun formatClass(classOrObject: KtClassOrObject): String {
-        val bindingContext = classOrObject.analyze(BodyResolveMode.FULL)
-        val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject)
-
-        if (descriptor is ClassDescriptor) return formatClassDescriptor(descriptor)
-        return "class " + classOrObject.name!!
-    }
+    fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.resolveToDescriptor() as ClassDescriptor)
 
     fun checkParametersInMethodHierarchy(parameter: PsiParameter): Collection<PsiElement>? {
         val method = parameter.declarationScope as PsiMethod
 
         val parametersToDelete = collectParametersHierarchy(method, parameter)
-        if (parametersToDelete.size > 1) {
-            if (ApplicationManager.getApplication().isUnitTestMode) {
-                return parametersToDelete
-            }
+        if (parametersToDelete.size <= 1 || ApplicationManager.getApplication().isUnitTestMode) return parametersToDelete
 
-            val message = KotlinBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method))
-            val exitCode = Messages.showOkCancelDialog(
-                    parameter.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
-            if (exitCode == Messages.OK) {
-                return parametersToDelete
-            }
-            else {
-                return null
-            }
-        }
-
-        return parametersToDelete
+        val message = KotlinBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method))
+        val exitCode = Messages.showOkCancelDialog(parameter.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
+        return if (exitCode == Messages.OK) parametersToDelete else null
     }
 
     // TODO: generalize breadth-first search
@@ -253,19 +220,15 @@ object KotlinRefactoringUtil2 {
         while (!queue.isEmpty()) {
             val currentMethod = queue.poll()
 
-            visited.add(currentMethod)
+            visited += currentMethod
             addParameter(currentMethod, parametersToDelete, parameter)
 
-            for (superMethod in currentMethod.findSuperMethods(true)) {
-                if (!visited.contains(superMethod)) {
-                    queue.offer(superMethod)
-                }
-            }
-            for (overrider in OverridingMethodsSearch.search(currentMethod)) {
-                if (!visited.contains(overrider)) {
-                    queue.offer(overrider)
-                }
-            }
+            currentMethod.findSuperMethods(true)
+                    .filter { it !in visited }
+                    .forEach { queue.offer(it) }
+            OverridingMethodsSearch.search(currentMethod)
+                    .filter { it !in visited }
+                    .forEach { queue.offer(it) }
         }
         return parametersToDelete
     }
@@ -289,9 +252,8 @@ object KotlinRefactoringUtil2 {
             editor: Editor,
             file: KtFile,
             elementKinds: Collection<CodeInsightUtils.ElementKind>,
-            callback: (PsiElement?) -> Unit) {
-        selectElement(editor, file, true, elementKinds, callback)
-    }
+            callback: (PsiElement?) -> Unit
+    ) = selectElement(editor, file, true, elementKinds, callback)
 
     @Throws(IntroduceRefactoringException::class)
     fun selectElement(editor: Editor,
@@ -306,22 +268,18 @@ object KotlinRefactoringUtil2 {
             var firstElement: PsiElement = file.findElementAt(selectionStart)!!
             var lastElement: PsiElement = file.findElementAt(selectionEnd - 1)!!
 
-            if (PsiTreeUtil.getParentOfType(firstElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null && PsiTreeUtil.getParentOfType(lastElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null) {
+            if (PsiTreeUtil.getParentOfType(firstElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null
+                && PsiTreeUtil.getParentOfType(lastElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null) {
                 firstElement = firstElement.getNextSiblingIgnoringWhitespaceAndComments(true)!!
                 lastElement = lastElement.getPrevSiblingIgnoringWhitespaceAndComments(true)!!
                 selectionStart = firstElement.textRange.startOffset
                 selectionEnd = lastElement.textRange.endOffset
             }
 
-            for (elementKind in elementKinds) {
-                val element = findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, elementKind)
-                if (element != null) {
-                    callback(element)
-                    return
-                }
-            }
-
-            callback(null)
+            val element = elementKinds.asSequence()
+                    .mapNotNull { findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, it) }
+                    .firstOrNull()
+            callback(element)
         }
         else {
             val offset = editor.caretModel.offset
@@ -333,15 +291,13 @@ object KotlinRefactoringUtil2 {
     fun getSmartSelectSuggestions(
             file: PsiFile,
             offset: Int,
-            elementKind: CodeInsightUtils.ElementKind): List<KtElement> {
-        if (offset < 0) {
-            return ArrayList()
-        }
+            elementKind: CodeInsightUtils.ElementKind
+    ): List<KtElement> {
+        if (offset < 0) return emptyList()
 
-        var element: PsiElement? = file.findElementAt(offset) ?: return ArrayList()
-        if (element is PsiWhiteSpace) {
-            return getSmartSelectSuggestions(file, offset - 1, elementKind)
-        }
+        var element: PsiElement? = file.findElementAt(offset) ?: return emptyList()
+
+        if (element is PsiWhiteSpace) return getSmartSelectSuggestions(file, offset - 1, elementKind)
 
         val elements = ArrayList<KtElement>()
         while (element != null && !(element is KtBlockExpression && element.parent !is KtFunctionLiteral) &&
@@ -413,31 +369,28 @@ object KotlinRefactoringUtil2 {
             offset: Int,
             failOnEmptySuggestion: Boolean,
             elementKinds: Collection<CodeInsightUtils.ElementKind>,
-            callback: (PsiElement?) -> Unit) {
-        val elements = elementKinds.flatMap { kind -> getSmartSelectSuggestions(file, offset, kind) }
-        if (elements.size == 0) {
-            if (failOnEmptySuggestion)
-                throw IntroduceRefactoringException(
-                        KotlinRefactoringBundle.message("cannot.refactor.not.expression"))
+            callback: (PsiElement?) -> Unit
+    ) {
+        val elements = elementKinds.flatMap { getSmartSelectSuggestions(file, offset, it) }
+        if (elements.isEmpty()) {
+            if (failOnEmptySuggestion) throw IntroduceRefactoringException(KotlinRefactoringBundle.message("cannot.refactor.not.expression"))
             callback(null)
             return
         }
 
         if (elements.size == 1 || ApplicationManager.getApplication().isUnitTestMode) {
-            callback(elements[0])
+            callback(elements.first())
             return
         }
 
         val model = DefaultListModel<PsiElement>()
-        for (element in elements) {
-            model.addElement(element)
-        }
+        elements.forEach { model.addElement(it) }
 
         val highlighter = ScopeHighlighter(editor)
 
         val list = JBList(model)
 
-        list.setCellRenderer(object : DefaultListCellRenderer() {
+        list.cellRenderer = object : DefaultListCellRenderer() {
             override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
                 val rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
                 val element = value as KtElement?
@@ -446,16 +399,16 @@ object KotlinRefactoringUtil2 {
                 }
                 return rendererComponent
             }
-        })
+        }
 
-        list.addListSelectionListener(ListSelectionListener {
+        list.addListSelectionListener {
             highlighter.dropHighlight()
-            val selectedIndex = list.getSelectedIndex()
-            if (selectedIndex < 0) return@ListSelectionListener
+            val selectedIndex = list.selectedIndex
+            if (selectedIndex < 0) return@addListSelectionListener
             val toExtract = ArrayList<PsiElement>()
             toExtract.add(model.get(selectedIndex))
             highlighter.highlight(model.get(selectedIndex), toExtract)
-        })
+        }
 
         var title = "Elements"
         if (elementKinds.size == 1) {
@@ -465,11 +418,22 @@ object KotlinRefactoringUtil2 {
             }
         }
 
-        JBPopupFactory.getInstance().createListPopupBuilder(list).setTitle(title).setMovable(false).setResizable(false).setRequestFocus(true).setItemChoosenCallback { callback(list.getSelectedValue() as KtElement) }.addListener(object : JBPopupAdapter() {
-            override fun onClosed(event: LightweightWindowEvent?) {
-                highlighter.dropHighlight()
-            }
-        }).createPopup().showInBestPositionFor(editor)
+        JBPopupFactory.getInstance()
+                .createListPopupBuilder(list)
+                .setTitle(title)
+                .setMovable(false)
+                .setResizable(false)
+                .setRequestFocus(true)
+                .setItemChoosenCallback { callback(list.selectedValue as KtElement) }
+                .addListener(
+                        object : JBPopupAdapter() {
+                            override fun onClosed(event: LightweightWindowEvent?) {
+                                highlighter.dropHighlight()
+                            }
+                        }
+                )
+                .createPopup()
+                .showInBestPositionFor(editor)
 
     }
 
@@ -487,7 +451,8 @@ object KotlinRefactoringUtil2 {
             startOffset: Int,
             endOffset: Int,
             failOnNoExpression: Boolean,
-            elementKind: CodeInsightUtils.ElementKind): PsiElement? {
+            elementKind: CodeInsightUtils.ElementKind
+    ): PsiElement? {
         var element = CodeInsightUtils.findElement(file, startOffset, endOffset, elementKind)
         if (element == null && elementKind == CodeInsightUtils.ElementKind.EXPRESSION) {
             element = findExpressionOrStringFragment(file, startOffset, endOffset)
@@ -503,8 +468,5 @@ object KotlinRefactoringUtil2 {
         return element
     }
 
-    class IntroduceRefactoringException(private val myMessage: String) : RuntimeException() {
-        override val message: String?
-            get() = myMessage
-    }
+    class IntroduceRefactoringException(message: String) : RuntimeException(message)
 }
