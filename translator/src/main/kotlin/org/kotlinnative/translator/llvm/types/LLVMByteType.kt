@@ -12,25 +12,25 @@ class LLVMByteType() : LLVMType() {
     override val defaultValue = "0"
     override val isPrimitive = true
 
-    override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorLt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp slt i8 $firstOp, $secondOp")
 
-    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorGt(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp sgt i8 $firstOp, $secondOp")
 
-    override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorLeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp sle i8 $firstOp, $secondOp")
 
-    override fun operatorGeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorGeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp sge i8 $firstOp, $secondOp")
 
-    override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorEq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp eq i8" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
-    override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorNeq(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMBooleanType(), "icmp ne i8" + (if ((firstOp.pointer > 0) || (secondOp.pointer > 0)) "*" else "") + " $firstOp, $secondOp")
 
-    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue): LLVMExpression =
+    override fun operatorMod(firstOp: LLVMSingleValue, secondOp: LLVMSingleValue) =
             LLVMExpression(LLVMByteType(), "srem i8 $firstOp, $secondOp")
 
     override fun equals(other: Any?) =
