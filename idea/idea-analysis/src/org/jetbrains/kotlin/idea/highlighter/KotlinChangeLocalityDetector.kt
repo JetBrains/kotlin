@@ -25,8 +25,6 @@ class KotlinChangeLocalityDetector : ChangeLocalityDetector {
     override fun getChangeHighlightingDirtyScopeFor(element: PsiElement): PsiElement? {
         val parent = element.parent
         if (element is KtBlockExpression && parent is KtNamedFunction && parent.name != null) {
-            // Do nothing for local functions because of at least WRAPPED_INTO_REF highlighting
-
             if (parent.parents.all { it is KtClassBody || it is KtClassOrObject || it is KtFile || it is KtScript }) {
                 return parent
             }

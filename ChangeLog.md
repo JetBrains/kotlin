@@ -105,6 +105,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13630`](https://youtrack.jetbrains.com/issue/KT-13630) Do not show Change Signature dialog when applying "Remove parameter" quick-fix
 - Re-highlight only single function after local modifications
 - [`KT-13474`](https://youtrack.jetbrains.com/issue/KT-13474) Fix performance of typing super call lambda
+- Show "Variables and values captured in a closure" highlighting only for usages
 
 #### Intention actions, inspections and quickfixes
 
