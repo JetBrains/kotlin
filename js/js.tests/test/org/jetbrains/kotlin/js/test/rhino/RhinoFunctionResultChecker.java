@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -57,18 +56,15 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     private String functionCallString() {
         StringBuilder sb = new StringBuilder();
-        if (packageName != null) {
-            sb.append("kotlin.modules");
-            if (moduleId.contains(".")) {
-                sb.append("['").append(moduleId).append("']");
-            } else {
-                sb.append(".").append(moduleId);
-            }
-            if (!Namer.getRootPackageName().equals(packageName) ) {
-                sb.append('.').append(packageName);
-            }
-            sb.append('.');
+        sb.append("kotlin.modules");
+        if (moduleId.contains(".")) {
+            sb.append("['").append(moduleId).append("']");
+        } else {
+            sb.append(".").append(moduleId);
         }
-        return sb.append(functionName).append("()").toString();
+        if (packageName != null) {
+            sb.append('.').append(packageName);
+        }
+        return sb.append(".").append(functionName).append("()").toString();
     }
 }

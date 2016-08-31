@@ -50,15 +50,12 @@ import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsVerificationKt;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -390,20 +387,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             libFiles.add((KtFile) psiFile);
         }
         return libFiles;
-    }
-
-    @NotNull
-    protected String getPackageName(@NotNull String filename) throws IOException {
-        String content = FileUtil.loadFile(new File(filename), true);
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        KtFile ktFile = psiFactory.createFile(content);
-        return getPackageName(ktFile);
-    }
-
-    @NotNull
-    protected static String getPackageName(KtFile ktFile) {
-        String packageName = ktFile.getPackageFqName().asString();
-        return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }
 
     protected static String getBaseName(String path) {

@@ -92,9 +92,10 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1)
                 outputFileName
             }
-            val mainModule = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
+            val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
+            val mainModule = modules[mainModuleName]!!
 
-            val checker = RhinoFunctionResultChecker(mainModule, testFactory.testPackage, TEST_FUNCTION, "OK")
+            val checker = RhinoFunctionResultChecker(mainModuleName, testFactory.testPackage, TEST_FUNCTION, "OK")
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + JavaScript.DOT_EXTENSION
@@ -117,8 +118,35 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
+            val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
+            val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, testFactory.testPackage)
+            FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
+
             RhinoUtils.runRhinoTest(allJsFiles, checker)
         }
+    }
+
+    private fun generateNodeRunner(files: Collection<String>, dir: File, moduleName: String, testPackage: String?): String {
+        val sb = StringBuilder("var text = \"\";\n")
+        sb.append("var fs = require('fs');\n")
+
+        sb.append("module.exports = function(kotlin, requireFromString) {\n")
+        sb.append("text += 'module.exports = function(kotlin) {\\n';\n")
+
+        for (file in files) {
+            val fileName = FileUtil.getRelativePath(dir, File(file))!!
+            sb.append("text += fs.readFileSync(__dirname + \"/$fileName\") + \"\\n\";\n")
+        }
+        sb.append("text += 'return $moduleName;';\n")
+        sb.append("text += \"};\";\n")
+
+        val fqn = testPackage?.let { ".$it" } ?: ""
+
+        sb.append("var testModule = requireFromString(text)(kotlin);\n")
+        sb.append("return testModule$fqn.box();\n")
+        sb.append("};")
+
+        return sb.toString()
     }
 
     private fun getOutputDir(file: File): File {
@@ -130,9 +158,13 @@ abstract class BasicBoxTest(
                 .fold(File(pathToOutputDir), ::File)
     }
 
-    private fun TestModule.outputFileName(directory: File): String {
+    private fun TestModule.outputFileSimpleName(): String {
         val outputFileSuffix = if (this.name == TEST_MODULE) "" else "-$name"
-        return directory.absolutePath + "/" + getTestName(true) + "${outputFileSuffix}_v5"
+        return getTestName(true) + "${outputFileSuffix}_v5"
+    }
+
+    private fun TestModule.outputFileName(directory: File): String {
+        return directory.absolutePath + "/" + outputFileSimpleName()
     }
 
     private fun generateJavaScriptFile(
@@ -225,7 +257,10 @@ abstract class BasicBoxTest(
             val ktFile = KtPsiFactory(project).createFile(text)
             val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION  }
             if (boxFunction != null) {
-                testPackage = SingleFileTranslationTest.getPackageName(ktFile)
+                testPackage = ktFile.packageFqName.asString()
+                if (testPackage?.isEmpty() ?: false) {
+                    testPackage = null
+                }
             }
 
             if (module != null) {
@@ -243,7 +278,7 @@ abstract class BasicBoxTest(
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            return TestFile(fileName, temporaryFile.absolutePath, module ?: defaultModule)
+            return TestFile(temporaryFile.absolutePath, module ?: defaultModule)
         }
 
         override fun createModule(name: String, dependencies: List<String>): TestModule? {
@@ -255,7 +290,7 @@ abstract class BasicBoxTest(
         }
     }
 
-    private class TestFile(val name: String, val fileName: String, val module: TestModule) {
+    private class TestFile(val fileName: String, val module: TestModule) {
         init {
             module.files += this
         }
