@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -65,6 +66,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             val outerCalleeDescriptor = lambdaParent.outerCalleeDescriptor() ?: return false
             val lambdaParameterType = outerCalleeDescriptor.valueParameters.lastOrNull()?.type
             if (lambdaParameterType != null && lambdaParameterType.isFunctionType) {
+                // For lambda parameter with receiver, conversion is not allowed
+                if (lambdaParameterType.isExtensionFunctionType) return false
                 // Special Unit case (non-Unit returning lambda is accepted here, but non-Unit returning reference is not)
                 lambdaMustReturnUnit = getReturnTypeFromFunctionType(lambdaParameterType).isUnit()
             }

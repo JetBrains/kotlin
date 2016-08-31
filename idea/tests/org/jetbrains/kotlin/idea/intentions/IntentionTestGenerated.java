@@ -3883,6 +3883,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("argumentWithReceiver.kt")
+        public void testArgumentWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/argumentWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/constructor.kt");
