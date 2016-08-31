@@ -478,6 +478,16 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
 
         if (log != null) {
             KotlinTestUtils.assertEqualsToFile(new File(rootPath, prefix + "log"), log);
+
+            // if log is empty then compare results with plain search
+            try {
+                ExpressionsOfTypeProcessor.Companion.setMode(ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN);
+
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options);
+            }
+            finally {
+                ExpressionsOfTypeProcessor.Companion.setMode(ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART);
+            }
         }
     }
 

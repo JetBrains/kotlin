@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 //TODO: check if smart search is too expensive
@@ -592,7 +593,7 @@ class ExpressionsOfTypeProcessor(
     private fun PsiElement.isOperatorExpensiveToSearch(): Boolean {
         when (this) {
             is KtFunction -> {
-                if (name?.startsWith("component") == true) return false // component functions are not so expensive to search
+                if (name?.startsWith("component") == true || name == OperatorNameConventions.INVOKE.asString()) return false
                 return  hasModifier(KtTokens.OPERATOR_KEYWORD)
                         || hasModifier(KtTokens.OVERRIDE_KEYWORD) && (resolveToDescriptorIfAny() as? FunctionDescriptor)?.isOperator == true
             }

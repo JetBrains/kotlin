@@ -37,22 +37,21 @@ import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.effectiveSearchScope
 import org.jetbrains.kotlin.idea.search.unionSafe
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
-import org.jetbrains.kotlin.idea.search.usagesSearch.findDestructuringDeclarationUsages
-import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
-import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
                                          val acceptOverloads: Boolean = false,
                                          val acceptExtensionsOfDeclarationClass: Boolean = false,
                                          val acceptCompanionObjectMembers: Boolean = false,
                                          val searchForComponentConventions: Boolean = true,
+                                         val searchInvokeOperator: Boolean = true,
                                          val searchNamedArguments: Boolean = true) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
@@ -143,6 +142,11 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     }
                 }
             }
+        }
+
+        //TODO: Java invoke's
+        if (kotlinOptions.searchInvokeOperator && element is KtFunction && name == OperatorNameConventions.INVOKE.asString()) {
+            findInvokeOperatorUsages(element, effectiveSearchScope, consumer)
         }
     }
 

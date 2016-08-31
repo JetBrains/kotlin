@@ -22,6 +22,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
@@ -56,6 +57,13 @@ class KotlinReferencesSearchTest(): AbstractSearcherTest() {
         Assert.assertEquals(2, refs.size)
         Assert.assertEquals("component1", refs[0].canonicalText)
         Assert.assertTrue(refs[1] is KtDestructuringDeclarationReference)
+    }
+
+    fun testInvokeFun() {
+        val refs = doTest<KtFunction>()
+        Assert.assertEquals(2, refs.size)
+        Assert.assertEquals("invoke", refs[0].canonicalText)
+        Assert.assertTrue(refs[1] is KtInvokeFunctionReference)
     }
 
     // workaround for KT-9788 AssertionError from backand when we read field from inline function
