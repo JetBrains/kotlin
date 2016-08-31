@@ -104,13 +104,17 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         }
     }
 
-    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
+    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest? {
 
         val dist0 = anglesDistances[Angle(0)]!!
-        val dist60 = anglesDistances[Angle(60)]!!
+        val dist60 = anglesDistances[Angle(70)]!!
         val dist90 = anglesDistances[Angle(90)]!!
-        val dist120 = anglesDistances[Angle(120)]!!
+        val dist120 = anglesDistances[Angle(110)]!!
         val sonarAngle = carAngle - 90
+
+        if (anglesDistances.filter { it.value.angle.degs() >= 60 && it.value.angle.degs() <= 120 && it.value.distance == -1 }.size != 0) {
+            return null
+        }
 
         if (calibrateAfterRotate) {
             if (Math.abs(dist60.distance - dist120.distance) > 4) {

@@ -113,6 +113,11 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             return
         }
         val command = getCommand(anglesDistances, state)
+
+        if (command == null) {
+            return
+        }
+
         afterGetCommand(command)
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.distances))
@@ -137,7 +142,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     }
 
     protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?
-    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest
+    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest?
     protected abstract fun afterGetCommand(route: RouteMetricRequest)
 
 
