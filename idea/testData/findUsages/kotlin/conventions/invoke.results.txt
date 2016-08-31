@@ -1,1 +1,2 @@
-Function call 9 B(1).invoke(2)
+Function call 11 f(1).invoke(2)
+Implicit 'invoke' 12 f(2)(2)
