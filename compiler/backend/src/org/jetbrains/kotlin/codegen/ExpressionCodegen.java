@@ -1839,27 +1839,54 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression valueToReturn) {
+    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression returnValue) {
         ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(RETURN_HANDLE_RESULT_RESOLVED_CALL, callOwner);
 
         if (resolvedCall != null) {
             assert resolvedCall.getValueArgumentsByIndex() != null : "Arguments were not resolved for call element: " + callOwner.getText();
             KtExpression argumentExpression =
                     resolvedCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
-            if (valueToReturn == null
-                    && KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
+
+            final StackValue putValueBeforeCall;
+            // This condition may be true in cases like return-statement without value or for last statement in a lambda block that
+            // has a type different from Unit, while 'handleResult' method accepts exactly the latter
+            // (see org.jetbrains.kotlin.coroutines.resolveCoroutineHandleResultCallIfNeeded for clarifications)
+            if (argumentExpression != returnValue) {
+                assert KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())
+                        : "If handleResult argument is different from returnValue, handleResult's first parameter must accept Unit, but " +
+                          resolvedCall.getResultingDescriptor() + " was found";
+
+                // generate last statement in the coroutine lambda
+                putValueBeforeCall = returnValue != null ? genStatement(returnValue) : null;
+
+                // Here 'argumentExpression' is a special fake one that used as an expression of Unit type
+                // when 'handleResult' call was resolved
                 tempVariables.put(argumentExpression, StackValue.unit());
             }
             else {
-                assert valueToReturn != null : "valueReturn expected to be not null for non-unit types";
-                tempVariables.put(argumentExpression, gen(valueToReturn));
+                putValueBeforeCall = null;
             }
 
             tempVariables.put(
                     resolvedCall.getValueArgumentsByIndex().get(1).getArguments().get(0).getArgumentExpression(),
                     genCoroutineInstanceValueFromResolvedCall(resolvedCall));
 
-            return invokeFunction(resolvedCall, StackValue.none());
+
+            final StackValue handleResultCallValue = invokeFunction(resolvedCall, StackValue.none());
+            if (putValueBeforeCall == null) return handleResultCallValue;
+
+            return new StackValue(handleResultCallValue.type) {
+                @Override
+                public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+                    putValueBeforeCall.put(type, v);
+                    handleResultCallValue.putSelector(type, v);
+                }
+
+                @Override
+                public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
+                    handleResultCallValue.putReceiver(v, isRead);
+                }
+            };
         }
         return null;
     }
