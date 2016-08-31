@@ -40,7 +40,6 @@ fun createBuiltInPackageFragmentProvider(
     val provider = PackageFragmentProviderImpl(packageFragments)
 
     val notFoundClasses = NotFoundClasses(storageManager, module)
-    val localClassResolver = LocalClassResolverImpl()
 
     val components = DeserializationComponents(
             storageManager,
@@ -48,7 +47,7 @@ fun createBuiltInPackageFragmentProvider(
             DeserializedClassDataFinder(provider),
             AnnotationAndConstantLoaderImpl(module, notFoundClasses, BuiltInSerializerProtocol),
             provider,
-            localClassResolver,
+            LocalClassifierTypeSettings.Default,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
             FlexibleTypeFactory.ThrowException,
@@ -56,8 +55,6 @@ fun createBuiltInPackageFragmentProvider(
             notFoundClasses,
             additionalSupertypes = additionalSupertypes
     )
-
-    localClassResolver.setDeserializationComponents(components)
 
     for (packageFragment in packageFragments) {
         packageFragment.components = components

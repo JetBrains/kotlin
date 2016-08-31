@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -29,9 +28,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.KotlinType
 
 abstract class DeserializerForDecompilerBase(
         val packageDirectory: VirtualFile,
@@ -68,6 +68,7 @@ abstract class DeserializerForDecompilerBase(
     }
 }
 
-class ResolveEverythingToKotlinAnyLocalClassResolver(private val builtIns: KotlinBuiltIns) : LocalClassResolver {
-    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = builtIns.any
+class ResolveEverythingToKotlinAnyLocalClassifierResolver(private val builtIns: KotlinBuiltIns) : LocalClassifierTypeSettings {
+    override val replacementTypeForLocalClassifiers: KotlinType?
+        get() = builtIns.anyType
 }

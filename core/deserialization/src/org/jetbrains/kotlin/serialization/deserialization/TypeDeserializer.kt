@@ -65,6 +65,14 @@ class TypeDeserializer(
             return flexibleTypeFactory.create(DeserializedType(c, proto), DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!))
         }
 
+        val localClassifierType = when {
+            proto.hasClassName() -> computeLocalClassifierReplacementType(proto.className)
+            else -> null
+        }
+
+        if (localClassifierType != null) return localClassifierType
+
+
         return DeserializedType(c, proto, additionalAnnotations)
     }
 
@@ -99,9 +107,16 @@ class TypeDeserializer(
         val id = c.nameResolver.getClassId(fqNameIndex)
         if (id.isLocal) {
             // Local classes can't be found in scopes
-            return c.components.localClassResolver.resolveLocalClass(id)
+            return c.components.deserializeClass(id)
         }
         return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
+    }
+
+    private fun computeLocalClassifierReplacementType(className: Int): KotlinType? {
+        if (c.nameResolver.getClassId(className).isLocal) {
+            return c.components.localClassifierTypeSettings.replacementTypeForLocalClassifiers
+        }
+        return null
     }
 
     fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {

@@ -107,6 +107,12 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         doTest(fileName);
     }
 
+    @TestMetadata("LocalClassAsTypeWithArgument")
+    public void testLocalClassAsTypeWithArgument() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
