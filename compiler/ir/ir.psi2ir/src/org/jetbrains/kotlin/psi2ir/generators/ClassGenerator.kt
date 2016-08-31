@@ -111,8 +111,8 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                 BodyGenerator(enumEntryDescriptor.containingDeclaration, context)
                         .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
 
-        ktEnumEntry.getBody()?.let { ktEnumEntryBody ->
-            // TODO
+        if (ktEnumEntry.getBody() != null) {
+            irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
         }
 
         return irEnumEntry

@@ -146,39 +146,65 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     private fun generateSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
         val classDescriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
 
-        if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
-            val kotlinEnumConstructor = context.builtIns.enum.unsubstitutedPrimaryConstructor!!
-            irBlockBody.addStatement(IrEnumConstructorCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, kotlinEnumConstructor))
-            return
-        }
-
-        val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return
-        for (ktSuperTypeListEntry in ktSuperTypeList.entries) {
-            if (ktSuperTypeListEntry is KtSuperTypeCallEntry) {
-                val statementGenerator = createStatementGenerator()
-                val superConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperTypeListEntry)!!)
-                val irSuperConstructorCall = CallGenerator(statementGenerator).generateCall(
-                        ktSuperTypeListEntry, superConstructorCall, IrOperator.SUPER_CONSTRUCTOR_CALL)
-                irBlockBody.addStatement(irSuperConstructorCall)
+        when (classDescriptor.kind) {
+            ClassKind.ENUM_CLASS -> {
+                val kotlinEnumConstructor = context.builtIns.enum.unsubstitutedPrimaryConstructor!!
+                irBlockBody.addStatement(IrEnumConstructorCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                                                                   kotlinEnumConstructor, null))
+            }
+            ClassKind.ENUM_ENTRY -> {
+                irBlockBody.addStatement(generateEnumEntrySuperConstructorCall(ktClassOrObject as KtEnumEntry, classDescriptor))
+            }
+            else -> {
+                val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return
+                for (ktSuperTypeListEntry in ktSuperTypeList.entries) {
+                    if (ktSuperTypeListEntry is KtSuperTypeCallEntry) {
+                        val statementGenerator = createStatementGenerator()
+                        val superConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperTypeListEntry)!!)
+                        val irSuperConstructorCall = CallGenerator(statementGenerator).generateCall(
+                                ktSuperTypeListEntry, superConstructorCall, IrOperator.SUPER_CONSTRUCTOR_CALL)
+                        irBlockBody.addStatement(irSuperConstructorCall)
+                    }
+                }
             }
         }
     }
 
+    private fun generateEnumEntrySuperConstructorCall(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
+        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, null)
+    }
+
     fun generateEnumEntryInitializer(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
+        // Enum entry with body has a corresponding underlying class
+        if (ktEnumEntry.getBody() != null) {
+            val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
+            return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
+                                             enumEntryConstructor, enumEntryDescriptor)
+        }
+
+        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, enumEntryDescriptor)
+    }
+
+    private fun generateEnumConstructorCallOrSuperCall(
+            ktEnumEntry: KtEnumEntry,
+            enumClassDescriptor: ClassDescriptor,
+            enumEntryOrNull: ClassDescriptor?
+    ): IrExpression {
         val statementGenerator = createStatementGenerator()
 
-        val ktSuperCallElement = ktEnumEntry.getSuperTypeListEntries().firstOrNull()
-
-        if (ktSuperCallElement != null) {
+        // Entry constructor with argument(s)
+        ktEnumEntry.getSuperTypeListEntries().firstOrNull()?.let { ktSuperCallElement ->
             val enumConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperCallElement)!!)
             return CallGenerator(statementGenerator).generateEnumConstructorSuperCall(
-                    ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumConstructorCall, enumEntryDescriptor)
+                    ktEnumEntry.startOffset, ktEnumEntry.endOffset,
+                    enumConstructorCall, enumEntryOrNull)
+
         }
 
         // No-argument enum entry constructor
-        val enumClassDescriptor = enumEntryDescriptor.containingDeclaration as ClassDescriptor
         val enumClassConstructor = enumClassDescriptor.unsubstitutedPrimaryConstructor!!
-        return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumClassConstructor, enumEntryDescriptor)
+        return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
+                                         enumClassConstructor, enumEntryOrNull)
     }
 
     fun generateNestedInitializersBody(ktClassOrObject: KtClassOrObject): IrBody {

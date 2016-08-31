@@ -26,7 +26,7 @@ interface IrEnumConstructorCall : IrGeneralCall {
     val enumEntryDescriptor: ClassDescriptor?
 }
 
-val IrEnumConstructorCall.isDelegating: Boolean
+val IrEnumConstructorCall.isSuper: Boolean
     get() = enumEntryDescriptor == null
 
 class IrEnumConstructorCallImpl(
