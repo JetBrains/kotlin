@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package java.lang
+package kotlin.text
 
 
 interface Appendable {
