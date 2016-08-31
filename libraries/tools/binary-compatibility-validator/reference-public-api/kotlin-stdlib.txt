@@ -66,6 +66,27 @@ public final class kotlin/_Assertions {
 	public static final field INSTANCE Lkotlin/_Assertions;
 }
 
+public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun getSize ()I
+	public abstract fun hashCode ()I
+	public fun isEmpty ()Z
+	public abstract fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class kotlin/collections/AbstractIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	protected abstract fun computeNext ()V
@@ -74,6 +95,53 @@ public abstract class kotlin/collections/AbstractIterator : java/util/Iterator, 
 	public fun next ()Ljava/lang/Object;
 	public fun remove ()V
 	protected final fun setNext (Ljava/lang/Object;)V
+}
+
+public abstract class kotlin/collections/AbstractList : kotlin/collections/AbstractCollection, java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/collections/AbstractList$Companion;
+	public fun <init> ()V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public abstract fun get (I)Ljava/lang/Object;
+	public abstract fun getSize ()I
+	public fun hashCode ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public fun iterator ()Ljava/util/Iterator;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public fun remove (I)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeAt (I)Ljava/lang/Object;
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun subList (II)Ljava/util/List;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class kotlin/collections/AbstractList$Companion {
+}
+
+public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
+	protected fun <init> ()V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public abstract fun getSize ()I
+	public fun hashCode ()I
+	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/collections/ArraysKt {
