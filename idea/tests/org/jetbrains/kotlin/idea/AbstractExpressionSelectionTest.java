@@ -22,7 +22,8 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2;
+import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2Kt;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -35,7 +36,7 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil2.INSTANCE.selectElement(
+            KotlinRefactoringUtil2Kt.selectElement(
                     getEditor(),
                     (KtFile) getFile(),
                     Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
@@ -49,7 +50,7 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
                     }
             );
         }
-        catch (KotlinRefactoringUtil2.IntroduceRefactoringException e) {
+        catch (IntroduceRefactoringException e) {
             assertEquals(expectedExpression, "");
         }
     }
