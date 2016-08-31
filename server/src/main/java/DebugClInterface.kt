@@ -1,5 +1,6 @@
 import Exceptions.InactiveCarException
 import algorithm.AbstractAlgorithm
+import algorithm.AlgorithmThread
 import algorithm.RoomBypassingAlgorithm
 import algorithm.RoomModel
 import car.client.CarClient
@@ -15,6 +16,7 @@ object DebugClInterface {
 
     val exchanger = Exchanger<IntArray>()
     var algorithmImpl: AbstractAlgorithm? = null
+    var algorithmThread: AlgorithmThread? = null
 
     private val routeRegex = Regex("route [0-9]{1,10}")
     private val sonarRegex = Regex("sonar [0-9]{1,10}")
@@ -101,20 +103,25 @@ object DebugClInterface {
 
     private fun executeAlg(readString: String) {
         val params = readString.split(" ")
-        var count =
+        val count =
                 if (params.size == 2) try {
                     params[1].toInt()
                 } catch (e: Exception) {
                     1
                 } else 1
 
-        if (algorithmImpl == null) {
-            algorithmImpl = RoomBypassingAlgorithm(Environment.map.values.last(), exchanger)
+        var alg = algorithmImpl
+        if (alg == null) {
+            alg = RoomBypassingAlgorithm(Environment.map.values.last(), exchanger)
         }
-        while (count > 0) {
-            count--
-            algorithmImpl!!.iterate()
+        var algThread = algorithmThread
+        if (algThread == null) {
+            algThread = AlgorithmThread(alg)
+            algThread.start()
         }
+        algorithmImpl = alg
+        algThread.setCount(count)
+        algorithmThread = algThread
     }
 
     private fun executeDebugInfoCommand(readString: String) {

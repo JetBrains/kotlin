@@ -15,6 +15,7 @@ import java.util.*
 import java.util.concurrent.Exchanger
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.concurrent.thread
 
 abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntArray>) {
 
@@ -63,8 +64,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         try {
             val distances = exchanger.exchange(IntArray(0), 300, TimeUnit.SECONDS)
             return distances
-        } catch (e: InterruptedException) {
-            println("don't have response from car!")
         } catch (e: TimeoutException) {
             println("don't have response from car. Timeout!")
         }
@@ -77,6 +76,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         moveCar(requestBytes)
     }
 
+
+
     private fun moveCar(messageBytes: ByteArray) {
         val request = getDefaultHttpRequest(thisCar.host, setRouteMetricUrl, messageBytes)
         try {
@@ -87,8 +88,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         try {
             exchanger.exchange(IntArray(0), 60, TimeUnit.SECONDS)
             return
-        } catch (e: InterruptedException) {
-            println("don't have response from car!")
         } catch (e: TimeoutException) {
             println("don't have response from car. Timeout!")
         }

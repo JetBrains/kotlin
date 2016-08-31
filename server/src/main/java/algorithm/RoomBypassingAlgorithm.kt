@@ -1,5 +1,6 @@
 package algorithm
 
+import Logger.log
 import RouteMetricRequest
 import SonarRequest
 import algorithm.geometry.Angle
@@ -8,7 +9,6 @@ import algorithm.geometry.Point
 import algorithm.geometry.Wall
 import objects.Car
 import java.util.concurrent.Exchanger
-import Logger.log
 
 class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : AbstractAlgorithm(thisCar, exchanger) {
 
@@ -19,14 +19,14 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     override val WINDOW_SIZE = 3
 
     //SHOULD BE CALIBRATED BEFORE RUNNING!!!!!!!!!!!
-    private val CHARGE_CORRECTION = 0.85
+    private val CHARGE_CORRECTION = 1.02//on full charge ok is 0.83 - 0.86
 
-    private val MAX_DISTANCE_TO_WALL_AHEAD = 30         // reached the corner and should turn left
-    private val OUTER_CORNER_DISTANCE_THRESHOLD = 60    // reached outer corner
+    private val MAX_DISTANCE_TO_WALL_AHEAD = 55         // reached the corner and should turn left
+    private val OUTER_CORNER_DISTANCE_THRESHOLD = 90    // reached outer corner
     private val ISOSCALENESS_MIN_DIFF = 5               // have to correct alignment to the wall
     private val ISOSCALENESS_MAX_DIFF = 50              // almost reached outer corner but not yet, and 120 meas. founds far wall
-    private val DISTANCE_TO_WALL_UPPER_BOUND = 50       // have to move closer to the parallel wall
-    private val DISTANCE_TO_WALL_LOWER_BOUND = 25       // have to move farther to the parallel wall
+    private val DISTANCE_TO_WALL_UPPER_BOUND = 60       // have to move closer to the parallel wall
+    private val DISTANCE_TO_WALL_LOWER_BOUND = 40       // have to move farther to the parallel wall
     private val SPURIOUS_REFLECTION_DIFF = 70           // we're approaching corner and get spurious reflection from two walls on 60 meas. ! Should be before outer corner case !
 
     private var calibrateAfterRotate = false
@@ -70,7 +70,12 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         for (i in 0..15 step 5) {
             val distRightForward = anglesDistances[Angle(70 + i)]!!
             val distRightBackward = anglesDistances[Angle(110 - i)]!!
-            if (distRightBackward.distance > (average * 1.5) || distRightForward.distance > (average * 1.5)) {
+            if (distRightBackward.distance == -1 || distRightForward.distance == -1) {
+                log("Found -1 in angle distances, passing")
+                continue
+            }
+            if (distRightBackward.distance > (average * 1.5) || distRightForward.distance > (average * 1.5) ||
+                    distRightBackward.distance < (average / 2) || distRightForward.distance < (average / 2)) {
                 continue
             }
 
@@ -93,16 +98,20 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
 
         val rotationDirection = if (anglesDistances[Angle(90)]!!.distance > 50) RIGHT else LEFT
-
-        resultBuilder.setDirections(getIntArray(rotationDirection, FORWARD))
-        resultBuilder.setDistances(getIntArray(10, 10))
+        val backRotationDirection = if (rotationDirection == RIGHT) LEFT else RIGHT
+        resultBuilder.setDirections(getIntArray(rotationDirection, FORWARD, backRotationDirection))
+        resultBuilder.setDistances(getIntArray(15, 20, 5))
         return resultBuilder.build()
     }
 
-    private fun moveForward(): RouteMetricRequest {
+    private fun moveForward(distToWall: Int): RouteMetricRequest {
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         resultBuilder.setDirections(getIntArray(FORWARD))
-        resultBuilder.setDistances(getIntArray(20))
+        if (distToWall == -1 || distToWall > 200) {
+            resultBuilder.setDistances(getIntArray(50))
+        } else {
+            resultBuilder.setDistances(getIntArray(Math.max(distToWall / 4, 20)))
+        }
         return resultBuilder.build()
     }
 
@@ -126,12 +135,19 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest? {
         val dist0 = anglesDistances[Angle(0)]!!
         val dist70 = anglesDistances[Angle(70)]!!
+        val dist80 = anglesDistances[Angle(80)]!!
         val dist90 = anglesDistances[Angle(90)]!!
+        val dist100 = anglesDistances[Angle(100)]!!
         val dist110 = anglesDistances[Angle(110)]!!
         val sonarAngle = carAngle - 90
 
-        if (anglesDistances.filter { it.value.angle.degs() >= 60 && it.value.angle.degs() <= 120 && it.value.distance == -1 }.size != 0) {
-            log("Found -1 in angle distances, passing")
+        if (anglesDistances.filter {
+            it.value.angle.degs() >= 60
+                    && it.value.angle.degs() <= 120
+                    && it.value.distance == -1
+        }.size > anglesDistances.size / 2) {
+            log("Found to many -1 in angle distances, passing")
+            //todo Теоретически такая ситуация может быть валидной, если сразу после внутреннего угла идёт внешний
             return null
         }
 
@@ -182,20 +198,20 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         // Big fail too
         if (dist110.distance == -1) {
             log("No back measurement found, wtf")
-            return moveForward()
+            return moveForward(dist0.distance)
         }
 
         // Approaching inner corner and getting spurious reflection from 2 walls on 60 - just move forward to get closer to corner
-        if (dist70.distance - dist0.distance > SPURIOUS_REFLECTION_DIFF) {
-            log("Spurious reflection detected, moving forward")
-            return moveForward()
-        }
-
-        // Approaching outer corner (parallel wall is ending soon, but not yet) - just move forward to get to the end of the wall
-        if (dist70.distance == -1 || Math.abs(dist110.distance - dist70.distance) > ISOSCALENESS_MAX_DIFF) {
-            log("Aprroaching outer corner, moving forward")
-            return moveForward()
-        }
+//        if (dist70.distance - dist0.distance > SPURIOUS_REFLECTION_DIFF) {
+//            log("Spurious reflection detected, moving forward")
+//            return moveForward()
+//        }
+//
+//        // Approaching outer corner (parallel wall is ending soon, but not yet) - just move forward to get to the end of the wall
+//        if (dist80.distance == -1 || Math.abs(dist100.distance - dist80.distance) > ISOSCALENESS_MAX_DIFF) {
+//            log("Aprroaching outer corner, moving forward")
+//            return moveForward()
+//        }
 
         for (i in 70..110 step 10) {
             if (i == 90) {
@@ -203,7 +219,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             }
 
             val curDist = anglesDistances[Angle(i)]!!.distance
-            if (curDist > (average * 1.5)) {
+            if (curDist > (average * 1.5) || curDist < (average / 2)) {
                 continue
             }
             val point = Point(
@@ -228,7 +244,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
         // default case: everything is ok, just move forward
         log("Default case: moving forward")
-        return moveForward()
+        return moveForward(dist0.distance)
     }
 
     private fun calculateAngle(anglesDistances: Map<Angle, AngleData>, state: CarState): Angle {
@@ -252,12 +268,12 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                     carY -= (Math.sin(degreesToRadian(carAngle.toInt())) * route.distances[idx]).toInt()
                 }
                 LEFT -> {
-                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-                    carAngle += route.distances[idx]
+//                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
+//                    carAngle += route.distances[idx]
                 }
                 RIGHT -> {
-                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-                    carAngle -= route.distances[idx]
+//                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
+//                    carAngle -= route.distances[idx]
                 }
             }
         }

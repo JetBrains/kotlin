@@ -85,6 +85,13 @@ class ClientHandler : SimpleChannelInboundHandler<Any>() {
     private fun handlerSonarResponse(message: SonarResponse, angles: IntArray) {
         println("request angles: ${Arrays.toString(angles)}")
         println("distances from sonar: ${Arrays.toString(message.distances)}")
+        val algThread = DebugClInterface.algorithmThread
+        if (algThread == null) {
+            return
+        }
+        if (!algThread.isAlive) {
+            return
+        }
         try {
             DebugClInterface.exchanger.exchange(message.distances, 20, TimeUnit.SECONDS)
         } catch (e: InterruptedException) {
