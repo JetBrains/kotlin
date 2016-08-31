@@ -1760,7 +1760,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
         @Nullable
-        StackValue answer = null;
+        StackValue blockResult = null;
 
         for (Iterator<KtExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
             KtExpression possiblyLabeledStatement = iterator.next();
@@ -1781,32 +1781,39 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.mark(labelBeforeLastExpression);
             }
 
-            // Note that this result value is potentially unused (in case of handleResult coroutine call)
+            // Note that this statementResult value is potentially unused (in case of handleResult coroutine call)
             // It's supposed here that no bytecode is emitted until 'put' call on relevant StackValue object
-            StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
+            StackValue statementResult = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
-                answer = result;
                 StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, possiblyLabeledStatement);
                 if (handleResultValue != null) {
-                    answer = handleResultValue;
+                    blockResult = handleResultValue;
+                }
+                else {
+                    blockResult = statementResult;
                 }
             }
             else {
-                result.put(Type.VOID_TYPE, v);
+                statementResult.put(Type.VOID_TYPE, v);
             }
 
             addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
         }
 
-        if (answer == null) {
-            answer = genControllerHandleResultForLastStatementInCoroutine(block, null);
-            if (answer == null) {
-                answer = StackValue.none();
+        if (statements.isEmpty()) {
+            StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, null);
+            if (handleResultValue != null) {
+                blockResult = handleResultValue;
+            }
+            else {
+                blockResult = StackValue.none();
             }
         }
 
-        return new StackValueWithLeaveTask(answer, new Function1<StackValue, Unit>() {
+        assert blockResult != null : "Block result should be initialized in the loop or the condition above";
+
+        return new StackValueWithLeaveTask(blockResult, new Function1<StackValue, Unit>() {
             @Override
             public Unit invoke(StackValue value) {
                 if (labelBlockEnd == null) {
