@@ -18,6 +18,7 @@ object Server {
                     ModeChange.Mode.ManualControl -> MANUAL_MODE
                     ModeChange.Mode.PerimeterBuilding -> PERIMETER_BUILDING
                     ModeChange.Mode.PerimeterDebug -> PERIMETER_DEBUG
+                    ModeChange.Mode.Idle -> IDLE
                     else -> throw IllegalArgumentException("Illegal argument when parsing ServerMode from Protobuf Mode")
                 }
             }
