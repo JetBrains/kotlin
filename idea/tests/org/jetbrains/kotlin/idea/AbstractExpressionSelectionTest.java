@@ -21,7 +21,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -34,11 +34,11 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil.selectElement(
+            KotlinRefactoringUtil2.selectElement(
                     getEditor(),
                     (KtFile) getFile(),
                     Collections.singletonList(CodeInsightUtils.ElementKind.EXPRESSION),
-                    new KotlinRefactoringUtil.SelectElementCallback() {
+                    new KotlinRefactoringUtil2.SelectElementCallback() {
                         @Override
                         public void run(@Nullable PsiElement element) {
                             assertNotNull("Selected expression mustn't be null", element);
@@ -47,7 +47,7 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
                     }
             );
         }
-        catch (KotlinRefactoringUtil.IntroduceRefactoringException e) {
+        catch (KotlinRefactoringUtil2.IntroduceRefactoringException e) {
             assertEquals(expectedExpression, "");
         }
     }

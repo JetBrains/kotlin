@@ -68,8 +68,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class KotlinRefactoringUtil {
-    private KotlinRefactoringUtil() {
+public class KotlinRefactoringUtil2 {
+    private KotlinRefactoringUtil2() {
     }
 
     @NotNull
