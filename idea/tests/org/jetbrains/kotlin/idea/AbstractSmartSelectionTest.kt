@@ -14,39 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.refactoring.ElementSelectionUtilsKt;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.testFramework.LightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
+import org.jetbrains.kotlin.idea.refactoring.getSmartSelectSuggestions
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
-import java.util.ArrayList;
-import java.util.List;
+abstract class AbstractSmartSelectionTest : LightCodeInsightTestCase() {
+    fun doTestSmartSelection(path: String) {
+        configureByFile(path)
 
-public abstract class AbstractSmartSelectionTest extends LightCodeInsightTestCase {
-
-    public void doTestSmartSelection(@NotNull String path) throws Exception {
-        configureByFile(path);
-        String expectedResultText = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
-
-        List<KtElement> elements = ElementSelectionUtilsKt.getSmartSelectSuggestions(
-                getFile(), getEditor().getCaretModel().getOffset(), CodeInsightUtils.ElementKind.EXPRESSION);
-
-        List<String> textualExpressions = new ArrayList<String>();
-        for (KtElement element : elements) {
-            textualExpressions.add(ElementSelectionUtilsKt.getExpressionShortText(element));
-        }
-        assertEquals(expectedResultText, StringUtil.join(textualExpressions, "\n"));
+        val expectedResultText = KotlinTestUtils.getLastCommentInFile(getFile() as KtFile)
+        val elements = getSmartSelectSuggestions(getFile(), getEditor().caretModel.offset, CodeInsightUtils.ElementKind.EXPRESSION)
+        assertEquals(expectedResultText, elements.joinToString(separator = "\n", transform = ::getExpressionShortText))
     }
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
-    }
+    override fun getTestDataPath() = ""
 }
