@@ -1,0 +1,11 @@
+class A
+
+val <T : A> List<T>.foo: (T) -> Int
+    get() {
+        val a: T? = firstOrNull()
+        return { 0 }
+    }
+
+fun test() {
+    val t = listOf(A()).foo
+}

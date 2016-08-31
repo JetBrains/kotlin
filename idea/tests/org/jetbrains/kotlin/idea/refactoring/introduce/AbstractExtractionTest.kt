@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODUCE_PROPERTY
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.KotlinIntroduceTypeParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -307,6 +308,18 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             )
             handler.selectElements(editor, file) { elements, previousSibling ->
                 handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
+            }
+        }
+    }
+
+    protected fun doIntroduceTypeParameterTest(path: String) {
+        doTest(path) { file ->
+            file as KtFile
+
+            val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
+            val editor = fixture.editor
+            KotlinIntroduceTypeParameterHandler.selectElements(editor, file) { elements, previousSibling ->
+                KotlinIntroduceTypeParameterHandler.doInvoke(project, editor, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }

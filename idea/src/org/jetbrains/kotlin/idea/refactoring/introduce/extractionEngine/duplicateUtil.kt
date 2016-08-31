@@ -66,7 +66,9 @@ fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? 
 fun processDuplicates(
         duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
         project: Project,
-        editor: Editor
+        editor: Editor,
+        scopeDescription: String = "this file",
+        usageDescription: String = "a usage of extracted declaration"
 ) {
     val size = duplicateReplacers.size
     if (size == 0) return
@@ -81,9 +83,11 @@ fun processDuplicates(
         Messages.showYesNoDialog(
                 project,
                 KotlinRefactoringBundle.message(
-                        "0.has.detected.1.code.fragments.in.this.file.that.can.be.replaced.with.a.call.to.extracted.declaration",
+                        "0.has.detected.1.code.fragments.in.2.that.can.be.replaced.with.3",
                         ApplicationNamesInfo.getInstance().productName,
-                        duplicateReplacers.size
+                        duplicateReplacers.size,
+                        scopeDescription,
+                        usageDescription
                 ),
                 "Process Duplicates",
                 Messages.getQuestionIcon()
