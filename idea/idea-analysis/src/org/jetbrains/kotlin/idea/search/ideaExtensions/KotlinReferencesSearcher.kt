@@ -123,7 +123,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             when (element) {
                 is KtFunction -> {
                     if (name != null && isComponentLike(name)) {
-                        findDestructuringDeclarationUsages(element, effectiveSearchScope, consumer, queryParameters.optimizer)
+                        DestructuringDeclarationReferenceSearcher(element, effectiveSearchScope, consumer, queryParameters.optimizer).run()
                     }
                 }
 
@@ -146,7 +146,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         //TODO: Java invoke's
         if (kotlinOptions.searchInvokeOperator && element is KtFunction && name == OperatorNameConventions.INVOKE.asString()) {
-            findInvokeOperatorUsages(element, effectiveSearchScope, consumer)
+            InvokeOperatorReferenceSearcher(element, effectiveSearchScope, consumer, queryParameters.optimizer).run()
         }
     }
 
@@ -249,7 +249,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             }
             if (componentFunction != null) {
                 searchNamedElement(queryParameters, componentFunction)
-                findDestructuringDeclarationUsages(componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
+                DestructuringDeclarationReferenceSearcher.runForPsiMethod(componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
             }
         }
 
