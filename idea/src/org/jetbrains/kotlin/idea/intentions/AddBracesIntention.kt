@@ -32,10 +32,6 @@ class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::cl
         return true
     }
 
-    override fun allowCaretInsideElement(element: PsiElement): Boolean {
-        return element !is KtBlockExpression // do not work inside another block to avoid confusion
-    }
-
     override fun applyTo(element: KtExpression, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
