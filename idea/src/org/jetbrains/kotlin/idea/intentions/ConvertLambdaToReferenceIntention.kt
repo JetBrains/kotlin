@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
@@ -115,7 +116,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                 val receiverType = callReceiverDescriptor.type
                 // No exotic receiver types
                 if (receiverType.isTypeParameter() || receiverType.isError || receiverType.isDynamic() ||
-                    receiverType.isFlexibleRecursive() || !receiverType.constructor.isDenotable || receiverType.isFunctionType) return false
+                    !receiverType.constructor.isDenotable || receiverType.isFunctionType) return false
                 val receiverDeclarationDescriptor = receiverType.constructor.declarationDescriptor
                 if (receiverDeclarationDescriptor is ClassDescriptor) {
                     // No references to object members
@@ -224,7 +225,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                     val receiver = expression.receiverExpression as? KtNameReferenceExpression ?: return null
                     val context = receiver.analyze()
                     val receiverDescriptor = context[REFERENCE_TARGET, receiver] as? ParameterDescriptor ?: return null
-                    val receiverType = receiverDescriptor.type
+                    val originalReceiverType = receiverDescriptor.type
+                    val receiverType = originalReceiverType.approximateFlexibleTypes()
                     "$receiverType::$selectorReferenceName"
                 }
                 else -> null
