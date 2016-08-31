@@ -1,10 +1,10 @@
 package Test
 
-import java.util.<caret>
+import kotlin.<caret>
 
 class Test {
 
 }
 
-// EXIST: AbstractList, Date
-// EXIST_JAVA_ONLY: Random, concurrent
+// EXIST: Unit, Nothing, collections
+// EXIST_JAVA_ONLY: assert, concurrent
