@@ -522,8 +522,21 @@ public class KotlinRefactoringUtil {
             }
         });
 
+        String title = "Elements";
+        if (elementKinds.size() == 1) {
+            switch (elementKinds.iterator().next()) {
+                case EXPRESSION:
+                    title = "Expressions";
+                    break;
+                case TYPE_ELEMENT:
+                case TYPE_CONSTRUCTOR:
+                    title = "Types";
+                    break;
+            }
+        }
+
         JBPopupFactory.getInstance().createListPopupBuilder(list).
-                setTitle(KotlinRefactoringBundle.message("expressions.title")).setMovable(false).setResizable(false).
+                setTitle(title).setMovable(false).setResizable(false).
                 setRequestFocus(true).setItemChoosenCallback(new Runnable() {
             @Override
             public void run() {
