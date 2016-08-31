@@ -4348,6 +4348,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("falseUnitCoercion.kt")
+        public void testFalseUnitCoercion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/falseUnitCoercion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("generate.kt")
         public void testGenerate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/generate.kt");

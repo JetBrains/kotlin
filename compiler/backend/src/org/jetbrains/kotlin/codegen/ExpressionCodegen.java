@@ -2875,7 +2875,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspensionPoint) {
-            StackValue.coerce(Type.VOID_TYPE, getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
+            AsmUtil.pushDefaultValueOnStack(getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
