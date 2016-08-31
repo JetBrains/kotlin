@@ -26,7 +26,7 @@ import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil2Kt;
+import org.jetbrains.kotlin.idea.refactoring.RenderingUtilsKt;
 
 import javax.swing.*;
 
@@ -50,7 +50,7 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
 
     @Override
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
-        coloredComponent.append(KotlinRefactoringUtil2Kt.formatJavaOrLightMethod((PsiMethod) myPsiElement));
+        coloredComponent.append(RenderingUtilsKt.formatJavaOrLightMethod((PsiMethod) myPsiElement));
     }
 
     @Override

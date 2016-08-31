@@ -17,41 +17,23 @@
 package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.codeInsight.unwrap.ScopeHighlighter
-import com.intellij.ide.IdeBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
-import com.intellij.psi.*
-import com.intellij.psi.search.searches.OverridingMethodsSearch
-import com.intellij.psi.util.PsiFormatUtil
-import com.intellij.psi.util.PsiFormatUtilBase
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.components.JBList
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.introduce.findExpressionOrStringFragment
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.Component
 import java.lang.RuntimeException
@@ -59,192 +41,6 @@ import java.util.*
 import javax.swing.DefaultListCellRenderer
 import javax.swing.DefaultListModel
 import javax.swing.JList
-
-fun wrapOrSkip(s: String, inCode: Boolean) = if (inCode) "<code>$s</code>" else s
-
-fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor)
-
-fun formatPsiClass(
-        psiClass: PsiClass,
-        markAsJava: Boolean,
-        inCode: Boolean
-): String {
-    var description: String
-
-    val kind = if (psiClass.isInterface) "interface " else "class "
-    description = kind + PsiFormatUtil.formatClass(
-            psiClass,
-            PsiFormatUtilBase.SHOW_CONTAINING_CLASS or PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS or PsiFormatUtilBase.SHOW_TYPE
-    )
-    description = wrapOrSkip(description, inCode)
-
-    return if (markAsJava) "[Java] $description" else description
-}
-
-fun checkSuperMethods(
-        declaration: KtDeclaration,
-        ignore: Collection<PsiElement>?,
-        actionStringKey: String
-): List<PsiElement> {
-    val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
-
-    if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
-
-    val project = declaration.project
-    val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
-    for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
-        val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
-        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod) {
-            overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
-        }
-    }
-    if (ignore != null) {
-        overriddenElementsToDescriptor.keys.removeAll(ignore)
-    }
-
-    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
-
-    return askUserForMethodsToSearch(declaration, declarationDescriptor, overriddenElementsToDescriptor, actionStringKey)
-}
-
-private fun askUserForMethodsToSearch(
-        declaration: KtDeclaration,
-        declarationDescriptor: CallableDescriptor,
-        overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>,
-        actionStringKey: String
-): List<PsiElement> {
-    if (ApplicationManager.getApplication().isUnitTestMode) return overriddenElementsToDescriptor.keys.toList()
-
-    val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
-
-    val message = KotlinBundle.message(
-            "x.overrides.y.in.class.list",
-            DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
-            "\n${superClassDescriptions.joinToString(separator = "")}",
-            KotlinBundle.message(actionStringKey)
-    )
-
-    val exitCode = Messages.showYesNoCancelDialog(declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
-    when (exitCode) {
-        Messages.YES -> return overriddenElementsToDescriptor.keys.toList()
-        Messages.NO -> return listOf(declaration)
-        else -> return emptyList()
-    }
-}
-
-private fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
-    return overriddenElementsToDescriptor.entries.map { entry ->
-        val (element, descriptor) = entry
-        val description = when (element) {
-            is KtNamedFunction, is KtProperty -> formatClassDescriptor(descriptor.containingDeclaration)
-            is PsiMethod -> {
-                val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
-                formatPsiClass(psiClass, true, false)
-            }
-            else -> error("Unexpected element: ${element.getElementTextWithContext()}")
-        }
-        "    $description\n"
-    }
-}
-
-fun formatClass(classDescriptor: DeclarationDescriptor, inCode: Boolean): String {
-    val element = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor)
-    return if (element is PsiClass) {
-        formatPsiClass(element, false, inCode)
-    }
-    else {
-        wrapOrSkip(formatClassDescriptor(classDescriptor), inCode)
-    }
-}
-
-fun formatFunction(functionDescriptor: DeclarationDescriptor, inCode: Boolean): String {
-    val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
-    return if (element is PsiMethod) {
-        formatPsiMethod(element, false, inCode)
-    }
-    else {
-        wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode)
-    }
-}
-
-private fun formatFunctionDescriptor(functionDescriptor: DeclarationDescriptor) = DescriptorRenderer.COMPACT.render(functionDescriptor)
-
-fun formatPsiMethod(
-        psiMethod: PsiMethod,
-        showContainingClass: Boolean,
-        inCode: Boolean
-): String {
-    var options = PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS or PsiFormatUtilBase.SHOW_TYPE
-    if (showContainingClass) {
-        //noinspection ConstantConditions
-        options = options or PsiFormatUtilBase.SHOW_CONTAINING_CLASS
-    }
-
-    var description = PsiFormatUtil.formatMethod(psiMethod, PsiSubstitutor.EMPTY, options, PsiFormatUtilBase.SHOW_TYPE)
-    description = wrapOrSkip(description, inCode)
-
-    return "[Java] $description"
-}
-
-fun formatJavaOrLightMethod(method: PsiMethod): String {
-    val originalDeclaration = method.unwrapped
-    return if (originalDeclaration is KtDeclaration) {
-        formatFunctionDescriptor(originalDeclaration.resolveToDescriptor())
-    }
-    else {
-        formatPsiMethod(method, false, false)
-    }
-}
-
-fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.resolveToDescriptor() as ClassDescriptor)
-
-fun checkParametersInMethodHierarchy(parameter: PsiParameter): Collection<PsiElement>? {
-    val method = parameter.declarationScope as PsiMethod
-
-    val parametersToDelete = collectParametersHierarchy(method, parameter)
-    if (parametersToDelete.size <= 1 || ApplicationManager.getApplication().isUnitTestMode) return parametersToDelete
-
-    val message = KotlinBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method))
-    val exitCode = Messages.showOkCancelDialog(parameter.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
-    return if (exitCode == Messages.OK) parametersToDelete else null
-}
-
-// TODO: generalize breadth-first search
-private fun collectParametersHierarchy(method: PsiMethod, parameter: PsiParameter): Set<PsiElement> {
-    val queue = ArrayDeque<PsiMethod>()
-    val visited = HashSet<PsiMethod>()
-    val parametersToDelete = HashSet<PsiElement>()
-
-    queue.add(method)
-    while (!queue.isEmpty()) {
-        val currentMethod = queue.poll()
-
-        visited += currentMethod
-        addParameter(currentMethod, parametersToDelete, parameter)
-
-        currentMethod.findSuperMethods(true)
-                .filter { it !in visited }
-                .forEach { queue.offer(it) }
-        OverridingMethodsSearch.search(currentMethod)
-                .filter { it !in visited }
-                .forEach { queue.offer(it) }
-    }
-    return parametersToDelete
-}
-
-private fun addParameter(method: PsiMethod, result: MutableSet<PsiElement>, parameter: PsiParameter) {
-    val parameterIndex = parameter.unwrapped!!.parameterIndex()
-
-    if (method is KtLightMethod) {
-        val declaration = method.kotlinOrigin
-        if (declaration is KtFunction) {
-            result.add(declaration.valueParameters[parameterIndex])
-        }
-    }
-    else {
-        result.add(method.parameterList.parameters[parameterIndex])
-    }
-}
 
 @Throws(IntroduceRefactoringException::class)
 fun selectElement(
