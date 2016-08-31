@@ -110,6 +110,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 #### Intention actions, inspections and quickfixes
 
 - [`KT-9490`](https://youtrack.jetbrains.com/issue/KT-9490) Convert receiver to parameter: use template instead of the dialog
+- [`KT-11483`](https://youtrack.jetbrains.com/issue/KT-11483) Move to Companion: Do not use qualified names as labels
 
 ##### New features
 

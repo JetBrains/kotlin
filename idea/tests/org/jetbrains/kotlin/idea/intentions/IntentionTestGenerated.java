@@ -9001,6 +9001,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveToCompanion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("doNotQualifyThisLabel.kt")
+        public void testDoNotQualifyThisLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/doNotQualifyThisLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dropFinal.kt")
         public void testDropFinal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/dropFinal.kt");
