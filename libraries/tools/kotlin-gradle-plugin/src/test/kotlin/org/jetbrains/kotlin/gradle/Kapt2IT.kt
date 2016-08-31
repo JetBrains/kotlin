@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.junit.Test
 import java.io.File
 import java.io.FileFilter
@@ -60,6 +61,31 @@ class Kapt2IT: BaseGradleIT() {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE")
             assertContains(":compileJava UP-TO-DATE")
+        }
+    }
+
+    @Test
+    fun testSimpleWithIC() {
+        val options = defaultBuildOptions().copy(incremental = true)
+        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+        }
+
+        val files = listOf("InternalDummy.kt", "test.kt")
+        kotlin.repeat(2) { i ->
+            project.projectDir.getFileByName(files[i]).appendText(" ")
+
+            project.build("build", options = options) {
+                assertSuccessful()
+                assertKaptSuccessful()
+                assertContains(":compileKotlin")
+                assertContains(":compileJava")
+            }
         }
     }
 

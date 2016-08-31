@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
+import java.io.IOException
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
@@ -42,8 +43,10 @@ class ClasspathBasedAnnotationProcessingExtension(
         generatedSourcesOutputDir: File,
         classesOutputDir: File,
         javaSourceRoots: List<File>,
-        verboseOutput: Boolean
-) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots, verboseOutput) {
+        verboseOutput: Boolean,
+        incrementalDataFile: File?
+) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, 
+                                          classesOutputDir, javaSourceRoots, verboseOutput, incrementalDataFile) {
     override fun loadAnnotationProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -54,8 +57,13 @@ abstract class AbstractAnnotationProcessingExtension(
         val generatedSourcesOutputDir: File,
         val classesOutputDir: File,
         val javaSourceRoots: List<File>,
-        val verboseOutput: Boolean
+        val verboseOutput: Boolean,
+        val incrementalDataFile: File? = null
 ) : AnalysisCompletedHandlerExtension {
+    private companion object {
+        val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+    }
+    
     private var annotationProcessingComplete = false
     private val messager = KotlinMessager()
 
@@ -64,6 +72,10 @@ abstract class AbstractAnnotationProcessingExtension(
     }
     
     private fun Int.count(noun: String) = if (this == 1) "$this $noun" else "$this ${noun}s"
+
+    private inline fun <T, R> T.runIf(condition: Boolean, block: T.() -> R) {
+        if (condition) block()
+    }
 
     override fun analysisCompleted(
             project: Project,
@@ -134,12 +146,13 @@ abstract class AbstractAnnotationProcessingExtension(
     }
 
     private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {
-        run initializeProcessors@ {
+        val allSupportedAnnotationFqNames = run initializeProcessors@ {
             processors.forEach { it.init(this) }
             log { "Initialized processors: " + processors.joinToString { it.javaClass.name } }
+            processors.flatMapTo(mutableSetOf()) { it.supportedAnnotationTypes }
         }
 
-        val firstRoundAnnotations = RoundAnnotations()
+        val firstRoundAnnotations = RoundAnnotations(allSupportedAnnotationFqNames)
         
         run analyzeFilesForFirstRound@ {
             log { "Analysing Kotlin files: " + files.map { it.virtualFile.path } }
@@ -159,13 +172,54 @@ abstract class AbstractAnnotationProcessingExtension(
             }
         }
         
+        runIf(incrementalDataFile != null) processIncrementalData@ {
+            val incrementalDataFile = incrementalDataFile!!
+            
+            
+            runIf(incrementalDataFile.exists()) analyzeFilesFromPreviousIncrementalData@ {
+                val incrementalData = try {
+                    incrementalDataFile.readText()
+                } catch (e: IOException) {
+                    log { "An exception occurred while processing incremental data file: $incrementalDataFile" }
+                    null 
+                }
+
+                if (incrementalData != null) {
+                    val analyzedClasses = mutableListOf<String>()
+                    
+                    for (line in incrementalData.lines()) {
+                        if (line.length < 3 || !line.startsWith("i ")) continue
+                        val fqName = line.drop(2) 
+                        val psiClass = javaPsiFacade.findClass(fqName, projectScope) ?: continue
+                        if (firstRoundAnnotations.analyzeDeclaration(psiClass)) {
+                            analyzedClasses += fqName
+                        }
+                    }
+                    
+                    log { "Analysing files from incremental data: $analyzedClasses" }
+                }
+            }
+            
+            run saveNewIncrementalData@ {
+                val analyzedClasses = firstRoundAnnotations.analyzedClasses
+                log { "Saving incremental data: ${analyzedClasses.size} class names" }
+                try {
+                    incrementalDataFile.parentFile.mkdirs()
+                    incrementalDataFile.writeText(analyzedClasses.map { "i $it" }.joinToString(LINE_SEPARATOR))
+                }
+                catch (e: IOException) {
+                    log { "Unable to write $incrementalDataFile" }
+                }
+            }
+        }
+        
         val finalRoundNumber = run annotationProcessing@ {
             val firstRoundEnvironment = KotlinRoundEnvironment(firstRoundAnnotations, false, 1)
             process(firstRoundEnvironment)
         } + 1
         
         log { "Starting round $finalRoundNumber (final)" }
-        val finalRoundEnvironment = KotlinRoundEnvironment(RoundAnnotations(), true, finalRoundNumber)
+        val finalRoundEnvironment = KotlinRoundEnvironment(RoundAnnotations(allSupportedAnnotationFqNames), true, finalRoundNumber)
         for (processor in processors) {
             processor.process(emptySet(), finalRoundEnvironment)
         }
@@ -200,7 +254,7 @@ abstract class AbstractAnnotationProcessingExtension(
         }
         
         // Start the next round
-        val nextRoundAnnotations = RoundAnnotations().apply { analyzeFiles(psiFiles) }
+        val nextRoundAnnotations = RoundAnnotations(roundEnvironment.supportedAnnotationFqNames).apply { analyzeFiles(psiFiles) }
         val nextRoundEnvironment = KotlinRoundEnvironment(nextRoundAnnotations, false, roundEnvironment.roundNumber + 1)
         return process(nextRoundEnvironment)
     }
