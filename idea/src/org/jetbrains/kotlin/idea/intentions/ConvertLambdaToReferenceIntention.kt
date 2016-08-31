@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -157,13 +159,13 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val body = element.bodyExpression ?: return
-        val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return) ?: return
+        val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return, shortTypes = false) ?: return
         val factory = KtPsiFactory(element)
         val lambdaArgument = element.parent as? KtLambdaArgument
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
             val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
-            element.replace(callableReferenceExpr)
+            (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
         }
         else {
             // Otherwise, replace the whole argument list for lambda argument-using call
@@ -196,10 +198,10 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             }
             val argumentList = outerCallExpression.valueArgumentList
             if (argumentList == null) {
-                lambdaArgument.replace(newArgumentList)
+                (lambdaArgument.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
             }
             else {
-                argumentList.replace(newArgumentList)
+                (argumentList.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
                 lambdaArgument.delete()
             }
         }
@@ -208,11 +210,11 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
     companion object {
         internal fun shouldSuggestToConvert(element: KtLambdaExpression): Boolean {
             val body = element.bodyExpression ?: return false
-            val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return false) ?: return false
+            val referenceName = buildReferenceText(body.statements.singleOrNull() ?: return false, shortTypes = true) ?: return false
             return referenceName.length < element.text.length
         }
 
-        private fun buildReferenceText(expression: KtExpression): String? {
+        private fun buildReferenceText(expression: KtExpression, shortTypes: Boolean): String? {
             return when (expression) {
                 is KtCallExpression -> "::${expression.getCallReferencedName()}"
                 is KtDotQualifiedExpression -> {
@@ -227,7 +229,12 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                     val receiverDescriptor = context[REFERENCE_TARGET, receiver] as? ParameterDescriptor ?: return null
                     val originalReceiverType = receiverDescriptor.type
                     val receiverType = originalReceiverType.approximateFlexibleTypes()
-                    "$receiverType::$selectorReferenceName"
+                    if (shortTypes) {
+                        "${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)}::$selectorReferenceName"
+                    }
+                    else {
+                        "${IdeDescriptorRenderers.SOURCE_CODE.renderType(receiverType)}::$selectorReferenceName"
+                    }
                 }
                 else -> null
             }
