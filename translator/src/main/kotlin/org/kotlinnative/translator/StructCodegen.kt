@@ -97,7 +97,6 @@ abstract class StructCodegen(val state: TranslationState,
         }
     }
 
-
     private fun generateEnumFields() {
         val enumEntries = classOrObject.declarations.filter { it is KtEnumEntry }
 

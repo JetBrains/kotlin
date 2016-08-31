@@ -53,6 +53,114 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         codeBuilder.addUnconditionalJump(nextIterationLabel ?: return)
     }
 
+    fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? =
+            when (expr) {
+                is KtBlockExpression -> {
+                    expressionWalker(expr.lBrace, breakLabel = null, scopeDepth = scopeDepth + 1)
+                    null
+                }
+                is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
+                is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
+                is KtPrefixExpression -> evaluatePrefixExpression(expr, scopeDepth)
+                is KtConstantExpression -> evaluateConstantExpression(expr)
+                is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
+                is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
+                is KtCallableReferenceExpression -> evaluateCallableReferenceExpression(expr)
+                is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
+                is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
+                is KtIfExpression -> evaluateIfOperator(expr, scopeDepth + 1)
+                is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
+                is KtReturnExpression -> evaluateReturnInstruction(expr.firstChild, scopeDepth)
+                is KtThisExpression -> evaluateThisExpression()
+                is KtSafeQualifiedExpression -> evaluateSafeAccessExpression(expr, scopeDepth)
+                is KtParenthesizedExpression -> evaluateExpression(expr.expression, scopeDepth)
+                null,
+                is PsiWhiteSpace -> null
+                is PsiElement -> evaluatePsiElement(expr, scopeDepth)
+                else -> throw UnsupportedOperationException()
+            }
+
+    fun evaluateConstructorDelegationReferenceExpression(expr: KtConstructorDelegationReferenceExpression, structCodegen: StructCodegen, constructorArguments: List<LLVMVariable>, scopeDepth: Int): LLVMSingleValue? {
+        val targetCall = state.bindingContext.get(BindingContext.CALL, expr)
+        val names = parseValueArguments(targetCall!!.valueArguments, scopeDepth)
+        val args = codeBuilder.loadArgsIfRequired(names, constructorArguments)
+        return evaluateConstructorCallExpression(LLVMVariable(structCodegen.structName + LLVMType.mangleFunctionArguments(names), structCodegen.type, scope = LLVMVariableScope()), args)
+    }
+
+    fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement? = null): LLVMSingleValue? {
+        val type = receiver.type as LLVMReferenceType
+        val clazz = resolveClassOrObjectLocation(type) ?: throw UnexpectedException(type.toString() + receiver.toString())
+        val field = clazz.fieldsIndex[selectorName]
+
+        if (field != null) {
+            return evaluateClassField(receiver, field)
+        } else {
+            return evaluateMemberMethod(receiver, clazz, scopeDepth, call as? KtCallExpression ?: throw UnexpectedException("$receiver:$selectorName"))
+        }
+    }
+
+    fun addPrimitiveBinaryOperation(operator: IElementType, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue, referenceName: KtSimpleNameExpression? = null): LLVMVariable {
+        val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
+        val secondNativeOp = codeBuilder.receiveNativeValue(secondOp)
+
+        val llvmExpression = when (operator) {
+            KtTokens.PLUS -> firstOp.type.operatorPlus(firstNativeOp, secondNativeOp)
+            KtTokens.MINUS -> firstOp.type.operatorMinus(firstNativeOp, secondNativeOp)
+            KtTokens.MUL -> firstOp.type.operatorTimes(firstNativeOp, secondNativeOp)
+            KtTokens.DIV -> firstOp.type.operatorDiv(firstNativeOp, secondNativeOp)
+            KtTokens.LT -> firstOp.type.operatorLt(firstNativeOp, secondNativeOp)
+            KtTokens.GT -> firstOp.type.operatorGt(firstNativeOp, secondNativeOp)
+            KtTokens.LTEQ -> firstOp.type.operatorLeq(firstNativeOp, secondNativeOp)
+            KtTokens.GTEQ -> firstOp.type.operatorGeq(firstNativeOp, secondNativeOp)
+            KtTokens.EQEQ ->
+                if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
+                    val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
+                    val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
+                    firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
+                } else
+                    firstOp.type.operatorEq(firstNativeOp, secondNativeOp)
+            KtTokens.EQEQEQ -> {
+                val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
+                val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
+                firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
+            }
+            KtTokens.EXCLEQ -> {
+                if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
+                    val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
+                    val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
+                    firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
+                } else
+                    firstOp.type.operatorNeq(firstNativeOp, secondNativeOp)
+            }
+            KtTokens.EXCLEQEQEQ -> {
+                val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
+                val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
+                firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
+            }
+            KtTokens.EQ -> {
+                if (secondOp.type is LLVMNullType) {
+                    codeBuilder.storeNull(firstOp as LLVMVariable)
+                    return firstOp
+                }
+
+                val result = firstOp as LLVMVariable
+                val sourceArgument: LLVMSingleValue
+                if ((firstOp.pointer == 2) && secondOp.type.isPrimitive && (secondOp.pointer == 0)) {
+                    sourceArgument = codeBuilder.getNewVariable(secondOp.type, 1)
+                    codeBuilder.allocStaticVar(sourceArgument, asValue = true)
+                    codeBuilder.storeVariable(sourceArgument, secondOp)
+                } else {
+                    sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
+                }
+
+                codeBuilder.storeVariable(result, sourceArgument)
+                return result
+            }
+            else -> addPrimitiveReferenceOperationByName(referenceName!!.getReferencedName(), firstOp, secondNativeOp)
+        }
+        return codeBuilder.storeExpression(llvmExpression)
+    }
+
     private fun expressionWalker(expr: PsiElement?, breakLabel: LLVMLabel?, scopeDepth: Int) {
         when (expr) {
             is KtBlockExpression -> expressionWalker(expr.lBrace, breakLabel, scopeDepth + 1)
@@ -80,42 +188,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
 
     private fun evaluateDoWhileExpression(expr: KtDoWhileExpression, scopeDepth: Int) =
             executeWhileBlock(expr.condition!!, expr.body!!, scopeDepth, checkConditionBeforeExecute = false)
-
-
-    fun evaluateExpression(expr: PsiElement?, scopeDepth: Int): LLVMSingleValue? {
-        return when (expr) {
-            is KtBlockExpression -> {
-                expressionWalker(expr.lBrace, breakLabel = null, scopeDepth = scopeDepth + 1)
-                return null
-            }
-            is KtBinaryExpression -> evaluateBinaryExpression(expr, scopeDepth)
-            is KtPostfixExpression -> evaluatePostfixExpression(expr, scopeDepth)
-            is KtPrefixExpression -> evaluatePrefixExpression(expr, scopeDepth)
-            is KtConstantExpression -> evaluateConstantExpression(expr)
-            is KtCallExpression -> evaluateCallExpression(expr, scopeDepth)
-            is KtWhenExpression -> evaluateWhenExpression(expr, scopeDepth)
-            is KtCallableReferenceExpression -> evaluateCallableReferenceExpression(expr)
-            is KtDotQualifiedExpression -> evaluateDotExpression(expr, scopeDepth)
-            is KtReferenceExpression -> evaluateReferenceExpression(expr, scopeDepth)
-            is KtIfExpression -> evaluateIfOperator(expr, scopeDepth + 1)
-            is KtStringTemplateExpression -> evaluateStringTemplateExpression(expr)
-            is KtReturnExpression -> evaluateReturnInstruction(expr.firstChild, scopeDepth)
-            is KtThisExpression -> evaluateThisExpression()
-            is KtSafeQualifiedExpression -> evaluateSafeAccessExpression(expr, scopeDepth)
-            is KtParenthesizedExpression -> evaluateExpression(expr.expression, scopeDepth)
-            null,
-            is PsiWhiteSpace -> null
-            is PsiElement -> evaluatePsiElement(expr, scopeDepth)
-            else -> throw UnsupportedOperationException()
-        }
-    }
-
-    fun evaluateConstructorDelegationReferenceExpression(expr: KtConstructorDelegationReferenceExpression, structCodegen: StructCodegen, constructorArguments: List<LLVMVariable>, scopeDepth: Int): LLVMSingleValue? {
-        val targetCall = state.bindingContext.get(BindingContext.CALL, expr)
-        val names = parseValueArguments(targetCall!!.valueArguments, scopeDepth)
-        val args = codeBuilder.loadArgsIfRequired(names, constructorArguments)
-        return evaluateConstructorCallExpression(LLVMVariable(structCodegen.structName + LLVMType.mangleFunctionArguments(names), structCodegen.type, scope = LLVMVariableScope()), args)
-    }
 
     private fun evaluateThisExpression(): LLVMSingleValue? =
             variableManager["this"]
@@ -263,25 +335,13 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                 else -> throw UnsupportedOperationException()
             }
 
-    fun evaluateMemberMethodOrField(receiver: LLVMVariable, selectorName: String, scopeDepth: Int, call: PsiElement? = null): LLVMSingleValue? {
-        val type = receiver.type as LLVMReferenceType
-        val clazz = resolveClassOrObjectLocation(type) ?: throw UnexpectedException(type.toString() + receiver.toString())
-        val field = clazz.fieldsIndex[selectorName]
-
-        if (field != null) {
-            return evaluateClassField(receiver, field)
-        } else {
-            return evaluateMemberMethod(receiver, clazz, scopeDepth, call as? KtCallExpression ?: throw UnexpectedException("$receiver:$selectorName"))
-        }
-    }
-
-    fun evaluateClassField(receiver: LLVMVariable, field: LLVMClassVariable): LLVMVariable {
+    private fun evaluateClassField(receiver: LLVMVariable, field: LLVMClassVariable): LLVMVariable {
         val result = codeBuilder.getNewVariable(field.type, pointer = field.pointer + 1)
         codeBuilder.loadClassField(result, receiver, field.offset)
         return result
     }
 
-    fun evaluateMemberMethod(receiver: LLVMVariable, clazz: StructCodegen, scopeDepth: Int, call: KtCallExpression): LLVMSingleValue? {
+    private fun evaluateMemberMethod(receiver: LLVMVariable, clazz: StructCodegen, scopeDepth: Int, call: KtCallExpression): LLVMSingleValue? {
         val resolvedCall = call.getCall(state.bindingContext)!!.getResolvedCallWithAssert(state.bindingContext)
         val functionDescriptor = resolvedCall.candidateDescriptor
         val functionArguments = functionDescriptor.valueParameters.map { it -> it.type }.map { LLVMMapStandardType(it, state) }
@@ -329,7 +389,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return if (codegen?.structName == type.type) codegen else codegen?.nestedClasses?.get(type.type)
     }
 
-    fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
+    private fun evaluateArrayAccessExpression(expr: KtArrayAccessExpression, scope: Int): LLVMSingleValue? {
         val arrayNameVariable = evaluateExpression(expr.arrayExpression, scope) as LLVMVariable
         return when (arrayNameVariable.type) {
             is LLVMReferenceType -> {
@@ -536,10 +596,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             parseValueArguments(expr.getValueArgumentsInParentheses(), scopeDepth)
 
     private fun parseValueArguments(args: List<ValueArgument>, scopeDepth: Int): List<LLVMSingleValue> =
-            args.map { parseOneValueArgument(it, scopeDepth) }
-
-    fun parseOneValueArgument(arg: ValueArgument, scopeDepth: Int): LLVMSingleValue =
-            evaluateExpression(arg.getArgumentExpression(), scopeDepth) as LLVMSingleValue
+            args.map { evaluateExpression(it.getArgumentExpression(), scopeDepth) as LLVMSingleValue }
 
     private fun parseArgumentsWithDefaultValues(args: MutableCollection<ResolvedValueArgument>, defaultValues: List<KtExpression?>, scopeDepth: Int): List<LLVMSingleValue> =
             args.mapIndexed(fun(i: Int, value: ResolvedValueArgument): LLVMSingleValue {
@@ -549,7 +606,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
                     else -> throw UnexpectedException("Wrong parser argument")
                 }
             }).toList()
-
 
     private fun evaluateBinaryExpression(expr: KtBinaryExpression, scopeDepth: Int): LLVMVariable? {
         val operator = expr.operationToken
@@ -667,7 +723,7 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
         return left
     }
 
-    fun addPrimitiveReferenceOperationByName(operator: String, firstOp: LLVMSingleValue, secondNativeOp: LLVMSingleValue): LLVMExpression {
+    private fun addPrimitiveReferenceOperationByName(operator: String, firstOp: LLVMSingleValue, secondNativeOp: LLVMSingleValue): LLVMExpression {
         val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
 
         return when (operator) {
@@ -709,68 +765,6 @@ abstract class BlockCodegen(val state: TranslationState, val variableManager: Va
             }
             else -> throw UnsupportedOperationException("Unknown binary operator: $operator(${firstNativeOp.type}, ${secondNativeOp.type})")
         }
-    }
-
-    fun addPrimitiveBinaryOperation(operator: IElementType, firstOp: LLVMSingleValue, secondOp: LLVMSingleValue, referenceName: KtSimpleNameExpression? = null): LLVMVariable {
-        val firstNativeOp = codeBuilder.receiveNativeValue(firstOp)
-        val secondNativeOp = codeBuilder.receiveNativeValue(secondOp)
-
-        val llvmExpression = when (operator) {
-            KtTokens.PLUS -> firstOp.type.operatorPlus(firstNativeOp, secondNativeOp)
-            KtTokens.MINUS -> firstOp.type.operatorMinus(firstNativeOp, secondNativeOp)
-            KtTokens.MUL -> firstOp.type.operatorTimes(firstNativeOp, secondNativeOp)
-            KtTokens.DIV -> firstOp.type.operatorDiv(firstNativeOp, secondNativeOp)
-            KtTokens.LT -> firstOp.type.operatorLt(firstNativeOp, secondNativeOp)
-            KtTokens.GT -> firstOp.type.operatorGt(firstNativeOp, secondNativeOp)
-            KtTokens.LTEQ -> firstOp.type.operatorLeq(firstNativeOp, secondNativeOp)
-            KtTokens.GTEQ -> firstOp.type.operatorGeq(firstNativeOp, secondNativeOp)
-            KtTokens.EQEQ ->
-                if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
-                    val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
-                    val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                    firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
-                } else
-                    firstOp.type.operatorEq(firstNativeOp, secondNativeOp)
-            KtTokens.EQEQEQ -> {
-                val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
-                val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                firstOp.type.operatorEq(firstPointedArgument, secondPointedArgument)
-            }
-            KtTokens.EXCLEQ -> {
-                if (LLVMType.isReferredType(firstOp.type) && LLVMType.isReferredType(secondOp.type)) {
-                    val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
-                    val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                    firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
-                } else
-                    firstOp.type.operatorNeq(firstNativeOp, secondNativeOp)
-            }
-            KtTokens.EXCLEQEQEQ -> {
-                val firstPointedArgument = codeBuilder.receivePointedArgument(firstOp, 1)
-                val secondPointedArgument = codeBuilder.receivePointedArgument(secondOp, 1)
-                firstOp.type.operatorNeq(firstPointedArgument, secondPointedArgument)
-            }
-            KtTokens.EQ -> {
-                if (secondOp.type is LLVMNullType) {
-                    codeBuilder.storeNull(firstOp as LLVMVariable)
-                    return firstOp
-                }
-
-                val result = firstOp as LLVMVariable
-                val sourceArgument: LLVMSingleValue
-                if ((firstOp.pointer == 2) && secondOp.type.isPrimitive && (secondOp.pointer == 0)) {
-                    sourceArgument = codeBuilder.getNewVariable(secondOp.type, 1)
-                    codeBuilder.allocStaticVar(sourceArgument, asValue = true)
-                    codeBuilder.storeVariable(sourceArgument, secondOp)
-                } else {
-                    sourceArgument = if (result.pointer == secondOp.pointer + 1) secondOp else secondNativeOp
-                }
-
-                codeBuilder.storeVariable(result, sourceArgument)
-                return result
-            }
-            else -> addPrimitiveReferenceOperationByName(referenceName!!.getReferencedName(), firstOp, secondNativeOp)
-        }
-        return codeBuilder.storeExpression(llvmExpression)
     }
 
     private fun evaluateConstantExpression(expr: KtConstantExpression): LLVMConstant {
