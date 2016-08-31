@@ -41,7 +41,7 @@ class CompositeScopeTowerProcessor<out C>(
 }
 
 internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
-        val context: CandidateFactory<D, C>
+        val candidateFactory: CandidateFactory<D, C>
 ) : ScopeTowerProcessor<C> {
 
     protected abstract fun simpleProcess(data: TowerData): Collection<C>
@@ -66,12 +66,12 @@ internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Ca
     private fun resolveAsMember(): Collection<C> {
         val members = ReceiverScopeTowerLevel(scopeTower, explicitReceiver)
                 .collectCandidates(null).filter { !it.requiresExtensionReceiver }
-        return members.map { context.createCandidate(it, ExplicitReceiverKind.DISPATCH_RECEIVER, extensionReceiver = null) }
+        return members.map { candidateFactory.createCandidate(it, ExplicitReceiverKind.DISPATCH_RECEIVER, extensionReceiver = null) }
     }
 
     private fun resolveAsExtension(level: ScopeTowerLevel): Collection<C> {
         val extensions = level.collectCandidates(explicitReceiver).filter { it.requiresExtensionReceiver }
-        return extensions.map { context.createCandidate(it, ExplicitReceiverKind.EXTENSION_RECEIVER, extensionReceiver = explicitReceiver) }
+        return extensions.map { candidateFactory.createCandidate(it, ExplicitReceiverKind.EXTENSION_RECEIVER, extensionReceiver = explicitReceiver) }
     }
 }
 
@@ -86,7 +86,7 @@ private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<
 
         val staticMembers = QualifierScopeTowerLevel(scopeTower, qualifier).collectCandidates(null)
                 .filter { !it.requiresExtensionReceiver }
-                .map { context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null) }
+                .map { candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null) }
         return staticMembers
     }
 }
@@ -99,7 +99,7 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
             = when(data) {
                 is TowerData.TowerLevel -> {
                     data.level.collectCandidates(null).filter { !it.requiresExtensionReceiver }.map {
-                        context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null)
+                        candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null)
                     }
                 }
                 is TowerData.BothTowerLevelAndImplicitReceiver -> {
@@ -107,13 +107,13 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
 
                     data.level.collectCandidates(data.implicitReceiver).filter { it.requiresExtensionReceiver }.forEach {
                         result.add(
-                            context.createCandidate(
+                            candidateFactory.createCandidate(
                                     it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
 
                         if (data.implicitReceiver.receiverValue is CoroutineReceiverValue) {
                             val newDescriptor = it.descriptor.createCoroutineSuspensionFunctionView() ?: return@forEach
                             result.add(
-                                context.createCandidate(
+                                candidateFactory.createCandidate(
                                         it.copy(newDescriptor = newDescriptor),
                                         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
                         }

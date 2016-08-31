@@ -131,11 +131,11 @@ private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescripto
 
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (explicitReceiver != null && data == TowerData.Empty) {
-            return listOf(context.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.BOTH_RECEIVERS, explicitReceiver))
+            return listOf(candidateFactory.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.BOTH_RECEIVERS, explicitReceiver))
         }
 
         if (explicitReceiver == null && data is TowerData.OnlyImplicitReceiver) {
-            return listOf(context.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.DISPATCH_RECEIVER, data.implicitReceiver))
+            return listOf(candidateFactory.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.DISPATCH_RECEIVER, data.implicitReceiver))
         }
 
         return emptyList()
