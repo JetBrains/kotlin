@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -40,8 +41,15 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
             findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
 
     @IfNotParsed
-    fun getTypeReference(): KtTypeReference? =
-            findChildByType(KtNodeTypes.TYPE_REFERENCE)
+    fun getTypeReference(): KtTypeReference? {
+        if (stub != null) {
+            val typeReferences = getStubOrPsiChildrenAsList<KtTypeReference, KotlinPlaceHolderStub<KtTypeReference>>(KtStubElementTypes.TYPE_REFERENCE)
+            return typeReferences[0]
+        }
+        else {
+            return findChildByType(KtNodeTypes.TYPE_REFERENCE)
+        }
+    }
 
     override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 }
