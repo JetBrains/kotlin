@@ -20,7 +20,7 @@
 
 package kotlin.collections
 
-abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
+public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
 
     /**
      * A mutable [Map.Entry] shared by several [Map] implementations.
@@ -102,7 +102,7 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
 
 
     override val keys: MutableSet<K> get() {
-        return object : AbstractSet<K>() {
+        return object : AbstractMutableSet<K>() {
             override fun clear() {
                 this@AbstractMap.clear()
             }
@@ -149,7 +149,7 @@ abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
     private fun toString(o: Any?): String = if (o === this) "(this Map)" else o.toString()
 
     override val values: MutableCollection<V> get() {
-        return object : AbstractCollection<V>() {
+        return object : AbstractMutableCollection<V>() {
             override fun clear() = this@AbstractMap.clear()
 
             override operator fun contains(element: V): Boolean = containsValue(element)

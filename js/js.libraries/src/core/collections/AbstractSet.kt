@@ -15,21 +15,14 @@
  */
 package kotlin.collections
 
-abstract class AbstractSet<E> protected constructor() : AbstractCollection<E>(), MutableSet<E> {
+public abstract class AbstractMutableSet<E> protected constructor() : AbstractMutableCollection<E>(), MutableSet<E> {
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Set<*>) return false
-        if (other.size != size) return false
-        return containsAll(other)
+        return AbstractSet.setEquals(this, other)
     }
 
-    override fun hashCode(): Int {
-        var hashCode = 0
-        for (element in this) {
-            hashCode = (hashCode + (element?.hashCode() ?: 0)) or 0
-        }
-        return hashCode
-    }
+    override fun hashCode(): Int = AbstractSet.unorderedHashCode(this)
 
 }

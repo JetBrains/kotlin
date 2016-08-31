@@ -25,7 +25,7 @@ import kotlin.collections.MutableMap.MutableEntry
 
 open class HashMap<K, V> : AbstractMap<K, V> {
 
-    private inner class EntrySet : AbstractSet<MutableEntry<K, V>>() {
+    private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
 
         override fun clear() {
             this@HashMap.clear()

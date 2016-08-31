@@ -20,7 +20,7 @@
 
 package kotlin.collections
 
-public abstract class AbstractList<out E> : AbstractCollection<E>(), List<E> {
+public abstract class AbstractList<out E> protected constructor() : AbstractCollection<E>(), List<E> {
     abstract override val size: Int
     abstract override fun get(index: Int): E
 
@@ -62,7 +62,7 @@ public abstract class AbstractList<out E> : AbstractCollection<E>(), List<E> {
 
     override fun hashCode(): Int = orderedHashCode(this)
 
-    internal open inner class IteratorImpl : Iterator<E> {
+    private open inner class IteratorImpl : Iterator<E> {
         /** the index of the item that will be returned on the next call to [next]`()` */
         protected var index = 0
         /** the index of the item that was returned on the previous call to [next]`()`
@@ -83,7 +83,7 @@ public abstract class AbstractList<out E> : AbstractCollection<E>(), List<E> {
     /**
      * Implementation of `MutableListIterator` for abstract lists.
      */
-    internal open inner class ListIteratorImpl(index: Int) : IteratorImpl(), ListIterator<E> {
+    private open inner class ListIteratorImpl(index: Int) : IteratorImpl(), ListIterator<E> {
 
         init {
             checkPositionIndex(index, this@AbstractList.size)
@@ -104,7 +104,7 @@ public abstract class AbstractList<out E> : AbstractCollection<E>(), List<E> {
         override fun previousIndex(): Int = index - 1
     }
 
-    companion object {
+    internal companion object {
         internal fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {
                 throw IndexOutOfBoundsException("index: $index, size: $size")

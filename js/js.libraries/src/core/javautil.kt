@@ -34,8 +34,8 @@ public class Date() {
 
 // TODO: Deprecate with replacement
 public typealias RandomAccess = kotlin.collections.RandomAccess
-public typealias AbstractCollection<E> = kotlin.collections.AbstractCollection<E>
-public typealias AbstractList<E> = kotlin.collections.AbstractList<E>
+public typealias AbstractCollection<E> = kotlin.collections.AbstractMutableCollection<E>
+public typealias AbstractList<E> = kotlin.collections.AbstractMutableList<E>
 public typealias ArrayList<E> = kotlin.collections.ArrayList<E>
 public typealias HashSet<E> = kotlin.collections.HashSet<E>
 public typealias LinkedHashSet<E> = kotlin.collections.LinkedHashSet<E>

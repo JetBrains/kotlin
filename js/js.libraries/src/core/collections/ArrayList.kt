@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractList<E>(), RandomAccess {
+public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), RandomAccess {
 
     public constructor(capacity: Int = 0) : this(emptyArray()) {}
     public constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
@@ -103,10 +103,10 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
 
 
     private fun rangeCheck(index: Int) = index.apply {
-        checkElementIndex(index, size)
+        AbstractList.checkElementIndex(index, size)
     }
 
     private fun insertionRangeCheck(index: Int) = index.apply {
-        checkPositionIndex(index, size)
+        AbstractList.checkPositionIndex(index, size)
     }
 }

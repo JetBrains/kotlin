@@ -21,7 +21,7 @@
 package kotlin.collections
 
 
-open class HashSet<E> : AbstractSet<E> {
+public open class HashSet<E> : AbstractMutableSet<E> {
 
     private val map: HashMap<E, Any>
 

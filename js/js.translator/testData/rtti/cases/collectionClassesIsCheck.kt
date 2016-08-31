@@ -1,15 +1,13 @@
 // KT-2468 ArrayList<String> is List<String> or HashSet<String> is Set<String> fails in generated JS code
 package foo
 
-import java.util.*
-
 class A
 
 fun checkAbstractList(obj: Any) {
-    assertTrue(obj is AbstractList<*>, "checkAbstractList: is AbstractList")
+    assertTrue(obj is AbstractMutableList<*>, "checkAbstractList: is AbstractMutableList")
     assertTrue(obj is MutableList<*>, "checkAbstractList: is MutableList")
     assertTrue(obj is List<*>, "checkAbstractList: is List")
-    assertTrue(obj is AbstractCollection<*>, "checkAbstractList: is AbstractCollection")
+    assertTrue(obj is AbstractMutableCollection<*>, "checkAbstractList: is AbstractMutableCollection")
     assertTrue(obj is MutableCollection<*>, "checkAbstractList: is MutableCollection")
     assertTrue(obj is Collection<*>, "checkAbstractList: is Collection")
     assertTrue(obj is MutableIterable<*>, "checkAbstractList: is MutableIterable")
@@ -25,7 +23,8 @@ fun checkArrayList(obj: Any) {
 
 fun checkHashSet(obj: Any) {
     assertTrue(obj is HashSet<*>, "checkHashSet: is HashSet")
-    assertTrue(obj is AbstractCollection<*>, "checkHashSet: is AbstractCollection")
+    assertTrue(obj is AbstractMutableSet<*>, "checkHashSet: is AbstractMutableSet")
+    assertTrue(obj is AbstractMutableCollection<*>, "checkHashSet: is AbstractMutableCollection")
     assertTrue(obj is MutableCollection<*>, "checkHashSet: is MutableCollection")
     assertTrue(obj is Collection<*>, "checkHashSet: is Collection")
     assertTrue(obj is MutableIterable<*>, "checkHashSet: is MutableIterable")

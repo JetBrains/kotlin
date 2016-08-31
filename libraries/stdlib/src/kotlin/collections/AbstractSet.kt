@@ -20,16 +20,24 @@ public abstract class AbstractSet<out E> protected constructor() : AbstractColle
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Set<*>) return false
-        if (other.size != size) return false
-        return containsAll(other)
+        return setEquals(this, other)
     }
 
-    override fun hashCode(): Int {
-        var hashCode = 0
-        for (element in this) {
-            hashCode = (hashCode + (element?.hashCode() ?: 0)) or 0
+    override fun hashCode(): Int = unorderedHashCode(this)
+
+    internal companion object {
+        internal fun unorderedHashCode(c: Collection<*>): Int {
+            var hashCode = 0
+            for (element in c) {
+                hashCode = (hashCode + (element?.hashCode() ?: 0)) or 0
+            }
+            return hashCode
         }
-        return hashCode
+
+        internal fun setEquals(c: Set<*>, other: Set<*>): Boolean {
+            if (c.size != other.size) return false
+            return c.containsAll(other)
+        }
     }
 
 }

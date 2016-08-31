@@ -20,7 +20,7 @@
 
 package kotlin.collections
 
-open class LinkedHashSet<E> : HashSet<E> {
+public open class LinkedHashSet<E> : HashSet<E> {
 
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 

@@ -67,7 +67,7 @@ public final class kotlin/_Assertions {
 }
 
 public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
-	public fun <init> ()V
+	protected fun <init> ()V
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (Ljava/util/Collection;)Z
 	public fun clear ()V
@@ -99,7 +99,7 @@ public abstract class kotlin/collections/AbstractIterator : java/util/Iterator, 
 
 public abstract class kotlin/collections/AbstractList : kotlin/collections/AbstractCollection, java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/collections/AbstractList$Companion;
-	public fun <init> ()V
+	protected fun <init> ()V
 	public fun add (ILjava/lang/Object;)V
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
@@ -125,10 +125,8 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
-public final class kotlin/collections/AbstractList$Companion {
-}
-
 public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/collections/AbstractSet$Companion;
 	protected fun <init> ()V
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (Ljava/util/Collection;)Z

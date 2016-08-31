@@ -40,7 +40,7 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         internal var prev: ChainEntry<K, V>? = null
     }
 
-    private inner class EntrySet : AbstractSet<MutableEntry<K, V>>() {
+    private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
 
         private inner class EntryIterator : MutableIterator<MutableEntry<K, V>> {
             // The last entry that was returned from this iterator.
