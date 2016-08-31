@@ -73,8 +73,14 @@ open class KotlinScriptDefinitionFromTemplate(final override val template: KClas
             // TODO: logScriptDefMessage missing or invalid constructor
             defAnn != null -> ScriptTemplateDefinitionData(defAnn.resolver,
                                                            {
-                                                               defAnn.resolver.primaryConstructor?.call() ?: null.apply {
-                                                                   log.error("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
+                                                               try {
+                                                                   defAnn.resolver.primaryConstructor?.call() ?: null.apply {
+                                                                       log.error("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
+                                                                   }
+                                                               }
+                                                               catch (ex: ClassCastException) {
+                                                                   log.error("[kts] Script def error ${ex.message}")
+                                                                   null
                                                                }
                                                            },
                                                            filePattern)
