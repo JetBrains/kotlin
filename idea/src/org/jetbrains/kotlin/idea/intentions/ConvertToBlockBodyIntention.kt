@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import java.lang.RuntimeException
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
         KtDeclarationWithBody::class.java, "Convert to block body"
@@ -47,7 +48,7 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
         }
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration && super.allowCaretInsideElement(element)
 
     override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
         convert(element)

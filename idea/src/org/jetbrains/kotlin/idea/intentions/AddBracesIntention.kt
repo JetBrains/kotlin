@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import java.lang.IllegalArgumentException
 
 class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Add braces") {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
@@ -30,10 +30,6 @@ class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::cl
         val description = (expression.parent as KtContainerNode).description()!!
         text = "Add braces to '$description' statement"
         return true
-    }
-
-    override fun allowCaretInsideElement(element: PsiElement): Boolean {
-        return element !is KtBlockExpression // do not work inside another block to avoid confusion
     }
 
     override fun applyTo(element: KtExpression, editor: Editor?) {
