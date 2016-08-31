@@ -61,3 +61,34 @@ while (true) { try { while (true) { continue@outer } } finally { return "OK" } }
 outer@while (true) { try { while (true) { continue@outer } } finally { return "OK" } }       !<v9>: *        COPY
 { outer@while (true) { try { while (true) { continue@outer } } finally { return "OK" } } }   !<v9>: *        COPY
 =====================
+== baz ==
+fun baz(): String {
+    outer@while (true) {
+        try {
+            inner@while (true) {
+                continue@inner
+            }
+        } finally {
+            return "OK"
+        }
+    }
+}
+---------------------
+                                                                                                   <v1>: *         NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+                                                                                                   <v3>: *         NEW: magic[VALUE_CONSUMER](true|<v2>) -> <v3>
+true                                                                                               <v0>: Boolean   NEW: r(true) -> <v0>
+true                                                                                               <v2>: Boolean   NEW: r(true) -> <v2>
+continue@inner                                                                                     !<v4>: *
+{ continue@inner }                                                                                 !<v4>: *        COPY
+while (true) { continue@inner }                                                                    !<v5>: *
+inner@while (true) { continue@inner }                                                              !<v5>: *        COPY
+{ inner@while (true) { continue@inner } }                                                          !<v5>: *        COPY
+"OK"                                                                                               <v6>: String    NEW: r("OK") -> <v6>
+return "OK"                                                                                        !<v7>: *
+{ return "OK" }                                                                                    !<v7>: *        COPY
+try { inner@while (true) { continue@inner } } finally { return "OK" }                              <v8>: *         NEW: merge(try { inner@while (true) { continue@inner } } finally { return "OK" }|!<v5>) -> <v8>
+{ try { inner@while (true) { continue@inner } } finally { return "OK" } }                          <v8>: *         COPY
+while (true) { try { inner@while (true) { continue@inner } } finally { return "OK" } }             !<v9>: *
+outer@while (true) { try { inner@while (true) { continue@inner } } finally { return "OK" } }       !<v9>: *        COPY
+{ outer@while (true) { try { inner@while (true) { continue@inner } } finally { return "OK" } } }   !<v9>: *        COPY
+=====================
