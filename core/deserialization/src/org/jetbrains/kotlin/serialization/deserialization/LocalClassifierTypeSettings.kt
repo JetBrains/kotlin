@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.SimpleType
 
-interface LocalClassifierResolver {
-    fun resolveLocalClass(classId: ClassId): ClassDescriptor?
-    fun resolveLocalTypeAlias(typeAliasId: ClassId): ClassifierDescriptor?
+interface LocalClassifierTypeSettings {
+    val replacementTypeForLocalClassifiers: SimpleType?
+
+    object Default : LocalClassifierTypeSettings {
+        override val replacementTypeForLocalClassifiers: SimpleType?
+            get() = null
+    }
 }

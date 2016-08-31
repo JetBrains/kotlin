@@ -31,7 +31,7 @@ class DeserializationComponents(
         val classDataFinder: ClassDataFinder,
         val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
         val packageFragmentProvider: PackageFragmentProvider,
-        val localClassifierResolver: LocalClassifierResolver,
+        val localClassifierTypeSettings: LocalClassifierTypeSettings,
         val errorReporter: ErrorReporter,
         val lookupTracker: LookupTracker,
         val flexibleTypeDeserializer: FlexibleTypeDeserializer,
