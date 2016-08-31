@@ -125,6 +125,30 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/collections/AbstractMap$Companion;
+	protected fun <init> ()V
+	public fun clear ()V
+	public fun containsKey (Ljava/lang/Object;)Z
+	public fun containsValue (Ljava/lang/Object;)Z
+	public final fun entrySet ()Ljava/util/Set;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun get (Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getEntries ()Ljava/util/Set;
+	public fun getKeys ()Ljava/util/Set;
+	public fun getSize ()I
+	public fun getValues ()Ljava/util/Collection;
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public final fun keySet ()Ljava/util/Set;
+	public fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun putAll (Ljava/util/Map;)V
+	public fun remove (Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun size ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun values ()Ljava/util/Collection;
+}
+
 public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/collections/AbstractSet$Companion;
 	protected fun <init> ()V

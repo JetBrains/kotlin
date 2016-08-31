@@ -23,7 +23,7 @@ package kotlin.collections
 import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
 
-open class HashMap<K, V> : AbstractMap<K, V> {
+public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 
     private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
 

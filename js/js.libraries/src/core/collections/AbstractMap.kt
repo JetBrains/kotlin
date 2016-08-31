@@ -20,7 +20,7 @@
 
 package kotlin.collections
 
-public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, V> {
+public abstract class AbstractMutableMap<K, V> protected constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
     /**
      * A mutable [Map.Entry] shared by several [Map] implementations.
@@ -44,67 +44,14 @@ public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, 
 
     }
 
-    /**
-     * An immutable [Map.Entry] shared by several [Map] implementations.
-     */
-    class SimpleImmutableEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-        constructor(entry: Map.Entry<K, V>) : this(entry.key, entry.value)
-
-        override fun hashCode(): Int = entryHashCode(this)
-        override fun toString(): String = entryToString(this)
-        override fun equals(other: Any?): Boolean = entryEquals(this, other)
-    }
-
-
     override fun clear() {
         entries.clear()
     }
 
-    override fun containsKey(key: K): Boolean {
-        return implFindEntry(key, false) != null
-    }
-
-    override fun containsValue(value: V): Boolean = entries.any { it.value == value }
-
-    internal fun containsEntry(entry: Map.Entry<*, *>?): Boolean {
-        // since entry comes from @UnsafeVariance parameters it can be virtually anything
-        if (entry !is Map.Entry<*, *>) return false
-        val key = entry.key
-        val value = entry.value
-        val ourValue = get(key)
-
-        if (value != ourValue) {
-            return false
-        }
-
-        // Perhaps it was null and we don't contain the key?
-        if (ourValue == null && !containsKey(key)) {
-            return false
-        }
-
-        return true
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is Map<*, *>) return false
-        if (size != other.size) return false
-
-        return other.entries.all { containsEntry(it) }
-    }
-
-    override operator fun get(key: K): V? = implFindEntry(key, false)?.value
-
-    override fun hashCode(): Int = entries.hashCode()
-
-    override fun isEmpty(): Boolean = size == 0
-    override val size: Int get() = entries.size
-
-
     override val keys: MutableSet<K> get() {
         return object : AbstractMutableSet<K>() {
             override fun clear() {
-                this@AbstractMap.clear()
+                this@AbstractMutableMap.clear()
             }
 
             override operator fun contains(element: K): Boolean = containsKey(element)
@@ -120,13 +67,13 @@ public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, 
 
             override fun remove(element: K): Boolean {
                 if (containsKey(element)) {
-                    this@AbstractMap.remove(element)
+                    this@AbstractMutableMap.remove(element)
                     return true
                 }
                 return false
             }
 
-            override val size: Int get() = this@AbstractMap.size
+            override val size: Int get() = this@AbstractMutableMap.size
         }
     }
 
@@ -140,17 +87,9 @@ public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, 
         }
     }
 
-    override fun remove(key: K): V? = implFindEntry(key, true)?.value
-
-    override fun toString(): String = entries.joinToString(", ", "{", "}") { toString(it) }
-
-    private fun toString(entry: Map.Entry<K, V>): String = toString(entry.key) + "=" + toString(entry.value)
-
-    private fun toString(o: Any?): String = if (o === this) "(this Map)" else o.toString()
-
     override val values: MutableCollection<V> get() {
         return object : AbstractMutableCollection<V>() {
-            override fun clear() = this@AbstractMap.clear()
+            override fun clear() = this@AbstractMutableMap.clear()
 
             override operator fun contains(element: V): Boolean = containsValue(element)
 
@@ -163,7 +102,7 @@ public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, 
                 }
             }
 
-            override val size: Int get() = this@AbstractMap.size
+            override val size: Int get() = this@AbstractMutableMap.size
 
             // TODO: should we implement them this way? Currently it's unspecified in JVM
             override fun equals(other: Any?): Boolean {
@@ -175,29 +114,18 @@ public abstract class AbstractMap<K, V> protected constructor() : MutableMap<K, 
         }
     }
 
-    private fun implFindEntry(key: K, remove: Boolean): Map.Entry<K, V>? {
+    override fun remove(key: K): V? {
         val iter = entries.iterator()
         while (iter.hasNext()) {
             var entry = iter.next()
             val k = entry.key
             if (key == k) {
-                if (remove) {
-                    entry = SimpleEntry(entry)
-                    iter.remove()
-                }
-                return entry
+                val value = entry.value
+                iter.remove()
+                return value
             }
         }
         return null
     }
 
-    companion object {
-
-        internal fun entryHashCode(e: Map.Entry<*, *>): Int = with(e) { (key?.hashCode() ?: 0) xor (value?.hashCode() ?: 0) }
-        internal fun entryToString(e: Map.Entry<*, *>): String = with(e) { "$key=$value" }
-        internal fun entryEquals(e: Map.Entry<*, *>, other: Any?): Boolean {
-            if (other !is Map.Entry<*, *>) return false
-            return e.key == other.key && e.value == other.value
-        }
-    }
 }

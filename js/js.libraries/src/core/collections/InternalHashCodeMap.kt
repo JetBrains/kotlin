@@ -21,7 +21,7 @@
 package kotlin.collections
 
 import kotlin.collections.MutableMap.MutableEntry
-import kotlin.collections.AbstractMap.SimpleEntry
+import kotlin.collections.AbstractMutableMap.SimpleEntry
 
 /**
  * A simple wrapper around JavaScriptObject to provide [java.util.Map]-like semantics for any
