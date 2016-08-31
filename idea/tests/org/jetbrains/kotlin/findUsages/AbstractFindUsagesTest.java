@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
-import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsagesKt;
+import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -70,7 +70,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtureTestCase {
 
@@ -401,14 +404,14 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
         Collection<UsageInfo> usageInfos;
         String log = null;
         try {
-            DestructuringDeclarationUsagesKt.setDestructuringDeclarationUsageSearchLog(new ArrayList<String>());
+            ExpressionsOfTypeProcessor.Companion.setTestLog(new ArrayList<String>());
 
             usageInfos = findUsages(caretElement, options, highlightingMode);
         }
         finally {
-            List<String> logList = DestructuringDeclarationUsagesKt.getDestructuringDeclarationUsageSearchLog();
+            List<String> logList = ExpressionsOfTypeProcessor.Companion.getTestLog();
             assert logList != null;
-            DestructuringDeclarationUsagesKt.setDestructuringDeclarationUsageSearchLog(null);
+            ExpressionsOfTypeProcessor.Companion.setTestLog(null);
             if (logList.size() > 0) {
                 Collections.sort(logList);
                 log = StringUtil.join(logList, "\n");

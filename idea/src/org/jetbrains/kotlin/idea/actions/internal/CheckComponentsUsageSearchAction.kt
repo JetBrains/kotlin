@@ -28,8 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationUsageSearch
-import org.jetbrains.kotlin.idea.search.usagesSearch.destructuringDeclarationUsageSearchMode
+import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
@@ -67,12 +66,12 @@ class CheckComponentsUsageSearchAction : AnAction() {
                 try {
                     var smartRefsCount = 0
                     var goldRefsCount = 0
-                    ProgressManager.getInstance().runProcess(Runnable {
-                        destructuringDeclarationUsageSearchMode = DestructuringDeclarationUsageSearch.ALWAYS_SMART
+                    ProgressManager.getInstance().runProcess({
+                        ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
 
                         smartRefsCount = ReferencesSearch.search(parameter).findAll().size
 
-                        destructuringDeclarationUsageSearchMode = DestructuringDeclarationUsageSearch.ALWAYS_PLAIN
+                        ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
 
                         goldRefsCount = ReferencesSearch.search(parameter).findAll().size
                     }, EmptyProgressIndicator())
@@ -85,7 +84,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
                     }
                 }
                 finally {
-                    destructuringDeclarationUsageSearchMode = DestructuringDeclarationUsageSearch.PLAIN_WHEN_NEEDED
+                    ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED
                 }
             }
 
