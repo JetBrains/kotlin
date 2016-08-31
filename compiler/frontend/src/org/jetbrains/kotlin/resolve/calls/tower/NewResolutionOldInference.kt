@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
@@ -157,6 +160,13 @@ class NewResolutionOldInference(
         }
 
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference)
+
+        if (candidates.isEmpty()) {
+            if (reportAdditionalDiagnosticIfNoCandidates(context, name, kind, scopeTower, detailedReceiver)) {
+                return OverloadResolutionResultsImpl.nameNotFound()
+            }
+        }
+
         return convertToOverloadResults(candidates, tracing, context)
     }
 
@@ -240,6 +250,32 @@ class NewResolutionOldInference(
         }
 
         return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls)
+    }
+
+    // true if we found something
+    private fun reportAdditionalDiagnosticIfNoCandidates(
+            context: BasicCallResolutionContext,
+            name: Name,
+            kind: ResolutionKind<*>,
+            scopeTower: ImplicitScopeTower,
+            detailedReceiver: DetailedReceiver?
+    ): Boolean {
+        val reference = context.call.calleeExpression as? KtReferenceExpression ?: return false
+
+        val errorCadidates = when (kind) {
+            ResolutionKind.Function -> collectErrorCandidatesForFunction(scopeTower, name, detailedReceiver)
+            ResolutionKind.Variable -> collectErrorCandidatesForVariable(scopeTower, name, detailedReceiver)
+            else -> emptyList()
+        }
+
+        for (candidate in errorCadidates) {
+            if (candidate is ErrorCandidate.Classifier) {
+                context.trace.record(BindingContext.REFERENCE_TARGET, reference, candidate.descriptor)
+                context.trace.report(Errors.RESOLUTION_TO_CLASSIFIER.on(reference, candidate.descriptor, candidate.kind, candidate.errorMessage))
+                return true
+            }
+        }
+        return false
     }
 
     private class ImplicitScopeTowerImpl(

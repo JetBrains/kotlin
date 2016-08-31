@@ -15603,6 +15603,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/noCandidates")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NoCandidates extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInNoCandidates() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/noCandidates"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt2787.kt")
+                public void testKt2787() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/noCandidates/kt2787.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resolvedToClassifier.kt")
+                public void testResolvedToClassifier() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/noCandidates/resolvedToClassifier.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resolvedToClassifierWithReceiver.kt")
+                public void testResolvedToClassifierWithReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/noCandidates/resolvedToClassifierWithReceiver.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
