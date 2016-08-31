@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 interface AbstractLookupElementFactory {
     fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement>
@@ -342,30 +343,34 @@ class LookupElementFactory(
                                 ?: dispatchReceiverParameter
                                 ?: return null
 
+        val matchingReceiverIndices = HashSet<Int>()
+        var bestReceiverType: ReceiverType? = null
+        var bestWeight: CallableWeightEnum? = null
         for (receiverType in receiverTypes) {
             val weight = callableWeightForReceiverType(receiverType.type, receiverParameter.type)
             if (weight != null) {
-                val receiverIndex = receiverType.receiverIndex
-
-                var receiverIndexToUse: Int? = receiverIndex
-                if (receiverIndex == 0) {
-                    val maxReceiverIndex = receiverTypes.map { it.receiverIndex }.max()!!
-                    if (maxReceiverIndex > 0) {
-                        val matchesAllReceivers = receiverTypes
-                                .filter { it.receiverIndex != 0 && callableWeightForReceiverType(it.type, receiverParameter.type) != null }
-                                .map { it.receiverIndex }
-                                .toSet()
-                                .containsAll((1..maxReceiverIndex).toList())
-                        if (matchesAllReceivers) { // if descriptor is matching all receivers then use null as receiverIndex - otherwise e.g. all members of Any would have too high priority
-                            receiverIndexToUse = null
-                        }
-                    }
+                if (bestWeight == null || weight < bestWeight) {
+                    bestWeight = weight
+                    bestReceiverType = receiverType
                 }
-
-                return CallableWeight(weight, receiverIndexToUse)
+                matchingReceiverIndices.add(receiverType.receiverIndex)
             }
         }
-        return onReceiverTypeMismatch
+
+        if (bestWeight == null) return onReceiverTypeMismatch
+
+        val receiverIndex = bestReceiverType!!.receiverIndex
+
+        var receiverIndexToUse: Int? = receiverIndex
+        val maxReceiverIndex = receiverTypes.map { it.receiverIndex }.max()!!
+        if (maxReceiverIndex > 0) {
+            val matchesAllReceivers = (0..maxReceiverIndex).all { it in matchingReceiverIndices }
+            if (matchesAllReceivers) { // if descriptor is matching all receivers then use null as receiverIndex - otherwise e.g. all members of Any would have too high priority
+                receiverIndexToUse = null
+            }
+        }
+
+        return CallableWeight(bestWeight, receiverIndexToUse)
     }
 
     private fun CallableDescriptor.callableWeightForReceiverType(receiverType: KotlinType, receiverParameterType: KotlinType): CallableWeightEnum? {
