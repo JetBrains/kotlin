@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
@@ -192,6 +191,6 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         if (owner == null) {
             owner = PsiTreeUtil.getParentOfType(this, KtExpression.class);
         }
-        return owner != null ? new LocalSearchScope(owner) : GlobalSearchScope.EMPTY_SCOPE;
+        return new LocalSearchScope(owner != null ? owner : this);
     }
 }

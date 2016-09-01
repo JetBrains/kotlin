@@ -91,6 +91,6 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
     @Override
     public SearchScope getUseScope() {
         KtTypeParameterListOwner owner = PsiTreeUtil.getParentOfType(this, KtTypeParameterListOwner.class);
-        return owner != null ? new LocalSearchScope(owner) : GlobalSearchScope.EMPTY_SCOPE;
+        return new LocalSearchScope(owner != null ? owner : this);
     }
 }
