@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.*
 import objects.Car
 import setRouteMetricUrl
 import sonarUrl
+import sun.rmi.runtime.Log
 import java.util.*
 import java.util.concurrent.Exchanger
 import java.util.concurrent.TimeUnit
@@ -28,19 +29,21 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     protected val LEFT = 2
     protected val RIGHT = 3
 
-    private var prevState: CarState? = null
+    private val historySize = 10
+    private val history = Stack<RouteMetricRequest>()
 
+    private var prevState: CarState? = null
     private var prevSonarDistances = mapOf<Angle, AngleData>()
     private val defaultAngles = arrayOf(Angle(0), Angle(70), Angle(75), Angle(80), Angle(85), Angle(90), Angle(95), Angle(100), Angle(105), Angle(110), Angle(180))
+
     //    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
     protected var requiredAngles = defaultAngles
-
     protected enum class CarState {
         WALL,
         INNER,
         OUTER
-    }
 
+    }
     private var iterationCounter = 0
 
     protected fun getData(angles: Array<Angle>): IntArray {
@@ -95,6 +98,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     fun iterate() {
         Logger.log("============= STARTING ITERATION ${iterationCounter} ============")
+        Logger.indent()
         iterationCounter++
         if (RoomModel.finished) {
             return
@@ -118,10 +122,14 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
             return
         }
 
+        addToHistory(command)
+
         afterGetCommand(command)
         Logger.log("Sending command:")
-        Logger.log("    Directions = ${Arrays.toString(command.directions)}")
-        Logger.log("    Distanced = ${Arrays.toString(command.distances)}")
+        Logger.indent()
+        Logger.log("Directions = ${Arrays.toString(command.directions)}")
+        Logger.log("Distanced = ${Arrays.toString(command.distances)}")
+        Logger.outdent()
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.distances))
 
@@ -129,6 +137,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         this.prevState = state
 
         moveCar(command)
+        Logger.outdent()
         Logger.log("============= FINISHING ITERATION ${iterationCounter} ============")
         Logger.log("")
     }
@@ -144,6 +153,58 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     private fun getAngles(): Array<Angle> {
         return requiredAngles
+    }
+
+    private fun addToHistory(command: RouteMetricRequest) {
+        history.push(command)
+        while(history.size > historySize) {
+            history.removeAt(0)
+        }
+    }
+
+    private fun popFromHistory(): RouteMetricRequest {
+        return history.pop()
+    }
+
+    private fun inverseCommand(command: RouteMetricRequest): RouteMetricRequest {
+        val res = RouteMetricRequest.BuilderRouteMetricRequest(command.distances, command.directions)
+        res.distances.reverse()
+        res.directions.reverse()
+
+        for ((index, dir) in res.directions.withIndex()) {
+            res.directions[index] = when (dir) {
+                FORWARD -> BACKWARD
+                BACKWARD -> FORWARD
+                LEFT -> RIGHT
+                RIGHT -> LEFT
+                else -> throw IllegalArgumentException("Unexpected direction = ${dir} found during command inversion")
+            }
+        }
+        return res.build()
+    }
+
+    protected fun rollback() {
+        val lastCommand = popFromHistory()
+        val invertedCommand = inverseCommand(lastCommand)
+        Logger.log ("Rollback:")
+        Logger.indent()
+        Logger.log ("Last command: ${lastCommand.toString()}")
+        Logger.log ("Inverted cmd: ${invertedCommand.toString()}")
+        Logger.outdent()
+        moveCar(invertedCommand)
+    }
+
+    protected fun rollback(steps: Int) {
+        Logger.log("=== Starting rollback for ${steps} steps ===")
+        Logger.indent()
+        var stepsRemaining = steps
+        while(stepsRemaining > 0 && history.size > 0) {
+            Logger.log("Step: ${steps - stepsRemaining + 1}")
+            rollback()
+            stepsRemaining--
+        }
+        Logger.outdent()
+        Logger.log("=== Finished rollback ===")
     }
 
     protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?

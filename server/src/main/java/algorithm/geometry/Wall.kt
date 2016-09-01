@@ -18,16 +18,22 @@ data class Wall(val wallAngleOX: Angle,
     }
 
     var isFinished = false
-    val MAX_REGRESSION_ERROR = 5.0
+    val MAX_SLOPE = 0.2
 
     fun pushBackPoint(point: Point) {
+        Logger.log("Adding ${point.toString()}")
         rawPoints.add(point)
+        Logger.log("Line before approximation ${line.toString()}")
         line = approximatePointsByLine()
+        Logger.log("Line after approximation ${line.toString()}")
     }
 
     fun pushFrontPoint(point: Point) {
+        Logger.log("Adding ${point.toString()}")
         rawPoints.add(0, point)
+        Logger.log("Line before approximation ${line.toString()}")
         line = approximatePointsByLine()
+        Logger.log("Line after approximation ${line.toString()}")
     }
 
     var points: ArrayList<Point> = arrayListOf()
@@ -86,20 +92,7 @@ data class Wall(val wallAngleOX: Angle,
         var beta1 = xybar / xxbar
         var beta0 = ybar - beta1 * xbar
 
-        // analyze results
-        val df = n - 2
-        var rss = 0.0      // residual sum of squares
-        var ssr = 0.0      // regression sum of squares
-        for ((x, y) in rawPoints) {
-            val fit = beta1 * x + beta0
-            rss += (fit - y) * (fit - y)
-            ssr += (fit - ybar) * (fit - ybar)
-        }
-
-        val svar = rss / df
-        val svar1 = svar / xxbar
-
-        if (svar1.isNaN() || svar1.isInfinite() || Math.sqrt(svar1).gt(MAX_REGRESSION_ERROR) || Math.abs(beta1) > 1) {
+        if (Math.abs(beta1) > MAX_SLOPE) {
             beta1 = xybar / yybar
             beta0 = xbar - beta1 * ybar
             return Line(1.0, -beta1, -beta0)

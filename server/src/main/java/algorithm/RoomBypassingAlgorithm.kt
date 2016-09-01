@@ -4,13 +4,11 @@ import Logger.log
 import RouteMetricRequest
 import SonarRequest
 import algorithm.geometry.*
+import algorithm.geometry.Vector
 import objects.Car
 import java.util.concurrent.Exchanger
 
 class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : AbstractAlgorithm(thisCar, exchanger) {
-
-
-    // TODO: set to appropriate values
     override val ATTEMPTS: Int = 5
     override val SMOOTHING = SonarRequest.Smoothing.MEDIAN
     override val WINDOW_SIZE = 3
@@ -40,19 +38,14 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return CarState.WALL
     }
 
-    private fun noParallelWallFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
-        val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
-        resultBuilder.setDirections(getIntArray(FORWARD))
-        resultBuilder.setDistances(getIntArray(10))
-        return resultBuilder.build()
-    }
-
     private fun noOrthogonalMeasurementFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         resultBuilder.setDirections(getIntArray(FORWARD, RIGHT, FORWARD))
         val wallAngle = calculateAngle(anglesDistances, state)
+        Logger.indent()
         resultBuilder.setDistances(getIntArray(20, wallAngle.degs(), 75))
         addWall(-wallAngle)
+        Logger.outdent()
         carAngle = RoomModel.walls.last().wallAngleOX.degs()
         calibrateAfterRotate = true
         return resultBuilder.build()
@@ -122,11 +115,11 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
     private fun addWall(angleWithPrevWall: Angle) {
         log("Adding wall")
+        Logger.indent()
         RoomModel.updateWalls()
-
+        Logger.outdent()
         val firstWall = RoomModel.walls.first()
         val lastWall = RoomModel.walls.last()
-//        if (firstWall == lastWall && RoomModel.walls.size > 1) {
         if (circleFound) {
             log("Found circle, finishing algorithm")
             isCompleted = true
@@ -155,7 +148,8 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                     && it.value.angle.degs() <= 120
                     && it.value.distance == -1
         }.size > anglesDistances.size / 2) {
-            log("Found to many -1 in angle distances, passing")
+            log("Found to many -1 in angle distances, falling back")
+            rollback()
             //todo Теоретически такая ситуация может быть валидной, если сразу после внутреннего угла идёт внешний
             return null
         }
@@ -166,9 +160,12 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 .sumByDouble { it.distance.toDouble() }) / anglesDistances.values.size
         log("Estimated average = $average")
 
+        log("1. Checking if we just rotated and should re-calibrate")
         if (calibrateAfterRotate) {
             log("Calibrating after rotate")
+            Logger.indent()
             val maybeAlignment = tryAlignParallelToWall(anglesDistances, state, average)
+            Logger.outdent()
             if (maybeAlignment != null) {
                 log("Realigning")
                 return maybeAlignment
@@ -176,39 +173,35 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             log("No need to realign")
             calibrateAfterRotate = false
         }
+        log("")
+
 
         // Check most basic measurements: 60/90/120
+        log("2. Check if we have measurement on 90")
         if (dist90.distance == -1 || dist90.distance > OUTER_CORNER_DISTANCE_THRESHOLD) {
             log("No orthogonal measurement found")
             return noOrthogonalMeasurementFound(anglesDistances, state)
         }
+        log("")
 
         // Add point to room map
         val point = Point(
                 x = carX + dist90.distance * Math.cos(degreesToRadian(sonarAngle)),
                 y = carY + dist90.distance * Math.sin(degreesToRadian(sonarAngle))
         )
-        log("Adding ${point.toString()} to last wall")
+        log("Adding middle point ${point.toString()} to wall ${RoomModel.walls.last().id}")
         RoomModel.walls.last().pushBackPoint(point)
+        log("")
 
         // Check if corner reached
+        log("3. Check if we reached corner, dist0 = ${dist0.distance}")
         if (dist0.distance != -1 && dist0.distance < MAX_DISTANCE_TO_WALL_AHEAD) {
             log("Wall ahead found")
             return wallAheadFound(anglesDistances, state)
         }
+        log("")
 
-        // Big fail, try to do something safe
-        if (dist110.distance == -1 && dist70.distance == -1) {
-            log("No parallel wall found")
-            return noParallelWallFound(anglesDistances, state)
-        }
-
-        // Big fail too
-        if (dist110.distance == -1) {
-            log("No back measurement found, wtf")
-            return moveForward(dist0.distance)
-        }
-
+        log("Adding other points")
         for (i in 70..110 step 10) {
             if (i == 90) {
                 continue    // point on 90 was already added
@@ -216,44 +209,57 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
             val curDist = anglesDistances[Angle(i)]!!.distance
             if (curDist > (average * 1.5) || curDist < (average / 2)) {
+                log("For point on ${i} dist = ${curDist}, while window is from ${average * 1.5} till ${average * 2}. Dropping it as outlier")
                 continue
             }
             val point = Point(
                     x = carX + curDist * Math.cos(degreesToRadian(carAngle - i)),
                     y = carY + curDist * Math.sin(degreesToRadian(carAngle - i))
             )
+            log("Adding ${point.toString()} to wall ${RoomModel.walls.last().id}")
             RoomModel.walls.last().pushBackPoint(point)
         }
+        log("")
 
         // Try align parallel to wall
+        log("4. Check if we have to align parallel to the wall")
+        Logger.indent()
         val maybeAlignment = tryAlignParallelToWall(anglesDistances, state, average)
+        Logger.outdent()
         if (maybeAlignment != null) {
             log("Realigning")
             return maybeAlignment
         }
+        log("")
 
         // Check if wall is too close or too far
+        log ("5. Check if we have to move closer or farther to the wall")
         if (dist90.distance > DISTANCE_TO_WALL_UPPER_BOUND || dist90.distance < DISTANCE_TO_WALL_LOWER_BOUND) {
             log("Flaw in distance to the parallel wall found, correcting")
             return correctDistanceToParallelWall(anglesDistances, state)
         }
+        log("")
 
         // Approaching inner corner and getting spurious reflection from 2 walls on 60;
         // Just move forward to get closer to the corner;
+        log ("6. Check if we are detecting echo reflections approaching inner corner")
         if (dist70.distance - dist0.distance > ECHO_REFLECTION_DIFF) {
-            log("Spurious reflection detected, moving forward")
+            log("Echo reflection detected, moving forward")
             return moveForward(dist0.distance)
         }
+        log ("")
 
         // Approaching outer corner (parallel wall is ending soon, but not yet);
         // Just move forward to get to the end of the wall
+        log ("7. Check if we are detecting far wall approaching outer corner")
         if (dist80.distance == -1 || Math.abs(dist100.distance - dist80.distance) > ISOSCALENESS_MAX_DIFF) {
-            log("Aprroaching outer corner, moving forward")
+            log("Approaching outer corner, moving forward")
             return moveForward(dist0.distance)
         }
+        log ("")
 
         // default case: everything is ok, just move forward
-        log("Default case: moving forward")
+        log("8. Default case: moving forward")
         return moveForward(dist0.distance)
     }
 
@@ -283,16 +289,15 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
                 }
                 LEFT -> {
                     route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-//                    carAngle += route.distances[idx]
                 }
                 RIGHT -> {
                     route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-//                    carAngle -= route.distances[idx]
                 }
             }
         }
         if (Math.round(Math.cos(Angle(carAngle).rads())).toInt() == 1 && carAngle != 0
                 && Vector(carX.toDouble(), carY.toDouble()).length() < RANGE_FROM_ZERO_POINT_TO_FINISH_ALG) {
+            log("Found circle!")
             circleFound = true
         }
 
