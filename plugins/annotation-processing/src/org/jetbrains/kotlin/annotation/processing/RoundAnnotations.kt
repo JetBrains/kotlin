@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.psi.*
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
     private val mutableAnnotationsMap = mutableMapOf<String, MutableList<PsiModifierListOwner>>()
@@ -61,7 +61,7 @@ internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
     
     fun PsiElement.getTopLevelClassParent(): PsiClass? = when (this) {
         is PsiClass -> containingClass?.let { it.getTopLevelClassParent() } ?: this
-        else -> getParentOfType<PsiClass>(true)?.getTopLevelClassParent()
+        else -> PsiTreeUtil.getParentOfType(this, PsiClass::class.java, true)?.getTopLevelClassParent()
     }
 
     fun analyzeDeclaration(declaration: PsiElement): Boolean {
