@@ -24,6 +24,7 @@ import java.io.FileFilter
 class Kapt2IT: BaseGradleIT() {
     companion object {
         private const val GRADLE_VERSION = "2.10"
+        private const val GRADLE_2_14_VERSION = "2.14.1"
         private const val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
     }
 
@@ -163,6 +164,49 @@ class Kapt2IT: BaseGradleIT() {
             assertFileExists("build/generated/source/kapt2/release/io/realm/CatRealmProxyInterface.java")
             assertFileExists("build/generated/source/kapt2/release/io/realm/DefaultRealmModule.java")
             assertFileExists("build/generated/source/kapt2/release/io/realm/DefaultRealmModuleMediator.java")
+        }
+    }
+
+    @Test
+    fun testGeneratedDirectoryIsUpToDate() {
+        val project = Project("generatedDirUpToDate", GRADLE_2_14_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/classes/main/example/TestClass.class")
+
+            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt2/main/example/SourceAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt2/main/example/BinaryAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt2/main/example/RuntimeAnnotatedTestClassGenerated.java")
+
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+        }
+
+        val testKt = project.projectDir.getFileByName("test.kt")
+        testKt.writeText(testKt.readText().replace("@ExampleBinaryAnnotation", ""))
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/classes/main/example/TestClass.class")
+
+            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt2/main/example/SourceAnnotatedTestClassGenerated.java")
+            /*!*/   assertNoSuchFile("build/generated/source/kapt2/main/example/BinaryAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt2/main/example/RuntimeAnnotatedTestClassGenerated.java")
+
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
+            /*!*/   assertNoSuchFile("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
         }
     }
 }
