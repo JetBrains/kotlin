@@ -18,7 +18,7 @@ class DefaultArguments(raw: RawArguments) : Arguments(raw, name = "default") {
 
     val output = optionalParameter(
             name = "output",
-            description = "output file",
+            description = "output file path",
             shortNames = listOf('o')
     )
 
@@ -29,6 +29,7 @@ class DefaultArguments(raw: RawArguments) : Arguments(raw, name = "default") {
             shortNames = listOf('M')
     )
 
+    //[TODO] files with [] or another marking
     val sources = positionalArguments(
             name = "sources",
             description = "source files",

@@ -95,16 +95,16 @@ class LLVMBuilder(arm: Boolean = false) {
         addLLVMCodeToLocalPlace("$target = bitcast ${allocated.pointedType} $allocated to ${if (asValue) target.type.toString() else target.pointedType}" + if (pointer) "" else "*")
     }
 
-    fun addGlobalInitialize(target: LLVMVariable, fields: ArrayList<LLVMVariable>, initializers: Map<LLVMVariable, String>, classType: LLVMType) {
+    fun addGlobalInitialize(target: LLVMVariable, fields: ArrayList<LLVMClassVariable>, initializers: Map<LLVMVariable, String>, classType: LLVMType) {
         val code = "$target = internal global $classType { ${
         fields.map { it.pointedType + " " + if (initializers.containsKey(it)) initializers[it] else "0" }.joinToString()
         } }, align ${classType.align}"
         addLLVMCodeToGlobalPlace(code)
     }
 
-    fun bitcast(src: LLVMVariable, llvmType: LLVMVariable): LLVMVariable {
-        val empty = getNewVariable(llvmType.type, pointer = llvmType.pointer)
-        addLLVMCodeToLocalPlace("$empty = bitcast ${src.pointedType} $src to ${llvmType.pointedType}")
+    fun bitcast(src: LLVMVariable, llvmType: LLVMType, pointer: Int): LLVMVariable {
+        val empty = getNewVariable(llvmType, pointer = pointer)
+        addLLVMCodeToLocalPlace("$empty = bitcast ${src.pointedType} $src to ${llvmType.toString() + "*".repeat(pointer)}")
         return empty
     }
 

@@ -25,17 +25,14 @@ import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import java.util.*
 
-class TranslationState(val environment: KotlinCoreEnvironment, val bindingContext: BindingContext, val mainFunction: String, arm: Boolean) {
-    companion object {
-        var POINTER_ALIGN = 4
-        var POINTER_SIZE = 4
-    }
 
-    init {
-        POINTER_ALIGN = if (arm) 4 else 8
-        POINTER_SIZE = if (arm) 4 else 8
-    }
-
+class TranslationState
+private constructor
+(
+        val environment: KotlinCoreEnvironment,
+        val bindingContext: BindingContext,
+        val mainFunction: String, arm: Boolean
+) {
     var externalFunctions = HashMap<String, FunctionCodegen>()
     var functions = HashMap<String, FunctionCodegen>()
     val globalVariableCollection = HashMap<String, LLVMVariable>()
@@ -45,60 +42,71 @@ class TranslationState(val environment: KotlinCoreEnvironment, val bindingContex
     val codeBuilder = LLVMBuilder(arm)
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
 
-}
-
-fun parseAndAnalyze(sources: List<String>, disposer: Disposable, mainFunction: String, arm: Boolean = false): TranslationState {
-
-    val configuration = CompilerConfiguration()
-    val messageCollector = object : MessageCollector {
-        private var hasError = false
-
-        override fun hasErrors(): Boolean = hasError
-
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-            if (severity.isError) {
-                System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
-                hasError = true
-            }
-        }
+    init {
+        POINTER_ALIGN = if (arm) 4 else 8
+        POINTER_SIZE = if (arm) 4 else 8
     }
 
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-    configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
+    companion object {
+        var POINTER_ALIGN = 4
+        var POINTER_SIZE = 4
 
-    configuration.addKotlinSourceRoots(sources)
+        fun createTranslationState(sources: List<String>, disposer: Disposable, mainFunction: String, arm: Boolean = false): TranslationState {
 
-    val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-    val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException("Can't initialize binding context for project")
+            val configuration = CompilerConfiguration()
+            val messageCollector = object : MessageCollector {
+                private var hasError = false
 
-    return TranslationState(environment, bindingContext, mainFunction, arm)
-}
+                override fun hasErrors(): Boolean = hasError
 
-fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
-    val collector = environment.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+                    if (severity.isError) {
+                        System.err.println("[${severity.toString()}]${location.path} ${location.line}:${location.column} $message")
+                        hasError = true
+                    }
+                }
+            }
 
-    val analyzer = AnalyzerWithCompilerReport(collector)
-    analyzer.analyzeAndReport(environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
-        override fun analyze(): AnalysisResult {
-            val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-            val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
+            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            configuration.put(JVMConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
 
-            return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    moduleContext,
-                    environment.getSourceFiles(),
-                    sharedTrace,
-                    environment.configuration.get(JVMConfigurationKeys.MODULES),
-                    environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                    JvmPackagePartProvider(environment))
+            configuration.addKotlinSourceRoots(sources)
+
+            val environment = KotlinCoreEnvironment.createForProduction(disposer, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val bindingContext = analyze(environment)?.bindingContext ?: throw TranslationException("Can't initialize binding context for project")
+
+            return TranslationState(environment, bindingContext, mainFunction, arm)
         }
 
-        override fun reportEnvironmentErrors() {
-            val files = environment.configuration.jvmClasspathRoots
-            val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
-            collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
-            System.err.println(runtimes.joinToString { it.toString() })
-        }
-    })
+        private fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
+            val collector = environment.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-    return if (analyzer.hasErrors()) null else analyzer.analysisResult
+            val analyzer = AnalyzerWithCompilerReport(collector)
+            analyzer.analyzeAndReport(environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
+                override fun analyze(): AnalysisResult {
+                    val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+                    val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
+
+                    return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                            moduleContext,
+                            environment.getSourceFiles(),
+                            sharedTrace,
+                            environment.configuration.get(JVMConfigurationKeys.MODULES),
+                            environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                            JvmPackagePartProvider(environment))
+                }
+
+                override fun reportEnvironmentErrors() {
+                    val files = environment.configuration.jvmClasspathRoots
+                    val runtimes = files.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+                    collector.report(CompilerMessageSeverity.ERROR, runtimes.joinToString { it.path }, CompilerMessageLocation.NO_LOCATION)
+                    System.err.println(runtimes.joinToString { it.toString() })
+                }
+            })
+
+            return if (analyzer.hasErrors()) null else analyzer.analysisResult
+        }
+
+    }
+
 }

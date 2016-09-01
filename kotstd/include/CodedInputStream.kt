@@ -8,6 +8,7 @@
  *
  */
 
+// TODO get this out of native translator stdlib
 // TODO: refactor correctness checks into readTag
 class CodedInputStream(val buffer: ByteArray) {
     val inputStream: KotlinInputStream

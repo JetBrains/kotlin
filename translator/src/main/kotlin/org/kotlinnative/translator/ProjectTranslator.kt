@@ -2,7 +2,8 @@ package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.*
 
-class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
+class ProjectTranslator(val files: List<KtFile>,
+                        val state: TranslationState) {
     private var codeBuilder = state.codeBuilder
 
     fun generateCode(): String {

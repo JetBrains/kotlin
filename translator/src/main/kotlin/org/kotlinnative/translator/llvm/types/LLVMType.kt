@@ -4,7 +4,7 @@ import org.kotlinnative.translator.exceptions.UnimplementedException
 import org.kotlinnative.translator.llvm.LLVMExpression
 import org.kotlinnative.translator.llvm.LLVMSingleValue
 
-abstract class LLVMType() : Cloneable {
+abstract class LLVMType() {
 
     companion object {
         fun mangleFunctionArguments(names: List<LLVMSingleValue>) =

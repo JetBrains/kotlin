@@ -6,13 +6,13 @@ external fun kotlinclib_long_size(): Int
 
 
 class LongArray(var size: Int) {
-    val data: Int
+    val dataRawPtr: Int
 
     /** Returns the number of elements in the array. */
     //size: Int
 
     init {
-        this.data = malloc_array(kotlinclib_long_size() * this.size)
+        this.dataRawPtr = malloc_array(kotlinclib_long_size() * this.size)
         var index = 0
         while (index < this.size) {
             set(index, 0)
@@ -22,13 +22,13 @@ class LongArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Long {
-        return kotlinclib_get_long(this.data, index)
+        return kotlinclib_get_long(this.dataRawPtr, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Long) {
-        kotlinclib_set_long(this.data, index, value)
+        kotlinclib_set_long(this.dataRawPtr, index, value)
     }
 
 

@@ -12,13 +12,17 @@ import org.kotlinnative.translator.llvm.types.LLVMType
 import org.kotlinnative.translator.llvm.types.LLVMVoidType
 import java.util.*
 
+/*
+ * TODO make high level description of code generation process
+ * and structure of generated code.
+ */
 abstract class StructCodegen(val state: TranslationState,
                              val variableManager: VariableManager,
                              val classOrObject: KtClassOrObject,
                              val codeBuilder: LLVMBuilder,
                              val parentCodegen: StructCodegen? = null) {
 
-    val fields = ArrayList<LLVMVariable>()
+    val fields = ArrayList<LLVMClassVariable>()
     val fieldsIndex = HashMap<String, LLVMClassVariable>()
     val nestedClasses = HashMap<String, ClassCodegen>()
     val enumFields = HashMap<String, LLVMVariable>()
@@ -208,8 +212,8 @@ abstract class StructCodegen(val state: TranslationState,
     private fun generateReturn(src: LLVMVariable) {
         val dst = LLVMVariable("classvariable.this", type, scope = LLVMRegisterScope(), pointer = 1)
 
-        val castedDst = codeBuilder.bitcast(dst, LLVMVariable("", LLVMCharType(), pointer = 1))
-        val castedSrc = codeBuilder.bitcast(src, LLVMVariable("", LLVMCharType(), pointer = 1))
+        val castedDst = codeBuilder.bitcast(dst, LLVMCharType(), pointer = 1)
+        val castedSrc = codeBuilder.bitcast(src, LLVMCharType(), pointer = 1)
 
         codeBuilder.memcpy(castedDst, castedSrc, size)
     }
