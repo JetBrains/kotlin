@@ -20244,6 +20244,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("throwJLException.kt")
+            public void testThrowJLException() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/throwJLException.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasArgumentsInCompanionObject.kt")
             public void testTypeAliasArgumentsInCompanionObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasArgumentsInCompanionObject.kt");
