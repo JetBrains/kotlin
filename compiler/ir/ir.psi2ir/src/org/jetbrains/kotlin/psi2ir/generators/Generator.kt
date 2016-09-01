@@ -52,7 +52,7 @@ fun Generator.getInferredTypeWithImplicitCasts(key: KtExpression): KotlinType? =
         context.bindingContext.getType(key)
 
 fun Generator.getInferredTypeWithImplicitCastsOrFail(key: KtExpression): KotlinType =
-        getInferredTypeWithImplicitCasts(key) ?: throw AssertionError("No type for expression: ${key.text}")
+        getInferredTypeWithImplicitCasts(key) ?: throw RuntimeException("No type for expression: ${key.text}")
 
 fun Generator.getResolvedCall(key: KtElement): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)

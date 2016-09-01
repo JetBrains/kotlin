@@ -135,7 +135,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                                                  getterDescriptor, getterBody)
 
         if (propertyDescriptor.isVar) {
-            val setterDescriptor = propertyDescriptor.setter ?: throw AssertionError("Delegated property should have setter: $propertyDescriptor")
+            val setterDescriptor = propertyDescriptor.setter ?: throw AssertionError("Delegated var should have setter: $propertyDescriptor")
             val setterBody = createBodyGenerator(setterDescriptor).generateDelegatedPropertySetter(ktDelegate, delegateDescriptor, setterDescriptor)
             irProperty.setter = IrPropertySetterImpl(ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
                                                      setterDescriptor, setterBody)
@@ -153,18 +153,16 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktGetter)
             val getterDescriptor = accessorDescriptor as? PropertyGetterDescriptor ?: TODO("not a getter?")
             val irGetterBody = generateFunctionBody(getterDescriptor, ktGetter.bodyExpression ?: TODO("default getter"))
-            val irGetter = IrPropertyGetterImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED,
-                                                getterDescriptor, irGetterBody)
-            irGetter
+            IrPropertyGetterImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED,
+                                 getterDescriptor, irGetterBody)
         }
 
         irProperty.setter = ktProperty.setter?.let { ktSetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktSetter)
             val setterDescriptor = accessorDescriptor as? PropertySetterDescriptor ?: TODO("not a setter?")
             val irSetterBody = generateFunctionBody(setterDescriptor, ktSetter.bodyExpression ?: TODO("default setter"))
-            val irSetter = IrPropertySetterImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED,
-                                                setterDescriptor, irSetterBody)
-            irSetter
+            IrPropertySetterImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED,
+                                 setterDescriptor, irSetterBody)
         }
 
         return irProperty

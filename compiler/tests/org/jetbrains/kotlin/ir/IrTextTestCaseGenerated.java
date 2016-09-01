@@ -171,6 +171,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("typeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/typeAlias.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/expressions")

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
@@ -345,6 +346,10 @@ class StatementGenerator(
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Nothing?): IrStatement =
             LocalClassGenerator(this).generateLocalClass(classOrObject)
+
+    override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Nothing?): IrStatement =
+            IrTypeAliasImpl(typeAlias.startOffset, typeAlias.endOffset, IrDeclarationOrigin.DEFINED,
+                            getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
 }
 
 abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {

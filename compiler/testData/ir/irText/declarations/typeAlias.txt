@@ -1,0 +1,10 @@
+FILE /typeAlias.kt
+  TYPEALIAS Test1 type=kotlin.String
+  FUN public fun foo(): kotlin.Unit
+    BLOCK_BODY
+      TYPEALIAS TestLocal type=kotlin.String
+  CLASS CLASS C
+    CONSTRUCTOR public constructor C()
+      BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=C
+    TYPEALIAS TestNested type=kotlin.String
