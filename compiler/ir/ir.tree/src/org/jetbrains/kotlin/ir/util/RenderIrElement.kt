@@ -69,6 +69,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
             "ENUM_ENTRY ${declaration.descriptor.render()}"
 
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
+            "ANONYMOUS_INITIALIZER ${declaration.descriptor.name}"
+
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "EXPRESSION_BODY"
 
@@ -119,8 +122,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 else enumEntryDescriptor.name
             }
 
-    override fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: Nothing?): String =
-            "NESTED_INITIALIZERS_CALL classDescriptor=${expression.classDescriptor.name}"
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
+            "INSTANCE_INITIALIZER_CALL classDescriptor=${expression.classDescriptor.name}"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
             "GET_VAR ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"

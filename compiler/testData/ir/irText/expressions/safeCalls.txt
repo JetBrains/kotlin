@@ -4,6 +4,7 @@ FILE /safeCalls.kt
       BLOCK_BODY
         SET_BACKING_FIELD value type=kotlin.Unit operator=null
           GET_VAR value type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=Ref
     PROPERTY public final var value: kotlin.Int
       EXPRESSION_BODY
         GET_VAR value type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER

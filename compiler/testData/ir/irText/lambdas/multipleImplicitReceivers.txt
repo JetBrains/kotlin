@@ -2,9 +2,11 @@ FILE /multipleImplicitReceivers.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=A
   CLASS OBJECT B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=B
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B
       PROPERTY_GETTER public open fun A.<get-foo>(): B

@@ -32,12 +32,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             when (ktDeclaration) {
                 is KtNamedFunction ->
                     generateFunctionDeclaration(ktDeclaration)
-                is KtSecondaryConstructor ->
-                    generateSecondaryConstructor(ktDeclaration)
                 is KtProperty ->
                     generatePropertyDeclaration(ktDeclaration)
-                is KtEnumEntry ->
-                    generateEnumEntryDeclaration(ktDeclaration)
                 is KtClassOrObject ->
                     generateClassOrObjectDeclaration(ktDeclaration)
                 is KtTypeAlias ->
@@ -49,6 +45,18 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     )
             }
 
+    fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, classDescriptor: ClassDescriptor): IrDeclaration =
+            when (ktDeclaration) {
+                is KtAnonymousInitializer ->
+                    generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
+                is KtSecondaryConstructor ->
+                    generateSecondaryConstructor(ktDeclaration)
+                is KtEnumEntry ->
+                    generateEnumEntryDeclaration(ktDeclaration)
+                else ->
+                    generateMemberDeclaration(ktDeclaration)
+            }
+
     private fun generateEnumEntryDeclaration(ktEnumEntry: KtEnumEntry): IrEnumEntry =
             ClassGenerator(this).generateEnumEntry(ktEnumEntry)
 
@@ -58,6 +66,13 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
             IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
                             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
+
+    fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration {
+        val irAnonymousInitializer = IrAnonymousInitializerImpl(ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset,
+                                                                IrDeclarationOrigin.DEFINED, classDescriptor)
+        irAnonymousInitializer.body = BodyGenerator(classDescriptor, context).generateAnonymousInitializerBody(ktAnonymousInitializer)
+        return irAnonymousInitializer
+    }
 
     fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrGeneralFunction {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)

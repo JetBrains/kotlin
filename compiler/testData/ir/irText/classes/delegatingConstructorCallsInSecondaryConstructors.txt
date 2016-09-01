@@ -2,16 +2,16 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Base
   CLASS CLASS Test
-    nestedInitializers: BLOCK_BODY
     CONSTRUCTOR public constructor Test()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
-        NESTED_INITIALIZERS_CALL classDescriptor=Test
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test
     CONSTRUCTOR public constructor Test(/*0*/ xx: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
-        NESTED_INITIALIZERS_CALL classDescriptor=Test
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test
     CONSTRUCTOR public constructor Test(/*0*/ xx: kotlin.Short)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Test

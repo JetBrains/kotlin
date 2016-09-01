@@ -39,6 +39,7 @@ enum class IrDeclarationKind {
     CLASS,
     TYPEALIAS,
     ENUM_ENTRY,
+    ANONYMOUS_INITIALIZER,
     DUMMY;
 }
 

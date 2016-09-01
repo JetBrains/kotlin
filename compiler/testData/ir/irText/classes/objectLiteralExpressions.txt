@@ -7,6 +7,7 @@ FILE /objectLiteralExpressions.kt
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
+              INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
         CALL .<init> type=test1.<no name provided> operator=OBJECT_LITERAL
   PROPERTY public val test2: IFoo
     EXPRESSION_BODY
@@ -14,6 +15,7 @@ FILE /objectLiteralExpressions.kt
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
+              INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
           FUN public open override /*1*/ fun foo(): kotlin.Unit
             BLOCK_BODY
               CALL .println type=kotlin.Unit operator=null
@@ -22,9 +24,11 @@ FILE /objectLiteralExpressions.kt
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Outer
     CLASS CLASS Inner
       CONSTRUCTOR public constructor Inner()
         BLOCK_BODY
+          INSTANCE_INITIALIZER_CALL classDescriptor=Inner
     FUN public final fun test3(): Outer.Inner
       BLOCK_BODY
         RETURN type=kotlin.Nothing from=test3
@@ -34,6 +38,7 @@ FILE /objectLiteralExpressions.kt
                 BLOCK_BODY
                   CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
                     $this: THIS public final class Outer type=Outer
+                  INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
               FUN public open override /*1*/ fun foo(): kotlin.Unit
                 BLOCK_BODY
                   CALL .println type=kotlin.Unit operator=null
@@ -48,6 +53,7 @@ FILE /objectLiteralExpressions.kt
               BLOCK_BODY
                 CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
                   $this: $RECEIVER of: test4 type=Outer
+                INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
             FUN public open override /*1*/ fun foo(): kotlin.Unit
               BLOCK_BODY
                 CALL .println type=kotlin.Unit operator=null

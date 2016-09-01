@@ -3,6 +3,7 @@ FILE /values.kt
     CONSTRUCTOR private constructor Enum()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
+        INSTANCE_INITIALIZER_CALL classDescriptor=Enum
     ENUM_ENTRY enum entry A
       init: ENUM_CONSTRUCTOR_CALL Enum A
     FUN public final /*synthesized*/ fun values(): kotlin.Array<Enum>
@@ -12,15 +13,18 @@ FILE /values.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=A
   PROPERTY public val a: kotlin.Int = 0
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   CLASS CLASS Z
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Z
     CLASS OBJECT Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
+          INSTANCE_INITIALIZER_CALL classDescriptor=Companion
   FUN public fun test1(): Enum
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test1

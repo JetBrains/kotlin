@@ -4,21 +4,23 @@ FILE /initVal.kt
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValFromParameter
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS TestInitValInClass
     CONSTRUCTOR public constructor TestInitValInClass()
       BLOCK_BODY
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          CONST Int type=kotlin.Int value='0'
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValInClass
     PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitValInInitBlock
     CONSTRUCTOR public constructor TestInitValInInitBlock()
       BLOCK_BODY
-        BLOCK type=kotlin.Unit operator=null
-          SET_BACKING_FIELD x type=kotlin.Unit operator=null
-            CONST Int type=kotlin.Int value='0'
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValInInitBlock
     PROPERTY public final val x: kotlin.Int
+    ANONYMOUS_INITIALIZER TestInitValInInitBlock
+      BLOCK_BODY
+        SET_BACKING_FIELD x type=kotlin.Unit operator=null
+          CONST Int type=kotlin.Int value='0'

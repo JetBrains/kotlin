@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
@@ -39,10 +40,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
 
         generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
-
-        if (shouldGenerateNestedInitializers(ktClassOrObject)) {
-            irClass.nestedInitializers = BodyGenerator(descriptor, context).generateNestedInitializersBody(ktClassOrObject)
-        }
 
         if (descriptor.isData) {
             generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
@@ -61,12 +58,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
 
     private fun generateAdditionalMembersForEnumClass(irClass: IrClassImpl) {
         EnumClassMembersGenerator(context).generateSpecialMembers(irClass)
-    }
-
-    private fun shouldGenerateNestedInitializers(ktClassOrObject: KtClassOrObject): Boolean {
-        val ktClassBody = ktClassOrObject.getBody() ?: return false
-
-        return ktClassBody.declarations.any { it is KtSecondaryConstructor && it.isConstructorDelegatingToSuper(context.bindingContext) }
     }
 
     private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
@@ -97,10 +88,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     private fun generateMembersDeclaredInClassBody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getBody()?.let { ktClassBody ->
             for (ktDeclaration in ktClassBody.declarations) {
-                if (ktDeclaration is KtAnonymousInitializer) continue
-
-                val irMember = declarationGenerator.generateMemberDeclaration(ktDeclaration)
-
+                val irMember = declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass.descriptor)
                 irClass.addMember(irMember)
             }
         }

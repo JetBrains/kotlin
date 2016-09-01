@@ -2,6 +2,7 @@ FILE /when.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=A
   FUN public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=testWithSubject

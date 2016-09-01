@@ -2,12 +2,16 @@ FILE /companionObject.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test1
     CLASS OBJECT Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
+          INSTANCE_INITIALIZER_CALL classDescriptor=Companion
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test2
     CLASS OBJECT Named
       CONSTRUCTOR private constructor Named()
         BLOCK_BODY
+          INSTANCE_INITIALIZER_CALL classDescriptor=Named

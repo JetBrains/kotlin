@@ -2,24 +2,22 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Base
   CLASS CLASS TestProperty
-    nestedInitializers: BLOCK_BODY
-      SET_BACKING_FIELD x type=kotlin.Unit operator=null
-        CONST Int type=kotlin.Int value='0'
     PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestProperty()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
-        NESTED_INITIALIZERS_CALL classDescriptor=TestProperty
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestProperty
   CLASS CLASS TestInitBlock
-    nestedInitializers: BLOCK_BODY
-      BLOCK type=kotlin.Unit operator=null
+    PROPERTY public final val x: kotlin.Int
+    ANONYMOUS_INITIALIZER TestInitBlock
+      BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           CONST Int type=kotlin.Int value='0'
-    PROPERTY public final val x: kotlin.Int
     CONSTRUCTOR public constructor TestInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base
-        NESTED_INITIALIZERS_CALL classDescriptor=TestInitBlock
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitBlock

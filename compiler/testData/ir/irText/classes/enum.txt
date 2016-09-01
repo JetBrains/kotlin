@@ -3,6 +3,7 @@ FILE /enum.kt
     CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum1
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL TestEnum1 TEST1
     ENUM_ENTRY enum entry TEST2
@@ -17,6 +18,7 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL Enum super
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum2
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -37,12 +39,14 @@ FILE /enum.kt
     CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum3
     ENUM_ENTRY enum entry TEST
       init: ENUM_CONSTRUCTOR_CALL TEST TEST
       class: CLASS ENUM_ENTRY TEST
         CONSTRUCTOR private constructor TEST()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum3 super
+            INSTANCE_INITIALIZER_CALL classDescriptor=TEST
         FUN public open override /*1*/ fun foo(): kotlin.Unit
           BLOCK_BODY
             CALL .println type=kotlin.Unit operator=null
@@ -58,6 +62,7 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL Enum super
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum4
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -68,6 +73,7 @@ FILE /enum.kt
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum4 super
               x: CONST Int type=kotlin.Int value='1'
+            INSTANCE_INITIALIZER_CALL classDescriptor=TEST1
         FUN public open override /*1*/ fun foo(): kotlin.Unit
           BLOCK_BODY
             CALL .println type=kotlin.Unit operator=null
@@ -79,11 +85,13 @@ FILE /enum.kt
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL TestEnum4 super
               x: CONST Int type=kotlin.Int value='2'
-            BLOCK type=kotlin.Unit operator=null
-              SET_BACKING_FIELD z type=kotlin.Unit operator=null
-                CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
-                  $this: THIS enum entry TEST2 type=TestEnum4.TEST2
+            INSTANCE_INITIALIZER_CALL classDescriptor=TEST2
         PROPERTY public final val z: kotlin.Int
+        ANONYMOUS_INITIALIZER TEST2
+          BLOCK_BODY
+            SET_BACKING_FIELD z type=kotlin.Unit operator=null
+              CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS enum entry TEST2 type=TestEnum4.TEST2
         FUN public open override /*1*/ fun foo(): kotlin.Unit
           BLOCK_BODY
             CALL .println type=kotlin.Unit operator=null

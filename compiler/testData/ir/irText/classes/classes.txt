@@ -2,17 +2,21 @@ FILE /classes.kt
   CLASS CLASS TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestClass
   CLASS INTERFACE TestInterface
   CLASS OBJECT TestObject
     CONSTRUCTOR private constructor TestObject()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestObject
   CLASS ANNOTATION_CLASS TestAnnotationClass
     CONSTRUCTOR public constructor TestAnnotationClass()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestAnnotationClass
   CLASS ENUM_CLASS TestEnumClass
     CONSTRUCTOR private constructor TestEnumClass()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL Enum super
+        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnumClass
     FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnumClass>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnumClass

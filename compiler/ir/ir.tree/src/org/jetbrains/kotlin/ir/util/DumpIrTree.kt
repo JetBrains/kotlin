@@ -60,15 +60,6 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitClass(declaration: IrClass, data: String) {
-        declaration.dumpLabeledElementWith(data) {
-            declaration.nestedInitializers?.accept(this, "nestedInitializers")
-            declaration.members.forEach {
-                it.accept(this, "")
-            }
-        }
-    }
-
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.initializerExpression.accept(this, "init")

@@ -39,6 +39,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
     fun visitDelegate(declaration: IrDelegate, data: D) = visitDeclaration(declaration, data)
     fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
+    fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D) = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D) = visitBody(body, data)
@@ -71,7 +72,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitCallableReference(expression: IrCallableReference, data: D) = visitDeclarationReference(expression, data)
     fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 
-    fun visitNestedInitializersCall(expression: IrNestedInitializersCall, data: D) = visitExpression(expression, data)
+    fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: D) = visitExpression(expression, data)
 
     fun visitTypeOperator(expression: IrTypeOperatorCall, data: D) = visitExpression(expression, data)
 

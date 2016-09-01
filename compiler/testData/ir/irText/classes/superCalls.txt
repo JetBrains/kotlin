@@ -2,8 +2,7 @@ FILE /superCalls.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
-        SET_BACKING_FIELD bar type=kotlin.Unit operator=null
-          CONST String type=kotlin.String value=''
+        INSTANCE_INITIALIZER_CALL classDescriptor=Base
     FUN public open fun foo(): kotlin.Unit
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.String = ""
@@ -13,6 +12,7 @@ FILE /superCalls.kt
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
         CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        INSTANCE_INITIALIZER_CALL classDescriptor=Derived
     FUN public open override /*1*/ fun foo(): kotlin.Unit
       BLOCK_BODY
         CALL .foo superQualifier=Base type=kotlin.Unit operator=null

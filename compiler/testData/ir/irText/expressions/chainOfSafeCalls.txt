@@ -2,6 +2,7 @@ FILE /chainOfSafeCalls.kt
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=C
     FUN public final fun foo(): C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from=foo

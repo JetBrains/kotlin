@@ -8,6 +8,7 @@ FILE /dataClasses.kt
           GET_VAR y type=kotlin.String operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD z type=kotlin.Unit operator=null
           GET_VAR z type=kotlin.Any operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test1
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
         GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
