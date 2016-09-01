@@ -33,6 +33,10 @@ Assembled the translator can be found in the following folder
 To execute the generated code you should use should link your code with kotlin native runtime. By default, you can find the appropriate library at
 `../kotstd/build/stdlib_x86.ll`
 
+If this file is missing you can assemble it yourself
+
+    $  cd ../kotstd && make clean && make
+
 For linking, run the following command
 
     $  llvm-link-3.6 -S $(KOTLIN_NATIVE_RUNTIME) $(COMPILED_LLVM_CODE)
