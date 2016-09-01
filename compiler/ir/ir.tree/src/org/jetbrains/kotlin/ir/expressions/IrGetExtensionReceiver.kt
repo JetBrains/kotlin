@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 interface IrGetExtensionReceiver : IrDeclarationReference, IrExpressionWithCopy {
     override val descriptor: ReceiverParameterDescriptor
@@ -29,12 +28,11 @@ interface IrGetExtensionReceiver : IrDeclarationReference, IrExpressionWithCopy 
 class IrGetExtensionReceiverImpl(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
         descriptor: ReceiverParameterDescriptor
-) : IrTerminalDeclarationReferenceBase<ReceiverParameterDescriptor>(startOffset, endOffset, type, descriptor), IrGetExtensionReceiver {
+) : IrTerminalDeclarationReferenceBase<ReceiverParameterDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetExtensionReceiver {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetExtensionReceiver(this, data)
 
     override fun copy(): IrGetExtensionReceiver =
-            IrGetExtensionReceiverImpl(startOffset, endOffset, type, descriptor)
+            IrGetExtensionReceiverImpl(startOffset, endOffset, descriptor)
 }

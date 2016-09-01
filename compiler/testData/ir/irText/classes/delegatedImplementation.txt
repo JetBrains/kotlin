@@ -1,9 +1,20 @@
 FILE /delegatedImplementation.kt
   CLASS INTERFACE IBase
+    FUN public abstract fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
+    FUN public abstract fun bar(): kotlin.Int
+    FUN public abstract fun kotlin.String.qux(): kotlin.Unit
   CLASS OBJECT BaseImpl
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
         INSTANCE_INITIALIZER_CALL classDescriptor=BaseImpl
+    FUN public open override /*1*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
+      BLOCK_BODY
+    FUN public open override /*1*/ fun bar(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=bar
+          CONST Int type=kotlin.Int value='42'
+    FUN public open override /*1*/ fun kotlin.String.qux(): kotlin.Unit
+      BLOCK_BODY
   CLASS INTERFACE IOther
   FUN public fun otherImpl(): IOther
     BLOCK_BODY
@@ -21,6 +32,22 @@ FILE /delegatedImplementation.kt
     DELEGATE val `Test1$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT BaseImpl type=BaseImpl
+    FUN public open override /*1*/ /*delegation*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
+      BLOCK_BODY
+        CALL .foo type=kotlin.Unit operator=null
+          $this: GET_VAR Test1$IBase$delegate type=BaseImpl operator=null
+          x: GET_VAR x type=kotlin.Int operator=null
+          s: GET_VAR s type=kotlin.String operator=null
+    FUN public open override /*1*/ /*delegation*/ fun bar(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=bar
+          CALL .bar type=kotlin.Int operator=null
+            $this: GET_VAR Test1$IBase$delegate type=BaseImpl operator=null
+    FUN public open override /*1*/ /*delegation*/ fun kotlin.String.qux(): kotlin.Unit
+      BLOCK_BODY
+        CALL .qux type=kotlin.Unit operator=null
+          $this: GET_VAR Test1$IBase$delegate type=BaseImpl operator=null
+          $receiver: $RECEIVER of: qux type=kotlin.String
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
@@ -28,6 +55,22 @@ FILE /delegatedImplementation.kt
     DELEGATE val `Test2$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT BaseImpl type=BaseImpl
+    FUN public open override /*1*/ /*delegation*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
+      BLOCK_BODY
+        CALL .foo type=kotlin.Unit operator=null
+          $this: GET_VAR Test2$IBase$delegate type=BaseImpl operator=null
+          x: GET_VAR x type=kotlin.Int operator=null
+          s: GET_VAR s type=kotlin.String operator=null
+    FUN public open override /*1*/ /*delegation*/ fun bar(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=bar
+          CALL .bar type=kotlin.Int operator=null
+            $this: GET_VAR Test2$IBase$delegate type=BaseImpl operator=null
+    FUN public open override /*1*/ /*delegation*/ fun kotlin.String.qux(): kotlin.Unit
+      BLOCK_BODY
+        CALL .qux type=kotlin.Unit operator=null
+          $this: GET_VAR Test2$IBase$delegate type=BaseImpl operator=null
+          $receiver: $RECEIVER of: qux type=kotlin.String
     DELEGATE val `Test2$IOther$delegate`: IOther
       EXPRESSION_BODY
         CALL .otherImpl type=IOther operator=null

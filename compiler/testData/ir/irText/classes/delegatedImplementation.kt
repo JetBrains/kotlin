@@ -1,5 +1,14 @@
-interface IBase
-object BaseImpl : IBase
+interface IBase {
+    fun foo(x: Int, s: String)
+    fun bar(): Int
+    fun String.qux()
+}
+
+object BaseImpl : IBase {
+    override fun foo(x: Int, s: String) {}
+    override fun bar(): Int = 42
+    override fun String.qux() {}
+}
 
 interface IOther
 fun otherImpl(): IOther = object : IOther {}

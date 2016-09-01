@@ -51,7 +51,7 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
             IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                  receiver.classQualifier.descriptor)
         is ExtensionReceiver ->
-            IrGetExtensionReceiverImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.type,
+            IrGetExtensionReceiverImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset,
                                        receiver.declarationDescriptor.extensionReceiverParameter!!)
         else ->
             TODO("Receiver: ${receiver.javaClass.simpleName}")

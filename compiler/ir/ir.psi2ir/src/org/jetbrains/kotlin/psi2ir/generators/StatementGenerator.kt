@@ -285,11 +285,7 @@ class StatementGenerator(
                 )
             is CallableDescriptor -> {
                 val extensionReceiver = referenceTarget.extensionReceiverParameter ?: TODO("No extension receiver: $referenceTarget")
-                IrGetExtensionReceiverImpl(
-                        expression.startOffset, expression.endOffset,
-                        extensionReceiver.type,
-                        extensionReceiver
-                )
+                IrGetExtensionReceiverImpl(expression.startOffset, expression.endOffset, extensionReceiver)
             }
             else ->
                 error("Expected this or receiver: $referenceTarget")
