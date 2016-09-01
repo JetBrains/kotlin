@@ -1,5 +1,6 @@
 package algorithm
 
+import Exceptions.SonarDataException
 import Logger.log
 import RouteMetricRequest
 import SonarRequest
@@ -134,7 +135,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         }
     }
 
-    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest? {
+    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
         val dist0 = anglesDistances[Angle(0)]!!
         val dist70 = anglesDistances[Angle(70)]!!
         val dist80 = anglesDistances[Angle(80)]!!
@@ -151,7 +152,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             log("Found to many -1 in angle distances, falling back")
             rollback()
             //todo Теоретически такая ситуация может быть валидной, если сразу после внутреннего угла идёт внешний
-            return null
+            throw SonarDataException()
         }
 
         val average = (anglesDistances.values
@@ -233,7 +234,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         log("")
 
         // Check if wall is too close or too far
-        log ("5. Check if we have to move closer or farther to the wall")
+        log("5. Check if we have to move closer or farther to the wall")
         if (dist90.distance > DISTANCE_TO_WALL_UPPER_BOUND || dist90.distance < DISTANCE_TO_WALL_LOWER_BOUND) {
             log("Flaw in distance to the parallel wall found, correcting")
             return correctDistanceToParallelWall(anglesDistances, state)
@@ -242,21 +243,21 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
         // Approaching inner corner and getting spurious reflection from 2 walls on 60;
         // Just move forward to get closer to the corner;
-        log ("6. Check if we are detecting echo reflections approaching inner corner")
+        log("6. Check if we are detecting echo reflections approaching inner corner")
         if (dist70.distance - dist0.distance > ECHO_REFLECTION_DIFF) {
             log("Echo reflection detected, moving forward")
             return moveForward(dist0.distance)
         }
-        log ("")
+        log("")
 
         // Approaching outer corner (parallel wall is ending soon, but not yet);
         // Just move forward to get to the end of the wall
-        log ("7. Check if we are detecting far wall approaching outer corner")
+        log("7. Check if we are detecting far wall approaching outer corner")
         if (dist80.distance == -1 || Math.abs(dist100.distance - dist80.distance) > ISOSCALENESS_MAX_DIFF) {
             log("Approaching outer corner, moving forward")
             return moveForward(dist0.distance)
         }
-        log ("")
+        log("")
 
         // default case: everything is ok, just move forward
         log("8. Default case: moving forward")

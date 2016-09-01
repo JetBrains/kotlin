@@ -2,6 +2,7 @@ package algorithm
 
 import CodedOutputStream
 import Exceptions.InactiveCarException
+import Exceptions.SonarDataException
 import RouteMetricRequest
 import SonarRequest
 import algorithm.geometry.Angle
@@ -38,12 +39,14 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     //    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
     protected var requiredAngles = defaultAngles
+
     protected enum class CarState {
         WALL,
         INNER,
         OUTER
 
     }
+
     private var iterationCounter = 0
 
     protected fun getData(angles: Array<Angle>): IntArray {
@@ -115,10 +118,16 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
         this.requiredAngles = defaultAngles
 
-        val state = getCarState(anglesDistances) ?: return
-        val command = getCommand(anglesDistances, state)
-
-        if (command == null) {
+        val command: RouteMetricRequest
+        val state: CarState
+        try {
+            state = getCarState(anglesDistances)
+            command = getCommand(anglesDistances, state)
+        } catch (e: SonarDataException) {
+            Logger.log("iteration cancelled. need more data from sonar")
+            Logger.outdent()
+            Logger.log("============= FINISHING ITERATION ${iterationCounter} ============")
+            Logger.log("")
             return
         }
 
@@ -157,7 +166,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
     private fun addToHistory(command: RouteMetricRequest) {
         history.push(command)
-        while(history.size > historySize) {
+        while (history.size > historySize) {
             history.removeAt(0)
         }
     }
@@ -186,10 +195,10 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     protected fun rollback() {
         val lastCommand = popFromHistory()
         val invertedCommand = inverseCommand(lastCommand)
-        Logger.log ("Rollback:")
+        Logger.log("Rollback:")
         Logger.indent()
-        Logger.log ("Last command: ${lastCommand.toString()}")
-        Logger.log ("Inverted cmd: ${invertedCommand.toString()}")
+        Logger.log("Last command: ${lastCommand.toString()}")
+        Logger.log("Inverted cmd: ${invertedCommand.toString()}")
         Logger.outdent()
         moveCar(invertedCommand)
     }
@@ -198,7 +207,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         Logger.log("=== Starting rollback for ${steps} steps ===")
         Logger.indent()
         var stepsRemaining = steps
-        while(stepsRemaining > 0 && history.size > 0) {
+        while (stepsRemaining > 0 && history.size > 0) {
             Logger.log("Step: ${steps - stepsRemaining + 1}")
             rollback()
             stepsRemaining--
@@ -207,8 +216,8 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         Logger.log("=== Finished rollback ===")
     }
 
-    protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?
-    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest?
+    protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState
+    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest
     protected abstract fun afterGetCommand(route: RouteMetricRequest)
     abstract fun isCompleted(): Boolean
 
