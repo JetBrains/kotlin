@@ -1253,6 +1253,7 @@
         <delete dir="${output}/mock-runtime-src" failonerror="false"/>
         <mkdir dir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/core/runtime.jvm/src/kotlin/TypeAliases.kt" todir="${output}/mock-runtime-src"/>
+        <copy file="${basedir}/core/runtime.jvm/src/kotlin/text/TypeAliases.kt" todir="${output}/mock-runtime-src/text"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/util/Standard.kt" todir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/internal/Annotations.kt" todir="${output}/mock-runtime-src"/>
 
