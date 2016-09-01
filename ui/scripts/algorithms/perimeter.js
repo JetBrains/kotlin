@@ -26,7 +26,7 @@ function perimeterDebugRequest() {
 		console.log("Got debug response");
 		var debugInfo = DebugResponse.decode64(data);
 		console.log("Drawing");
-		drawDebug(debugInfo);
+		drawDebug(debugInfo, 1);
 	});
 }
 

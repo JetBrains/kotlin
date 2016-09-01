@@ -137,7 +137,7 @@ function init() {
     	var mousePos = getMousePos(evt);
     	var message = "(" + mousePos.x + "," + mousePos.y + ")";
     	tooltip[0].textContent = message;
-    	tooltip.offset( {top: (evt.clientY + 20), left: (evt.clientX + 20) } );
+    	tooltip.offset( {top: (evt.pageY + 20), left: (evt.pageX + 20) } );
 	}, 
 	false
 );

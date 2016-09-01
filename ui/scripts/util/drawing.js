@@ -213,7 +213,7 @@ function drawAxis() {
 	drawLine(createLine(0, 1, 0), "black", 2)
 }
 
-function drawDebug(data) {
+function drawDebug(data, attempt) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	var segments = [];
@@ -247,4 +247,9 @@ function drawDebug(data) {
 	}
 
 	drawAxis()
+
+	// re-draw everything to be sure that all resizing and centering will take their place
+	if (attempt == 1) {
+		drawDebug(data, 0)
+	}
 }
