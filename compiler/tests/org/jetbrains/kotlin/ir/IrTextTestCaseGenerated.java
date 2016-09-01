@@ -35,12 +35,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("defaultArguments.kt")
-    public void testDefaultArguments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/defaultArguments.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("compiler/testData/ir/irText/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -148,6 +142,27 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("superCalls.kt")
         public void testSuperCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/superCalls.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/declarations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Declarations extends AbstractIrTextTestCase {
+        public void testAllFilesPresentInDeclarations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("defaultArguments.kt")
+        public void testDefaultArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/defaultArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatedProperties.kt")
+        public void testDelegatedProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
             doTest(fileName);
         }
     }

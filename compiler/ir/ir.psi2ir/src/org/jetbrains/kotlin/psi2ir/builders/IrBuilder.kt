@@ -66,6 +66,11 @@ open class IrBlockBodyBuilder(
 ) : IrStatementsBuilder<IrBlockBody>(context, scope, startOffset, endOffset) {
     private val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
 
+    inline fun blockBody(body: IrBlockBodyBuilder.() -> Unit): IrBlockBody {
+        body()
+        return doBuild()
+    }
+
     override fun addStatement(irStatement: IrStatement) {
         irBlockBody.addStatement(irStatement)
     }
@@ -124,3 +129,9 @@ inline fun GeneratorWithScope.irBlock(ktElement: KtElement? = null, operator: Ir
                        ktElement?.endOffset ?: UNDEFINED_OFFSET,
                        operator, resultType
         ).block(body)
+
+inline fun GeneratorWithScope.irBlockBody(ktElement: KtElement? = null, body: IrBlockBodyBuilder.() -> Unit) : IrBlockBody =
+        IrBlockBodyBuilder(context, scope,
+                           ktElement?.startOffset ?: UNDEFINED_OFFSET,
+                           ktElement?.endOffset ?: UNDEFINED_OFFSET
+        ).blockBody(body)

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 
 interface IrDeclaration : IrStatement {
-    val descriptor: DeclarationDescriptor?
+    val descriptor: DeclarationDescriptor
     val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
 }
@@ -35,6 +35,7 @@ enum class IrDeclarationKind {
     CONSTRUCTOR,
     PROPERTY,
     VARIABLE,
+    DELEGATE,
     CLASS,
     TYPEALIAS,
     ENUM_ENTRY,
@@ -43,6 +44,8 @@ enum class IrDeclarationKind {
 
 enum class IrDeclarationOrigin {
     DEFINED,
+    DELEGATE,
+    DELEGATED_PROPERTY_ACCESSOR,
     CLASS_FOR_ENUM_ENTRY,
     ENUM_CLASS_SPECIAL_MEMBER,
     GENERATED_DATA_CLASS_MEMBER,

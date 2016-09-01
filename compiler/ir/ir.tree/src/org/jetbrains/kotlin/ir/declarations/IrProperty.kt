@@ -35,10 +35,9 @@ interface IrSimpleProperty : IrProperty {
 }
 
 interface IrDelegatedProperty : IrProperty {
-    var delegateInitializer: IrBody
+    var delegate: IrDelegate
 }
 
-// TODO synchronization?
 abstract class IrPropertyBase(
         startOffset: Int,
         endOffset: Int,
@@ -119,26 +118,37 @@ class IrDelegatedPropertyImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        delegateInitializer: IrBody
+        descriptor: PropertyDescriptor
 ) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrDelegatedProperty {
-    override var delegateInitializer: IrBody = delegateInitializer
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            origin: IrDeclarationOrigin,
+            descriptor: PropertyDescriptor,
+            delegate: IrDelegate
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        this.delegate = delegate
+    }
+
+    private var delegateImpl: IrDelegate? = null
+    override var delegate: IrDelegate
+        get() = delegateImpl!!
         set(value) {
             value.assertDetached()
-            field.detach()
-            field = value
-            value.setTreeLocation(this, INITIALIZER_SLOT)
+            delegateImpl?.detach()
+            delegateImpl = value
+            value.setTreeLocation(this, DELEGATE_SLOT)
         }
 
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
-                INITIALIZER_SLOT -> delegateInitializer
+                DELEGATE_SLOT -> delegate
                 else -> super.getChild(slot)
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
-            INITIALIZER_SLOT -> delegateInitializer = newChild.assertCast()
+            DELEGATE_SLOT -> delegate = newChild.assertCast()
             else -> super.replaceChild(slot, newChild)
         }
     }
@@ -147,7 +157,7 @@ class IrDelegatedPropertyImpl(
             visitor.visitDelegatedProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        delegateInitializer.accept(visitor, data)
+        delegate.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }

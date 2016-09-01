@@ -20,11 +20,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunctionBase
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.builders.irBlockBody
+import org.jetbrains.kotlin.psi2ir.builders.irCallableReference
+import org.jetbrains.kotlin.psi2ir.builders.irGet
+import org.jetbrains.kotlin.psi2ir.builders.irReturn
+import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
+import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.lang.AssertionError
 import java.util.*
 
 class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext): GeneratorWithScope {
@@ -59,7 +67,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         return irBlockBody
     }
 
-    fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrBody =
+    fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpressionBody =
             IrExpressionBodyImpl(ktInitializer.startOffset, ktInitializer.endOffset,
                                  createStatementGenerator().generateExpression(ktInitializer))
 
@@ -277,5 +285,34 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     private fun createPropertyInitializationExpression(ktElement: KtElement, propertyDescriptor: PropertyDescriptor, value: IrExpression) =
             IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor, value)
+
+    fun generateDelegatedPropertyGetter(
+            ktDelegate: KtPropertyDelegate,
+            delegateDescriptor: IrPropertyDelegateDescriptor,
+            getterDescriptor: PropertyGetterDescriptor
+    ): IrBody =
+            irBlockBody(ktDelegate) {
+                val statementGenerator = createStatementGenerator()
+                val conventionMethodResolvedCall = getOrFail(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor)
+                val conventionMethodCall = statementGenerator.pregenerateCall(conventionMethodResolvedCall)
+                conventionMethodCall.setExplicitReceiverValue(VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor))
+                conventionMethodCall.irValueArgumentsByIndex[1] = irCallableReference(delegateDescriptor.kPropertyType, delegateDescriptor.correspondingProperty)
+                +irReturn(CallGenerator(statementGenerator).generateCall(ktDelegate.startOffset, ktDelegate.endOffset, conventionMethodCall))
+            }
+
+    fun generateDelegatedPropertySetter(
+            ktDelegate: KtPropertyDelegate,
+            delegateDescriptor: IrPropertyDelegateDescriptor,
+            setterDescriptor: PropertySetterDescriptor
+    ): IrBody =
+            irBlockBody(ktDelegate) {
+                val statementGenerator = createStatementGenerator()
+                val conventionMethodResolvedCall = getOrFail(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
+                val conventionMethodCall = statementGenerator.pregenerateCall(conventionMethodResolvedCall)
+                conventionMethodCall.setExplicitReceiverValue(VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor))
+                conventionMethodCall.irValueArgumentsByIndex[1] = irCallableReference(delegateDescriptor.kPropertyType, delegateDescriptor.correspondingProperty)
+                conventionMethodCall.irValueArgumentsByIndex[2] = irGet(setterDescriptor.valueParameters[0])
+                +irReturn(CallGenerator(statementGenerator).generateCall(ktDelegate.startOffset, ktDelegate.endOffset, conventionMethodCall))
+            }
 }
 

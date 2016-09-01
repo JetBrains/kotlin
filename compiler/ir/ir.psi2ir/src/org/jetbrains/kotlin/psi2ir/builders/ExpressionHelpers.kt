@@ -76,7 +76,6 @@ fun IrBuilderWithScope.irThis() =
             IrThisReferenceImpl(startOffset, endOffset, classOwner.defaultType, classOwner)
         }
 
-
 fun IrBuilderWithScope.irGet(variable: VariableDescriptor) =
         IrGetVariableImpl(startOffset, endOffset, variable)
 
@@ -127,3 +126,6 @@ fun IrBuilderWithScope.irString(value: String) =
 
 fun IrBuilderWithScope.irConcat() =
         IrStringConcatenationImpl(startOffset, endOffset, context.builtIns.stringType)
+
+fun IrBuilderWithScope.irCallableReference(type: KotlinType, descriptor: CallableDescriptor) =
+        IrCallableReferenceImpl(startOffset, endOffset, type, descriptor)

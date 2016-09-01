@@ -22,34 +22,35 @@ import org.jetbrains.kotlin.ir.expressions.*
 
 interface IrElementVisitor<out R, in D> {
     fun visitElement(element: IrElement, data: D): R
-    fun visitModule(declaration: IrModule, data: D): R = visitElement(declaration, data)
-    fun visitFile(declaration: IrFile, data: D): R = visitElement(declaration, data)
+    fun visitModule(declaration: IrModule, data: D) = visitElement(declaration, data)
+    fun visitFile(declaration: IrFile, data: D) = visitElement(declaration, data)
 
-    fun visitDeclaration(declaration: IrDeclaration, data: D): R = visitElement(declaration, data)
-    fun visitClass(declaration: IrClass, data: D): R = visitDeclaration(declaration, data)
-    fun visitTypeAlias(declaration: IrTypeAlias, data: D): R = visitDeclaration(declaration, data)
+    fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)
+    fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
+    fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
     fun visitGeneralFunction(declaration: IrGeneralFunction, data: D) = visitDeclaration(declaration, data)
-    fun visitFunction(declaration: IrFunction, data: D): R = visitGeneralFunction(declaration, data)
-    fun visitPropertyGetter(declaration: IrPropertyGetter, data: D): R = visitGeneralFunction(declaration, data)
-    fun visitPropertySetter(declaration: IrPropertySetter, data: D): R = visitGeneralFunction(declaration, data)
-    fun visitConstructor(declaration: IrConstructor, data: D): R = visitGeneralFunction(declaration, data)
-    fun visitProperty(declaration: IrProperty, data: D): R = visitDeclaration(declaration, data)
-    fun visitSimpleProperty(declaration: IrSimpleProperty, data: D): R = visitProperty(declaration, data)
-    fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D): R = visitProperty(declaration, data)
+    fun visitFunction(declaration: IrFunction, data: D) = visitGeneralFunction(declaration, data)
+    fun visitPropertyGetter(declaration: IrPropertyGetter, data: D) = visitGeneralFunction(declaration, data)
+    fun visitPropertySetter(declaration: IrPropertySetter, data: D) = visitGeneralFunction(declaration, data)
+    fun visitConstructor(declaration: IrConstructor, data: D) = visitGeneralFunction(declaration, data)
+    fun visitProperty(declaration: IrProperty, data: D) = visitDeclaration(declaration, data)
+    fun visitSimpleProperty(declaration: IrSimpleProperty, data: D) = visitProperty(declaration, data)
+    fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D) = visitProperty(declaration, data)
     fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
+    fun visitDelegate(declaration: IrDelegate, data: D) = visitDeclaration(declaration, data)
     fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
 
-    fun visitBody(body: IrBody, data: D): R = visitElement(body, data)
-    fun visitExpressionBody(body: IrExpressionBody, data: D): R = visitBody(body, data)
+    fun visitBody(body: IrBody, data: D) = visitElement(body, data)
+    fun visitExpressionBody(body: IrExpressionBody, data: D) = visitBody(body, data)
     fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
     fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
-    fun visitExpression(expression: IrExpression, data: D): R = visitElement(expression, data)
-    fun <T> visitConst(expression: IrConst<T>, data: D): R = visitExpression(expression, data)
-    fun visitVararg(expression: IrVararg, data: D): R = visitExpression(expression, data)
-    fun visitSpreadElement(spread: IrSpreadElement, data: D): R = visitElement(spread, data)
+    fun visitExpression(expression: IrExpression, data: D) = visitElement(expression, data)
+    fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
+    fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
+    fun visitSpreadElement(spread: IrSpreadElement, data: D) = visitElement(spread, data)
 
-    fun visitBlock(expression: IrBlock, data: D): R = visitExpression(expression, data)
+    fun visitBlock(expression: IrBlock, data: D) = visitExpression(expression, data)
     fun visitStringConcatenation(expression: IrStringConcatenation, data: D) = visitExpression(expression, data)
     fun visitThisReference(expression: IrThisReference, data: D) = visitExpression(expression, data)
 
@@ -84,8 +85,8 @@ interface IrElementVisitor<out R, in D> {
     fun visitBreak(jump: IrBreak, data: D) = visitBreakContinue(jump, data)
     fun visitContinue(jump: IrContinue, data: D) = visitBreakContinue(jump, data)
 
-    fun visitReturn(expression: IrReturn, data: D): R = visitExpression(expression, data)
-    fun visitThrow(expression: IrThrow, data: D): R = visitExpression(expression, data)
+    fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
+    fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
 
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)

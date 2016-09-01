@@ -205,7 +205,10 @@ class StatementGenerator(
             entry.expression!!.genExpr()
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
-        val resolvedCall = getResolvedCall(expression) ?: throw AssertionError("No resolved call for ${expression.text}")
+        val resolvedCall = getResolvedCall(expression) ?:
+                           return IrDummyExpression(expression.startOffset, expression.endOffset,
+                                                    context.builtIns.nothingType,
+                                                    "No resolved call for ${expression.text}")
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             val variableCall = pregenerateCall(resolvedCall.variableCall)

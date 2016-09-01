@@ -34,7 +34,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "? ${element.javaClass.simpleName}"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-            "? ${declaration.javaClass.simpleName} ${declaration.descriptor?.name}"
+            "? ${declaration.javaClass.simpleName} ${declaration.descriptor.name}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
             "FILE ${declaration.name}"
@@ -62,6 +62,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
+
+    override fun visitDelegate(declaration: IrDelegate, data: Nothing?): String =
+            "DELEGATE ${declaration.descriptor.render()}"
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
             "ENUM_ENTRY ${declaration.descriptor.render()}"
@@ -187,12 +190,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
         internal fun IrDeclaration.name(): String =
-                descriptor?.let { it.name.toString() } ?: "<none>"
+                descriptor.let { it.name.toString() }
 
-        internal fun DeclarationDescriptor?.render(): String =
-                this?.let { DESCRIPTOR_RENDERER.render(it) } ?: "<none>"
+        internal fun DeclarationDescriptor.render(): String =
+                DESCRIPTOR_RENDERER.render(this)
 
-        internal fun KotlinType?.render(): String =
-                this?.let { DESCRIPTOR_RENDERER.renderType(it) } ?: "<no-type>"
+        internal fun KotlinType.render(): String =
+                DESCRIPTOR_RENDERER.renderType(this)
     }
 }

@@ -31,8 +31,8 @@ class VariableLValue(
         val descriptor: VariableDescriptor,
         val irOperator: IrOperator? = null
 ) : LValue, AssignmentReceiver {
-    constructor(irVariable: IrVariable, irOperator: IrOperator? = null) :
-    this(irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
+    constructor(irVariable: IrVariable, irOperator: IrOperator? = null) : this(
+            irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
 
     override val type: KotlinType get() = descriptor.type
 
