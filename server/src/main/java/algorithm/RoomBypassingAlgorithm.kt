@@ -24,8 +24,8 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     private val ISOSCALENESS_MAX_DIFF = 50              // almost reached outer corner but not yet, and 120 meas. founds far wall
     private val DISTANCE_TO_WALL_UPPER_BOUND = 60       // have to move closer to the parallel wall
     private val DISTANCE_TO_WALL_LOWER_BOUND = 40       // have to move farther to the parallel wall
-    private val SPURIOUS_REFLECTION_DIFF = 70           // we're approaching corner and get spurious reflection from two walls on 60 meas. ! Should be before outer corner case !
-    private val RANGE_FROM_ZERO_POINT_TO_FINISH_ALG = 60
+    private val ECHO_REFLECTION_DIFF = 70           // we're approaching corner and get spurious reflection from two walls on 60 meas. ! Should be before outer corner case !
+    private val RANGE_FROM_ZERO_POINT_TO_FINISH_ALG = 50
 
     private var calibrateAfterRotate = false
 
@@ -209,8 +209,6 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             return moveForward(dist0.distance)
         }
 
-        // Approaching inner corner and getting spurious reflection from 2 walls on 60 - just move forward to get closer to corner
-
         for (i in 70..110 step 10) {
             if (i == 90) {
                 continue    // point on 90 was already added
@@ -240,15 +238,18 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             return correctDistanceToParallelWall(anglesDistances, state)
         }
 
-        if (dist70.distance - dist0.distance > SPURIOUS_REFLECTION_DIFF) {
+        // Approaching inner corner and getting spurious reflection from 2 walls on 60;
+        // Just move forward to get closer to the corner;
+        if (dist70.distance - dist0.distance > ECHO_REFLECTION_DIFF) {
             log("Spurious reflection detected, moving forward")
             return moveForward(dist0.distance)
         }
 
-        // Approaching outer corner (parallel wall is ending soon, but not yet) - just move forward to get to the end of the wall
+        // Approaching outer corner (parallel wall is ending soon, but not yet);
+        // Just move forward to get to the end of the wall
         if (dist80.distance == -1 || Math.abs(dist100.distance - dist80.distance) > ISOSCALENESS_MAX_DIFF) {
             log("Aprroaching outer corner, moving forward")
-            return moveForward(30)
+            return moveForward(dist0.distance)
         }
 
         // default case: everything is ok, just move forward
