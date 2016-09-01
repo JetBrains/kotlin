@@ -125,6 +125,12 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
 
+#### Android Lint
+
+###### Issues fixed
+
+- [`KT-12022`](https://youtrack.jetbrains.com/issue/KT-12022) Report lint warnings even when file contains errors
+
 ## 1.0.4
 
 ### Compiler

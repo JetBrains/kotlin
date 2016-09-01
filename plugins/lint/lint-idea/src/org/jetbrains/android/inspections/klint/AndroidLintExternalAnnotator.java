@@ -62,6 +62,12 @@ import static com.android.tools.klint.detector.api.TextFormat.RAW;
 public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State> {
   static final boolean INCLUDE_IDEA_SUPPRESS_ACTIONS = false;
 
+  @Nullable
+  @Override
+  public State collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
+    return collectInformation(file);
+  }
+
   @Override
   public State collectInformation(@NotNull PsiFile file) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
