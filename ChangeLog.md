@@ -19,6 +19,12 @@
 
 - [`KT-7549`](https://youtrack.jetbrains.com/issue/KT-7549) Allow to evaluate kotlin expressions in Java files
 
+#### Android Lint
+
+###### Issues fixed
+
+- [`KT-12022`](https://youtrack.jetbrains.com/issue/KT-12022) Report lint warnings even when file contains errors
+
 ## 1.0.4
 
 ### Compiler
