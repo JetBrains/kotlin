@@ -198,8 +198,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     fun generateEnumEntryInitializer(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
-        // Enum entry with body has a corresponding underlying class
-        if (ktEnumEntry.getBody() != null) {
+        if (ktEnumEntry.declarations.isNotEmpty()) {
             val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
             return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
                                              enumEntryConstructor, enumEntryDescriptor)
