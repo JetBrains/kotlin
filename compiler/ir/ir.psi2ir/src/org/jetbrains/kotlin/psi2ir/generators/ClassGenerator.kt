@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -39,6 +41,8 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
 
         generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
 
+        generateMembersDeclaredInSupertypeList(irClass, ktClassOrObject)
+
         generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
         if (descriptor.isData) {
@@ -50,6 +54,30 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         }
 
         return irClass
+    }
+
+    private fun generateMembersDeclaredInSupertypeList(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+        ktClassOrObject.getSuperTypeList()?.let { ktSuperTypeList ->
+            for (ktEntry in ktSuperTypeList.entries) {
+                if (ktEntry is KtDelegatedSuperTypeEntry) {
+                    generateDelegatedImplementationMembers(irClass, ktEntry)
+                }
+            }
+        }
+    }
+
+    private fun generateDelegatedImplementationMembers(irClass: IrClassImpl, ktEntry: KtDelegatedSuperTypeEntry) {
+        val ktDelegateExpression = ktEntry.delegateExpression!!
+        val delegateType = getInferredTypeWithImplicitCastsOrFail(ktDelegateExpression)
+        val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
+        val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
+        val irDelegate = IrDelegateImpl(ktDelegateExpression.startOffset, ktDelegateExpression.endOffset, IrDeclarationOrigin.DELEGATE,
+                                        delegateDescriptor)
+        val bodyGenerator = BodyGenerator(irClass.descriptor, context)
+        irDelegate.initializer = bodyGenerator.generatePropertyInitializerBody(ktDelegateExpression)
+        irClass.addMember(irDelegate)
+
+        // TODO add delegated members
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {

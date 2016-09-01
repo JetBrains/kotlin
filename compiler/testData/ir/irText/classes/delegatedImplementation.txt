@@ -1,0 +1,33 @@
+FILE /delegatedImplementation.kt
+  CLASS INTERFACE IBase
+  CLASS OBJECT BaseImpl
+    CONSTRUCTOR private constructor BaseImpl()
+      BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=BaseImpl
+  CLASS INTERFACE IOther
+  FUN public fun otherImpl(): IOther
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from=otherImpl
+        BLOCK type=otherImpl.<no name provided> operator=OBJECT_LITERAL
+          CLASS CLASS <no name provided>
+            CONSTRUCTOR public constructor <no name provided>()
+              BLOCK_BODY
+                INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
+          CALL .<init> type=otherImpl.<no name provided> operator=OBJECT_LITERAL
+  CLASS CLASS Test1
+    CONSTRUCTOR public constructor Test1()
+      BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test1
+    DELEGATE val `Test1$IBase$delegate`: BaseImpl
+      EXPRESSION_BODY
+        GET_OBJECT BaseImpl type=BaseImpl
+  CLASS CLASS Test2
+    CONSTRUCTOR public constructor Test2()
+      BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test2
+    DELEGATE val `Test2$IBase$delegate`: BaseImpl
+      EXPRESSION_BODY
+        GET_OBJECT BaseImpl type=BaseImpl
+    DELEGATE val `Test2$IOther$delegate`: IOther
+      EXPRESSION_BODY
+        CALL .otherImpl type=IOther operator=null

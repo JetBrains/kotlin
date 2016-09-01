@@ -31,16 +31,15 @@ interface IrPropertyDelegateDescriptor : IrDelegateDescriptor {
     val kPropertyType: KotlinType
 }
 
-class IrPropertyDelegateDescriptorImpl(
-        outType: KotlinType,
-        override val correspondingProperty: PropertyDescriptor,
-        override val kPropertyType: KotlinType
-) : IrPropertyDelegateDescriptor,
-        VariableDescriptorImpl(correspondingProperty.containingDeclaration,
-                               Annotations.EMPTY,
-                               getDelegateName(correspondingProperty.name),
-                               outType, SourceElement.NO_SOURCE
-        ) {
+interface IrImplementingDelegateDescriptor : IrDelegateDescriptor {
+    val correspondingSuperType: KotlinType
+}
+
+abstract class IrDelegateDescriptorBase(
+        containingDeclaration: DeclarationDescriptor,
+        name: Name,
+        delegateType: KotlinType
+) : VariableDescriptorImpl(containingDeclaration, Annotations.EMPTY, name, delegateType, SourceElement.NO_SOURCE) {
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
 
     override fun getVisibility(): Visibility = Visibilities.PRIVATE
@@ -55,5 +54,24 @@ class IrPropertyDelegateDescriptorImpl(
             visitor.visitVariableDescriptor(this, data)
 }
 
+class IrPropertyDelegateDescriptorImpl(
+        override val correspondingProperty: PropertyDescriptor,
+        delegateType: KotlinType,
+        override val kPropertyType: KotlinType
+) : IrPropertyDelegateDescriptor,
+        IrDelegateDescriptorBase(correspondingProperty.containingDeclaration, getDelegateName(correspondingProperty.name), delegateType)
+
+class IrImplementingDelegateDescriptorImpl(
+        containingDeclaration: ClassDescriptor,
+        delegateType: KotlinType,
+        override val correspondingSuperType: KotlinType
+) : IrImplementingDelegateDescriptor,
+        IrDelegateDescriptorBase(containingDeclaration, getDelegateName(containingDeclaration, correspondingSuperType), delegateType)
+
 internal fun getDelegateName(name: Name): Name =
         Name.identifier(name.asString() + "\$delegate")
+
+internal fun getDelegateName(classDescriptor: ClassDescriptor, superType: KotlinType): Name =
+        Name.identifier(classDescriptor.name.asString() + "\$" +
+                        (superType.constructor.declarationDescriptor?.name ?: "\$") +
+                        "\$delegate")

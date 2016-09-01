@@ -121,7 +121,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                                    propertyDescriptor.dispatchReceiverParameter?.type
         val kPropertyType = context.reflectionTypes.getKPropertyType(
                 Annotations.EMPTY, propertyReceiverType, propertyDescriptor.type, propertyDescriptor.isVar)
-        val delegateDescriptor = IrPropertyDelegateDescriptorImpl(delegateType, propertyDescriptor, kPropertyType)
+        val delegateDescriptor = IrPropertyDelegateDescriptorImpl(propertyDescriptor, delegateType, kPropertyType)
         val irDelegateInitializer = generateInitializerBody(delegateDescriptor, ktDelegateExpression)
         val irDelegate = IrDelegateImpl(ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
                                         delegateDescriptor, irDelegateInitializer)
