@@ -11,13 +11,10 @@ fun estimateAngle(from: Pair<Double, Double>, to: Pair<Double, Double>): Double 
         Math.atan2(to.first - from.first, to.second - from.second)
 
 fun angleDistance(from: Double, to: Double): Double {
-    val min = Math.min(from, to)
-    val max = Math.max(from, to)
+    val distance = Math.min(Math.abs(from - to), Math.abs(360 - (from - to)))
+    val direction = if (distance == Math.abs(from - to)) Math.signum(to - from) else -Math.signum(to - from)
 
-    val up = max - min
-    val down = 360 - max + min
-
-    if (Math.abs(up) < Math.abs(down)) return up else return down
+    return distance * direction
 }
 
 fun <T> maxSuffix(first: List<T>, second: List<T>, distance: (T, T) -> Double): Int {

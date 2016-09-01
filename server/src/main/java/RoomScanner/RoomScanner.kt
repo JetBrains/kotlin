@@ -12,35 +12,31 @@ class RoomScanner(val controller: CarController) : Thread() {
     }
 
     private fun step() {
-        val iterationPoints = scan()
-        points.addAll(iterationPoints.filter { it.first > 0 || it.second > 0 })
+        val iterationPoints = scan().filter { it.first > 0 || it.second > 0}
+        points.addAll(iterationPoints)
 
-        val target = iterationPoints.filter { it.first > 0 && it.second > 0 }.maxBy { distance(controller.position, it) }
+        val target = iterationPoints.maxBy { distance(controller.position, it) }
         target ?: return
 
-        controller.moveTo(target)
+        controller.moveTo(target, 50.0)
+        controller.rotateOn(0.0)
     }
 
     private fun scan(): MutableList<Pair<Double, Double>> {
         val horizon = IntArray(180 / 5, { it * 5 })
+        horizon.reverse()
 
-        val distance = fun(first: Double, second: Double): Double = when {
-            first == second -> 0.0
-            first == -1.0 -> second
-            second == -1.0 -> first
-            else -> Math.abs(first - second)
+        val dots = mutableListOf<Pair<Double, Double>>()
+        for (i in arrayOf(0.0, 90.0, 180.0, 270.0)) {
+            controller.rotateOn(i)
+            dots.addAll(controller.scan(horizon).mapIndexed { i: Int, d: Double -> controller.convertToPoint((i * 5 - 180).toDouble(), d) })
         }
 
-        val metrics = mutableListOf<List<Double>>()
-        for (i in intArrayOf(0, 180)) {
-            controller.rotateOn(i.toDouble())
-            metrics.add(controller.scan(horizon))
-        }
+        controller.rotateOn(0.0)
 
-        val points = merge(metrics.reversed(), distance).reversed()
-        return points.mapIndexed { i: Int, d: Double -> controller.convertToPoint((i * 5).toDouble(), d) }.toMutableList()
+        return dots
     }
 
     private fun plot(points: MutableList<Pair<Double, Double>>) =
-            "x <- c(${points.joinToString { it.first.toInt().toString() }}) \n y <- c(${points.joinToString { it.second.toInt().toString() }})"
+            "x <- c(${points.joinToString { it.first.toInt().toString() }}) \ny <- c(${points.joinToString { it.second.toInt().toString() }})"
 }

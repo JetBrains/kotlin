@@ -21,25 +21,25 @@ class CarController(var car: Car) {
     private val CHARGE_CORRECTION = 1.0 //0.85
     private var angle = 0.0
 
-    fun moveTo(to: Pair<Double, Double>) {
+    fun moveTo(to: Pair<Double, Double>, distance: Double) {
         val driveAngle = (Math.toDegrees(Math.atan2(to.first, to.second)) + 360) % 360
-        rotateOn(angleDistance(angle, driveAngle))
-        drive(Direction.FORWARD, 1)
+        rotateOn(driveAngle)
+        drive(Direction.FORWARD, distance.toInt())
 
-        position = Pair(position.first +  Math.cos(Math.toRadians(angle)),
-                position.second + Math.sin(Math.toRadians(angle)))
+        position = Pair(position.first +  distance * Math.cos(Math.toRadians(driveAngle)),
+                position.second + distance * Math.sin(Math.toRadians(driveAngle)))
     }
 
     fun rotateOn(target: Double) {
         val rotateAngle = angleDistance(angle, target)
         val direction = if (rotateAngle > 0) Direction.LEFT else Direction.RIGHT
-        drive(direction, rotateAngle.toInt())
+        drive(direction, Math.abs(rotateAngle.toInt()))
 
         angle = target
     }
 
     fun scan(angles: IntArray): List<Double> {
-        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 5, SonarRequest.Smoothing.NONE).build()
+        val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 1, SonarRequest.Smoothing.NONE).build()
         val data = CarClient.serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
         val response = CarClient.sendRequest(car, CarClient.Request.SONAR, data).get().responseBodyAsBytes
 
