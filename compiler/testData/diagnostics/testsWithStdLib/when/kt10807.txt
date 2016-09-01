@@ -1,7 +1,7 @@
 package
 
-public fun getComp(): java.util.Comparator<Foo?>
-public fun getCompInverted(): java.util.Comparator<Foo?>
+public fun getComp(): kotlin.comparisons.Comparator<Foo?> /* = java.util.Comparator<Foo?> */
+public fun getCompInverted(): kotlin.comparisons.Comparator<Foo?> /* = java.util.Comparator<Foo?> */
 
 public final class Foo {
     public constructor Foo(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int)

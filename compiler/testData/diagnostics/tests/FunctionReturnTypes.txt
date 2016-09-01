@@ -30,7 +30,7 @@ public fun blockReturnValueTypeMismatchUnit(): kotlin.Int
 public fun f(): kotlin.Int
 public fun f1(): kotlin.Int
 public fun f2(): kotlin.Int
-public fun foo(/*0*/ expr: java.lang.StringBuilder): kotlin.Int
+public fun foo(/*0*/ expr: kotlin.text.StringBuilder /* = java.lang.StringBuilder */): kotlin.Int
 public fun illegalConstantBlock(): kotlin.String
 public fun illegalConstantBody(): kotlin.Int
 public fun illegalIfBlock(): kotlin.Boolean
