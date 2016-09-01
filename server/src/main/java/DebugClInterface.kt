@@ -25,7 +25,7 @@ object DebugClInterface {
             "route [car_id] - setting a route for car with car id.\n" +
             "refloc - refresh all car locations\n" +
             "sonar [car_id] - get sonar data\n" +
-            "dbinfo [car_id] [type] - refresh all car locations\n." +
+            "dbinfo [car_id] [type] - refresh all car locations\n" +
             "lines - print lines, detected by car\n" +
             "alg [count] - run algorithm. Make [count] iteration\n" +
             "type is string name of value or int value. available values: MEMORYSTATS - 0\n" +

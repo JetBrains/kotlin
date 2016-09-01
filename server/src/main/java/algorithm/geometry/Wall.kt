@@ -5,8 +5,9 @@ import java.util.*
 data class Wall(val wallAngleOX: Angle,
                 val rawPoints: ArrayList<Point> = arrayListOf<Point>(),
                 var line: Line = Line(0.0, 0.0, 0.0)
-                ) {
+) {
     val id: Int
+
     companion object {
         var idCounter = 0
     }
@@ -17,7 +18,7 @@ data class Wall(val wallAngleOX: Angle,
     }
 
     var isFinished = false
-    val MAX_REGRESSION_ERROR = 10.0
+    val MAX_REGRESSION_ERROR = 5.0
 
     fun pushBackPoint(point: Point) {
         rawPoints.add(point)

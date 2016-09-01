@@ -97,8 +97,6 @@ class ClientHandler : SimpleChannelInboundHandler<Any>() {
         } catch (e: InterruptedException) {
             println("interrupted before sending datas to algorithm!")
         } catch (e: TimeoutException) {
-            e.printStackTrace()
-            println("timeout")
         }
     }
 

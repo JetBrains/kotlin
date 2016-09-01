@@ -77,7 +77,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     }
 
 
-
     private fun moveCar(messageBytes: ByteArray) {
         val request = getDefaultHttpRequest(thisCar.host, setRouteMetricUrl, messageBytes)
         try {
@@ -150,6 +149,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?
     protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest?
     protected abstract fun afterGetCommand(route: RouteMetricRequest)
+    abstract fun isCompleted(): Boolean
 
 
     private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {

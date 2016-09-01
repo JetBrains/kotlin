@@ -3,10 +3,7 @@ package algorithm
 import Logger.log
 import RouteMetricRequest
 import SonarRequest
-import algorithm.geometry.Angle
-import algorithm.geometry.AngleData
-import algorithm.geometry.Point
-import algorithm.geometry.Wall
+import algorithm.geometry.*
 import objects.Car
 import java.util.concurrent.Exchanger
 
@@ -19,7 +16,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     override val WINDOW_SIZE = 3
 
     //SHOULD BE CALIBRATED BEFORE RUNNING!!!!!!!!!!!
-    private val CHARGE_CORRECTION = 1.02//on full charge ok is 0.83 - 0.86
+    private val CHARGE_CORRECTION = 0.88//on full charge ok is 0.83 - 0.86
 
     private val MAX_DISTANCE_TO_WALL_AHEAD = 55         // reached the corner and should turn left
     private val OUTER_CORNER_DISTANCE_THRESHOLD = 90    // reached outer corner
@@ -28,8 +25,12 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
     private val DISTANCE_TO_WALL_UPPER_BOUND = 60       // have to move closer to the parallel wall
     private val DISTANCE_TO_WALL_LOWER_BOUND = 40       // have to move farther to the parallel wall
     private val SPURIOUS_REFLECTION_DIFF = 70           // we're approaching corner and get spurious reflection from two walls on 60 meas. ! Should be before outer corner case !
+    private val RANGE_FROM_ZERO_POINT_TO_FINISH_ALG = 50
 
     private var calibrateAfterRotate = false
+
+    private var isCompleted = false
+    private var circleFound = false
 
     var carX = 0
     var carY = 0
@@ -50,8 +51,9 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         resultBuilder.setDirections(getIntArray(FORWARD, RIGHT, FORWARD))
         val wallAngle = calculateAngle(anglesDistances, state)
-        resultBuilder.setDistances(getIntArray(15, wallAngle.degs(), 60))
+        resultBuilder.setDistances(getIntArray(15, wallAngle.degs(), 70))
         addWall(-wallAngle)
+        carAngle = RoomModel.walls.last().wallAngleOX.degs()
         calibrateAfterRotate = true
         return resultBuilder.build()
     }
@@ -62,6 +64,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val wallAngle = calculateAngle(anglesDistances, state)
         resultBuilder.setDistances(getIntArray(wallAngle.degs(), 15))
         addWall(wallAngle)
+        carAngle = RoomModel.walls.last().wallAngleOX.degs()
         calibrateAfterRotate = true
         return resultBuilder.build()
     }
@@ -108,7 +111,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         resultBuilder.setDirections(getIntArray(FORWARD))
         if (distToWall == -1 || distToWall > 200) {
-            resultBuilder.setDistances(getIntArray(50))
+            resultBuilder.setDistances(getIntArray(70))
         } else {
             resultBuilder.setDistances(getIntArray(Math.max(distToWall / 4, 20)))
         }
@@ -121,10 +124,14 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 
         val firstWall = RoomModel.walls.first()
         val lastWall = RoomModel.walls.last()
-        if (firstWall == lastWall && RoomModel.walls.size > 1) {
-            log("Found equal walls, finishing algorithm")
+//        if (firstWall == lastWall && RoomModel.walls.size > 1) {
+        if (circleFound) {
+            log("Found circle, finishing algorithm")
+            isCompleted = true
             RoomModel.finished = true
-            lastWall.pushBackPoint(firstWall.rawPoints.last())
+            val intersectionPoint = firstWall.rawPoints.last()
+            intersectionPoint.y = lastWall.rawPoints.first().y
+            lastWall.pushBackPoint(intersectionPoint)
             lastWall.markAsFinished()
             RoomModel.walls.removeAt(0)
         } else {
@@ -166,7 +173,6 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
             }
             log("No need to realign")
             calibrateAfterRotate = false
-            carAngle = RoomModel.walls.last().wallAngleOX.degs()
         }
 
         // Check most basic measurements: 60/90/120
@@ -256,6 +262,10 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         return args
     }
 
+    override fun isCompleted(): Boolean {
+        return isCompleted
+    }
+
     override fun afterGetCommand(route: RouteMetricRequest) {
         route.directions.forEachIndexed { idx, direction ->
             when (direction) {
@@ -276,6 +286,10 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
 //                    carAngle -= route.distances[idx]
                 }
             }
+        }
+        if (Math.round(Math.cos(Angle(carAngle).rads())).toInt() == 1 && carAngle != 0
+                && Vector(carX.toDouble(), carY.toDouble()).length() < RANGE_FROM_ZERO_POINT_TO_FINISH_ALG) {
+            circleFound = true
         }
 
     }

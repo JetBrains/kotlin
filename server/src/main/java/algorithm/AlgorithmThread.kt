@@ -1,13 +1,11 @@
 package algorithm
 
-import kotlin.concurrent.thread
-
 class AlgorithmThread(val algorithmImpl: AbstractAlgorithm) : Thread() {
 
     private var count = 0
 
     override fun run() {
-        while (true) {//todo while !alrightmImpl.isDone(), but need check it
+        while (!algorithmImpl.isCompleted()) {
             try {
                 if (count > 0) {
                     algorithmImpl.iterate()
