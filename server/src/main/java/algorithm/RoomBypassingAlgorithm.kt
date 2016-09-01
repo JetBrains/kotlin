@@ -51,7 +51,7 @@ class RoomBypassingAlgorithm(thisCar: Car, exchanger: Exchanger<IntArray>) : Abs
         val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(IntArray(0), IntArray(0))
         resultBuilder.setDirections(getIntArray(FORWARD, RIGHT, FORWARD))
         val wallAngle = calculateAngle(anglesDistances, state)
-        resultBuilder.setDistances(getIntArray(40, wallAngle.degs(), 75))
+        resultBuilder.setDistances(getIntArray(20, wallAngle.degs(), 75))
         addWall(-wallAngle)
         carAngle = RoomModel.walls.last().wallAngleOX.degs()
         calibrateAfterRotate = true
