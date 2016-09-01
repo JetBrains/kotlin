@@ -31,15 +31,18 @@ class DummyFileResolveCachingTest : LightCodeInsightFixtureTestCase() {
     fun test() {
         myFixture.configureByText(KotlinFileType.INSTANCE, "")
 
-        val dummyFileText = "import java.util.ArrayList"
+        val dummyFileText = "import java.util.Properties"
         val dummyFile = KtPsiFactory(project).createAnalyzableFile("Dummy.kt", dummyFileText, file)
 
-        dummyFile.getResolutionFacade().getFileResolutionScope(dummyFile)
+        fun findClassifier(identifier: String) =
+                dummyFile.getResolutionFacade()
+                        .getFileResolutionScope(dummyFile)
+                        .findClassifier(Name.identifier(identifier), NoLookupLocation.FROM_IDE)
+
+        assertNotNull(findClassifier("Properties"))
 
         dummyFile.importDirectives.single().delete()
 
-        val resolutionScope = dummyFile.getResolutionFacade().getFileResolutionScope(dummyFile)
-        val classifier = resolutionScope.findClassifier(Name.identifier("ArrayList"), NoLookupLocation.FROM_IDE)
-        assertNull(classifier)
+        assertNull(findClassifier("Properties"))
     }
 }
