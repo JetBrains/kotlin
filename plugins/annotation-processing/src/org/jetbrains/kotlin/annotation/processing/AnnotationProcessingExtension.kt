@@ -87,6 +87,10 @@ abstract class AbstractAnnotationProcessingExtension(
             return null
         }
 
+        // Clean the generated source directory even if we don't run any annotation processors
+        generatedSourcesOutputDir.deleteRecursively()
+        generatedSourcesOutputDir.mkdirs()
+
         val processors = loadAnnotationProcessors()
         if (processors.isEmpty()) {
             log { "No annotation processors detected, exiting" }
