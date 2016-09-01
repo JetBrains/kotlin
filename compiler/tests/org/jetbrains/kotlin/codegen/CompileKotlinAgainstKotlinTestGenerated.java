@@ -208,4 +208,10 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("typeAliasesKt13181.kt")
+    public void testTypeAliasesKt13181() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
+        doTest(fileName);
+    }
 }
