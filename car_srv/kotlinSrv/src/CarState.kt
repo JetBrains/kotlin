@@ -14,7 +14,7 @@ class CarState private constructor() {
     fun moving(distance: Int) {
         x += (Math.cos(degreesToRadian(angle)) * distance).toInt()
         y += (Math.sin(degreesToRadian(angle)) * distance).toInt()
-        println("new position: {$x, $y}")
+        println("new position: {$x, $y}, distance: {$distance}")
     }
 
     private fun degreesToRadian(angleInDegrees: Int): Double {
@@ -23,7 +23,7 @@ class CarState private constructor() {
 
     //angle positive - rotation left
     fun rotate(angle: Int) {
-        this.angle += angle
+        this.angle = (this.angle + angle) % 360
         println("new angle: {$angle, ${this.angle}}")
     }
 

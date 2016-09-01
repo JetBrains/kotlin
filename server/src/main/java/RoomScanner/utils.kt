@@ -1,14 +1,18 @@
 package RoomScanner
 
+fun horizon(): IntArray {
+    val horizon = IntArray(180 / 5, { it * 5 })
+    horizon.reverse()
+
+    return horizon
+}
+
 fun distance(first: Pair<Double, Double>, second: Pair<Double, Double>): Double {
     val xDistance = first.first - second.first
     val yDistance = first.second - second.second
 
     return Math.sqrt(xDistance * xDistance + yDistance * yDistance)
 }
-
-fun estimateAngle(from: Pair<Double, Double>, to: Pair<Double, Double>): Double =
-        Math.atan2(to.first - from.first, to.second - from.second)
 
 fun angleDistance(from: Double, to: Double): Double {
     val distance = Math.min(Math.abs(from - to), Math.abs(360 - (from - to)))
