@@ -50,6 +50,7 @@ class JeDeclaredType(
 
     override fun getTypeArguments(): List<TypeMirror> {
         return when (psiType) {
+            is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
             is PsiClassType -> {
                 val substitutor = psiType.resolveGenerics().substitutor
                 val psiClass = psiType.resolve() ?: return psiType.parameters.map { it.toJeType(psiManager) }
@@ -80,13 +81,22 @@ class JeDeclaredType(
         return PsiTypesUtil.getClassType(psiClass).toJeType(psiManager)
     }
 
-    override fun equals(other: Any?): Boolean{
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return psiType == (other as? JeDeclaredType)?.psiType
+        other as? JeDeclaredType ?: return false
+        
+        return enclosingType == other.enclosingType
+               && psiClass == other.psiClass
+               && typeArguments == other.typeArguments
     }
-
-    override fun hashCode() = psiType.hashCode()
+    
+    override fun hashCode(): Int {
+        var result = enclosingType.hashCode()
+        result = 31 * result + psiClass.hashCode()
+        result = 31 * result + typeArguments.hashCode()
+        return result
+    }
     
     override fun toString() = psiType.getCanonicalText(false)
 }

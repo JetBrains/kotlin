@@ -31,11 +31,11 @@ class JeIntersectionType(
 
     override fun getBounds() = psiType.superTypes.map { it.toJeType(psiManager) }
 
-    override fun equals(other: Any?): Boolean{
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return psiType == (other as? JeIntersectionType)?.psiType
+        return bounds == (other as? JeIntersectionType)?.bounds
     }
 
-    override fun hashCode() = psiType.hashCode()
+    override fun hashCode() = bounds.hashCode()
 }
