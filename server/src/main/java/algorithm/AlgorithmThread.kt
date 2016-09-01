@@ -17,6 +17,7 @@ class AlgorithmThread(val algorithmImpl: AbstractAlgorithm) : Thread() {
 
             }
         }
+        println("algorithm is finished!")
     }
 
     fun setCount(count: Int) {
