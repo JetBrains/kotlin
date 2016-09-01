@@ -5,17 +5,30 @@ import org.kotlinnative.translator.llvm.types.*
 import java.rmi.UnexpectedException
 import java.util.*
 
-class LLVMBuilder(val arm: Boolean = false) {
+class LLVMBuilder(arm: Boolean = false) {
 
     private var localCode: StringBuilder = StringBuilder()
     private var globalCode: StringBuilder = StringBuilder()
     private var variableCount = 0
     private var labelCount = 0
-    var exceptions: Map<String, LLVMVariable> = mapOf()
+    private val exceptions = mapOf(
+            Pair("KotlinNullPointerException", initializeExceptionString("Exception in thread main kotlin.KotlinNullPointerException")))
 
 
     init {
-        initBuilder()
+        val declares = arrayOf(
+                "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
+                "declare i8* @malloc_heap(i32)",
+                "declare i32 @printf(i8*, ...)",
+                "declare void @abort()",
+                "%class.Nothing = type { }")
+
+        declares.forEach { addLLVMCodeToGlobalPlace(it) }
+
+        if (arm) {
+            val functionAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
+            addLLVMCodeToGlobalPlace(functionAttributes)
+        }
     }
 
     fun addLLVMCodeToLocalPlace(code: String) =
@@ -95,17 +108,11 @@ class LLVMBuilder(val arm: Boolean = false) {
         return empty
     }
 
-    fun clean() {
-        localCode = StringBuilder()
-        globalCode = StringBuilder()
-        initBuilder()
-    }
-
     fun convertVariableToType(variable: LLVMSingleValue, targetType: LLVMType): LLVMSingleValue {
         var resultVariable = variable
         if (variable.type != targetType) {
             val convertedExpression = targetType.convertFrom(variable)
-            resultVariable = storeExpression(convertedExpression)
+            resultVariable = saveExpression(convertedExpression)
         }
         return resultVariable
     }
@@ -189,10 +196,10 @@ class LLVMBuilder(val arm: Boolean = false) {
                 else -> throw UnexpectedException("Unknown inheritor of LLVMSingleValue")
             }
 
-    fun receivePointedArgument(value: LLVMSingleValue, pointer: Int): LLVMSingleValue {
+    fun receivePointedArgument(value: LLVMSingleValue, requirePointer: Int): LLVMSingleValue {
         var result = value
 
-        while (result.pointer > pointer) {
+        while (result.pointer > requirePointer) {
             result = receiveNativeValue(result)
         }
 
@@ -221,8 +228,8 @@ class LLVMBuilder(val arm: Boolean = false) {
         }
     }
 
-    fun storeExpression(expression: LLVMExpression): LLVMVariable {
-        val resultOp = getNewVariable(expression.variableType, pointer = expression.pointer)
+    fun saveExpression(expression: LLVMSingleValue): LLVMVariable {
+        val resultOp = getNewVariable(expression.type, pointer = expression.pointer)
         addAssignment(resultOp, expression)
         return resultOp
     }
@@ -239,25 +246,6 @@ class LLVMBuilder(val arm: Boolean = false) {
             addLLVMCodeToLocalPlace("$from = load ${source.pointedType} $source, align ${from.type.align}")
         }
         addLLVMCodeToLocalPlace("store ${target.type} $from, ${target.pointedType} $target, align ${from.type.align}")
-    }
-
-    private fun initBuilder() {
-        val declares = arrayOf(
-                "declare void @llvm.memcpy.p0i8.p0i8.i64(i8* nocapture, i8* nocapture readonly, i64, i32, i1)",
-                "declare i8* @malloc_heap(i32)",
-                "declare i32 @printf(i8*, ...)",
-                "%class.Nothing = type { }",
-                "declare void @abort()")
-
-        declares.forEach { addLLVMCodeToGlobalPlace(it) }
-
-        exceptions = mapOf(
-                Pair("KotlinNullPointerException", initializeExceptionString("Exception in thread main kotlin.KotlinNullPointerException")))
-
-        if (arm) {
-            val functionAttributes = """attributes #0 = { nounwind "stack-protector-buffer-size"="8" "target-cpu"="cortex-m3" "target-features"="+hwdiv,+strict-align" }"""
-            addLLVMCodeToGlobalPlace(functionAttributes)
-        }
     }
 
     private fun initializeExceptionString(string: String): LLVMVariable {

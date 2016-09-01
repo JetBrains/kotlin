@@ -56,15 +56,13 @@ class FunctionCodegen(state: TranslationState,
             state.extensionFunctions.put(translatorType.toString(), extensionFunctionsOfThisType)
         }
 
-        defaultValues = mutableListOf()
-        for (index in descriptor.valueParameters.indices) {
-            val parameterDescriptor = descriptor.valueParameters[index]
+        defaultValues = descriptor.valueParameters.indices.map {
+            val parameterDescriptor = descriptor.valueParameters[it]
             if (parameterDescriptor.declaresDefaultValue()) {
-                val initializer = (parameterDescriptor.source as KotlinSourceElement).psi
-                val defaultValue = (initializer as KtParameter).defaultValue
-                defaultValues.add(defaultValue!!)
+                val initializer = (parameterDescriptor.source as KotlinSourceElement).psi as KtParameter
+                initializer.defaultValue
             } else {
-                defaultValues.add(null)
+                null
             }
         }
     }
@@ -105,7 +103,7 @@ class FunctionCodegen(state: TranslationState,
                 else -> LLVMVariable("type", translatorType, pointer = 0)
             }
 
-            variableManager.addVariable("this", classVal, 0)
+            variableManager.addVariable("this", classVal, level = 0)
             actualArgs.add(classVal)
         }
 

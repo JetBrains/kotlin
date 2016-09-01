@@ -6,7 +6,6 @@ class ProjectTranslator(val files: List<KtFile>, val state: TranslationState) {
     private var codeBuilder = state.codeBuilder
 
     fun generateCode(): String {
-        codeBuilder.clean()
         with(files) {
             map { addClassDeclarations(it) }
             map { addObjectDeclarations(it) }

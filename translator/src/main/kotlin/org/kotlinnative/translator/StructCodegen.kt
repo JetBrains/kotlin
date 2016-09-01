@@ -63,7 +63,7 @@ abstract class StructCodegen(val state: TranslationState,
         classOrObject.getSecondaryConstructors().map { generateSecondaryConstructor(it) }
 
         val classVal = LLVMVariable("classvariable.this", type, pointer = if (type.isPrimitive) 0 else 1)
-        variableManager.addVariable("this", classVal, 0)
+        variableManager.addVariable("this", classVal, level = 0)
 
         methods.values.map { it.generate(classVal) }
     }
@@ -121,7 +121,7 @@ abstract class StructCodegen(val state: TranslationState,
         val descriptor = state.bindingContext.get(BindingContext.CONSTRUCTOR, secondaryConstructor)
 
         val classVal = LLVMVariable("classvariable.this", type, pointer = 1)
-        variableManager.addVariable("this", classVal, 0)
+        variableManager.addVariable("this", classVal, level = 0)
 
         val secondaryConstructorArguments = descriptor!!.valueParameters.map {
             LLVMInstanceOfStandardType(it.fqNameSafe.convertToNativeName(), it.type, state = state)
@@ -135,21 +135,21 @@ abstract class StructCodegen(val state: TranslationState,
 
         codeBuilder.addStartExpression()
 
-        secondaryConstructorArguments.map { variableManager.addVariable(it.label, it, 2) }
+        secondaryConstructorArguments.map { variableManager.addVariable(it.label, it, level = 2) }
 
         val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
         val mainConstructorThis = blockCodegen.evaluateConstructorDelegationReferenceExpression(thisCall!!, this, secondaryConstructorArguments, 1) as LLVMVariable
-        variableManager.addVariable("this", mainConstructorThis, 0)
+        variableManager.addVariable("this", mainConstructorThis, level = 0)
 
         blockCodegen.evaluateCodeBlock(secondaryConstructor.bodyExpression, scopeDepth = 1)
-        generateReturn(codeBuilder.receivePointedArgument(variableManager["this"]!!, 1) as LLVMVariable)
+        generateReturn(codeBuilder.receivePointedArgument(variableManager["this"]!!, requirePointer = 1) as LLVMVariable)
         codeBuilder.addAnyReturn(LLVMVoidType())
         codeBuilder.addEndExpression()
     }
 
     private fun generatePrimaryConstructor() {
         val classVal = LLVMVariable("classvariable.this", type, pointer = 1)
-        variableManager.addVariable("this", classVal, 0)
+        variableManager.addVariable("this", classVal, level = 0)
 
         val argFields = mutableListOf(classVal)
         argFields.addAll(constructorFields[primaryConstructorIndex]!!)
@@ -194,7 +194,7 @@ abstract class StructCodegen(val state: TranslationState,
 
         val blockCodegen = object : BlockCodegen(state, variableManager, codeBuilder) {}
         val receiverThis = LLVMVariable("classvariable.this.addr", type, scope = LLVMRegisterScope(), pointer = 1)
-        variableManager.addVariable("this", receiverThis, 2)
+        variableManager.addVariable("this", receiverThis, level = 2)
 
         for ((variable, initializer) in initializedFields) {
             val left = blockCodegen.evaluateMemberMethodOrField(receiverThis, variable.label, blockCodegen.topLevelScopeDepth, call = null)!!
