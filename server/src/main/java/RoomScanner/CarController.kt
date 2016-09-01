@@ -18,16 +18,16 @@ class CarController(var car: Car) {
     var position = Pair(0.0, 0.0)
         private set
 
-    private val WALL_DISTANCE = 50
     private val CHARGE_CORRECTION = 1.0 //0.85
     private var angle = 0.0
 
     fun moveTo(to: Pair<Double, Double>) {
         val driveAngle = (Math.toDegrees(Math.atan2(to.first, to.second)) + 360) % 360
         rotateOn(angleDistance(angle, driveAngle))
-        drive(Direction.FORWARD, Math.max(0.0, distance(position, to)).toInt() - WALL_DISTANCE)
+        drive(Direction.FORWARD, 1)
 
-        position = to
+        position = Pair(position.first +  Math.cos(Math.toRadians(angle)),
+                position.second + Math.sin(Math.toRadians(angle)))
     }
 
     fun rotateOn(target: Double) {
@@ -58,7 +58,7 @@ class CarController(var car: Car) {
     private fun drive(direction: Direction, distance: Int) {
         val request = RouteMetricRequest.BuilderRouteMetricRequest(intArrayOf((distance * CHARGE_CORRECTION).toInt()), intArrayOf(direction.id)).build()
         val data = CarClient.serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
-        CarClient.sendRequest(car, CarClient.Request.ROUTE_METRIC, data).get()
+        val response = CarClient.sendRequest(car, CarClient.Request.ROUTE_METRIC, data).get()
     }
 
 }

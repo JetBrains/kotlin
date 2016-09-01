@@ -112,10 +112,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
         this.requiredAngles = defaultAngles
 
-        val state = getCarState(anglesDistances)
-        if (state == null) {
-            return
-        }
+        val state = getCarState(anglesDistances) ?: return
         val command = getCommand(anglesDistances, state)
 
         if (command == null) {

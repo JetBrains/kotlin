@@ -1,7 +1,6 @@
 package algorithm.geometry
 
 import java.util.*
-import algorithm.geometry.Vector
 
 data class Wall(val wallAngleOX: Angle,
                 val rawPoints: ArrayList<Point> = arrayListOf<Point>(),
@@ -64,10 +63,10 @@ data class Wall(val wallAngleOX: Angle,
         var sumx = 0.0
         var sumy = 0.0
         var sumx2 = 0.0
-        for (pt in rawPoints) {
-            sumx += pt.x
-            sumx2 += pt.x * pt.x
-            sumy += pt.y
+        for ((x2, y2) in rawPoints) {
+            sumx += x2
+            sumx2 += x2 * x2
+            sumy += y2
             n++
         }
         val xbar = sumx / n
@@ -77,10 +76,10 @@ data class Wall(val wallAngleOX: Angle,
         var xxbar = 0.0
         var yybar = 0.0
         var xybar = 0.0
-        for (pt in rawPoints) {
-            xxbar += (pt.x - xbar) * (pt.x - xbar)
-            yybar += (pt.y - ybar) * (pt.y - ybar)
-            xybar += (pt.x - xbar) * (pt.y - ybar)
+        for ((x1, y1) in rawPoints) {
+            xxbar += (x1 - xbar) * (x1 - xbar)
+            yybar += (y1 - ybar) * (y1 - ybar)
+            xybar += (x1 - xbar) * (y1 - ybar)
         }
 
         var beta1 = xybar / xxbar
@@ -90,9 +89,9 @@ data class Wall(val wallAngleOX: Angle,
         val df = n - 2
         var rss = 0.0      // residual sum of squares
         var ssr = 0.0      // regression sum of squares
-        for (pt in rawPoints) {
-            val fit = beta1 * pt.x + beta0
-            rss += (fit - pt.y) * (fit - pt.y)
+        for ((x, y) in rawPoints) {
+            val fit = beta1 * x + beta0
+            rss += (fit - y) * (fit - y)
             ssr += (fit - ybar) * (fit - ybar)
         }
 
@@ -118,7 +117,7 @@ data class Wall(val wallAngleOX: Angle,
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
-        if (!(other is Wall)) return false
+        if (other !is Wall) return false
         return line.equals(other.line)
     }
 }

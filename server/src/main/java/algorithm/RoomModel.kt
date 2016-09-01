@@ -7,11 +7,9 @@ import algorithm.geometry.Angle
 import algorithm.geometry.Line
 import algorithm.geometry.Point
 import algorithm.geometry.Wall
-import objects.Car
-import java.util.*
 
 object RoomModel {
-    val walls = arrayListOf<Wall>(Wall(Angle(0)))
+    val walls = arrayListOf(Wall(Angle(0)))
     var finished = false
 
     val linesModel = listOf(Line(0.0, 1.0, -300.0),

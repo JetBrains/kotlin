@@ -22,10 +22,10 @@ class Line(var A: Double, var B: Double, var C: Double) {
     }
 
     fun normalize() {
-        val div = Math.sqrt(A * A + B * B);
-        A /= div;
-        B /= div;
-        C /= div;
+        val div = Math.sqrt(A * A + B * B)
+        A /= div
+        B /= div
+        C /= div
 
         if (A.eq(0.0)) {
             if (B.lt(0.0)) {
@@ -51,7 +51,7 @@ class Line(var A: Double, var B: Double, var C: Double) {
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
 
-        if (!(other is Line)) return false
+        if (other !is Line) return false
 
         Logger.log("Comparing lines: ")
         Logger.log("    this = ${this.toString()}")

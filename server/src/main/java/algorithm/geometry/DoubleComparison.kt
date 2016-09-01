@@ -9,5 +9,5 @@ fun Double.gt(other: Double): Boolean {
 }
 
 fun Double.eq(other: Double): Boolean {
-    return Math.abs(this - other) < Util.eps;
+    return Math.abs(this - other) < Util.eps
 }
