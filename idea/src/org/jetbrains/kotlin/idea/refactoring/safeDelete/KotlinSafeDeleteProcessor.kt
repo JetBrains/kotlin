@@ -344,11 +344,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         if (ApplicationManager.getApplication()!!.isUnitTestMode) return Collections.singletonList(element)
 
         return when (element) {
-            is KtNamedFunction, is KtProperty ->
-                checkSuperMethods(
-                        element as KtDeclaration, allElementsToDelete, "super.methods.delete.with.usage.search"
-                )
-
+            is KtNamedFunction, is KtProperty -> checkSuperMethods(element as KtDeclaration, allElementsToDelete, "delete (with usage search)")
             else -> super.getElementsToSearch(element, module, allElementsToDelete)
         }
     }
