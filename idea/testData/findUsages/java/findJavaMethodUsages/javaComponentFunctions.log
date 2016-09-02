@@ -1,0 +1,3 @@
+Resolved (a, n)
+Searched references to JavaClass
+Searched references to parameter c of f(c: JavaClass) in Kotlin files
