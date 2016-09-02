@@ -12,5 +12,5 @@ Searched references to constructor in Kotlin files
 Searched references to f1() in Kotlin files
 Searched references to fun2 in Kotlin files
 Searched references to fun3 in Kotlin files
-Used plain search of parameter a of A() in LocalSearchScope:
+Used plain search of parameter a of A(val a: Int, val b: Int) in LocalSearchScope:
     CLASS:A

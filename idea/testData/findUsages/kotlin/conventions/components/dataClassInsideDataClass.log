@@ -8,12 +8,12 @@ Searched references to C
 Searched references to C.component1() in Kotlin files
 Searched references to a in Kotlin files
 Searched references to a1 in Kotlin files
-Searched references to parameter a of B() in Kotlin files
-Searched references to parameter b of f() in Kotlin files
-Searched references to parameter c of f() in Kotlin files
+Searched references to parameter a of B(val a: A, val n: Int) in Kotlin files
+Searched references to parameter b of f(b: B, c: C) in Kotlin files
+Searched references to parameter c of f(b: B, c: C) in Kotlin files
 Used plain search of C.component1() in LocalSearchScope:
     CLASS:C
-Used plain search of parameter a of B() in LocalSearchScope:
+Used plain search of parameter a of B(val a: A, val n: Int) in LocalSearchScope:
     CLASS:B
-Used plain search of parameter x of A() in LocalSearchScope:
+Used plain search of parameter x of A(val x: Int, val y: Int, val z: String) in LocalSearchScope:
     CLASS:A

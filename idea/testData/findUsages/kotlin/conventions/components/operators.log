@@ -2,12 +2,12 @@ Resolved (x, y)
 Resolved b1 + b2
 Searched references to A
 Searched references to B
-Searched references to parameter b1 of f() in Kotlin files
-Searched references to parameter b2 of f() in Kotlin files
-Searched references to parameter other of plus() in Kotlin files
-Searched references to plus() in Kotlin files
-Used plain search of parameter x of A() in LocalSearchScope:
+Searched references to parameter b1 of f(b1: B, b2: B) in Kotlin files
+Searched references to parameter b2 of f(b1: B, b2: B) in Kotlin files
+Searched references to parameter other of plus(other: B) in Kotlin files
+Searched references to plus(other: B) in Kotlin files
+Used plain search of parameter x of A(val x: Int, val y: Int) in LocalSearchScope:
     CLASS:A
-Used plain search of plus() in LocalSearchScope:
+Used plain search of plus(other: B) in LocalSearchScope:
     CLASS:B
     FUN:plus
