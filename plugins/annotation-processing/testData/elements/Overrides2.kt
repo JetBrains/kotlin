@@ -1,4 +1,6 @@
-@Deprecated("")
+annotation class Anno
+
+@Anno
 interface Intf {
     fun a()
 }
