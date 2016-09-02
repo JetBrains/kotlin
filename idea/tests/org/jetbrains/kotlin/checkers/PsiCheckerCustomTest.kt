@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
     fun testNoUnusedParameterWhenCustom() {
@@ -41,4 +43,8 @@ class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
     }
 
     private fun getTestDataFile(localName: String) = "idea/testData/checker/custom/$localName"
+
+    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
+
+    override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromTestName()
 }

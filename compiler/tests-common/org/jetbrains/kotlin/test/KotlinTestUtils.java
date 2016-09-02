@@ -828,6 +828,20 @@ public class KotlinTestUtils {
         return testClassMetadata.value();
     }
 
+    /**
+     * @return test data file name specified in the metadata of test method
+     */
+    @Nullable
+    public static String getTestDataFileName(@NotNull Class<?> testCaseClass, @NotNull String testName) {
+        try {
+            Method method = testCaseClass.getDeclaredMethod(testName);
+            return getMethodMetadata(method);
+        }
+        catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
@@ -898,12 +912,18 @@ public class KotlinTestUtils {
                 }));
     }
 
+    @Nullable
+    private static String getMethodMetadata(Method method) {
+        TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
+        return (testMetadata != null) ? testMetadata.value() : null;
+    }
+
     private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
         Set<String> filePaths = Sets.newHashSet();
         for (Method method : testCaseClass.getDeclaredMethods()) {
-            TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
-            if (testMetadata != null) {
-                filePaths.add(testMetadata.value());
+            String path = getMethodMetadata(method);
+            if (path != null) {
+                filePaths.add(path);
             }
         }
         return filePaths;

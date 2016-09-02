@@ -1,3 +1,4 @@
+// RUNTIME
 import java.util.*
 
 import java.io.*
@@ -9,15 +10,15 @@ fun takeFirst(expr: StringBuilder): Char {
 }
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
-  if (expr.length == 0) throw Throwable("Syntax error: Character expected");
+  if (expr.length == 0) throw Exception("Syntax error: Character expected");
   val c = takeFirst(<error>expr</error>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'
-    if (!numbers.contains(n)) throw Throwable("You used incorrect number: " + n)
+    if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
     numbers.remove(n)
     return n
   }
-  throw Throwable("Syntax error: Unrecognized character " + c)
+  throw Exception("Syntax error: Unrecognized character " + c)
 }
 
 fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {

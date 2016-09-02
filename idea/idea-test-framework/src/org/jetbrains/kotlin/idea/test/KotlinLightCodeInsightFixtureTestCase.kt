@@ -128,7 +128,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected fun isAllFilesPresentInTest(): Boolean = KotlinTestUtils.isAllFilesPresentTest(getTestName(false))
 
     protected open fun fileName(): String
-            = getTestName(false) + ".kt"
+            = KotlinTestUtils.getTestDataFileName(this.javaClass, this.name) ?: (getTestName(false) + ".kt")
 
     protected fun performNotWriteEditorAction(actionId: String): Boolean {
         val dataContext = (myFixture.editor as EditorEx).dataContext

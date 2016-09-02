@@ -1,3 +1,4 @@
+// RUNTIME
 @file:JvmName("TopLevelMultifile")
 @file:JvmMultifileClass
 package test
