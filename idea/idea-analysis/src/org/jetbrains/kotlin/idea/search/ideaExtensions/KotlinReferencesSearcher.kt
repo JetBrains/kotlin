@@ -120,9 +120,8 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             searchLightElements(queryParameters, element, consumer)
         }
 
-        //TODO: operator functions from Java
-        if (element is KtFunction) {
-            val referenceSearcher = OperatorReferenceSearcher.createForKtFunction(
+        if (element is KtFunction || element is PsiMethod) {
+            val referenceSearcher = OperatorReferenceSearcher.create(
                     element, effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
             referenceSearcher?.run()
         }
@@ -247,7 +246,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             }
             if (componentFunction != null) {
                 searchNamedElement(queryParameters, componentFunction)
-                val searcher = OperatorReferenceSearcher.createForPsiMethod(
+                val searcher = OperatorReferenceSearcher.create(
                         componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
                 searcher!!.run()
             }

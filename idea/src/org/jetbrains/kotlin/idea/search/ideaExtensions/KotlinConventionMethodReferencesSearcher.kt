@@ -35,7 +35,7 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
         if (!Name.isValidIdentifier(name)) return
         val identifier = Name.identifier(name)
 
-        val operatorSearcher = OperatorReferenceSearcher.createForPsiMethod(
+        val operatorSearcher = OperatorReferenceSearcher.create(
                 method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, KotlinReferencesSearchOptions.Empty)
         if (operatorSearcher != null) {
             operatorSearcher.run()

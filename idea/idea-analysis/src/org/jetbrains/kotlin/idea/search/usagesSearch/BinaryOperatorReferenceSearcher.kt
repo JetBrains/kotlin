@@ -25,11 +25,10 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class BinaryOperatorReferenceSearcher(
-        targetFunction: KtFunction,
+        targetFunction: PsiElement,
         private val operationTokens: List<KtSingleValueToken>,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,

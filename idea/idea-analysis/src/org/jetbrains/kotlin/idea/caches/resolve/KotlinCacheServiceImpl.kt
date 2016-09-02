@@ -20,19 +20,21 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiCodeFragment
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
-import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -200,13 +202,27 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
         val syntheticFiles = findSyntheticFiles(files)
         val file = files.first()
-        val projectFacade = if (syntheticFiles.isNotEmpty()) {
-            getFacadeForSyntheticFiles(syntheticFiles)
+        val moduleInfo = file.getModuleInfo()
+        if (syntheticFiles.isNotEmpty()) {
+            val projectFacade = getFacadeForSyntheticFiles(syntheticFiles)
+            return ResolutionFacadeImpl(projectFacade, moduleInfo)
         }
         else {
-            globalFacade(TargetPlatformDetector.getPlatform(file))
+            val platform = TargetPlatformDetector.getPlatform(file)
+            return getResolutionFacadeByModuleInfo(moduleInfo, platform)
         }
-        return ResolutionFacadeImpl(projectFacade, file.getModuleInfo())
+    }
+
+    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade {
+        assert(file !is PsiCodeFragment)
+        assert(ProjectRootsUtil.isInProjectSource(file))
+        val moduleInfo = file.getModuleInfo()
+        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+    }
+
+    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
+        val projectFacade = globalFacade(platform)
+        return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
     private fun findSyntheticFiles(files: Collection<KtFile>) = files.mapNotNull {

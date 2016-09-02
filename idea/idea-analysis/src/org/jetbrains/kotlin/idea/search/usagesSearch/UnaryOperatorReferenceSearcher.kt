@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class UnaryOperatorReferenceSearcher(
-        targetFunction: KtFunction,
+        targetFunction: PsiElement,
         private val operationToken: KtSingleValueToken,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,

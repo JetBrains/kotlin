@@ -22,23 +22,34 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class DestructuringDeclarationReferenceSearcher(
-        targetDeclaration: KtDeclaration,
+        targetDeclaration: PsiElement,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = listOf("(")) {
 
+    //TODO
     private val componentIndex = when (targetDeclaration) {
         is KtParameter -> targetDeclaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
         is KtFunction -> targetDeclaration.name?.let { getComponentIndex(it) }
     //TODO: java component functions (see KT-13605)
         else -> null
+    }
+
+    override fun resolveTargetToDescriptor(): FunctionDescriptor? {
+        if (targetDeclaration is KtParameter) {
+            return targetDeclaration.dataClassComponentFunction()
+        }
+        else {
+            return super.resolveTargetToDescriptor()
+        }
     }
 
     override fun run() {
