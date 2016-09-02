@@ -75,7 +75,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     // Optimizations
     when (this) {
         is KtInvokeFunctionReference -> {
-            if (candidateTarget !is KtNamedFunction) return false
+            if (candidateTarget !is KtNamedFunction && candidateTarget !is PsiMethod) return false
         }
         is KtDestructuringDeclarationReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter && candidateTarget !is PsiMethod) return false
