@@ -39,7 +39,7 @@ class CompositeScopeTowerProcessor<out C>(
     override fun process(data: TowerData): List<Collection<C>> = processors.flatMap { it.process(data) }
 }
 
-internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor, C: Candidate>(
         val candidateFactory: CandidateFactory<D, C>
 ) : ScopeTowerProcessor<C> {
 
@@ -51,7 +51,7 @@ internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor
 private typealias CandidatesCollector<D> =
     ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
 
-internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate>(
         val scopeTower: ImplicitScopeTower,
         context: CandidateFactory<D, C>,
         val explicitReceiver: ReceiverValueWithSmartCastInfo,
@@ -78,7 +78,7 @@ internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Ca
     }
 }
 
-private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate>(
         val scopeTower: ImplicitScopeTower,
         context: CandidateFactory<D, C>,
         val qualifier: QualifierReceiver,
@@ -94,7 +94,7 @@ private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<
     }
 }
 
-private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
+private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate>(
         context: CandidateFactory<D, C>,
         val collectCandidates: CandidatesCollector<D>
 ) : AbstractSimpleScopeTowerProcessor<D, C>(context) {
@@ -120,7 +120,8 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
             }
 
 }
-private fun <D : CallableDescriptor, C : Candidate<D>> processCommonAndSyntheticMembers(
+
+private fun <D : CallableDescriptor, C : Candidate> processCommonAndSyntheticMembers(
         receiverForMember: ReceiverValueWithSmartCastInfo,
         scopeTowerLevel: ScopeTowerLevel,
         collectCandidates: CandidatesCollector<D>,
@@ -149,7 +150,7 @@ private fun <D : CallableDescriptor, C : Candidate<D>> processCommonAndSynthetic
            }
 }
 
-private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
+private fun <D : CallableDescriptor, C: Candidate> createSimpleProcessor(
         scopeTower: ImplicitScopeTower,
         context: CandidateFactory<D, C>,
         explicitReceiver: DetailedReceiver?,
@@ -178,23 +179,23 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
     }
 }
 
-fun <C : Candidate<VariableDescriptor>> createVariableProcessor(scopeTower: ImplicitScopeTower, name: Name,
-                                                                context: CandidateFactory<VariableDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
+fun <C : Candidate> createVariableProcessor(scopeTower: ImplicitScopeTower, name: Name,
+                                            context: CandidateFactory<VariableDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
 ) = createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getVariables(name, it) }
 
-fun <C : Candidate<VariableDescriptor>> createVariableAndObjectProcessor(scopeTower: ImplicitScopeTower, name: Name,
-                                                                         context: CandidateFactory<VariableDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
+fun <C : Candidate> createVariableAndObjectProcessor(scopeTower: ImplicitScopeTower, name: Name,
+                                                     context: CandidateFactory<VariableDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
 ) = CompositeScopeTowerProcessor(
         createVariableProcessor(scopeTower, name, context, explicitReceiver),
         createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getObjects(name, it) }
 )
 
-fun <C : Candidate<FunctionDescriptor>> createSimpleFunctionProcessor(scopeTower: ImplicitScopeTower, name: Name,
-                                                                      context: CandidateFactory<FunctionDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
+fun <C : Candidate> createSimpleFunctionProcessor(scopeTower: ImplicitScopeTower, name: Name,
+                                                  context: CandidateFactory<FunctionDescriptor, C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
 ) = createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getFunctions(name, it) }
 
 
-fun <F: Candidate<FunctionDescriptor>, V: Candidate<VariableDescriptor>> createFunctionProcessor(
+fun <F: Candidate, V: Candidate> createFunctionProcessor(
         scopeTower: ImplicitScopeTower,
         name: Name,
         simpleContext: CandidateFactory<FunctionDescriptor, F>,
@@ -217,7 +218,7 @@ fun <F: Candidate<FunctionDescriptor>, V: Candidate<VariableDescriptor>> createF
 }
 
 
-fun <D : CallableDescriptor, C: Candidate<D>> createProcessorWithReceiverValueOrEmpty(
+fun <C: Candidate> createProcessorWithReceiverValueOrEmpty(
         explicitReceiver: DetailedReceiver?,
         create: (ReceiverValueWithSmartCastInfo?) -> ScopeTowerProcessor<C>
 ): ScopeTowerProcessor<C> {

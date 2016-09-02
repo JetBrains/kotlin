@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+abstract class AbstractInvokeTowerProcessor<F : Candidate, V : Candidate>(
         protected val factoryProviderForInvoke: CandidateFactoryProviderForInvoke<F, V>,
         private val variableProcessor: ScopeTowerProcessor<V>
 ) : ScopeTowerProcessor<F> {
@@ -86,7 +86,7 @@ abstract class AbstractInvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V
 }
 
 // todo KT-9522 Allow invoke convention for synthetic property
-class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+class InvokeTowerProcessor<F : Candidate, V : Candidate>(
         val scopeTower: ImplicitScopeTower,
         val name: Name,
         factoryProviderForInvoke: CandidateFactoryProviderForInvoke<F, V>,
@@ -104,7 +104,7 @@ class InvokeTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<Vari
     }
 }
 
-class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candidate<VariableDescriptor>>(
+class InvokeExtensionTowerProcessor<F : Candidate, V : Candidate>(
         val scopeTower: ImplicitScopeTower,
         val name: Name,
         factoryProviderForInvoke: CandidateFactoryProviderForInvoke<F, V>,
@@ -123,7 +123,7 @@ class InvokeExtensionTowerProcessor<F : Candidate<FunctionDescriptor>, V : Candi
     }
 }
 
-private class InvokeExtensionScopeTowerProcessor<C : Candidate<FunctionDescriptor>>(
+private class InvokeExtensionScopeTowerProcessor<C : Candidate>(
         context: CandidateFactory<FunctionDescriptor, C>,
         private val invokeCandidateDescriptor: CandidateWithBoundDispatchReceiver<FunctionDescriptor>,
         private val explicitReceiver: ReceiverValueWithSmartCastInfo?
@@ -159,7 +159,7 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
 }
 
 // case 1.(foo())() or (foo())()
-fun <F : Candidate<FunctionDescriptor>> createCallTowerProcessorForExplicitInvoke(
+fun <F : Candidate> createCallTowerProcessorForExplicitInvoke(
         scopeTower: ImplicitScopeTower,
         functionContext: CandidateFactory<FunctionDescriptor, F>,
         expressionForInvoke: ReceiverValueWithSmartCastInfo,
