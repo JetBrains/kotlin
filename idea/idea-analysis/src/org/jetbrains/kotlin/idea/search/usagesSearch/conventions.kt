@@ -59,9 +59,6 @@ fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>>? {
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
     }
 
-    val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
-    if (unaryOp != null) return setOf(unaryOp) to KtSimpleNameReference::class.java
-
     val assignmentOp = ASSIGNMENT_OPERATIONS.inverse()[this]
     if (assignmentOp != null) return setOf(assignmentOp) to KtSimpleNameReference::class.java
 

@@ -23,36 +23,35 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-class BinaryOperatorReferenceSearcher(
+class UnaryOperatorReferenceSearcher(
         targetDeclaration: KtDeclaration,
-        private val operationTokens: List<KtSingleValueToken>,
+        private val operationToken: KtSingleValueToken,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtBinaryExpression>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = operationTokens.map { it.value }) {
+) : OperatorReferenceSearcher<KtUnaryExpression>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = listOf(operationToken.value)) {
 
     override fun processSuspiciousExpression(expression: KtExpression) {
-        val binaryExpression = expression.parent as? KtBinaryExpression ?: return
-        if (binaryExpression.operationToken !in operationTokens) return
-        if (expression != binaryExpression.left) return
-        processReferenceElement(binaryExpression)
+        val unaryExpression = expression.parent as? KtUnaryExpression ?: return
+        if (unaryExpression.operationToken != operationToken) return
+        processReferenceElement(unaryExpression)
     }
 
     override fun isReferenceToCheck(ref: PsiReference): Boolean {
         if (ref !is KtSimpleNameReference) return false
         val element = ref.element
-        if (element.parent !is KtBinaryExpression) return false
-        return element.getReferencedNameElementType() in operationTokens
+        if (element.parent !is KtUnaryExpression) return false
+        return element.getReferencedNameElementType() == operationToken
     }
 
     override fun extractReference(element: PsiElement): PsiReference? {
-        val binaryExpression = element as? KtBinaryExpression ?: return null
-        if (binaryExpression.operationToken !in operationTokens) return null
-        return binaryExpression.operationReference.references.firstIsInstance<KtSimpleNameReference>()
+        val unaryExpression = element as? KtUnaryExpression ?: return null
+        if (unaryExpression.operationToken != operationToken) return null
+        return unaryExpression.operationReference.references.firstIsInstance<KtSimpleNameReference>()
     }
 }

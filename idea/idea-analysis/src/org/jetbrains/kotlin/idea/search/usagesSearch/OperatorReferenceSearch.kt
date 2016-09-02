@@ -123,6 +123,11 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer)
             }
 
+            val unaryOp = OperatorConventions.UNARY_OPERATION_NAMES.inverse()[name]
+            if (unaryOp != null) {
+                return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer)
+            }
+
             return null
         }
 
