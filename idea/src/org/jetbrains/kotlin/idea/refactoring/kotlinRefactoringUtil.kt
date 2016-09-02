@@ -805,7 +805,7 @@ val PsiElement.isInsideInjectedFragment: Boolean
 fun checkSuperMethods(
         declaration: KtDeclaration,
         ignore: Collection<PsiElement>?,
-        actionStringKey: String
+        actionString: String
 ): List<PsiElement> {
     fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
@@ -834,7 +834,7 @@ fun checkSuperMethods(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
                 "\n${superClassDescriptions.joinToString(separator = "")}",
-                KotlinBundle.message(actionStringKey)
+                actionString
         )
 
         val exitCode = Messages.showYesNoCancelDialog(declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
