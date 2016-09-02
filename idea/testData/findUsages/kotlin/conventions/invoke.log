@@ -4,5 +4,5 @@ Resolved f(2)
 Resolved f(2)(2)
 Searched references to B
 Searched references to f() in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of B.invoke() in LocalSearchScope:
     CLASS:B

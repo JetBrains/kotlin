@@ -56,7 +56,7 @@ class ExpressionsOfTypeProcessor(
         private val typeToSearch: FuzzyType,
         private val searchScope: SearchScope,
         private val suspiciousExpressionHandler: (KtExpression) -> Unit,
-        suspiciousScopeHandler: (SearchScope) -> Unit,
+        private val suspiciousScopeHandler: (SearchScope) -> Unit,
         private val resolutionFacade: ResolutionFacade
 ) {
     enum class Mode {
@@ -88,11 +88,6 @@ class ExpressionsOfTypeProcessor(
 
     private val project = resolutionFacade.project
 
-    private val plainSearchHandler: (SearchScope) -> Unit = { scope ->
-        testLog?.add("Used plain search in ${scope.logPresentation()}")
-        suspiciousScopeHandler(scope)
-    }
-
     // note: a Task must define equals & hashCode!
     private interface Task {
         fun perform()
@@ -114,7 +109,7 @@ class ExpressionsOfTypeProcessor(
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
         if (!ProjectRootsUtil.isInProjectSource(psiClass)) {
-            plainSearchHandler(searchScope)
+            suspiciousScopeHandler(searchScope)
             return
         }
 
@@ -123,7 +118,7 @@ class ExpressionsOfTypeProcessor(
         processTasks()
 
         val scopeElements = scopesToUsePlainSearch.values.flatMap { it }.toTypedArray()
-        plainSearchHandler(LocalSearchScope(scopeElements))
+        suspiciousScopeHandler(LocalSearchScope(scopeElements))
     }
 
     private fun addTask(task: Task) {
@@ -142,7 +137,7 @@ class ExpressionsOfTypeProcessor(
     private fun downShiftToPlainSearch() {
         tasks.clear()
         scopesToUsePlainSearch.clear()
-        plainSearchHandler(searchScope)
+        suspiciousScopeHandler(searchScope)
     }
 
     private fun addClassToProcess(classToSearch: PsiClass) {
@@ -619,34 +614,5 @@ class ExpressionsOfTypeProcessor(
             is KtParameter -> declaration.typeReference == null
             else -> false
         }
-    }
-
-    private fun SearchScope.logPresentation(): String {
-        return when (this) {
-            searchScope -> "whole search scope"
-
-            is LocalSearchScope -> {
-                scope
-                        .map { element ->
-                            "    " + when (element) {
-                                is KtFunctionLiteral -> element.text
-                                is KtWhenEntry -> {
-                                    if (element.isElse)
-                                        "KtWhenEntry \"else\""
-                                    else
-                                        "KtWhenEntry \"" + element.conditions.joinToString(", ") { it.text } + "\""
-                                }
-                                is KtNamedDeclaration -> element.node.elementType.toString() + ":" + element.name
-                                else -> element.toString()
-                            }
-                        }
-                        .toList()
-                        .sorted()
-                        .joinToString("\n", "LocalSearchScope:\n")
-            }
-
-            else -> this.displayName
-        }
-
     }
 }
