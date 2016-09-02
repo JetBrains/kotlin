@@ -1,5 +1,5 @@
 Searched references to A
-Used plain search in LocalSearchScope:
+Used plain search of parameter a in A() in LocalSearchScope:
     CLASS:A
     KtWhenEntry "else"
     KtWhenEntry "is A"

@@ -3,7 +3,7 @@ Checked type of g()
 Resolved (x1, y1)
 Searched references to X
 Searched references to f() in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of component1() in LocalSearchScope:
     CLASS:X
     FUN:component1
     FUN:component1

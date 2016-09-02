@@ -22,7 +22,7 @@ Searched references to a in Kotlin files
 Searched references to a in Kotlin files
 Searched references to parameter a in A.plus() in Kotlin files
 Searched references to parameter a in A.plus() in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of A.plus() in LocalSearchScope:
     CLASS:A
-Used plain search in LocalSearchScope:
+Used plain search of A.plus() in LocalSearchScope:
     CLASS:A

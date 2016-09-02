@@ -171,6 +171,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     private fun doPlainSearch(scope: SearchScope) {
+        testLog?.add("Used plain search of ${logPresentation(targetDeclaration)} in ${scope.logPresentation()}")
+
         if (scope is LocalSearchScope) {
             for (element in scope.scope) {
                 element.accept(object : PsiRecursiveElementWalkingVisitor() {
@@ -208,5 +210,34 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 }
             }
         }
+    }
+
+    private fun SearchScope.logPresentation(): String {
+        return when (this) {
+            searchScope -> "whole search scope"
+
+            is LocalSearchScope -> {
+                scope
+                        .map { element ->
+                            "    " + when (element) {
+                                is KtFunctionLiteral -> element.text
+                                is KtWhenEntry -> {
+                                    if (element.isElse)
+                                        "KtWhenEntry \"else\""
+                                    else
+                                        "KtWhenEntry \"" + element.conditions.joinToString(", ") { it.text } + "\""
+                                }
+                                is KtNamedDeclaration -> element.node.elementType.toString() + ":" + element.name
+                                else -> element.toString()
+                            }
+                        }
+                        .toList()
+                        .sorted()
+                        .joinToString("\n", "LocalSearchScope:\n")
+            }
+
+            else -> this.displayName
+        }
+
     }
 }

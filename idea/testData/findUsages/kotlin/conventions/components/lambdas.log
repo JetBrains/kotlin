@@ -11,7 +11,7 @@ Searched references to takeFun2() in Kotlin files
 Searched references to takeFun3() in Kotlin files
 Searched references to takeFuns() in Kotlin files
 Searched references to v in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of parameter a in A() in LocalSearchScope:
     CLASS:A
     { a, n -> val (x, y) = a!! }
     { val (x, y ) = it }

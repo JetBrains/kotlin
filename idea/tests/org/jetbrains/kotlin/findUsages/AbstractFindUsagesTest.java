@@ -403,14 +403,15 @@ public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtu
 
         Collection<UsageInfo> usageInfos;
         String log = null;
+        ArrayList<String> logList = new ArrayList<String>();
         try {
-            ExpressionsOfTypeProcessor.Companion.setTestLog(new ArrayList<String>());
+            if (ExpressionsOfTypeProcessor.Companion.getMode() != ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN) {
+                ExpressionsOfTypeProcessor.Companion.setTestLog(logList);
+            }
 
             usageInfos = findUsages(caretElement, options, highlightingMode);
         }
         finally {
-            List<String> logList = ExpressionsOfTypeProcessor.Companion.getTestLog();
-            assert logList != null;
             ExpressionsOfTypeProcessor.Companion.setTestLog(null);
             if (logList.size() > 0) {
                 Collections.sort(logList);

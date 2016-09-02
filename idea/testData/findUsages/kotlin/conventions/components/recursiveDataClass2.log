@@ -7,7 +7,7 @@ Searched references to b in Kotlin files
 Searched references to parameter a in B() in Kotlin files
 Searched references to parameter a in f() in Kotlin files
 Searched references to parameter b in A() in Kotlin files
-Used plain search in LocalSearchScope:
-    CLASS:A
-Used plain search in LocalSearchScope:
+Used plain search of parameter a in B() in LocalSearchScope:
     CLASS:B
+Used plain search of parameter b in A() in LocalSearchScope:
+    CLASS:A

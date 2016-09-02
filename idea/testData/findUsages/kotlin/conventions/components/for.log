@@ -3,5 +3,5 @@ Resolved (x, y)
 Resolved (x, y, z)
 Searched references to A
 Searched references to parameter a in FOR in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of parameter n in A() in LocalSearchScope:
     CLASS:A

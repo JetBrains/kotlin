@@ -23,7 +23,7 @@ Searched references to pack.A
 Searched references to pack.X
 Searched references to parameter p1 in test2() in Kotlin files
 Searched references to parameter p2 in test2() in Kotlin files
-Used plain search in LocalSearchScope:
+Used plain search of parameter n in A() in LocalSearchScope:
     CLASS:A
     CLASS:X
     FUN:ext1
