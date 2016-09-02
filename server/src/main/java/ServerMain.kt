@@ -4,7 +4,6 @@ import net.car.Dropper
 import net.car.client.Client
 import objects.Environment
 
-
 fun main(args: Array<String>) {
     var roomScanner: RoomScanner? = null
     val carServer = net.car.server.Server.createCarServerThread()
@@ -20,7 +19,6 @@ fun main(args: Array<String>) {
             roomScanner!!.start()
         }
     }
-
 
     //todo запуск потока алгоритма нужно вынести сюда,
     //todo а debug интерфейсутребуется исключительно возможность установки кол-ва итераций

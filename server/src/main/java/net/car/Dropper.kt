@@ -7,6 +7,8 @@ import kotlin.concurrent.thread
 
 object Dropper {
 
+    private val WAIT_TIMEOUT = 2L * 60 * 1000
+
     fun createCarsDestroyThread(): Thread {
         return thread(false, false, null, "dropCar", -1, getThreadCode())
     }
@@ -19,7 +21,7 @@ object Dropper {
                     dropInactiveCar(Environment)
                 })
                 try {
-                    Thread.sleep(120000)
+                    Thread.sleep(WAIT_TIMEOUT)
                 } catch (e: InterruptedException) {
                     println("thread for destroy cars stopped")
                     stopped = true

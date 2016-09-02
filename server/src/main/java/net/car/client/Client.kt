@@ -8,7 +8,7 @@ import java.rmi.UnexpectedException
 object Client {
 
     private val client = DefaultAsyncHttpClient()
-    private val timeout = 5 * 60 * 60 * 1000
+    private val TIMEOUT = 5 * 60 * 60 * 1000
 
     enum class Request(val url: String) {
         CONNECT("connect"),
@@ -27,6 +27,6 @@ object Client {
     }
 
     fun makeRequest(request: String, data: ByteArray): ListenableFuture<Response> =
-            client.preparePost(request).setBody(data).setRequestTimeout(timeout).execute() ?: throw UnexpectedException(request)
+            client.preparePost(request).setBody(data).setRequestTimeout(TIMEOUT).execute() ?: throw UnexpectedException(request)
 
 }
