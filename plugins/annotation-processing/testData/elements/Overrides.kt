@@ -1,4 +1,6 @@
-@Deprecated("")
+annotation class Anno
+
+@Anno
 open class Parent {
     open fun a() {}
 }

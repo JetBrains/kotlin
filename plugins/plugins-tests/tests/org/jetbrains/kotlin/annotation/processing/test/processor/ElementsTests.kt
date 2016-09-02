@@ -127,7 +127,7 @@ class ElementsTests : AbstractProcessorTest() {
         assertEquals(packageElement, testPackageElement)
         assertFalse(packageElement.isUnnamed)
         val classes = packageElement.enclosedElements.filterIsInstance<JeTypeElement>()
-        assertEquals(2, classes.size)
+        assertEquals(3, classes.size)
     }
     
     fun testGetArrayType() = test("GetPackageOf", "*") { set, roundEnv, env ->

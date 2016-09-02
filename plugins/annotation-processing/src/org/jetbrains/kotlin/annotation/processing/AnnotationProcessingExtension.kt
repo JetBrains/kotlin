@@ -164,14 +164,12 @@ abstract class AbstractAnnotationProcessingExtension(
     }
 
     private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {
-        val allSupportedAnnotationFqNames = run initializeProcessors@ {
+        run initializeProcessors@ {
             processors.forEach { it.init(this) }
             log { "Initialized processors: " + processors.joinToString { it.javaClass.name } }
-            processors.flatMapTo(mutableSetOf()) { it.supportedAnnotationTypes }
         }
 
         val firstRoundAnnotations = RoundAnnotations(
-                allSupportedAnnotationFqNames, 
                 incrementalCompilationComponents?.getSourceRetentionAnnotationHandler(),
                 bindingContext,
                 createTypeMapper())

@@ -29,23 +29,29 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class RoundAnnotations(
-        val supportedAnnotationFqNames: Set<String>,
         val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
         val bindingContext: BindingContext,
         val typeMapper: KotlinTypeMapper
 ) {
+    private companion object {
+        private val BLACKLISTED_ANNOTATATIONS = listOf(
+                "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
+                "java.lang.annotation.", // Java annotations
+                "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
+                "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
+        )
+    }
+    
     private val mutableAnnotationsMap = mutableMapOf<String, MutableList<PsiModifierListOwner>>()
     private val mutableAnalyzedClasses = mutableSetOf<String>()
     
-    private val acceptsAnyAnnotation = "*" in supportedAnnotationFqNames
-
     val annotationsMap: Map<String, List<PsiModifierListOwner>>
         get() = mutableAnnotationsMap
     
     val analyzedClasses: Set<String>
         get() = mutableAnalyzedClasses
     
-    fun copy() = RoundAnnotations(supportedAnnotationFqNames, sourceRetentionAnnotationHandler, bindingContext, typeMapper)
+    fun copy() = RoundAnnotations(sourceRetentionAnnotationHandler, bindingContext, typeMapper)
 
     fun analyzeFiles(files: Collection<KtFile>) = files.forEach { analyzeFile(it) }
     
@@ -105,7 +111,7 @@ internal class RoundAnnotations(
                 }
             }
             
-            if (!acceptsAnyAnnotation && fqName !in supportedAnnotationFqNames) continue
+            if (BLACKLISTED_ANNOTATATIONS.any { fqName.startsWith(it) }) continue
             mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
 
             // Add only top-level classes

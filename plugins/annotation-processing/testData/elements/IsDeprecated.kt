@@ -1,3 +1,6 @@
+annotation class Anno
+
+@Anno
 @Deprecated("")
 class Depr
 
