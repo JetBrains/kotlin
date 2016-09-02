@@ -51,7 +51,7 @@ FILE /delegatedImplementation.kt
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         INSTANCE_INITIALIZER_CALL classDescriptor=Test1
-    DELEGATE val `Test1$IBase$delegate`: BaseImpl
+    PROPERTY val `Test1$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT BaseImpl type=BaseImpl
     FUN public open override /*1*/ /*delegation*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
@@ -74,7 +74,7 @@ FILE /delegatedImplementation.kt
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         INSTANCE_INITIALIZER_CALL classDescriptor=Test2
-    DELEGATE val `Test2$IBase$delegate`: BaseImpl
+    PROPERTY val `Test2$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT BaseImpl type=BaseImpl
     FUN public open override /*1*/ /*delegation*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
@@ -93,7 +93,7 @@ FILE /delegatedImplementation.kt
         CALL .qux type=kotlin.Unit operator=null
           $this: GET_VAR Test2$IBase$delegate type=BaseImpl operator=null
           $receiver: $RECEIVER of: qux type=kotlin.String
-    DELEGATE val `Test2$IOther$delegate`: IOther
+    PROPERTY val `Test2$IOther$delegate`: IOther
       EXPRESSION_BODY
         CALL .otherImpl type=IOther operator=null
           x0: CONST String type=kotlin.String value=''

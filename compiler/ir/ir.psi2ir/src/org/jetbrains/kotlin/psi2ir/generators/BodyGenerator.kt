@@ -129,8 +129,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         irBlockBody.addStatement(irDelegatingConstructorCall)
     }
 
-    private fun createStatementGenerator() =
-            StatementGenerator(context, scopeOwner, this, scope)
+    fun createStatementGenerator() = StatementGenerator(this, scope)
 
     fun putLoop(expression: KtLoopExpression, irLoop: IrLoop) {
         loopTable[expression] = irLoop
@@ -261,34 +260,5 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     private fun createPropertyInitializationExpression(ktElement: KtElement, propertyDescriptor: PropertyDescriptor, value: IrExpression) =
             IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor, value)
-
-    fun generateDelegatedPropertyGetter(
-            ktDelegate: KtPropertyDelegate,
-            delegateDescriptor: IrPropertyDelegateDescriptor,
-            getterDescriptor: PropertyGetterDescriptor
-    ): IrBody =
-            irBlockBody(ktDelegate) {
-                val statementGenerator = createStatementGenerator()
-                val conventionMethodResolvedCall = getOrFail(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor)
-                val conventionMethodCall = statementGenerator.pregenerateCall(conventionMethodResolvedCall)
-                conventionMethodCall.setExplicitReceiverValue(VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor))
-                conventionMethodCall.irValueArgumentsByIndex[1] = irCallableReference(delegateDescriptor.kPropertyType, delegateDescriptor.correspondingProperty)
-                +irReturn(CallGenerator(statementGenerator).generateCall(ktDelegate.startOffset, ktDelegate.endOffset, conventionMethodCall))
-            }
-
-    fun generateDelegatedPropertySetter(
-            ktDelegate: KtPropertyDelegate,
-            delegateDescriptor: IrPropertyDelegateDescriptor,
-            setterDescriptor: PropertySetterDescriptor
-    ): IrBody =
-            irBlockBody(ktDelegate) {
-                val statementGenerator = createStatementGenerator()
-                val conventionMethodResolvedCall = getOrFail(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
-                val conventionMethodCall = statementGenerator.pregenerateCall(conventionMethodResolvedCall)
-                conventionMethodCall.setExplicitReceiverValue(VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor))
-                conventionMethodCall.irValueArgumentsByIndex[1] = irCallableReference(delegateDescriptor.kPropertyType, delegateDescriptor.correspondingProperty)
-                conventionMethodCall.irValueArgumentsByIndex[2] = irGet(setterDescriptor.valueParameters[0])
-                +irReturn(CallGenerator(statementGenerator).generateCall(ktDelegate.startOffset, ktDelegate.endOffset, conventionMethodCall))
-            }
 }
 

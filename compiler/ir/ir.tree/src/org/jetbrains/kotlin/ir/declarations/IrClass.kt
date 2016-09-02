@@ -34,12 +34,10 @@ interface IrClass : IrDeclaration {
 fun IrClass.getInstanceInitializerMembers() =
         members.filter {
             when (it) {
-                is IrDelegate ->
-                    true
                 is IrAnonymousInitializer ->
                     true
                 is IrSimpleProperty ->
-                    it.valueInitializer != null
+                    it.initializer != null
                 is IrDelegatedProperty ->
                     true
                 else -> false

@@ -1,0 +1,21 @@
+FILE /localDelegatedProperties.kt
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      ? IrLocalDelegatedPropertyImpl x
+        VAR val `x$delegate`: kotlin.Lazy<kotlin.Int>
+          CALL .lazy type=kotlin.Lazy<kotlin.Int> operator=null
+            initializer: BLOCK type=() -> kotlin.Int operator=LAMBDA
+              FUN local final fun <anonymous>(): kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from=<anonymous>
+                    CONST Int type=kotlin.Int value='42'
+              CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Int type=() -> kotlin.Int
+        ? IrLocalPropertyAccessorImpl <get-x>
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from=<get-x>
+              CALL .getValue type=kotlin.Int operator=null
+                $receiver: GET_VAR x$delegate type=kotlin.Lazy<kotlin.Int> operator=null
+                thisRef: CONST Null type=kotlin.Nothing? value='null'
+                property: CALLABLE_REFERENCE val x: kotlin.Int type=kotlin.reflect.KProperty0<kotlin.Int>
+      CALL .println type=kotlin.Unit operator=null
+        message: GET_VAR x type=kotlin.Int operator=null

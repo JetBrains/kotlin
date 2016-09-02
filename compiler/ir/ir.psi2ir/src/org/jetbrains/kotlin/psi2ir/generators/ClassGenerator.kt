@@ -81,8 +81,8 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor ?:
                          throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
         val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
-        val irDelegate = IrDelegateImpl(ktDelegateExpression.startOffset, ktDelegateExpression.endOffset, IrDeclarationOrigin.DELEGATE,
-                                        delegateDescriptor)
+        val irDelegate = IrSimplePropertyImpl(ktDelegateExpression.startOffset, ktDelegateExpression.endOffset, IrDeclarationOrigin.DELEGATE,
+                                                   delegateDescriptor)
         val bodyGenerator = BodyGenerator(irClass.descriptor, context)
         irDelegate.initializer = bodyGenerator.generatePropertyInitializerBody(ktDelegateExpression)
         irClass.addMember(irDelegate)
@@ -95,7 +95,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         }
     }
 
-    private fun generateDelegatedMember(irClass: IrClassImpl, irDelegate: IrDelegateImpl, delegatedMember: CallableMemberDescriptor, overriddenMember: CallableMemberDescriptor) {
+    private fun generateDelegatedMember(irClass: IrClassImpl, irDelegate: IrSimplePropertyImpl, delegatedMember: CallableMemberDescriptor, overriddenMember: CallableMemberDescriptor) {
         when (delegatedMember) {
             is FunctionDescriptor ->
                 generateDelegatedFunction(irClass, irDelegate, delegatedMember, overriddenMember as FunctionDescriptor)
@@ -105,7 +105,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
 
     }
 
-    private fun generateDelegatedProperty(irClass: IrClassImpl, irDelegate: IrDelegateImpl, delegated: PropertyDescriptor, overridden: PropertyDescriptor) {
+    private fun generateDelegatedProperty(irClass: IrClassImpl, irDelegate: IrSimplePropertyImpl, delegated: PropertyDescriptor, overridden: PropertyDescriptor) {
         val irProperty = IrSimplePropertyImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated)
 
         val irGetter = IrPropertyGetterImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.getter!!)
@@ -121,13 +121,13 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         irClass.addMember(irProperty)
     }
 
-    private fun generateDelegatedFunction(irClass: IrClassImpl, irDelegate: IrDelegateImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor) {
+    private fun generateDelegatedFunction(irClass: IrClassImpl, irDelegate: IrSimplePropertyImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor) {
         val irFunction = IrFunctionImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated)
         irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden)
         irClass.addMember(irFunction)
     }
 
-    private fun generateDelegateFunctionBody(irDelegate: IrDelegateImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
+    private fun generateDelegateFunctionBody(irDelegate: IrSimplePropertyImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
         val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
         val returnType = overridden.returnType!!
         val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden)
@@ -197,7 +197,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val irProperty = IrSimplePropertyImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFINED, propertyDescriptor)
         val irGetParameter = IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
                                                valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
-        irProperty.valueInitializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
+        irProperty.initializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
         return irProperty
     }
 

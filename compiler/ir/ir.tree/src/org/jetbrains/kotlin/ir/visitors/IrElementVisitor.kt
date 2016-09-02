@@ -36,8 +36,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitProperty(declaration: IrProperty, data: D) = visitDeclaration(declaration, data)
     fun visitSimpleProperty(declaration: IrSimpleProperty, data: D) = visitProperty(declaration, data)
     fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: D) = visitProperty(declaration, data)
+    fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: D) = visitDeclaration(declaration, data)
+    fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor, data: D) = visitGeneralFunction(declaration, data)
     fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
-    fun visitDelegate(declaration: IrDelegate, data: D) = visitDeclaration(declaration, data)
     fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
     fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: D) = visitDeclaration(declaration, data)
 
@@ -92,6 +93,4 @@ interface IrElementVisitor<out R, in D> {
     // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
     fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
-
-
 }

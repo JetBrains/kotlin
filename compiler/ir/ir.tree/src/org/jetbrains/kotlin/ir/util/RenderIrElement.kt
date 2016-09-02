@@ -63,9 +63,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
             "VAR ${declaration.descriptor.render()}"
 
-    override fun visitDelegate(declaration: IrDelegate, data: Nothing?): String =
-            "DELEGATE ${declaration.descriptor.render()}"
-
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
             "ENUM_ENTRY ${declaration.descriptor.render()}"
 

@@ -43,11 +43,12 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.lang.AssertionError
 
 class StatementGenerator(
-        override val context: GeneratorContext,
-        val scopeOwner: DeclarationDescriptor,
         val bodyGenerator: BodyGenerator,
         override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(), GeneratorWithScope {
+    override val context: GeneratorContext get() = bodyGenerator.context
+    val scopeOwner: DeclarationDescriptor get() = bodyGenerator.scopeOwner
+
     fun generateStatement(ktElement: KtElement): IrStatement =
             ktElement.genStmt()
 
@@ -64,14 +65,26 @@ class StatementGenerator(
             createDummyExpression(expression, expression.javaClass.simpleName)
 
     override fun visitProperty(property: KtProperty, data: Nothing?): IrStatement {
-        if (property.delegateExpression != null) TODO("Local delegated property")
-
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
+
+        property.delegate?.let { ktDelegate ->
+            return generateLocalDelegatedProperty(property, ktDelegate, variableDescriptor as VariableDescriptorWithAccessors)
+        }
 
         val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOrigin.DEFINED, variableDescriptor)
         irLocalVariable.initializer = property.initializer?.genExpr()
         return irLocalVariable
     }
+
+    private fun generateLocalDelegatedProperty(
+            ktProperty: KtProperty,
+            ktDelegate: KtPropertyDelegate,
+            variableDescriptor: VariableDescriptorWithAccessors
+    ): IrStatement =
+            DelegatedPropertyGenerator(context).generateLocalDelegatedProperty(
+                    ktProperty, ktDelegate, variableDescriptor,
+                    ktDelegate.expression!!.genExpr()
+            )
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         // TODO use some special form that introduces multiple declarations into surrounding scope?

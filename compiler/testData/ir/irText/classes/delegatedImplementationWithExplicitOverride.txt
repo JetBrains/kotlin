@@ -14,7 +14,7 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         INSTANCE_INITIALIZER_CALL classDescriptor=C
-    DELEGATE val `C$IFooBar$delegate`: FooBarImpl
+    PROPERTY val `C$IFooBar$delegate`: FooBarImpl
       EXPRESSION_BODY
         GET_OBJECT FooBarImpl type=FooBarImpl
     FUN public open override /*1*/ /*delegation*/ fun foo(): kotlin.Unit

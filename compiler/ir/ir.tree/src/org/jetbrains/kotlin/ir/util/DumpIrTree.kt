@@ -51,6 +51,14 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         visitFunctionWithParameters(declaration, data)
     }
 
+    override fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.delegate.accept(this, "delegate")
+            declaration.getter?.accept(this, "")
+            declaration.setter?.accept(this, "")
+        }
+    }
+
     private fun visitFunctionWithParameters(declaration: IrFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.descriptor.valueParameters.forEach { valueParameter ->

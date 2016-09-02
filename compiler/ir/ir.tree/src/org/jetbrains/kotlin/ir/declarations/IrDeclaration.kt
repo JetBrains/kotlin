@@ -29,16 +29,16 @@ interface IrDeclaration : IrStatement {
 enum class IrDeclarationKind {
     MODULE,
     FILE,
+    CLASS,
+    ENUM_ENTRY,
     FUNCTION,
-    PROPERTY_GETTER,
-    PROPERTY_SETTER,
     CONSTRUCTOR,
     PROPERTY,
+    PROPERTY_ACCESSOR,
     VARIABLE,
-    DELEGATE,
-    CLASS,
+    LOCAL_PROPERTY,
+    LOCAL_PROPERTY_ACCESSOR,
     TYPEALIAS,
-    ENUM_ENTRY,
     ANONYMOUS_INITIALIZER,
     DUMMY;
 }

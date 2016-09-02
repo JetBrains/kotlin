@@ -26,7 +26,7 @@ import java.util.*
 
 interface IrGeneralFunction : IrDeclaration {
     override val descriptor: FunctionDescriptor
-    val body: IrBody?
+    var body: IrBody?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION

@@ -31,11 +31,11 @@ interface IrProperty : IrDeclaration {
 }
 
 interface IrSimpleProperty : IrProperty {
-    var valueInitializer: IrBody?
+    var initializer: IrBody?
 }
 
 interface IrDelegatedProperty : IrProperty {
-    var delegate: IrDelegate
+    var delegate: IrSimpleProperty
 }
 
 abstract class IrPropertyBase(
@@ -83,7 +83,7 @@ class IrSimplePropertyImpl(
         descriptor: PropertyDescriptor,
         valueInitializer: IrBody? = null
 ) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrSimpleProperty {
-    override var valueInitializer: IrBody? = valueInitializer
+    override var initializer: IrBody? = valueInitializer
         set(value) {
             value?.assertDetached()
             field?.detach()
@@ -93,13 +93,13 @@ class IrSimplePropertyImpl(
 
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
-                INITIALIZER_SLOT -> valueInitializer
+                INITIALIZER_SLOT -> initializer
                 else -> super.getChild(slot)
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
-            INITIALIZER_SLOT -> valueInitializer = newChild.assertCast()
+            INITIALIZER_SLOT -> initializer = newChild.assertCast()
             else -> super.replaceChild(slot, newChild)
         }
     }
@@ -108,7 +108,7 @@ class IrSimplePropertyImpl(
             visitor.visitSimpleProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        valueInitializer?.accept(visitor, data)
+        initializer?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
@@ -125,13 +125,13 @@ class IrDelegatedPropertyImpl(
             endOffset: Int,
             origin: IrDeclarationOrigin,
             descriptor: PropertyDescriptor,
-            delegate: IrDelegate
+            delegate: IrSimpleProperty
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.delegate = delegate
     }
 
-    private var delegateImpl: IrDelegate? = null
-    override var delegate: IrDelegate
+    private var delegateImpl: IrSimpleProperty? = null
+    override var delegate: IrSimpleProperty
         get() = delegateImpl!!
         set(value) {
             value.assertDetached()

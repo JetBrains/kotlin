@@ -24,20 +24,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrPropertyAccessor : IrGeneralFunction {
     override val descriptor: PropertyAccessorDescriptor
+
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.PROPERTY_ACCESSOR
 }
 
 interface IrPropertyGetter : IrPropertyAccessor {
     override val descriptor: PropertyGetterDescriptor
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.PROPERTY_GETTER
+
 }
 
 interface IrPropertySetter : IrPropertyAccessor {
     override val descriptor: PropertySetterDescriptor
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.PROPERTY_SETTER
 }
 
 abstract class IrPropertyAccessorBase(
