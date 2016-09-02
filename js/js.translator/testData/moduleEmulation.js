@@ -1,30 +1,24 @@
-(function(global) {
-    var modules = { kotlin: kotlin };
+
+    var emulatedModules = { kotlin: kotlin };
     var module = { exports: {} };
 
     function require(moduleId) {
-        return modules[moduleId];
+        return emulatedModules[moduleId];
     }
 
-    function beginModule() {
+    function __beginModule__() {
         module.exports = {};
     }
 
-    function endModule(moduleId) {
-        modules[moduleId] = module.exports;
+    function __endModule__(moduleId) {
+        emulatedModules[moduleId] = module.exports;
     }
 
     function define(moduleId, dependencies, body) {
         var resolvedDependencies = [];
         for (var i = 0; i < dependencies.length; ++i) {
-            resolvedDependencies.push(modules[dependencies[i]]);
+            resolvedDependencies.push(emulatedModules[dependencies[i]]);
         }
-        modules[moduleId] = body.apply(null, resolvedDependencies);
+        emulatedModules[moduleId] = body.apply(null, resolvedDependencies);
     }
-
-    global.require = require;
-    global.define = define;
-    global.__beginModule__ = beginModule;
-    global.__endModule__ = endModule;
-    global.module = module;
-})(this);
+    define.amd = {};

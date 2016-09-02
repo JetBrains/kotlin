@@ -1,3 +1,4 @@
+// SKIP_NODE_JS
 package foo
 
 val EXPECTED = """Hello, World
