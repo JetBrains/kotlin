@@ -1,6 +1,8 @@
 package test
 
-@Deprecated("")
+annotation class Anno
+
+@Anno
 class MyClass
 
 interface MyInterface

@@ -190,7 +190,11 @@ class ProcessorTests : AbstractProcessorTest() {
     
     fun testIncrementalDataSimple() = incrementalDataTest(
             "IncrementalDataSimple",
-            "i Intf, i Test, i Test2, i Test3, i Test8")
+            "i Intf, i Test, i Test2, i Test3, i Test6, i Test7, i Test8")
+
+    fun testIncrementalDataKotlinAnnotations() = incrementalDataTest(
+            "KotlinAnnotations",
+            "i AnnoAnnotated")
     
     private fun getKapt2Extension() = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
             .firstIsInstance<AnnotationProcessingExtensionForTests>()

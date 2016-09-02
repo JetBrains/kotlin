@@ -47,6 +47,12 @@ public class KotlinModelWrappersTestGenerated extends AbstractKotlinModelWrapper
         doTest(fileName);
     }
 
+    @TestMetadata("kotlinAnnotations.kt")
+    public void testKotlinAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-processing/testData/kotlinWrappers/kotlinAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("metaAnnotations.kt")
     public void testMetaAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-processing/testData/kotlinWrappers/metaAnnotations.kt");
