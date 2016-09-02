@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.caches.resolve
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 
 interface KotlinCacheService {
@@ -28,6 +30,7 @@ interface KotlinCacheService {
     }
 
     fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade
+    fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade
 
     fun getSuppressionCache(): KotlinSuppressCache
 }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class IndexingOperatorReferenceSearcher(
-        targetFunction: KtFunction,
+        targetFunction: PsiElement,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector,

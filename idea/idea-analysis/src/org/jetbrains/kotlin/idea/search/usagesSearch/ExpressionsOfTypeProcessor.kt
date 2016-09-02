@@ -20,6 +20,8 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
@@ -39,7 +42,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
@@ -51,6 +53,7 @@ import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -59,9 +62,9 @@ import java.util.*
 class ExpressionsOfTypeProcessor(
         private val typeToSearch: FuzzyType,
         private val searchScope: SearchScope,
+        private val project: Project,
         private val suspiciousExpressionHandler: (KtExpression) -> Unit,
-        private val suspiciousScopeHandler: (SearchScope) -> Unit,
-        private val resolutionFacade: ResolutionFacade
+        private val suspiciousScopeHandler: (SearchScope) -> Unit
 ) {
     enum class Mode {
         ALWAYS_SMART,
@@ -89,9 +92,20 @@ class ExpressionsOfTypeProcessor(
                 else -> fqName
             }
         }
-    }
 
-    private val project = resolutionFacade.project
+        private fun SearchScope.isEmpty(): Boolean {
+            when (this) {
+                GlobalSearchScope.EMPTY_SCOPE -> return true
+
+                is GlobalSearchScope -> {
+                    val rootManager = ProjectRootManager.getInstance(project!!)
+                    return rootManager.fileIndex.iterateContent { it.isDirectory || it !in this }
+                }
+
+                else -> return (this as LocalSearchScope).scope.isEmpty()
+            }
+        }
+    }
 
     // note: a Task must define equals & hashCode!
     private interface Task {
@@ -104,6 +118,8 @@ class ExpressionsOfTypeProcessor(
     private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
     fun run() {
+        if (searchScope.restrictToKotlinSources().isEmpty()) return // optimization
+
         val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return
         val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
         val psiClass = when (classDeclaration) {
@@ -123,7 +139,9 @@ class ExpressionsOfTypeProcessor(
         processTasks()
 
         val scopeElements = scopesToUsePlainSearch.values.flatMap { it }.toTypedArray()
-        suspiciousScopeHandler(LocalSearchScope(scopeElements))
+        if (scopeElements.isNotEmpty()) {
+            suspiciousScopeHandler(LocalSearchScope(scopeElements))
+        }
     }
 
     private fun addTask(task: Task) {
@@ -439,6 +457,7 @@ class ExpressionsOfTypeProcessor(
                             if (psiClass != null) {
                                 testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
 
+                                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
                                 val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade)
                                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
                                     addSamInterfaceToProcess(psiClass)
@@ -541,18 +560,23 @@ class ExpressionsOfTypeProcessor(
 
     private fun usePlainSearch(scope: KtElement) {
         val file = scope.getContainingKtFile()
-        val restricted = LocalSearchScope(scope).intersectWith(searchScope) as LocalSearchScope
-        ScopeLoop@
-        for (element in restricted.scope) {
-            val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
-            for ((index, prevElement) in prevElements.withIndex()) {
-                if (prevElement.isAncestor(element, strict = false)) continue@ScopeLoop
-                if (element.isAncestor(prevElement)) {
-                    prevElements[index] = element
-                    continue@ScopeLoop
+        val restricted = LocalSearchScope(scope).intersectWith(searchScope)
+        if (restricted is LocalSearchScope) {
+            ScopeLoop@
+            for (element in restricted.scope) {
+                val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
+                for ((index, prevElement) in prevElements.withIndex()) {
+                    if (prevElement.isAncestor(element, strict = false)) continue@ScopeLoop
+                    if (element.isAncestor(prevElement)) {
+                        prevElements[index] = element
+                        continue@ScopeLoop
+                    }
                 }
+                prevElements.add(element)
             }
-            prevElements.add(element)
+        }
+        else {
+            assert(restricted == GlobalSearchScope.EMPTY_SCOPE)
         }
     }
 

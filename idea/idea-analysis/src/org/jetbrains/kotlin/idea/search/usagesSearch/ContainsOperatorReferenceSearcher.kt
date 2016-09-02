@@ -23,11 +23,14 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ContainsOperatorReferenceSearcher(
-        targetFunction: KtFunction,
+        targetFunction: PsiElement,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector

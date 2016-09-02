@@ -22,10 +22,9 @@ import com.intellij.psi.search.*
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
 abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
-        private val targetDeclaration: KtDeclaration,
+        protected val targetDeclaration: PsiElement,
         private val searchScope: SearchScope,
         private val consumer: Processor<PsiReference>,
         private val optimizer: SearchRequestCollector,
@@ -70,47 +69,46 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     companion object {
-        fun createForKtFunction(
-                function: KtFunction,
+        fun create(
+                declaration: PsiElement,
                 searchScope: SearchScope,
                 consumer: Processor<PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
-            val name = function.name ?: return null
-            return create(function, name, searchScope, consumer, optimizer, options)
-        }
+            val functionName =  when (declaration) {
+                is KtNamedFunction -> declaration.name
+                is PsiMethod -> declaration.name
+                else -> null
+            } ?: return null
 
-        fun createForPsiMethod(
-                psiMethod: PsiMethod,
-                searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
-                optimizer: SearchRequestCollector,
-                options: KotlinReferencesSearchOptions
-        ): OperatorReferenceSearcher<*>? {
-            if (psiMethod !is KtLightMethod) return null //TODO?
-            val ktDeclaration = psiMethod.kotlinOrigin as? KtDeclaration ?: return null //TODO?
-            return create(ktDeclaration, psiMethod.name, searchScope, consumer, optimizer, options)
-        }
-
-        private fun create(
-                declaration: KtDeclaration,
-                functionName: String,
-                searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
-                optimizer: SearchRequestCollector,
-                options: KotlinReferencesSearchOptions
-        ): OperatorReferenceSearcher<*>? {
             if (!Name.isValidIdentifier(functionName)) return null
             val name = Name.identifier(functionName)
 
+            val declarationToUse = if (declaration is KtLightMethod) {
+                declaration.kotlinOrigin ?: return null
+            }
+            else {
+                declaration
+            }
+
+            return create(declarationToUse, name, consumer, optimizer, options, searchScope)
+        }
+
+        private fun create(
+                declaration: PsiElement,
+                name: Name,
+                consumer: Processor<PsiReference>,
+                optimizer: SearchRequestCollector,
+                options: KotlinReferencesSearchOptions,
+                searchScope: SearchScope
+        ): OperatorReferenceSearcher<*>? {
             if (isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
                 return DestructuringDeclarationReferenceSearcher(declaration, searchScope, consumer, optimizer)
             }
 
             if (!options.searchForOperatorConventions) return null
-            if (declaration !is KtFunction) return null
 
             if (name == OperatorNameConventions.INVOKE) {
                 return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
@@ -148,9 +146,18 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             return null
         }
 
-        private object SearchesInProgress : ThreadLocal<HashSet<KtDeclaration>>() {
-            override fun initialValue() = HashSet<KtDeclaration>()
+        //TODO: check no light elements here
+        private object SearchesInProgress : ThreadLocal<HashSet<PsiElement>>() {
+            override fun initialValue() = HashSet<PsiElement>()
         }
+    }
+
+    open protected fun resolveTargetToDescriptor(): FunctionDescriptor? {
+        return when (targetDeclaration) {
+            is KtDeclaration -> targetDeclaration.resolveToDescriptor()
+            is PsiMember -> targetDeclaration.getJavaOrKotlinMemberDescriptor()
+            else -> null
+        }  as? FunctionDescriptor
     }
 
     open fun run() {
@@ -158,6 +165,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         if (!inProgress.add(targetDeclaration)) return //TODO: it's not quite correct
 
         try {
+            val descriptor = resolveTargetToDescriptor() ?: return
+            if (!descriptor.isValidOperator()) return
+
             val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
                 ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
                 ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
@@ -167,9 +177,6 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 doPlainSearch(searchScope)
                 return
             }
-
-            val descriptor = targetDeclaration.resolveToDescriptor() as? CallableDescriptor ?: return
-            if (descriptor is FunctionDescriptor && !descriptor.isValidOperator()) return
 
             val dataType = if (descriptor.isExtension) {
                 descriptor.fuzzyExtensionReceiverType()!!
@@ -182,9 +189,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             ExpressionsOfTypeProcessor(
                     dataType,
                     searchScope,
+                    project,
                     suspiciousExpressionHandler = { expression -> processSuspiciousExpression(expression) },
-                    suspiciousScopeHandler = { searchScope -> doPlainSearch(searchScope) },
-                    resolutionFacade = targetDeclaration.getResolutionFacade()
+                    suspiciousScopeHandler = { searchScope -> doPlainSearch(searchScope) }
             ).run()
         }
         finally {

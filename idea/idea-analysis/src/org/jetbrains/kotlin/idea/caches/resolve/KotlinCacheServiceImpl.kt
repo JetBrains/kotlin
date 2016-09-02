@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiCodeFragment
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -48,8 +50,9 @@ import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
+import java.lang.AssertionError
+import java.lang.IllegalStateException
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
@@ -309,12 +312,25 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val syntheticFiles = findSyntheticFiles(files)
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
-        val projectFacade = if (syntheticFiles.isNotEmpty()) {
-            getFacadeForSyntheticFiles(syntheticFiles)
+        if (syntheticFiles.isNotEmpty()) {
+            val projectFacade = getFacadeForSyntheticFiles(syntheticFiles)
+            return ResolutionFacadeImpl(projectFacade, moduleInfo)
         }
         else {
-            globalFacade(TargetPlatformDetector.getPlatform(file), moduleInfo.sdk)
+            val platform = TargetPlatformDetector.getPlatform(file)
+            return getResolutionFacadeByModuleInfo(moduleInfo, platform)
         }
+    }
+
+    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade {
+        assert(file !is PsiCodeFragment)
+        assert(ProjectRootsUtil.isInProjectSource(file))
+        val moduleInfo = file.getModuleInfo()
+        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+    }
+
+    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
+        val projectFacade = globalFacade(platform, moduleInfo.sdk)
         return ResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
