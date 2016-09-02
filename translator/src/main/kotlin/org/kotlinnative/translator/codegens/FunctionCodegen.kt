@@ -1,4 +1,4 @@
-package org.kotlinnative.translator
+package org.kotlinnative.translator.codegens
 
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.kotlinnative.translator.TranslationState
+import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMFunctionType
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType

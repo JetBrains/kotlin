@@ -1,7 +1,9 @@
-package org.kotlinnative.translator
+package org.kotlinnative.translator.codegens
 
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.kotlinnative.translator.TranslationState
+import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
 import org.kotlinnative.translator.llvm.LLVMVariableScope

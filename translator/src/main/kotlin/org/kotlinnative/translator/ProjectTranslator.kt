@@ -1,6 +1,10 @@
 package org.kotlinnative.translator
 
 import org.jetbrains.kotlin.psi.*
+import org.kotlinnative.translator.codegens.ClassCodegen
+import org.kotlinnative.translator.codegens.FunctionCodegen
+import org.kotlinnative.translator.codegens.ObjectCodegen
+import org.kotlinnative.translator.codegens.PropertyCodegen
 
 class ProjectTranslator(val files: List<KtFile>,
                         val state: TranslationState) {

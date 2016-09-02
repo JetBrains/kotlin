@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
+import org.kotlinnative.translator.codegens.ClassCodegen
+import org.kotlinnative.translator.codegens.FunctionCodegen
+import org.kotlinnative.translator.codegens.ObjectCodegen
+import org.kotlinnative.translator.codegens.PropertyCodegen
 import org.kotlinnative.translator.exceptions.TranslationException
 import org.kotlinnative.translator.llvm.LLVMBuilder
 import org.kotlinnative.translator.llvm.LLVMVariable
@@ -35,12 +39,12 @@ private constructor
 ) {
     var externalFunctions = HashMap<String, FunctionCodegen>()
     var functions = HashMap<String, FunctionCodegen>()
-    val globalVariableCollection = HashMap<String, LLVMVariable>()
     var classes = HashMap<String, ClassCodegen>()
     var objects = HashMap<String, ObjectCodegen>()
     var properties = HashMap<String, PropertyCodegen>()
     val codeBuilder = LLVMBuilder(arm)
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
+    val globalVariableCollection = HashMap<String, LLVMVariable>()
 
     init {
         POINTER_ALIGN = if (arm) 4 else 8

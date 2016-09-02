@@ -1,4 +1,4 @@
-package org.kotlinnative.translator
+package org.kotlinnative.translator.codegens
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallIm
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.kotlinnative.translator.TranslationState
+import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
 import java.rmi.UnexpectedException

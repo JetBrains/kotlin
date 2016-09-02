@@ -1,10 +1,12 @@
-package org.kotlinnative.translator
+package org.kotlinnative.translator.codegens
 
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.kotlinnative.translator.TranslationState
+import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.LLVMCharType
 import org.kotlinnative.translator.llvm.types.LLVMReferenceType
