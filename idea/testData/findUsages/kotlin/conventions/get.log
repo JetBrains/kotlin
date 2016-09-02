@@ -1,5 +1,6 @@
+Checked type of b
 Resolved B(1)[2]
 Searched references to B
-Searched references to B.get(i: Int) in Kotlin files
+Searched references to b in Kotlin files
 Used plain search of B.get(i: Int) in LocalSearchScope:
     CLASS:B

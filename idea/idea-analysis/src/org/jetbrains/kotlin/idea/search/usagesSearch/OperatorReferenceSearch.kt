@@ -133,8 +133,12 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer)
             }
 
-            if (name in INDEXING_OPERATION_NAMES) {
-                return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+            if (name == OperatorNameConventions.GET) {
+                return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = false)
+            }
+
+            if (name == OperatorNameConventions.SET) {
+                return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = true)
             }
 
             return null
