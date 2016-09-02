@@ -25,9 +25,15 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
 import org.jetbrains.kotlin.annotation.processing.diagnostic.ErrorsAnnotationProcessing
 import org.jetbrains.kotlin.annotation.processing.impl.*
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
@@ -44,9 +50,11 @@ class ClasspathBasedAnnotationProcessingExtension(
         classesOutputDir: File,
         javaSourceRoots: List<File>,
         verboseOutput: Boolean,
-        incrementalDataFile: File?
+        incrementalDataFile: File?,
+        incrementalCompilationComponents: IncrementalCompilationComponents?
 ) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, 
-                                          classesOutputDir, javaSourceRoots, verboseOutput, incrementalDataFile) {
+                                          classesOutputDir, javaSourceRoots, verboseOutput,
+                                          incrementalDataFile, incrementalCompilationComponents) {
     override fun loadAnnotationProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -58,7 +66,8 @@ abstract class AbstractAnnotationProcessingExtension(
         val classesOutputDir: File,
         val javaSourceRoots: List<File>,
         val verboseOutput: Boolean,
-        val incrementalDataFile: File? = null
+        val incrementalDataFile: File? = null,
+        val incrementalCompilationComponents: IncrementalCompilationComponents? = null
 ) : AnalysisCompletedHandlerExtension {
     private companion object {
         val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
@@ -116,7 +125,7 @@ abstract class AbstractAnnotationProcessingExtension(
 
         val processingEnvironment = KotlinProcessingEnvironment(
                 elements, types, messager, options, filer, processors,
-                project, psiManager, javaPsiFacade, projectScope, appendJavaSourceRootsHandler)
+                project, psiManager, javaPsiFacade, projectScope, bindingTrace.bindingContext, appendJavaSourceRootsHandler)
 
         val processingResult = processingEnvironment.doAnnotationProcessing(files)
 
@@ -148,6 +157,11 @@ abstract class AbstractAnnotationProcessingExtension(
                 listOf(generatedSourcesOutputDir),
                 addToEnvironment = false)
     }
+    
+    private fun KotlinProcessingEnvironment.createTypeMapper(): KotlinTypeMapper {
+        return KotlinTypeMapper(bindingContext, ClassBuilderMode.full(false), NoResolveFileClassesProvider,
+                         null, IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+    }
 
     private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {
         val allSupportedAnnotationFqNames = run initializeProcessors@ {
@@ -156,7 +170,11 @@ abstract class AbstractAnnotationProcessingExtension(
             processors.flatMapTo(mutableSetOf()) { it.supportedAnnotationTypes }
         }
 
-        val firstRoundAnnotations = RoundAnnotations(allSupportedAnnotationFqNames)
+        val firstRoundAnnotations = RoundAnnotations(
+                allSupportedAnnotationFqNames, 
+                incrementalCompilationComponents?.getSourceRetentionAnnotationHandler(),
+                bindingContext,
+                createTypeMapper())
         
         run analyzeFilesForFirstRound@ {
             log { "Analysing Kotlin files: " + files.map { it.virtualFile.path } }
@@ -223,7 +241,7 @@ abstract class AbstractAnnotationProcessingExtension(
         } + 1
         
         log { "Starting round $finalRoundNumber (final)" }
-        val finalRoundEnvironment = KotlinRoundEnvironment(RoundAnnotations(allSupportedAnnotationFqNames), true, finalRoundNumber)
+        val finalRoundEnvironment = KotlinRoundEnvironment(firstRoundAnnotations.copy(), true, finalRoundNumber)
         for (processor in processors) {
             processor.process(emptySet(), finalRoundEnvironment)
         }
@@ -258,7 +276,7 @@ abstract class AbstractAnnotationProcessingExtension(
         }
         
         // Start the next round
-        val nextRoundAnnotations = RoundAnnotations(roundEnvironment.supportedAnnotationFqNames).apply { analyzeFiles(psiFiles) }
+        val nextRoundAnnotations = roundEnvironment.roundAnnotations.copy().apply { analyzeFiles(psiFiles) }
         val nextRoundEnvironment = KotlinRoundEnvironment(nextRoundAnnotations, false, roundEnvironment.roundNumber + 1)
         return process(nextRoundEnvironment)
     }
@@ -274,8 +292,8 @@ abstract class AbstractAnnotationProcessingExtension(
             val acceptsAnyAnnotation = supportedAnnotationNames.contains("*")
 
             val applicableAnnotationNames = when (acceptsAnyAnnotation) {
-                true -> roundEnvironment.annotationsMap.keys
-                false -> processor.supportedAnnotationTypes.filter { it in roundEnvironment.annotationsMap }
+                true -> roundEnvironment.roundAnnotations.annotationsMap.keys
+                false -> processor.supportedAnnotationTypes.filter { it in roundEnvironment.roundAnnotations.annotationsMap }
             }
 
             if (applicableAnnotationNames.isEmpty()) {

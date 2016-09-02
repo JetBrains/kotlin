@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.components
+package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
-import org.jetbrains.kotlin.modules.TargetId
 
-interface IncrementalCompilationComponents {
-    fun getIncrementalCache(target: TargetId): IncrementalCache
-    fun getLookupTracker(): LookupTracker
-    fun getSourceRetentionAnnotationHandler(): SourceRetentionAnnotationHandler?
+class SourceRetentionAnnotationHandlerImpl : SourceRetentionAnnotationHandler {
+    private val mutableSourceRetentionAnnotations = mutableSetOf<String>()
+    
+    val sourceRetentionAnnotations: Set<String>
+        get() = mutableSourceRetentionAnnotations
+    
+    override fun register(internalName: String) {
+        mutableSourceRetentionAnnotations += internalName
+    }
 }
