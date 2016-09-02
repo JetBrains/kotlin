@@ -1,3 +1,3 @@
-import java.util.*
+import java.util.concurrent.*
 
-val c = Comparator {(x: Int, y: Int) -> 1}
+val c = Callable { -> 1 }

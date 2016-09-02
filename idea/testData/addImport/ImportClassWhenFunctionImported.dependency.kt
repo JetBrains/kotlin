@@ -1,3 +1,3 @@
 package pack1
 
-fun ArrayList(){}
+fun ConcurrentHashMap(){}

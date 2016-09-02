@@ -1,4 +1,4 @@
-// IMPORT: java.util.ArrayList
+// IMPORT: java.util.Calendar
 
 // comment
 fun foo() {}

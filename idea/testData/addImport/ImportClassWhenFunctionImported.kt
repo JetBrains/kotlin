@@ -1,7 +1,7 @@
-// IMPORT: java.util.ArrayList
-import pack1.ArrayList
+// IMPORT: java.util.concurrent.ConcurrentHashMap
+import pack1.ConcurrentHashMap
 
 fun foo() {
-    ArrayList()
-    ArrayList<String>()
+    ConcurrentHashMap()
+    ConcurrentHashMap<String, String>()
 }

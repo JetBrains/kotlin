@@ -1,9 +1,8 @@
-import java.util.Collections
-import java.util.ArrayList
+import java.util.concurrent.Executors
 
 fun foo() {
-    Collections.sort(
-            ArrayList<Int>(),
-            <selection>java.util.Comparator</selection> { x: Int, y: Int -> x - y }
+    Executors.callable(
+            <selection>java.lang.Runnable</selection> { -> },
+            Unit
     )
 }
