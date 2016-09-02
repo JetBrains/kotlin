@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 import java.util.*
 import javax.annotation.processing.ProcessingEnvironment
@@ -41,6 +42,7 @@ class KotlinProcessingEnvironment(
         internal val psiManager: PsiManager,
         internal val javaPsiFacade: JavaPsiFacade,
         internal val projectScope: GlobalSearchScope,
+        internal val bindingContext: BindingContext,
         internal val appendJavaSourceRootsHandler: (List<File>) -> Unit
 ) : ProcessingEnvironment {
     private val options = Collections.unmodifiableMap(options) 

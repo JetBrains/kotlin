@@ -34,5 +34,6 @@
     <orderEntry type="module" module-name="light-classes" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="junit-plugin" level="project" />
     <orderEntry type="module" module-name="annotation-processing" scope="TEST" />
+    <orderEntry type="module" module-name="build-common" scope="TEST" />
   </component>
 </module>
