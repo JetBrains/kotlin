@@ -141,6 +141,10 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = true)
             }
 
+            if (name == OperatorNameConventions.CONTAINS) {
+                return ContainsOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+            }
+
             return null
         }
 
