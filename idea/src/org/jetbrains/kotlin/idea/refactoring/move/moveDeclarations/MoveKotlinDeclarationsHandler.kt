@@ -86,7 +86,10 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         when (container) {
             is PsiDirectory, is PsiPackage, is KtFile -> {
                 val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
-                val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
+                val targetDirectory = if (targetContainer != null) {
+                    MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
+                }
+                else null
                 val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
                 val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
                 val targetFile = targetContainer as? KtFile
