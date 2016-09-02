@@ -1,0 +1,15 @@
+FILE /unresolvedReference.kt
+  PROPERTY public val test1: [ERROR : Type for unresolved]
+    EXPRESSION_BODY
+      ERROR_CALL '' type=[ERROR : ]
+  PROPERTY public val test2: [ERROR : Unresolved]
+    EXPRESSION_BODY
+      ERROR_CALL '' type=[ERROR : ]
+  PROPERTY public val test3: [ERROR : Type for 42.unresolved(56)]
+    EXPRESSION_BODY
+      ERROR_CALL '' type=[ERROR : ]
+        receiver: CONST Int type=kotlin.Int value='42'
+        CONST Int type=kotlin.Int value='56'
+  PROPERTY public val test4: [ERROR : Type for 42 *]
+    EXPRESSION_BODY
+      ERROR_EXPR '' type=[ERROR : ]
