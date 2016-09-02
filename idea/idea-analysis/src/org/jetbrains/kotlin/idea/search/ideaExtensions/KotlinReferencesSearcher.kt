@@ -82,7 +82,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch(kotlinOptions) }
         val words = runReadAction {
             val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-            specialSymbols.first +
+            (specialSymbols?.first ?: emptyList()) +
             (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
 
@@ -93,7 +93,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val refFilter: (PsiReference) -> Boolean = when {
             unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
-            specialSymbols.second != null -> { ref -> ref.javaClass == specialSymbols.second }
+            specialSymbols != null -> { ref -> ref.javaClass == specialSymbols.second }
             else -> ({true})
         }
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,16 +53,6 @@ public class OperatorConventions {
             .put(KtTokens.PLUS, UNARY_PLUS)
             .put(KtTokens.MINUS, UNARY_MINUS)
             .put(KtTokens.EXCL, NOT)
-            .build();
-
-    public static final ImmutableMap<Name, KtSingleValueToken> UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED = ImmutableMap.<Name, KtSingleValueToken>builder()
-            .put(INC, KtTokens.PLUSPLUS)
-            .put(DEC, KtTokens.MINUSMINUS)
-            .put(UNARY_PLUS, KtTokens.PLUS)
-            .put(PLUS, KtTokens.PLUS)
-            .put(UNARY_MINUS, KtTokens.MINUS)
-            .put(MINUS, KtTokens.MINUS)
-            .put(NOT, KtTokens.EXCL)
             .build();
 
     public static final ImmutableBiMap<KtSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<KtSingleValueToken, Name>builder()

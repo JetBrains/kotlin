@@ -41,9 +41,8 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
             operatorSearcher.run()
         }
         else {
-            val operationSymbolsToSearch = identifier.getOperationSymbolsToSearch()
+            val operationSymbolsToSearch = identifier.getOperationSymbolsToSearch() ?: return
             val wordsToSearch = operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value }
-            if (wordsToSearch.isEmpty()) return
             val resultProcessor = KotlinRequestResultProcessor(method,
                                                                filter = { ref -> ref.javaClass == operationSymbolsToSearch.second })
 

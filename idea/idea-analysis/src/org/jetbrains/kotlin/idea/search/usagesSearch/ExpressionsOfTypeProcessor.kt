@@ -28,8 +28,10 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -44,7 +46,9 @@ import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -584,13 +588,12 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun PsiElement.isOperatorExpensiveToSearch(): Boolean {
-        return false //TODO
-/*
         when (this) {
             is KtFunction -> {
-                if (name?.startsWith("component") == true || name == OperatorNameConventions.INVOKE.asString()) return false
-                return  hasModifier(KtTokens.OPERATOR_KEYWORD)
-                        || hasModifier(KtTokens.OVERRIDE_KEYWORD) && (resolveToDescriptorIfAny() as? FunctionDescriptor)?.isOperator == true
+                val isOperator = hasModifier(KtTokens.OPERATOR_KEYWORD)
+                                  || hasModifier(KtTokens.OVERRIDE_KEYWORD) && (resolveToDescriptorIfAny() as? FunctionDescriptor)?.isOperator == true
+                val name = name
+                return isOperator && name != null && Name.isValidIdentifier(name) && Name.identifier(name).getOperationSymbolsToSearch() != null
             }
 
             is KtLightMethod -> {
@@ -601,7 +604,6 @@ class ExpressionsOfTypeProcessor(
                 return false
             }
         }
-*/
     }
 
     private fun KotlinType.containsTypeOrDerivedInside(type: FuzzyType): Boolean {
