@@ -17,7 +17,7 @@ Assembled the translator can be found in the following folder
     $  java -jar $(PATH_TO_TRANSLATOR_JAR) -I $(PATH_TO_KOTLIB) $(KOTLIN_SOURCES)
   where
   - $(PATH_TO_TRANSLATOR_JAR) - path to jar, which you got in building step, by default it `build/libs/translator-1.0.jar`
-  - $(PATH_TO_KOTLIB) - path to standart kotlin lib, by default it `../kotstd/include`
+  - $(PATH_TO_KOTLIB) - path to standart kotlin lib, by default it `../kotstd/kt`
   - $(KOTLIN_SOURCES) - the different files that you want to compile
   
 ### Optional arguments
