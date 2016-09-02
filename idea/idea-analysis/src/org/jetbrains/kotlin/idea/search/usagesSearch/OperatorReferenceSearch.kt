@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProces
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.logPresentation
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.testLog
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.name.Name
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
@@ -167,8 +170,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         if (!inProgress.add(targetDeclaration)) return //TODO: it's not quite correct
 
         try {
-            val descriptor = resolveTargetToDescriptor() ?: return
-            if (!descriptor.isValidOperator()) return
+            val receiverType = runReadAction { extractReceiverType() } ?: return
 
             val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
                 ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
@@ -180,16 +182,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 return
             }
 
-            val dataType = if (descriptor.isExtension) {
-                descriptor.fuzzyExtensionReceiverType()!!
-            }
-            else {
-                val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return
-                classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
-            }
-
             ExpressionsOfTypeProcessor(
-                    dataType,
+                    receiverType,
                     searchScope,
                     project,
                     suspiciousExpressionHandler = { expression -> processSuspiciousExpression(expression) },
@@ -198,6 +192,18 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         }
         finally {
             inProgress.remove(targetDeclaration)
+        }
+    }
+
+    private fun extractReceiverType(): FuzzyType? {
+        val descriptor = resolveTargetToDescriptor()?.check { it.isValidOperator() } ?: return null
+
+        return if (descriptor.isExtension) {
+            descriptor.fuzzyExtensionReceiverType()!!
+        }
+        else {
+            val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return null
+            classDescriptor.defaultType.toFuzzyType(classDescriptor.typeConstructor.parameters)
         }
     }
 
