@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.psi2ir.generators
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -91,9 +89,17 @@ class DataClassMembersGenerator(
     private val IMUL = INT.findFirstFunction("times") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, INT_TYPE) }
     private val IADD = INT.findFirstFunction("plus") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, INT_TYPE) }
 
-    private fun getHashCodeFunction(type: KotlinType): CallableDescriptor =
-            (type.constructor.declarationDescriptor as? ClassDescriptor)?.findFirstFunction("hashCode") { it.valueParameters.isEmpty() } ?:
-            throw AssertionError("Unexpected type: $type")
+    private fun getHashCodeFunction(type: KotlinType): CallableDescriptor {
+        val typeConstructorDescriptor = type.constructor.declarationDescriptor
+        when (typeConstructorDescriptor) {
+            is ClassDescriptor ->
+                return typeConstructorDescriptor.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
+            is TypeParameterDescriptor ->
+                return getHashCodeFunction(context.builtIns.anyType) // TODO
+            else ->
+                throw AssertionError("Unexpected type: $type")
+        }
+    }
 
     override fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {

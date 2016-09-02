@@ -86,8 +86,13 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     private fun StatementGenerator.generateReturnExpression(ktExpression: KtExpression, irBlockBody: IrBlockBodyImpl) {
-        val irExpression = generateExpression(ktExpression)
-        irBlockBody.addStatement(irExpression.wrapWithReturn())
+        val irReturnExpression = generateStatement(ktExpression)
+        if (irReturnExpression is IrExpression) {
+            irBlockBody.addStatement(irReturnExpression.wrapWithReturn())
+        }
+        else {
+            irBlockBody.addStatement(irReturnExpression)
+        }
     }
 
     private fun IrExpression.wrapWithReturn() =

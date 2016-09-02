@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.SETTER_ARGUMENT_INDEX
-import org.jetbrains.kotlin.ir.assertDetached
-import org.jetbrains.kotlin.ir.detach
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrPropertyAccessorCallBase(
@@ -105,5 +103,18 @@ class IrSetterCallImpl(
         if (index != SETTER_ARGUMENT_INDEX) return
         argumentImpl?.detach()
         argumentImpl = null
+    }
+
+    override fun getChild(slot: Int): IrElement? =
+            when (slot) {
+                SETTER_ARGUMENT_INDEX -> argumentImpl
+                else -> super.getChild(slot)
+            }
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        when (slot) {
+            SETTER_ARGUMENT_INDEX -> putArgument(slot, newChild.assertCast())
+            else -> super.replaceChild(slot, newChild)
+        }
     }
 }

@@ -22,16 +22,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 
 class GeneratorContext(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext
 ) {
-    val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS
     val sourceManager = PsiSourceManager()
-    val syntheticDescriptorsFactory by lazy { SyntheticDescriptorsFactory(storageManager) }
+    val syntheticDescriptorsFactory = SyntheticDescriptorsFactory()
 
     val reflectionTypes = ReflectionTypes(moduleDescriptor)
     val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns

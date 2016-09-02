@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrElement {
@@ -73,7 +74,7 @@ fun IrElement.assertDetached() {
 }
 
 fun IrElement.throwNoSuchSlot(slot: Int): Nothing =
-        throw AssertionError("$this: no such slot $slot")
+        throw AssertionError("${this.render()}: no such slot $slot")
 
 inline fun <reified T : IrElement> IrElement.assertCast(): T =
         if (this is T) this else throw AssertionError("Expected ${T::class.simpleName}: $this")

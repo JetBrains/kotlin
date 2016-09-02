@@ -20,29 +20,36 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertyAccessorDescriptor.Kind.MEMBER_PROPERTY
 import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertyAccessorDescriptor.Kind.STATIC_PROPERTY
 import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrSyntheticPropertySetterDescriptorImpl
-import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.AssertionError
+import java.util.*
 
 
-class SyntheticDescriptorsFactory(storageManager: StorageManager) {
-    private val propertyGetters = storageManager.createMemoizedFunction<PropertyDescriptor, PropertyGetterDescriptor> {
-        property ->
-        when {
+class SyntheticDescriptorsFactory {
+    private val propertyGetters = HashMap<PropertyDescriptor, PropertyGetterDescriptor>()
+
+    private fun generateGetter(property: PropertyDescriptor): PropertyGetterDescriptor {
+        return when {
             isStaticPropertyInClass(property) ->
                 IrSyntheticPropertyGetterDescriptorImpl(property, STATIC_PROPERTY)
+            isPropertyInClass(property) ->
+                IrSyntheticPropertyGetterDescriptorImpl(property, MEMBER_PROPERTY)
             else ->
                 throw AssertionError("Don't know how to create synthetic getter for $property")
         }
     }
 
-    private val propertySetters = storageManager.createMemoizedFunction<PropertyDescriptor, PropertySetterDescriptor> {
-        property ->
-        when {
+    private val propertySetters = HashMap<PropertyDescriptor, PropertySetterDescriptor>()
+
+    private fun generateSetter(property: PropertyDescriptor): PropertySetterDescriptor {
+        return when {
             isStaticPropertyInClass(property) ->
                 IrSyntheticPropertySetterDescriptorImpl(property, STATIC_PROPERTY)
+            isPropertyInClass(property) ->
+                IrSyntheticPropertySetterDescriptorImpl(property, MEMBER_PROPERTY)
             else ->
                 throw AssertionError("Don't know how to create synthetic setter for $property")
         }
@@ -53,9 +60,12 @@ class SyntheticDescriptorsFactory(storageManager: StorageManager) {
             propertyDescriptor.dispatchReceiverParameter == null &&
             propertyDescriptor.extensionReceiverParameter == null
 
+    private fun isPropertyInClass(propertyDescriptor: PropertyDescriptor): Boolean =
+            propertyDescriptor.containingDeclaration is ClassDescriptor
+
     fun getOrCreatePropertyGetter(propertyDescriptor: PropertyDescriptor): PropertyGetterDescriptor =
-            propertyGetters(propertyDescriptor)
+            propertyGetters.getOrPut(propertyDescriptor) { generateGetter(propertyDescriptor) }
 
     fun getOrCreatePropertySetter(propertyDescriptor: PropertyDescriptor): PropertySetterDescriptor =
-            propertySetters(propertyDescriptor)
+            propertySetters.getOrPut(propertyDescriptor) { generateSetter(propertyDescriptor) }
 }

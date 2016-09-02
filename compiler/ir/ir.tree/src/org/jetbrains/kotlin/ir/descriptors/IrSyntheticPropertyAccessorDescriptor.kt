@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 
 interface IrSyntheticPropertyAccessorDescriptor : PropertyAccessorDescriptor {
     enum class Kind {
-        STATIC_PROPERTY
+        STATIC_PROPERTY,
+        MEMBER_PROPERTY
     }
 
     val kind: Kind

@@ -56,9 +56,9 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         if (descriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $descriptor")
 
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
-            if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
-            if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor)
+            irCall.dispatchReceiver = dispatchReceiver?.load()
+            irCall.extensionReceiver = extensionReceiver?.load()
             addParametersToCall(startOffset, endOffset, call, irCall, descriptor.returnType)
         }
     }

@@ -60,8 +60,9 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
         val type = getErrorExpressionType(ktName)
 
         val irErrorCall = IrErrorCallExpressionImpl(ktName.startOffset, ktName.endOffset, type, "") // TODO problem description?
-        irErrorCall.explicitReceiver = (ktName.parent as? KtDotQualifiedExpression)?.let {
-            statementGenerator.generateExpression(it.receiverExpression)
+        irErrorCall.explicitReceiver = (ktName.parent as? KtDotQualifiedExpression)?.let { ktParent ->
+            if (ktParent.receiverExpression == ktName) null
+            else statementGenerator.generateExpression(ktParent.receiverExpression)
         }
 
         return irErrorCall
