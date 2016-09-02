@@ -121,6 +121,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - KT-13635 Implement quick fix to convert a too long char literal to a string
 - KT-13945 Add intention to replace Math.max/min with coerceAtLeast/coerceAtMost
 - KT-9839 Add intention to convert primary constructor to a secondary one and back
+- [`KT-9931`](https://youtrack.jetbrains.com/issue/KT-9931) Implement "Remove unused assignment" quickfix
 
 ##### Issues fixed
 

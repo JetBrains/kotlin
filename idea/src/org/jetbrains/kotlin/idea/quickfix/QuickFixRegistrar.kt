@@ -423,5 +423,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(CreateTypeParameterByRefActionFactory)
 
         TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.registerFactory(TooLongCharLiteralToStringFix)
+
+        UNUSED_VALUE.registerFactory(RemoveUnusedValueFix)
     }
 }
