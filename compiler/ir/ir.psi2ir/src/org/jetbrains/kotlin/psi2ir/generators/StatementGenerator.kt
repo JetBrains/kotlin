@@ -193,6 +193,10 @@ class StatementGenerator(
                 IrConstImpl.float(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             is CharValue ->
                 IrConstImpl.char(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is ByteValue ->
+                IrConstImpl.byte(expression.startOffset, expression.endOffset, constantType, constantValue.value)
+            is ShortValue ->
+                IrConstImpl.short(expression.startOffset, expression.endOffset, constantType, constantValue.value)
             else ->
                 TODO("handle other literal types: ${constantValue.type}")
         }
@@ -224,23 +228,37 @@ class StatementGenerator(
             entry.expression!!.genExpr()
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
-        val resolvedCall = getResolvedCall(expression) ?:
-                           return ErrorExpressionGenerator(this).generateErrorExpression(expression)
+        val resolvedCall = getResolvedCall(expression)
 
-        if (resolvedCall is VariableAsFunctionResolvedCall) {
-            val variableCall = pregenerateCall(resolvedCall.variableCall)
-            return CallGenerator(this).generateCall(expression, variableCall, IrOperator.VARIABLE_AS_FUNCTION)
+        if (resolvedCall != null) {
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                val variableCall = pregenerateCall(resolvedCall.variableCall)
+                return CallGenerator(this).generateCall(expression, variableCall, IrOperator.VARIABLE_AS_FUNCTION)
+            }
+
+            val descriptor = resolvedCall.resultingDescriptor
+
+            return generateExpressionForReferencedDescriptor(descriptor, expression, resolvedCall)
         }
 
-        val descriptor = resolvedCall.resultingDescriptor
+        val referenceTarget = get(BindingContext.REFERENCE_TARGET, expression)
+        if (referenceTarget != null) {
+            return generateExpressionForReferencedDescriptor(referenceTarget, expression, null)
+        }
 
-        return generateExpressionForReferencedDescriptor(descriptor, expression, resolvedCall)
+        return ErrorExpressionGenerator(this).generateErrorExpression(expression)
     }
 
-    private fun generateExpressionForReferencedDescriptor(descriptor: DeclarationDescriptor, expression: KtExpression, resolvedCall: ResolvedCall<*>): IrExpression =
+    private fun generateExpressionForReferencedDescriptor(
+            descriptor: DeclarationDescriptor,
+            expression: KtExpression,
+            resolvedCall: ResolvedCall<*>?
+    ): IrExpression =
             when (descriptor) {
                 is FakeCallableDescriptorForObject ->
                     generateExpressionForReferencedDescriptor(descriptor.getReferencedDescriptor(), expression, resolvedCall)
+                is TypeAliasDescriptor ->
+                    generateExpressionForReferencedDescriptor(descriptor.classDescriptor!!, expression, null)
                 is ClassDescriptor -> {
                     val classValueType = descriptor.classValueType!!
                     when {
@@ -255,7 +273,7 @@ class StatementGenerator(
                     }
                 }
                 is PropertyDescriptor -> {
-                    CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
+                    CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall!!))
                 }
                 is VariableDescriptor ->
                     CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor)

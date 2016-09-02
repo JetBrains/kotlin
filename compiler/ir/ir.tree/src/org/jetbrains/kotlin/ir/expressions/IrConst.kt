@@ -34,6 +34,8 @@ sealed class IrConstKind<T>(val asString: kotlin.String)  {
     object Null : IrConstKind<Nothing?>("Null")
     object Boolean : IrConstKind<kotlin.Boolean>("Boolean")
     object Char : IrConstKind<kotlin.Char>("Char")
+    object Byte : IrConstKind<kotlin.Byte>("Byte")
+    object Short : IrConstKind<kotlin.Short>("Short")
     object Int : IrConstKind<kotlin.Int>("Int")
     object Long : IrConstKind<kotlin.Long>("Long")
     object String : IrConstKind<kotlin.String>("String")
@@ -86,6 +88,12 @@ class IrConstImpl<T> (
 
         fun char(startOffset: Int, endOffset: Int, type: KotlinType, value: Char): IrExpression =
                 IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
+
+        fun byte(startOffset: Int, endOffset: Int, type: KotlinType, value: Byte): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
+
+        fun short(startOffset: Int, endOffset: Int, type: KotlinType, value: Short): IrExpression =
+                IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
     }
 }
 
