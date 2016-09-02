@@ -2,7 +2,7 @@
 // OPTIONS: usages
 
 class A(val n: Int) {
-    fun <caret>inc(): A = A(n + 1)
+    operator fun <caret>inc(): A = A(n + 1)
 }
 
 fun test() {

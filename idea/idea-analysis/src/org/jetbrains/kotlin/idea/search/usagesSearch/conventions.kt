@@ -62,11 +62,13 @@ fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>?> {
     val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
     if (unaryOp != null) return setOf(unaryOp) to KtSimpleNameReference::class.java
 
+/*
     val binaryOp = BINARY_OPERATION_NAMES.inverse()[this]
     if (binaryOp != null) {
         val assignmentOp = ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
         return (if (assignmentOp != null) setOf(binaryOp, assignmentOp) else setOf(binaryOp)) to KtSimpleNameReference::class.java
     }
+*/
 
     val assignmentOp = ASSIGNMENT_OPERATIONS.inverse()[this]
     if (assignmentOp != null) return setOf(assignmentOp) to KtSimpleNameReference::class.java

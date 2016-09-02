@@ -17,29 +17,29 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.logPresentation
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.testLog
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
@@ -48,7 +48,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private val searchScope: SearchScope,
         private val consumer: Processor<PsiReference>,
         private val optimizer: SearchRequestCollector,
-        private val wordToSearch: String?
+        private val wordsToSearch: List<String>
 ) {
     private val project = targetDeclaration.project
 
@@ -70,6 +70,62 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     companion object {
+        fun createForKtFunction(
+                function: KtFunction,
+                searchScope: SearchScope,
+                consumer: Processor<PsiReference>,
+                optimizer: SearchRequestCollector,
+                options: KotlinReferencesSearchOptions
+        ): OperatorReferenceSearcher<*>? {
+            val name = function.name ?: return null
+            return create(function, name, searchScope, consumer, optimizer, options)
+        }
+
+        fun createForPsiMethod(
+                psiMethod: PsiMethod,
+                searchScope: SearchScope,
+                consumer: Processor<PsiReference>,
+                optimizer: SearchRequestCollector,
+                options: KotlinReferencesSearchOptions
+        ): OperatorReferenceSearcher<*>? {
+            if (psiMethod !is KtLightMethod) return null //TODO?
+            val ktDeclaration = psiMethod.kotlinOrigin as? KtDeclaration ?: return null //TODO?
+            return create(ktDeclaration, psiMethod.name, searchScope, consumer, optimizer, options)
+        }
+
+        private fun create(
+                declaration: KtDeclaration,
+                functionName: String,
+                searchScope: SearchScope,
+                consumer: Processor<PsiReference>,
+                optimizer: SearchRequestCollector,
+                options: KotlinReferencesSearchOptions
+        ): OperatorReferenceSearcher<*>? {
+            if (!Name.isValidIdentifier(functionName)) return null
+            val name = Name.identifier(functionName)
+
+            if (isComponentLike(name)) {
+                if (!options.searchForComponentConventions) return null
+                return DestructuringDeclarationReferenceSearcher(declaration, searchScope, consumer, optimizer)
+            }
+
+            if (!options.searchForOperatorConventions) return null
+            if (declaration !is KtFunction) return null
+
+            if (name == OperatorNameConventions.INVOKE) {
+                return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+            }
+
+            val binaryOp = OperatorConventions.BINARY_OPERATION_NAMES.inverse()[name]
+            if (binaryOp != null) {
+                val assignmentOp = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
+                val operationTokens = listOf(binaryOp, assignmentOp).filterNotNull()
+                return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer)
+            }
+
+            return null
+        }
+
         private object SearchesInProgress : ThreadLocal<HashSet<KtDeclaration>>() {
             override fun initialValue() = HashSet<KtDeclaration>()
         }
@@ -77,9 +133,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 
     open fun run() {
         val inProgress = SearchesInProgress.get()
-        try {
-            if (!inProgress.add(targetDeclaration)) return //TODO: it's not quite correct
+        if (!inProgress.add(targetDeclaration)) return //TODO: it's not quite correct
 
+        try {
             val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
                 ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
                 ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
@@ -131,11 +187,13 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         }
         else {
             scope as GlobalSearchScope
-            if (wordToSearch != null) {
+            if (wordsToSearch.isNotEmpty()) {
                 val unwrappedElement = targetDeclaration.namedUnwrappedElement ?: return
                 val resultProcessor = KotlinRequestResultProcessor(unwrappedElement,
                                                                    filter = { ref -> isReferenceToCheck(ref) })
-                optimizer.searchWord(wordToSearch, scope.restrictToKotlinSources(), UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
+                wordsToSearch.forEach {
+                    optimizer.searchWord(it, scope.restrictToKotlinSources(), UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
+                }
             }
             else {
                 val psiManager = PsiManager.getInstance(project)

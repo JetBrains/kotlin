@@ -2,11 +2,11 @@
 // OPTIONS: usages
 
 class A<T: Any> {
-    public fun <caret>iterator(): Iterator<T> = throw IllegalStateException("")
+    operator fun <caret>iterator(): Iterator<T> = throw IllegalStateException("")
 }
 
 class B<T: Any> {
-    public fun iterator(): Iterator<T> = throw IllegalStateException("")
+    operator fun iterator(): Iterator<T> = throw IllegalStateException("")
 }
 
 fun test() {

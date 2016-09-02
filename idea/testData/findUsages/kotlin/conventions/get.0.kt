@@ -2,7 +2,7 @@
 // OPTIONS: usages
 
 class B(val n: Int) {
-    fun <caret>get(i: Int): B = B(i)
+    operator fun <caret>get(i: Int): B = B(i)
 }
 
 fun test() {

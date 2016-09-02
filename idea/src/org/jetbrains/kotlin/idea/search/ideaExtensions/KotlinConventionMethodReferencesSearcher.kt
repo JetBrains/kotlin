@@ -22,14 +22,11 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.idea.search.usagesSearch.DestructuringDeclarationReferenceSearcher
-import org.jetbrains.kotlin.idea.search.usagesSearch.InvokeOperatorReferenceSearcher
+import org.jetbrains.kotlin.idea.search.usagesSearch.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
@@ -38,11 +35,10 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
         if (!Name.isValidIdentifier(name)) return
         val identifier = Name.identifier(name)
 
-        if (isComponentLike(identifier)) {
-            DestructuringDeclarationReferenceSearcher.runForPsiMethod(method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
-        }
-        else if (identifier == OperatorNameConventions.INVOKE) {
-            InvokeOperatorReferenceSearcher.runForPsiMethod(method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer)
+        val operatorSearcher = OperatorReferenceSearcher.createForPsiMethod(
+                method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, KotlinReferencesSearchOptions.Empty)
+        if (operatorSearcher != null) {
+            operatorSearcher.run()
         }
         else {
             val operationSymbolsToSearch = identifier.getOperationSymbolsToSearch()

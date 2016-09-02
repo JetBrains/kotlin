@@ -1,4 +1,13 @@
+Resolved (x, y)
+Resolved b1 + b2
 Searched references to A
+Searched references to B
+Searched references to parameter b1 in f() in Kotlin files
+Searched references to parameter b2 in f() in Kotlin files
+Searched references to parameter other in plus() in Kotlin files
+Searched references to plus() in Kotlin files
 Used plain search in LocalSearchScope:
     CLASS:A
-Used plain search in whole search scope
+Used plain search in LocalSearchScope:
+    CLASS:B
+    FUN:plus
