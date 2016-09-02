@@ -78,7 +78,7 @@ class ExpressionsOfTypeProcessor(
                 is PsiMethod, is KtFunction -> fqName + "()"
                 is KtParameter -> {
                     val owner = element.ownerFunction?.let { logPresentation(it) } ?: element.parent.toString()
-                    "parameter ${element.name} in $owner"
+                    "parameter ${element.name} of $owner"
                 }
                 is KtDestructuringDeclaration -> element.entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
                 else -> fqName

@@ -3,6 +3,6 @@ Resolved (x, y)
 Resolved (x1, y1)
 Searched references to A
 Searched references to list in Kotlin files
-Used plain search of parameter x in A() in LocalSearchScope:
+Used plain search of parameter x of A() in LocalSearchScope:
     CLASS:A
     FUN:x

@@ -1,7 +1,7 @@
-Checked type of parameter a in FOR
+Checked type of parameter a of FOR
 Resolved (x, y)
 Resolved (x, y, z)
 Searched references to A
-Searched references to parameter a in FOR in Kotlin files
-Used plain search of parameter n in A() in LocalSearchScope:
+Searched references to parameter a of FOR in Kotlin files
+Used plain search of parameter n of A() in LocalSearchScope:
     CLASS:A

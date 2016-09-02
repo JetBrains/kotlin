@@ -1,11 +1,11 @@
 Checked type of y1()
 Resolved (x1, y1)
 Searched references to A
-Searched references to parameter a in condition() in Kotlin files
-Searched references to parameter a in x() in Kotlin files
-Searched references to parameter a in y1() in Kotlin files
-Searched references to parameter a in y2() in Kotlin files
-Searched references to parameter a in y3() in Kotlin files
-Used plain search of parameter n in A() in LocalSearchScope:
+Searched references to parameter a of condition() in Kotlin files
+Searched references to parameter a of x() in Kotlin files
+Searched references to parameter a of y1() in Kotlin files
+Searched references to parameter a of y2() in Kotlin files
+Searched references to parameter a of y3() in Kotlin files
+Used plain search of parameter n of A() in LocalSearchScope:
     CLASS:A
     { val (x2, y2) = this }
