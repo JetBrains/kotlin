@@ -7166,6 +7166,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/removeRedundantAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantAssignment extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRemoveRedundantAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constant.kt")
+        public void testConstant() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeRedundantAssignment/constant.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeRedundantAssignment/functionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notRedundant.kt")
+        public void testNotRedundant() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeRedundantAssignment/notRedundant.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleRef.kt")
+        public void testSimpleRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeRedundantAssignment/simpleRef.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/removeToStringInStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

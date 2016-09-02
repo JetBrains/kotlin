@@ -213,6 +213,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ##### New features
 
 - [`KT-11525`](https://youtrack.jetbrains.com/issue/KT-11525) Implement "Create type parameter" quickfix
+- [`KT-9931`](https://youtrack.jetbrains.com/issue/KT-9931) Implement "Remove unused assignment" quickfix
 
 #### Refactorings
 
