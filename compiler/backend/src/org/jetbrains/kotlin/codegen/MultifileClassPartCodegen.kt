@@ -77,7 +77,7 @@ class MultifileClassPartCodegen(
             }
 
     override fun generate() {
-        if (state.classBuilderMode != ClassBuilderMode.FULL) return
+        if (!state.classBuilderMode.generateBodies) return
 
         super.generate()
 
@@ -132,7 +132,7 @@ class MultifileClassPartCodegen(
             }
         }
 
-        if (state.classBuilderMode == ClassBuilderMode.FULL) {
+        if (state.classBuilderMode.generateBodies) {
             generateInitializers { createOrGetClInitCodegen() }
         }
     }

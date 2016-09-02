@@ -109,8 +109,13 @@ class ReplInterpreter(
             is Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult.javaClass}")
         }
-
-        val state = GenerationState(psiFile.project, ClassBuilderFactories.BINARIES, analyzerEngine.module, analyzerEngine.trace.bindingContext, listOf(psiFile))
+        
+        val state = GenerationState(
+                psiFile.project, 
+                ClassBuilderFactories.binaries(false), 
+                analyzerEngine.module, 
+                analyzerEngine.trace.bindingContext,
+                listOf(psiFile))
 
         compileScript(psiFile.script!!, earlierLines.map(EarlierLine::getScriptDescriptor), state, CompilationErrorHandler.THROW_EXCEPTION)
 

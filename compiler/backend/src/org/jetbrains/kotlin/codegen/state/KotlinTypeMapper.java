@@ -113,7 +113,7 @@ public class KotlinTypeMapper {
 
         @Override
         public void processErrorType(@NotNull KotlinType kotlinType, @NotNull ClassDescriptor descriptor) {
-            if (classBuilderMode == ClassBuilderMode.FULL) {
+            if (classBuilderMode.generateBodies) {
                 throw new IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor));
             }
         }
@@ -1108,7 +1108,7 @@ public class KotlinTypeMapper {
     }
 
     private void writeFormalTypeParameter(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull JvmSignatureWriter sw) {
-        if (classBuilderMode != ClassBuilderMode.FULL && typeParameterDescriptor.getName().isSpecial()) {
+        if (!classBuilderMode.generateBodies && typeParameterDescriptor.getName().isSpecial()) {
             // If a type parameter has no name, the code below fails, but it should recover in case of light classes
             return;
         }
@@ -1258,7 +1258,7 @@ public class KotlinTypeMapper {
 
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
-        if (classBuilderMode == ClassBuilderMode.FULL) {
+        if (classBuilderMode.generateBodies) {
             ResolvedCall<ConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
             if (superCall == null) return;
             writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);

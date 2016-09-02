@@ -31,7 +31,7 @@ public class ClassBuilderFactories {
         @NotNull
         @Override
         public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.FULL;
+            return ClassBuilderMode.full(false);
         }
 
         @NotNull
@@ -55,13 +55,22 @@ public class ClassBuilderFactories {
             throw new IllegalStateException();
         }
     };
+    
+    public static ClassBuilderFactory TEST = new TestClassBuilderFactory(false);
 
-    @NotNull
-    public static ClassBuilderFactory TEST = new ClassBuilderFactory() {
+    public static ClassBuilderFactory TEST_WITH_SOURCE_RETENTION_ANNOTATIONS = new TestClassBuilderFactory(true);
+    
+    private static class TestClassBuilderFactory implements ClassBuilderFactory {
+        private final boolean generateSourceRetentionAnnotations;
+
+        public TestClassBuilderFactory(boolean generateSourceRetentionAnnotations) {
+            this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
+        }
+
         @NotNull
         @Override
         public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.FULL;
+            return ClassBuilderMode.full(generateSourceRetentionAnnotations);
         }
 
         @NotNull
@@ -89,38 +98,40 @@ public class ClassBuilderFactories {
         public void close() {
 
         }
-    };
-
+    }
+    
     @NotNull
-    public static ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
-        @NotNull
-        @Override
-        public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.FULL;
-        }
+    public static ClassBuilderFactory binaries(final boolean generateSourceRetentionAnnotations) {
+        return new ClassBuilderFactory() {
+            @NotNull
+            @Override
+            public ClassBuilderMode getClassBuilderMode() {
+                return ClassBuilderMode.full(generateSourceRetentionAnnotations);
+            }
 
-        @NotNull
-        @Override
-        public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-            return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
-        }
+            @NotNull
+            @Override
+            public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
+                return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
+            }
 
-        @Override
-        public String asText(ClassBuilder builder) {
-            throw new UnsupportedOperationException("BINARIES generator asked for text");
-        }
+            @Override
+            public String asText(ClassBuilder builder) {
+                throw new UnsupportedOperationException("BINARIES generator asked for text");
+            }
 
-        @Override
-        public byte[] asBytes(ClassBuilder builder) {
-            ClassWriter visitor = (ClassWriter) builder.getVisitor();
-            return visitor.toByteArray();
-        }
+            @Override
+            public byte[] asBytes(ClassBuilder builder) {
+                ClassWriter visitor = (ClassWriter) builder.getVisitor();
+                return visitor.toByteArray();
+            }
 
-        @Override
-        public void close() {
+            @Override
+            public void close() {
 
-        }
-    };
+            }
+        };
+    }
 
     private ClassBuilderFactories() {
     }

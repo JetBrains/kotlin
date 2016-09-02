@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.cli.jvm.config
 
-fun ClassBuilderMode.shouldGenerateMetadata() =
-        this == ClassBuilderMode.FULL || this == ClassBuilderMode.KAPT
+import com.intellij.openapi.util.Key
+
+val IS_KAPT2_ENABLED_KEY = Key<Boolean>("IsKapt2EnabledKey")

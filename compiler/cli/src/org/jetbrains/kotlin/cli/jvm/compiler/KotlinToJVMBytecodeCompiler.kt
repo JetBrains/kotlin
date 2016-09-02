@@ -411,9 +411,11 @@ object KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).fqNameForClassNameWithoutDollars)
             }
         }
+        
+        val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
         val generationState = GenerationState(
                 environment.project,
-                ClassBuilderFactories.BINARIES,
+                ClassBuilderFactories.binaries(isKapt2Enabled),
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,
