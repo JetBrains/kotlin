@@ -359,6 +359,12 @@ class StatementGenerator(
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Nothing?): IrStatement =
             IrTypeAliasImpl(typeAlias.startOffset, typeAlias.endOffset, IrDeclarationOrigin.DEFINED,
                             getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
+
+    override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Nothing?): IrStatement =
+            ReflectionReferencesGenerator(this).generateClassLiteral(expression)
+
+    override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, data: Nothing?): IrStatement =
+            ReflectionReferencesGenerator(this).generateCallableReference(expression)
 }
 
 abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {

@@ -176,6 +176,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
             "CLASS_REFERENCE ${expression.descriptor.render()} type=${expression.type.render()}"
 
+    override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
+            "GET_CLASS type=${expression.type.render()}"
+
     override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): String =
             "TRY_CATCH type=${tryCatch.type.render()}"
 

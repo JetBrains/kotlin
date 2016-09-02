@@ -1,0 +1,34 @@
+FILE /reflectionLiterals.kt
+  CLASS CLASS A
+    CONSTRUCTOR public constructor A()
+      BLOCK_BODY
+        INSTANCE_INITIALIZER_CALL classDescriptor=A
+    FUN public final fun foo(): kotlin.Unit
+      BLOCK_BODY
+  FUN public fun bar(): kotlin.Unit
+    BLOCK_BODY
+  PROPERTY public val qux: kotlin.Int = 42
+    EXPRESSION_BODY
+      CONST Int type=kotlin.Int value='42'
+  PROPERTY public val test1: kotlin.reflect.KClass<A>
+    EXPRESSION_BODY
+      CLASS_REFERENCE public final class A type=kotlin.reflect.KClass<A>
+  PROPERTY public val test2: kotlin.reflect.KClass<kotlin.Int>
+    EXPRESSION_BODY
+      GET_CLASS type=kotlin.reflect.KClass<kotlin.Int>
+        CALL .<get-qux> type=kotlin.Int operator=GET_PROPERTY
+  PROPERTY public val test3: kotlin.reflect.KFunction1<A, kotlin.Unit>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE public final fun foo(): kotlin.Unit type=kotlin.reflect.KFunction1<A, kotlin.Unit>
+  PROPERTY public val test4: kotlin.reflect.KFunction0<A>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE public constructor A() type=kotlin.reflect.KFunction0<A>
+  PROPERTY public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE public final fun foo(): kotlin.Unit type=kotlin.reflect.KFunction0<kotlin.Unit>
+  PROPERTY public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE public fun bar(): kotlin.Unit type=kotlin.reflect.KFunction0<kotlin.Unit>
+  PROPERTY public val test7: kotlin.reflect.KProperty0<kotlin.Int>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE public val qux: kotlin.Int = 42 type=kotlin.reflect.KProperty0<kotlin.Int>
