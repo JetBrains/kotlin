@@ -4,6 +4,7 @@ red='\033[0;31m'
 lightRed='\033[1;31m'
 orange='\033[0;33m'
 nc='\033[0m'
+KOTSTD='../kotstd/kt'
 
 if [ "$3" == "--debug" ]; then
     cd ../kotstd && make clean && make debug
@@ -74,7 +75,7 @@ for i in $TESTS; do
 		fi
 	fi
 
-    java -jar build/libs/translator-1.0.jar -I ../kotstd/include $DIRECTORY/$TEST/$TEST.kt > $DIRECTORY/$TEST/linked/$TEST.ll
+    java -jar build/libs/translator-1.0.jar -I $KOTSTD  $DIRECTORY/$TEST/$TEST.kt > $DIRECTORY/$TEST/linked/$TEST.ll
 
 	if [ $? -ne 0 ]; then
 		echo -e "${red}Translation error: ${DIRECTORY}/$TEST/${TEST}.kt${nc}"

@@ -16,6 +16,15 @@ stdlib:
 tests: stdlib $(OBJECTS)
 	@date
 
-.DEFAULT_GOAL := tests
 
-.PHONY: tests, stdlib
+build:
+	./gradlew jar
+
+all: build tests;
+
+clean:
+	./gradlew clean
+
+.DEFAULT_GOAL := all
+.FORCE: build, all
+.PHONY: tests, stdlib, build, all

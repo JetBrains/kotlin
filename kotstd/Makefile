@@ -1,10 +1,10 @@
 
 BUILD_DIR=$(PWD)/build
 INCLUDE_DIR=$(PWD)/include
-LIB_DIR=$(PWD)/lib
+LIB_DIR=$(PWD)/ll
 LIB_ARM_DIR=$(LIB_DIR)/arm
 LIB_X86_DIR=$(LIB_DIR)/x86
-LIBC=$(PWD)/libc
+LIBC=$(PWD)/c
 LLVM_ARM_FILES = $(patsubst $(LIBC)/%.c,$(LIB_ARM_DIR)/%.ll,$(wildcard $(LIBC)/*.c))
 LLVM_X86_FILES = $(patsubst $(LIBC)/%.c,$(LIB_X86_DIR)/%.ll,$(wildcard $(LIBC)/*.c))
 
@@ -52,9 +52,6 @@ memory_debug:
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(LIB_DIR)
-
-aaa:
-	@echo $(LLVM_ARM_FILES)
 
 .PHONY: all clean
 
