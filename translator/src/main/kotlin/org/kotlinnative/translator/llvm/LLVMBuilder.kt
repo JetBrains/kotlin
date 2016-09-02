@@ -44,7 +44,7 @@ class LLVMBuilder(arm: Boolean = false) {
             addLLVMCodeToLocalPlace("{")
 
     fun addEndExpression() =
-            addLLVMCodeToLocalPlace("}")
+            addLLVMCodeToLocalPlace("unreachable\n}")
 
     fun addAssignment(lhs: LLVMVariable, rhs: LLVMNode) =
             addLLVMCodeToLocalPlace("$lhs = $rhs")

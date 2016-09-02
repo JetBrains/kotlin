@@ -31,7 +31,6 @@ abstract class BlockCodegen(val state: TranslationState,
 
     val topLevelScopeDepth = 2
     var returnType: LLVMVariable? = null
-    var wasReturnOnTopLevel = false
 
     fun evaluateCodeBlock(expr: PsiElement?,
                           startLabel: LLVMLabel? = null,
@@ -57,7 +56,6 @@ abstract class BlockCodegen(val state: TranslationState,
                 else -> codeBuilder.addAnyReturn(result.type, result.toString())
             }
 
-            wasReturnOnTopLevel = true
         }
         codeBuilder.addUnconditionalJump(nextIterationLabel ?: return)
     }
@@ -1104,9 +1102,7 @@ abstract class BlockCodegen(val state: TranslationState,
                 codeBuilder.addReturnOperator(retNativeValue)
             }
         }
-        if (scopeDepth == topLevelScopeDepth + 2) {
-            wasReturnOnTopLevel = true
-        }
+
         return null
     }
 

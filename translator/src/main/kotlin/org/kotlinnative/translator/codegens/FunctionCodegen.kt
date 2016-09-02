@@ -80,9 +80,9 @@ class FunctionCodegen(state: TranslationState,
         generateLoadArguments()
         evaluateCodeBlock(function.bodyExpression, scopeDepth = topLevelScopeDepth, isBlock = function.hasBlockBody())
 
-        if (!wasReturnOnTopLevel)
-            codeBuilder.addAnyReturn(returnType!!.type)
-
+        if (returnType?.type is LLVMVoidType){
+            codeBuilder.addAnyReturn(LLVMVoidType())
+        }
         codeBuilder.addEndExpression()
     }
 
