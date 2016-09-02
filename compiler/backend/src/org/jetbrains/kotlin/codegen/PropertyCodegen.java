@@ -230,7 +230,7 @@ public class PropertyCodegen {
         KtExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
             ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext, true);
-            assert state.getClassBuilderMode() != ClassBuilderMode.FULL || constant != null
+            assert !state.getClassBuilderMode().generateBodies || constant != null
                     : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
             if (constant != null) {
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, memberCodegen, typeMapper);

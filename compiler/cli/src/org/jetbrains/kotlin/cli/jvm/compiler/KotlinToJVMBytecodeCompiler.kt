@@ -129,7 +129,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
         var result = analyze(environment, targetDescription)
-        
+
         if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
             val oldReadOnlyValue = projectConfiguration.isReadOnly
             projectConfiguration.isReadOnly = false
@@ -142,14 +142,14 @@ object KotlinToJVMBytecodeCompiler {
 
             // Clear package caches (see KotlinJavaPsiFacade)
             (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
-            
+
             // Clear all diagnostic messages
             projectConfiguration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
-            
+
             // Repeat analysis with additional Java roots (kapt generated sources)
             result = analyze(environment, targetDescription)
         }
-        
+
         if (result == null || !result.shouldGenerateCode) return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -249,7 +249,7 @@ object KotlinToJVMBytecodeCompiler {
         try {
             try {
                 tryConstructClass(scriptClass, scriptArgs)
-                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
+                ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
             }
             finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
@@ -428,7 +428,7 @@ object KotlinToJVMBytecodeCompiler {
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
-        
+
         return if (!analyzerWithCompilerReport.hasErrors() || analysisResult is AnalysisResult.RetryWithAdditionalJavaRoots)
             analysisResult
         else
@@ -442,9 +442,10 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles: List<KtFile>,
             module: Module?
     ): GenerationState {
+        val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
         val generationState = GenerationState(
                 environment.project,
-                ClassBuilderFactories.BINARIES,
+                ClassBuilderFactories.binaries(isKapt2Enabled),
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,

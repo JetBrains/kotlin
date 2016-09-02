@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
+import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractJavaModelWrappersTest
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractKotlinModelWrappersTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -1072,6 +1073,10 @@ fun main(args: Array<String>) {
         
         testClass<AbstractKotlinModelWrappersTest>() {
             model("kotlinWrappers", extension = "kt")
+        }
+        
+        testClass<AbstractBytecodeListingTestForSourceRetention>() {
+            model("sourceRetention", extension = "kt")
         }
     }
 

@@ -199,7 +199,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state, parentBodyCodegen));
         }
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL || isAbstractMethod(functionDescriptor, contextKind, state)) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -715,7 +715,7 @@ public class FunctionCodegen {
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
         AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext) {
                 mv.visitCode();
                 generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
@@ -889,7 +889,7 @@ public class FunctionCodegen {
 
         MethodVisitor mv =
                 v.newMethod(JvmDeclarationOriginKt.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
 

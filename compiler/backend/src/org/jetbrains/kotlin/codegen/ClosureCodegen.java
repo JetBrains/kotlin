@@ -308,7 +308,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC,
                             bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
 
@@ -342,7 +342,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     private void generateFunctionReferenceMethods(@NotNull FunctionDescriptor descriptor) {
         int flags = ACC_PUBLIC | ACC_FINAL;
-        boolean generateBody = state.getClassBuilderMode() == ClassBuilderMode.FULL;
+        boolean generateBody = state.getClassBuilderMode().generateBodies;
 
         {
             MethodVisitor mv =
@@ -412,7 +412,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
                                        ArrayUtil.EMPTY_STRING_ARRAY);
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 

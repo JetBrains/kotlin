@@ -96,7 +96,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {

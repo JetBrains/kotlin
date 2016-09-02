@@ -130,7 +130,7 @@ public class SamWrapperCodegen {
         MethodVisitor mv = cv.newMethod(JvmDeclarationOriginKt.OtherOrigin(samType.getJavaClassDescriptor()),
                                         visibility, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 

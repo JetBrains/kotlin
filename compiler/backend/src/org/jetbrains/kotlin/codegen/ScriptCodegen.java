@@ -150,7 +150,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 ACC_PUBLIC, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
                 null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             mv.visitCode();
 
             InstructionAdapter iv = new InstructionAdapter(mv);

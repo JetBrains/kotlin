@@ -113,9 +113,12 @@ class ReplInterpreter(
         }
 
         val state = GenerationState(
-                psiFile.project, ClassBuilderFactories.BINARIES, analyzerEngine.module,
-                analyzerEngine.trace.bindingContext, listOf(psiFile), configuration
-        )
+                psiFile.project,
+                ClassBuilderFactories.binaries(false), 
+                analyzerEngine.module,
+                analyzerEngine.trace.bindingContext, 
+                listOf(psiFile), 
+                configuration)
 
         compileScript(psiFile.script!!, earlierLines.map(EarlierLine::getScriptDescriptor), state, CompilationErrorHandler.THROW_EXCEPTION)
 
