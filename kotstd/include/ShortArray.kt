@@ -1,7 +1,7 @@
 package kotlin
 
-external fun kotlinclib_get_short(src: Int, index: Int): Short
-external fun kotlinclib_set_short(src: Int, index: Int, value: Short)
+external fun kotlinclib_short_array_get_ix(dataRawPtr: Int, index: Int): Short
+external fun kotlinclib_short_array_set_ix(dataRawPtr: Int, index: Int, value: Short)
 external fun kotlinclib_short_size(): Int
 
 
@@ -22,13 +22,13 @@ class ShortArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Short {
-        return kotlinclib_get_short(this.dataRawPtr, index)
+        return kotlinclib_short_array_get_ix(this.dataRawPtr, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Short) {
-        kotlinclib_set_short(this.dataRawPtr, index, value)
+        kotlinclib_short_array_set_ix(this.dataRawPtr, index, value)
     }
 
 

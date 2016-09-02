@@ -1,5 +1,7 @@
 package kotlin
 
+external fun kotlinclib_boolean_array_get_ix(dataRawPtr: Int, index: Int): Byte
+external fun kotlinclib_boolean_array_set_ix(dataRawPtr: Int, index: Int, value: Byte)
 external fun kotlinclib_boolean_size(): Int
 
 class BooleanArray(var size: Int) {
@@ -19,7 +21,7 @@ class BooleanArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Boolean {
-        val res = kotlinclib_get_byte(this.dataRawPtr, index) == 1.toByte()
+        val res = kotlinclib_boolean_array_get_ix(this.dataRawPtr, index) == 1.toByte()
         return res
     }
 
@@ -27,9 +29,9 @@ class BooleanArray(var size: Int) {
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Boolean) {
         if (value == true) {
-            kotlinclib_set_byte(this.dataRawPtr, index, 1.toByte())
+            kotlinclib_boolean_array_set_ix(this.dataRawPtr, index, 1.toByte())
         } else {
-            kotlinclib_set_byte(this.dataRawPtr, index, 0.toByte())
+            kotlinclib_boolean_array_set_ix(this.dataRawPtr, index, 0.toByte())
         }
     }
 
@@ -52,7 +54,7 @@ fun BooleanArray.print() {
     while (index < size) {
         print(get(index))
         index++
-        if (index < size){
+        if (index < size) {
             print(';')
             print(' ')
         }

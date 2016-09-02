@@ -44,7 +44,7 @@ class FunctionCodegen(state: TranslationState,
             returnType!!.pointer = 2
         }
         external = descriptor.isExternal
-        name = "${function.fqName}${if (!external) LLVMType.mangleFunctionArguments(args) else ""}"
+        name = if (external) function.name!! else function.fqName!!.convertToNativeName() +  LLVMType.mangleFunctionArguments(args)
 
         if (isExtensionDeclaration) {
             name = "${function.name}${if (!external) LLVMType.mangleFunctionArguments(args) else ""}"

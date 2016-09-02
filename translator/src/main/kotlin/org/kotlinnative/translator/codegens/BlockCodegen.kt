@@ -544,17 +544,18 @@ abstract class BlockCodegen(val state: TranslationState,
 
         val functionDescriptor = resolvedCall!!.candidateDescriptor
         val targetFunctionName = functionDescriptor.fqNameSafe.convertToNativeName()
+        val externalFunctionName = functionDescriptor.name.asString()
         val arguments = resolvedCall.valueArguments.toSortedMap(compareBy { it.index }).values
 
-        val external = state.externalFunctions.containsKey(targetFunctionName)
+        val external = state.externalFunctions.containsKey(externalFunctionName)
         val functionArguments = functionDescriptor.valueParameters.map { it -> it.type }.map { LLVMMapStandardType(it, state) }
         val function = "$targetFunctionName${if (!external) LLVMType.mangleFunctionTypes(functionArguments) else ""}"
 
-        if (function in state.functions || function in state.externalFunctions) {
-            val descriptor = state.functions[function] ?: state.externalFunctions[function]!!
+        if (function in state.functions || externalFunctionName in state.externalFunctions) {
+            val descriptor = state.functions[function] ?: state.externalFunctions[externalFunctionName]!!
             names = parseArgumentsWithDefaultValues(arguments, descriptor.defaultValues, scopeDepth)
             val args = codeBuilder.loadArgsIfRequired(names, descriptor.args)
-            return evaluateFunctionCallExpression(LLVMVariable(function, descriptor.returnType!!.type, scope = LLVMVariableScope()), args)
+            return evaluateFunctionCallExpression(LLVMVariable(descriptor.name, descriptor.returnType!!.type, scope = LLVMVariableScope()), args)
         }
 
         if (targetFunctionName in state.classes || classScope?.structName == targetFunctionName) {

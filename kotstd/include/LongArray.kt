@@ -1,7 +1,7 @@
 package kotlin
 
-external fun kotlinclib_get_long(src: Int, index: Int): Long
-external fun kotlinclib_set_long(src: Int, index: Int, value: Long)
+external fun kotlinclib_long_array_get_ix(dataRawPtr: Int, index: Int): Long
+external fun kotlinclib_long_array_set_ix(dataRawPtr: Int, index: Int, value: Long)
 external fun kotlinclib_long_size(): Int
 
 
@@ -22,13 +22,13 @@ class LongArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Long {
-        return kotlinclib_get_long(this.dataRawPtr, index)
+        return kotlinclib_long_array_get_ix(this.dataRawPtr, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Long) {
-        kotlinclib_set_long(this.dataRawPtr, index, value)
+        kotlinclib_long_array_set_ix(this.dataRawPtr, index, value)
     }
 
 

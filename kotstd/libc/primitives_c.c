@@ -1,4 +1,4 @@
-#define MAKE_CONVERT(from, from_type, to, to_type) to_type kotlinclib_ ## from ## To ## to  ( from_type value ) { return (to_type) value;}
+#define MAKE_CONVERT(from, from_type, to, to_type) to_type kotlinclib_ ## from ## To ## to  ( from_type value )  __attribute__(( weak)) { return (to_type) value;}
 
 
 MAKE_CONVERT(int, int, Byte, char)
@@ -55,3 +55,36 @@ MAKE_CONVERT(double, double, Short, short)
 MAKE_CONVERT(double, double, Int, int)
 MAKE_CONVERT(double, double, Long, long)
 MAKE_CONVERT(double, double, Float, float)
+
+
+int kotlinclib_int_size() __attribute__((weak)){
+  return sizeof (int);
+}
+
+int kotlinclib_long_size() __attribute__((weak)){
+  return sizeof (long long);
+}
+
+int kotlinclib_boolean_size() __attribute__((weak)){
+  return sizeof (char);
+}
+
+int kotlinclib_short_size() __attribute__((weak)){
+  return sizeof (short);
+}
+
+int kotlinclib_double_size() __attribute__((weak)){
+  return sizeof (double);
+}
+
+int kotlinclib_float_size() __attribute__((weak)){
+  return sizeof (float);
+}
+
+int kotlinclib_char_size() __attribute__((weak)){
+  return sizeof (char);
+}
+
+int kotlinclib_byte_size() __attribute__((weak)){
+  return sizeof (char);
+}

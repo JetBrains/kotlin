@@ -1,8 +1,8 @@
 package kotlin
 
 external fun malloc_array(size: Int): Int
-external fun kotlinclib_get_byte(src: Int, index: Int): Byte
-external fun kotlinclib_set_byte(src: Int, index: Int, value: Byte)
+external fun kotlinclib_byte_array_get_ix(dataRawPtr: Int, index: Int): Byte
+external fun kotlinclib_byte_array_set_ix(dataRawPtr: Int, index: Int, value: Byte)
 external fun kotlinclib_byte_size(): Int
 
 
@@ -24,13 +24,13 @@ class ByteArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Byte {
-        return kotlinclib_get_byte(this.dataRawPtr, index)
+        return kotlinclib_byte_array_get_ix(this.dataRawPtr, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Byte) {
-        kotlinclib_set_byte(this.dataRawPtr, index, value)
+        kotlinclib_byte_array_set_ix(this.dataRawPtr, index, value)
     }
 
 
@@ -54,7 +54,7 @@ fun ByteArray.print() {
     while (index < size) {
         print(get(index))
         index++
-        if (index < size){
+        if (index < size) {
             print(';')
             print(' ')
         }

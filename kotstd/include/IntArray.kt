@@ -1,13 +1,14 @@
 package kotlin
 
-external fun kotlinclib_get_int(src: Int, index: Int): Int
-external fun kotlinclib_set_int(src: Int, index: Int, value: Int)
+external fun kotlinclib_int_array_get_ix(dataRawPtr: Int, index: Int): Int
+external fun kotlinclib_int_array_set_ix(dataRawPtr: Int, index: Int, value: Int)
 external fun kotlinclib_int_size(): Int
 
 
 class IntArray(var size: Int) {
     val dataRawPtr: Int
 
+    //[TODO move up]
     /** Returns the number of elements in the array. */
     //size: Int
 
@@ -22,13 +23,13 @@ class IntArray(var size: Int) {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     operator fun get(index: Int): Int {
-        return kotlinclib_get_int(this.dataRawPtr, index)
+        return kotlinclib_int_array_get_ix(this.dataRawPtr, index)
     }
 
 
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
     operator fun set(index: Int, value: Int) {
-        kotlinclib_set_int(this.dataRawPtr, index, value)
+        kotlinclib_int_array_set_ix(this.dataRawPtr, index, value)
     }
 
 
