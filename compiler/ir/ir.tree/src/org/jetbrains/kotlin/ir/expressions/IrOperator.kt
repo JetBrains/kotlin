@@ -91,7 +91,8 @@ interface IrOperator {
 
     object SUPER_CONSTRUCTOR_CALL : IrOperatorImpl("SUPER_CONSTRUCTOR_CALL")
     object INITIALIZE_PROPERTY_FROM_PARAMETER : IrOperatorImpl("INITIALIZE_PROPERTY_FROM_PARAMETER")
-    object ANONYMOUS_INITIALIZER : IrOperatorImpl("ANONYMOUS_INITIALIZER")
+
+    object PROPERTY_REFERENCE_FOR_DELEGATE : IrOperatorImpl("PROPERTY_REFERENCE_FOR_DELEGATE")
 
     data class COMPONENT_N private constructor(val index: Int) : IrOperatorImpl("COMPONENT_$index") {
         companion object {

@@ -10,4 +10,4 @@ FILE /extensionLambda.kt
                 RETURN type=kotlin.Nothing from=<anonymous>
                   CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
                     $this: $RECEIVER of: <anonymous> type=kotlin.String
-            CALLABLE_REFERENCE local final fun kotlin.String.<anonymous>(): kotlin.Int type=kotlin.String.() -> kotlin.Int
+            CALLABLE_REFERENCE <anonymous> type=kotlin.String.() -> kotlin.Int operator=LAMBDA

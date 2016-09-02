@@ -6,7 +6,7 @@ FILE /nonLocalReturn.kt
           FUN local final fun <anonymous>(): kotlin.Nothing
             BLOCK_BODY
               RETURN type=kotlin.Nothing from=test0
-          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Nothing type=() -> kotlin.Nothing
+          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Nothing operator=LAMBDA
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       CALL .run type=kotlin.Unit operator=null
@@ -14,7 +14,7 @@ FILE /nonLocalReturn.kt
           FUN local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from=<anonymous>
-          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Unit type=() -> kotlin.Unit
+          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Unit operator=LAMBDA
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
       CALL .run type=kotlin.Unit operator=null
@@ -22,7 +22,7 @@ FILE /nonLocalReturn.kt
           FUN local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from=<anonymous>
-          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Unit type=() -> kotlin.Unit
+          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Unit operator=LAMBDA
   FUN public fun testLrmFoo1(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     BLOCK_BODY
       CALL .forEach type=kotlin.Unit operator=null
@@ -38,7 +38,7 @@ FILE /nonLocalReturn.kt
               RETURN type=kotlin.Nothing from=<anonymous>
                 CALL .print type=kotlin.Unit operator=null
                   message: GET_VAR it type=kotlin.Int operator=null
-          CALLABLE_REFERENCE local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit type=(kotlin.Int) -> kotlin.Unit
+          CALLABLE_REFERENCE <anonymous> type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
   FUN public fun testLrmFoo2(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     BLOCK_BODY
       CALL .forEach type=kotlin.Unit operator=null
@@ -54,4 +54,4 @@ FILE /nonLocalReturn.kt
               RETURN type=kotlin.Nothing from=<anonymous>
                 CALL .print type=kotlin.Unit operator=null
                   message: GET_VAR it type=kotlin.Int operator=null
-          CALLABLE_REFERENCE local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit type=(kotlin.Int) -> kotlin.Unit
+          CALLABLE_REFERENCE <anonymous> type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA

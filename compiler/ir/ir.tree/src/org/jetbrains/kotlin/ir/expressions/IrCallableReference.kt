@@ -17,37 +17,19 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-
-interface IrCallableReference : IrDeclarationReference {
-    override val descriptor: CallableDescriptor
-
-    // TODO closure
-}
+interface IrCallableReference : IrGeneralCall
 
 class IrCallableReferenceImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        descriptor: CallableDescriptor
-) : IrDeclarationReferenceBase<CallableDescriptor>(startOffset, endOffset, type, descriptor), IrCallableReference {
+        override val descriptor: CallableDescriptor,
+        override val operator: IrOperator? = null
+) : IrGeneralCallBase(startOffset, endOffset, type, descriptor.valueParameters.size, operator), IrCallableReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCallableReference(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // TODO
-    }
-
-    override fun getChild(slot: Int): IrElement? {
-        // TODO
-        return null
-    }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        // TODO
     }
 }

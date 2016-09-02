@@ -43,6 +43,6 @@ FILE /multipleImplicitReceivers.kt
                                       $receiver: CALL .<get-foo> type=B operator=GET_PROPERTY
                                         $this: $RECEIVER of: <anonymous> type=IFoo
                                         $receiver: $RECEIVER of: <anonymous> type=A
-                              CALLABLE_REFERENCE local final fun IInvoke.<anonymous>(): kotlin.Int type=IInvoke.() -> kotlin.Int
-                    CALLABLE_REFERENCE local final fun IFoo.<anonymous>(): kotlin.Int type=IFoo.() -> kotlin.Int
-          CALLABLE_REFERENCE local final fun A.<anonymous>(): kotlin.Int type=A.() -> kotlin.Int
+                              CALLABLE_REFERENCE <anonymous> type=IInvoke.() -> kotlin.Int operator=LAMBDA
+                    CALLABLE_REFERENCE <anonymous> type=IFoo.() -> kotlin.Int operator=LAMBDA
+          CALLABLE_REFERENCE <anonymous> type=A.() -> kotlin.Int operator=LAMBDA

@@ -171,10 +171,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "THROW type=${expression.type.render()}"
 
     override fun visitCallableReference(expression: IrCallableReference, data: Nothing?): String =
-            "CALLABLE_REFERENCE ${expression.descriptor.render()} type=${expression.type.render()}"
+            "CALLABLE_REFERENCE ${expression.descriptor.name} type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-            "CLASS_REFERENCE ${expression.descriptor.render()} type=${expression.type.render()}"
+            "CLASS_REFERENCE ${expression.descriptor.name} type=${expression.type.render()}"
 
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
             "GET_CLASS type=${expression.type.render()}"

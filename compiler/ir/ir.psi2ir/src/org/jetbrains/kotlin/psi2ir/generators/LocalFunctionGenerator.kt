@@ -40,7 +40,8 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         irFun.body = BodyGenerator(lambdaDescriptor, statementGenerator.context).generateLambdaBody(ktFun)
         irBlock.addStatement(irFun)
 
-        irBlock.addStatement(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, lambdaDescriptor))
+        irBlock.addStatement(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
+                                                     lambdaDescriptor, IrOperator.LAMBDA))
 
         return irBlock
     }
@@ -57,7 +58,8 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 val irFun = generateFunctionDeclaration(ktFun)
                 irBlock.addStatement(irFun)
 
-                irBlock.addStatement(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, irFun.descriptor))
+                irBlock.addStatement(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
+                                                             irFun.descriptor, IrOperator.ANONYMOUS_FUNCTION))
 
                 irBlock
             }

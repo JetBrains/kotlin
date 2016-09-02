@@ -9,14 +9,14 @@ FILE /localDelegatedProperties.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from=<anonymous>
                     CONST Int type=kotlin.Int value='42'
-              CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Int type=() -> kotlin.Int
+              CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA
         LOCAL_PROPERTY_ACCESSOR <get-x>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from=<get-x>
               CALL .getValue type=kotlin.Int operator=null
                 $receiver: GET_VAR x$delegate type=kotlin.Lazy<kotlin.Int> operator=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
-                property: CALLABLE_REFERENCE val x: kotlin.Int type=kotlin.reflect.KProperty0<kotlin.Int>
+                property: CALLABLE_REFERENCE x type=kotlin.reflect.KProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
       CALL .println type=kotlin.Unit operator=null
         message: CALL .<get-x> type=kotlin.Int operator=GET_LOCAL_PROPERTY
   FUN public fun test2(): kotlin.Unit
@@ -30,7 +30,7 @@ FILE /localDelegatedProperties.kt
               CALL .getValue type=kotlin.Int operator=null
                 $receiver: GET_VAR x$delegate type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
-                property: CALLABLE_REFERENCE var x: kotlin.Int type=kotlin.reflect.KMutableProperty0<kotlin.Int>
+                property: CALLABLE_REFERENCE x type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
         LOCAL_PROPERTY_ACCESSOR <set-x>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from=<set-x>
@@ -38,7 +38,7 @@ FILE /localDelegatedProperties.kt
                 CALL .setValue type=kotlin.Unit operator=null
                   $receiver: GET_VAR x$delegate type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
                   thisRef: CONST Null type=kotlin.Nothing? value='null'
-                  property: CALLABLE_REFERENCE var x: kotlin.Int type=kotlin.reflect.KMutableProperty0<kotlin.Int>
+                  property: CALLABLE_REFERENCE x type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
                   value: GET_VAR value type=kotlin.Int operator=null
       CALL .<set-x> type=kotlin.Int operator=EQ
         value: CONST Int type=kotlin.Int value='0'

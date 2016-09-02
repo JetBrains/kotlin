@@ -86,7 +86,8 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
             BackingFieldLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor, null)
 
     private fun createCallableReference(ktElement: KtElement, type: KotlinType, referencedDescriptor: CallableDescriptor): IrCallableReference =
-            IrCallableReferenceImpl(ktElement.startOffset, ktElement.endOffset, type, referencedDescriptor)
+            IrCallableReferenceImpl(ktElement.startOffset, ktElement.endOffset, type,
+                                    referencedDescriptor, IrOperator.PROPERTY_REFERENCE_FOR_DELEGATE)
 
     fun generateLocalDelegatedProperty(
             ktProperty: KtProperty,

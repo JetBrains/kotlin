@@ -6,4 +6,4 @@ FILE /justLambda.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from=<anonymous>
               CONST Int type=kotlin.Int value='42'
-        CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Int type=() -> kotlin.Int
+        CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA

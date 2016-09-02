@@ -7,7 +7,7 @@ FILE /variableAsFunctionCall.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from=<anonymous>
                 $RECEIVER of: k type=kotlin.String
-          CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.String type=() -> kotlin.String
+          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.String operator=LAMBDA
   FUN public fun test1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=test1

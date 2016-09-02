@@ -19,18 +19,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrFunctionBase
-import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.builders.irBlockBody
-import org.jetbrains.kotlin.psi2ir.builders.irCallableReference
-import org.jetbrains.kotlin.psi2ir.builders.irGet
-import org.jetbrains.kotlin.psi2ir.builders.irReturn
-import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
-import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.lang.AssertionError
 import java.util.*
 
 class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext): GeneratorWithScope {
