@@ -127,17 +127,17 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         irProperty.getter = ktProperty.getter?.let { ktGetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktGetter)
             val getterDescriptor = accessorDescriptor as? PropertyGetterDescriptor ?: TODO("not a getter?")
-            val irGetterBody = generateFunctionBody(getterDescriptor, ktGetter.bodyExpression ?: TODO("default getter"))
-            IrPropertyGetterImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED,
-                                 getterDescriptor, irGetterBody)
+            val irGetter = IrPropertyGetterImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED, getterDescriptor)
+            irGetter.body = ktGetter.bodyExpression?.let { generateFunctionBody(getterDescriptor, it ) }
+            irGetter
         }
 
         irProperty.setter = ktProperty.setter?.let { ktSetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktSetter)
             val setterDescriptor = accessorDescriptor as? PropertySetterDescriptor ?: TODO("not a setter?")
-            val irSetterBody = generateFunctionBody(setterDescriptor, ktSetter.bodyExpression ?: TODO("default setter"))
-            IrPropertySetterImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED,
-                                 setterDescriptor, irSetterBody)
+            val irSetter = IrPropertySetterImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED, setterDescriptor)
+            irSetter.body = ktSetter.bodyExpression?.let { generateFunctionBody(setterDescriptor, it ) }
+            irSetter
         }
 
         return irProperty
