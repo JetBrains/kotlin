@@ -1,25 +1,21 @@
 package algorithm
 
+import CodedInputStream
 import CodedOutputStream
-import Exceptions.InactiveCarException
-import Exceptions.SonarDataException
+import Logger
 import RouteMetricRequest
 import SonarRequest
+import SonarResponse
 import algorithm.geometry.Angle
 import algorithm.geometry.AngleData
-import io.netty.buffer.Unpooled
-import io.netty.handler.codec.http.*
+import net.car.client.Client
 import objects.Car
-import setRouteMetricUrl
-import sonarUrl
-import sun.rmi.runtime.Log
+import java.net.ConnectException
 import java.util.*
-import java.util.concurrent.Exchanger
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.concurrent.thread
 
-abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntArray>) {
+abstract class AbstractAlgorithm(val thisCar: Car) {
 
     open val ATTEMPTS = 1
     open val SMOOTHING = SonarRequest.Smoothing.NONE
@@ -37,7 +33,6 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     private var prevSonarDistances = mapOf<Angle, AngleData>()
     private val defaultAngles = arrayOf(Angle(0), Angle(70), Angle(75), Angle(80), Angle(85), Angle(90), Angle(95), Angle(100), Angle(105), Angle(110), Angle(180))
 
-    //    private val defaultAngles = arrayOf(Angle(0), Angle(60), Angle(70), Angle(80), Angle(90), Angle(100), Angle(110), Angle(120), Angle(180))
     protected var requiredAngles = defaultAngles
 
     protected enum class CarState {
@@ -60,22 +55,21 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
                 .build()
         val requestBytes = ByteArray(message.getSizeNoTag())
         message.writeTo(CodedOutputStream(requestBytes))
-        val request = getDefaultHttpRequest(thisCar.host, sonarUrl, requestBytes)
         try {
-            car.client.Client.sendRequest(request, thisCar.host, thisCar.port, mapOf(Pair("angles", anglesIntArray)))
-        } catch (e: InactiveCarException) {
+            val futureListener = thisCar.carConnection.sendRequest(Client.Request.SONAR, requestBytes)
+            val bytes = futureListener.get(300, TimeUnit.SECONDS).responseBodyAsBytes
+            val responseMessage = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
+            responseMessage.mergeFrom(CodedInputStream(bytes))
+            return responseMessage.distances
+        } catch (e: ConnectException) {
             println("connection error!")
-        }
-
-        try {
-            val distances = exchanger.exchange(IntArray(0), 300, TimeUnit.SECONDS)
-            return distances
         } catch (e: TimeoutException) {
-            println("don't have response from car. Timeout!")
+            println("don't have response from net.car. Timeout!")
         }
         return IntArray(0)
     }
 
+    //todo методы управления машинкой должны быть в отдельном классе по аналогии с carController
     protected fun moveCar(message: RouteMetricRequest) {
         val requestBytes = ByteArray(message.getSizeNoTag())
         message.writeTo(CodedOutputStream(requestBytes))
@@ -84,23 +78,18 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
 
     private fun moveCar(messageBytes: ByteArray) {
-        val request = getDefaultHttpRequest(thisCar.host, setRouteMetricUrl, messageBytes)
         try {
-            car.client.Client.sendRequest(request, thisCar.host, thisCar.port, mapOf<String, Int>())
-        } catch (e: InactiveCarException) {
+            thisCar.carConnection.sendRequest(Client.Request.ROUTE_METRIC, messageBytes).get(60, TimeUnit.SECONDS)
+        } catch (e: ConnectException) {
             println("connection error!")
-        }
-        try {
-            exchanger.exchange(IntArray(0), 60, TimeUnit.SECONDS)
-            return
         } catch (e: TimeoutException) {
-            println("don't have response from car. Timeout!")
+            println("don't have response from net.car. Timeout!")
         }
         return
     }
 
     fun iterate() {
-        Logger.log("============= STARTING ITERATION ${iterationCounter} ============")
+        Logger.log("============= STARTING ITERATION $iterationCounter ============")
         Logger.indent()
         iterationCounter++
         if (RoomModel.finished) {
@@ -118,16 +107,15 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
         this.requiredAngles = defaultAngles
 
-        val command: RouteMetricRequest
-        val state: CarState
-        try {
-            state = getCarState(anglesDistances)
-            command = getCommand(anglesDistances, state)
-        } catch (e: SonarDataException) {
-            Logger.log("iteration cancelled. need more data from sonar")
-            Logger.outdent()
-            Logger.log("============= FINISHING ITERATION ${iterationCounter} ============")
-            Logger.log("")
+        val state = getCarState(anglesDistances)
+
+        if (state == null) {
+            addCancelIterationToLog()
+            return
+        }
+        val command = getCommand(anglesDistances, state)
+        if (command == null) {
+            addCancelIterationToLog()
             return
         }
 
@@ -147,18 +135,17 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
 
         moveCar(command)
         Logger.outdent()
-        Logger.log("============= FINISHING ITERATION ${iterationCounter} ============")
+        Logger.log("============= FINISHING ITERATION $iterationCounter ============")
         Logger.log("")
     }
 
-
-    protected fun getPrevState(): CarState? {
-        return prevState
+    private fun addCancelIterationToLog() {
+        Logger.log("iteration cancelled. need more data from sonar")
+        Logger.outdent()
+        Logger.log("============= FINISHING ITERATION $iterationCounter ============")
+        Logger.log("")
     }
 
-    protected fun getPrevSonarDistances(): Map<Angle, AngleData> {
-        return prevSonarDistances
-    }
 
     private fun getAngles(): Array<Angle> {
         return requiredAngles
@@ -186,7 +173,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
                 BACKWARD -> FORWARD
                 LEFT -> RIGHT
                 RIGHT -> LEFT
-                else -> throw IllegalArgumentException("Unexpected direction = ${dir} found during command inversion")
+                else -> throw IllegalArgumentException("Unexpected direction = $dir found during command inversion")
             }
         }
         return res.build()
@@ -204,7 +191,7 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
     }
 
     protected fun rollback(steps: Int) {
-        Logger.log("=== Starting rollback for ${steps} steps ===")
+        Logger.log("=== Starting rollback for $steps steps ===")
         Logger.indent()
         var stepsRemaining = steps
         while (stepsRemaining > 0 && history.size > 0) {
@@ -216,18 +203,9 @@ abstract class AbstractAlgorithm(val thisCar: Car, val exchanger: Exchanger<IntA
         Logger.log("=== Finished rollback ===")
     }
 
-    protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState
-    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest
+    protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?
+    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest?
     protected abstract fun afterGetCommand(route: RouteMetricRequest)
     abstract fun isCompleted(): Boolean
-
-
-    private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
-        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, url, Unpooled.copiedBuffer(bytes))
-        request.headers().set(HttpHeaderNames.HOST, host)
-        request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
-        request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-        return request
-    }
 
 }

@@ -4,7 +4,7 @@ import CodedInputStream
 import RouteMetricRequest
 import SonarRequest
 import SonarResponse
-import car.client.CarClient
+import net.car.client.Client
 import objects.Car
 
 class CarController(var car: Car) {
@@ -15,16 +15,16 @@ class CarController(var car: Car) {
         RIGHT(3);
     }
 
+    //todo use x,y,angle from car object. x,y in sm, angle in degrees
     var position = Pair(0.0, 0.0)
         private set
+    private var angle = 0.0
 
     private val CHARGE_CORRECTION = 0.97
     private val MAX_ANGLE = 360.0
     private val SCAN_STEP = 5.0
     private val MIN_ROTATION = 10
     private val MAX_VALID_DISTANCE = 100.0
-
-    private var angle = 0.0
 
     fun moveTo(to: Pair<Double, Double>, distance: Double) {
         val driveAngle = (Math.toDegrees(Math.atan2(to.second, to.first)) + MAX_ANGLE) % MAX_ANGLE
@@ -70,8 +70,10 @@ class CarController(var car: Car) {
 
     fun scan(angles: IntArray): List<Double> {
         val request = SonarRequest.BuilderSonarRequest(angles, IntArray(angles.size, { 1 }), 1, SonarRequest.Smoothing.NONE).build()
-        val data = CarClient.serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
-        val response = CarClient.sendRequest(car, CarClient.Request.SONAR, data).get().responseBodyAsBytes
+
+        val data = serialize(request.getSizeNoTag(), { request.writeTo(it) })
+
+        val response = car.carConnection.sendRequest(Client.Request.SONAR, data).get().responseBodyAsBytes
 
         val result = SonarResponse.BuilderSonarResponse(IntArray(0)).parseFrom(CodedInputStream(response)).build().distances.map { it.toDouble() }
         return result
@@ -88,8 +90,7 @@ class CarController(var car: Car) {
 
     fun drive(direction: Direction, distance: Int) {
         val request = RouteMetricRequest.BuilderRouteMetricRequest(intArrayOf((distance * CHARGE_CORRECTION).toInt()), intArrayOf(direction.id)).build()
-        val data = CarClient.serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
-        CarClient.sendRequest(car, CarClient.Request.ROUTE_METRIC, data).get()
+        val data = serialize(request.getSizeNoTag(), { i -> request.writeTo(i) })
+        car.carConnection.sendRequest(Client.Request.ROUTE_METRIC, data).get()
     }
-
 }

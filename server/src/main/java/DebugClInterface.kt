@@ -1,32 +1,28 @@
-import Exceptions.InactiveCarException
+import RoomScanner.serialize
 import algorithm.AbstractAlgorithm
 import algorithm.AlgorithmThread
 import algorithm.RoomBypassingAlgorithm
 import algorithm.RoomModel
-import car.client.CarClient
-import car.client.Client
-import io.netty.buffer.Unpooled
-import io.netty.handler.codec.http.*
+import net.car.client.Client
 import objects.Car
 import objects.Environment
+import java.net.ConnectException
 import java.rmi.UnexpectedException
-import java.util.concurrent.Exchanger
 
 object DebugClInterface {
 
-    val exchanger = Exchanger<IntArray>()
+    //todo remove
     var algorithmImpl: AbstractAlgorithm? = null
     var algorithmThread: AlgorithmThread? = null
 
     private val routeRegex = Regex("route [0-9]{1,10}")
     private val sonarRegex = Regex("sonar [0-9]{1,10}")
-    private val helpString = "available commands:\n" +
+    private val helpString = "available handlers:\n" +
             "cars - get list of connected cars\n" +
-            "route [car_id] - setting a route for car with car id.\n" +
-            "refloc - refresh all car locations\n" +
+            "route [car_id] - setting a route for net.car with net.car id.\n" +
             "sonar [car_id] - get sonar data\n" +
-            "dbinfo [car_id] [type] - refresh all car locations\n" +
-            "lines - print lines, detected by car\n" +
+            "dbinfo [car_id] [type] - refresh all net.car locations\n" +
+            "lines - print lines, detected by net.car\n" +
             "alg [count] - run algorithm. Make [count] iteration\n" +
             "type is string name of value or int value. available values: MEMORYSTATS - 0\n" +
             "stop - exit from this interface and stop all threads\n"
@@ -66,7 +62,6 @@ object DebugClInterface {
                 })
             }
             "route" -> executeRouteCommand(readString)
-            "refloc" -> executeRefreshLocationCommand()
             "sonar" -> executeSonarCommand(readString)
             "dbinfo" -> executeDebugInfoCommand(readString)
             "lines" -> algorithm.RoomModel.walls.forEach { println(it.line) }
@@ -74,7 +69,7 @@ object DebugClInterface {
                 val tmp = algorithmImpl
                 if (tmp is RoomBypassingAlgorithm) {
                     println("walls: ${RoomModel.walls}")
-                    println("x: ${tmp.carX} y: ${tmp.carY} angle:${tmp.carAngle}")
+                    println("x: ${tmp.thisCar.x} y: ${tmp.thisCar.y} angle:${tmp.thisCar.angle}")
                 }
             }
             "alg" -> executeAlg(readString)
@@ -90,10 +85,9 @@ object DebugClInterface {
         val window = params[3].toInt()
 
         val request = SonarExploreAngleRequest.BuilderSonarExploreAngleRequest(angle, window).build()
-        val responseData = CarClient.sendRequest(
-                car,
-                CarClient.Request.EXPLORE_ANGLE,
-                CarClient.serialize(request.getSizeNoTag(), { request.writeTo(it) })
+        val responseData = car.carConnection.sendRequest(
+                Client.Request.EXPLORE_ANGLE,
+                serialize(request.getSizeNoTag(), { request.writeTo(it) })
         ).get().responseBodyAsBytes
 
         val distances = SonarExploreAngleResponse.BuilderSonarExploreAngleResponse(IntArray(0)).parseFrom(CodedInputStream(responseData)).build().distances
@@ -112,7 +106,7 @@ object DebugClInterface {
 
         var alg = algorithmImpl
         if (alg == null) {
-            alg = RoomBypassingAlgorithm(Environment.map.values.last(), exchanger)
+            alg = RoomBypassingAlgorithm(Environment.map.values.last())
         }
         var algThread = algorithmThread
         if (algThread == null) {
@@ -131,15 +125,14 @@ object DebugClInterface {
 
         val request = DebugRequest.BuilderDebugRequest(type).build()
         val requestType = when (type) {
-            DebugRequest.Type.MEMORY_STATS -> CarClient.Request.DEBUG_MEMORY
-            DebugRequest.Type.SONAR_STATS -> CarClient.Request.DEBUG_SONAR
+            DebugRequest.Type.MEMORY_STATS -> Client.Request.DEBUG_MEMORY
+            DebugRequest.Type.SONAR_STATS -> Client.Request.DEBUG_SONAR
             else -> throw UnexpectedException(type.toString())
         }
 
-        val responseData = CarClient.sendRequest(
-                car,
+        val responseData = car.carConnection.sendRequest(
                 requestType,
-                CarClient.serialize(request.getSizeNoTag(), { request.writeTo(it) })
+                serialize(request.getSizeNoTag(), { request.writeTo(it) })
         ).get().responseBodyAsBytes
 
         when (type) {
@@ -180,16 +173,15 @@ object DebugClInterface {
             Environment.map[id]
         })
         if (car == null) {
-            println("car with id=$id not found")
+            println("net.car with id=$id not found")
             return
         }
         val requestMessage = getSonarRequest() ?: return
         val requestBytes = ByteArray(requestMessage.getSizeNoTag())
         requestMessage.writeTo(CodedOutputStream(requestBytes))
-        val request = getDefaultHttpRequest(car.host, sonarUrl, requestBytes)
         try {
-            Client.sendRequest(request, car.host, car.port, mapOf(Pair("angles", requestMessage.angles)))
-        } catch (e: InactiveCarException) {
+            car.carConnection.sendRequest(Client.Request.SONAR, requestBytes)
+        } catch (e: ConnectException) {
             synchronized(Environment, {
                 Environment.map.remove(id)
             })
@@ -223,29 +215,6 @@ object DebugClInterface {
         }
     }
 
-    private fun getRequestOptionId(id: Int): Map<String, Int> {
-        return mapOf(Pair("uid", id))
-    }
-
-    private fun executeRefreshLocationCommand() {
-        val cars = synchronized(Environment, { Environment.map.values })
-        val inactiveCars = mutableListOf<Int>()
-        for (car in cars) {
-            val request = getDefaultHttpRequest(car.host, getLocationUrl, ByteArray(0))
-            try {
-                Client.sendRequest(request, car.host, car.port, getRequestOptionId(car.uid))
-            } catch (e: InactiveCarException) {
-                inactiveCars.add(car.uid)
-            }
-            println("ref loc done")
-        }
-        synchronized(Environment, {
-            for (id in inactiveCars) {
-                Environment.map.remove(id)
-            }
-        })
-    }
-
     private fun executeRouteCommand(readString: String) {
         if (!routeRegex.matches(readString)) {
             println("incorrect args of command route.")
@@ -266,16 +235,15 @@ object DebugClInterface {
                     Environment.map[id]
                 })
         if (car == null) {
-            println("car with id=$id not found")
+            println("net.car with id=$id not found")
             return
         }
         val routeMessage = getRouteMessage() ?: return
         val requestBytes = ByteArray(routeMessage.getSizeNoTag())
         routeMessage.writeTo(CodedOutputStream(requestBytes))
-        val request = getDefaultHttpRequest(car.host, setRouteUrl, requestBytes)
         try {
-            Client.sendRequest(request, car.host, car.port, mapOf(Pair("uid", id)))
-        } catch (e: InactiveCarException) {
+            car.carConnection.sendRequest(Client.Request.ROUTE_METRIC, requestBytes)
+        } catch (e: ConnectException) {
             synchronized(Environment, {
                 Environment.map.remove(id)
             })
@@ -283,10 +251,9 @@ object DebugClInterface {
     }
 
     private fun getRouteMessage(): RouteRequest? {
-        println("print way points in polar coordinate als [distance] [rotation target] in metres and degrees." +
-                "after enter all points print \"done\". for reset route print \"reset\"")
-        println("e.g. for move from (x,y) to (x+1,y) and back to (x,y) you need enter:" +
-                "1 0[enter] 1 180[enter] done")
+        println("print way points in polar coordinate als [distance/degrees] [direction] in sm and degrees." +
+                "after enter all points print \"done\". for reset route print \"reset\". available directions:" +
+                "0 - FORWARD, 1 - BACKWARD, 2 - LEFT, 3 - RIGHT")
         val distances = arrayListOf<Int>()
         val angles = arrayListOf<Int>()
         while (true) {
@@ -315,13 +282,4 @@ object DebugClInterface {
             }
         }
     }
-
-    private fun getDefaultHttpRequest(host: String, url: String, bytes: ByteArray): DefaultFullHttpRequest {
-        val request = DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, url, Unpooled.copiedBuffer(bytes))
-        request.headers().set(HttpHeaderNames.HOST, host)
-        request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
-        request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes())
-        return request
-    }
-
 }

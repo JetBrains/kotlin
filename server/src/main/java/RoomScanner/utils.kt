@@ -1,5 +1,7 @@
 package RoomScanner
 
+import CodedOutputStream
+
 fun horizon(): IntArray {
     val horizon = IntArray(180 / 5, { it * 5 })
     horizon.reverse()
@@ -19,6 +21,13 @@ fun angleDistance(from: Double, to: Double): Double {
     val direction = if (distance == Math.abs(from - to)) Math.signum(to - from) else -Math.signum(to - from)
 
     return distance * direction
+}
+
+inline fun serialize(size: Int, writeTo: (CodedOutputStream) -> Unit): ByteArray {
+    val bytes = ByteArray(size)
+    writeTo(CodedOutputStream(bytes))
+
+    return bytes
 }
 
 fun <T> maxSuffix(first: List<T>, second: List<T>, distance: (T, T) -> Double): Int {

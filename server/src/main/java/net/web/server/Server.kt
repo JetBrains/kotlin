@@ -1,4 +1,4 @@
-package web.server
+package net.web.server
 
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.nio.NioEventLoopGroup
@@ -6,6 +6,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel
 import kotlin.concurrent.thread
 
 object Server {
+
+    private val DEFAULT_PORT = 7926
+
     enum class ServerMode {
         IDLE,
         MANUAL_MODE,
@@ -19,7 +22,7 @@ object Server {
                     ModeChange.Mode.PerimeterBuilding -> PERIMETER_BUILDING
                     ModeChange.Mode.PerimeterDebug -> PERIMETER_DEBUG
                     ModeChange.Mode.Idle -> IDLE
-                    else -> throw IllegalArgumentException("Illegal argument when parsing ServerMode from Protobuf Mode")
+                    else -> throw IllegalArgumentException("Illegal argument when parsing ServerMode from proto buf Mode")
                 }
             }
         }
@@ -33,7 +36,7 @@ object Server {
         serverMode = newMode
     }
 
-    fun getWebServerThread(webServerPort: Int): Thread {
+    fun createWebServerThread(webServerPort: Int = DEFAULT_PORT): Thread {
         return thread(false, false, null, "webServer", -1, {
             println("web server started")
             val bossGroup = NioEventLoopGroup(1)

@@ -1,23 +1,15 @@
 import RoomScanner.CarController
 import RoomScanner.RoomScanner
-import car.Dropper
-import car.client.Client
+import net.car.Dropper
+import net.car.client.Client
 import objects.Environment
 
-val carServerPort: Int = 7925
-val webServerPort: Int = 7926
-val getLocationUrl = "/getLocation"
-val setRouteUrl = "/route"
-val setRouteMetricUrl = "/routeMetric"
-val connectUrl = "/connect"
-val debugMemoryUrl = "/debug/memory"
-val sonarUrl = "/sonar"
 
 fun main(args: Array<String>) {
     var roomScanner: RoomScanner? = null
-    val carServer = car.server.Server.getCarServerThread(carServerPort)
-    val webServer = web.server.Server.getWebServerThread(webServerPort)
-    val carsDestroy = Dropper.getCarsDestroyThread()
+    val carServer = net.car.server.Server.createCarServerThread()
+    val webServer = net.web.server.Server.createWebServerThread()
+    val carsDestroy = Dropper.createCarsDestroyThread()
     carServer.start()
     carsDestroy.start()
     webServer.start()
@@ -29,6 +21,9 @@ fun main(args: Array<String>) {
         }
     }
 
+
+    //todo запуск потока алгоритма нужно вынести сюда,
+    //todo а debug интерфейсутребуется исключительно возможность установки кол-ва итераций
     //CL user interface
     DebugClInterface.run()
 

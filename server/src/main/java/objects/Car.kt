@@ -1,26 +1,16 @@
 package objects
 
 
-class Car constructor(uid: Int, host: String, port: Int) {
+class Car constructor(val uid: Int, host: String, port: Int) {
 
-    val uid: Int
-    val host: String
-    val port: Int
+    var x = 0.0
+    var y = 0.0
+    var angle = 0.0
 
-    var lastAction: Long
-
-    var x: Int
-    var y: Int
-    var angle: Int
+    val carConnection: CarConnection
 
     init {
-        this.uid = uid
-        this.host = host
-        this.port = port
-        x = 0
-        y = 0
-        angle = 0
-        this.lastAction = System.currentTimeMillis()
+        carConnection = CarConnection(host, port)
     }
 
     override fun toString(): String {
