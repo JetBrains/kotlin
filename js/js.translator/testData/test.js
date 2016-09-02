@@ -2,7 +2,12 @@
 
 var assert = require('assert');
 var fs = require('fs');
-var kotlin = require(process.env.KOTLIN_JS_LOCATION);
+var kotlinJsLocation = process.env.KOTLIN_JS_LOCATION;
+if (!kotlinJsLocation) {
+    kotlinJsLocation = "../../../dist/js/kotlin.js";
+}
+var kotlin = require(kotlinJsLocation);
+supplyAsserter(kotlin);
 var requireFromString = require('require-from-string');
 
 var model = generateModel("out");
@@ -60,4 +65,36 @@ function generateModel(path) {
     } else {
         return void 0;
     }
+}
+
+function supplyAsserter(kotlin) {
+    var asserterContainer = kotlin.defineRootPackage(null, {
+        asserter : kotlin.createClass(
+            function () {
+                return [kotlin.kotlin.test.Asserter];
+            },
+            function () {},
+            {
+                assertTrue_tup0fe$: function (lazyMessage, actual) {
+                    kotlin.kotlin.test.assertTrue_8kj6y5$(actual, lazyMessage());
+                },
+                assertTrue_ivxn3r$: function (message, actual) {
+                    if (!actual) {
+                        this.failWithMessage(message);
+                    }
+                },
+                fail_61zpoe$: function (message) {
+                    this.failWithMessage(message);
+                },
+                failWithMessage: function (message) {
+                    if (message == null) {
+                        throw new Kotlin.AssertionError();
+                    } else {
+                        throw new Kotlin.AssertionError(message);
+                    }
+                }
+            }
+        )
+    });
+    kotlin.kotlin.test.asserter = new asserterContainer.asserter();
 }

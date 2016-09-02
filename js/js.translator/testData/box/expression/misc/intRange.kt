@@ -61,9 +61,6 @@ fun testRange(): Boolean {
     for (i in oneToFive) {
         sum += i;
     }
-    for (i in oneToFive) {
-        print(i)
-    }
 
     if (sum != 10) return false;
 
@@ -72,8 +69,6 @@ fun testRange(): Boolean {
 }
 
 fun testReversedRange(): Boolean {
-
-    println("Testing reversed range.");
 
     val tenToFive = NumberRange(10, 5, true);
 
@@ -90,11 +85,6 @@ fun testReversedRange(): Boolean {
     if (!(tenToFive.start == 10)) return false;
     if (!(tenToFive.size == 5)) return false;
     if (!(tenToFive.end == 6)) return false;
-
-    for (i in tenToFive) {
-        println(i)
-    }
-
 
     var sum = 0;
     for (i in tenToFive) {

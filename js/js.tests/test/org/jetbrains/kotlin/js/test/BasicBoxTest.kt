@@ -104,7 +104,14 @@ abstract class BasicBoxTest(
             val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
                 JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", JavaScript.EXTENSION)
             }
-            val inputJsFiles = inputFiles.map { it.fileName }.filter { it.endsWith(".js") }
+            val inputJsFiles = inputFiles
+                    .filter { it.fileName.endsWith(".js") }
+                    .map { file ->
+                        val sourceFile = File(file.fileName)
+                        val targetFile = File(outputDir, file.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                        FileUtil.copy(File(file.fileName), targetFile)
+                        targetFile.absolutePath
+                    }
 
             val additionalFiles = mutableListOf<String>()
             if (modules.size > 1) {
@@ -118,9 +125,11 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
-            val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
-            val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, testFactory.testPackage)
-            FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
+            if (!SKIP_NODE_JS.matcher(expectedText).find()) {
+                val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
+                val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, testFactory.testPackage)
+                FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
+            }
 
             RhinoUtils.runRhinoTest(allJsFiles, checker)
         }
@@ -137,7 +146,7 @@ abstract class BasicBoxTest(
             val fileName = FileUtil.getRelativePath(dir, File(file))!!
             sb.append("text += fs.readFileSync(__dirname + \"/$fileName\") + \"\\n\";\n")
         }
-        sb.append("text += 'return $moduleName;';\n")
+        sb.append("text += 'return kotlin.modules.$moduleName;';\n")
         sb.append("text += \"};\";\n")
 
         val fqn = testPackage?.let { ".$it" } ?: ""
@@ -160,11 +169,11 @@ abstract class BasicBoxTest(
 
     private fun TestModule.outputFileSimpleName(): String {
         val outputFileSuffix = if (this.name == TEST_MODULE) "" else "-$name"
-        return getTestName(true) + "${outputFileSuffix}_v5"
+        return getTestName(true) + outputFileSuffix
     }
 
     private fun TestModule.outputFileName(directory: File): String {
-        return directory.absolutePath + "/" + outputFileSimpleName()
+        return directory.absolutePath + "/" + outputFileSimpleName() + "_v5"
     }
 
     private fun generateJavaScriptFile(
@@ -315,5 +324,6 @@ abstract class BasicBoxTest(
 
         private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
+        private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
     }
 }
