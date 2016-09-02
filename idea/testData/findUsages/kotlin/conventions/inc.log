@@ -1,0 +1,8 @@
+Checked type of a
+Resolved ++a
+Resolved a++
+Searched references to A
+Searched references to A.inc() in Kotlin files
+Searched references to a in Kotlin files
+Used plain search of A.inc() in LocalSearchScope:
+    CLASS:A
