@@ -21,15 +21,17 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrDummyDeclaration(
+interface IrErrorDeclaration : IrDeclaration
+
+class IrErrorDeclarationImpl(
         startOffset: Int,
         endOffset: Int,
         override val descriptor: DeclarationDescriptor
-) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED) {
+) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED), IrErrorDeclaration {
     override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.DUMMY
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitDummyDeclaration(this, data)
+        return visitor.visitErrorDeclaration(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

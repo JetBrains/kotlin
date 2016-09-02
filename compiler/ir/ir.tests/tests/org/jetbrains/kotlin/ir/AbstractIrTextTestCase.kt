@@ -32,7 +32,8 @@ import java.util.regex.Pattern
 abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
         val dir = wholeFile.parentFile
-        for ((testFile, irFile) in generateIrFilesAsSingleModule(testFiles)) {
+        val ignoreErrors = shouldIgnoreErrors(wholeFile)
+        for ((testFile, irFile) in generateIrFilesAsSingleModule(testFiles, ignoreErrors)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
     }
@@ -74,6 +75,10 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
         private val IR_TREES_TXT_PATTERN = Regex("""// \s*<<<\s+(.*)$""")
+        private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
+
+        internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
+                IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
 
         internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
             val regexps = ArrayList<RegexpInText>()

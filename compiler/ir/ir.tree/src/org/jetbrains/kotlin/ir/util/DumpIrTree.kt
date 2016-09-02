@@ -59,6 +59,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.explicitReceiver?.accept(this, "receiver")
+            expression.arguments.forEach { it.accept(this, "") }
+        }
+    }
+
     private fun visitFunctionWithParameters(declaration: IrFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.descriptor.valueParameters.forEach { valueParameter ->

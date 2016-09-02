@@ -33,12 +33,14 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)
 
-    protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>): Map<TestFile, IrFile> {
+    protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(myFiles.psiFiles, myEnvironment)
-        analysisResult.throwIfError()
-        AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
+        val analysisResult = JvmResolveUtil.analyze(myFiles.psiFiles, myEnvironment)
+        if (!ignoreErrors) {
+            analysisResult.throwIfError()
+            AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
+        }
         val psi2ir = Psi2IrTranslator()
         val irModule = psi2ir.generateModule(analysisResult.moduleDescriptor, myFiles.psiFiles, analysisResult.bindingContext)
         val ktFiles = testFiles.filter { it.name.endsWith(".kt") }

@@ -209,6 +209,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         }
     }
 
+    @TestMetadata("compiler/testData/ir/irText/errors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Errors extends AbstractIrTextTestCase {
+        public void testAllFilesPresentInErrors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("unresolvedReference.kt")
+        public void testUnresolvedReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/errors/unresolvedReference.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/ir/irText/expressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

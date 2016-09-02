@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrDummyExpression
+import org.jetbrains.kotlin.ir.expressions.IrErrorExpressionImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -57,5 +57,5 @@ fun Generator.getInferredTypeWithImplicitCastsOrFail(key: KtExpression): KotlinT
 fun Generator.getResolvedCall(key: KtElement): ResolvedCall<out CallableDescriptor>? =
         key.getResolvedCall(context.bindingContext)
 
-fun Generator.createDummyExpression(ktExpression: KtExpression, description: String): IrDummyExpression =
-        IrDummyExpression(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithImplicitCastsOrFail(ktExpression), description)
+fun Generator.createDummyExpression(ktExpression: KtExpression, description: String): IrErrorExpressionImpl =
+        IrErrorExpressionImpl(ktExpression.startOffset, ktExpression.endOffset, getInferredTypeWithImplicitCastsOrFail(ktExpression), description)

@@ -182,11 +182,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): String =
             "TRY_CATCH type=${tryCatch.type.render()}"
 
-    override fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: Nothing?): String =
-            "DUMMY ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.name}"
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
+            "ERROR_DECL ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.name}"
 
-    override fun visitDummyExpression(expression: IrDummyExpression, data: Nothing?): String =
-            "DUMMY ${expression.description} type=${expression.type.render()}"
+    override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
+            "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
+
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
+            "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
 
     companion object {
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {

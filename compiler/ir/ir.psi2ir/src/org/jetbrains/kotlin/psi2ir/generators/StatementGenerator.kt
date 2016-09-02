@@ -56,7 +56,12 @@ class StatementGenerator(
             ktExpression.genExpr()
 
     private fun KtElement.genStmt(): IrStatement =
-            deparenthesize().accept(this@StatementGenerator, null)
+            try {
+                deparenthesize().accept(this@StatementGenerator, null)
+            }
+            catch (e: Exception) {
+                ErrorExpressionGenerator(this@StatementGenerator).generateErrorExpression(this, e.message)
+            }
 
     private fun KtElement.genExpr(): IrExpression =
             genStmt().assertCast()
@@ -220,9 +225,7 @@ class StatementGenerator(
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): IrExpression {
         val resolvedCall = getResolvedCall(expression) ?:
-                           return IrDummyExpression(expression.startOffset, expression.endOffset,
-                                                    context.builtIns.nothingType,
-                                                    "No resolved call for ${expression.text}")
+                           return ErrorExpressionGenerator(this).generateErrorExpression(expression)
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             val variableCall = pregenerateCall(resolvedCall.variableCall)
@@ -257,14 +260,15 @@ class StatementGenerator(
                 is VariableDescriptor ->
                     CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor)
                 else ->
-                    IrDummyExpression(
+                    IrErrorExpressionImpl(
                             expression.startOffset, expression.endOffset, getInferredTypeWithImplicitCastsOrFail(expression),
                             expression.text + ": ${descriptor.name} ${descriptor.javaClass.simpleName}"
                     )
             }
 
     override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrStatement {
-        val resolvedCall = getResolvedCall(expression) ?: TODO("No resolved call for call expression")
+        val resolvedCall = getResolvedCall(expression) ?:
+                           return ErrorExpressionGenerator(this).generateErrorCall(expression)
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             val functionCall = pregenerateCall(resolvedCall.functionCall)

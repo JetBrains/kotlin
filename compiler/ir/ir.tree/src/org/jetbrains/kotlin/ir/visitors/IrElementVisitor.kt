@@ -91,7 +91,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
     fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
 
-    // NB Use it only for testing purposes; will be removed as soon as all Kotlin expression types are covered
-    fun visitDummyDeclaration(declaration: IrDummyDeclaration, data: D) = visitDeclaration(declaration, data)
-    fun visitDummyExpression(expression: IrDummyExpression, data: D) = visitExpression(expression, data)
+    fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
+    fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)
+    fun visitErrorCallExpression(expression: IrErrorCallExpression, data: D) = visitErrorExpression(expression, data)
 }

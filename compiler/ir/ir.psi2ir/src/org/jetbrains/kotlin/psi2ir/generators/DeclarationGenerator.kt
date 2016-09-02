@@ -38,7 +38,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 is KtTypeAlias ->
                     generateTypeAliasDeclaration(ktDeclaration)
                 else ->
-                    IrDummyDeclaration(
+                    IrErrorDeclarationImpl(
                             ktDeclaration.startOffset, ktDeclaration.endOffset,
                             getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                     )
