@@ -48,7 +48,7 @@ val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
 
 val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
 
-fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>?> {
+fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>>? {
     when (this) {
         OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH to KtSimpleNameReference::class.java
         OperatorNameConventions.EQUALS -> return EQUALS_OPERATIONS to KtSimpleNameReference::class.java
@@ -59,19 +59,11 @@ fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>?> {
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
     }
 
-    val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
+    val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
     if (unaryOp != null) return setOf(unaryOp) to KtSimpleNameReference::class.java
-
-/*
-    val binaryOp = BINARY_OPERATION_NAMES.inverse()[this]
-    if (binaryOp != null) {
-        val assignmentOp = ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
-        return (if (assignmentOp != null) setOf(binaryOp, assignmentOp) else setOf(binaryOp)) to KtSimpleNameReference::class.java
-    }
-*/
 
     val assignmentOp = ASSIGNMENT_OPERATIONS.inverse()[this]
     if (assignmentOp != null) return setOf(assignmentOp) to KtSimpleNameReference::class.java
 
-    return emptySet<KtToken>() to null
+    return null
 }

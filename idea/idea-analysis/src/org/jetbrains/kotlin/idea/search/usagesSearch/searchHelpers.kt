@@ -63,14 +63,14 @@ fun PsiNamedElement.getClassNameForCompanionObject(): String? {
     }
 }
 
-fun PsiNamedElement.getSpecialNamesToSearch(options: KotlinReferencesSearchOptions): Pair<List<String>, Class<*>?> {
+fun PsiNamedElement.getSpecialNamesToSearch(options: KotlinReferencesSearchOptions): Pair<List<String>, Class<*>>? {
     val name = name
-    return when {
-        name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>() to null
+    when {
+        name == null || !Name.isValidIdentifier(name) -> return null
 
         else -> {
-            val operationSymbolsToSearch = Name.identifier(name).getOperationSymbolsToSearch()
-            operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value } to operationSymbolsToSearch.second
+            val operationSymbolsToSearch = Name.identifier(name).getOperationSymbolsToSearch() ?: return null
+            return operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value } to operationSymbolsToSearch.second
         }
     }
 }
