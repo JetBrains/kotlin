@@ -25,23 +25,15 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class DestructuringDeclarationReferenceSearcher(
         targetDeclaration: PsiElement,
+        private val componentIndex: Int,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = listOf("(")) {
-
-    //TODO
-    private val componentIndex = when (targetDeclaration) {
-        is KtParameter -> targetDeclaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }
-        is KtFunction -> targetDeclaration.name?.let { getComponentIndex(it) }
-    //TODO: java component functions (see KT-13605)
-        else -> null
-    }
 
     override fun resolveTargetToDescriptor(): FunctionDescriptor? {
         if (targetDeclaration is KtParameter) {
@@ -52,15 +44,10 @@ class DestructuringDeclarationReferenceSearcher(
         }
     }
 
-    override fun run() {
-        if (componentIndex == null) return
-        super.run()
-    }
-
     override fun extractReference(element: PsiElement): PsiReference? {
         val destructuringDeclaration = element as? KtDestructuringDeclaration ?: return null
         val entries = destructuringDeclaration.entries
-        if (entries.size < componentIndex!!) return null
+        if (entries.size < componentIndex) return null
         return entries[componentIndex - 1].references.firstIsInstance<KtDestructuringDeclarationReference>()
     }
 

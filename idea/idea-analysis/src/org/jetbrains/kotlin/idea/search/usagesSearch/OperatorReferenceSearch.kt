@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -105,7 +106,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         ): OperatorReferenceSearcher<*>? {
             if (isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
-                return DestructuringDeclarationReferenceSearcher(declaration, searchScope, consumer, optimizer)
+                val componentIndex = getComponentIndex(name.asString())
+                return DestructuringDeclarationReferenceSearcher(declaration, componentIndex, searchScope, consumer, optimizer)
             }
 
             if (!options.searchForOperatorConventions) return null
@@ -160,7 +162,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         }  as? FunctionDescriptor
     }
 
-    open fun run() {
+    fun run() {
         val inProgress = SearchesInProgress.get()
         if (!inProgress.add(targetDeclaration)) return //TODO: it's not quite correct
 
