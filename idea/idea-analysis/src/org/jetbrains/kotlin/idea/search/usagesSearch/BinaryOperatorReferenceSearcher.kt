@@ -24,17 +24,17 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class BinaryOperatorReferenceSearcher(
-        targetDeclaration: KtDeclaration,
+        targetFunction: KtFunction,
         private val operationTokens: List<KtSingleValueToken>,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtBinaryExpression>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = operationTokens.map { it.value }) {
+) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = operationTokens.map { it.value }) {
 
     override fun processSuspiciousExpression(expression: KtExpression) {
         val binaryExpression = expression.parent as? KtBinaryExpression ?: return
