@@ -16,7 +16,11 @@ FILE /delegatedImplementation.kt
     FUN public open override /*1*/ fun kotlin.String.qux(): kotlin.Unit
       BLOCK_BODY
   CLASS INTERFACE IOther
-  FUN public fun otherImpl(): IOther
+    PROPERTY public abstract val x: kotlin.String
+    PROPERTY public abstract var y: kotlin.Int
+    PROPERTY public abstract val kotlin.Byte.z1: kotlin.Int
+    PROPERTY public abstract var kotlin.Byte.z2: kotlin.Int
+  FUN public fun otherImpl(/*0*/ x0: kotlin.String, /*1*/ y0: kotlin.Int): IOther
     BLOCK_BODY
       RETURN type=kotlin.Nothing from=otherImpl
         BLOCK type=otherImpl.<no name provided> operator=OBJECT_LITERAL
@@ -24,6 +28,24 @@ FILE /delegatedImplementation.kt
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
+            PROPERTY public open override /*1*/ val x: kotlin.String
+              EXPRESSION_BODY
+                GET_VAR x0 type=kotlin.String operator=null
+            PROPERTY public open override /*1*/ var y: kotlin.Int
+              EXPRESSION_BODY
+                GET_VAR y0 type=kotlin.Int operator=null
+            PROPERTY public open override /*1*/ val kotlin.Byte.z1: kotlin.Int
+              PROPERTY_GETTER public open override /*1*/ fun kotlin.Byte.<get-z1>(): kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from=<get-z1>
+                    CONST Int type=kotlin.Int value='1'
+            PROPERTY public open override /*1*/ var kotlin.Byte.z2: kotlin.Int
+              PROPERTY_GETTER public open override /*1*/ fun kotlin.Byte.<get-z2>(): kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from=<get-z2>
+                    CONST Int type=kotlin.Int value='2'
+              PROPERTY_SETTER public open override /*1*/ fun kotlin.Byte.<set-z2>(/*0*/ value: kotlin.Int): kotlin.Unit
+                BLOCK_BODY
           CALL .<init> type=otherImpl.<no name provided> operator=OBJECT_LITERAL
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
@@ -74,3 +96,42 @@ FILE /delegatedImplementation.kt
     DELEGATE val `Test2$IOther$delegate`: IOther
       EXPRESSION_BODY
         CALL .otherImpl type=IOther operator=null
+          x0: CONST String type=kotlin.String value=''
+          y0: CONST Int type=kotlin.Int value='42'
+    PROPERTY public open override /*1*/ /*delegation*/ val x: kotlin.String
+      PROPERTY_GETTER public open override /*1*/ /*delegation*/ fun <get-x>(): kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-x>
+            CALL .<get-x> type=kotlin.String operator=null
+              $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+    PROPERTY public open override /*1*/ /*delegation*/ var y: kotlin.Int
+      PROPERTY_GETTER public open override /*1*/ /*delegation*/ fun <get-y>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-y>
+            CALL .<get-y> type=kotlin.Int operator=null
+              $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+      PROPERTY_SETTER public open override /*1*/ /*delegation*/ fun <set-y>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          CALL .<set-y> type=kotlin.Unit operator=null
+            $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+            <set-?>: GET_VAR <set-?> type=kotlin.Int operator=null
+    PROPERTY public open override /*1*/ /*delegation*/ val kotlin.Byte.z1: kotlin.Int
+      PROPERTY_GETTER public open override /*1*/ /*delegation*/ fun kotlin.Byte.<get-z1>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-z1>
+            CALL .<get-z1> type=kotlin.Int operator=null
+              $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+              $receiver: $RECEIVER of: z1 type=kotlin.Byte
+    PROPERTY public open override /*1*/ /*delegation*/ var kotlin.Byte.z2: kotlin.Int
+      PROPERTY_GETTER public open override /*1*/ /*delegation*/ fun kotlin.Byte.<get-z2>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from=<get-z2>
+            CALL .<get-z2> type=kotlin.Int operator=null
+              $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+              $receiver: $RECEIVER of: z2 type=kotlin.Byte
+      PROPERTY_SETTER public open override /*1*/ /*delegation*/ fun kotlin.Byte.<set-z2>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          CALL .<set-z2> type=kotlin.Unit operator=null
+            $this: GET_VAR Test2$IOther$delegate type=IOther operator=null
+            $receiver: $RECEIVER of: z2 type=kotlin.Byte
+            <set-?>: GET_VAR <set-?> type=kotlin.Int operator=null

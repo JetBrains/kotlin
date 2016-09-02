@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import java.lang.AssertionError
 
 class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
@@ -107,13 +106,29 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     }
 
     private fun generateDelegatedProperty(irClass: IrClassImpl, irDelegate: IrDelegateImpl, delegated: PropertyDescriptor, overridden: PropertyDescriptor) {
-        // TODO
+        val irProperty = IrSimplePropertyImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated)
+
+        val irGetter = IrPropertyGetterImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.getter!!)
+        irGetter.body = generateDelegateFunctionBody(irDelegate, delegated.getter!!, overridden.getter!!)
+        irProperty.getter = irGetter
+
+        if (delegated.isVar) {
+            val irSetter = IrPropertySetterImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.setter!!)
+            irSetter.body = generateDelegateFunctionBody(irDelegate, delegated.setter!!, overridden.setter!!)
+            irProperty.setter = irSetter
+        }
+
+        irClass.addMember(irProperty)
     }
 
     private fun generateDelegatedFunction(irClass: IrClassImpl, irDelegate: IrDelegateImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor) {
         val irFunction = IrFunctionImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated)
-        val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
+        irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden)
+        irClass.addMember(irFunction)
+    }
 
+    private fun generateDelegateFunctionBody(irDelegate: IrDelegateImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
+        val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
         val returnType = overridden.returnType!!
         val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden)
         irCall.dispatchReceiver = IrGetVariableImpl(irDelegate.startOffset, irDelegate.endOffset, irDelegate.descriptor)
@@ -128,11 +143,10 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
             irBlockBody.addStatement(irCall)
         }
         else {
-            irBlockBody.addStatement(IrReturnImpl(irDelegate.startOffset, irDelegate.endOffset, context.builtIns.nothingType, delegated, irCall))
+            val irReturn = IrReturnImpl(irDelegate.startOffset, irDelegate.endOffset, context.builtIns.nothingType, delegated, irCall)
+            irBlockBody.addStatement(irReturn)
         }
-
-        irFunction.body = irBlockBody
-        irClass.addMember(irFunction)
+        return irBlockBody
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
