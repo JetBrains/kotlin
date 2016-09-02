@@ -22,29 +22,37 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-//TODO: more effective search of 'set'
 class IndexingOperatorReferenceSearcher(
         targetFunction: KtFunction,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
-        optimizer: SearchRequestCollector
+        optimizer: SearchRequestCollector,
+        private val isSet: Boolean
 ) : OperatorReferenceSearcher<KtArrayAccessExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = listOf("[")) {
 
     override fun processSuspiciousExpression(expression: KtExpression) {
         val accessExpression = expression.parent as? KtArrayAccessExpression ?: return
         if (expression != accessExpression.arrayExpression) return
+        if (!checkAccessExpression(accessExpression)) return
         processReferenceElement(accessExpression)
     }
 
-    override fun isReferenceToCheck(ref: PsiReference) = ref is KtArrayAccessReference
+    override fun isReferenceToCheck(ref: PsiReference) = ref is KtArrayAccessReference && checkAccessExpression(ref.element as KtArrayAccessExpression)
 
     override fun extractReference(element: PsiElement): PsiReference? {
         val accessExpression = element as? KtArrayAccessExpression ?: return null
+        if (!checkAccessExpression(accessExpression)) return null
         return accessExpression.references.firstIsInstance<KtArrayAccessReference>()
+    }
+
+    private fun checkAccessExpression(accessExpression: KtArrayAccessExpression): Boolean {
+        val readWriteAccess = accessExpression.readWriteAccess(useResolveForReadWrite = false)
+        return if (isSet) readWriteAccess.isWrite else readWriteAccess.isRead
     }
 }

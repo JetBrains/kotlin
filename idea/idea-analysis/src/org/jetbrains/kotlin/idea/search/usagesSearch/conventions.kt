@@ -40,8 +40,6 @@ val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .add(KtTokens.BY_KEYWORD)
         .build()
 
-val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
-
 val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
 
 val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
