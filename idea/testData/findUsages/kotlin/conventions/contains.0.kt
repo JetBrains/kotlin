@@ -2,7 +2,7 @@
 // OPTIONS: usages
 
 class A(val n: Int) {
-    fun <caret>contains(k: Int): Boolean = k <= n
+    infix operator fun <caret>contains(k: Int): Boolean = k <= n
 }
 
 fun test() {

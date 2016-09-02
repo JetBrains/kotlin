@@ -2,7 +2,7 @@
 // OPTIONS: usages
 
 class B(val n: Int) {
-    fun <caret>set(i: Int, a: B) {}
+    operator fun <caret>set(i: Int, a: B) {}
 }
 
 fun test() {

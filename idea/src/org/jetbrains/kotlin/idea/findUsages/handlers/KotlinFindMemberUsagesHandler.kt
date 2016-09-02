@@ -131,9 +131,9 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
         val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
 
         if (options.isUsages) {
-            // we disable searchForComponentConventions and searchInvokeOperator for ReferencesSearch because they will be searched by MethodReferencesSearch
+            // we disable searchForComponentConventions and searchForOperatorConventions for ReferencesSearch because they will be searched by MethodReferencesSearch
             val kotlinSearchOptions = createKotlinReferencesSearchOptions(options)
-                    .copy(searchForComponentConventions = false, searchInvokeOperator = false)
+                    .copy(searchForComponentConventions = false, searchForOperatorConventions = false)
             val searchParameters = KotlinReferencesSearchParameters(element, options.searchScope, kotlinOptions = kotlinSearchOptions)
 
             with(applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))) {

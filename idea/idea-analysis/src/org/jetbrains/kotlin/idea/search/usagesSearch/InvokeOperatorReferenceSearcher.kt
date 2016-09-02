@@ -25,16 +25,16 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class InvokeOperatorReferenceSearcher(
-        targetDeclaration: KtDeclaration,
+        targetDeclaration: KtFunction,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtCallExpression>(targetDeclaration, searchScope, consumer, optimizer, wordToSearch = null) {
+) : OperatorReferenceSearcher<KtCallExpression>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = emptyList()) {
 
     companion object {
         fun runForPsiMethod(
@@ -44,8 +44,8 @@ class InvokeOperatorReferenceSearcher(
                 optimizer: SearchRequestCollector
         ) {
             if (invokeFunction !is KtLightMethod) return //TODO
-            val ktDeclarationTarget = invokeFunction.kotlinOrigin as? KtDeclaration ?: return //TODO?
-            InvokeOperatorReferenceSearcher(ktDeclarationTarget, scope, consumer, optimizer).run()
+            val ktFunction = invokeFunction.kotlinOrigin as? KtFunction ?: return //TODO?
+            InvokeOperatorReferenceSearcher(ktFunction, scope, consumer, optimizer).run()
         }
     }
 

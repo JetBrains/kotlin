@@ -17,16 +17,12 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.logPresentation
-import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor.Companion.testLog
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -36,20 +32,7 @@ class DestructuringDeclarationReferenceSearcher(
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, wordToSearch = "(") {
-
-    companion object {
-        fun runForPsiMethod(
-                componentFunction: PsiMethod,
-                scope: SearchScope,
-                consumer: Processor<PsiReference>,
-                optimizer: SearchRequestCollector
-        ) {
-            if (componentFunction !is KtLightMethod) return //TODO
-            val ktDeclarationTarget = componentFunction.kotlinOrigin as? KtDeclaration ?: return //TODO?
-            DestructuringDeclarationReferenceSearcher(ktDeclarationTarget, scope, consumer, optimizer).run()
-        }
-    }
+) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = listOf("(")) {
 
     private val componentIndex = when (targetDeclaration) {
         is KtParameter -> targetDeclaration.dataClassComponentFunction()?.name?.asString()?.let { getComponentIndex(it) }

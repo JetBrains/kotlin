@@ -2,8 +2,8 @@
 // OPTIONS: usages
 
 class A(val n: Int) {
-    fun <caret>plus(m: Int): A = A(n + m)
-    fun plus(a: A): A = this + a.n
+    operator fun <caret>plus(m: Int): A = A(n + m)
+    operator fun plus(a: A): A = this + a.n
 }
 
 fun test() {
