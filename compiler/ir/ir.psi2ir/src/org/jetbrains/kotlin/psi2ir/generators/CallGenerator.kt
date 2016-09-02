@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -35,7 +36,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is VariableDescriptor ->
                 call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                    IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
+                    generateGetVariable(startOffset, endOffset, descriptor, operator)
                 }
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, operator, call)
@@ -43,6 +44,12 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
     }
+
+    fun generateGetVariable(startOffset: Int, endOffset: Int, descriptor: VariableDescriptor, operator: IrOperator? = null) =
+            if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
+                IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, operator ?: IrOperator.GET_LOCAL_PROPERTY)
+            else
+                IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val descriptor = call.descriptor

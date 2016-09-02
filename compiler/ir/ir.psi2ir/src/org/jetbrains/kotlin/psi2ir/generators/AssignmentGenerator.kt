@@ -114,7 +114,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor, operator)
             is LocalVariableDescriptor ->
                 if (descriptor.isDelegated)
-                    TODO("Delegated local variable")
+                    DelegatedLocalPropertyLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
                 else
                     VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
             is PropertyDescriptor ->

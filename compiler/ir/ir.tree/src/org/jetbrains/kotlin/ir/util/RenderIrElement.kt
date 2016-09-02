@@ -69,6 +69,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
             "ANONYMOUS_INITIALIZER ${declaration.descriptor.name}"
 
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
+            "LOCAL_DELEGATED_PROPERTY ${declaration.descriptor.render()}"
+
+    override fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor, data: Nothing?): String =
+            "LOCAL_PROPERTY_ACCESSOR ${declaration.descriptor.name}" // can't render, see nullability for modality
+
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "EXPRESSION_BODY"
 

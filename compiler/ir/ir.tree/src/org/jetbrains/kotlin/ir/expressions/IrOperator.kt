@@ -72,6 +72,7 @@ interface IrOperator {
     object DESTRUCTURING_DECLARATION : IrOperatorImpl("DESTRUCTURING_DECLARATION")
     
     object GET_PROPERTY : IrOperatorImpl("GET_PROPERTY")
+    object GET_LOCAL_PROPERTY : IrOperatorImpl("GET_LOCAL_PROPERTY")
 
     object IF : IrOperatorImpl("IF")
     object WHEN : IrOperatorImpl("WHEN")

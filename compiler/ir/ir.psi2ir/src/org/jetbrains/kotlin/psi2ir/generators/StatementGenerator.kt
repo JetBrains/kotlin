@@ -255,7 +255,7 @@ class StatementGenerator(
                     CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
                 }
                 is VariableDescriptor ->
-                    IrGetVariableImpl(expression.startOffset, expression.endOffset, descriptor)
+                    CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor)
                 else ->
                     IrDummyExpression(
                             expression.startOffset, expression.endOffset, getInferredTypeWithImplicitCastsOrFail(expression),
