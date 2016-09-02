@@ -41,7 +41,8 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
         val psi2ir = Psi2IrTranslator()
         val irModule = psi2ir.generateModule(analysisResult.moduleDescriptor, myFiles.psiFiles, analysisResult.bindingContext)
-        return testFiles.filter { it.name.endsWith(".kt") }.zip(irModule.files).toMap()
+        val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
+        return ktFiles.zip(irModule.files).toMap()
     }
 }
 
