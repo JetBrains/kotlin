@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 
 
 class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackServicesFacade, eventManger: EventManger, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
@@ -31,4 +32,6 @@ class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackS
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(facade, target, profiler)
 
     override fun getLookupTracker(): LookupTracker = remoteLookupTrackerClient
+
+    override fun getSourceRetentionAnnotationHandler() = null
 }

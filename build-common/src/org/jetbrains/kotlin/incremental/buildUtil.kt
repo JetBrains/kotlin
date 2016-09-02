@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -70,9 +71,17 @@ fun makeCompileServices(
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
         compilationCanceledStatus: CompilationCanceledStatus?
+) = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, null)
+
+fun makeCompileServices(
+        incrementalCaches: Map<TargetId, IncrementalCache>,
+        lookupTracker: LookupTracker,
+        compilationCanceledStatus: CompilationCanceledStatus?,
+        sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?
 ): Services =
     with(Services.Builder()) {
-        register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
+        register(IncrementalCompilationComponents::class.java, 
+                 IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker, sourceRetentionAnnotationHandler))
         compilationCanceledStatus?.let {
             register(CompilationCanceledStatus::class.java, it)
         }

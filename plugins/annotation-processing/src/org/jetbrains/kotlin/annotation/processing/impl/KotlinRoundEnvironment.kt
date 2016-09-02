@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
-import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
 import org.jetbrains.kotlin.java.model.toJeElement
 import javax.annotation.processing.RoundEnvironment
@@ -24,17 +23,11 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 
 internal class KotlinRoundEnvironment(
-        private val roundAnnotations: RoundAnnotations,
+        val roundAnnotations: RoundAnnotations,
         private val isProcessingOver: Boolean,
         internal val roundNumber: Int
 ) : RoundEnvironment {
     private var isError = false
-    
-    internal val annotationsMap: Map<String, List<PsiModifierListOwner>>
-        get() = roundAnnotations.annotationsMap
-    
-    internal val supportedAnnotationFqNames: Set<String>
-        get() = roundAnnotations.supportedAnnotationFqNames
     
     override fun getRootElements() = emptySet<Element>()
     
