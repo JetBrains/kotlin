@@ -12,7 +12,7 @@ class A {
 
         val v = 42
 
-        fun Int.get(a: Int) = this + a
+        operator fun Int.get(a: Int) = this + a
     }
 }
 
