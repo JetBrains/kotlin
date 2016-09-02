@@ -20,13 +20,15 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.annotation.ClasspathBasedAnnotationProcessingExtension
 import org.jetbrains.kotlin.annotation.processing.diagnostic.DefaultErrorMessagesAnnotationProcessing
+import org.jetbrains.kotlin.cli.jvm.config.IS_KAPT2_ENABLED_KEY
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
@@ -93,13 +95,6 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
 }
 
 class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
-    private companion object {
-        private val JVM_CLASSPATH_ROOT = "org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot"
-        private val JAVA_SOURCE_ROOT = "org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot"
-        
-        private val CLASSPATH_ROOTS = listOf(JVM_CLASSPATH_ROOT, JAVA_SOURCE_ROOT)
-    }
-    
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val generatedOutputDir = configuration.get(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR) ?: return
         val apClasspath = configuration.get(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
@@ -111,12 +106,10 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
 
         val contentRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
         
-        fun ContentRoot.jvmRootFile() = javaClass.getMethod("getFile")(this) as File
-        
-        val compileClasspath = contentRoots.filter { it.javaClass.canonicalName in CLASSPATH_ROOTS }.map { it.jvmRootFile() }
+        val compileClasspath = contentRoots.filterIsInstance<JvmContentRoot>().map { it.file }
         val classpath = apClasspath + compileClasspath
 
-        val javaRoots = contentRoots.filter { it.javaClass.canonicalName == JAVA_SOURCE_ROOT }.map { it.jvmRootFile() }
+        val javaRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
         
         val classesOutputDir = File(configuration.get(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR) 
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory()) 
@@ -125,6 +118,9 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME)
                 .registerExtension(DefaultErrorMessagesAnnotationProcessing())
+        
+        // Annotations with the "SOURCE" retention will be written to class files
+        project.putUserData(IS_KAPT2_ENABLED_KEY, true)
         
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput, incrementalDataFile)

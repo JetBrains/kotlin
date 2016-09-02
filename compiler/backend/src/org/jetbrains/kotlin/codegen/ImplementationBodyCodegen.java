@@ -156,7 +156,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             if (!ktClass.hasModifier(KtTokens.OPEN_KEYWORD) && !isAbstract) {
                 // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
-                isFinal = !(ktClass.isEnum() && state.getClassBuilderMode() != ClassBuilderMode.FULL);
+                isFinal = !(ktClass.isEnum() && !state.getClassBuilderMode().generateBodies);
             }
             isStatic = !ktClass.isInner();
         }
@@ -167,8 +167,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int access = 0;
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            // ClassBuilderMode.LIGHT_CLASSES means we are generating light classes & looking at a nested or inner class
+        if (!state.getClassBuilderMode().generateBodies && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            // !ClassBuilderMode.generateBodies means we are generating light classes & looking at a nested or inner class
             // Light class generation is implemented so that Cls-classes only read bare code of classes,
             // without knowing whether these classes are inner or not (see ClassStubBuilder.EMPTY_STRATEGY)
             // Thus we must write full accessibility flags on inner classes in this mode
@@ -263,7 +263,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void writeEnclosingMethod() {
         // Do not emit enclosing method in "light-classes mode" since currently we generate local light classes as if they're top level
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
+        if (!state.getClassBuilderMode().generateBodies) {
             return;
         }
 
@@ -808,7 +808,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmDeclarationOriginKt.OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUES.asString(),
                 "()" + type.getDescriptor(), null, null
         );
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
         mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), ENUM_VALUES_FIELD_NAME, type.getDescriptor());
@@ -828,7 +828,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 });
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(myClass, valueOfFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUE_OF.asString(),
                                        "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
         mv.visitLdcInsn(classAsmType);
@@ -848,7 +848,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                        ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
                        field.name, field.type.getDescriptor(), null, null);
 
-            if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+            if (!state.getClassBuilderMode().generateBodies) return;
             // Invoke the object constructor but ignore the result because INSTANCE will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             markLineNumberForElement(element, v);
@@ -888,7 +888,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
             // TODO: test this code
-            if (state.getClassBuilderMode() == ClassBuilderMode.FULL && info.defaultValue == null) {
+            if (state.getClassBuilderMode().generateBodies && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
                 int companionObjectIndex = putCompanionObjectInLocalVar(codegen);
                 StackValue.local(companionObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
@@ -1207,7 +1207,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent() {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL || descriptor.getConstructors().isEmpty()) return;
+        if (!state.getClassBuilderMode().generateBodies || descriptor.getConstructors().isEmpty()) return;
 
         KtVisitorVoid visitor = new KtVisitorVoid() {
             @Override
@@ -1564,7 +1564,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void initializeEnumConstants(@NotNull List<KtEnumEntry> enumEntries) {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         InstructionAdapter iv = codegen.v;

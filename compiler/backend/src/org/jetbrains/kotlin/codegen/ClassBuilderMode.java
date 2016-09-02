@@ -16,17 +16,50 @@
 
 package org.jetbrains.kotlin.codegen;
 
-public enum ClassBuilderMode {
+public class ClassBuilderMode {
+    public final boolean generateBodies;
+    public final boolean generateMetadata;
+    public final boolean generateSourceRetentionAnnotations;
+
+    private ClassBuilderMode(boolean generateBodies, boolean generateMetadata, boolean generateSourceRetentionAnnotations) {
+        this.generateBodies = generateBodies;
+        this.generateMetadata = generateMetadata;
+        this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
+    }
+    
+    public static ClassBuilderMode full(boolean generateSourceRetentionAnnotations) {
+        return generateSourceRetentionAnnotations ? KAPT2 : FULL;
+    }
+
     /**
      * Full function bodies
      */
-    FULL,
+    private final static ClassBuilderMode FULL = new ClassBuilderMode(
+            /* bodies = */ true, 
+            /* metadata = */ true,
+            /* sourceRetention = */ false);
+
+    /**
+     * Full function bodies, write annotations with the "source" retention.
+     */
+    private final static ClassBuilderMode KAPT2 = new ClassBuilderMode(
+            /* bodies = */ true, 
+            /* metadata = */ true,
+            /* sourceRetention = */ true);
+    
     /**
      * Generating light classes: Only function signatures
      */
-    LIGHT_CLASSES,
+    public final static ClassBuilderMode LIGHT_CLASSES = new ClassBuilderMode(
+            /* bodies = */ false,
+            /* metadata = */ false,
+            /* sourceRetention = */ true);
+    
     /**
      * Function signatures + metadata (to support incremental compilation with kapt)
      */
-    KAPT;
+    public final static ClassBuilderMode KAPT = new ClassBuilderMode(
+            /* bodies = */ false,
+            /* metadata = */ true,
+            /* sourceRetention = */ true);
 }
