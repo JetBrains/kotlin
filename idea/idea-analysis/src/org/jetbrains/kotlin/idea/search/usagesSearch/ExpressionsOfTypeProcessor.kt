@@ -75,7 +75,8 @@ class ExpressionsOfTypeProcessor(
             val fqName = element.getKotlinFqName()?.asString()
                          ?: (element as? KtNamedDeclaration)?.name
             return when (element) {
-                is PsiMethod, is KtFunction -> fqName + "()"
+                is PsiMethod -> fqName + element.parameterList.text
+                is KtFunction -> fqName + element.valueParameterList!!.text
                 is KtParameter -> {
                     val owner = element.ownerFunction?.let { logPresentation(it) } ?: element.parent.toString()
                     "parameter ${element.name} of $owner"

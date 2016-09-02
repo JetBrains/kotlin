@@ -21,9 +21,9 @@ Searched references to h() in Kotlin files
 Searched references to listOfA() in Kotlin files
 Searched references to pack.A
 Searched references to pack.X
-Searched references to parameter p1 of test2() in Kotlin files
-Searched references to parameter p2 of test2() in Kotlin files
-Used plain search of parameter n of A() in LocalSearchScope:
+Searched references to parameter p1 of test2(p1: JavaClass2, p2: JavaClass3) in Kotlin files
+Searched references to parameter p2 of test2(p1: JavaClass2, p2: JavaClass3) in Kotlin files
+Used plain search of parameter n of A(val n: Int, val s: String, val o: Any) in LocalSearchScope:
     CLASS:A
     CLASS:X
     FUN:ext1

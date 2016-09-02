@@ -14,15 +14,15 @@ Resolved a += A(1)
 Resolved a += A(1)
 Searched references to A
 Searched references to A
-Searched references to A.plus() in Kotlin files
-Searched references to A.plus() in Kotlin files
-Searched references to A.plus() in Kotlin files
-Searched references to A.plus() in Kotlin files
+Searched references to A.plus(a: A) in Kotlin files
+Searched references to A.plus(a: A) in Kotlin files
+Searched references to A.plus(m: Int) in Kotlin files
+Searched references to A.plus(m: Int) in Kotlin files
 Searched references to a in Kotlin files
 Searched references to a in Kotlin files
-Searched references to parameter a of A.plus() in Kotlin files
-Searched references to parameter a of A.plus() in Kotlin files
-Used plain search of A.plus() in LocalSearchScope:
+Searched references to parameter a of A.plus(a: A) in Kotlin files
+Searched references to parameter a of A.plus(a: A) in Kotlin files
+Used plain search of A.plus(a: A) in LocalSearchScope:
     CLASS:A
-Used plain search of A.plus() in LocalSearchScope:
+Used plain search of A.plus(m: Int) in LocalSearchScope:
     CLASS:A
