@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class InvokeOperatorReferenceSearcher(
-        targetDeclaration: KtFunction,
+        targetFunction: KtFunction,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
         optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtCallExpression>(targetDeclaration, searchScope, consumer, optimizer, wordsToSearch = emptyList()) {
+) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = emptyList()) {
 
     companion object {
         fun runForPsiMethod(

@@ -1,0 +1,8 @@
+Checked type of a
+Resolved a[2]
+Resolved a[2]
+Searched references to B
+Searched references to a in Kotlin files
+Searched references to parameter a of B.set(i: Int, a: B) in Kotlin files
+Used plain search of B.set(i: Int, a: B) in LocalSearchScope:
+    CLASS:B
