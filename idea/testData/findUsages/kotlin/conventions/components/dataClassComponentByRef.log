@@ -2,5 +2,5 @@ Checked type of a
 Resolved (x, y, z)
 Searched references to A
 Searched references to a in Kotlin files
-Used plain search of parameter n in A() in LocalSearchScope:
+Used plain search of parameter n of A() in LocalSearchScope:
     CLASS:A
