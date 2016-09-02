@@ -209,7 +209,7 @@ private fun smartSelectElement(
     if (elementKinds.size == 1) {
         when (elementKinds.iterator().next()) {
             CodeInsightUtils.ElementKind.EXPRESSION -> title = "Expressions"
-            CodeInsightUtils.ElementKind.TYPE_ELEMENT, CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR -> title = "Types"
+            CodeInsightUtils.ElementKind.TYPE_ELEMENT -> title = "Types"
         }
     }
 
