@@ -127,6 +127,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("objectWithInitializers.kt")
+        public void testObjectWithInitializers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/objectWithInitializers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/primaryConstructor.kt");
@@ -142,6 +148,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("qualifiedSuperCalls.kt")
         public void testQualifiedSuperCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/qualifiedSuperCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClasses.kt")
+        public void testSealedClasses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/sealedClasses.kt");
             doTest(fileName);
         }
 

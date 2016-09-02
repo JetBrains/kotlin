@@ -23,3 +23,35 @@ FILE /nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from=<anonymous>
           CALLABLE_REFERENCE local final fun <anonymous>(): kotlin.Unit type=() -> kotlin.Unit
+  FUN public fun testLrmFoo1(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    BLOCK_BODY
+      CALL .forEach type=kotlin.Unit operator=null
+        $receiver: GET_VAR ints type=kotlin.collections.List<kotlin.Int> operator=null
+        action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
+          FUN local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit
+            BLOCK_BODY
+              WHEN type=kotlin.Unit operator=IF
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR it type=kotlin.Int operator=null
+                  arg1: CONST Int type=kotlin.Int value='0'
+                then: RETURN type=kotlin.Nothing from=<anonymous>
+              RETURN type=kotlin.Nothing from=<anonymous>
+                CALL .print type=kotlin.Unit operator=null
+                  message: GET_VAR it type=kotlin.Int operator=null
+          CALLABLE_REFERENCE local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit type=(kotlin.Int) -> kotlin.Unit
+  FUN public fun testLrmFoo2(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    BLOCK_BODY
+      CALL .forEach type=kotlin.Unit operator=null
+        $receiver: GET_VAR ints type=kotlin.collections.List<kotlin.Int> operator=null
+        action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
+          FUN local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit
+            BLOCK_BODY
+              WHEN type=kotlin.Unit operator=IF
+                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR it type=kotlin.Int operator=null
+                  arg1: CONST Int type=kotlin.Int value='0'
+                then: RETURN type=kotlin.Nothing from=<anonymous>
+              RETURN type=kotlin.Nothing from=<anonymous>
+                CALL .print type=kotlin.Unit operator=null
+                  message: GET_VAR it type=kotlin.Int operator=null
+          CALLABLE_REFERENCE local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit type=(kotlin.Int) -> kotlin.Unit
