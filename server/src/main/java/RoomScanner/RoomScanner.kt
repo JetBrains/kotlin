@@ -28,13 +28,13 @@ class RoomScanner(val controller: CarController) : Thread() {
 
         val dots = mutableListOf<Pair<Double, Double>>()
         for (i in arrayOf(0.0, 90.0, 180.0, 270.0)) {
-            controller.rotateLeftWithCorrection(90.0)
             dots.addAll(controller.scan(horizon).mapIndexed { i: Int, d: Double -> controller.convertToPoint((i * 5 - 180).toDouble(), d) })
             controller.drive(CarController.Direction.FORWARD, 10)
             controller.drive(CarController.Direction.BACKWARD, 10)
+
+            controller.rotateLeftWithCorrection(90.0)
         }
 
-        controller.rotateLeftWithCorrection(90.0)
         return dots
     }
 
