@@ -174,6 +174,13 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("importKotlinStaticCompanionMemberFromJava.test")
+        public void testImportKotlinStaticCompanionMemberFromJava() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticCompanionMemberFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("importKotlinStaticFunctionFromJava.test")
         public void testImportKotlinStaticFunctionFromJava() throws Exception {
             String fileName =
