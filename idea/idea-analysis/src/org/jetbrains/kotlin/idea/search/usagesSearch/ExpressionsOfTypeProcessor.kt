@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchPar
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -78,18 +79,20 @@ class ExpressionsOfTypeProcessor(
         var testLog: MutableList<String>? = null
 
         fun logPresentation(element: PsiElement): String? {
-            if (element !is KtDeclaration && element !is PsiMember) return element.text
-            val fqName = element.getKotlinFqName()?.asString()
-                         ?: (element as? KtNamedDeclaration)?.name
-            return when (element) {
-                is PsiMethod -> fqName + element.parameterList.text
-                is KtFunction -> fqName + element.valueParameterList!!.text
-                is KtParameter -> {
-                    val owner = element.ownerFunction?.let { logPresentation(it) } ?: element.parent.toString()
-                    "parameter ${element.name} of $owner"
+            return runReadAction {
+                if (element !is KtDeclaration && element !is PsiMember) return@runReadAction element.text
+                val fqName = element.getKotlinFqName()?.asString()
+                             ?: (element as? KtNamedDeclaration)?.name
+                when (element) {
+                    is PsiMethod -> fqName + element.parameterList.text
+                    is KtFunction -> fqName + element.valueParameterList!!.text
+                    is KtParameter -> {
+                        val owner = element.ownerFunction?.let { logPresentation(it) } ?: element.parent.toString()
+                        "parameter ${element.name} of $owner"
+                    }
+                    is KtDestructuringDeclaration -> element.entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
+                    else -> fqName
                 }
-                is KtDestructuringDeclaration -> element.entries.joinToString(", ", prefix = "(", postfix = ")") { it.text }
-                else -> fqName
             }
         }
 
@@ -118,18 +121,10 @@ class ExpressionsOfTypeProcessor(
     private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
     fun run() {
-        if (searchScope.restrictToKotlinSources().isEmpty()) return // optimization
-
-        val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return
-        val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
-        val psiClass = when (classDeclaration) {
-            is PsiClass -> classDeclaration
-            is KtClassOrObject -> classDeclaration.toLightClass() ?: return
-            else -> return
-        }
+        val psiClass = runReadAction { detectClassToSearch() } ?: return
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
-        if (!ProjectRootsUtil.isInProjectSource(psiClass)) {
+        if (!runReadAction { psiClass.isValid && ProjectRootsUtil.isInProjectSource (psiClass) }) {
             suspiciousScopeHandler(searchScope)
             return
         }
@@ -138,9 +133,26 @@ class ExpressionsOfTypeProcessor(
 
         processTasks()
 
-        val scopeElements = scopesToUsePlainSearch.values.flatMap { it }.toTypedArray()
-        if (scopeElements.isNotEmpty()) {
-            suspiciousScopeHandler(LocalSearchScope(scopeElements))
+        runReadAction {
+            val scopeElements = scopesToUsePlainSearch.values
+                    .flatMap { it }
+                    .filter { it.isValid }
+                    .toTypedArray()
+            if (scopeElements.isNotEmpty()) {
+                suspiciousScopeHandler(LocalSearchScope(scopeElements))
+            }
+        }
+    }
+
+    private fun detectClassToSearch(): PsiClass? {
+        if (searchScope.restrictToKotlinSources().isEmpty()) return null // optimization
+
+        val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return null
+        val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
+        return when (classDeclaration) {
+            is PsiClass -> classDeclaration
+            is KtClassOrObject -> classDeclaration.toLightClass()
+            else -> null
         }
     }
 
@@ -167,19 +179,19 @@ class ExpressionsOfTypeProcessor(
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
                 testLog?.add("Searched references to ${logPresentation(classToSearch)}")
-                ReferencesSearch.search(classToSearch).forEach(Processor processor@ { reference -> //TODO: see KT-13607
-                    if (processClassUsage(reference)) return@processor true
+                searchReferences(classToSearch, GlobalSearchScope.allScope(project)) { reference ->
+                    if (processClassUsage(reference)) return@searchReferences true
 
                     if (mode != Mode.ALWAYS_SMART) {
                         downShiftToPlainSearch()
-                        return@processor false
+                        return@searchReferences false
                     }
 
                     val element = reference.element
                     val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
                     val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
                     error("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
-                })
+                }
 
                 // we must use plain search inside our class (and inheritors) because implicit 'this' can happen anywhere
                 (classToSearch as? KtLightClass)?.kotlinOrigin?.let { usePlainSearch(it) }
@@ -211,7 +223,7 @@ class ExpressionsOfTypeProcessor(
                 testLog?.add("Searched references to ${logPresentation(declaration)} in Kotlin files")
                 val searchParameters = KotlinReferencesSearchParameters(
                         declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
-                ReferencesSearch.search(searchParameters).forEach { reference ->
+                searchReferences(searchParameters) { reference ->
                     when (kind) {
                         CallableToProcessKind.HAS_OUR_CLASS_TYPE -> {
                             if (reference is KtDestructuringDeclarationReference) {
@@ -227,6 +239,7 @@ class ExpressionsOfTypeProcessor(
                             (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
                         }
                     }
+                    true
                 }
             }
         }
@@ -239,13 +252,14 @@ class ExpressionsOfTypeProcessor(
                 //TODO: what about other JVM languages?
                 val scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), JavaFileType.INSTANCE)
                 testLog?.add("Searched references to ${logPresentation(psiClass)} in java files")
-                ReferencesSearch.search(psiClass, scope).forEach { reference ->
+                searchReferences(psiClass, scope) { reference ->
                     // check if the reference is method parameter type
                     val parameter = ((reference as? PsiJavaCodeReferenceElement)?.parent as? PsiTypeElement)?.parent as? PsiParameter
                     val method = parameter?.declarationScope as? PsiMethod
                     if (method != null) {
                         addCallableDeclarationToProcess(method, CallableToProcessKind.PROCESS_LAMBDAS)
                     }
+                    true
                 }
             }
         }
@@ -559,24 +573,30 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun usePlainSearch(scope: KtElement) {
-        val file = scope.getContainingKtFile()
-        val restricted = LocalSearchScope(scope).intersectWith(searchScope)
-        if (restricted is LocalSearchScope) {
-            ScopeLoop@
-            for (element in restricted.scope) {
-                val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
-                for ((index, prevElement) in prevElements.withIndex()) {
-                    if (prevElement.isAncestor(element, strict = false)) continue@ScopeLoop
-                    if (element.isAncestor(prevElement)) {
-                        prevElements[index] = element
-                        continue@ScopeLoop
+        runReadAction {
+            if (!scope.isValid) return@runReadAction
+
+            val file = scope.getContainingKtFile()
+            val restricted = LocalSearchScope(scope).intersectWith(searchScope)
+            if (restricted is LocalSearchScope) {
+                ScopeLoop@
+                for (element in restricted.scope) {
+                    val prevElements = scopesToUsePlainSearch.getOrPut(file) { ArrayList() }
+                    for ((index, prevElement) in prevElements.withIndex()) {
+                        if (!prevElement.isValid) continue@ScopeLoop
+                        if (prevElement.isAncestor(element, strict = false)) continue@ScopeLoop
+                        if (element.isAncestor(prevElement)) {
+                            prevElements[index] = element
+                            continue@ScopeLoop
+                        }
                     }
+                    prevElements.add(element)
                 }
-                prevElements.add(element)
             }
-        }
-        else {
-            assert(restricted == GlobalSearchScope.EMPTY_SCOPE)
+            else {
+                assert(restricted == GlobalSearchScope.EMPTY_SCOPE)
+            }
+
         }
     }
 
@@ -641,5 +661,23 @@ class ExpressionsOfTypeProcessor(
             is KtParameter -> declaration.typeReference == null
             else -> false
         }
+    }
+
+    private fun searchReferences(element: PsiElement,scope: SearchScope, processor: (PsiReference) -> Boolean) {
+        val parameters = ReferencesSearch.SearchParameters(element, scope, false)
+        searchReferences(parameters, processor)
+    }
+
+    private fun searchReferences(parameters: ReferencesSearch.SearchParameters, processor: (PsiReference) -> Boolean) {
+        ReferencesSearch.search(parameters).forEach(Processor { ref ->
+            runReadAction {
+                if (ref.element.isValid) {
+                    processor(ref)
+                }
+                else {
+                    true
+                }
+            }
+        })
     }
 }

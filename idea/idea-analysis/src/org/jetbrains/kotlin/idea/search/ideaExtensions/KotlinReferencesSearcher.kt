@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
@@ -46,6 +45,8 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.util.*
 
 data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
                                          val acceptOverloads: Boolean = false,
@@ -70,255 +71,245 @@ class KotlinReferencesSearchParameters(elementToSearch: PsiElement,
 }
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
-
     override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
-        val element = queryParameters.elementToSearch
+        val processor = QueryProcessor(queryParameters, consumer)
+        runReadAction { processor.processInReadAction() }
+        processor.executeLongRunningTasks()
+    }
 
-        val unwrappedElement = element.namedUnwrappedElement ?: return
+    private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: Processor<PsiReference>) {
 
-        val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
-                            ?: KotlinReferencesSearchOptions.Empty
+        private val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
+                                    ?: KotlinReferencesSearchOptions.Empty
 
-        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch(kotlinOptions) }
-        val words = runReadAction {
-            val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-            (specialSymbols?.first ?: emptyList()) +
-            (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+        private val longTasks = ArrayList<() -> Unit>()
+
+        fun executeLongRunningTasks() {
+            longTasks.forEach { it() }
         }
 
-        val effectiveSearchScope = runReadAction {
+        fun processInReadAction() {
+            val element = queryParameters.elementToSearch
+            if (!element.isValid) return
+
+            val unwrappedElement = element.namedUnwrappedElement ?: return
+
+            val specialSymbols = unwrappedElement.getSpecialNamesToSearch(kotlinOptions)
+            val words = (specialSymbols?.first ?: emptyList()) + unwrappedElement.getClassNameForCompanionObject().singletonOrEmptyList()
+
             val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
-            elements.fold(queryParameters.effectiveSearchScope) { scope, e -> scope.unionSafe(queryParameters.effectiveSearchScope(e)) }
-        }
-
-        val refFilter: (PsiReference) -> Boolean = when {
-            unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
-            specialSymbols != null -> { ref -> ref.javaClass == specialSymbols.second }
-            else -> ({true})
-        }
-
-        val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
-
-        val name = runReadAction { unwrappedElement.name }
-        if (kotlinOptions.anyEnabled()) {
-            if (name != null) {
-                queryParameters.optimizer.searchWord(name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement,
-                                                     resultProcessor)
+            val effectiveSearchScope = elements.fold(queryParameters.effectiveSearchScope) { scope, e ->
+                scope.unionSafe(queryParameters.effectiveSearchScope(e))
             }
-        }
-        words.forEach { word ->
-            queryParameters.optimizer.searchWord(word, effectiveSearchScope,
-                                                 UsageSearchContext.ANY, true, unwrappedElement,
-                                                 resultProcessor)
-        }
 
-        if (unwrappedElement is KtParameter && kotlinOptions.searchNamedArguments) {
-            runReadAction { searchNamedArguments(unwrappedElement, queryParameters) }
-        }
+            val refFilter: (PsiReference) -> Boolean = when {
+                unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
+                specialSymbols != null -> { ref -> ref.javaClass == specialSymbols.second }
+                else -> ({true})
+            }
 
-        if (!(unwrappedElement is KtElement && isOnlyKotlinSearch(effectiveSearchScope))) {
-            searchLightElements(queryParameters, element, consumer)
-        }
+            val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
 
-        if (element is KtFunction || element is PsiMethod) {
-            val referenceSearcher = OperatorReferenceSearcher.create(
-                    element, effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
-            referenceSearcher?.run()
-        }
-
-        if (kotlinOptions.searchForComponentConventions) {
-            when (element) {
-                is KtParameter -> {
-                    val componentFunctionDescriptor = runReadAction { element.dataClassComponentFunction() }
-                    if (componentFunctionDescriptor != null) {
-                        val containingClass = element.getStrictParentOfType<KtClassOrObject>()?.toLightClass()
-                        searchDataClassComponentUsages(queryParameters, containingClass, componentFunctionDescriptor, consumer, kotlinOptions)
-                    }
-                }
-
-                is KtLightParameter -> {
-                    val componentFunctionDescriptor = runReadAction { element.kotlinOrigin?.dataClassComponentFunction() }
-                    if (componentFunctionDescriptor != null) {
-                        searchDataClassComponentUsages(queryParameters, element.method.containingClass, componentFunctionDescriptor, consumer, kotlinOptions)
-                    }
+            val name = unwrappedElement.name
+            if (kotlinOptions.anyEnabled()) {
+                if (name != null) {
+                    queryParameters.optimizer.searchWord(
+                            name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
                 }
             }
-        }
-    }
+            words.forEach { word ->
+                queryParameters.optimizer.searchWord(
+                        word, effectiveSearchScope, UsageSearchContext.ANY, true, unwrappedElement, resultProcessor)
+            }
 
-    private fun searchNamedArguments(parameter: KtParameter, queryParameters: ReferencesSearch.SearchParameters) {
-        val parameterName = parameter.name ?: return
-        val function = parameter.ownerFunction ?: return
-        if (function.nameAsName?.isSpecial ?: true) return
-        val project = function.project
-        var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
+            if (unwrappedElement is KtParameter && kotlinOptions.searchNamedArguments) {
+                searchNamedArguments(unwrappedElement)
+            }
 
-        if (namedArgsScope is GlobalSearchScope) {
-            namedArgsScope = KotlinSourceFilterScope.sourcesAndLibraries(namedArgsScope, project)
+            if (!(unwrappedElement is KtElement && isOnlyKotlinSearch(effectiveSearchScope))) {
+                searchLightElements(element)
+            }
 
-            val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
-                    function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true)
-            namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
-        }
+            if (element is KtFunction || element is PsiMethod) {
+                val referenceSearcher = OperatorReferenceSearcher.create(
+                        element, effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
+                if (referenceSearcher != null) {
+                    longTasks.add { referenceSearcher.run() }
+                }
 
-        val processor = KotlinRequestResultProcessor(parameter, filter = { it.isNamedArgumentReference() })
-        queryParameters.optimizer.searchWord(parameterName,
-                                             namedArgsScope,
-                                             KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
-                                             true,
-                                             parameter,
-                                             processor)
-    }
+            }
 
-    private fun PsiReference.isNamedArgumentReference(): Boolean {
-        return this is KtSimpleNameReference && expression.parent is KtValueArgumentName
-    }
-
-    companion object {
-        fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
-            val className = runReadAction { element.name }
-            if (className != null) {
-                val lightClass = runReadAction { element.toLightClass() }
-                if (lightClass != null) {
-                    searchNamedElement(queryParameters, lightClass, className)
-
-                    if (element is KtObjectDeclaration && element.isCompanion()) {
-                        val fieldForCompanionObject = runReadAction { LightClassUtil.getLightFieldForCompanionObject(element) }
-                        if (fieldForCompanionObject != null) {
-                            searchNamedElement(queryParameters, fieldForCompanionObject)
+            if (kotlinOptions.searchForComponentConventions) {
+                when (element) {
+                    is KtParameter -> {
+                        val componentFunctionDescriptor = element.dataClassComponentFunction()
+                        if (componentFunctionDescriptor != null) {
+                            val containingClass = element.getStrictParentOfType<KtClassOrObject>()?.toLightClass()
+                            searchDataClassComponentUsages(containingClass, componentFunctionDescriptor, kotlinOptions)
                         }
+                    }
 
-                        val kotlinReferencesSearchOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
-                        if (kotlinReferencesSearchOptions?.acceptCompanionObjectMembers == true) {
-                            runReadAction {
-                                val originClass = element.getStrictParentOfType<KtClass>()
-                                val originLightClass = originClass?.toLightClass()
-                                if (originLightClass != null) {
-                                    val lightDeclarations: List<KtLightElement<*, *>?> =
-                                            originLightClass.methods.map { it as? KtLightMethod } +
-                                            originLightClass.fields.map { it as? KtLightField }
-
-                                    for (declaration in element.declarations) {
-                                        val lightDeclaration = lightDeclarations.find { it?.kotlinOrigin == declaration }
-                                        if (lightDeclaration != null) {
-                                            searchNamedElement(queryParameters, lightDeclaration)
-                                        }
-                                    }
-                                }
-                            }
+                    is KtLightParameter -> {
+                        val componentFunctionDescriptor = element.kotlinOrigin?.dataClassComponentFunction()
+                        if (componentFunctionDescriptor != null) {
+                            searchDataClassComponentUsages(element.method.containingClass, componentFunctionDescriptor, kotlinOptions)
                         }
                     }
                 }
             }
         }
 
-        private fun findStaticMethodsFromCompanionObject(declaration: KtDeclaration): List<PsiMethod> {
-            val originObject = declaration.parents
-                .dropWhile { it is KtClassBody }
-                .firstOrNull() as? KtObjectDeclaration ?: return emptyList()
-            if (originObject.isCompanion()) {
-                val originClass = originObject.getStrictParentOfType<KtClass>()
-                val originLightClass = originClass?.toLightClass() ?: return emptyList()
-                val allMethods = originLightClass.allMethods
-                return allMethods.filter { it is KtLightMethod && it.kotlinOrigin == declaration }
+        private fun searchNamedArguments(parameter: KtParameter) {
+            val parameterName = parameter.name ?: return
+            val function = parameter.ownerFunction ?: return
+            if (function.nameAsName?.isSpecial ?: true) return
+            val project = function.project
+            var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
+
+            if (namedArgsScope is GlobalSearchScope) {
+                namedArgsScope = KotlinSourceFilterScope.sourcesAndLibraries(namedArgsScope, project)
+
+                val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
+                        function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true)
+                namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
             }
-            return emptyList()
+
+            val processor = KotlinRequestResultProcessor(parameter, filter = { it.isNamedArgumentReference() })
+            queryParameters.optimizer.searchWord(parameterName,
+                                                 namedArgsScope,
+                                                 KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
+                                                 true,
+                                                 parameter,
+                                                 processor)
         }
 
-        private fun processStaticsFromCompanionObject(element: KtDeclaration, queryParameters: ReferencesSearch.SearchParameters) {
-            val staticsFromCompanionObject = runReadAction { findStaticMethodsFromCompanionObject(element) }
-            staticsFromCompanionObject.forEach { searchNamedElement(queryParameters, it) }
-        }
-
-        private fun searchPropertyMethods(queryParameters: ReferencesSearch.SearchParameters, parameter: KtParameter) {
-            val lightElements = runReadAction { parameter.toLightElements() }
-            lightElements.forEach { searchNamedElement(queryParameters, it) }
-        }
-
-        private fun searchDataClassComponentUsages(queryParameters: ReferencesSearch.SearchParameters,
-                                                   containingClass: PsiClass?,
-                                                   componentFunctionDescriptor: FunctionDescriptor,
-                                                   consumer: Processor<PsiReference>,
-                                                   kotlinOptions: KotlinReferencesSearchOptions
-        ) {
-            val componentFunction = containingClass?.methods?.find {
-                it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
-            }
-            if (componentFunction != null) {
-                searchNamedElement(queryParameters, componentFunction)
-                val searcher = OperatorReferenceSearcher.create(
-                        componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
-                searcher!!.run()
-            }
-        }
-
-        private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement, consumer: Processor<PsiReference>) {
+        private fun searchLightElements(element: PsiElement) {
             when (element) {
-                is KtClassOrObject -> processKtClassOrObject(element, queryParameters)
+                is KtClassOrObject -> {
+                    processKtClassOrObject(element)
+                }
+
                 is KtNamedFunction, is KtSecondaryConstructor -> {
-                    val function = element as KtFunction
-                    val name = runReadAction { function.name }
+                    val name = (element as KtFunction).name
                     if (name != null) {
-                        val methods = runReadAction { LightClassUtil.getLightClassMethods(function) }
+                        val methods = LightClassUtil.getLightClassMethods(element)
                         for (method in methods) {
-                            searchNamedElement(queryParameters, method)
+                            searchNamedElement(method)
                         }
                     }
 
-                    processStaticsFromCompanionObject(element, queryParameters)
+                    processStaticsFromCompanionObject(element)
                 }
 
                 is KtProperty -> {
-                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    propertyMethods.allDeclarations.forEach { searchNamedElement(queryParameters, it) }
-                    processStaticsFromCompanionObject(element, queryParameters)
+                    val propertyMethods = LightClassUtil.getLightClassPropertyMethods(element)
+                    propertyMethods.allDeclarations.forEach { searchNamedElement(it) }
+                    processStaticsFromCompanionObject(element)
                 }
 
                 is KtParameter -> {
-                    searchPropertyMethods(queryParameters, element)
+                    searchPropertyAccessorMethods(element)
                 }
 
                 is KtLightMethod -> {
                     val declaration = element.kotlinOrigin
                     if (declaration is KtProperty || (declaration is KtParameter && declaration.hasValOrVar())) {
-                        searchNamedElement(queryParameters, declaration as PsiNamedElement)
-                        processStaticsFromCompanionObject(declaration, queryParameters)
+                        searchNamedElement(declaration as PsiNamedElement)
+                        processStaticsFromCompanionObject(declaration)
                     }
                     else if (declaration is KtPropertyAccessor) {
                         val property = declaration.getStrictParentOfType<KtProperty>()
-                        searchNamedElement(queryParameters, property)
+                        searchNamedElement(property)
                     }
                     else if (declaration is KtFunction) {
-                        processStaticsFromCompanionObject(declaration, queryParameters)
+                        processStaticsFromCompanionObject(declaration)
                     }
                 }
 
                 is KtLightParameter -> {
                     val origin = element.kotlinOrigin ?: return
-                    searchPropertyMethods(queryParameters, origin)
+                    searchPropertyAccessorMethods(origin)
                 }
             }
         }
 
-        private fun isOnlyKotlinSearch(searchScope: SearchScope) =
-                searchScope is LocalSearchScope && runReadAction {
-                    searchScope.scope.all { it.containingFile.fileType == KotlinFileType.INSTANCE }
-                }
+        private fun searchPropertyAccessorMethods(origin: KtParameter) {
+            origin.toLightElements().forEach { searchNamedElement(it) }
+        }
 
-        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters,
-                                       element: PsiNamedElement?,
-                                       name: String? = element?.name) {
+        private fun processKtClassOrObject(element: KtClassOrObject) {
+            val className = element.name ?: return
+            val lightClass = element.toLightClass() ?: return
+            searchNamedElement(lightClass, className)
+
+            if (element is KtObjectDeclaration && element.isCompanion()) {
+                LightClassUtil.getLightFieldForCompanionObject(element)?.let { searchNamedElement(it) }
+
+                if (kotlinOptions.acceptCompanionObjectMembers) {
+                    val originLightClass = element.getStrictParentOfType<KtClass>()?.toLightClass()
+                    if (originLightClass != null) {
+                        val lightDeclarations: List<KtLightElement<*, *>?> =
+                                originLightClass.methods.map { it as? KtLightMethod } +
+                                originLightClass.fields.map { it as? KtLightField }
+
+                        for (declaration in element.declarations) {
+                            lightDeclarations
+                                    .firstOrNull { it?.kotlinOrigin == declaration }
+                                    ?.let { searchNamedElement(it) }
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun searchDataClassComponentUsages(containingClass: PsiClass?,
+                                                   componentFunctionDescriptor: FunctionDescriptor,
+                                                   kotlinOptions: KotlinReferencesSearchOptions
+        ) {
+            val componentFunction = containingClass?.methods?.firstOrNull {
+                it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
+            }
+            if (componentFunction != null) {
+                searchNamedElement(componentFunction)
+
+                val searcher = OperatorReferenceSearcher.create(
+                        componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions)
+                longTasks.add { searcher!!.run() }
+            }
+        }
+
+        private fun isOnlyKotlinSearch(searchScope: SearchScope): Boolean {
+            return searchScope is LocalSearchScope && searchScope.scope.all { it.containingFile is KtFile }
+        }
+
+        private fun processStaticsFromCompanionObject(element: KtDeclaration) {
+            findStaticMethodsFromCompanionObject(element).forEach { searchNamedElement(it) }
+        }
+
+        private fun findStaticMethodsFromCompanionObject(declaration: KtDeclaration): List<PsiMethod> {
+            val originObject = declaration.parents
+                                       .dropWhile { it is KtClassBody }
+                                       .firstOrNull() as? KtObjectDeclaration ?: return emptyList()
+            if (!originObject.isCompanion()) return emptyList()
+            val originClass = originObject.getStrictParentOfType<KtClass>()
+            val originLightClass = originClass?.toLightClass() ?: return emptyList()
+            val allMethods = originLightClass.allMethods
+            return allMethods.filter { it is KtLightMethod && it.kotlinOrigin == declaration }
+        }
+
+        private fun searchNamedElement(element: PsiNamedElement?, name: String? = element?.name) {
             if (name != null && element != null) {
-                val scope = runReadAction { queryParameters.effectiveSearchScope(element) }
+                val scope = queryParameters.effectiveSearchScope(element)
                 val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
-                val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
-                                    ?: KotlinReferencesSearchOptions.Empty
                 val resultProcessor = KotlinRequestResultProcessor(element,
                                                                    queryParameters.elementToSearch.namedUnwrappedElement ?: element,
                                                                    options = kotlinOptions)
-                queryParameters.optimizer.searchWord(name, scope, context.toShort(), true, element,
-                                                     resultProcessor)
+                queryParameters.optimizer.searchWord(name, scope, context.toShort(), true, element, resultProcessor)
             }
+        }
+
+        private fun PsiReference.isNamedArgumentReference(): Boolean {
+            return this is KtSimpleNameReference && expression.parent is KtValueArgumentName
         }
     }
 }

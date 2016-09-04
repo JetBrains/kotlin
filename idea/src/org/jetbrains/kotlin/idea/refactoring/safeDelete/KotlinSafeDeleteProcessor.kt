@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -179,12 +179,12 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 else -> return
             }
             for (constructor in constructors) {
-                constructor.processDelegationCallConstructorUsages(constructor.useScope) {
+                constructor.buildProcessDelegationCallConstructorUsagesTask(constructor.useScope) {
                     if (!getIgnoranceCondition().value(it)) {
                         usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
                     }
                     true
-                }
+                }.invoke()
             }
         }
 
