@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
@@ -98,7 +99,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
         }
 
         override fun applyQueryFilters(element: PsiElement, options: FindUsagesOptions, query: Query<PsiReference>): Query<PsiReference> {
-            var kotlinOptions = options as KotlinPropertyFindUsagesOptions
+            val kotlinOptions = options as KotlinPropertyFindUsagesOptions
 
             if (!kotlinOptions.isReadAccess && !kotlinOptions.isWriteAccess) {
                 return EmptyQuery()
@@ -127,53 +128,67 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
         }
     }
 
-    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        val kotlinOptions = options as KotlinCallableFindUsagesOptions
-
-        val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
-        val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
-
-        if (options.isUsages) {
-            val kotlinSearchOptions = createKotlinReferencesSearchOptions(options)
-            val searchParameters = KotlinReferencesSearchParameters(element, options.searchScope, kotlinOptions = kotlinSearchOptions)
-
-            with(applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))) {
-                if (!forEach(referenceProcessor)) return false
-            }
-
-            for (psiMethod in runReadAction { element.toLightMethods() }) {
-                var searchScope = options.searchScope
-                // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
-                if (element is KtNamedFunction || (element is KtParameter && element.dataClassComponentFunction() != null)) {
-                    searchScope = searchScope.excludeKotlinSources()
-                }
-                with(applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, searchScope, true))) {
-                    if (!forEach(referenceProcessor)) return false
-                }
-            }
-        }
-
-        if (kotlinOptions.searchOverrides) {
-            for (method in HierarchySearchRequest(element, options.searchScope, true).searchOverriders()) {
-                if (!KotlinFindUsagesHandler.processUsage(uniqueProcessor, method.navigationElement)) break
-            }
-        }
-
-        return true
+    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+        return MySearcher(element, processor, options)
     }
 
-    private fun SearchScope.excludeKotlinSources(): SearchScope {
-        if (this is GlobalSearchScope) {
-            val fileTypes = FileTypeManager.getInstance().registeredFileTypes.filter { it != KotlinFileType.INSTANCE }.toTypedArray()
-            return GlobalSearchScope.getScopeRestrictedByFileTypes(this, *fileTypes)
+    private inner class MySearcher(
+            element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions
+    ) : Searcher(element, processor, options) {
+
+        private val kotlinOptions = options as KotlinCallableFindUsagesOptions
+
+        override fun buildTaskList(): Boolean {
+            val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
+            val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
+
+            if (options.isUsages) {
+                val kotlinSearchOptions = createKotlinReferencesSearchOptions(options)
+                val searchParameters = KotlinReferencesSearchParameters(element, options.searchScope, kotlinOptions = kotlinSearchOptions)
+
+                applyQueryFilters(element, options, ReferencesSearch.search(searchParameters)).let { query ->
+                    addTask { query.forEach(referenceProcessor) }
+                }
+
+
+                for (psiMethod in element.toLightMethods()) {
+                    var searchScope = options.searchScope
+                    // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
+                    if (element is KtNamedFunction || (element is KtParameter && element.dataClassComponentFunction() != null)) {
+                        searchScope = searchScope.excludeKotlinSources()
+                    }
+                    applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, searchScope, true)).let { query ->
+                        addTask { query.forEach(referenceProcessor) }
+                    }
+                }
+            }
+
+            if (kotlinOptions.searchOverrides) {
+                addTask {
+                    val overriders = HierarchySearchRequest(element, options.searchScope, true).searchOverriders()
+                    overriders.all {
+                        val element = runReadAction { it.check { it.isValid }?.navigationElement } ?: return@all true
+                        KotlinFindUsagesHandler.processUsage(uniqueProcessor, element)
+                    }
+                }
+            }
+
+            return true
         }
-        else {
-            this as LocalSearchScope
-            val filteredElements = scope.filter { it.containingFile !is KtFile }
-            return if (filteredElements.isNotEmpty())
-                LocalSearchScope(filteredElements.toTypedArray())
-            else
-                GlobalSearchScope.EMPTY_SCOPE
+
+        private fun SearchScope.excludeKotlinSources(): SearchScope {
+            if (this is GlobalSearchScope) {
+                val fileTypes = FileTypeManager.getInstance().registeredFileTypes.filter { it != KotlinFileType.INSTANCE }.toTypedArray()
+                return GlobalSearchScope.getScopeRestrictedByFileTypes(this, *fileTypes)
+            }
+            else {
+                this as LocalSearchScope
+                val filteredElements = scope.filter { it.containingFile !is KtFile }
+                return if (filteredElements.isNotEmpty())
+                    LocalSearchScope(filteredElements.toTypedArray())
+                else
+                    GlobalSearchScope.EMPTY_SCOPE
+            }
         }
     }
 

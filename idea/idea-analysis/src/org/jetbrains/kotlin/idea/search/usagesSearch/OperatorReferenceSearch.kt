@@ -80,6 +80,21 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
+            return runReadAction {
+                if (declaration.isValid)
+                    _create(declaration, searchScope, consumer, optimizer, options)
+                else
+                    null
+            }
+        }
+
+        private fun _create(
+                declaration: PsiElement,
+                searchScope: SearchScope,
+                consumer: Processor<PsiReference>,
+                optimizer: SearchRequestCollector,
+                options: KotlinReferencesSearchOptions
+        ): OperatorReferenceSearcher<*>? {
             val functionName =  when (declaration) {
                 is KtNamedFunction -> declaration.name
                 is PsiMethod -> declaration.name
@@ -212,16 +227,20 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 
         if (scope is LocalSearchScope) {
             for (element in scope.scope) {
-                element.accept(object : PsiRecursiveElementWalkingVisitor() {
-                    override fun visitElement(element: PsiElement) {
-                        val reference = extractReference(element)
-                        if (reference != null && reference.isReferenceTo(targetDeclaration)) {
-                            consumer.process(reference)
-                        }
+                runReadAction {
+                    if (element.isValid) {
+                        element.accept(object : PsiRecursiveElementWalkingVisitor() {
+                            override fun visitElement(element: PsiElement) {
+                                val reference = extractReference(element)
+                                if (reference != null && reference.isReferenceTo(targetDeclaration)) {
+                                    consumer.process(reference)
+                                }
 
-                        super.visitElement(element)
+                                super.visitElement(element)
+                            }
+                        })
                     }
-                })
+                }
             }
         }
         else {
@@ -238,7 +257,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 val psiManager = PsiManager.getInstance(project)
                 ProjectRootManager.getInstance(project).fileIndex.iterateContent { file ->
                     if (file in scope) {
-                        val ktFile = psiManager.findFile(file) as? KtFile
+                        val ktFile = runReadAction { psiManager.findFile(file) as? KtFile }
                         if (ktFile != null) {
                             doPlainSearch(LocalSearchScope(ktFile))
                         }

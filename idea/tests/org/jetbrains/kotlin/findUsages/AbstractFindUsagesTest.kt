@@ -388,8 +388,6 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             options: FindUsagesOptions?,
             highlightingMode: Boolean
     ): Collection<UsageInfo> {
-        @Suppress("NAME_SHADOWING")
-        var options = options
         val project = project
 
         val handler: FindUsagesHandler = (if (targetElement is PsiMember) {
@@ -402,21 +400,26 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement, false)
         }) ?: error("Cannot find handler for: $targetElement")
 
-        if (options == null) {
-            options = handler.getFindUsagesOptions(null)
-        }
+        @Suppress("NAME_SHADOWING")
+        val options = options ?: handler.getFindUsagesOptions(null)
 
         options.searchScope = GlobalSearchScope.allScope(project)
 
         val processor = CommonProcessors.CollectProcessor<UsageInfo>()
         for (psiElement in handler.primaryElements + handler.secondaryElements) {
             if (highlightingMode) {
+                //TODO: should findReferencesToHighlight work outside read-action or it makes no sense?
                 for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
                     processor.process(UsageInfo(reference))
                 }
             }
             else {
-                handler.processElementUsages(psiElement, processor, options)
+                // run in another thread to test read-action assertions
+                val thread = Thread {
+                    handler.processElementUsages(psiElement, processor, options)
+                }
+                thread.start()
+                thread.join()
             }
         }
 
