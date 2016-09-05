@@ -18,3 +18,16 @@ fun test2() {
     X1.X2.x2++
     X1.X2.X3.x3++
 }
+
+class B(var s: Int = 0)
+
+object Host {
+    operator fun B.plusAssign(b: B) {
+        this.s += b.s
+    }
+}
+
+fun Host.test3(v: B) {
+    v += B(1000)
+}
+

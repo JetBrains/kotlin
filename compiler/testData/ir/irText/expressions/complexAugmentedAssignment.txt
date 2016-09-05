@@ -86,3 +86,39 @@ FILE /complexAugmentedAssignment.kt
             <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
               $this: GET_VAR tmp5 type=kotlin.Int operator=null
           GET_VAR tmp5 type=kotlin.Int operator=null
+  CLASS CLASS B
+    CONSTRUCTOR public constructor B(/*0*/ s: kotlin.Int = ...)
+      s: EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
+        SET_BACKING_FIELD s type=kotlin.Unit operator=null
+          GET_VAR s type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor=B
+    PROPERTY public final var s: kotlin.Int
+      EXPRESSION_BODY
+        GET_VAR s type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+  CLASS OBJECT Host
+    CONSTRUCTOR private constructor Host()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
+        INSTANCE_INITIALIZER_CALL classDescriptor=Host
+    FUN public final operator fun B.plusAssign(/*0*/ b: B): kotlin.Unit
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit operator=PLUSEQ
+          VAR val tmp0_this: B
+            $RECEIVER of: plusAssign type=B
+          CALL .<set-s> type=kotlin.Unit operator=PLUSEQ
+            $this: GET_VAR tmp0_this type=B operator=null
+            <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
+              $this: CALL .<get-s> type=kotlin.Int operator=PLUSEQ
+                $this: GET_VAR tmp0_this type=B operator=null
+              other: CALL .<get-s> type=kotlin.Int operator=GET_PROPERTY
+                $this: GET_VAR b type=B operator=null
+  FUN public fun Host.test3(/*0*/ v: B): kotlin.Unit
+    BLOCK_BODY
+      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+        $this: $RECEIVER of: test3 type=Host
+        $receiver: GET_VAR v type=B operator=PLUSEQ
+        b: CALL .<init> type=B operator=null
+          s: CONST Int type=kotlin.Int value='1000'

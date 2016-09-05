@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -119,6 +117,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
             is PropertyDescriptor ->
                 generateAssignmentReceiverForProperty(descriptor, operator, ktLeft, resolvedCall)
+            is VariableDescriptor ->
+                VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
             else ->
                 TODO("Other cases of LHS")
         }
