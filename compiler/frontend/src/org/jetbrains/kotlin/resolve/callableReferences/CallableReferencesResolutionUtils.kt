@@ -78,9 +78,9 @@ fun resolvePossiblyAmbiguousCallableReference(
         return null
     }
 
-    val typeElement = callableReferenceExpression.typeReference?.typeElement
-    if (typeElement is KtUserType) {
-        val qualifier = ClassQualifier(typeElement.referenceExpression!!, classifier)
+    val referenceExpression = (callableReferenceExpression.typeReference?.typeElement as? KtUserType)?.referenceExpression
+    if (referenceExpression != null) {
+        val qualifier = ClassQualifier(referenceExpression, classifier)
         val possibleStatic = resolveWithReceiver("resolve unbound callable reference in static scope", qualifier)
         if (possibleStatic != null) return possibleStatic
     }
