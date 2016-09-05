@@ -27,8 +27,14 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import java.lang.AssertionError
+import java.util.*
 
 class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
@@ -56,12 +62,34 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         return irClass
     }
 
+    private object StableDelegatesComparator : Comparator<CallableMemberDescriptor> {
+        override fun compare(member1: CallableMemberDescriptor?, member2: CallableMemberDescriptor?): Int {
+            if (member1 == member2) return 0
+            if (member1 == null) return -1
+            if (member2 == null) return 1
+
+            val image1 = DESCRIPTOR_RENDERER.render(member1)
+            val image2 = DESCRIPTOR_RENDERER.render(member2)
+            return image1.compareTo(image2)
+        }
+
+        private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
+            withDefinedIn = false
+            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
+            includePropertyConstant = true
+            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
+            verbose = true
+            modifiers = DescriptorRendererModifier.ALL
+        }
+    }
+
     private fun generateMembersDeclaredInSupertypeList(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getSuperTypeList()?.let { ktSuperTypeList ->
             val delegatedMembers = irClass.descriptor.unsubstitutedMemberScope
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES)
                     .filterIsInstance<CallableMemberDescriptor>()
                     .filter { it.kind == CallableMemberDescriptor.Kind.DELEGATION }
+                    .sortedWith(StableDelegatesComparator)
             if (delegatedMembers.isEmpty()) return
 
             for (ktEntry in ktSuperTypeList.entries) {
