@@ -50,6 +50,7 @@ internal class ResolutionFacadeImpl(
     }
 
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
+        if (elements.isEmpty()) return BindingContext.EMPTY
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
         return resolveElementCache.resolveToElements(elements, bodyResolveMode)
     }
