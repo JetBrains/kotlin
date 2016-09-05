@@ -7,6 +7,8 @@ object Rng {
     val c = 1013904223L
     val mod = 2147483648L
 
+    var ADD_RANDOM = false
+
     fun abs(value: Long): Long {
         if (value < 0)
             return -value

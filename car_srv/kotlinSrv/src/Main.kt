@@ -20,11 +20,11 @@ fun main(args: Array<String>) {
         println("incorrect config format!")
         js("process.exit(1)")
     }
-
     val clArgs = js("process.argv")
     var runAsEmulator = false
     var runTests = false
     var nextSeed = false
+    var room: Room = Room.testRoom1()
     for (arg in clArgs) {
         if (nextSeed) {
             Rng.SEED = parseInt(arg, 10).toLong()
@@ -34,17 +34,27 @@ fun main(args: Array<String>) {
         when (arg) {
             "-t" -> runTests = true
             "-e" -> runAsEmulator = true
-            "-tr1" -> Room.walls = Room.testRoom1()
-            "-tr2" -> Room.walls = Room.testRoom2()
-            "-tr3" -> Room.walls = Room.testRoom3()
-            "-r" -> Room.randomOn()
+            "-tr1" -> room = Room.testRoom1()
+            "-tr2" -> room = Room.testRoom2()
+            "-tr3" -> room = Room.testRoom3()
+            "-r" -> Rng.ADD_RANDOM = true
             "-s" -> nextSeed = true
+        }
+        if (arg.toString().contains("--room=")) {
+            val pathToFile = arg.toString().split("=")[1].replace("\"", "")
+            val data: String = fs.readFileSync(pathToFile, "utf8")
+            val roomOrNull = Room.roomFromString(data)
+            if (roomOrNull == null) {
+                println("error parsing string $data \nto room")
+                return
+            }
+            room = roomOrNull
         }
     }
     val carController =
             if (runAsEmulator) {
                 McState.instance.connect("")
-                ControllerEmulator()
+                ControllerEmulator(room)
             } else {
                 ControllerToUsb()
             }

@@ -6,7 +6,7 @@ fun runTests() {
 }
 
 private fun testCarEmulator() {
-    val controller = ControllerEmulator()
+    val controller = ControllerEmulator(Room.testRoom1())
     var sonarRequest = SonarRequest.BuilderSonarRequest(IntArray(2, { x -> x * 90 }), IntArray(0), 0, SonarRequest.Smoothing.NONE).build()
     var sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
     controller.executeRequestSensorData(sonarRequest, { bytes ->

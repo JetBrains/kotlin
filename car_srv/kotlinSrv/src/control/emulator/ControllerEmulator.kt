@@ -4,8 +4,8 @@ import CarState
 import RouteMetricRequest
 import RouteRequest
 import RouteResponse
-import SonarRequest
 import SonarExploreAngleRequest
+import SonarRequest
 import SonarResponse
 import control.Controller
 import encodeProtoBuf
@@ -14,7 +14,7 @@ import geometry.Vector
 import room.Room
 import kotlin.Pair
 
-class ControllerEmulator : Controller {
+class ControllerEmulator(val room: Room) : Controller {
     private val MOVE_VELOCITY = 0.05//sm/ms
     private val ROTATION_VELOCITY = 0.05//degrees/ms
 
@@ -111,7 +111,7 @@ class ControllerEmulator : Controller {
             if (distance == -1) {
                 distances.add(distance)
             } else {
-                val delta = if (Room.ADD_RANDOM) Rng.nextInt(-2, 2) else 0//return one of -2 -1 0 1 or 2
+                val delta = if (Rng.ADD_RANDOM) Rng.nextInt(-2, 2) else 0//return one of -2 -1 0 1 or 2
                 distances.add(distance + delta)
             }
         }
@@ -122,7 +122,7 @@ class ControllerEmulator : Controller {
 
     private fun getDistance(xSensor0: Int, ySensor0: Int, sensorLine: Line, sensorVector: Vector): Int {
         var result = Int.MAX_VALUE
-        for (wall in Room.walls) {
+        for (wall in room.walls) {
             val wallLine = wall.line
             val slope = sensorLine.A * wallLine.B - sensorLine.B * wallLine.A
             if (Math.abs(slope) < 0.01) {
@@ -148,9 +148,6 @@ class ControllerEmulator : Controller {
                 result = currentDistance
             }
         }
-//        if (result < 5 || result > 500) {
-//            return -1
-//        }
         return result
     }
 
@@ -163,14 +160,6 @@ class ControllerEmulator : Controller {
         return angleTmp % 360
     }
 
-    //return random int from array
-    private fun getRandomIntFrom(values: IntArray): Int {
-        val randomValue = (Math.random() * 1000).toInt()//value in [0,999]
-        val randomArrayIdx = randomValue * values.size / 1000//index in [0, values.size-1]
-        return values[randomArrayIdx]
-    }
-
-
     fun executeCommand(commands: List<Pair<MoveDirection, Double>>, currentCommandIdx: Int, callBack: (ByteArray) -> Unit) {
         if (currentCommandIdx == commands.size) {
             val responseMessage = RouteResponse.BuilderRouteResponse(0).build()
@@ -182,7 +171,7 @@ class ControllerEmulator : Controller {
         //refresh car state
         val carInstance = CarState.instance
         val commandDistance = currentCommand.second
-        val coef = if (Room.ADD_RANDOM) Rng.nextInt(900, 1100).toDouble() / 1000.0 else 1.0
+        val coef = if (Rng.ADD_RANDOM) Rng.nextInt(900, 1100).toDouble() / 1000.0 else 1.0
         val commandDistanceIncludeRandom = (commandDistance * coef).toInt()
         when (currentCommand.first) {
             MoveDirection.FORWARD -> carInstance.moving(commandDistanceIncludeRandom)
