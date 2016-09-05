@@ -16,26 +16,9 @@
 
 package org.jetbrains.kotlin.idea.navigation
 
-import com.intellij.codeInsight.CodeInsightActionHandler
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Assert
 
-abstract class AbstractGotoTypeDeclarationTest : LightCodeInsightFixtureTestCase() {
-    protected fun doTest(testPath: String) {
-        val parts = KotlinTestUtils.loadBeforeAfterText(testPath)
-
-        myFixture.configureByText(KotlinFileType.INSTANCE, parts[0])
-
-        val gotoSuperAction = ActionManager.getInstance().getAction(IdeActions.ACTION_GOTO_TYPE_DECLARATION) as CodeInsightActionHandler
-        gotoSuperAction.invoke(project, myFixture.editor, myFixture.file)
-
-
-        val afterText = StringBuilder(myFixture.getDocument(myFixture.file).text).insert(editor.caretModel.offset, "<caret>").toString()
-
-        Assert.assertEquals(parts[1], afterText)
-    }
+abstract class AbstractGotoTypeDeclarationTest : AbstractGotoActionTest() {
+    override val actionName: String
+        get() = IdeActions.ACTION_GOTO_TYPE_DECLARATION
 }
