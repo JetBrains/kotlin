@@ -1,13 +1,16 @@
 package algorithm
 
+import CodedInputStream
 import Logger
-import RouteMetricRequest
 import SonarRequest
+import SonarResponse
 import algorithm.geometry.Angle
 import algorithm.geometry.AngleData
 import objects.Car
 import roomScanner.CarController.Direction.*
 import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 abstract class AbstractAlgorithm(val thisCar: Car) {
 
@@ -15,9 +18,8 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
     open val SMOOTHING = SonarRequest.Smoothing.NONE
     open val WINDOW_SIZE = 0
 
-    val carController = CarController(thisCar.carConnection)
     private val historySize = 10
-    private val history = Stack<RouteMetricRequest>()
+    private val history = Stack<RouteData>()
 
     private var prevState: CarState? = null
     private var prevSonarDistances = mapOf<Angle, AngleData>()
@@ -42,7 +44,18 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
             return
         }
         val angles = getAngles()
-        val distances = carController.scan(angles.map { it.degs() }.toIntArray(), ATTEMPTS, WINDOW_SIZE, SMOOTHING)
+        val future = thisCar.scan(angles.map { it.degs() }.toIntArray(), ATTEMPTS, WINDOW_SIZE, SMOOTHING)
+        val bytes: ByteArray
+        try {
+            bytes = future.get(300, TimeUnit.SECONDS).responseBodyAsBytes
+        } catch (e: TimeoutException) {
+            println("time out")
+            return
+        }
+        val sonarResponse = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
+        sonarResponse.mergeFrom(CodedInputStream(bytes))
+        val distances = sonarResponse.distances
+
         if (distances.size != angles.size) {
             throw RuntimeException("error! angles and distances have various sizes")
         }
@@ -79,7 +92,10 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         this.prevSonarDistances = anglesDistances
         this.prevState = state
 
-        carController.moveCar(command)
+        command.distances.forEachIndexed { idx, distance ->
+            thisCar.moveCar(distance, command.directions[idx])
+        }
+
         Logger.outDent()
         Logger.log("============= FINISHING ITERATION $iterationCounter ============")
         Logger.log("")
@@ -97,32 +113,32 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         return requiredAngles
     }
 
-    private fun addToHistory(command: RouteMetricRequest) {
+    private fun addToHistory(command: RouteData) {
         history.push(command)
         while (history.size > historySize) {
             history.removeAt(0)
         }
     }
 
-    private fun popFromHistory(): RouteMetricRequest {
+    private fun popFromHistory(): RouteData {
         return history.pop()
     }
 
-    private fun inverseCommand(command: RouteMetricRequest): RouteMetricRequest {
-        val res = RouteMetricRequest.BuilderRouteMetricRequest(command.distances, command.directions)
+    private fun inverseCommand(command: RouteData): RouteData {
+        val res = RouteData(command.distances, command.directions)
         res.distances.reverse()
         res.directions.reverse()
 
         for ((index, dir) in res.directions.withIndex()) {
             res.directions[index] = when (dir) {
-                FORWARD.id -> BACKWARD.id
-                BACKWARD.id -> FORWARD.id
-                LEFT.id -> RIGHT.id
-                RIGHT.id -> LEFT.id
+                FORWARD -> BACKWARD
+                BACKWARD -> FORWARD
+                LEFT -> RIGHT
+                RIGHT -> LEFT
                 else -> throw IllegalArgumentException("Unexpected direction = $dir found during command inversion")
             }
         }
-        return res.build()
+        return res
     }
 
     protected fun rollback() {
@@ -133,7 +149,9 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         Logger.log("Last command: ${lastCommand.toString()}")
         Logger.log("Inverted cmd: ${invertedCommand.toString()}")
         Logger.outDent()
-        carController.moveCar(invertedCommand)
+        invertedCommand.distances.forEachIndexed { idx, distance ->
+            thisCar.moveCar(distance, invertedCommand.directions[idx])
+        }
     }
 
     protected fun rollback(steps: Int) {
@@ -150,8 +168,8 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
     }
 
     protected abstract fun getCarState(anglesDistances: Map<Angle, AngleData>): CarState?
-    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest?
-    protected abstract fun afterGetCommand(route: RouteMetricRequest)
+    protected abstract fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteData?
+    protected abstract fun afterGetCommand(route: RouteData)
     abstract fun isCompleted(): Boolean
 
 }

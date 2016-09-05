@@ -2,7 +2,6 @@ package algorithm
 
 import Logger
 import Logger.log
-import RouteMetricRequest
 import SonarRequest
 import algorithm.geometry.*
 import objects.Car
@@ -32,27 +31,27 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
         return CarState.WALL
     }
 
-    private fun noOrthogonalMeasurementFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
+    private fun noOrthogonalMeasurementFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteData {
         val wallAngle = calculateAngle(anglesDistances, state)
         Logger.indent()
         thisCar.angle = (RoomModel.walls.last().wallAngleOX.degs() - wallAngle.degs()).toDouble()
         addWall(-wallAngle)
         Logger.outDent()
         calibrateAfterRotate = true
-        return buildRoute(
+        return RouteData(
                 getIntArray(20, wallAngle.degs(), 75),
-                getIntArray(FORWARD.id, RIGHT.id, FORWARD.id))
+                arrayOf(FORWARD, RIGHT, FORWARD))
     }
 
-    private fun wallAheadFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
+    private fun wallAheadFound(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteData {
         val wallAngle = calculateAngle(anglesDistances, state)
         thisCar.angle = (RoomModel.walls.last().wallAngleOX.degs() + wallAngle.degs()).toDouble()
         addWall(wallAngle)
         calibrateAfterRotate = true
-        return buildRoute(getIntArray(wallAngle.degs(), 15), getIntArray(LEFT.id, FORWARD.id))
+        return RouteData(getIntArray(wallAngle.degs(), 15), arrayOf(LEFT, FORWARD))
     }
 
-    private fun tryAlignParallelToWall(anglesDistances: Map<Angle, AngleData>, state: CarState, average: Double): RouteMetricRequest? {
+    private fun tryAlignParallelToWall(anglesDistances: Map<Angle, AngleData>, state: CarState, average: Double): RouteData? {
         for (i in 0..15 step 5) {
             val distRightForward = anglesDistances[Angle(70 + i)]!!
             val distRightBackward = anglesDistances[Angle(110 - i)]!!
@@ -69,15 +68,15 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
             }
             log("Flaw in align found, correcting")
             val rotationDirection = if (distRightBackward.distance > distRightForward.distance) LEFT else RIGHT
-            return buildRoute(
+            return RouteData(
                     getIntArray(Math.min(Math.abs(distRightBackward.distance - distRightForward.distance), 20)),
-                    getIntArray(rotationDirection.id))
+                    arrayOf(rotationDirection))
         }
 
         return null  // TODO: everything is broken, what to do?
     }
 
-    private fun correctDistanceToParallelWall(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest {
+    private fun correctDistanceToParallelWall(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteData {
         val distToWall = anglesDistances[Angle(90)]!!.distance
         val rotationDirection = if (distToWall > DISTANCE_TO_WALL_UPPER_BOUND) RIGHT else LEFT
         val backRotationDirection = if (rotationDirection == RIGHT) LEFT else RIGHT
@@ -86,12 +85,12 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
         } else {
             DISTANCE_TO_WALL_LOWER_BOUND - distToWall
         }
-        return buildRoute(getIntArray(2 * rangeToCorridor + 5, 20, (1.5 * rangeToCorridor).toInt()),
-                getIntArray(rotationDirection.id, FORWARD.id, backRotationDirection.id))
+        return RouteData(getIntArray(2 * rangeToCorridor + 5, 20, (1.5 * rangeToCorridor).toInt()),
+                arrayOf(rotationDirection, FORWARD, backRotationDirection))
     }
 
-    private fun moveForward(distToWall: Int): RouteMetricRequest {
-        return buildRoute(getIntArray(Math.max(distToWall / 4, 20)), getIntArray(FORWARD.id))
+    private fun moveForward(distToWall: Int): RouteData {
+        return RouteData(getIntArray(Math.max(distToWall / 4, 20)), arrayOf(FORWARD))
     }
 
     private fun addWall(angleWithPrevWall: Angle) {
@@ -141,7 +140,7 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
         }
     }
 
-    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteMetricRequest? {
+    override fun getCommand(anglesDistances: Map<Angle, AngleData>, state: CarState): RouteData? {
         val dist0 = anglesDistances[Angle(0)]!!
         val dist70 = anglesDistances[Angle(70)]!!
         val dist80 = anglesDistances[Angle(80)]!!
@@ -194,7 +193,7 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
                 x = thisCar.x + dist90.distance * Math.cos(Angle(sonarAngle).rads()),
                 y = thisCar.y + dist90.distance * Math.sin(Angle(sonarAngle).rads())
         )
-        log("Adding middle point ${point.toString()} to wall ${RoomModel.walls.last().id}")
+        log("Adding middle point ${point.toString()} to wall ${RoomModel.walls.last()}")
         RoomModel.walls.last().pushBackPoint(point)
         log("")
 
@@ -221,7 +220,7 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
                     x = thisCar.x + curDist * Math.cos(Angle((thisCar.angle - i).toInt()).rads()),
                     y = thisCar.y + curDist * Math.sin(Angle((thisCar.angle - i).toInt()).rads())
             )
-            log("Adding ${point.toString()} to wall ${RoomModel.walls.last().id}")
+            log("Adding ${point.toString()} to wall ${RoomModel.walls.last()}")
             RoomModel.walls.last().pushBackPoint(point)
         }
         log("")
@@ -277,17 +276,26 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
         return args
     }
 
-    private fun buildRoute(distances: IntArray, directions: IntArray): RouteMetricRequest {
-        val resultBuilder = RouteMetricRequest.BuilderRouteMetricRequest(distances, directions)
-        return resultBuilder.build()
-    }
-
     override fun isCompleted(): Boolean {
         return isCompleted
     }
 
-    override fun afterGetCommand(route: RouteMetricRequest) {
-        thisCar.refreshPositionAfterRoute(route)
+    override fun afterGetCommand(route: RouteData) {
+        val carAngle = thisCar.angle.toInt()
+        route.distances.forEachIndexed { idx, value ->
+            when (route.directions[idx]) {
+                FORWARD -> {
+                    thisCar.x += (Math.cos(Angle(carAngle).rads()) * route.distances[idx]).toInt()
+                    thisCar.y += (Math.sin(Angle(carAngle).rads()) * route.distances[idx]).toInt()
+                }
+                BACKWARD -> {
+                    thisCar.x -= (Math.cos(Angle(carAngle).rads()) * route.distances[idx]).toInt()
+                    thisCar.y -= (Math.sin(Angle(carAngle).rads()) * route.distances[idx]).toInt()
+                }
+                else -> {
+                }
+            }
+        }
         if (Math.round(Math.cos(Angle(thisCar.angle.toInt()).rads())).toInt() == 1 && thisCar.angle.toInt() != 0
                 && Vector(thisCar.x.toDouble(), thisCar.y.toDouble()).length() < RANGE_FROM_ZERO_POINT_TO_FINISH_ALG) {
             log("Found circle!")

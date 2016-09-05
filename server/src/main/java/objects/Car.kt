@@ -1,8 +1,13 @@
 package objects
 
-import roomScanner.CarController.Direction
+import CodedOutputStream
 import RouteMetricRequest
-import algorithm.geometry.Angle
+import SonarRequest
+import net.car.client.Client
+import org.asynchttpclient.ListenableFuture
+import org.asynchttpclient.Response
+import roomScanner.CarController.Direction
+import roomScanner.serialize
 
 class Car constructor(val uid: Int, host: String, port: Int) {
 
@@ -13,26 +18,24 @@ class Car constructor(val uid: Int, host: String, port: Int) {
     var angle = 0.0
     val carConnection = CarConnection(host, port)
 
-    fun refreshPositionAfterRoute(route:RouteMetricRequest) {
-        val carAngle = angle.toInt()
-        route.directions.forEachIndexed { idx, direction ->
-            when (direction) {
-                Direction.FORWARD.id -> {
-                    x += (Math.cos(Angle(carAngle).rads()) * route.distances[idx]).toInt()
-                    y += (Math.sin(Angle(carAngle).rads()) * route.distances[idx]).toInt()
-                }
-                Direction.BACKWARD.id -> {
-                    x -= (Math.cos(Angle(carAngle).rads()) * route.distances[idx]).toInt()
-                    y -= (Math.sin(Angle(carAngle).rads()) * route.distances[idx]).toInt()
-                }
-                Direction.LEFT.id -> {
-                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-                }
-                Direction.RIGHT.id -> {
-                    route.distances[idx] = (CHARGE_CORRECTION * route.distances[idx]).toInt()
-                }
-            }
-        }
+    fun moveCar(distance: Int, direction: Direction): ListenableFuture<Response> {
+
+        val route = RouteMetricRequest.BuilderRouteMetricRequest(
+                IntArray(1, { (distance * CHARGE_CORRECTION).toInt() }), IntArray(1, { direction.id }))
+        val bytesRoute = ByteArray(route.getSizeNoTag())
+        route.writeTo(CodedOutputStream(bytesRoute))
+        return carConnection.sendRequest(Client.Request.ROUTE_METRIC, bytesRoute)
+    }
+
+    fun scan(angles: IntArray, attempts: Int, windowSize: Int, smoothing: SonarRequest.Smoothing): ListenableFuture<Response> {
+        val message = SonarRequest.BuilderSonarRequest(
+                angles = angles,
+                attempts = IntArray(angles.size, { attempts }),
+                smoothing = smoothing,
+                windowSize = windowSize)
+                .build()
+        val data = serialize(message.getSizeNoTag(), { message.writeTo(it) })
+        return carConnection.sendRequest(Client.Request.SONAR, data)
     }
 
     override fun toString(): String {
