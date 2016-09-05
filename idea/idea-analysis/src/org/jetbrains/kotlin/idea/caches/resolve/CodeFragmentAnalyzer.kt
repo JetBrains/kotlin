@@ -48,7 +48,7 @@ class CodeFragmentAnalyzer(
         val codeFragmentElement = codeFragment.getContentElement()
 
         val (scopeForContextElement, dataFlowInfo) = getScopeAndDataFlowForAnalyzeFragment(codeFragment) {
-            resolveElementCache!!.resolveToElement(it, bodyResolveMode)
+            resolveElementCache!!.resolveToElements(listOf(it), bodyResolveMode)
         } ?: return
 
         when (codeFragmentElement) {

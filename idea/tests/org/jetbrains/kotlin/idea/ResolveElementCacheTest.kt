@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
+import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -48,6 +50,7 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun c() {
+        x(2)
     }
 }
 """
@@ -360,5 +363,62 @@ class C(param1: String = "", param2: Int = 0) {
 
         val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
         annotationArguments.analyzeFullyAndGetResult()
+    }
+
+    fun testFullResolveMultiple() {
+        doTest {
+            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val statement1InFunA = aBody.statements[0]
+            val statement2InFunA = aBody.statements[1]
+            val statementInFunB = ((members[1] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
+            val statementInFunC = ((members[2] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
+
+            val bindingContext = checkResolveMultiple(BodyResolveMode.FULL, statement1InFunA, statementInFunB)
+
+            TestCase.assertEquals(true, bindingContext[BindingContext.PROCESSED, statement2InFunA])
+            TestCase.assertEquals(null, bindingContext[BindingContext.PROCESSED, statementInFunC])
+        }
+    }
+
+    fun testPartialResolveMultiple() {
+        doTest {
+            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val statement1InFunA = aBody.statements[0]
+            val statement2InFunA = aBody.statements[1]
+            val statementInFunB = ((members[1] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
+            val constructorParameterDefault = klass.getPrimaryConstructor()!!.valueParameters[1].defaultValue!!
+            val funC = members[2]
+
+            checkResolveMultiple(BodyResolveMode.PARTIAL, statement1InFunA, statement2InFunA, statementInFunB, constructorParameterDefault, funC)
+        }
+    }
+
+    fun testPartialResolveMultipleInOneFunction() {
+        doTest {
+            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val statement1InFunA = aBody.statements[0]
+            val statement2InFunA = aBody.statements[1]
+
+            val bindingContext = checkResolveMultiple(BodyResolveMode.PARTIAL, statement1InFunA, statement2InFunA)
+
+            val bindingContext1 = statement1InFunA.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext1 === bindingContext)
+        }
+    }
+
+    private fun checkResolveMultiple(mode: BodyResolveMode, vararg expressions: KtExpression): BindingContext {
+        val resolutionFacade = expressions.first().getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(expressions.asList(), mode)
+
+        expressions.forEach {
+            if (it !is KtDeclaration) {
+                TestCase.assertEquals(true, bindingContext[BindingContext.PROCESSED, it])
+            }
+            else {
+                TestCase.assertNotNull(bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it])
+            }
+        }
+
+        return bindingContext
     }
 }

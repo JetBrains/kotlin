@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.psi.PsiElement
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -26,14 +25,12 @@ import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.util.isProbablyNothing
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.swap
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 //TODO: do resolve anonymous object's body
 
 class PartialBodyResolveFilter(
-        elementToResolve: KtElement,
+        elementsToResolve: Collection<KtElement>,
         private val declaration: KtDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames,
         forCompletion: Boolean
@@ -50,7 +47,7 @@ class PartialBodyResolveFilter(
         get() = statementMarks.allMarkedStatements()
 
     init {
-        assert(declaration.isAncestor(elementToResolve))
+        elementsToResolve.forEach { assert(declaration.isAncestor(it)) }
         assert(!KtPsiUtil.isLocal(declaration)) { "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing" }
 
         declaration.forEachDescendantOfType<KtCallableDeclaration> { declaration ->
@@ -67,7 +64,9 @@ class PartialBodyResolveFilter(
             }
         }
 
-        statementMarks.mark(elementToResolve, if (forCompletion) MarkLevel.NEED_COMPLETION else MarkLevel.NEED_REFERENCE_RESOLVE)
+        elementsToResolve.forEach {
+            statementMarks.mark(it, if (forCompletion) MarkLevel.NEED_COMPLETION else MarkLevel.NEED_REFERENCE_RESOLVE)
+        }
         declaration.forTopLevelBlocksInside { processBlock(it) }
     }
 
