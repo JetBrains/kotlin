@@ -16,9 +16,20 @@
 
 package org.jetbrains.kotlin;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IErrorCounterReparseableElementType;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.lexer.KotlinLexer;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -115,7 +126,48 @@ public interface KtNodeTypes {
     KtNodeType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     KtNodeType BODY                      = new KtNodeType("BODY", KtContainerNode.class);
     KtNodeType BLOCK                     = new KtNodeType("BLOCK", KtBlockExpression.class);
-    KtNodeType LAMBDA_EXPRESSION         = new KtNodeType("LAMBDA_EXPRESSION", KtLambdaExpression.class);
+
+    IElementType LAMBDA_EXPRESSION = new IErrorCounterReparseableElementType("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE) {
+        @Override
+        public ASTNode parseContents(ASTNode chameleon) {
+            Project project = chameleon.getPsi().getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, KotlinLanguage.INSTANCE, chameleon.getChars());
+            return KotlinParser.parseLambdaExpression(builder).getFirstChildNode();
+        }
+
+        @Nullable
+        @Override
+        public ASTNode createNode(CharSequence text) {
+            return new KtLambdaExpression(text);
+        }
+
+        @Override
+        public int getErrorsCount(CharSequence seq, Language fileLanguage, Project project) {
+            Lexer lexer = new KotlinLexer();
+
+            lexer.start(seq);
+            if (lexer.getTokenType() != KtTokens.LBRACE) return IErrorCounterReparseableElementType.FATAL_ERROR;
+            lexer.advance();
+            int balance = 1;
+            while (true) {
+                IElementType type = lexer.getTokenType();
+                if (type == null) break;
+                if (balance == 0) {
+                    return IErrorCounterReparseableElementType.FATAL_ERROR;
+                }
+                if (type == KtTokens.LBRACE) {
+                    balance++;
+                }
+                else if (type == KtTokens.RBRACE) {
+                    balance--;
+                }
+                lexer.advance();
+            }
+            return balance;
+        }
+    };
+
+
     KtNodeType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
     KtNodeType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
 

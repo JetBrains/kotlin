@@ -573,7 +573,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return false;
         }
 
-        parseFunctionLiteral(preferBlock);
+        parseFunctionLiteral(preferBlock, /* collapse = */true);
 
         doneOrDrop(labeled, LABELED_EXPRESSION, wasLabel);
         doneOrDrop(annotated, ANNOTATED_EXPRESSION, wereAnnotations);
@@ -1033,10 +1033,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseFunctionLiteral() {
-        parseFunctionLiteral(/* preferBlock = */false);
+        parseFunctionLiteral(/* preferBlock = */false, /* collapse = */true);
     }
 
-    private void parseFunctionLiteral(boolean preferBlock) {
+    public void parseFunctionLiteral(boolean preferBlock, boolean collapse) {
         assert _at(LBRACE);
 
         PsiBuilder.Marker literalExpression = mark();
@@ -1088,7 +1088,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
 
         literal.done(FUNCTION_LITERAL);
-        literalExpression.done(LAMBDA_EXPRESSION);
+        if (collapse) {
+            literalExpression.collapse(LAMBDA_EXPRESSION);
+        }
+        else {
+            literalExpression.done(LAMBDA_EXPRESSION);
+        }
     }
 
     private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {
