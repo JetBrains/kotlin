@@ -36,13 +36,6 @@ import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
 abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCase() {
-    private data class ElementInfo(val checked: Boolean, val toAbstract: Boolean)
-
-    companion object {
-        private var PsiElement.elementInfo: ElementInfo
-                by NotNullableUserDataProperty(Key.create("ELEMENT_INFO"), ElementInfo(false, false))
-    }
-
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
@@ -70,11 +63,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
         }
 
         try {
-            for ((element, info) in file.findElementsByCommentPrefix("// INFO: ")) {
-                val parsedInfo = JsonParser().parse(info).asJsonObject
-                element.elementInfo = ElementInfo(parsedInfo["checked"]?.asBoolean ?: false,
-                                                  parsedInfo["toAbstract"]?.asBoolean ?: false)
-            }
+            markMembersInfo(file)
 
             action(file)
 
@@ -99,12 +88,26 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
         }
     }
 
-    protected fun <T : MemberInfoBase<*>> chooseMembers(members: List<T>): List<T> {
-        members.forEach {
-            val info = it.member.elementInfo
-            it.isChecked = info.checked
-            it.isToAbstract = info.toAbstract
-        }
-        return members.filter { it.isChecked }
+
+}
+
+internal fun markMembersInfo(file: PsiFile) {
+    for ((element, info) in file.findElementsByCommentPrefix("// INFO: ")) {
+        val parsedInfo = JsonParser().parse(info).asJsonObject
+        element.elementInfo = ElementInfo(parsedInfo["checked"]?.asBoolean ?: false,
+                                          parsedInfo["toAbstract"]?.asBoolean ?: false)
     }
+}
+
+internal data class ElementInfo(val checked: Boolean, val toAbstract: Boolean)
+
+internal var PsiElement.elementInfo: ElementInfo by NotNullableUserDataProperty(Key.create("ELEMENT_INFO"), ElementInfo(false, false))
+
+internal fun <T : MemberInfoBase<*>> chooseMembers(members: List<T>): List<T> {
+    members.forEach {
+        val info = it.member.elementInfo
+        it.isChecked = info.checked
+        it.isToAbstract = info.toAbstract
+    }
+    return members.filter { it.isChecked }
 }

@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -161,17 +161,8 @@ private fun KotlinPullUpData.checkVisibility(
     }
 
     val member = memberInfo.member
-    val childrenToCheck = member.allChildren.toMutableList()
+    val childrenToCheck = memberInfo.getChildrenToAnalyze()
     if (memberInfo.isToAbstract && member is KtCallableDeclaration) {
-        when (member) {
-            is KtNamedFunction -> childrenToCheck.remove(member.bodyExpression as PsiElement?)
-            is KtProperty -> {
-                childrenToCheck.remove(member.initializer as PsiElement?)
-                childrenToCheck.remove(member.delegateExpression as PsiElement?)
-                childrenToCheck.removeAll(member.accessors)
-            }
-        }
-
         if (member.typeReference == null) {
             (memberDescriptor as CallableDescriptor).returnType?.let { returnType ->
                 val typeInTargetClass = sourceToTargetClassSubstitutor.substitute(returnType, Variance.INVARIANT)

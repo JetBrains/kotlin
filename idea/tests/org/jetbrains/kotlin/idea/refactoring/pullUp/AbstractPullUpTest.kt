@@ -27,6 +27,7 @@ import com.intellij.refactoring.util.classMembers.MemberInfoStorage
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.AbstractMemberPullPushTest
+import org.jetbrains.kotlin.idea.refactoring.chooseMembers
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
