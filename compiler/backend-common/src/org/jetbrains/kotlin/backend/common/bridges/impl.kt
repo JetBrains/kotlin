@@ -72,6 +72,9 @@ class DescriptorBasedFunctionHandle(
             descriptor.modality == Modality.ABSTRACT ||
             isBodyOwner(descriptor.containingDeclaration)
 
+    override val isInterfaceDeclaration: Boolean
+        get() = DescriptorUtils.isInterface(descriptor.containingDeclaration)
+
     override fun getOverridden() = overridden
 
     override fun hashCode(): Int {
