@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -41,7 +42,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             analysisResult.throwIfError()
             AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
         }
-        val psi2ir = Psi2IrTranslator()
+        val psi2ir = Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors))
         val irModule = psi2ir.generateModule(analysisResult.moduleDescriptor, myFiles.psiFiles, analysisResult.bindingContext)
         val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
         return ktFiles.zip(irModule.files).toMap()

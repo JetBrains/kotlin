@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class Psi2IrTranslator() {
+class Psi2IrTranslator(val configuration: Psi2IrConfiguration) {
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModule {
-        val context = GeneratorContext(moduleDescriptor, bindingContext)
+        val context = GeneratorContext(configuration, moduleDescriptor, bindingContext)
         val irModule = ModuleGenerator(context).generateModule(ktFiles)
         postprocess(irModule)
         return irModule

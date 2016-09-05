@@ -246,7 +246,7 @@ class StatementGenerator(
             return generateExpressionForReferencedDescriptor(referenceTarget, expression, null)
         }
 
-        return ErrorExpressionGenerator(this).generateErrorExpression(expression)
+        return ErrorExpressionGenerator(this).generateErrorSimpleName(expression)
     }
 
     private fun generateExpressionForReferencedDescriptor(
