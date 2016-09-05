@@ -16,11 +16,18 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractPsi2IrAcceptanceTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
-        // Just make sure that nothing interesting happens - e.g., no exceptions thrown
-        generateIrFilesAsSingleModule(testFiles, false)
+        val irModule = generateIrModule(false)
+        val irModuleDump = irModule.dump()
+        val expectedPath = wholeFile.canonicalPath
+                // .replace("/codegen/box/", "/ir/irTextBox/")
+                .replace(".kt", ".txt")
+        val expectedFile = File(expectedPath)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, irModuleDump)
     }
 }
