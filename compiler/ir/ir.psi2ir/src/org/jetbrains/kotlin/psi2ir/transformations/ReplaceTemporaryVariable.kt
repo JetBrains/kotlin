@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrGetVariable
 import org.jetbrains.kotlin.ir.replaceWith
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
 
-class ReplaceTemporaryVariable(val from: IrVariable, val to: IntermediateValue) : IrElementVisitor<Unit, Nothing?> {
-    override fun visitElement(element: IrElement, data: Nothing?) {
-        element.acceptChildren(this, data)
+class ReplaceTemporaryVariable(val from: IrVariable, val to: IntermediateValue) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
     }
 
-    override fun visitGetVariable(expression: IrGetVariable, data: Nothing?) {
+    override fun visitGetVariable(expression: IrGetVariable) {
         if (expression.descriptor == from.descriptor) {
             expression.replaceWith { to.load() }
         }

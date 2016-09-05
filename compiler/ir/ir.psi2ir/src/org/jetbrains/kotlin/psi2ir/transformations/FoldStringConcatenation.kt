@@ -20,27 +20,29 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.replaceWith
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 fun foldStringConcatenation(element: IrElement) {
-    element.accept(FoldStringConcatenation(), null)
+    element.acceptVoid(FoldStringConcatenation())
 }
 
-class FoldStringConcatenation : IrElementVisitor<Unit, Nothing?> {
-    override fun visitElement(element: IrElement, data: Nothing?) {
-        element.acceptChildren(this, data)
+class FoldStringConcatenation : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
     }
 
-    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?) {
+    override fun visitGeneralCall(expression: IrGeneralCall) {
         if (!isStringPlus(expression.descriptor)) {
-            visitElement(expression, data)
+            visitElement(expression)
             return
         }
 

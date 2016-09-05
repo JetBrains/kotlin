@@ -22,20 +22,23 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 fun inlineDesugaredBlocks(element: IrElement) {
-    element.accept(InlineDesugaredBlocks(), null)
+    element.acceptVoid(InlineDesugaredBlocks())
 }
 
-class InlineDesugaredBlocks : IrElementVisitor<Unit, Nothing?> {
-    override fun visitElement(element: IrElement, data: Nothing?) {
-        element.acceptChildren(this, data)
+class InlineDesugaredBlocks : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Nothing?) {
+    override fun visitBlock(expression: IrBlock) {
         val transformedBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.operator)
         for (statement in expression.statements) {
-            statement.accept(this, data)
+            statement.acceptVoid(this)
             if (statement is IrBlock && statement.operator != null) {
                 statement.statements.forEach {
                     transformedBlock.addStatement(it.detach())

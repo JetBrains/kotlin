@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.SourceLocationManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(): String {
@@ -153,15 +155,15 @@ class DumpTreeFromSourceLineVisitor(
         val fileEntry: SourceLocationManager.FileEntry,
         val lineNumber: Int,
         out: Appendable
-): IrElementVisitor<Unit, Nothing?> {
+): IrElementVisitorVoid {
     val dumper = DumpIrTreeVisitor(out)
 
-    override fun visitElement(element: IrElement, data: Nothing?) {
+    override fun visitElement(element: IrElement) {
         if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {
             element.accept(dumper, "")
             return
         }
 
-        element.acceptChildren(this, data)
+        element.acceptChildrenVoid(this)
     }
 }
