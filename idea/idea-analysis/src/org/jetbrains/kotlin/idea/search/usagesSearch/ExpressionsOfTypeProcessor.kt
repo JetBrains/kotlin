@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -352,6 +354,13 @@ class ExpressionsOfTypeProcessor(
                 }
 
                 if (element.getStrictParentOfType<KtImportDirective>() != null) return true // ignore usage in import
+
+                val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+                val hasType = bindingContext.getType(element) != null
+                if (hasType) { // access to object or companion object
+                    processSuspiciousExpression(element)
+                    return true
+                }
             }
 
             is KDocName -> return true // ignore usage in doc-comment
