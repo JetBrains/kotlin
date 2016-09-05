@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -30,12 +31,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import java.io.File
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import java.lang.RuntimeException
+import java.lang.UnsupportedOperationException
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 
 interface KotlinScriptDefinition {
     val name: String get() = "Kotlin Script"
@@ -102,3 +105,33 @@ fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): K
                 ClassId.topLevel(FqName(fqName)),
                 NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
         ).defaultType
+
+// TODO: support star projections
+// TODO: support annotations on types and type parameters
+// TODO: support type parameters on types and type projections
+fun getKotlinTypeByKType(scriptDescriptor: ScriptDescriptor, kType: KType): KotlinType {
+    val classifier = kType.classifier
+    if (classifier !is KClass<*>)
+        throw UnsupportedOperationException("Only classes are supported as parameters in script template: $classifier")
+
+    val type = getKotlinType(scriptDescriptor, classifier)
+    val typeProjections = kType.arguments.map { getTypeProjection(scriptDescriptor, it) }
+    val isNullable = kType.isMarkedNullable
+
+    return KotlinTypeFactory.simpleType(Annotations.EMPTY, type.constructor, typeProjections, isNullable)
+}
+
+private fun getTypeProjection(scriptDescriptor: ScriptDescriptor, kTypeProjection: KTypeProjection): TypeProjection {
+    val kType = kTypeProjection.type ?: throw UnsupportedOperationException("Star projections are not supported")
+
+    val type = getKotlinTypeByKType(scriptDescriptor, kType)
+
+    val variance = when (kTypeProjection.variance) {
+        KVariance.IN -> Variance.IN_VARIANCE
+        KVariance.OUT -> Variance.OUT_VARIANCE
+        KVariance.INVARIANT -> Variance.INVARIANT
+        null -> throw UnsupportedOperationException("Star projections are not supported")
+    }
+
+    return TypeProjectionImpl(variance, type)
+}
