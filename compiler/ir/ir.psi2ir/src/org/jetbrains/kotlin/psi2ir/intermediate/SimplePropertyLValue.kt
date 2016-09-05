@@ -37,23 +37,27 @@ class SimplePropertyLValue(
 
     override fun load(): IrExpression =
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                val getter = descriptor.getter ?: context.syntheticDescriptorsFactory.getOrCreatePropertyGetter(descriptor)
-                IrGetterCallImpl(startOffset, endOffset, getter,
-                                 dispatchReceiverValue?.load(),
-                                 extensionReceiverValue?.load(),
-                                 irOperator,
-                                 superQualifier)
+                descriptor.getter?.let { getter ->
+                    IrGetterCallImpl(startOffset, endOffset, getter,
+                                     dispatchReceiverValue?.load(),
+                                     extensionReceiverValue?.load(),
+                                     irOperator,
+                                     superQualifier)
+                } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
+                                           dispatchReceiverValue?.load(), irOperator, superQualifier)
             }
 
     override fun store(irExpression: IrExpression) =
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                val setter = descriptor.setter ?: context.syntheticDescriptorsFactory.getOrCreatePropertySetter(descriptor)
-                IrSetterCallImpl(startOffset, endOffset, setter,
-                                 dispatchReceiverValue?.load(),
-                                 extensionReceiverValue?.load(),
-                                 irExpression,
-                                 irOperator,
-                                 superQualifier)
+                descriptor.setter?.let { setter ->
+                    IrSetterCallImpl(startOffset, endOffset, setter,
+                                     dispatchReceiverValue?.load(),
+                                     extensionReceiverValue?.load(),
+                                     irExpression,
+                                     irOperator,
+                                     superQualifier)
+                } ?: IrSetBackingFieldImpl(startOffset, endOffset, descriptor,
+                                           dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
             }
 
     override fun assign(withLValue: (LValue) -> IrExpression) =

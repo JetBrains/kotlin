@@ -5,6 +5,6 @@ object B {
     operator fun A.component2() = 2
 }
 
-fun B.test() { // <<< destructuring1.txt
+fun B.test() {
     val (x, y) = A
 }

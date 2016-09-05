@@ -424,6 +424,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("jvmInstanceFieldReference.kt")
+        public void testJvmInstanceFieldReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jvmStaticFieldReference.kt")
         public void testJvmStaticFieldReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/jvmStaticFieldReference.kt");
@@ -463,6 +469,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("safeCalls.kt")
         public void testSafeCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/safeCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("setFieldWithImplicitCast.kt")
+        public void testSetFieldWithImplicitCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.kt");
             doTest(fileName);
         }
 

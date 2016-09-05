@@ -94,6 +94,19 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitGetBackingField(expression: IrGetBackingField, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.receiver?.accept(this, "receiver")
+        }
+    }
+
+    override fun visitSetBackingField(expression: IrSetBackingField, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.receiver?.accept(this, "receiver")
+            expression.value.accept(this, "value")
+        }
+    }
+
     override fun visitWhen(expression: IrWhen, data: String) {
         expression.dumpLabeledElementWith(data) {
             for (i in 0 .. expression.branchesCount - 1) {

@@ -4,7 +4,8 @@ FILE /initVar.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          receiver: THIS public final class TestInitVarFromParameter type=TestInitVarFromParameter
+          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarFromParameter
     PROPERTY public final var x: kotlin.Int
       EXPRESSION_BODY
@@ -39,13 +40,13 @@ FILE /initVar.kt
       PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            GET_VAR value type=kotlin.Int operator=null
+            value: GET_VAR value type=kotlin.Int operator=null
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
       PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            GET_VAR value type=kotlin.Int operator=null
+            value: GET_VAR value type=kotlin.Int operator=null
     ANONYMOUS_INITIALIZER TestInitVarWithCustomSetterWithExplicitCtor
       BLOCK_BODY
         CALL .<set-x> type=kotlin.Unit operator=EQ
@@ -60,7 +61,7 @@ FILE /initVar.kt
       PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            GET_VAR value type=kotlin.Int operator=null
+            value: GET_VAR value type=kotlin.Int operator=null
     CONSTRUCTOR public constructor TestInitVarWithCustomSetterInCtor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Any

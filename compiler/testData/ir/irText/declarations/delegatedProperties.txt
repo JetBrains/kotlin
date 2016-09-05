@@ -21,7 +21,8 @@ FILE /delegatedProperties.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD map type=kotlin.Unit operator=null
-          GET_VAR map type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          receiver: THIS public final class C type=C
+          value: GET_VAR map type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=C
     PROPERTY public final val map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
       EXPRESSION_BODY
@@ -41,6 +42,7 @@ FILE /delegatedProperties.kt
           RETURN type=kotlin.Nothing from=<get-test2>
             CALL .getValue type=kotlin.Int operator=null
               $receiver: GET_BACKING_FIELD test2$delegate type=kotlin.Lazy<kotlin.Int> operator=null
+                receiver: THIS public final class C type=C
               thisRef: THIS public final class C type=C
               property: CALLABLE_REFERENCE test2 type=kotlin.reflect.KProperty1<C, kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test3: kotlin.Any
@@ -53,6 +55,7 @@ FILE /delegatedProperties.kt
           RETURN type=kotlin.Nothing from=<get-test3>
             CALL .getValue type=kotlin.Any operator=null
               $receiver: GET_BACKING_FIELD test3$delegate type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
+                receiver: THIS public final class C type=C
               thisRef: THIS public final class C type=C
               property: CALLABLE_REFERENCE test3 type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
       PROPERTY_SETTER public final fun <set-test3>(/*0*/ <set-?>: kotlin.Any): kotlin.Unit
@@ -60,6 +63,7 @@ FILE /delegatedProperties.kt
           RETURN type=kotlin.Nothing from=<set-test3>
             CALL .setValue type=kotlin.Unit operator=null
               $receiver: GET_BACKING_FIELD test3$delegate type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
+                receiver: THIS public final class C type=C
               thisRef: THIS public final class C type=C
               property: CALLABLE_REFERENCE test3 type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR <set-?> type=kotlin.Any operator=null

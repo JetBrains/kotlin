@@ -288,7 +288,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                     val valueParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
 
                     irBlockBody.addStatement(
-                            createPropertyInitializationExpression(
+                            initializePropertyInPrimaryConstructor(
                                     ktParameter, propertyDescriptor,
                                     IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
                                                       valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
@@ -298,7 +298,15 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         }
     }
 
-    private fun createPropertyInitializationExpression(ktElement: KtElement, propertyDescriptor: PropertyDescriptor, value: IrExpression) =
-            IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor, value)
+    private fun initializePropertyInPrimaryConstructor(
+            ktElement: KtElement,
+            propertyDescriptor: PropertyDescriptor,
+            value: IrExpression
+    ): IrExpression {
+        val thisClass = propertyDescriptor.containingDeclaration as ClassDescriptor
+        return IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor,
+                              IrThisReferenceImpl(ktElement.startOffset, ktElement.endOffset, thisClass.defaultType, thisClass),
+                              value)
+    }
 }
 

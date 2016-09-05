@@ -1,0 +1,21 @@
+FILE /Derived.kt
+  CLASS CLASS Derived
+    CONSTRUCTOR public constructor Derived()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Base
+        INSTANCE_INITIALIZER_CALL classDescriptor=Derived
+    ANONYMOUS_INITIALIZER Derived
+      BLOCK_BODY
+        SET_BACKING_FIELD value type=kotlin.Unit operator=EQ
+          receiver: THIS public final class Derived : Base type=Derived
+          value: CONST Int type=kotlin.Int value='0'
+    FUN public final fun getValue(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from=getValue
+          GET_BACKING_FIELD value type=kotlin.Int operator=GET_PROPERTY
+            receiver: THIS public final class Derived : Base type=Derived
+    FUN public final fun setValue(/*0*/ value: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+        SET_BACKING_FIELD value type=kotlin.Unit operator=EQ
+          receiver: THIS public final class Derived : Base type=Derived
+          value: GET_VAR value type=kotlin.Int operator=null

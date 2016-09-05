@@ -17,7 +17,8 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
     ANONYMOUS_INITIALIZER TestInitBlock
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          CONST Int type=kotlin.Int value='0'
+          receiver: THIS public final class TestInitBlock : Base type=TestInitBlock
+          value: CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Base

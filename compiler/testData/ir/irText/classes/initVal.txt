@@ -4,7 +4,8 @@ FILE /initVal.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          receiver: THIS public final class TestInitValFromParameter type=TestInitValFromParameter
+          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValFromParameter
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
@@ -26,4 +27,5 @@ FILE /initVal.kt
     ANONYMOUS_INITIALIZER TestInitValInInitBlock
       BLOCK_BODY
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          CONST Int type=kotlin.Int value='0'
+          receiver: THIS public final class TestInitValInInitBlock type=TestInitValInInitBlock
+          value: CONST Int type=kotlin.Int value='0'

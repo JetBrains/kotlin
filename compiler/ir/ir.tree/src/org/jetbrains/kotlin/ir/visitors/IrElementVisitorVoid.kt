@@ -129,10 +129,13 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSetVariable(expression: IrSetVariable) = visitDeclarationReference(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
-    fun visitGetBackingField(expression: IrGetBackingField) = visitDeclarationReference(expression)
+    fun visitBackingFieldReference(expression: IrBackingFieldExpression) = visitDeclarationReference(expression)
+    override fun visitBackingFieldReference(expression: IrBackingFieldExpression, data: Nothing?) = visitBackingFieldReference(expression)
+
+    fun visitGetBackingField(expression: IrGetBackingField) = visitBackingFieldReference(expression)
     override fun visitGetBackingField(expression: IrGetBackingField, data: Nothing?) = visitGetBackingField(expression)
 
-    fun visitSetBackingField(expression: IrSetBackingField) = visitDeclarationReference(expression)
+    fun visitSetBackingField(expression: IrSetBackingField) = visitBackingFieldReference(expression)
     override fun visitSetBackingField(expression: IrSetBackingField, data: Nothing?) = visitSetBackingField(expression)
 
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)

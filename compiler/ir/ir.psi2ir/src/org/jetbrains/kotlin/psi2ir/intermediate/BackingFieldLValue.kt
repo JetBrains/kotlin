@@ -24,15 +24,16 @@ class BackingFieldLValue(
         val startOffset: Int,
         val endOffset: Int,
         val descriptor: PropertyDescriptor,
+        val receiver: IntermediateValue?,
         val operator: IrOperator?
 ) : LValue, AssignmentReceiver {
     override val type: KotlinType get() = descriptor.type
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetBackingFieldImpl(startOffset, endOffset, descriptor, irExpression, operator)
+            IrSetBackingFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), irExpression, operator)
 
     override fun load(): IrExpression =
-            IrGetBackingFieldImpl(startOffset, endOffset, descriptor, operator)
+            IrGetBackingFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), operator)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

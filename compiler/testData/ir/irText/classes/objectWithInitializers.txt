@@ -16,5 +16,6 @@ FILE /objectWithInitializers.kt
     ANONYMOUS_INITIALIZER Test
       BLOCK_BODY
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
-          CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
+          receiver: THIS public object Test : Base type=Test
+          value: CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
             $this: THIS public object Test : Base type=Test

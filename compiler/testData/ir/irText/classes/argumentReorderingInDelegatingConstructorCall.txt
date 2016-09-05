@@ -4,9 +4,11 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          receiver: THIS public open class Base type=Base
+          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
-          GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          receiver: THIS public open class Base type=Base
+          value: GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=Base
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY

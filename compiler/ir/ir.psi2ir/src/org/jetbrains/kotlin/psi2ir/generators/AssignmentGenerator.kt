@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrThisReferenceImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -108,8 +109,14 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val descriptor = resolvedCall.candidateDescriptor
 
         return when (descriptor) {
-            is SyntheticFieldDescriptor ->
-                BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor, operator)
+            is SyntheticFieldDescriptor -> {
+                val receiverValue = resolvedCall.dispatchReceiver?.let {
+                    statementGenerator.generateReceiver(ktLeft, it)
+                }
+                BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor,
+                                   receiverValue, operator)
+
+            }
             is LocalVariableDescriptor ->
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
@@ -131,7 +138,10 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             resolvedCall: ResolvedCall<*>
     ): AssignmentReceiver {
         if (isValInitializationInConstructor(descriptor, resolvedCall)) {
-            return BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, null)
+            val thisClass = getThisClass()
+            val irThis = IrThisReferenceImpl(ktLeft.startOffset, ktLeft.endOffset, thisClass.defaultType, thisClass)
+            return BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor,
+                                      RematerializableValue(irThis), null)
         }
 
         val propertyReceiver = statementGenerator.generateCallReceiver(
@@ -147,6 +157,15 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             !descriptor.isVar &&
             statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
             resolvedCall.dispatchReceiver is ThisClassReceiver
+
+    private fun getThisClass(): ClassDescriptor {
+        val scopeOwner = statementGenerator.scopeOwner
+        return when (scopeOwner) {
+            is ConstructorDescriptor -> scopeOwner.containingDeclaration
+            is ClassDescriptor -> scopeOwner
+            else -> scopeOwner.containingDeclaration as ClassDescriptor
+        }
+    }
 
     private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, irOperator: IrOperator): ArrayAccessAssignmentReceiver {
         val irArray = statementGenerator.generateExpression(ktLeft.arrayExpression!!)

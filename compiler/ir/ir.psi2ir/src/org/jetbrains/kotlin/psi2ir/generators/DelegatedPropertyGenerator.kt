@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptor
@@ -35,10 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.builders.irBlockBody
 import org.jetbrains.kotlin.psi2ir.builders.irGet
 import org.jetbrains.kotlin.psi2ir.builders.irReturn
-import org.jetbrains.kotlin.psi2ir.intermediate.BackingFieldLValue
-import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
-import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
-import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
+import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -82,8 +76,13 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
         return irProperty
     }
 
-    private fun createBackingFieldValueForDelegate(delegateDescriptor: IrPropertyDelegateDescriptor, ktDelegate: KtPropertyDelegate) =
-            BackingFieldLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor, null)
+    private fun createBackingFieldValueForDelegate(delegateDescriptor: IrPropertyDelegateDescriptor, ktDelegate: KtPropertyDelegate): IntermediateValue {
+        val thisClass = delegateDescriptor.correspondingProperty.containingDeclaration as? ClassDescriptor
+        val thisValue = thisClass?.let {
+            RematerializableValue(IrThisReferenceImpl(ktDelegate.startOffset, ktDelegate.endOffset, thisClass.defaultType, thisClass))
+        }
+        return BackingFieldLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor, thisValue, null)
+    }
 
     private fun createCallableReference(ktElement: KtElement, type: KotlinType, referencedDescriptor: CallableDescriptor): IrCallableReference =
             IrCallableReferenceImpl(ktElement.startOffset, ktElement.endOffset, type,

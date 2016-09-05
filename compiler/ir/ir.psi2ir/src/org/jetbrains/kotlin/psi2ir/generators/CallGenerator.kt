@@ -85,13 +85,15 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             call: CallBuilder
     ): IrExpression {
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val getter = descriptor.getter ?:
-                         context.syntheticDescriptorsFactory.getOrCreatePropertyGetter(descriptor)
-            IrGetterCallImpl(startOffset, endOffset, getter,
-                             dispatchReceiverValue?.load(),
-                             extensionReceiverValue?.load(),
-                             IrOperator.GET_PROPERTY,
-                             call.superQualifier)
+            descriptor.getter?.let { getter ->
+                IrGetterCallImpl(startOffset, endOffset, getter,
+                                 dispatchReceiverValue?.load(),
+                                 extensionReceiverValue?.load(),
+                                 IrOperator.GET_PROPERTY,
+                                 call.superQualifier)
+            } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
+                                       dispatchReceiverValue?.load(),
+                                       IrOperator.GET_PROPERTY, call.superQualifier)
         }
     }
 

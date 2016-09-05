@@ -3,14 +3,14 @@ FILE /jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL .println type=kotlin.Unit operator=null
         $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-          CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+          GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
         p0: CONST String type=kotlin.String value='testFun'
   PROPERTY public var testProp: kotlin.Any
     PROPERTY_GETTER public fun <get-testProp>(): kotlin.Any
       BLOCK_BODY
         CALL .println type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/get'
         RETURN type=kotlin.Nothing from=<get-testProp>
           CONST Int type=kotlin.Int value='42'
@@ -18,7 +18,7 @@ FILE /jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL .println type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/set'
   CLASS CLASS TestClass
     CONSTRUCTOR public constructor TestClass()
@@ -31,12 +31,12 @@ FILE /jvmStaticFieldReference.kt
           else: BLOCK type=kotlin.Int operator=null
             CALL .println type=kotlin.Unit operator=null
               $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-                CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+                GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
               p0: CONST String type=kotlin.String value='TestClass/test'
             CONST Int type=kotlin.Int value='42'
     ANONYMOUS_INITIALIZER TestClass
       BLOCK_BODY
         CALL .println type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            CALL .<get-out> type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='TestClass/init'

@@ -74,7 +74,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
-        private val IR_TREES_TXT_PATTERN = Regex("""// \s*<<<\s+(.*)$""")
+        private val IR_FILE_TXT_PATTERN = Regex("""// IR_FILE: (.*)$""")
         private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
 
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
@@ -84,14 +84,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             val regexps = ArrayList<RegexpInText>()
             val treeFiles = ArrayList<IrTreeFileLabel>()
 
-            for ((lineNumber, line) in testFile.content.split("\n").withIndex()) {
+            for (line in testFile.content.split("\n")) {
                 EXPECTED_OCCURRENCES_PATTERN.matchEntire(line)?.let { matchResult ->
                     regexps.add(RegexpInText(matchResult.groupValues[1], matchResult.groupValues[2].trim()))
                 }
-                ?: IR_TREES_TXT_PATTERN.find(line)?.let { matchResult ->
+                ?: IR_FILE_TXT_PATTERN.find(line)?.let { matchResult ->
                     val fileName = matchResult.groupValues[1].trim()
                     val file = createExpectedTextFile(testFile, dir, fileName)
-                    treeFiles.add(IrTreeFileLabel(file, lineNumber))
+                    treeFiles.add(IrTreeFileLabel(file, 0))
                 }
             }
 
