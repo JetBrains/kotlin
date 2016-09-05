@@ -142,7 +142,7 @@ public class QuickFixUtil {
             return returnedElement instanceof KtExpression && canEvaluateTo((KtExpression) returnedElement, expression);
         }
         else {
-            if (functionOrGetter instanceof KtWithExpressionInitializer && canEvaluateTo(((KtWithExpressionInitializer) functionOrGetter).getInitializer(), expression)) {
+            if (functionOrGetter instanceof KtDeclarationWithInitializer && canEvaluateTo(((KtDeclarationWithInitializer) functionOrGetter).getInitializer(), expression)) {
                 return true;
             }
             KtReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, KtReturnExpression.class);

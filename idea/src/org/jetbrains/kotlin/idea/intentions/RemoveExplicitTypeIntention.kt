@@ -51,7 +51,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             return element.textRange
         }
 
-        val initializer = (element as? KtWithExpressionInitializer)?.initializer ?: return null
+        val initializer = (element as? KtDeclarationWithInitializer)?.initializer ?: return null
         if (element !is KtProperty && (element !is KtNamedFunction || element.hasBlockBody())) return null
 
         return TextRange(element.startOffset, initializer.startOffset - 1)

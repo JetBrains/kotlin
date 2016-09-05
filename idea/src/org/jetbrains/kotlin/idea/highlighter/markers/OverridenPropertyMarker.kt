@@ -123,6 +123,6 @@ fun isImplemented(declaration: KtNamedDeclaration): Boolean {
 
     if (parent !is KtClass) return false
 
-    return parent.isInterface() && (declaration !is KtDeclarationWithBody || !declaration.hasBody()) && (declaration !is KtWithExpressionInitializer || !declaration.hasInitializer())
+    return parent.isInterface() && (declaration !is KtDeclarationWithBody || !declaration.hasBody()) && (declaration !is KtDeclarationWithInitializer || !declaration.hasInitializer())
 }
 
