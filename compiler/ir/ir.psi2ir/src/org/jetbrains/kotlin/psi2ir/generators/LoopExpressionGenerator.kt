@@ -39,8 +39,8 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
                                                       context.builtIns.unitType, IrOperator.DO_WHILE_LOOP))
 
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
-        statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
+        statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
         irLoop.body = ktLoop.body?.let { statementGenerator.generateExpression(ktLoop.body!!) }
         irLoop.label = getLoopLabel(ktLoop)
         return irLoop
@@ -74,14 +74,14 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
                 break
             }
             if (targetLabel == null) {
-                return getLoop(finger)
+                return getLoop(finger) ?: continue
             }
             else {
                 val parent = finger.parent
                 if (parent is KtLabeledExpression) {
                     val label = parent.getLabelName()!!
                     if (targetLabel == label) {
-                        return getLoop(finger)
+                        return getLoop(finger) ?: continue
                     }
                 }
             }
@@ -89,9 +89,8 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         throw AssertionError("No parent loop for break/continue @$targetLabel")
     }
 
-    private fun getLoop(ktLoop: KtLoopExpression): IrLoop {
-        return statementGenerator.bodyGenerator.getLoop(ktLoop) ?:
-               throw AssertionError("Loop was not visited:\n${ktLoop.text}")
+    private fun getLoop(ktLoop: KtLoopExpression): IrLoop? {
+        return statementGenerator.bodyGenerator.getLoop(ktLoop)
     }
 
     fun generateForLoop(ktFor: KtForExpression): IrExpression {

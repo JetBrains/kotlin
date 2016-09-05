@@ -304,6 +304,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("breakContinueInLoopHeader.kt")
+        public void testBreakContinueInLoopHeader() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/breakContinueInLoopHeader.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("callWithReorderedArguments.kt")
         public void testCallWithReorderedArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/callWithReorderedArguments.kt");

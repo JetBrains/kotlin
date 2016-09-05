@@ -13,7 +13,7 @@ FILE /forWithBreakContinue.kt
               CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                 $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
-              BREAK label=null depth=0
+              BREAK label=null loop.label=null depth=0
   FUN public fun testForBreak2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
@@ -40,10 +40,10 @@ FILE /forWithBreakContinue.kt
                       CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                         $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                     BLOCK type=kotlin.Nothing operator=null
-                      BREAK label=OUTER depth=1
-                      BREAK label=INNER depth=0
-                      BREAK label=null depth=0
-              BREAK label=OUTER depth=0
+                      BREAK label=OUTER loop.label=OUTER depth=1
+                      BREAK label=INNER loop.label=INNER depth=0
+                      BREAK label=null loop.label=INNER depth=0
+              BREAK label=OUTER loop.label=OUTER depth=0
   FUN public fun testForContinue1(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
@@ -58,7 +58,7 @@ FILE /forWithBreakContinue.kt
               CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                 $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
-              CONTINUE label=null depth=0
+              CONTINUE label=null loop.label=null depth=0
   FUN public fun testForContinue2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
@@ -85,7 +85,7 @@ FILE /forWithBreakContinue.kt
                       CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
                         $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
                     BLOCK type=kotlin.Nothing operator=null
-                      CONTINUE label=OUTER depth=1
-                      CONTINUE label=INNER depth=0
-                      CONTINUE label=null depth=0
-              CONTINUE label=OUTER depth=0
+                      CONTINUE label=OUTER loop.label=OUTER depth=1
+                      CONTINUE label=INNER loop.label=INNER depth=0
+                      CONTINUE label=null loop.label=INNER depth=0
+              CONTINUE label=OUTER loop.label=OUTER depth=0

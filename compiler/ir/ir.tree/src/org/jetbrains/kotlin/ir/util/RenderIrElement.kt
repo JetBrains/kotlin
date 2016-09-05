@@ -162,10 +162,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "DO_WHILE label=${loop.label} operator=${loop.operator}"
 
     override fun visitBreak(jump: IrBreak, data: Nothing?): String =
-            "BREAK label=${jump.label} depth=${jump.getDepth()}"
+            "BREAK label=${jump.label} loop.label=${jump.loop.label} depth=${jump.getDepth()}"
 
     override fun visitContinue(jump: IrContinue, data: Nothing?): String =
-            "CONTINUE label=${jump.label} depth=${jump.getDepth()}"
+            "CONTINUE label=${jump.label} loop.label=${jump.loop.label} depth=${jump.getDepth()}"
 
     override fun visitThrow(expression: IrThrow, data: Nothing?): String =
             "THROW type=${expression.type.render()}"
