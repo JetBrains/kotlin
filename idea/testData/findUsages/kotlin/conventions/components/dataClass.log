@@ -9,6 +9,7 @@ Checked type of x1
 Checked type of x2
 Checked type of x2
 Checked type of x3
+Checked type of x3
 Checked type of x4
 Checked type of x5
 Checked type of y
@@ -16,6 +17,7 @@ Checked type of y1
 Checked type of y1
 Checked type of y2
 Checked type of y2
+Checked type of y3
 Checked type of y3
 Checked type of y4
 Checked type of y5
@@ -30,12 +32,16 @@ Resolved (x1, y1)
 Resolved (x1, y1, z1)
 Resolved (x2, y2)
 Resolved (x2, y2, z2)
+Resolved (x3, y3)
 Resolved (x3, y3, z3)
 Resolved (x4, y4, z4)
 Resolved (x5, y5, z5)
 Searched references to JavaClass.getA() in Kotlin files
 Searched references to JavaClass2
 Searched references to JavaClass3
+Searched references to JavaClass4.NestedPrivate
+Searched references to JavaClass4.NestedPublic
+Searched references to JavaClass4.getNested() in Kotlin files
 Searched references to a in Kotlin files
 Searched references to f() in Kotlin files
 Searched references to g() in Kotlin files
