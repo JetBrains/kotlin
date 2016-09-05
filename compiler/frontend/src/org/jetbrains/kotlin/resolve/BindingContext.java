@@ -161,7 +161,7 @@ public interface BindingContext {
     /**
      * Has type of current expression has been already resolved
      */
-    WritableSlice<KtExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
+    WritableSlice<KtExpression, Boolean> PROCESSED = Slices.createSimpleSlice();
     WritableSlice<KtElement, Boolean> USED_AS_EXPRESSION = Slices.createSimpleSetSlice();
     WritableSlice<KtElement, Boolean> USED_AS_RESULT_OF_LAMBDA = Slices.createSimpleSetSlice();
     WritableSlice<KtElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();

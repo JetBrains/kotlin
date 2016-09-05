@@ -34,7 +34,7 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
     override fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
         if (declaration is KtAnonymousInitializer || KtPsiUtil.isLocal(declaration)) {
             return container.get<ResolveElementCache>()
-                    .resolveToElement(declaration, BodyResolveMode.FULL)
+                    .resolveToElements(listOf(declaration), BodyResolveMode.FULL)
                     .get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)!!
         }
         return container.get<ResolveSession>().resolveToDescriptor(declaration)

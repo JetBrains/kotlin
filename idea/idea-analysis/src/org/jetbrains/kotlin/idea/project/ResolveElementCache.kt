@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -45,7 +46,8 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 class ResolveElementCache(
         private val resolveSession: ResolveSession,
@@ -112,13 +114,18 @@ class ResolveElementCache(
     }
 
     override fun resolveFunctionBody(function: KtNamedFunction)
-            = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
+            = getElementsAdditionalResolve(function, emptyList(), BodyResolveMode.FULL)
 
     fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
         return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingKtFile()).bindingContext
     }
 
+    @Deprecated("Use getElementsAdditionalResolve")
     fun getElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
+        return getElementsAdditionalResolve(resolveElement, listOf(contextElement), bodyResolveMode)
+    }
+
+    fun getElementsAdditionalResolve(resolveElement: KtElement, contextElements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
         // check if full additional resolve already performed and is up-to-date
         val fullResolveMap = fullResolveCache.value
         val cachedFullResolve = fullResolveMap[resolveElement]
@@ -133,23 +140,25 @@ class ResolveElementCache(
 
         when (bodyResolveMode) {
             BodyResolveMode.FULL -> {
-                val bindingContext = performElementAdditionalResolve(resolveElement, resolveElement, BodyResolveMode.FULL).first
+                val bindingContext = performElementAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL).first
                 fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                 return bindingContext
             }
 
             BodyResolveMode.PARTIAL -> {
                 if (resolveElement !is KtDeclaration) {
-                    return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
+                    return getElementsAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL)
                 }
 
                 val file = resolveElement.getContainingKtFile()
-                val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
+                val statementsToResolve = contextElements.map { PartialBodyResolveFilter.findStatementToResolve(it, resolveElement) }.distinct()
                 val partialResolveMap = partialBodyResolveCache.value
-                partialResolveMap[statementToResolve ?: resolveElement]
-                        ?.check { it.isUpToDate(file) }
-                        ?.let { return it.bindingContext } // partial resolve is already cached for this statement
-                val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
+                val cachedResults = statementsToResolve.map { partialResolveMap[it ?: resolveElement] }
+                if (cachedResults.all { it != null && it.isUpToDate(file) }) { // partial resolve is already cached for these statements
+                    return CompositeBindingContext.create(cachedResults.map { it!!.bindingContext }.distinct())
+                }
+
+                val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElements, BodyResolveMode.PARTIAL)
 
                 if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
                     fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
@@ -172,35 +181,48 @@ class ResolveElementCache(
 
             BodyResolveMode.PARTIAL_FOR_COMPLETION -> {
                 if (resolveElement !is KtDeclaration) {
-                    return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
+                    return getElementsAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL)
                 }
 
                 // not cached
-                return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode).first
+                return performElementAdditionalResolve(resolveElement, contextElements, bodyResolveMode).first
             }
         }
     }
 
-    fun resolveToElement(element: KtElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
-        var contextElement = element
+    fun resolveToElements(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
+        val elementsByAdditionalResolveElement: Map<KtElement?, List<KtElement>> = elements.groupBy { findElementOfAdditionalResolve(it) }
 
-        val elementOfAdditionalResolve = findElementOfAdditionalResolve(contextElement)
-
-        if (elementOfAdditionalResolve is KtParameter) {
-            // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
-            contextElement = elementOfAdditionalResolve
+        val bindingContexts = ArrayList<BindingContext>()
+        val declarationsToResolve = ArrayList<KtDeclaration>()
+        var addResolveSessionBindingContext = false
+        for ((elementOfAdditionalResolve, contextElements) in elementsByAdditionalResolveElement) {
+            if (elementOfAdditionalResolve != null) {
+                if (elementOfAdditionalResolve !is KtParameter) {
+                    val bindingContext = getElementsAdditionalResolve(elementOfAdditionalResolve, contextElements, bodyResolveMode)
+                    bindingContexts.add(bindingContext)
+                }
+                else {
+                    // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
+                    declarationsToResolve.addIfNotNull(elementOfAdditionalResolve.getNonStrictParentOfType<KtDeclaration>())
+                    addResolveSessionBindingContext = true
+                }
+            }
+            else {
+                contextElements
+                        .map { it.getNonStrictParentOfType<KtDeclaration>() }
+                        .filterNotNull()
+                        .filterTo(declarationsToResolve) { it !is KtAnonymousInitializer }
+                addResolveSessionBindingContext = true
+            }
         }
-        else if (elementOfAdditionalResolve != null) {
-            return getElementAdditionalResolve(elementOfAdditionalResolve, contextElement, bodyResolveMode)
+
+        declarationsToResolve.forEach { resolveSession.resolveToDescriptor(it) }
+        if (addResolveSessionBindingContext) {
+            bindingContexts.add(resolveSession.bindingContext)
         }
 
-        val declaration = contextElement.getParentOfType<KtDeclaration>(false)
-        if (declaration != null && declaration !is KtAnonymousInitializer) {
-            // Activate descriptor resolution
-            resolveSession.resolveToDescriptor(declaration)
-        }
-
-        return resolveSession.bindingContext
+        return CompositeBindingContext.create(bindingContexts)
     }
 
     private fun findElementOfAdditionalResolve(element: KtElement): KtElement? {
@@ -258,7 +280,7 @@ class ResolveElementCache(
         }
     }
 
-    private fun performElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement,
+    private fun performElementAdditionalResolve(resolveElement: KtElement, contextElements: Collection<KtElement>,
                                                 bodyResolveMode: BodyResolveMode): Pair<BindingContext, StatementFilter> {
         val file = resolveElement.getContainingKtFile()
 
@@ -268,7 +290,7 @@ class ResolveElementCache(
             assert(resolveElement is KtDeclaration)
             if (bodyResolveMode != BodyResolveMode.FULL) {
                 statementFilterUsed = PartialBodyResolveFilter(
-                        contextElement,
+                        contextElements,
                         resolveElement as KtDeclaration,
                         probablyNothingCallableNames(),
                         bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION)

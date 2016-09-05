@@ -108,7 +108,7 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
             @SuppressWarnings("ConstantConditions")
             boolean expressionProcessed = context.get(
                     BindingContext.PROCESSED,
-                    ktExpression instanceof KtFunctionLiteral ? (KtLambdaExpression) ktExpression.getParent() : ktExpression);
+                    ktExpression instanceof KtFunctionLiteral ? (KtLambdaExpression) ktExpression.getParent() : ktExpression) == Boolean.TRUE;
 
             assertEquals("Expected out-of-block should result expression analyzed and vise versa", expectedOutOfBlock,
                          expressionProcessed);
