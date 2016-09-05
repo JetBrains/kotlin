@@ -3,7 +3,7 @@ Checked type of x
 Checked type of y
 Resolved (x, y)
 Searched references to X
-Searched references to f() in Kotlin files
+Searched references to f() in non-Java files
 Used plain search of component1() in LocalSearchScope:
     CLASS:X
     FUN:component1

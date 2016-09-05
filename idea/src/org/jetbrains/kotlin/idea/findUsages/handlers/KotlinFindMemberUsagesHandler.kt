@@ -22,11 +22,8 @@ import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.impl.FindManagerImpl
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -35,7 +32,6 @@ import com.intellij.util.*
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
@@ -45,6 +41,7 @@ import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDial
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
+import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -174,21 +171,6 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
             }
 
             return true
-        }
-
-        private fun SearchScope.excludeKotlinSources(): SearchScope {
-            if (this is GlobalSearchScope) {
-                val fileTypes = FileTypeManager.getInstance().registeredFileTypes.filter { it != KotlinFileType.INSTANCE }.toTypedArray()
-                return GlobalSearchScope.getScopeRestrictedByFileTypes(this, *fileTypes)
-            }
-            else {
-                this as LocalSearchScope
-                val filteredElements = scope.filter { it.containingFile !is KtFile }
-                return if (filteredElements.isNotEmpty())
-                    LocalSearchScope(filteredElements.toTypedArray())
-                else
-                    GlobalSearchScope.EMPTY_SCOPE
-            }
         }
     }
 

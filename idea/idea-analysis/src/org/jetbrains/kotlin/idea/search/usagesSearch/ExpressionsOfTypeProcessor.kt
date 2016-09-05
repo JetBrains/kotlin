@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -36,12 +36,14 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+import org.jetbrains.kotlin.idea.search.excludeFileTypes
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
@@ -179,7 +181,8 @@ class ExpressionsOfTypeProcessor(
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
                 testLog?.add("Searched references to ${logPresentation(classToSearch)}")
-                searchReferences(classToSearch, GlobalSearchScope.allScope(project)) { reference ->
+                val scope = GlobalSearchScope.allScope(project).excludeFileTypes(XmlFileType.INSTANCE) // ignore usages in XML - they don't affect us
+                searchReferences(classToSearch, scope) { reference ->
                     if (processClassUsage(reference)) return@searchReferences true
 
                     if (mode != Mode.ALWAYS_SMART) {
@@ -200,21 +203,26 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessClassUsagesTask(classToSearch))
     }
 
-    private fun addCallableDeclarationToProcess(declaration: PsiElement, processMethod: (PsiReference) -> Unit) {
+    private fun addCallableDeclarationToProcess(declaration: PsiElement, processMethod: (PsiReference) -> Boolean) {
         if (declaration.isOperatorExpensiveToSearch()) { // cancel all tasks and use plain search
             downShiftToPlainSearch()
             return
         }
 
-        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processMethod: (PsiReference) -> Unit) : Task {
+        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processMethod: (PsiReference) -> Boolean) : Task {
             override fun perform() {
                 // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
-                //TODO: what about Scala and other JVM-languages?
-                val scope = GlobalSearchScope.projectScope(project).restrictToKotlinSources()
-                testLog?.add("Searched references to ${logPresentation(declaration)} in Kotlin files")
+                val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(JavaFileType.INSTANCE, XmlFileType.INSTANCE)
+                testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
                 val searchParameters = KotlinReferencesSearchParameters(
                         declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
-                searchReferences(searchParameters) { reference -> processMethod(reference); true }
+                searchReferences(searchParameters) { reference ->
+                    val processed = processMethod(reference)
+                    if (!processed) { // we don't know how to handle this reference and down-shift to plain search
+                        downShiftToPlainSearch()
+                    }
+                    processed
+                }
             }
         }
         addTask(ProcessCallableUsagesTask(declaration, processMethod))
@@ -226,30 +234,42 @@ class ExpressionsOfTypeProcessor(
     /**
      * Process reference to declaration whose type is our class (or our class used anywhere inside that type)
      */
-    private fun processReferenceToCallableOfOurType(reference: PsiReference) {
-        if (reference is KtDestructuringDeclarationReference) {
-            // declaration usage in form of destructuring declaration entry
-            addCallableDeclarationToProcess(reference.element, HAS_OUR_TYPE)
-        }
-        else {
-            (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+    private fun processReferenceToCallableOfOurType(reference: PsiReference): Boolean {
+        when (reference.element.language) {
+            KotlinLanguage.INSTANCE -> {
+                if (reference is KtDestructuringDeclarationReference) {
+                    // declaration usage in form of destructuring declaration entry
+                    addCallableDeclarationToProcess(reference.element, HAS_OUR_TYPE)
+                }
+                else {
+                    (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+                }
+                return true
+            }
+
+            else -> return false // reference in unknown language - we don't know how to handle it
         }
     }
 
     /**
      * Process reference to declaration which has parameter of functional type with our class used inside
      */
-    private fun processLambdasByCallableReference(reference: PsiReference) {
+    private fun processLambdasByCallableReference(reference: PsiReference): Boolean {
         (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
+        return true
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {
         data class ProcessSamInterfaceTask(val psiClass: PsiClass) : Task {
             override fun perform() {
-                //TODO: what about other JVM languages?
-                val scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), JavaFileType.INSTANCE)
-                testLog?.add("Searched references to ${logPresentation(psiClass)} in java files")
+                val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(KotlinFileType.INSTANCE, XmlFileType.INSTANCE)
+                testLog?.add("Searched references to ${logPresentation(psiClass)} in non-Kotlin files")
                 searchReferences(psiClass, scope) { reference ->
+                    if (reference.element.language != JavaFileType.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
+                        downShiftToPlainSearch()
+                        return@searchReferences false
+                    }
+
                     // check if the reference is method parameter type
                     val parameter = ((reference as? PsiJavaCodeReferenceElement)?.parent as? PsiTypeElement)?.parent as? PsiParameter
                     val method = parameter?.declarationScope as? PsiMethod
@@ -272,8 +292,6 @@ class ExpressionsOfTypeProcessor(
             KotlinLanguage.INSTANCE -> processClassUsageInKotlin(element)
 
             JavaLanguage.INSTANCE -> processClassUsageInJava(element)
-
-            XMLLanguage.INSTANCE -> true // ignore usages in XML - they don't affect us
 
             else -> false // we don't know anything about usages in other languages - so we downgrade to slow algorithm in this case
         }
