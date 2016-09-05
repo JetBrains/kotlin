@@ -24,4 +24,5 @@ fun listOfA() = listOf<A>(A(1, "", ""))
 fun test2(p1: JavaClass2, p2: JavaClass3) {
     val (x1, y1) = p1[0]
     val (x2, y2) = p2[0]
+    val (x3, y3) = JavaClass4.getNested()[0]
 }

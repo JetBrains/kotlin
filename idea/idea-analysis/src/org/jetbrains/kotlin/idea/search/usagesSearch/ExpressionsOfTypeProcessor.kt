@@ -455,7 +455,7 @@ class ExpressionsOfTypeProcessor(
                 is PsiReferenceList -> { // usage in extends/implements list
                     if (parent.role == PsiReferenceList.Role.EXTENDS_LIST || parent.role == PsiReferenceList.Role.IMPLEMENTS_LIST) {
                         val psiClass = parent.parent as PsiClass
-                        if (!psiClass.isPrivateOrLocal()) {
+                        if (!psiClass.isLocal()) { // we don't filter out private classes because we can inherit public class from private in Java
                             addClassToProcess(psiClass)
                         }
                     }
@@ -628,8 +628,10 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun PsiModifierListOwner.isPrivateOrLocal(): Boolean {
-        return hasModifierProperty(PsiModifier.PRIVATE) || parents.any { it is PsiCodeBlock }
+        return hasModifierProperty(PsiModifier.PRIVATE) || isLocal()
     }
+
+    private fun PsiModifierListOwner.isLocal() = parents.any { it is PsiCodeBlock }
 
     private fun PsiElement.isOperatorExpensiveToSearch(): Boolean {
         when (this) {
