@@ -21,6 +21,6 @@ import java.io.File
 abstract class AbstractPsi2IrAcceptanceTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
         // Just make sure that nothing interesting happens - e.g., no exceptions thrown
-        generateIrFilesAsSingleModule(testFiles, true)
+        generateIrFilesAsSingleModule(testFiles, false)
     }
 }

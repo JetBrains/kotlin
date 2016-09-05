@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun test0() {
     run {
         return

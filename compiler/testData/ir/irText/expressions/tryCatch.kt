@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun test1() {
     try {
         println()

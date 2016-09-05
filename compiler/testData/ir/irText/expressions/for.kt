@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun testEmpty(ss: List<String>) {
     for (s in ss);
 }

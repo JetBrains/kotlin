@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object A
 
 fun testWithSubject(x: Any?) =

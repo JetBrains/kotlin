@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class Test1 {
     init {
         println()

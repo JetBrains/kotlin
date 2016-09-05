@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -23,13 +25,50 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import java.io.File
+import java.util.*
 
 abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, javaFilesDir)
+        setupEnvironment(files, javaFilesDir)
+
         loadMultiFiles(files)
         doTest(wholeFile, files)
+    }
+
+    private fun setupEnvironment(files: List<TestFile>, javaFilesDir: File?) {
+        val jdkKind = getJdkKind(files)
+
+        val javacOptions = ArrayList<String>(0)
+        var addRuntime = false
+        var addReflect = false
+        for (file in files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                addRuntime = true
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                addReflect = true
+            }
+
+            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"))
+        }
+
+        val configurationKind = when {
+            addReflect -> ConfigurationKind.ALL
+            addRuntime -> ConfigurationKind.NO_KOTLIN_REFLECT
+            else -> ConfigurationKind.JDK_ONLY
+        };
+
+        val configuration = createConfiguration(
+                configurationKind, jdkKind,
+                listOf<File>(getAnnotationsJar()),
+                arrayOf(javaFilesDir).filterNotNull(),
+                files
+        )
+
+        myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)

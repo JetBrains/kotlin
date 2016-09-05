@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object FiveTimes
 
 class IntCell(var value: Int)

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun expectsString(s: String) {}
 fun expectsInt(i: Int) {}
 
