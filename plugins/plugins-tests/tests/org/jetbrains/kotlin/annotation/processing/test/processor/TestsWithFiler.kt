@@ -16,47 +16,42 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import java.io.File
 import javax.lang.model.element.TypeElement
 import javax.tools.JavaFileObject
 
 class TestsWithFiler : AbstractProcessorTest() {
     override val testDataDir = "plugins/annotation-processing/testData/withFiler"
     
-    fun testSimple() = filerTest("Simple", 1) { files ->
-        assertEquals(listOf("generated/Inject2Test.java"), files)
-    }
+    fun testSimple() = filerTest("Simple", 1, "generated/Inject2Test.java")
     
-    fun testMethodsFields() = filerTest("MethodsFields", 1) { files ->
-        assertEquals(listOf("generated/InjectmyField.java",
-                            "generated/InjectmyFunc.java"), files)
-    }
+    fun testMethodsFields() = filerTest("MethodsFields", 1,
+                                        "generated/InjectmyField.java",
+                                        "generated/InjectmyFunc.java")
     
-    fun testTwoRounds() = filerTest("TwoRounds", 2) { files ->
-        assertEquals(listOf("generated/Inject2InjectTest.java",
-                            "generated/InjectTest.java", 
-                            "generated/InjectmyFunc.java"), files)
-    }
+    fun testTwoRounds() = filerTest("TwoRounds", 2,
+                                    "generated/Inject2InjectTest.java",
+                                    "generated/InjectTest.java",
+                                    "generated/InjectmyFunc.java")
     
-    fun testOneRound() = filerTest("OneRound", 1) { files ->
-        assertEquals(listOf("generated/Inject2Test.java",
-                            "generated/Inject2myFunc.java",
-                            "generated/InjectmyFunc.java"), files)
-    }
+    fun testOneRound() = filerTest("OneRound", 1,
+                                   "generated/Inject2Test.java",
+                                   "generated/Inject2myFunc.java",
+                                   "generated/InjectmyFunc.java")
     
-    fun testZeroRounds() = filerTest("ZeroRounds", 0) { files ->
-        assertEquals(emptyList<String>(), files)
-    }
+    fun testZeroRounds() = filerTest("ZeroRounds", 0)
     
     private fun filerTest(
             fileName: String,
             roundCount: Int,
-            check: (List<String>) -> Unit) {
+            vararg expectedFiles: String
+    ) {
         val filesCreated = mutableSetOf<JavaFileObject>()
         var actualRoundCount = 0
 
         testAP(roundCount > 0, fileName, { set, roundEnv, env ->
             if (!roundEnv.processingOver()) actualRoundCount++
-            
+
             for (anno in set) {
                 val annotated = roundEnv.getElementsAnnotatedWith(anno)
                 annotated.forEach { el ->
@@ -74,6 +69,6 @@ class TestsWithFiler : AbstractProcessorTest() {
         }, "Inject", "Inject2")
 
         assertEquals(roundCount, actualRoundCount)
-        check(filesCreated.map { it.name }.sorted())
+        assertEquals(expectedFiles.map { it.replace('/', File.separatorChar) }, filesCreated.map { it.name }.sorted())
     }
 }
