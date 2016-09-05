@@ -15,12 +15,12 @@ Resolved (x1, y1, z1)
 Searched references to A
 Searched references to B
 Searched references to C
-Searched references to C.component1() in Kotlin files
-Searched references to a in Kotlin files
-Searched references to a1 in Kotlin files
-Searched references to parameter a of B(val a: A, val n: Int) in Kotlin files
-Searched references to parameter b of f(b: B, c: C) in Kotlin files
-Searched references to parameter c of f(b: B, c: C) in Kotlin files
+Searched references to C.component1() in non-Java files
+Searched references to a in non-Java files
+Searched references to a1 in non-Java files
+Searched references to parameter a of B(val a: A, val n: Int) in non-Java files
+Searched references to parameter b of f(b: B, c: C) in non-Java files
+Searched references to parameter c of f(b: B, c: C) in non-Java files
 Used plain search of C.component1() in LocalSearchScope:
     CLASS:C
 Used plain search of parameter a of B(val a: A, val n: Int) in LocalSearchScope:

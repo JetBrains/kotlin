@@ -4,7 +4,7 @@ Checked type of x1
 Checked type of y1
 Resolved (x1, y1)
 Searched references to X
-Searched references to f() in Kotlin files
+Searched references to f() in non-Java files
 Used plain search of component1() in LocalSearchScope:
     CLASS:X
     FUN:component1

@@ -36,21 +36,21 @@ Resolved (x3, y3)
 Resolved (x3, y3, z3)
 Resolved (x4, y4, z4)
 Resolved (x5, y5, z5)
-Searched references to JavaClass.getA() in Kotlin files
+Searched references to JavaClass.getA() in non-Java files
 Searched references to JavaClass2
 Searched references to JavaClass3
 Searched references to JavaClass4.NestedPrivate
 Searched references to JavaClass4.NestedPublic
-Searched references to JavaClass4.getNested() in Kotlin files
-Searched references to a in Kotlin files
-Searched references to f() in Kotlin files
-Searched references to g() in Kotlin files
-Searched references to h() in Kotlin files
-Searched references to listOfA() in Kotlin files
+Searched references to JavaClass4.getNested() in non-Java files
+Searched references to a in non-Java files
+Searched references to f() in non-Java files
+Searched references to g() in non-Java files
+Searched references to h() in non-Java files
+Searched references to listOfA() in non-Java files
 Searched references to pack.A
 Searched references to pack.X
-Searched references to parameter p1 of test2(p1: JavaClass2, p2: JavaClass3) in Kotlin files
-Searched references to parameter p2 of test2(p1: JavaClass2, p2: JavaClass3) in Kotlin files
+Searched references to parameter p1 of test2(p1: JavaClass2, p2: JavaClass3) in non-Java files
+Searched references to parameter p2 of test2(p1: JavaClass2, p2: JavaClass3) in non-Java files
 Used plain search of parameter n of A(val n: Int, val s: String, val o: Any) in LocalSearchScope:
     CLASS:A
     CLASS:X

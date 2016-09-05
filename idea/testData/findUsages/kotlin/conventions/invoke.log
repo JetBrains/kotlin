@@ -3,6 +3,6 @@ Resolved f(1)
 Resolved f(2)
 Resolved f(2)(2)
 Searched references to B
-Searched references to f() in Kotlin files
+Searched references to f() in non-Java files
 Used plain search of B.invoke(i: Int) in LocalSearchScope:
     CLASS:B
