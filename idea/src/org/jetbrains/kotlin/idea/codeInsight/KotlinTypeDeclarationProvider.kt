@@ -19,33 +19,25 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinTypeDeclarationProvider : TypeDeclarationProvider {
     override fun getSymbolTypeDeclarations(symbol: PsiElement): Array<PsiElement>? {
-        if (symbol is KtElement && symbol.getContainingFile() is KtFile) {
-            val bindingContext = symbol.analyze()
-            val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol)
-            if (descriptor is CallableDescriptor) {
-                val type = descriptor.returnType
-                if (type != null) {
-                    val classifierDescriptor = type.constructor.declarationDescriptor
-                    if (classifierDescriptor != null) {
-                        val typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor)
-                        if (typeElement != null) {
-                            return arrayOf(typeElement)
-                        }
-                    }
-                }
-            }
-        }
-        return arrayOfNulls(0)
+        if (symbol !is KtElement || symbol.getContainingFile() !is KtFile) return emptyArray()
+
+        val bindingContext = symbol.analyze()
+        val callableDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol)
+        if (callableDescriptor !is CallableDescriptor) return emptyArray()
+
+        val type = callableDescriptor.returnType ?: return emptyArray()
+
+        val classifierDescriptor = type.constructor.declarationDescriptor ?: return emptyArray()
+        val typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor) ?: return emptyArray()
+
+        return arrayOf(typeElement)
     }
 }
