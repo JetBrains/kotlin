@@ -13,6 +13,7 @@ Searched references to takeFuns(p: MutableList<(A) -> Unit>) in non-Java files
 Searched references to v in non-Java files
 Used plain search of parameter a of A(val a: Int, val b: Int) in LocalSearchScope:
     CLASS:A
+    FUN:null
     { a, n -> val (x, y) = a!! }
     { val (x, y ) = it }
     { val (x, y) = it }

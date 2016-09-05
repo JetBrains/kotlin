@@ -29,6 +29,7 @@ fun foo(p: A) {
     takeFun3 { val (x, y) = it[0] }
 
     x(p) { val (x, y) = it }
+    x(p, fun (p) { val (x, y) = p })
 }
 
 var Any.v: (A) -> Unit
