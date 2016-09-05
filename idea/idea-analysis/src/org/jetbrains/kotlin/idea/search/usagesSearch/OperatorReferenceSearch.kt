@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
+import com.intellij.openapi.progress.ProgressIndicatorProvider
+import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.*
 import com.intellij.psi.search.*
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -255,14 +258,32 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             }
             else {
                 val psiManager = PsiManager.getInstance(project)
-                ProjectRootManager.getInstance(project).fileIndex.iterateContent { file ->
-                    if (file in scope) {
-                        val ktFile = runReadAction { psiManager.findFile(file) as? KtFile }
-                        if (ktFile != null) {
-                            doPlainSearch(LocalSearchScope(ktFile))
+                // we must unwrap progress indicator because ProgressWrapper does not do anything on changing text and fraction
+                val progress = ProgressWrapper.unwrap(ProgressIndicatorProvider.getGlobalProgressIndicator())
+                progress?.pushState()
+                progress?.text = "Searching implicit usages..."
+
+                try {
+                    val files = ArrayList<KtFile>()
+                    ProjectRootManager.getInstance(project).fileIndex.iterateContent { file ->
+                        progress?.checkCanceled()
+                        runReadAction {
+                            if (file in scope) {
+                                files.addIfNotNull(psiManager.findFile(file) as? KtFile)
+                            }
                         }
+                        true
                     }
-                    true
+
+                    for ((index, file) in files.withIndex()) {
+                        progress?.checkCanceled()
+                        progress?.fraction = index / files.size.toDouble()
+                        progress?.text2 = file.virtualFile.path
+                        doPlainSearch(LocalSearchScope(file))
+                    }
+                }
+                finally {
+                    progress?.popState()
                 }
             }
         }
