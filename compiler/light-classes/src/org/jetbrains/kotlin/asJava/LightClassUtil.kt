@@ -23,13 +23,13 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
 object LightClassUtil {
 
@@ -129,10 +129,7 @@ object LightClassUtil {
     }
 
     private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<PsiMethod> {
-        val psiClasses = getWrappingClasses(declaration)
-        if (psiClasses.size == 0)
-            return emptySequence()
-        return psiClasses.asSequence().flatMap { it.methods.asSequence() }
+        return getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
                 .filter { method -> method is KtLightMethod && method.kotlinOrigin === declaration }
     }
 
@@ -169,13 +166,13 @@ object LightClassUtil {
         return null
     }
 
-    private fun getWrappingClasses(declaration: KtDeclaration): List<PsiClass> {
-        val wrapperClass = getWrappingClass(declaration) ?: return emptyList()
+    private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
+        val wrapperClass = getWrappingClass(declaration) ?: return emptySequence()
         val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
         if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion()) {
-            return listOfNotNull(wrapperClass, wrapperClass.parent as? KtLightClass)
+            return sequenceOfLazyValues({ wrapperClass }, { wrapperClass.parent as KtLightClass })
         }
-        return listOf(wrapperClass)
+        return sequenceOf(wrapperClass)
     }
 
     fun canGenerateLightClass(declaration: KtDeclaration): Boolean {

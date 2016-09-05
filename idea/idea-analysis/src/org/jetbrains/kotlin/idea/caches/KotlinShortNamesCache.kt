@@ -28,8 +28,8 @@ import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.asJava.getAccessorNamesCandidatesByPropertyName
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
@@ -88,33 +88,36 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
     }
 
     override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
+        return getMethodSequenceByName(name, scope).toList().toTypedArray()
+    }
+
+    fun getMethodSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
         val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
         val functionIndex = KotlinFunctionShortNameIndex.getInstance()
 
-        val kotlinFunctionsPsi = functionIndex.get(name, project, scope)
-                .flatMap { LightClassUtil.getLightClassMethods(it) }
+        val kotlinFunctionsPsi = functionIndex.get(name, project, scope).asSequence()
+                .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
 
-        val propertyAccessorsPsi = getPropertyNamesCandidatesByAccessorName(Name.identifier(name))
-                .flatMap { propertiesIndex.get(it.asString(), project, scope) }
-                .flatMap { LightClassUtil.getLightClassPropertyMethods(it).allDeclarations }
+        val propertyAccessorsPsi = getPropertyNamesCandidatesByAccessorName(Name.identifier(name)).asSequence()
+                .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
+                .flatMap { LightClassUtil.getLightClassPropertyMethods(it).allDeclarations.asSequence() }
                 .filter { it.name == name }
                 .map { it as? PsiMethod }
 
-        return (propertyAccessorsPsi + kotlinFunctionsPsi).filterNotNull().toList().toTypedArray()
+        return (propertyAccessorsPsi + kotlinFunctionsPsi).filterNotNull()
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
-        val methods = getMethodsByName(name, scope)
-        if (methods.size > maxCount)
-            return PsiMethod.EMPTY_ARRAY
-        return methods
+        val psiMethods = getMethodSequenceByName(name, scope)
+        val limitedByMaxCount = psiMethods.take(maxCount)
+        psiMethods.drop(maxCount).firstOrNull()?.let { return PsiMethod.EMPTY_ARRAY }
+        return limitedByMaxCount.toList().toTypedArray()
     }
 
     override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiField> {
-        val fields = getFieldsByName(name, scope)
-        if (fields.size > maxCount)
-            return PsiField.EMPTY_ARRAY
-        return fields
+        val psiFields = getFieldSequenceByName(name, scope)
+        psiFields.drop(maxCount).firstOrNull()?.let { return PsiField.EMPTY_ARRAY }
+        return psiFields.take(maxCount).toList().toTypedArray()
     }
 
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean
@@ -125,10 +128,8 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         val functionNames = functionIndex.getAllKeys(project)
 
         val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
-        val globalScope = GlobalSearchScope.allScope(project)
         val propertyAccessorNames = propertiesIndex.getAllKeys(project)
-                .flatMap { propertiesIndex.get(it, project, globalScope) }
-                .flatMap { it.getAccessorNames() }
+                .flatMap(::getAccessorNamesCandidatesByPropertyName)
 
         return (functionNames + propertyAccessorNames).toTypedArray()
     }
@@ -137,25 +138,18 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         set.addAll(allMethodNames)
     }
 
-    override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField> {
-        val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
-
-        return propertiesIndex.get(name, project, scope)
+    fun getFieldSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
+        return KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
                 .map { LightClassUtil.getLightClassBackingField(it) }
                 .filterNotNull()
-                .toTypedArray()
+    }
+
+    override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField> {
+        return getFieldSequenceByName(name, scope).toList().toTypedArray()
     }
 
     override fun getAllFieldNames(): Array<String> {
-        val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
-        val globalScope = GlobalSearchScope.allScope(project)
-
-        return propertiesIndex.getAllKeys(project)
-                .flatMap { propertiesIndex.get(it, project, globalScope) }
-                .map { LightClassUtil.getLightClassBackingField(it) }
-                .map { it?.name }
-                .filterNotNull()
-                .toTypedArray()
+        return KotlinPropertyShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
     }
 
     override fun getAllFieldNames(set: HashSet<String>) {
