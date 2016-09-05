@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.bridges
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
@@ -59,6 +60,10 @@ data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescriptor) : F
             DescriptorUtils.isInterface(descriptor.containingDeclaration)
 
     override fun getOverridden() = overridden
+
+    override fun toString(): String {
+        return descriptor.toString()
+    }
 }
 
 
