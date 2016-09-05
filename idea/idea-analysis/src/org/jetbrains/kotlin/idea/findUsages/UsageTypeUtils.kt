@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 object UsageTypeUtils {
     fun getUsageType(element: PsiElement?): UsageTypeEnum? {
@@ -41,7 +42,7 @@ object UsageTypeUtils {
 
         val refExpr = element?.getNonStrictParentOfType<KtReferenceExpression>() ?: return null
 
-        val context = refExpr.analyze()
+        val context = refExpr.analyze(BodyResolveMode.PARTIAL)
 
         fun getCommonUsageType(): UsageTypeEnum? {
             return when {
