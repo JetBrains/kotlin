@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,35 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.codeInsight;
+package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class KotlinTypeDeclarationProvider implements TypeDeclarationProvider {
-    @Override
-    public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
-        if (symbol instanceof KtElement && symbol.getContainingFile() instanceof KtFile) {
-            BindingContext bindingContext = ResolutionUtils.analyze((KtElement)symbol);
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
-            if (descriptor instanceof CallableDescriptor) {
-                KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
+class KotlinTypeDeclarationProvider : TypeDeclarationProvider {
+    override fun getSymbolTypeDeclarations(symbol: PsiElement): Array<PsiElement>? {
+        if (symbol is KtElement && symbol.getContainingFile() is KtFile) {
+            val bindingContext = symbol.analyze()
+            val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol)
+            if (descriptor is CallableDescriptor) {
+                val type = descriptor.returnType
                 if (type != null) {
-                    ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+                    val classifierDescriptor = type.constructor.declarationDescriptor
                     if (classifierDescriptor != null) {
-                        PsiElement typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor);
+                        val typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor)
                         if (typeElement != null) {
-                            return new PsiElement[] {typeElement};
+                            return arrayOf(typeElement)
                         }
                     }
                 }
             }
         }
-        return new PsiElement[0];
+        return arrayOfNulls(0)
     }
 }
