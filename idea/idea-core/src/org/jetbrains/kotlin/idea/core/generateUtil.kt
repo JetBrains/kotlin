@@ -70,7 +70,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
         }
     }
 
-    if (element is KtWithExpressionInitializer && element.hasInitializer()) {
+    if (element is KtDeclarationWithInitializer && element.hasInitializer()) {
         val expression = element.initializer
         if (expression == null) throw AssertionError()
 

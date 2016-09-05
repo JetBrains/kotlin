@@ -16,6 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-public interface KtVariableDeclaration extends KtCallableDeclaration, KtWithExpressionInitializer, KtValVarKeywordOwner {
+public interface KtVariableDeclaration extends KtCallableDeclaration, KtDeclarationWithInitializer, KtValVarKeywordOwner {
     boolean isVar();
 }

@@ -521,7 +521,7 @@ class ExpressionsOfTypeProcessor(
                     break@ParentsLoop
                 }
 
-                is KtWithExpressionInitializer -> { // "val x = <expr>" or "fun f() = <expr>"
+                is KtDeclarationWithInitializer -> { // "val x = <expr>" or "fun f() = <expr>"
                     if (element == parent.initializer) {
                         processSuspiciousDeclaration(parent)
                     }

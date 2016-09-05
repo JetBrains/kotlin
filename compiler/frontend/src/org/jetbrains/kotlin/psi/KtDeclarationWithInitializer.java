@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface KtWithExpressionInitializer extends KtDeclaration {
+public interface KtDeclarationWithInitializer extends KtDeclaration {
     @Nullable
     KtExpression getInitializer();
 
