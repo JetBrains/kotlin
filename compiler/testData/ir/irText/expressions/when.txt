@@ -2,6 +2,7 @@ FILE /when.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=A
   FUN public fun testWithSubject(/*0*/ x: kotlin.Any?): kotlin.String
     BLOCK_BODY

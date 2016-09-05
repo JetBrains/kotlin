@@ -2,6 +2,7 @@ FILE /initVal.kt
   CLASS CLASS TestInitValFromParameter
     CONSTRUCTOR public constructor TestInitValFromParameter(/*0*/ x: kotlin.Int)
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValFromParameter
@@ -11,6 +12,7 @@ FILE /initVal.kt
   CLASS CLASS TestInitValInClass
     CONSTRUCTOR public constructor TestInitValInClass()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValInClass
     PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
@@ -18,6 +20,7 @@ FILE /initVal.kt
   CLASS CLASS TestInitValInInitBlock
     CONSTRUCTOR public constructor TestInitValInInitBlock()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestInitValInInitBlock
     PROPERTY public final val x: kotlin.Int
     ANONYMOUS_INITIALIZER TestInitValInInitBlock

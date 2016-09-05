@@ -2,6 +2,7 @@ FILE /reflectionLiterals.kt
   CLASS CLASS A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=A
     FUN public final fun foo(): kotlin.Unit
       BLOCK_BODY

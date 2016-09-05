@@ -2,15 +2,18 @@ FILE /classes.kt
   CLASS CLASS TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestClass
   CLASS INTERFACE TestInterface
   CLASS OBJECT TestObject
     CONSTRUCTOR private constructor TestObject()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestObject
   CLASS ANNOTATION_CLASS TestAnnotationClass
     CONSTRUCTOR public constructor TestAnnotationClass()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestAnnotationClass
   CLASS ENUM_CLASS TestEnumClass
     CONSTRUCTOR private constructor TestEnumClass()

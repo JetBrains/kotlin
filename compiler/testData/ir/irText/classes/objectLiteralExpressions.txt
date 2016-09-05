@@ -7,6 +7,7 @@ FILE /objectLiteralExpressions.kt
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL Any
               INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
         CALL .<init> type=test1.<no name provided> operator=OBJECT_LITERAL
   PROPERTY public val test2: IFoo
@@ -15,6 +16,7 @@ FILE /objectLiteralExpressions.kt
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL Any
               INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
           FUN public open override /*1*/ fun foo(): kotlin.Unit
             BLOCK_BODY
@@ -24,10 +26,12 @@ FILE /objectLiteralExpressions.kt
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Outer
     CLASS CLASS Inner
       CONSTRUCTOR public constructor Inner()
         BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL Any
           INSTANCE_INITIALIZER_CALL classDescriptor=Inner
     FUN public final fun test3(): Outer.Inner
       BLOCK_BODY
@@ -36,7 +40,7 @@ FILE /objectLiteralExpressions.kt
             CLASS CLASS <no name provided>
               CONSTRUCTOR public constructor <no name provided>()
                 BLOCK_BODY
-                  CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
+                  DELEGATING_CONSTRUCTOR_CALL Inner
                     $this: THIS public final class Outer type=Outer
                   INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
               FUN public open override /*1*/ fun foo(): kotlin.Unit
@@ -51,7 +55,7 @@ FILE /objectLiteralExpressions.kt
           CLASS CLASS <no name provided>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
-                CALL .<init> type=Outer.Inner operator=SUPER_CONSTRUCTOR_CALL
+                DELEGATING_CONSTRUCTOR_CALL Inner
                   $this: $RECEIVER of: test4 type=Outer
                 INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
             FUN public open override /*1*/ fun foo(): kotlin.Unit

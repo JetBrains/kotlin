@@ -2,21 +2,22 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Base
   CLASS CLASS TestImplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
       BLOCK_BODY
-        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         INSTANCE_INITIALIZER_CALL classDescriptor=TestImplicitPrimaryConstructor
   CLASS CLASS TestExplicitPrimaryConstructor
     CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
       BLOCK_BODY
-        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         INSTANCE_INITIALIZER_CALL classDescriptor=TestExplicitPrimaryConstructor
   CLASS CLASS TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
-        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD y type=kotlin.Unit operator=null

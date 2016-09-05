@@ -2,6 +2,7 @@ FILE /superCalls.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Base
     FUN public open fun foo(): kotlin.Unit
       BLOCK_BODY
@@ -11,7 +12,7 @@ FILE /superCalls.kt
   CLASS CLASS Derived
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
-        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         INSTANCE_INITIALIZER_CALL classDescriptor=Derived
     FUN public open override /*1*/ fun foo(): kotlin.Unit
       BLOCK_BODY

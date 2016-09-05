@@ -2,6 +2,7 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Base
   CLASS CLASS TestProperty
     PROPERTY public final val x: kotlin.Int = 0

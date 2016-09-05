@@ -2,6 +2,7 @@ FILE /chainOfSafeCalls.kt
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=C
     FUN public final fun foo(): C
       BLOCK_BODY

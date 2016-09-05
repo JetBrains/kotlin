@@ -2,6 +2,7 @@ FILE /safeCallWithIncrementDecrement.kt
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=C
   PROPERTY public var test.C?.p: kotlin.Int
     PROPERTY_GETTER public fun test.C?.<get-p>(): kotlin.Int

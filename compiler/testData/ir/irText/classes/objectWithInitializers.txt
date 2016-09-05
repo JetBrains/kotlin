@@ -2,11 +2,12 @@ FILE /objectWithInitializers.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Base
   CLASS OBJECT Test
     CONSTRUCTOR private constructor Test()
       BLOCK_BODY
-        CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+        DELEGATING_CONSTRUCTOR_CALL Base
         INSTANCE_INITIALIZER_CALL classDescriptor=Test
     PROPERTY public final val x: kotlin.Int = 1
       EXPRESSION_BODY

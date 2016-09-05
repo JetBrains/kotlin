@@ -23,6 +23,7 @@ FILE /jvmStaticFieldReference.kt
   CLASS CLASS TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=TestClass
     PROPERTY public final val test: kotlin.Int
       EXPRESSION_BODY

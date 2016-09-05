@@ -2,6 +2,7 @@ FILE /augmentedAssignment2.kt
   CLASS CLASS A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=A
   FUN public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
     BLOCK_BODY

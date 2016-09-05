@@ -6,6 +6,7 @@ FILE /delegatedImplementation.kt
   CLASS OBJECT BaseImpl
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=BaseImpl
     FUN public open override /*1*/ fun foo(/*0*/ x: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
       BLOCK_BODY
@@ -27,6 +28,7 @@ FILE /delegatedImplementation.kt
           CLASS CLASS <no name provided>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL Any
                 INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
             PROPERTY public open override /*1*/ val x: kotlin.String
               EXPRESSION_BODY
@@ -50,6 +52,7 @@ FILE /delegatedImplementation.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Test1
     PROPERTY val `Test1$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
@@ -73,6 +76,7 @@ FILE /delegatedImplementation.kt
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Test2
     PROPERTY val `Test2$IBase$delegate`: BaseImpl
       EXPRESSION_BODY

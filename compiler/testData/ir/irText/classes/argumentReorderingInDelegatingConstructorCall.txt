@@ -2,6 +2,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
@@ -21,7 +22,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             GET_VAR yy type=kotlin.Int operator=null
           VAR val tmp1_x: kotlin.Int
             GET_VAR xx type=kotlin.Int operator=null
-          CALL .<init> type=Base operator=SUPER_CONSTRUCTOR_CALL
+          DELEGATING_CONSTRUCTOR_CALL Base
             x: GET_VAR tmp1_x type=kotlin.Int operator=null
             y: GET_VAR tmp0_y type=kotlin.Int operator=null
         INSTANCE_INITIALIZER_CALL classDescriptor=Test1
@@ -33,10 +34,9 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             GET_VAR yy type=kotlin.Int operator=null
           VAR val tmp1_x: kotlin.Int
             GET_VAR xx type=kotlin.Int operator=null
-          TYPE_OP operator=IMPLICIT_CAST typeOperand=Base
-            DELEGATING_CONSTRUCTOR_CALL Base
-              x: GET_VAR tmp1_x type=kotlin.Int operator=null
-              y: GET_VAR tmp0_y type=kotlin.Int operator=null
+          DELEGATING_CONSTRUCTOR_CALL Base
+            x: GET_VAR tmp1_x type=kotlin.Int operator=null
+            y: GET_VAR tmp0_y type=kotlin.Int operator=null
         INSTANCE_INITIALIZER_CALL classDescriptor=Test2
     CONSTRUCTOR public constructor Test2(/*0*/ xxx: kotlin.Int, /*1*/ yyy: kotlin.Int, /*2*/ a: kotlin.Any)
       BLOCK_BODY
@@ -45,7 +45,6 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
             GET_VAR yyy type=kotlin.Int operator=null
           VAR val tmp1_xx: kotlin.Int
             GET_VAR xxx type=kotlin.Int operator=null
-          TYPE_OP operator=IMPLICIT_CAST typeOperand=Test2
-            DELEGATING_CONSTRUCTOR_CALL Test2
-              xx: GET_VAR tmp1_xx type=kotlin.Int operator=null
-              yy: GET_VAR tmp0_yy type=kotlin.Int operator=null
+          DELEGATING_CONSTRUCTOR_CALL Test2
+            xx: GET_VAR tmp1_xx type=kotlin.Int operator=null
+            yy: GET_VAR tmp0_yy type=kotlin.Int operator=null

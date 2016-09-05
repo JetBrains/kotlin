@@ -4,6 +4,7 @@ FILE /classMembers.kt
       z: EXPRESSION_BODY
         CONST Int type=kotlin.Int value='1'
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD y type=kotlin.Unit operator=null
           GET_VAR y type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         SET_BACKING_FIELD z type=kotlin.Unit operator=null
@@ -51,6 +52,7 @@ FILE /classMembers.kt
     CLASS CLASS NestedClass
       CONSTRUCTOR public constructor NestedClass()
         BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL Any
           INSTANCE_INITIALIZER_CALL classDescriptor=NestedClass
       FUN public final fun function(): kotlin.Unit
         BLOCK_BODY
@@ -70,4 +72,5 @@ FILE /classMembers.kt
     CLASS OBJECT Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL Any
           INSTANCE_INITIALIZER_CALL classDescriptor=Companion

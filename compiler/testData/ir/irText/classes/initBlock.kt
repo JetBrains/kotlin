@@ -29,3 +29,15 @@ class Test4 {
         println("2")
     }
 }
+
+class Test5 {
+    init {
+        println("1")
+    }
+
+    inner class TestInner {
+        init {
+            println("2")
+        }
+    }
+}

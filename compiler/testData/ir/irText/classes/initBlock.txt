@@ -2,6 +2,7 @@ FILE /initBlock.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Test1
     ANONYMOUS_INITIALIZER Test1
       BLOCK_BODY
@@ -9,6 +10,7 @@ FILE /initBlock.kt
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(/*0*/ x: kotlin.Int)
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         SET_BACKING_FIELD x type=kotlin.Unit operator=null
           GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor=Test2
@@ -39,3 +41,21 @@ FILE /initBlock.kt
       BLOCK_BODY
         CALL .println type=kotlin.Unit operator=null
           message: CONST String type=kotlin.String value='2'
+  CLASS CLASS Test5
+    CONSTRUCTOR public constructor Test5()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
+        INSTANCE_INITIALIZER_CALL classDescriptor=Test5
+    ANONYMOUS_INITIALIZER Test5
+      BLOCK_BODY
+        CALL .println type=kotlin.Unit operator=null
+          message: CONST String type=kotlin.String value='1'
+    CLASS CLASS TestInner
+      CONSTRUCTOR public constructor TestInner()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL Any
+          INSTANCE_INITIALIZER_CALL classDescriptor=TestInner
+      ANONYMOUS_INITIALIZER TestInner
+        BLOCK_BODY
+          CALL .println type=kotlin.Unit operator=null
+            message: CONST String type=kotlin.String value='2'

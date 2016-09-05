@@ -13,6 +13,7 @@ FILE /values.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=A
   PROPERTY public val a: kotlin.Int = 0
     EXPRESSION_BODY
@@ -20,10 +21,12 @@ FILE /values.kt
   CLASS CLASS Z
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL Any
         INSTANCE_INITIALIZER_CALL classDescriptor=Z
     CLASS OBJECT Companion
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL Any
           INSTANCE_INITIALIZER_CALL classDescriptor=Companion
   FUN public fun test1(): Enum
     BLOCK_BODY

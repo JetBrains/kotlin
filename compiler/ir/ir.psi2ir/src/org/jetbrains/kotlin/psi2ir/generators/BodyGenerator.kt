@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import java.lang.AssertionError
 import java.util.*
 
@@ -177,16 +178,27 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 irBlockBody.addStatement(generateEnumEntrySuperConstructorCall(ktClassOrObject as KtEnumEntry, classDescriptor))
             }
             else -> {
-                val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return
-                for (ktSuperTypeListEntry in ktSuperTypeList.entries) {
-                    if (ktSuperTypeListEntry is KtSuperTypeCallEntry) {
-                        val statementGenerator = createStatementGenerator()
-                        val superConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperTypeListEntry)!!)
-                        val irSuperConstructorCall = CallGenerator(statementGenerator).generateCall(
-                                ktSuperTypeListEntry, superConstructorCall, IrOperator.SUPER_CONSTRUCTOR_CALL)
-                        irBlockBody.addStatement(irSuperConstructorCall)
+                val statementGenerator = createStatementGenerator()
+
+                ktClassOrObject.getSuperTypeList()?.let { ktSuperTypeList ->
+                    for (ktSuperTypeListEntry in ktSuperTypeList.entries) {
+                        if (ktSuperTypeListEntry is KtSuperTypeCallEntry) {
+                            val superConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperTypeListEntry)!!)
+                            val irSuperConstructorCall = CallGenerator(statementGenerator).generateDelegatingConstructorCall(
+                                    ktSuperTypeListEntry.startOffset, ktSuperTypeListEntry.endOffset, superConstructorCall)
+                            irBlockBody.addStatement(irSuperConstructorCall)
+                            return
+                        }
                     }
                 }
+
+                // If we are here, we didn't find a superclass entry in super types.
+                // Thus, super class should be Any.
+                val superClass = classDescriptor.getSuperClassOrAny()
+                assert(KotlinBuiltIns.isAny(superClass)) { "$classDescriptor: Super class should be any: $superClass" }
+                val superConstructor = superClass.constructors.single()
+                irBlockBody.addStatement(IrDelegatingConstructorCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                                                                         superConstructor))
             }
         }
     }
