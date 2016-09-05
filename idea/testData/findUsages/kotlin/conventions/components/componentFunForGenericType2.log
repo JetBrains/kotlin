@@ -1,5 +1,7 @@
 Checked type of f()
 Checked type of g()
+Checked type of x1
+Checked type of y1
 Resolved (x1, y1)
 Searched references to X
 Searched references to f() in Kotlin files

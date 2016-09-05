@@ -549,7 +549,7 @@ class ExpressionsOfTypeProcessor(
      */
     private fun processSuspiciousDeclaration(declaration: KtDeclaration) {
         if (declaration is KtDestructuringDeclaration) {
-            //TODO: process entries!
+            declaration.entries.forEach { processSuspiciousDeclaration(it) }
         }
         else {
             if (!isImplicitlyTyped(declaration)) return
