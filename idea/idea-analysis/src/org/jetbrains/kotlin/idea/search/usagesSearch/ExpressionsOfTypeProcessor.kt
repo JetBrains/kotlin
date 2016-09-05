@@ -200,22 +200,13 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessClassUsagesTask(classToSearch))
     }
 
-    private enum class CallableToProcessKind {
-        HAS_OUR_CLASS_TYPE,
-        PROCESS_LAMBDAS
-    }
-
-    /**
-     * Adds declaration whose type is our class (or our class used anywhere inside that type)
-     * or which has parameter of functional type with our class used inside
-     */
-    private fun addCallableDeclarationToProcess(declaration: PsiElement, kind: CallableToProcessKind) {
+    private fun addCallableDeclarationToProcess(declaration: PsiElement, processMethod: (PsiReference) -> Unit) {
         if (declaration.isOperatorExpensiveToSearch()) { // cancel all tasks and use plain search
             downShiftToPlainSearch()
             return
         }
 
-        data class ProcessCallableUsagesTask(val declaration: PsiElement, val kind: CallableToProcessKind) : Task {
+        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processMethod: (PsiReference) -> Unit) : Task {
             override fun perform() {
                 // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
                 //TODO: what about Scala and other JVM-languages?
@@ -223,27 +214,33 @@ class ExpressionsOfTypeProcessor(
                 testLog?.add("Searched references to ${logPresentation(declaration)} in Kotlin files")
                 val searchParameters = KotlinReferencesSearchParameters(
                         declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
-                searchReferences(searchParameters) { reference ->
-                    when (kind) {
-                        CallableToProcessKind.HAS_OUR_CLASS_TYPE -> {
-                            if (reference is KtDestructuringDeclarationReference) {
-                                // declaration usage in form of destructuring declaration entry
-                                addCallableDeclarationToProcess(reference.element, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
-                            }
-                            else {
-                                (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
-                            }
-                        }
-
-                        CallableToProcessKind.PROCESS_LAMBDAS -> {
-                            (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
-                        }
-                    }
-                    true
-                }
+                searchReferences(searchParameters) { reference -> processMethod(reference); true }
             }
         }
-        addTask(ProcessCallableUsagesTask(declaration, kind))
+        addTask(ProcessCallableUsagesTask(declaration, processMethod))
+    }
+
+    private val HAS_OUR_TYPE = this::processReferenceToCallableOfOurType
+    private val PROCESS_LAMBDAS = this::processLambdasByCallableReference
+
+    /**
+     * Process reference to declaration whose type is our class (or our class used anywhere inside that type)
+     */
+    private fun processReferenceToCallableOfOurType(reference: PsiReference) {
+        if (reference is KtDestructuringDeclarationReference) {
+            // declaration usage in form of destructuring declaration entry
+            addCallableDeclarationToProcess(reference.element, HAS_OUR_TYPE)
+        }
+        else {
+            (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
+        }
+    }
+
+    /**
+     * Process reference to declaration which has parameter of functional type with our class used inside
+     */
+    private fun processLambdasByCallableReference(reference: PsiReference) {
+        (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
     }
 
     private fun addSamInterfaceToProcess(psiClass: PsiClass) {
@@ -257,7 +254,7 @@ class ExpressionsOfTypeProcessor(
                     val parameter = ((reference as? PsiJavaCodeReferenceElement)?.parent as? PsiTypeElement)?.parent as? PsiParameter
                     val method = parameter?.declarationScope as? PsiMethod
                     if (method != null) {
-                        addCallableDeclarationToProcess(method, CallableToProcessKind.PROCESS_LAMBDAS)
+                        addCallableDeclarationToProcess(method, PROCESS_LAMBDAS)
                     }
                     true
                 }
@@ -349,14 +346,14 @@ class ExpressionsOfTypeProcessor(
             is KtCallableDeclaration -> {
                 when (typeRef) {
                     typeRefParent.typeReference -> { // usage in type of callable declaration
-                        addCallableDeclarationToProcess(typeRefParent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
+                        addCallableDeclarationToProcess(typeRefParent, HAS_OUR_TYPE)
 
                         if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
                             val usedInsideFunctionalType = userType.parents.takeWhile { it != typeRef }.any { it is KtFunctionType }
                             if (usedInsideFunctionalType) {
                                 val function = (typeRefParent.parent as? KtParameterList)?.parent as? KtFunction
                                 if (function != null) {
-                                    addCallableDeclarationToProcess(function, CallableToProcessKind.PROCESS_LAMBDAS)
+                                    addCallableDeclarationToProcess(function, PROCESS_LAMBDAS)
                                 }
                             }
                         }
@@ -440,14 +437,14 @@ class ExpressionsOfTypeProcessor(
 
                 is PsiMethod -> {
                     if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) { // usage in return type of a method
-                        addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
+                        addCallableDeclarationToProcess(parent, HAS_OUR_TYPE)
                     }
                     break@ParentsLoop
                 }
 
                 is PsiField -> {
                     if (prev == parent.typeElement && !parent.isPrivateOrLocal()) { // usage in type of a field
-                        addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
+                        addCallableDeclarationToProcess(parent, HAS_OUR_TYPE)
                     }
                     break@ParentsLoop
                 }
@@ -559,7 +556,7 @@ class ExpressionsOfTypeProcessor(
             val descriptor = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
             val type = descriptor.returnType
             if (type != null && type.containsTypeOrDerivedInside(typeToSearch)) {
-                addCallableDeclarationToProcess(declaration, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
+                addCallableDeclarationToProcess(declaration, HAS_OUR_TYPE)
             }
         }
     }
