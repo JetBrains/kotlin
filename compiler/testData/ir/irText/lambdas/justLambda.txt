@@ -1,5 +1,5 @@
 FILE /justLambda.kt
-  PROPERTY public val lambda: () -> kotlin.Int
+  PROPERTY public val test1: () -> kotlin.Int
     EXPRESSION_BODY
       BLOCK type=() -> kotlin.Int operator=LAMBDA
         FUN local final fun <anonymous>(): kotlin.Int
@@ -7,3 +7,10 @@ FILE /justLambda.kt
             RETURN type=kotlin.Nothing from=<anonymous>
               CONST Int type=kotlin.Int value='42'
         CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA
+  PROPERTY public val test2: () -> kotlin.Unit
+    EXPRESSION_BODY
+      BLOCK type=() -> kotlin.Unit operator=LAMBDA
+        FUN local final fun <anonymous>(): kotlin.Unit
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from=<anonymous>
+        CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Unit operator=LAMBDA

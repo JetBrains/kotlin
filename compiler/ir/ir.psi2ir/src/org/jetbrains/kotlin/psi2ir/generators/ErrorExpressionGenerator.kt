@@ -27,17 +27,20 @@ import org.jetbrains.kotlin.types.ErrorUtils
 class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     private val ignoreErrors: Boolean get() = context.configuration.ignoreErrors
 
-    private inline fun generateErrorExpression(message: String? = null, body: () -> IrExpression) =
-            if (ignoreErrors) body() else throw RuntimeException(message)
+    private inline fun generateErrorExpression(ktElement: KtElement, e: Exception? = null, body: () -> IrExpression) =
+            if (ignoreErrors)
+                body()
+            else
+                throw RuntimeException("${e?.message}: ${ktElement.javaClass.simpleName}:\n${ktElement.text}", e)
 
-    fun generateErrorExpression(ktElement: KtElement, message: String?): IrExpression =
-            generateErrorExpression {
+    fun generateErrorExpression(ktElement: KtElement, e: Exception): IrExpression =
+            generateErrorExpression(ktElement, e) {
                 IrErrorExpressionImpl(ktElement.startOffset, ktElement.endOffset,
                                       if (ktElement is KtExpression) getErrorExpressionType(ktElement) else ErrorUtils.createErrorType(""),
-                                      message ?: "")
+                                      e.message ?: "")
             }
 
-    fun generateErrorCall(ktCall: KtCallExpression): IrExpression = generateErrorExpression {
+    fun generateErrorCall(ktCall: KtCallExpression): IrExpression = generateErrorExpression(ktCall) {
         val type = getErrorExpressionType(ktCall)
 
         val irErrorCall = IrErrorCallExpressionImpl(ktCall.startOffset, ktCall.endOffset, type, "") // TODO problem description?
@@ -62,7 +65,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     private fun getErrorExpressionType(ktExpression: KtExpression) =
             getInferredTypeWithImplicitCasts(ktExpression) ?: ErrorUtils.createErrorType("")
 
-    fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression {
+    fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression(ktName) {
         val type = getErrorExpressionType(ktName)
 
         val irErrorCall = IrErrorCallExpressionImpl(ktName.startOffset, ktName.endOffset, type, "") // TODO problem description?

@@ -60,7 +60,7 @@ class StatementGenerator(
                 deparenthesize().accept(this@StatementGenerator, null)
             }
             catch (e: Exception) {
-                ErrorExpressionGenerator(this@StatementGenerator).generateErrorExpression(this, e.message)
+                ErrorExpressionGenerator(this@StatementGenerator).generateErrorExpression(this, e)
             }
 
     private fun KtElement.genExpr(): IrExpression =

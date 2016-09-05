@@ -70,11 +70,17 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         val ktBody = ktFun.bodyExpression!!
         val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
         if (ktBody is KtBlockExpression) {
-            for (ktStatement in ktBody.statements.subList(0, ktBody.statements.size - 1)) {
-                irBlockBody.addStatement(statementGenerator.generateStatement(ktStatement))
+            val ktBodyStatements = ktBody.statements
+            if (ktBodyStatements.isNotEmpty()) {
+                for (ktStatement in ktBodyStatements.dropLast(1)) {
+                    irBlockBody.addStatement(statementGenerator.generateStatement(ktStatement))
+                }
+                val ktReturnedValue = ktBodyStatements.last()
+                statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
             }
-            val ktReturnedValue = ktBody.statements.last()
-            statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
+            else {
+                irBlockBody.addStatement(generateReturnExpression(ktBody.startOffset, ktBody.endOffset, null))
+            }
         }
 
         return irBlockBody
@@ -100,11 +106,14 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
             if (KotlinBuiltIns.isNothing(type))
                 this
             else {
-                val returnTarget = (scopeOwner as? CallableDescriptor) ?:
-                                   throw AssertionError("'return' in a non-callable: $scopeOwner")
-                IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType,
-                             returnTarget, this)
+                generateReturnExpression(startOffset, endOffset, this)
             }
+
+    private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression?): IrReturnImpl {
+        val returnTarget = (scopeOwner as? CallableDescriptor) ?:
+                           throw AssertionError("'return' in a non-callable: $scopeOwner")
+        return IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, returnTarget, returnValue)
+    }
 
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
