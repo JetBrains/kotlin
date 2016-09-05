@@ -234,6 +234,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                     if (element.isValid) {
                         element.accept(object : PsiRecursiveElementWalkingVisitor() {
                             override fun visitElement(element: PsiElement) {
+                                //TODO: resolve of multiple references at once
                                 val reference = extractReference(element)
                                 if (reference != null && reference.isReferenceTo(targetDeclaration)) {
                                     consumer.process(reference)
