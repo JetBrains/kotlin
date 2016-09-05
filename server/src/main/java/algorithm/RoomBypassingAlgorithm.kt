@@ -14,9 +14,6 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
     override val SMOOTHING = SonarRequest.Smoothing.MEDIAN
     override val WINDOW_SIZE = 3
 
-    //SHOULD BE CALIBRATED BEFORE RUNNING!!!!!!!!!!!
-    private val CHARGE_CORRECTION = 1.0//on full charge ok is 0.83 - 0.86
-
     private val MAX_DISTANCE_TO_WALL_AHEAD = 55         // reached the corner and should turn left
     private val OUTER_CORNER_DISTANCE_THRESHOLD = 90    // reached outer corner
     private val ISOSCALENESS_MIN_DIFF = 5               // have to correct alignment to the wall
@@ -183,7 +180,6 @@ class RoomBypassingAlgorithm(thisCar: Car) : AbstractAlgorithm(thisCar) {
             calibrateAfterRotate = false
         }
         log("")
-
 
         // Check most basic measurements: 60/90/120
         log("2. Check if we have measurement on 90")
