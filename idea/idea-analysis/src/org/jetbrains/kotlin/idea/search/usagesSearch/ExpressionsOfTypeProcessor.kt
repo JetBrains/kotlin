@@ -28,6 +28,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -69,6 +70,7 @@ class ExpressionsOfTypeProcessor(
         private val suspiciousExpressionHandler: (KtExpression) -> Unit,
         private val suspiciousScopeHandler: (SearchScope) -> Unit
 ) {
+    @TestOnly
     enum class Mode {
         ALWAYS_SMART,
         ALWAYS_PLAIN,
@@ -76,8 +78,9 @@ class ExpressionsOfTypeProcessor(
     }
 
     companion object {
-        // for tests
+        @TestOnly
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
+        @TestOnly
         var testLog: MutableList<String>? = null
 
         fun logPresentation(element: PsiElement): String? {
