@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
@@ -92,7 +93,7 @@ class PropertyReferenceCodegen(
         }
 
         generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
-            aconst(getPropertyReferenceSignature(target as PropertyDescriptor, state))
+            generateCallableReferenceSignature(this, target, state)
         }
 
         generateAccessors()
@@ -132,14 +133,19 @@ class PropertyReferenceCodegen(
 
     companion object {
         @JvmStatic
-        fun getPropertyReferenceSignature(property: PropertyDescriptor, state: GenerationState): String {
-            val getter =
-                    property.getter ?: DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY).apply {
-                        initialize(property.type)
+        fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+            val accessor = when (callable) {
+                is FunctionDescriptor -> callable
+                is PropertyDescriptor ->
+                    callable.getter ?:
+                    DescriptorFactory.createDefaultGetter(callable, Annotations.EMPTY).apply {
+                        initialize(callable.type)
                     }
-
-            val method = state.typeMapper.mapAsmMethod(getter.original)
-            return method.name + method.descriptor
+                else -> error("Unsupported callable reference: $callable")
+            }
+            val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
+            val method = state.typeMapper.mapAsmMethod(declaration)
+            iv.aconst(method.name + method.descriptor)
         }
 
         @JvmStatic

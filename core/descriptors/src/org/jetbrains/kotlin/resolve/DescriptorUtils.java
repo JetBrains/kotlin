@@ -416,8 +416,8 @@ public class DescriptorUtils {
 
     /**
      * Given a fake override, finds any declaration of it in the overridden descriptors. Keep in mind that there may be many declarations
-     * of the fake override in the supertypes, this method finds just the only one.
-     * TODO: probably all call-sites of this method are wrong, they should handle all super-declarations
+     * of the fake override in the supertypes, this method finds just only one of them.
+     * TODO: probably some call-sites of this method are wrong, they should handle all super-declarations
      */
     @NotNull
     @SuppressWarnings("unchecked")
