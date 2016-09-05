@@ -92,7 +92,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         val functionIndex = KotlinFunctionShortNameIndex.getInstance()
 
         val kotlinFunctionsPsi = functionIndex.get(name, project, scope)
-                .map { LightClassUtil.getLightClassMethod(it) as? PsiMethod }
+                .flatMap { LightClassUtil.getLightClassMethods(it) }
 
         val propertyAccessorsPsi = getPropertyNamesCandidatesByAccessorName(Name.identifier(name))
                 .flatMap { propertiesIndex.get(it.asString(), project, scope) }

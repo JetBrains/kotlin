@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -53,9 +52,11 @@ object LightClassUtil {
 
     fun getLightClassAccessorMethods(accessor: KtPropertyAccessor): List<PsiMethod> {
         val property = accessor.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
-        val wrappers = getPsiMethodWrappers(property, true)
-        return wrappers.filter { wrapper -> (accessor.isGetter && !JvmAbi.isSetterName(wrapper.name)) ||
-                                            (accessor.isSetter && JvmAbi.isSetterName(wrapper.name)) }
+        val wrappers = getPsiMethodWrappers(property)
+        return wrappers.filter { wrapper ->
+            (accessor.isGetter && !JvmAbi.isSetterName(wrapper.name)) ||
+            (accessor.isSetter && JvmAbi.isSetterName(wrapper.name))
+        }.toList()
     }
 
     fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
@@ -120,36 +121,19 @@ object LightClassUtil {
     }
 
     fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
-        return getPsiMethodWrappers(function, true)
+        return getPsiMethodWrappers(function).toList()
     }
 
     private fun getPsiMethodWrapper(declaration: KtDeclaration): PsiMethod? {
-        return getPsiMethodWrappers(declaration, false).firstOrNull()
+        return getPsiMethodWrappers(declaration).firstOrNull()
     }
 
-    private fun getPsiMethodWrappers(declaration: KtDeclaration, collectAll: Boolean): List<PsiMethod> {
-        val psiClass = getWrappingClass(declaration) ?: return emptyList()
-
-        val methods = SmartList<PsiMethod>()
-        for (method in psiClass.methods.asList()) {
-            try {
-                if (method is KtLightMethod && method.kotlinOrigin === declaration) {
-                    methods.add(method)
-                    if (!collectAll) {
-                        return methods
-                    }
-                }
-            }
-            catch (e: ProcessCanceledException) {
-                throw e
-            }
-            catch (e: Throwable) {
-                throw IllegalStateException(
-                        "Error while wrapping declaration " + declaration.name + "Context\n:" + method, e)
-            }
-        }
-
-        return methods
+    private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<PsiMethod> {
+        val psiClasses = getWrappingClasses(declaration)
+        if (psiClasses.size == 0)
+            return emptySequence()
+        return psiClasses.asSequence().flatMap { it.methods.asSequence() }
+                .filter { method -> method is KtLightMethod && method.kotlinOrigin === declaration }
     }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
@@ -185,6 +169,15 @@ object LightClassUtil {
         return null
     }
 
+    private fun getWrappingClasses(declaration: KtDeclaration): List<PsiClass> {
+        val wrapperClass = getWrappingClass(declaration) ?: return emptyList()
+        val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
+        if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion()) {
+            return listOfNotNull(wrapperClass, wrapperClass.parent as? KtLightClass)
+        }
+        return listOf(wrapperClass)
+    }
+
     fun canGenerateLightClass(declaration: KtDeclaration): Boolean {
         //noinspection unchecked
         return PsiTreeUtil.getParentOfType(declaration, KtFunction::class.java, KtProperty::class.java) == null
@@ -197,7 +190,7 @@ object LightClassUtil {
         var setterWrapper = specialSetter
         val additionalAccessors = arrayListOf<PsiMethod>()
 
-        for (wrapper in getPsiMethodWrappers(ktDeclaration, true)) {
+        for (wrapper in getPsiMethodWrappers(ktDeclaration)) {
             if (wrapper !is KtLightMethod) continue
 
             if (wrapper.isSetter) {
