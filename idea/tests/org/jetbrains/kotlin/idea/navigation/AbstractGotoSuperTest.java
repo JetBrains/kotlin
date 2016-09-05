@@ -16,25 +16,13 @@
 
 package org.jetbrains.kotlin.idea.navigation;
 
-import com.intellij.codeInsight.CodeInsightActionHandler;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public abstract class AbstractGotoSuperTest extends LightCodeInsightFixtureTestCase {
-    protected void doTest(String testPath) {
-        List<String> parts = KotlinTestUtils.loadBeforeAfterText(testPath);
-
-        myFixture.configureByText(KotlinFileType.INSTANCE, parts.get(0));
-
-        CodeInsightActionHandler gotoSuperAction =
-                (CodeInsightActionHandler) ActionManager.getInstance().getAction(IdeActions.ACTION_GOTO_SUPER);
-        gotoSuperAction.invoke(getProject(), myFixture.getEditor(), myFixture.getFile());
-
-        myFixture.checkResult(parts.get(1));
+public abstract class AbstractGotoSuperTest extends AbstractGotoActionTest {
+    @NotNull
+    @Override
+    protected String getActionName() {
+        return IdeActions.ACTION_GOTO_SUPER;
     }
 }
