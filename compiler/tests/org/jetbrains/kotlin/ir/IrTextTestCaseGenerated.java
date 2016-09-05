@@ -624,5 +624,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/nonLocalReturn.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("samAdapter.kt")
+        public void testSamAdapter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/samAdapter.kt");
+            doTest(fileName);
+        }
     }
 }
