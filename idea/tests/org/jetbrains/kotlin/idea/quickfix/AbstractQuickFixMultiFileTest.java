@@ -235,87 +235,94 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk());
         }
 
-        final List<TestFile> subFiles = KotlinTestUtils.createTestFiles(
-                "single.kt",
-                multifileText,
-                new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
-                    @NotNull
-                    @Override
-                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
-                        if (text.startsWith("// FILE")) {
-                            String firstLineDropped = StringUtil.substringAfter(text, "\n");
-                            assert firstLineDropped != null;
+        try {
+            final List<TestFile> subFiles = KotlinTestUtils.createTestFiles(
+                    "single.kt",
+                    multifileText,
+                    new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+                        @NotNull
+                        @Override
+                        public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                            if (text.startsWith("// FILE")) {
+                                String firstLineDropped = StringUtil.substringAfter(text, "\n");
+                                assert firstLineDropped != null;
 
-                            text = firstLineDropped;
+                                text = firstLineDropped;
+                            }
+                            return new TestFile(fileName, text);
                         }
-                        return new TestFile(fileName, text);
-                    }
-                });
+                    });
 
-        final TestFile afterFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
-            @Override
-            public Boolean invoke(TestFile file) {
-                return file.path.contains(".after");
-            }
-        });
-        final TestFile beforeFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
-            @Override
-            public Boolean invoke(TestFile file) {
-                return file.path.contains(".before");
-            }
-        });
+            final TestFile afterFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
+                @Override
+                public Boolean invoke(TestFile file) {
+                    return file.path.contains(".after");
+                }
+            });
+            final TestFile beforeFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
+                @Override
+                public Boolean invoke(TestFile file) {
+                    return file.path.contains(".before");
+                }
+            });
 
-        assert beforeFile != null;
-        assert afterFile != null;
+            assert beforeFile != null;
+            assert afterFile != null;
 
-        subFiles.remove(afterFile);
-        subFiles.remove(beforeFile);
+            subFiles.remove(afterFile);
+            subFiles.remove(beforeFile);
 
-        configureMultiFileTest(subFiles, beforeFile);
+            configureMultiFileTest(subFiles, beforeFile);
 
-        CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PsiFile psiFile = getFile();
+            CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        PsiFile psiFile = getFile();
 
-                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, beforeFile.content);
-                    String text = pair.getFirst();
+                        Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, beforeFile.content);
+                        String text = pair.getFirst();
 
-                    boolean actionShouldBeAvailable = pair.getSecond();
+                        boolean actionShouldBeAvailable = pair.getSecond();
 
-                    if (psiFile instanceof KtFile) {
-                        DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
-                    }
-
-                    doAction(text, actionShouldBeAvailable, getTestName(false));
-
-                    String actualText = getFile().getText();
-                    String afterText = new StringBuilder(actualText).insert(getEditor().getCaretModel().getOffset(), "<caret>").toString();
-
-                    if (pair.second && !afterText.equals(afterFile.content)) {
-                        StringBuilder actualTestFile = new StringBuilder();
-                        actualTestFile.append("// FILE: ").append(beforeFile.path).append("\n").append(beforeFile.content);
-                        for (TestFile file : subFiles) {
-                            actualTestFile.append("// FILE: ").append(file.path).append("\n").append(file.content);
+                        if (psiFile instanceof KtFile) {
+                            DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
                         }
-                        actualTestFile.append("// FILE: ").append(afterFile.path).append("\n").append(afterText);
 
-                        KotlinTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
+                        doAction(text, actionShouldBeAvailable, getTestName(false));
+
+                        String actualText = getFile().getText();
+                        String afterText =
+                                new StringBuilder(actualText).insert(getEditor().getCaretModel().getOffset(), "<caret>").toString();
+
+                        if (pair.second && !afterText.equals(afterFile.content)) {
+                            StringBuilder actualTestFile = new StringBuilder();
+                            actualTestFile.append("// FILE: ").append(beforeFile.path).append("\n").append(beforeFile.content);
+                            for (TestFile file : subFiles) {
+                                actualTestFile.append("// FILE: ").append(file.path).append("\n").append(file.content);
+                            }
+                            actualTestFile.append("// FILE: ").append(afterFile.path).append("\n").append(afterText);
+
+                            KotlinTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
+                        }
+                    }
+                    catch (ComparisonFailure e) {
+                        throw e;
+                    }
+                    catch (AssertionError e) {
+                        throw e;
+                    }
+                    catch (Throwable e) {
+                        e.printStackTrace();
+                        fail(getTestName(true));
                     }
                 }
-                catch (ComparisonFailure e) {
-                    throw e;
-                }
-                catch (AssertionError e) {
-                    throw e;
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                    fail(getTestName(true));
-                }
+            }, "", "");
+        } finally {
+            if (withRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk());
             }
-        }, "", "");
+        }
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
