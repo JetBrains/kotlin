@@ -27,22 +27,17 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class KotlinTypeDeclarationProvider : TypeDeclarationProvider {
     override fun getSymbolTypeDeclarations(symbol: PsiElement): Array<PsiElement>? {
-        if (symbol is KtElement && symbol.getContainingFile() is KtFile) {
-            val bindingContext = symbol.analyze()
-            val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol)
-            if (descriptor is CallableDescriptor) {
-                val type = descriptor.returnType
-                if (type != null) {
-                    val classifierDescriptor = type.constructor.declarationDescriptor
-                    if (classifierDescriptor != null) {
-                        val typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor)
-                        if (typeElement != null) {
-                            return arrayOf(typeElement)
-                        }
-                    }
-                }
-            }
-        }
-        return arrayOfNulls(0)
+        if (symbol !is KtElement || symbol.getContainingFile() !is KtFile) return emptyArray()
+
+        val bindingContext = symbol.analyze()
+        val callableDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol)
+        if (callableDescriptor !is CallableDescriptor) return emptyArray()
+
+        val type = callableDescriptor.returnType ?: return emptyArray()
+
+        val classifierDescriptor = type.constructor.declarationDescriptor ?: return emptyArray()
+        val typeElement = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor) ?: return emptyArray()
+
+        return arrayOf(typeElement)
     }
 }
