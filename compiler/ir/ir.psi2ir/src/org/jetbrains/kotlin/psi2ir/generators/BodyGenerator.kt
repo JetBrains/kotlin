@@ -120,9 +120,23 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     private fun generateDelegatingConstructorCall(irBlockBody: IrBlockBodyImpl, ktConstructor: KtSecondaryConstructor) {
+        val constructorDescriptor = scopeOwner as ConstructorDescriptor
+
         val statementGenerator = createStatementGenerator()
         val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
-        val delegatingConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktDelegatingConstructorCall)!!)
+        val delegatingConstructorResolvedCall = getResolvedCall(ktDelegatingConstructorCall)
+
+        if (delegatingConstructorResolvedCall == null) {
+            if (constructorDescriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
+                generateEnumSuperConstructorCall(irBlockBody, ktConstructor)
+            }
+            else {
+                generateAnySuperConstructorCAll(irBlockBody, ktConstructor)
+            }
+            return
+        }
+
+        val delegatingConstructorCall = statementGenerator.pregenerateCall(delegatingConstructorResolvedCall)
         val irDelegatingConstructorCall = CallGenerator(statementGenerator).generateDelegatingConstructorCall(
                 ktDelegatingConstructorCall.startOffset, ktDelegatingConstructorCall.endOffset,
                 delegatingConstructorCall)
@@ -170,9 +184,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
         when (classDescriptor.kind) {
             ClassKind.ENUM_CLASS -> {
-                val kotlinEnumConstructor = context.builtIns.enum.unsubstitutedPrimaryConstructor!!
-                irBlockBody.addStatement(IrEnumConstructorCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset,
-                                                                   kotlinEnumConstructor, null))
+                generateEnumSuperConstructorCall(irBlockBody, ktClassOrObject)
             }
             ClassKind.ENUM_ENTRY -> {
                 irBlockBody.addStatement(generateEnumEntrySuperConstructorCall(ktClassOrObject as KtEnumEntry, classDescriptor))
@@ -196,11 +208,19 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 // Thus, super class should be Any.
                 val superClass = classDescriptor.getSuperClassOrAny()
                 assert(KotlinBuiltIns.isAny(superClass)) { "$classDescriptor: Super class should be any: $superClass" }
-                val superConstructor = superClass.constructors.single()
-                irBlockBody.addStatement(IrDelegatingConstructorCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset,
-                                                                         superConstructor))
+                generateAnySuperConstructorCAll(irBlockBody, ktClassOrObject)
             }
         }
+    }
+
+    private fun generateAnySuperConstructorCAll(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
+        val anyConstructor = context.builtIns.any.constructors.single()
+        irBlockBody.addStatement(IrDelegatingConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, anyConstructor))
+    }
+
+    private fun generateEnumSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
+        val enumConstructor = context.builtIns.enum.constructors.single()
+        irBlockBody.addStatement(IrEnumConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, enumConstructor, null))
     }
 
     private fun generateEnumEntrySuperConstructorCall(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
