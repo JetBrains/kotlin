@@ -1,5 +1,9 @@
 Checked type of a
 Checked type of a
+Checked type of a1
+Checked type of a1
+Checked type of a2
+Checked type of a2
 Resolved A(0) + A(1)
 Resolved A(0) + A(1)
 Resolved A(0) + A(1) + 2
@@ -11,6 +15,8 @@ Resolved a += 1
 Resolved a += 1
 Resolved a += A(1)
 Resolved a += A(1)
+Resolved a1 + 1
+Resolved a1 + 1
 Searched references to A
 Searched references to A
 Searched references to A.plus(a: A) in Kotlin files
@@ -19,8 +25,14 @@ Searched references to A.plus(m: Int) in Kotlin files
 Searched references to A.plus(m: Int) in Kotlin files
 Searched references to a in Kotlin files
 Searched references to a in Kotlin files
+Searched references to a1 in Kotlin files
+Searched references to a1 in Kotlin files
+Searched references to a2 in Kotlin files
+Searched references to a2 in Kotlin files
 Searched references to parameter a of A.plus(a: A) in Kotlin files
 Searched references to parameter a of A.plus(a: A) in Kotlin files
+Searched references to parameter array of test(array: Array<A>) in Kotlin files
+Searched references to parameter array of test(array: Array<A>) in Kotlin files
 Used plain search of A.plus(a: A) in LocalSearchScope:
     CLASS:A
 Used plain search of A.plus(m: Int) in LocalSearchScope:

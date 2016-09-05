@@ -1,4 +1,7 @@
 Checked type of a
+Checked type of x
+Checked type of y
+Checked type of z
 Resolved (x, y, z)
 Searched references to A
 Searched references to a in Kotlin files

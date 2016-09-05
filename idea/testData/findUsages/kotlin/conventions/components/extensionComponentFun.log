@@ -1,4 +1,10 @@
 Checked type of f()
+Checked type of x
+Checked type of x1
+Checked type of x2
+Checked type of y
+Checked type of y1
+Checked type of y2
 Resolved (x, y)
 Resolved (x1, y1)
 Resolved (x2, y2)
