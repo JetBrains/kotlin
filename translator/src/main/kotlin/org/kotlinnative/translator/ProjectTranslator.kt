@@ -23,8 +23,8 @@ class ProjectTranslator(val files: List<KtFile>,
 
     fun addFunctionDeclarations(file: KtFile) {
         val variableManager = VariableManager(state.globalVariableCollection)
-        for (declaration in file.declarations.filter { it is KtNamedFunction }) {
-            val function = FunctionCodegen(state, variableManager, declaration as KtNamedFunction, codeBuilder)
+        for (declaration in file.declarations.filterIsInstance<KtNamedFunction>()) {
+            val function = FunctionCodegen(state, variableManager, declaration, codeBuilder)
             if (function.external) {
                 state.externalFunctions.put(function.fullName, function)
             } else {
@@ -35,24 +35,24 @@ class ProjectTranslator(val files: List<KtFile>,
 
     fun addClassDeclarations(file: KtFile) {
         val variableManager = VariableManager(state.globalVariableCollection)
-        for (declaration in file.declarations.filter { it is KtClass }) {
-            val codegen = ClassCodegen(state, variableManager, declaration as KtClass, codeBuilder)
+        for (declaration in file.declarations.filterIsInstance<KtClass>()) {
+            val codegen = ClassCodegen(state, variableManager, declaration, codeBuilder)
             state.classes.put(codegen.structName, codegen)
         }
     }
 
     fun addPropertyDeclarations(file: KtFile) {
         val variableManager = VariableManager(state.globalVariableCollection)
-        for (declaration in file.declarations.filter { it is KtProperty }) {
-            val property = PropertyCodegen(state, variableManager, declaration as KtProperty, codeBuilder)
+        for (declaration in file.declarations.filterIsInstance<KtProperty>()) {
+            val property = PropertyCodegen(state, variableManager, declaration, codeBuilder)
             state.properties.put(declaration.name!!, property)
         }
     }
 
     fun addObjectDeclarations(file: KtFile) {
         val variableManager = VariableManager(state.globalVariableCollection)
-        for (declaration in file.declarations.filter { it is KtObjectDeclaration }) {
-            val codegen = ObjectCodegen(state, variableManager, declaration as KtObjectDeclaration, codeBuilder)
+        for (declaration in file.declarations.filterIsInstance<KtObjectDeclaration>()) {
+            val codegen = ObjectCodegen(state, variableManager, declaration, codeBuilder)
             state.objects.put(codegen.structName, codegen)
         }
     }

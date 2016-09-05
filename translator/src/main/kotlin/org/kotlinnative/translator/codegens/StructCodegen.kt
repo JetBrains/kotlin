@@ -39,8 +39,8 @@ abstract class StructCodegen(val state: TranslationState,
 
     open fun prepareForGenerate() {
         generateStruct()
-        classOrObject.declarations.filter { it is KtNamedFunction }.map {
-            val function = FunctionCodegen(state, variableManager, it as KtNamedFunction, codeBuilder)
+        classOrObject.declarations.filterIsInstance<KtNamedFunction>().map {
+            val function = FunctionCodegen(state, variableManager, it, codeBuilder)
             methods.put(function.name, function)
         }
     }
@@ -104,11 +104,11 @@ abstract class StructCodegen(val state: TranslationState,
     }
 
     private fun generateEnumFields() {
-        val enumEntries = classOrObject.declarations.filter { it is KtEnumEntry }
+        val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
 
         for (declaration in enumEntries) {
             val name = declaration.name!!
-            val initializer = (declaration as KtEnumEntry).initializerList!!.initializers[0]
+            val initializer = declaration.initializerList!!.initializers[0]
             val arguments = (initializer as KtSuperTypeCallEntry).valueArguments.map { it.getArgumentExpression()!!.text }
 
             val field = codeBuilder.getNewVariable(type, scope = LLVMVariableScope())
