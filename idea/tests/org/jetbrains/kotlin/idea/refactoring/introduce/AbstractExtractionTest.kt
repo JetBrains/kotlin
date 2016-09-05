@@ -22,6 +22,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
@@ -33,10 +34,16 @@ import com.intellij.refactoring.introduceParameter.AbstractJavaInplaceIntroducer
 import com.intellij.refactoring.introduceParameter.IntroduceParameterProcessor
 import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.chooseMembers
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperclassInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperclassRefactoring
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -46,22 +53,23 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.KotlinIntroduceTypeParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.markMembersInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
 import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
+import java.lang.AssertionError
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -342,6 +350,33 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
                 KotlinIntroduceTypeAliasHandler.doInvoke(project, editor, elements, explicitPreviousSibling ?: previousSibling) {
                     it.copy(name = aliasName ?: it.name, visibility = aliasVisibility ?: it.visibility)
                 }
+            }
+        }
+    }
+
+    protected fun doExtractSuperclassTest(path: String) {
+        doTest(path) { file ->
+            file as KtFile
+
+            markMembersInfo(file)
+
+            val targetParent = file.findElementByCommentPrefix("// SIBLING:")?.parent ?: file.parent!!
+            val fileText = file.text
+            val className = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NAME:")!!
+            val editor = fixture.editor
+            val originalClass = file.findElementAt(editor.caretModel.offset)?.getStrictParentOfType<KtClassOrObject>()!!
+            val memberInfos = chooseMembers(extractClassMembers(originalClass))
+            val conflicts = ExtractSuperclassRefactoring.collectConflicts(originalClass, memberInfos, targetParent, className)
+            project.checkConflictsInteractively(conflicts) {
+                val extractInfo = ExtractSuperclassInfo(
+                        originalClass,
+                        memberInfos,
+                        targetParent,
+                        "$className.${KotlinFileType.EXTENSION}",
+                        className,
+                        DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)
+                )
+                ExtractSuperclassRefactoring(extractInfo).performRefactoring()
             }
         }
     }

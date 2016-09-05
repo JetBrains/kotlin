@@ -4183,4 +4183,79 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/refactoring/extractSuperclass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExtractSuperclass extends AbstractExtractionTest {
+        @TestMetadata("addSuperclassNoSecondaryConstructors.kt")
+        public void testAddSuperclassNoSecondaryConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/addSuperclassNoSecondaryConstructors.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("addSuperclassOnlySecondaryConstructors.kt")
+        public void testAddSuperclassOnlySecondaryConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/addSuperclassOnlySecondaryConstructors.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("addSuperclassPrimaryConstructor.kt")
+        public void testAddSuperclassPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/addSuperclassPrimaryConstructor.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("addTypeParameters.kt")
+        public void testAddTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/addTypeParameters.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("addTypeParametersWithAbstract.kt")
+        public void testAddTypeParametersWithAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/addTypeParametersWithAbstract.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        public void testAllFilesPresentInExtractSuperclass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractSuperclass"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/annotation.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/enum.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("interface.kt")
+        public void testInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/interface.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("privateClass.kt")
+        public void testPrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/privateClass.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("privateMember.kt")
+        public void testPrivateMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/privateMember.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
+        @TestMetadata("replaceSuperclass.kt")
+        public void testReplaceSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/replaceSuperclass.kt");
+            doExtractSuperclassTest(fileName);
+        }
+    }
 }

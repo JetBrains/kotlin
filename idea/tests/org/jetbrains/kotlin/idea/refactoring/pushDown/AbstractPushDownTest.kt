@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.pushDown
 
 import org.jetbrains.kotlin.idea.refactoring.AbstractMemberPullPushTest
+import org.jetbrains.kotlin.idea.refactoring.chooseMembers
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 
 abstract class AbstractPushDownTest : AbstractMemberPullPushTest() {

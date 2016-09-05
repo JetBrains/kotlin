@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.SmartList
 
 fun showErrorHint(project: Project, editor: Editor, message: String, title: String) {
     CodeInsightUtils.showErrorHint(project, editor, message, title, null)
@@ -218,3 +219,21 @@ fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
 }
 
 fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDeclaration || (e is KtClass && !e.isInner())
+
+fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElement): T {
+    val targetParent = targetSibling.parent
+
+    val anchorCandidates = SmartList<PsiElement>()
+    anchorCandidates.add(targetSibling)
+    if (targetSibling is KtEnumEntry) {
+        anchorCandidates.add(targetSibling.siblings().last { it is KtEnumEntry })
+    }
+
+    val anchor = anchorCandidates.minBy { it.startOffset }!!.parentsWithSelf.first { it.parent == targetParent }
+    val targetContainer = anchor.parent!!
+
+    @Suppress("UNCHECKED_CAST")
+    return (targetContainer.addBefore(declaration, anchor) as T).apply {
+        targetContainer.addBefore(KtPsiFactory(declaration).createWhiteSpace("\n\n"), anchor)
+    }
+}

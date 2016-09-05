@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.codeInsight.highlighting.HighlightUsagesDescriptionLocation
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionLocation
 import com.intellij.psi.ElementDescriptionProvider
 import com.intellij.psi.PsiElement
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -72,7 +74,12 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             targetElement.parent as? KtProperty
         } else targetElement as? PsiNamedElement
 
-        if (namedElement == null || namedElement.language != KotlinLanguage.INSTANCE) return null
+        if (namedElement == null) {
+            return if (targetElement is KtElement) "'" + StringUtil.shortenTextWithEllipsis(targetElement.text.collapseSpaces(), 53, 0) + "'" else null
+        }
+
+        if (namedElement.language != KotlinLanguage.INSTANCE) return null
+
         return when(location) {
             is UsageViewTypeLocation -> elementKind()
             is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement.name

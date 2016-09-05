@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
@@ -42,4 +43,20 @@ fun PsiNamedElement.qualifiedClassNameForRendering(): String {
         else -> throw AssertionError("Not a class: ${getElementTextWithContext()}")
     }
     return fqName ?: name ?: "[Anonymous]"
+}
+
+fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
+    val member = member
+    val childrenToCheck = member.allChildren.toMutableList()
+    if (isToAbstract && member is KtCallableDeclaration) {
+        when (member) {
+            is KtNamedFunction -> childrenToCheck.remove(member.bodyExpression as PsiElement?)
+            is KtProperty -> {
+                childrenToCheck.remove(member.initializer as PsiElement?)
+                childrenToCheck.remove(member.delegateExpression as PsiElement?)
+                childrenToCheck.removeAll(member.accessors)
+            }
+        }
+    }
+    return childrenToCheck
 }

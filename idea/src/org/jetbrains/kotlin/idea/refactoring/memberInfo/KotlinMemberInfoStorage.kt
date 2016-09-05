@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverloadChecker
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import java.util.*
@@ -73,25 +74,40 @@ class KotlinMemberInfoStorage(
     }
 
     override fun extractClassMembers(aClass: PsiNamedElement, temp: ArrayList<KotlinMemberInfo>) {
-        if (aClass !is KtClassOrObject) return
-
-        val context = aClass.analyze()
-        aClass.declarations
-                .filter { it is KtNamedDeclaration
-                          && it !is KtConstructor<*>
-                          && !(it is KtObjectDeclaration && it.isCompanion())
-                          && myFilter.includeMember(it) }
-                .mapTo(temp) { KotlinMemberInfo(it as KtNamedDeclaration) }
-        if (aClass == myClass) {
-            aClass.getSuperTypeListEntries()
-                    .filterIsInstance<KtSuperTypeEntry>()
-                    .map {
-                        val type = context[BindingContext.TYPE, it.typeReference]
-                        val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
-                        classDescriptor?.source?.getPsi() as? KtClass
-                    }
-                    .filter { it != null && it.isInterface() }
-                    .mapTo(temp) { KotlinMemberInfo(it!!, true) }
+        if (aClass is KtClassOrObject) {
+            temp += extractClassMembers(aClass, aClass == myClass) { myFilter.includeMember(it) }
         }
     }
+}
+
+fun extractClassMembers(
+        aClass: KtClassOrObject,
+        collectSuperTypeEntries: Boolean = true,
+        filter: ((KtNamedDeclaration) -> Boolean)? = null
+): List<KotlinMemberInfo> {
+    if (aClass !is KtClassOrObject) return emptyList()
+
+    val result = ArrayList<KotlinMemberInfo>()
+
+    if (collectSuperTypeEntries) {
+        aClass.getSuperTypeListEntries()
+                .filterIsInstance<KtSuperTypeEntry>()
+                .mapNotNull {
+                    val typeReference = it.typeReference ?: return@mapNotNull null
+                    val type = typeReference.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
+                    val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
+                    classDescriptor?.source?.getPsi() as? KtClass
+                }
+                .filter { it.isInterface() }
+                .mapTo(result) { KotlinMemberInfo(it, true) }
+    }
+
+    aClass.declarations
+            .filter { it is KtNamedDeclaration
+                      && it !is KtConstructor<*>
+                      && !(it is KtObjectDeclaration && it.isCompanion())
+                      && (filter == null || filter(it)) }
+            .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration) }
+
+    return result
 }

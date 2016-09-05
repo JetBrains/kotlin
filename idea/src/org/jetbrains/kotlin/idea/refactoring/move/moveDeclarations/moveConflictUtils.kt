@@ -29,7 +29,6 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -47,10 +46,11 @@ import java.util.*
 
 class MoveConflictChecker(
         private val project: Project,
-        private val elementsToMove: List<KtNamedDeclaration>,
-        private val moveTarget: KotlinMoveTarget
+        private val elementsToMove: Collection<KtElement>,
+        private val moveTarget: KotlinMoveTarget,
+        contextElement: KtElement
 ) {
-    private val resolutionFacade by lazy { KotlinCacheService.getInstance(project).getResolutionFacade(elementsToMove) }
+    private val resolutionFacade = contextElement.getResolutionFacade()
 
     private val fakeFile = KtPsiFactory(project).createFile("")
 
@@ -152,6 +152,7 @@ class MoveConflictChecker(
                             val target = ref.resolve() ?: return@forEach
                             if (target.isInsideOf(elementsToMove)) return@forEach
                             if (target in resolveScope) return@forEach
+                            if (target is KtTypeParameter) return@forEach
 
                             val superMethods = SmartSet.create<PsiMethod>()
                             target.toLightMethods().forEach { superMethods += it.findDeepestSuperMethods() }

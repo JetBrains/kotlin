@@ -48,6 +48,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
@@ -68,6 +69,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -96,6 +98,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.io.File
+import java.lang.AssertionError
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
@@ -291,9 +294,11 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
     fun highlight(wholeAffected: PsiElement) {
         dropHighlight()
 
+        val affectedRange = wholeAffected.textRange ?: return
+
         val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
         val selectedRange = with(editor.selectionModel) { TextRange(selectionStart, selectionEnd) }
-        for (r in RangeSplitter.split(wholeAffected.textRange!!, Collections.singletonList(selectedRange))) {
+        for (r in RangeSplitter.split(affectedRange, Collections.singletonList(selectedRange))) {
             addHighlighter(r, attributes)
         }
     }
@@ -340,6 +345,10 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
+class SeparateFileWrapper(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE) {
+    override fun toString() = ""
+}
+
 fun <T> chooseContainerElement(
         containers: List<T>,
         editor: Editor,
@@ -380,6 +389,7 @@ fun <T> chooseContainerElement(
                 }
 
                 private fun PsiElement.renderText(): String {
+                    if (this is SeparateFileWrapper) return "Extract to separate file"
                     return StringUtil.shortenTextWithEllipsis(text!!.collapseSpaces(), 53, 0)
                 }
 
