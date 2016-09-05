@@ -525,7 +525,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             // TODO: generate the container once and save to a local field instead (KT-10495)
             ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
             iv.aconst(property.getName().asString());
-            iv.aconst(PropertyReferenceCodegen.getPropertyReferenceSignature(property, state));
+            PropertyReferenceCodegen.generateCallableReferenceSignature(iv, property, state);
             iv.invokespecial(
                     implType.getInternalName(), "<init>",
                     Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
