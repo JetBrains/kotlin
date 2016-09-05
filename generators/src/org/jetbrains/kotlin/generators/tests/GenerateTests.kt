@@ -93,6 +93,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
+import org.jetbrains.kotlin.idea.navigation.AbstractGotoTypeDeclarationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
@@ -425,6 +426,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractGotoSuperTest>() {
             model("navigation/gotoSuper", extension = "test")
+        }
+
+        testClass<AbstractGotoTypeDeclarationTest>() {
+            model("navigation/gotoTypeDeclaration", extension = "test")
         }
 
         testClass<AbstractParameterInfoTest>() {
