@@ -32,14 +32,17 @@ FILE /forWithImplicitReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from=next
           BLOCK type=kotlin.Int operator=POSTFIX_DECR
-            VAR val tmp0: kotlin.Int
-              CALL .<get-value> type=kotlin.Int operator=POSTFIX_DECR
-                $this: $RECEIVER of: next type=IntCell
-            CALL .<set-value> type=kotlin.Unit operator=POSTFIX_DECR
-              $this: $RECEIVER of: next type=IntCell
-              <set-?>: CALL .dec type=kotlin.Int operator=POSTFIX_DECR
-                $this: GET_VAR tmp0 type=kotlin.Int operator=null
-            GET_VAR tmp0 type=kotlin.Int operator=null
+            VAR val tmp0_this: IntCell
+              $RECEIVER of: next type=IntCell
+            BLOCK type=kotlin.Int operator=POSTFIX_DECR
+              VAR val tmp1: kotlin.Int
+                CALL .<get-value> type=kotlin.Int operator=POSTFIX_DECR
+                  $this: GET_VAR tmp0_this type=IntCell operator=null
+              CALL .<set-value> type=kotlin.Unit operator=POSTFIX_DECR
+                $this: GET_VAR tmp0_this type=IntCell operator=null
+                <set-?>: CALL .dec type=kotlin.Int operator=POSTFIX_DECR
+                  $this: GET_VAR tmp1 type=kotlin.Int operator=null
+              GET_VAR tmp1 type=kotlin.Int operator=null
   FUN public fun IReceiver.test(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP

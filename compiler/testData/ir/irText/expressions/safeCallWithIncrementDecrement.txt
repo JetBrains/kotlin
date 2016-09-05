@@ -41,14 +41,17 @@ FILE /safeCallWithIncrementDecrement.kt
             arg1: CONST Null type=kotlin.Nothing? value='null'
           then: CONST Null type=kotlin.Nothing? value='null'
           else: BLOCK type=kotlin.Int operator=POSTFIX_INCR
-            VAR val tmp1: kotlin.Int
-              CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
-                $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-            CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
-              $this: GET_VAR tmp0_safe_receiver type=test.C? operator=null
-              value: CALL .inc type=kotlin.Int? operator=POSTFIX_INCR
-                $receiver: GET_VAR tmp1 type=kotlin.Int operator=null
-            GET_VAR tmp1 type=kotlin.Int operator=null
+            VAR val tmp1_this: test.C?
+              GET_VAR tmp0_safe_receiver type=test.C? operator=null
+            BLOCK type=kotlin.Int operator=POSTFIX_INCR
+              VAR val tmp2: kotlin.Int
+                CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
+                  $this: GET_VAR tmp1_this type=test.C? operator=null
+              CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
+                $this: GET_VAR tmp1_this type=test.C? operator=null
+                value: CALL .inc type=kotlin.Int? operator=POSTFIX_INCR
+                  $receiver: GET_VAR tmp2 type=kotlin.Int operator=null
+              GET_VAR tmp2 type=kotlin.Int operator=null
   FUN public fun testArrayAccess(/*0*/ nc: test.C?): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Int operator=POSTFIX_INCR

@@ -322,6 +322,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("complexAugmentedAssignment.kt")
+        public void testComplexAugmentedAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/complexAugmentedAssignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conventionComparisons.kt")
         public void testConventionComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/conventionComparisons.kt");

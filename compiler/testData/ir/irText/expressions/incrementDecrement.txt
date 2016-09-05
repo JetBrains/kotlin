@@ -53,38 +53,42 @@ FILE /incrementDecrement.kt
     BLOCK_BODY
       VAR val p1: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_INCR
-          VAR val tmp0: kotlin.Int
-            CALL .inc type=kotlin.Int operator=PREFIX_INCR
-              $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_INCR
-          CALL .<set-p> type=kotlin.Unit operator=PREFIX_INCR
-            <set-?>: GET_VAR tmp0 type=kotlin.Int operator=null
-          GET_VAR tmp0 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int operator=PREFIX_INCR
+            VAR val tmp0: kotlin.Int
+              CALL .inc type=kotlin.Int operator=PREFIX_INCR
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_INCR
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_INCR
+              <set-?>: GET_VAR tmp0 type=kotlin.Int operator=null
+            GET_VAR tmp0 type=kotlin.Int operator=null
       VAR val p2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
-          VAR val tmp1: kotlin.Int
-            CALL .dec type=kotlin.Int operator=PREFIX_DECR
-              $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
-          CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
-            <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
-          GET_VAR tmp1 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int operator=PREFIX_DECR
+            VAR val tmp1: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
+              <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
   FUN public fun testPropPostfix(): kotlin.Unit
     BLOCK_BODY
       VAR val p1: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
-          VAR val tmp0: kotlin.Int
-            CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
-          CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
-            <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp0 type=kotlin.Int operator=null
-          GET_VAR tmp0 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int operator=POSTFIX_INCR
+            VAR val tmp0: kotlin.Int
+              CALL .<get-p> type=kotlin.Int operator=POSTFIX_INCR
+            CALL .<set-p> type=kotlin.Unit operator=POSTFIX_INCR
+              <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR tmp0 type=kotlin.Int operator=null
+            GET_VAR tmp0 type=kotlin.Int operator=null
       VAR val p2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
-          VAR val tmp1: kotlin.Int
-            CALL .dec type=kotlin.Int operator=PREFIX_DECR
-              $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
-          CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
-            <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
-          GET_VAR tmp1 type=kotlin.Int operator=null
+          BLOCK type=kotlin.Int operator=PREFIX_DECR
+            VAR val tmp1: kotlin.Int
+              CALL .dec type=kotlin.Int operator=PREFIX_DECR
+                $this: CALL .<get-p> type=kotlin.Int operator=PREFIX_DECR
+            CALL .<set-p> type=kotlin.Unit operator=PREFIX_DECR
+              <set-?>: GET_VAR tmp1 type=kotlin.Int operator=null
+            GET_VAR tmp1 type=kotlin.Int operator=null
   FUN public fun testArrayPrefix(): kotlin.Unit
     BLOCK_BODY
       VAR val a1: kotlin.Int

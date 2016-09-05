@@ -38,18 +38,23 @@ FILE /augmentedAssignment2.kt
         s: CONST String type=kotlin.String value='*='
   FUN public fun testProperty(): kotlin.Unit
     BLOCK_BODY
-      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-        $receiver: CALL .<get-p> type=A operator=PLUSEQ
-        s: CONST String type=kotlin.String value='+='
-      CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-        $receiver: CALL .<get-p> type=A operator=MINUSEQ
-        s: CONST String type=kotlin.String value='-='
-      CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-        $receiver: CALL .<get-p> type=A operator=MULTEQ
-        s: CONST String type=kotlin.String value='*='
-      CALL .divAssign type=kotlin.Unit operator=DIVEQ
-        $receiver: CALL .<get-p> type=A operator=DIVEQ
-        s: CONST String type=kotlin.String value='/='
-      CALL .modAssign type=kotlin.Unit operator=PERCEQ
-        $receiver: CALL .<get-p> type=A operator=PERCEQ
-        s: CONST String type=kotlin.String value='%='
+      BLOCK type=kotlin.Unit operator=PLUSEQ
+        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
+          $receiver: CALL .<get-p> type=A operator=PLUSEQ
+          s: CONST String type=kotlin.String value='+='
+      BLOCK type=kotlin.Unit operator=MINUSEQ
+        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
+          $receiver: CALL .<get-p> type=A operator=MINUSEQ
+          s: CONST String type=kotlin.String value='-='
+      BLOCK type=kotlin.Unit operator=MULTEQ
+        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
+          $receiver: CALL .<get-p> type=A operator=MULTEQ
+          s: CONST String type=kotlin.String value='*='
+      BLOCK type=kotlin.Unit operator=DIVEQ
+        CALL .divAssign type=kotlin.Unit operator=DIVEQ
+          $receiver: CALL .<get-p> type=A operator=DIVEQ
+          s: CONST String type=kotlin.String value='/='
+      BLOCK type=kotlin.Unit operator=PERCEQ
+        CALL .modAssign type=kotlin.Unit operator=PERCEQ
+          $receiver: CALL .<get-p> type=A operator=PERCEQ
+          s: CONST String type=kotlin.String value='%='
