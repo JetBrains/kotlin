@@ -1,5 +1,6 @@
 package algorithm.geometry
 
+import Logger
 import java.util.*
 
 data class Wall(val wallAngleOX: Angle,
@@ -18,7 +19,7 @@ data class Wall(val wallAngleOX: Angle,
     }
 
     var isFinished = false
-    val MAX_SLOPE = 0.2
+    private val MAX_SLOPE = 0.2
 
     fun pushBackPoint(point: Point) {
         Logger.log("Adding ${point.toString()}")
@@ -67,34 +68,34 @@ data class Wall(val wallAngleOX: Angle,
     private fun approximatePointsByLine(): Line {
         var n = 0
 
-        var sumx = 0.0
-        var sumy = 0.0
-        var sumx2 = 0.0
+        var sumX = 0.0
+        var sumY = 0.0
+        var sumX2 = 0.0
         for ((x2, y2) in rawPoints) {
-            sumx += x2
-            sumx2 += x2 * x2
-            sumy += y2
+            sumX += x2
+            sumX2 += x2 * x2
+            sumY += y2
             n++
         }
-        val xbar = sumx / n
-        val ybar = sumy / n
+        val xBar = sumX / n
+        val yBar = sumY / n
 
         // second pass: compute summary statistics
         var xxbar = 0.0
         var yybar = 0.0
         var xybar = 0.0
         for ((x1, y1) in rawPoints) {
-            xxbar += (x1 - xbar) * (x1 - xbar)
-            yybar += (y1 - ybar) * (y1 - ybar)
-            xybar += (x1 - xbar) * (y1 - ybar)
+            xxbar += (x1 - xBar) * (x1 - xBar)
+            yybar += (y1 - yBar) * (y1 - yBar)
+            xybar += (x1 - xBar) * (y1 - yBar)
         }
 
         var beta1 = xybar / xxbar
-        var beta0 = ybar - beta1 * xbar
+        var beta0 = yBar - beta1 * xBar
 
         if (Math.abs(beta1) > MAX_SLOPE) {
             beta1 = xybar / yybar
-            beta0 = xbar - beta1 * ybar
+            beta0 = xBar - beta1 * yBar
             return Line(1.0, -beta1, -beta0)
         }
 
@@ -107,11 +108,5 @@ data class Wall(val wallAngleOX: Angle,
 
     fun isHorizontal(): Boolean {
         return Math.abs(wallAngleOX.degs()) % 180 == 0
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other == null) return false
-        if (other !is Wall) return false
-        return line.equals(other.line)
     }
 }

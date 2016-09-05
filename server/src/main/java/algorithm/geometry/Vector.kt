@@ -4,7 +4,7 @@ class Vector constructor(var x: Double, var y: Double) {
 
     constructor(x1: Double, y1: Double, x2: Double, y2: Double) : this(x2 - x1, y2 - y1)
 
-    constructor(begin: Point, end: Point) : this (begin.x, begin.y, end.x, end.y)
+    constructor(begin: Point, end: Point) : this(begin.x, begin.y, end.x, end.y)
 
     fun scalarProduct(vector: Vector): Double {
         return this.x * vector.x + this.y * vector.y

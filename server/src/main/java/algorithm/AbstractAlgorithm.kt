@@ -1,19 +1,13 @@
 package algorithm
 
-import CodedInputStream
-import CodedOutputStream
 import Logger
 import RouteMetricRequest
 import SonarRequest
-import SonarResponse
 import algorithm.geometry.Angle
 import algorithm.geometry.AngleData
-import net.car.client.Client
 import objects.Car
-import java.net.ConnectException
+import roomScanner.CarController.Direction.*
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 abstract class AbstractAlgorithm(val thisCar: Car) {
 
@@ -21,11 +15,7 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
     open val SMOOTHING = SonarRequest.Smoothing.NONE
     open val WINDOW_SIZE = 0
 
-    protected val FORWARD = 0
-    protected val BACKWARD = 1
-    protected val LEFT = 2
-    protected val RIGHT = 3
-
+    val carController = CarController(thisCar.carConnection)
     private val historySize = 10
     private val history = Stack<RouteMetricRequest>()
 
@@ -44,50 +34,6 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
 
     private var iterationCounter = 0
 
-    protected fun getData(angles: Array<Angle>): IntArray {
-
-        val anglesIntArray = (angles.map { it -> it.degs() }).toIntArray()
-        val message = SonarRequest.BuilderSonarRequest(
-                angles = anglesIntArray,
-                attempts = IntArray(angles.size, { ATTEMPTS }),
-                smoothing = SMOOTHING,
-                windowSize = WINDOW_SIZE)
-                .build()
-        val requestBytes = ByteArray(message.getSizeNoTag())
-        message.writeTo(CodedOutputStream(requestBytes))
-        try {
-            val futureListener = thisCar.carConnection.sendRequest(Client.Request.SONAR, requestBytes)
-            val bytes = futureListener.get(300, TimeUnit.SECONDS).responseBodyAsBytes
-            val responseMessage = SonarResponse.BuilderSonarResponse(IntArray(0)).build()
-            responseMessage.mergeFrom(CodedInputStream(bytes))
-            return responseMessage.distances
-        } catch (e: ConnectException) {
-            println("connection error!")
-        } catch (e: TimeoutException) {
-            println("don't have response from net.car. Timeout!")
-        }
-        return IntArray(0)
-    }
-
-    //todo методы управления машинкой должны быть в отдельном классе по аналогии с carController
-    protected fun moveCar(message: RouteMetricRequest) {
-        val requestBytes = ByteArray(message.getSizeNoTag())
-        message.writeTo(CodedOutputStream(requestBytes))
-        moveCar(requestBytes)
-    }
-
-
-    private fun moveCar(messageBytes: ByteArray) {
-        try {
-            thisCar.carConnection.sendRequest(Client.Request.ROUTE_METRIC, messageBytes).get(60, TimeUnit.SECONDS)
-        } catch (e: ConnectException) {
-            println("connection error!")
-        } catch (e: TimeoutException) {
-            println("don't have response from net.car. Timeout!")
-        }
-        return
-    }
-
     fun iterate() {
         Logger.log("============= STARTING ITERATION $iterationCounter ============")
         Logger.indent()
@@ -96,7 +42,7 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
             return
         }
         val angles = getAngles()
-        val distances = getData(angles)
+        val distances = carController.scan(angles.map { it.degs() }.toIntArray(), ATTEMPTS, WINDOW_SIZE, SMOOTHING)
         if (distances.size != angles.size) {
             throw RuntimeException("error! angles and distances have various sizes")
         }
@@ -126,22 +72,22 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         Logger.indent()
         Logger.log("Directions = ${Arrays.toString(command.directions)}")
         Logger.log("Distanced = ${Arrays.toString(command.distances)}")
-        Logger.outdent()
+        Logger.outDent()
         println(Arrays.toString(command.directions))
         println(Arrays.toString(command.distances))
 
         this.prevSonarDistances = anglesDistances
         this.prevState = state
 
-        moveCar(command)
-        Logger.outdent()
+        carController.moveCar(command)
+        Logger.outDent()
         Logger.log("============= FINISHING ITERATION $iterationCounter ============")
         Logger.log("")
     }
 
     private fun addCancelIterationToLog() {
         Logger.log("iteration cancelled. need more data from sonar")
-        Logger.outdent()
+        Logger.outDent()
         Logger.log("============= FINISHING ITERATION $iterationCounter ============")
         Logger.log("")
     }
@@ -169,10 +115,10 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
 
         for ((index, dir) in res.directions.withIndex()) {
             res.directions[index] = when (dir) {
-                FORWARD -> BACKWARD
-                BACKWARD -> FORWARD
-                LEFT -> RIGHT
-                RIGHT -> LEFT
+                FORWARD.id -> BACKWARD.id
+                BACKWARD.id -> FORWARD.id
+                LEFT.id -> RIGHT.id
+                RIGHT.id -> LEFT.id
                 else -> throw IllegalArgumentException("Unexpected direction = $dir found during command inversion")
             }
         }
@@ -186,8 +132,8 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         Logger.indent()
         Logger.log("Last command: ${lastCommand.toString()}")
         Logger.log("Inverted cmd: ${invertedCommand.toString()}")
-        Logger.outdent()
-        moveCar(invertedCommand)
+        Logger.outDent()
+        carController.moveCar(invertedCommand)
     }
 
     protected fun rollback(steps: Int) {
@@ -199,7 +145,7 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
             rollback()
             stepsRemaining--
         }
-        Logger.outdent()
+        Logger.outDent()
         Logger.log("=== Finished rollback ===")
     }
 

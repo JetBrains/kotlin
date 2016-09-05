@@ -1,4 +1,4 @@
-package RoomScanner
+package roomScanner
 
 import CodedInputStream
 import RouteMetricRequest

@@ -52,7 +52,6 @@ class ServerHandler(val handlers: Map<String, Handler>) : SimpleChannelInboundHa
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext?, cause: Throwable?) {
-        println("exception")
         cause?.printStackTrace()
         ctx?.close()
     }

@@ -1,6 +1,5 @@
 import java.io.BufferedWriter
 import java.io.File
-import java.io.FileOutputStream
 import java.io.FileWriter
 
 object Logger {
@@ -14,12 +13,13 @@ object Logger {
         padding += paddingStep
     }
 
-    fun outdent() {
+    fun outDent() {
         if (padding.length == 0) {
-            throw IllegalArgumentException("Called outdent without corresponsing indent")
+            throw IllegalArgumentException("Called out dent without corresponding indent")
         }
         padding = padding.removeSuffix(paddingStep)
     }
+
     fun log(msg: String) {
         bufferedWriter.write(padding + msg + "\n")
         bufferedWriter.flush()

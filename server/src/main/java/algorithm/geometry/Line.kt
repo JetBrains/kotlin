@@ -1,7 +1,6 @@
 package algorithm.geometry
 
 class Line(var A: Double, var B: Double, var C: Double) {
-    val COMPARISON_THRESHOLD = 0
 
     init {
         normalize()
@@ -33,10 +32,8 @@ class Line(var A: Double, var B: Double, var C: Double) {
                 B *= -1
                 C *= -1
             }
-        }
-        else
-        {
-            if (A.lt(0.0)){
+        } else {
+            if (A.lt(0.0)) {
                 A *= -1
                 B *= -1
                 C *= -1
@@ -44,28 +41,8 @@ class Line(var A: Double, var B: Double, var C: Double) {
         }
     }
 
-    fun metricDist(other: Line): Double {
-        return Math.sqrt((A - other.A) * (A - other.A) + (B - other.B) * (B - other.B) + (C - other.C) * (C - other.C))
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other == null) return false
-
-        if (other !is Line) return false
-
-        Logger.log("Comparing lines: ")
-        Logger.log("    this = ${this.toString()}")
-        Logger.log("    other = ${other.toString()}")
-
-        val dist = metricDist(other)
-
-        Logger.log("    Distance = ${dist}")
-        Logger.log("    COMPARISON_THRESHOLD = ${COMPARISON_THRESHOLD}")
-        return dist < COMPARISON_THRESHOLD
-    }
-
     fun getDirectionVector(): Vector {
-        return Vector (A, -B)
+        return Vector(A, -B)
     }
 
 }

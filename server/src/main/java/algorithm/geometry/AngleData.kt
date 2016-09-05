@@ -3,7 +3,6 @@ package algorithm.geometry
 
 class AngleData(val angle: Angle, val distance: Int) {
 
-
     fun toPoint(carAngleOX: Angle): Point {
 
         //convert to global coordinate system

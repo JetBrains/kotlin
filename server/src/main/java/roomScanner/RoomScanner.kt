@@ -1,4 +1,4 @@
-package RoomScanner
+package roomScanner
 
 class RoomScanner(val controller: CarController) : Thread() {
     private val points = mutableListOf<Pair<Double, Double>>()
