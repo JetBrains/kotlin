@@ -289,12 +289,12 @@ class ExpressionsOfTypeProcessor(
             is KtReferenceExpression -> {
                 val parent = element.parent
                 when (parent) {
-                    is KtUserType -> {
+                    is KtUserType -> { // usage in type
                         return processClassUsageInUserType(parent)
                     }
 
                     is KtCallExpression -> {
-                        if (element == parent.calleeExpression) {
+                        if (element == parent.calleeExpression) {  // constructor invocation
                             processSuspiciousExpression(parent)
                             return true
                         }
@@ -307,7 +307,7 @@ class ExpressionsOfTypeProcessor(
                     }
 
                     is KtQualifiedExpression -> {
-                        if (element == parent.receiverExpression) {
+                        if (element == parent.receiverExpression) { // <class name>.memberName
                             return true // companion object member or static member access - ignore it
                         }
                     }
@@ -326,7 +326,7 @@ class ExpressionsOfTypeProcessor(
                     }
 
                     is KtClassLiteralExpression -> {
-                        if (element == parent.receiverExpression) { // ClassName::class
+                        if (element == parent.receiverExpression) { // <class name>::class
                             processSuspiciousExpression(element)
                             return true
                         }
@@ -348,7 +348,7 @@ class ExpressionsOfTypeProcessor(
         when (typeRefParent) {
             is KtCallableDeclaration -> {
                 when (typeRef) {
-                    typeRefParent.typeReference -> {
+                    typeRefParent.typeReference -> { // usage in type of callable declaration
                         addCallableDeclarationToProcess(typeRefParent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
 
                         if (typeRefParent is KtParameter) { //TODO: what if functional type is declared with "FunctionN<...>"?
@@ -364,7 +364,7 @@ class ExpressionsOfTypeProcessor(
                         return true
                     }
 
-                    typeRefParent.receiverTypeReference -> {
+                    typeRefParent.receiverTypeReference -> { // usage in receiver type of callable declaration
                         // we must use plain search inside extensions because implicit 'this' can happen anywhere
                         usePlainSearch(typeRefParent)
                         return true
@@ -372,7 +372,7 @@ class ExpressionsOfTypeProcessor(
                 }
             }
 
-            is KtTypeProjection -> {
+            is KtTypeProjection -> { // usage in type arguments of a call
                 val callExpression = (typeRefParent.parent as? KtTypeArgumentList)?.parent as? KtCallExpression
                 if (callExpression != null) {
                     processSuspiciousExpression(callExpression)
@@ -380,7 +380,7 @@ class ExpressionsOfTypeProcessor(
                 }
             }
 
-            is KtConstructorCalleeExpression -> {
+            is KtConstructorCalleeExpression -> { // super-class name in the list of bases
                 val parent = typeRefParent.parent
                 if (parent is KtSuperTypeCallEntry) {
                     val classOrObject = (parent.parent as KtSuperTypeList).parent as KtClassOrObject
@@ -390,7 +390,7 @@ class ExpressionsOfTypeProcessor(
                 }
             }
 
-            is KtSuperTypeListEntry -> {
+            is KtSuperTypeListEntry -> { // super-interface name in the list of bases
                 if (typeRef == typeRefParent.typeReference) {
                     val classOrObject = (typeRefParent.parent as KtSuperTypeList).parent as KtClassOrObject
                     val psiClass = classOrObject.toLightClass()
@@ -399,13 +399,13 @@ class ExpressionsOfTypeProcessor(
                 }
             }
 
-            is KtIsExpression -> {
+            is KtIsExpression -> { // <expr> is <class name>
                 val scopeOfPossibleSmartCast = typeRefParent.getParentOfType<KtDeclarationWithBody>(true)
                 scopeOfPossibleSmartCast?.let { usePlainSearch(it) }
                 return true
             }
 
-            is KtWhenConditionIsPattern -> {
+            is KtWhenConditionIsPattern -> { // "is <class name>" or "!is <class name>" in when
                 val whenEntry = typeRefParent.parent as KtWhenEntry
                 if (typeRefParent.isNegated) {
                     val whenExpression = whenEntry.parent as KtWhenExpression
@@ -418,7 +418,7 @@ class ExpressionsOfTypeProcessor(
                 return true
             }
 
-            is KtBinaryExpressionWithTypeRHS -> {
+            is KtBinaryExpressionWithTypeRHS -> { // <expr> as <class name>
                 processSuspiciousExpression(typeRefParent)
                 return true
             }
@@ -439,20 +439,20 @@ class ExpressionsOfTypeProcessor(
                     break@ParentsLoop // ignore local usages
 
                 is PsiMethod -> {
-                    if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) {
+                    if (prev == parent.returnTypeElement && !parent.isPrivateOrLocal()) { // usage in return type of a method
                         addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
                     }
                     break@ParentsLoop
                 }
 
                 is PsiField -> {
-                    if (prev == parent.typeElement && !parent.isPrivateOrLocal()) {
+                    if (prev == parent.typeElement && !parent.isPrivateOrLocal()) { // usage in type of a field
                         addCallableDeclarationToProcess(parent, CallableToProcessKind.HAS_OUR_CLASS_TYPE)
                     }
                     break@ParentsLoop
                 }
 
-                is PsiReferenceList -> {
+                is PsiReferenceList -> { // usage in extends/implements list
                     if (parent.role == PsiReferenceList.Role.EXTENDS_LIST || parent.role == PsiReferenceList.Role.IMPLEMENTS_LIST) {
                         val psiClass = parent.parent as PsiClass
                         if (!psiClass.isPrivateOrLocal()) {
@@ -464,7 +464,7 @@ class ExpressionsOfTypeProcessor(
 
                 //TODO: if Java parameter has Kotlin functional type then we should process method usages
                 is PsiParameter -> {
-                    if (prev == parent.typeElement) {
+                    if (prev == parent.typeElement) { // usage in parameter type - check if the method is in SAM interface
                         val method = parent.declarationScope as? PsiMethod
                         if (method != null && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
                             val psiClass = method.containingClass
@@ -509,12 +509,12 @@ class ExpressionsOfTypeProcessor(
 
             val parent = element.parent
             when (parent) {
-                is KtDestructuringDeclaration -> {
+                is KtDestructuringDeclaration -> { // "val (x, y) = <expr>"
                     processSuspiciousDeclaration(parent)
                     break@ParentsLoop
                 }
 
-                is KtWithExpressionInitializer -> {
+                is KtWithExpressionInitializer -> { // "val x = <expr>" or "fun f() = <expr>"
                     if (element == parent.initializer) {
                         processSuspiciousDeclaration(parent)
                     }
@@ -522,7 +522,7 @@ class ExpressionsOfTypeProcessor(
                 }
 
                 is KtContainerNode -> {
-                    if (parent.node.elementType == KtNodeTypes.LOOP_RANGE) {
+                    if (parent.node.elementType == KtNodeTypes.LOOP_RANGE) { // "for (x in <expr>) ..."
                         val forExpression = parent.parent as KtForExpression
                         (forExpression.destructuringParameter ?: forExpression.loopParameter as KtDeclaration?)?.let {
                             processSuspiciousDeclaration(it)
