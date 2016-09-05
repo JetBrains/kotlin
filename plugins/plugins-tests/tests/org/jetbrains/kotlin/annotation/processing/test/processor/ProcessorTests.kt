@@ -217,4 +217,16 @@ class ProcessorTests : AbstractProcessorTest() {
         val annotations = (annotationHandler as SourceRetentionAnnotationHandlerImpl).sourceRetentionAnnotations.sorted()
         assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
     }
+    
+    fun testKotlinAnnotationDefaultValueFromBinary() = test("DefaultValueFromBinary", "*") { set, roundEnv, env ->
+        fun check(expectedValue: Boolean, className: String) {
+            val clazz = env.findClass(className)
+            val anno = clazz.getAnnotation(JvmSuppressWildcards::class.java)!!
+            assertEquals(expectedValue, anno.suppress)
+        }
+        
+        check(true, "Test")
+        check(true, "TestTrue")
+        check(false, "TestFalse")
+    }
 }
