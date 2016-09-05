@@ -1,5 +1,16 @@
 # Translator from Kotlin to LLVM
 
+## Fast build
+If you want to use the translator without going into any technical details, this section is for you. Using following commands you will be able to compile your Kotlin files, the resulting executable file
+
+    $ make compile files=$(KTFILES) output=$(OUTPUT)
+
+where 
+  - $(KTFILES) - list of your Kotlin files separated by spaces
+  - $(OUTPUT) - the resulting file
+  
+  **NOTE:** when you use a fast build, the name of your your entry point function must be **main** and it should not receive arguments
+
 ## Building 
 
 For build translator into jar, you must run gradle target
@@ -50,3 +61,4 @@ where $(COMPILED_LLVM_CODE) - code obtained in the step compiler
     $  lli-3.6 $(LINKED_CODE)
     
 where $(LINKED_CODE)  - code obtained in the previous step
+
