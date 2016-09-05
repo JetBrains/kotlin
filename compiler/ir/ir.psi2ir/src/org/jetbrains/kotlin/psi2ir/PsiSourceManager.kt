@@ -23,18 +23,30 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import java.util.*
 
 class PsiSourceManager : SourceLocationManager {
-    class PsiFileEntry(val psiFile: PsiFile) : SourceLocationManager.FileEntry {
-        private val document = psiFile.viewProvider.document
+    class PsiFileEntry(psiFile: PsiFile) : SourceLocationManager.FileEntry {
+        private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
 
         override val maxOffset: Int
-            get() = document?.textLength ?: Int.MAX_VALUE
+        private val lineStartOffsets: IntArray
 
-        override fun getLineNumber(offset: Int): Int =
-                document?.getLineNumber(offset) ?: -1
+        init {
+            val document = psiFile.viewProvider.document ?: throw AssertionError("No document for $psiFile")
+
+            maxOffset = document.textLength
+
+            lineStartOffsets = (0 .. document.lineCount - 1)
+                    .map { document.getLineStartOffset(it) }
+                    .toIntArray()
+        }
+
+        override fun getLineNumber(offset: Int): Int {
+            val index = lineStartOffsets.binarySearch(offset)
+            return if (index >= 0) index else -index - 1
+        }
 
         override fun getColumnNumber(offset: Int): Int {
-            val startOffset = document?.getLineStartOffset(offset) ?: return -1
-            return offset - startOffset
+            val lineNumber = getLineNumber(offset)
+            return offset - lineStartOffsets[lineNumber]
         }
 
         override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
@@ -48,9 +60,9 @@ class PsiSourceManager : SourceLocationManager {
                         endColumnNumber = getColumnNumber(endOffset)
                 )
 
-        fun getRecognizableName(): String = psiFile.virtualFile?.path ?: psiFile.name
+        fun getRecognizableName(): String = psiFileName
 
-        override fun toString(): String = "${getRecognizableName()}"
+        override fun toString(): String = getRecognizableName()
     }
 
     private val fileEntriesByPsiFile = HashMap<PsiFile, PsiFileEntry>()
