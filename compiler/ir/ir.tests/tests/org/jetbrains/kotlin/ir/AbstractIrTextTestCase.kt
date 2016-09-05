@@ -75,10 +75,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
         private val IR_FILE_TXT_PATTERN = Regex("""// IR_FILE: (.*)$""")
-        private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
-
-        internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
-                IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
 
         internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
             val regexps = ArrayList<RegexpInText>()
@@ -101,17 +97,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
 
             return Expectations(regexps, treeFiles)
-        }
-
-        internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
-            val textFile = File(dir, fileName)
-            if (!textFile.exists()) {
-                TestCase.assertTrue("Can't create an IR expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
-                PrintWriter(FileWriter(textFile)).use {
-                    it.println("$fileName: new IR expected text containingFile for ${testFile.name}")
-                }
-            }
-            return textFile
         }
     }
 

@@ -123,10 +123,13 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitGetEnumValue(expression: IrGetEnumValue) = visitSingletonReference(expression)
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?) = visitGetEnumValue(expression)
 
-    fun visitGetVariable(expression: IrGetVariable) = visitDeclarationReference(expression)
+    fun visitVariableAccess(expression: IrVariableAccessExpression) = visitDeclarationReference(expression)
+    override fun visitVariableAccess(expression: IrVariableAccessExpression, data: Nothing?) = visitVariableAccess(expression)
+
+    fun visitGetVariable(expression: IrGetVariable) = visitVariableAccess(expression)
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?) = visitGetVariable(expression)
 
-    fun visitSetVariable(expression: IrSetVariable) = visitDeclarationReference(expression)
+    fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
     fun visitBackingFieldReference(expression: IrBackingFieldExpression) = visitDeclarationReference(expression)

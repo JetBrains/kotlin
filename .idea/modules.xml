@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/ant/ant.iml" filepath="$PROJECT_DIR$/ant/ant.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/compiler/backend/backend.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend-common/backend-common.iml" filepath="$PROJECT_DIR$/compiler/backend-common/backend-common.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/ir/backend.common/backend.common.iml" filepath="$PROJECT_DIR$/compiler/ir/backend.common/backend.common.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/compiler/ir/backend.jvm/backend.jvm.iml" filepath="$PROJECT_DIR$/compiler/ir/backend.jvm/backend.jvm.iml" group="compiler/ir" />
       <module fileurl="file://$PROJECT_DIR$/build-common/build-common.iml" filepath="$PROJECT_DIR$/build-common/build-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/builtins/builtins.iml" filepath="$PROJECT_DIR$/core/builtins/builtins.iml" group="core" />

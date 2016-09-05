@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import java.io.File
+import java.io.FileWriter
+import java.io.PrintWriter
 import java.util.*
 
 abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
@@ -85,6 +88,24 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val irModule = psi2ir.generateModule(analysisResult.moduleDescriptor, myFiles.psiFiles, analysisResult.bindingContext)
         val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
         return ktFiles.zip(irModule.files).toMap()
+    }
+
+    companion object {
+        private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
+
+        internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
+                IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
+
+        internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
+            val textFile = File(dir, fileName)
+            if (!textFile.exists()) {
+                TestCase.assertTrue("Can't create an expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
+                PrintWriter(FileWriter(textFile)).use {
+                    it.println("$fileName: new expected text containingFile for ${testFile.name}")
+                }
+            }
+            return textFile
+        }
     }
 }
 
