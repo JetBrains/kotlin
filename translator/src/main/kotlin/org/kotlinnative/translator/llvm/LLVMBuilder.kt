@@ -7,8 +7,8 @@ import java.util.*
 
 class LLVMBuilder(arm: Boolean = false) {
 
-    private var localCode: StringBuilder = StringBuilder()
-    private var globalCode: StringBuilder = StringBuilder()
+    private val localCode: StringBuilder = StringBuilder()
+    private val globalCode: StringBuilder = StringBuilder()
     private var variableCount = 0
     private var labelCount = 0
     private val exceptions = mapOf(
@@ -57,14 +57,6 @@ class LLVMBuilder(arm: Boolean = false) {
 
     fun addStringConstant(variable: LLVMVariable, value: String) =
             addLLVMCodeToGlobalPlace("$variable = private unnamed_addr constant  ${(variable.type as LLVMStringType).fullArrayType} c\"${value.replace("\"", "\\\"")}\\00\", align 1")
-
-    fun addVariableByRef(targetVariable: LLVMVariable, sourceVariable: LLVMVariable, store: Boolean) {
-        addLLVMCodeToLocalPlace("$targetVariable = alloca ${sourceVariable.pointedType}, align ${sourceVariable.type.align}")
-
-        if (store) {
-            addLLVMCodeToLocalPlace("store ${sourceVariable.pointedType} $sourceVariable, ${targetVariable.pointedType} $targetVariable, align ${targetVariable.type.align}")
-        }
-    }
 
     fun addCondition(condition: LLVMSingleValue, thenLabel: LLVMLabel, elseLabel: LLVMLabel) =
             addLLVMCodeToLocalPlace("br ${condition.pointedType} $condition, label $thenLabel, label $elseLabel")
@@ -154,7 +146,10 @@ class LLVMBuilder(arm: Boolean = false) {
 
     fun loadArgument(llvmVariable: LLVMVariable, store: Boolean = true): LLVMVariable {
         val allocVar = LLVMVariable("${llvmVariable.label}.addr", llvmVariable.type, llvmVariable.kotlinName, LLVMRegisterScope(), pointer = llvmVariable.pointer + 1)
-        addVariableByRef(allocVar, llvmVariable, store)
+        allocStackVar(allocVar, asValue = false, pointer = true)
+        if (store) {
+            storeVariable(allocVar, llvmVariable)
+        }
         return allocVar
     }
 
