@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -132,10 +131,10 @@ open class JvmBuiltInsSettings(
                 }.build()!!
             }
 
-    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Collection<Name> =
-            getAdditionalFunctions(classDescriptor) {
-                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).filterIsInstance<SimpleFunctionDescriptor>()
-            }.map(SimpleFunctionDescriptor::getName)
+    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Set<Name> =
+            // NB: It's just an approximation that could be calculated relatively fast
+            // More precise computation would look like `getAdditionalFunctions` (and the measurements show that it would be rather slow)
+            classDescriptor.getJavaAnalogue()?.unsubstitutedMemberScope?.getFunctionNames() ?: emptySet()
 
     private fun getAdditionalFunctions(
             classDescriptor: DeserializedClassDescriptor,
