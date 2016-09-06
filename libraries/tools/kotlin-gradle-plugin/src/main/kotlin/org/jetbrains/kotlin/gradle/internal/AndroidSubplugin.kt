@@ -26,6 +26,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -36,13 +37,13 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     override fun apply(target: Project?) {}
 }
 
-class AndroidSubplugin : KotlinGradleSubplugin {
+class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private companion object {
         @Volatile
         var migrateWarningReported: Boolean = false
     }
 
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+    override fun isApplicable(project: Project, task: KotlinCompile): Boolean {
         try {
             project.extensions.getByName("android") as? BaseExtension ?: return false
         } catch (e: UnknownDomainObjectException) {
@@ -61,7 +62,7 @@ class AndroidSubplugin : KotlinGradleSubplugin {
 
     override fun apply(
             project: Project,
-            kotlinCompile: AbstractCompile, 
+            kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile, 
             variantData: Any?, 
             javaSourceSet: SourceSet?

@@ -23,10 +23,11 @@ import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
+import org.jetbrains.kotlin.bytecode.AnnotationsRemover
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.org.objectweb.asm.*
+import java.io.*
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -56,6 +57,11 @@ open class SyncOutputTask : DefaultTask() {
     @get:InputFiles
     var kotlinOutputDir: File by Delegates.notNull()
     var javaOutputDir: File by Delegates.notNull()
+    var kotlinTask: KotlinCompile by Delegates.notNull()
+    private val sourceAnnotations: Set<String> by lazy {
+        kotlinTask.sourceAnnotationsRegistry?.annotations ?: emptySet()
+    }
+    private val annotationsRemover by lazy { AnnotationsRemover(sourceAnnotations) }
 
     // OutputDirectory needed for task to be incremental
     @get:OutputDirectory
@@ -130,7 +136,13 @@ open class SyncOutputTask : DefaultTask() {
         if (!fileInKotlinDir.isFile) return
 
         fileInJavaDir.parentFile.mkdirs()
-        fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
+        if (sourceAnnotations.isEmpty()) {
+            fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
+        }
+        else {
+            annotationsRemover.transformClassFile(fileInKotlinDir, fileInJavaDir)
+        }
+
         timestamps[fileInJavaDir] = fileInJavaDir.lastModified()
 
         logger.kotlinDebug {

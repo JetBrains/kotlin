@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -51,10 +52,10 @@ class ClasspathBasedAnnotationProcessingExtension(
         javaSourceRoots: List<File>,
         verboseOutput: Boolean,
         incrementalDataFile: File?,
-        incrementalCompilationComponents: IncrementalCompilationComponents?
+        sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?
 ) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, 
                                           classesOutputDir, javaSourceRoots, verboseOutput,
-                                          incrementalDataFile, incrementalCompilationComponents) {
+                                          incrementalDataFile, sourceRetentionAnnotationHandler) {
     override fun loadAnnotationProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -67,7 +68,7 @@ abstract class AbstractAnnotationProcessingExtension(
         val javaSourceRoots: List<File>,
         val verboseOutput: Boolean,
         val incrementalDataFile: File? = null,
-        val incrementalCompilationComponents: IncrementalCompilationComponents? = null
+        val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler? = null
 ) : AnalysisCompletedHandlerExtension {
     private companion object {
         val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
@@ -170,7 +171,7 @@ abstract class AbstractAnnotationProcessingExtension(
         }
 
         val firstRoundAnnotations = RoundAnnotations(
-                incrementalCompilationComponents?.getSourceRetentionAnnotationHandler(),
+                sourceRetentionAnnotationHandler,
                 bindingContext,
                 createTypeMapper())
         

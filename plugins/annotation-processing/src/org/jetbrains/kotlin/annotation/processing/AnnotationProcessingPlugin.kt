@@ -122,11 +122,11 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         // Annotations with the "SOURCE" retention will be written to class files
         project.putUserData(IS_KAPT2_ENABLED_KEY, true)
         
-        val incrementalCompilationComponents = configuration[JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS]
+        val sourceRetentionAnnotationHandler = configuration[JVMConfigurationKeys.SOURCE_RETENTION_ANNOTATION_HANDLER]
         
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput, 
-                incrementalDataFile, incrementalCompilationComponents)
+                incrementalDataFile, sourceRetentionAnnotationHandler)
         
         AnalysisCompletedHandlerExtension.registerExtension(project, annotationProcessingExtension)
     }
