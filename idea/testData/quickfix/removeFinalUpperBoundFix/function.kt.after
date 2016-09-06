@@ -1,0 +1,7 @@
+// "Remove final upper bound" "true"
+
+data class DC(val x: Int, val y: String) {
+    fun foo() {
+        val a: Int = Int.MAX_VALUE
+    }
+}
