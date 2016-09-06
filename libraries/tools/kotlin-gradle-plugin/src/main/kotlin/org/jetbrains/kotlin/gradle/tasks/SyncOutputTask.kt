@@ -61,13 +61,21 @@ open class SyncOutputTask : DefaultTask() {
     private val sourceAnnotations: Set<String> by lazy {
         kotlinTask.sourceAnnotationsRegistry?.annotations ?: emptySet()
     }
-    private val annotationsRemover by lazy { AnnotationsRemover(sourceAnnotations) }
+    private val annotationsRemover by lazy {
+        AnnotationsRemover(sourceAnnotations)
+    }
 
     // OutputDirectory needed for task to be incremental
     @get:OutputDirectory
-    val workingDir = File(project.buildDir, name).apply { mkdirs() }
-    private val timestampsFile = File(workingDir, TIMESTAMP_FILE_NAME)
-    private val timestamps: MutableMap<File, Long> = readTimestamps(timestampsFile)
+    val workingDir: File by lazy {
+        File(kotlinTask.taskBuildDirectory, "sync").apply { mkdirs() }
+    }
+    private val timestampsFile: File by lazy {
+        File(workingDir, TIMESTAMP_FILE_NAME)
+    }
+    private val timestamps: MutableMap<File, Long> by lazy {
+        readTimestamps(timestampsFile)
+    }
 
     @Suppress("unused")
     @get:OutputFiles
