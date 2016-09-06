@@ -94,15 +94,8 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
         override val defaultCaller: FunctionCaller<*>? get() = null
     }
-}
 
-
-internal interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
-    override val setter: Setter<R>
-
-    abstract class Setter<R> : KPropertyImpl.Accessor<R>(), KMutableProperty.Setter<R>, KCallableImpl<Unit> {
-        abstract override val property: KMutablePropertyImpl<R>
-
+    abstract class Setter<R> : Accessor<R>(), KMutableProperty.Setter<R>, KCallableImpl<Unit> {
         override val name: String get() = "<set-${property.name}>"
 
         override val container: KDeclarationContainerImpl get() = property.container

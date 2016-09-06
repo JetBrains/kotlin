@@ -38,7 +38,7 @@ internal open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProp
     }
 }
 
-internal open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
+internal class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -49,7 +49,7 @@ internal open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutable
 
     override fun set(receiver: T, value: R) = setter.call(receiver, value)
 
-    class Setter<T, R>(override val property: KMutableProperty1Impl<T, R>) : KMutablePropertyImpl.Setter<R>(), KMutableProperty1.Setter<T, R> {
+    class Setter<T, R>(override val property: KMutableProperty1Impl<T, R>) : KPropertyImpl.Setter<R>(), KMutableProperty1.Setter<T, R> {
         override fun invoke(receiver: T, value: R): Unit = property.set(receiver, value)
     }
 }

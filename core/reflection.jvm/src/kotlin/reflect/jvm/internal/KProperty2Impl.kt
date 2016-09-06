@@ -38,7 +38,7 @@ internal open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty<R>, KP
     }
 }
 
-internal open class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty2<D, E, R>, KMutablePropertyImpl<R> {
+internal class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty2<D, E, R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -49,7 +49,7 @@ internal open class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KM
 
     override fun set(receiver1: D, receiver2: E, value: R) = setter.call(receiver1, receiver2, value)
 
-    class Setter<D, E, R>(override val property: KMutableProperty2Impl<D, E, R>) : KMutablePropertyImpl.Setter<R>(), KMutableProperty2.Setter<D, E, R> {
+    class Setter<D, E, R>(override val property: KMutableProperty2Impl<D, E, R>) : KPropertyImpl.Setter<R>(), KMutableProperty2.Setter<D, E, R> {
         override fun invoke(receiver1: D, receiver2: E, value: R): Unit = property.set(receiver1, receiver2, value)
     }
 }
