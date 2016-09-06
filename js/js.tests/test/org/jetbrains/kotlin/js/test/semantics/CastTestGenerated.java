@@ -119,6 +119,12 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("implicitCastToLong.kt")
+    public void testImplicitCastToLong() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/implicitCastToLong.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noRuntimeTypeCheck.kt")
     public void testNoRuntimeTypeCheck() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/noRuntimeTypeCheck.kt");
