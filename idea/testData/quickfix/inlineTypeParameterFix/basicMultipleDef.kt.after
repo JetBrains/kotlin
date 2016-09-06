@@ -1,0 +1,9 @@
+// "Inline type parameter" "true"
+
+data class DC<S : String>(val x: Int, val y: String) {
+    var a: Int = Int.MAX_VALUE
+
+    fun foo(b: Int) {
+        val c: Int = Int.MIN_VALUE
+    }
+}
