@@ -1,0 +1,47 @@
+== test5 ==
+fun test5() {
+    var a: Int
+    try {
+        a = 3
+    }
+    finally {
+        a = 5
+    }
+    a.hashCode()
+}
+---------------------
+L0:
+  1 <START>                                                              INIT: in: {} out: {}              USE: in: {} out: {}
+  2 mark({ var a: Int try { a = 3 } finally { a = 5 } a.hashCode() })
+    v(var a: Int)                                                        INIT: in: {} out: {a=D}
+    mark(try { a = 3 } finally { a = 5 })                                INIT: in: {a=D} out: {a=D}
+    jmp?(L2)
+  3 mark({ a = 3 })
+    r(3) -> <v0>
+    w(a|<v0>)                                                            INIT: in: {a=D} out: {a=ID}
+  2 jmp?(L2)                                                             INIT: in: {a=ID} out: {a=ID}
+    jmp(L3)                                                                                                USE: in: {a=WRITTEN_AFTER_READ} out: {a=WRITTEN_AFTER_READ}
+L2 [onExceptionToFinallyBlock]:
+L4 [start finally]:
+  3 mark({ a = 5 })                                                      INIT: in: {a=I?D} out: {a=I?D}
+    r(5) -> <v2>                                                                                           USE: in: {a=ONLY_WRITTEN_NEVER_READ} out: {a=ONLY_WRITTEN_NEVER_READ}
+    w(a|<v2>)                                                            INIT: in: {a=I?D} out: {a=ID}     USE: in: {} out: {a=ONLY_WRITTEN_NEVER_READ}
+L5 [finish finally]:
+  2 jmp(error)                                                           INIT: in: {a=ID} out: {a=ID}      USE: in: {} out: {}
+L3 [skipFinallyToErrorBlock]:
+L6 [copy of L2, onExceptionToFinallyBlock]:
+  3 mark({ a = 5 })
+    r(5) -> <v2>                                                                                           USE: in: {a=WRITTEN_AFTER_READ} out: {a=WRITTEN_AFTER_READ}
+    w(a|<v2>)                                                                                              USE: in: {a=READ} out: {a=WRITTEN_AFTER_READ}
+  2 merge(try { a = 3 } finally { a = 5 }|!<v1>) -> <v4>
+    mark(a.hashCode())                                                                                     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v5>                                                                                           USE: in: {} out: {a=READ}
+    mark(hashCode())
+    call(hashCode(), hashCode|<v5>) -> <v6>
+L1:
+  1 <END>                                                                INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                 USE: in: {} out: {}
+=====================

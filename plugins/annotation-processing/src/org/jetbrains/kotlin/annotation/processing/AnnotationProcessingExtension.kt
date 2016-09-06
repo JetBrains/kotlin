@@ -19,19 +19,26 @@ package org.jetbrains.kotlin.annotation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
+import org.jetbrains.kotlin.annotation.processing.diagnostic.ErrorsAnnotationProcessing
 import org.jetbrains.kotlin.annotation.processing.impl.*
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
-import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
+import java.io.IOException
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
@@ -42,8 +49,12 @@ class ClasspathBasedAnnotationProcessingExtension(
         generatedSourcesOutputDir: File,
         classesOutputDir: File,
         javaSourceRoots: List<File>,
-        verboseOutput: Boolean
-) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, classesOutputDir, javaSourceRoots, verboseOutput) {
+        verboseOutput: Boolean,
+        incrementalDataFile: File?,
+        incrementalCompilationComponents: IncrementalCompilationComponents?
+) : AbstractAnnotationProcessingExtension(generatedSourcesOutputDir, 
+                                          classesOutputDir, javaSourceRoots, verboseOutput,
+                                          incrementalDataFile, incrementalCompilationComponents) {
     override fun loadAnnotationProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         return ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -54,8 +65,14 @@ abstract class AbstractAnnotationProcessingExtension(
         val generatedSourcesOutputDir: File,
         val classesOutputDir: File,
         val javaSourceRoots: List<File>,
-        val verboseOutput: Boolean
+        val verboseOutput: Boolean,
+        val incrementalDataFile: File? = null,
+        val incrementalCompilationComponents: IncrementalCompilationComponents? = null
 ) : AnalysisCompletedHandlerExtension {
+    private companion object {
+        val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+    }
+    
     private var annotationProcessingComplete = false
     private val messager = KotlinMessager()
 
@@ -63,68 +80,220 @@ abstract class AbstractAnnotationProcessingExtension(
         if (verboseOutput) messager.printMessage(Diagnostic.Kind.OTHER, "Kapt: " + message())
     }
     
+    private fun Int.count(noun: String) = if (this == 1) "$this $noun" else "$this ${noun}s"
+
+    private inline fun <T, R> T.runIf(condition: Boolean, block: T.() -> R) {
+        if (condition) block()
+    }
+
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
-            bindingContext: BindingContext,
+            bindingTrace: BindingTrace,
             files: Collection<KtFile>
     ): AnalysisResult? {
         if (annotationProcessingComplete) {
             return null
         }
 
+        // Clean the generated source directory even if we don't run any annotation processors
+        generatedSourcesOutputDir.deleteRecursively()
+        generatedSourcesOutputDir.mkdirs()
+
         val processors = loadAnnotationProcessors()
         if (processors.isEmpty()) {
             log { "No annotation processors detected, exiting" }
             return null
         }
-        
-        log { "Analysing Kotlin files: " + files.map { it.virtualFile.path } }
-        
-        val analysisContext = AnalysisContext(hashMapOf())
-        analysisContext.analyzeFiles(files)
-        
-        log { "Analysing Java source roots: $javaSourceRoots" }
-        
+
+        val appendJavaSourceRootsHandler = project.getUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY)
+        if (appendJavaSourceRootsHandler == null) {
+            log { "Java source root handler is not set, exiting" }
+            return null
+        }
+
         val psiManager = PsiManager.getInstance(project)
-        for (javaSourceRoot in javaSourceRoots) {
-            javaSourceRoot.walk().filter { it.isFile && it.extension == "java" }.forEach {
-                val vFile = StandardFileSystems.local().findFileByPath(it.absolutePath)
-                if (vFile != null) {
-                    val javaFile = psiManager.findFile(vFile) as? PsiJavaFile
-                    if (javaFile != null) {
-                        analysisContext.analyzeFile(javaFile)
+        val javaPsiFacade = JavaPsiFacade.getInstance(project)
+        val projectScope = GlobalSearchScope.projectScope(project)
+
+        val options = emptyMap<String, String>()
+        log { "Options: $options" }
+
+        val filer = KotlinFiler(generatedSourcesOutputDir, classesOutputDir)
+        val types = KotlinTypes(javaPsiFacade, PsiManager.getInstance(project), projectScope)
+        val elements = KotlinElements(javaPsiFacade, projectScope)
+
+        val processingEnvironment = KotlinProcessingEnvironment(
+                elements, types, messager, options, filer, processors,
+                project, psiManager, javaPsiFacade, projectScope, bindingTrace.bindingContext, appendJavaSourceRootsHandler)
+
+        val processingResult = processingEnvironment.doAnnotationProcessing(files)
+
+        annotationProcessingComplete = true
+        log {
+            "Annotation processing complete, " + 
+                    processingResult.errorCount.count("error") + ", " + 
+                    processingResult.warningCount.count("warning")
+        }
+
+        if (processingResult.errorCount != 0) {
+            val reportFile = files.firstOrNull()
+            if (reportFile != null) {
+                bindingTrace.report(ErrorsAnnotationProcessing.ANNOTATION_PROCESSING_ERROR.on(reportFile))
+            }
+
+            // Do not restart Kotlin file analysis
+            return null
+        }
+        
+        if (!processingResult.wasAnythingGenerated) {
+            // Nothing was generated, do not need to restart analysis
+            return null
+        }
+
+        return AnalysisResult.RetryWithAdditionalJavaRoots(
+                bindingTrace.bindingContext,
+                module,
+                listOf(generatedSourcesOutputDir),
+                addToEnvironment = false)
+    }
+    
+    private fun KotlinProcessingEnvironment.createTypeMapper(): KotlinTypeMapper {
+        return KotlinTypeMapper(bindingContext, ClassBuilderMode.full(false), NoResolveFileClassesProvider,
+                         null, IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+    }
+
+    private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {
+        run initializeProcessors@ {
+            processors.forEach { it.init(this) }
+            log { "Initialized processors: " + processors.joinToString { it.javaClass.name } }
+        }
+
+        val firstRoundAnnotations = RoundAnnotations(
+                incrementalCompilationComponents?.getSourceRetentionAnnotationHandler(),
+                bindingContext,
+                createTypeMapper())
+        
+        run analyzeFilesForFirstRound@ {
+            log { "Analysing Kotlin files: " + files.map { it.virtualFile.path } }
+            firstRoundAnnotations.analyzeFiles(files)
+
+            log { "Analysing Java source roots: $javaSourceRoots" }
+            for (javaSourceRoot in javaSourceRoots) {
+                javaSourceRoot.walk().filter { it.isFile && it.extension == "java" }.forEach {
+                    val vFile = StandardFileSystems.local().findFileByPath(it.absolutePath)
+                    if (vFile != null) {
+                        val javaFile = psiManager.findFile(vFile) as? PsiJavaFile
+                        if (javaFile != null) {
+                            firstRoundAnnotations.analyzeFile(javaFile)
+                        }
                     }
                 }
             }
         }
         
-        val options = emptyMap<String, String>()
-        log { "Options: $options" }
-        
-        val javaPsiFacade = JavaPsiFacade.getInstance(project)
-        val projectScope = GlobalSearchScope.projectScope(project)
-        
-        val filer = KotlinFiler(generatedSourcesOutputDir, classesOutputDir)
-        val types = KotlinTypes(javaPsiFacade, PsiManager.getInstance(project), projectScope)
-        val elements = KotlinElements(javaPsiFacade, projectScope)
-        
-        val processingEnvironment = KotlinProcessingEnvironment(elements, types, messager, options, filer)
-        processors.forEach { it.init(processingEnvironment) }
-        
-        log { "Initialized processors: " + processors.joinToString { it.javaClass.name } }
-        
-        log { "Starting round 1" }
-        val round1Environment = KotlinRoundEnvironment(analysisContext)
-        for (processor in processors) {
-            val supportedAnnotationNames = processor.supportedAnnotationTypes
-            val supportsAnyAnnotation = supportedAnnotationNames.contains("*")
+        runIf(incrementalDataFile != null) processIncrementalData@ {
+            val incrementalDataFile = incrementalDataFile!!
             
-            val applicableAnnotationNames = when (supportsAnyAnnotation) {
-                true -> analysisContext.annotationsMap.keys
-                false -> processor.supportedAnnotationTypes.filter { it in analysisContext.annotationsMap } 
+            
+            runIf(incrementalDataFile.exists()) analyzeFilesFromPreviousIncrementalData@ {
+                val incrementalData = try {
+                    incrementalDataFile.readText()
+                } catch (e: IOException) {
+                    log { "An exception occurred while processing incremental data file: $incrementalDataFile" }
+                    null 
+                }
+
+                if (incrementalData != null) {
+                    val analyzedClasses = mutableListOf<String>()
+                    
+                    for (line in incrementalData.lines()) {
+                        if (line.length < 3 || !line.startsWith("i ")) continue
+                        val fqName = line.drop(2) 
+                        val psiClass = javaPsiFacade.findClass(fqName, projectScope) ?: continue
+                        if (firstRoundAnnotations.analyzeDeclaration(psiClass)) {
+                            analyzedClasses += fqName
+                        }
+                    }
+                    
+                    log { "Analysing files from incremental data: $analyzedClasses" }
+                }
             }
             
+            run saveNewIncrementalData@ {
+                val analyzedClasses = firstRoundAnnotations.analyzedClasses
+                log { "Saving incremental data: ${analyzedClasses.size} class names" }
+                try {
+                    incrementalDataFile.parentFile.mkdirs()
+                    incrementalDataFile.writeText(analyzedClasses.map { "i $it" }.joinToString(LINE_SEPARATOR))
+                }
+                catch (e: IOException) {
+                    log { "Unable to write $incrementalDataFile" }
+                }
+            }
+        }
+        
+        val finalRoundNumber = run annotationProcessing@ {
+            val firstRoundEnvironment = KotlinRoundEnvironment(firstRoundAnnotations, false, 1)
+            process(firstRoundEnvironment)
+        } + 1
+        
+        log { "Starting round $finalRoundNumber (final)" }
+        val finalRoundEnvironment = KotlinRoundEnvironment(firstRoundAnnotations.copy(), true, finalRoundNumber)
+        for (processor in processors) {
+            processor.process(emptySet(), finalRoundEnvironment)
+        }
+
+        return ProcessingResult(messager.errorCount, messager.warningCount, filer.wasAnythingGenerated)
+    }
+    
+    private tailrec fun KotlinProcessingEnvironment.process(roundEnvironment: KotlinRoundEnvironment): Int {
+        val newFiles = doRound(roundEnvironment)
+        val newJavaFiles = newFiles.filter { it.extension.toLowerCase() == "java" }
+        if (newJavaFiles.isEmpty() || messager.errorCount != 0) {
+            return roundEnvironment.roundNumber
+        }
+        
+        // Add new Java source roots after the first round
+        if (roundEnvironment.roundNumber == 1) {
+            appendJavaSourceRootsHandler(listOf(generatedSourcesOutputDir))
+        }
+        
+        // Update the platform caches
+        (PsiManager.getInstance(project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
+        
+        // Find generated files
+        val localFileSystem = StandardFileSystems.local()
+        val psiFiles = newJavaFiles
+                .map { localFileSystem.findFileByPath(it.absolutePath)?.let { psiManager.findFile(it) } }
+                .filterIsInstance<PsiJavaFile>()
+
+        if (psiFiles.isEmpty()) {
+            log { "Something is strange, files were generated but not found by PsiManager" }
+            return roundEnvironment.roundNumber
+        }
+        
+        // Start the next round
+        val nextRoundAnnotations = roundEnvironment.roundAnnotations.copy().apply { analyzeFiles(psiFiles) }
+        val nextRoundEnvironment = KotlinRoundEnvironment(nextRoundAnnotations, false, roundEnvironment.roundNumber + 1)
+        return process(nextRoundEnvironment)
+    }
+    
+    private fun KotlinProcessingEnvironment.doRound(roundEnvironment: KotlinRoundEnvironment): List<File> {
+        log { "Starting round ${roundEnvironment.roundNumber}" }
+        
+        val newFiles = mutableListOf<File>()
+        filer.onFileCreatedHandler = { newFiles += it }
+
+        for (processor in processors) {
+            val supportedAnnotationNames = processor.supportedAnnotationTypes
+            val acceptsAnyAnnotation = supportedAnnotationNames.contains("*")
+
+            val applicableAnnotationNames = when (acceptsAnyAnnotation) {
+                true -> roundEnvironment.roundAnnotations.annotationsMap.keys
+                false -> processor.supportedAnnotationTypes.filter { it in roundEnvironment.roundAnnotations.annotationsMap }
+            }
+
             if (applicableAnnotationNames.isEmpty()) {
                 log { "Skipping processor " + processor.javaClass.name + ": no relevant annotations" }
                 continue
@@ -133,79 +302,20 @@ abstract class AbstractAnnotationProcessingExtension(
             val applicableAnnotations = applicableAnnotationNames
                     .map { javaPsiFacade.findClass(it, projectScope)?.let { JeTypeElement(it) } }
                     .filterNotNullTo(hashSetOf())
-            
+
             log {
                 val annotationNames = applicableAnnotations.joinToString { it.qualifiedName.toString() }
                 "Processing with " + processor.javaClass.name + " (annotations: " + annotationNames + ")"
             }
 
-            processor.process(applicableAnnotations, round1Environment)
-        }
-
-        log { "Starting round 2 (final)" }
-        val round2Environment = KotlinRoundEnvironment(AnalysisContext(hashMapOf()), isProcessingOver = true)
-        for (processor in processors) {
-            processor.process(emptySet(), round2Environment)
+            processor.process(applicableAnnotations, roundEnvironment)
         }
         
-        fun Int.count(noun: String) = if (this == 1) "$this $noun" else "$this ${noun}s"
-        log { "Annotation processing complete, ${messager.errorCount.count("error")}, ${messager.warningCount.count("warning")}" }
-
-        annotationProcessingComplete = true
-        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedSourcesOutputDir))
+        log { "Round ${roundEnvironment.roundNumber} finished, ${newFiles.size.count("file")} generated (${newFiles.joinToString()})" }
+        return newFiles
     }
 
     protected abstract fun loadAnnotationProcessors(): List<Processor>
 }
 
-internal class AnalysisContext(annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>) {
-    private val mutableAnnotationsMap = annotationsMap
-    
-    val annotationsMap: Map<String, List<PsiModifierListOwner>>
-        get() = mutableAnnotationsMap
-    
-    fun analyzeFiles(files: Collection<KtFile>) {
-        for (file in files) {
-            analyzeFile(file)
-        }
-    }
-
-    fun analyzeFile(file: KtFile) {
-        val lightClass = file.findFacadeClass()
-
-        if (lightClass != null) {
-            analyzeDeclaration(lightClass)
-        }
-
-        for (declaration in file.declarations) {
-            if (declaration !is KtClassOrObject) continue
-            val clazz = declaration.toLightClass() ?: continue
-            analyzeDeclaration(clazz)
-        }
-    }
-
-    fun analyzeFile(file: PsiJavaFile) {
-        file.classes.forEach { analyzeDeclaration(it) }
-    }
-
-    fun analyzeDeclaration(declaration: PsiElement) {
-        if (declaration !is PsiModifierListOwner) return
-
-        for (annotation in declaration.getAnnotationsWithInherited()) {
-            val fqName = annotation.qualifiedName ?: return
-            mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
-        }
-
-        if (declaration is PsiClass) {
-            declaration.methods.forEach { analyzeDeclaration(it) }
-            declaration.fields.forEach { analyzeDeclaration(it) }
-            declaration.innerClasses.forEach { analyzeDeclaration(it) }
-        }
-
-        if (declaration is PsiMethod) {
-            for (parameter in declaration.parameterList.parameters) {
-                analyzeDeclaration(parameter)
-            }
-        }
-    }
-}
+private class ProcessingResult(val errorCount: Int, val warningCount: Int, val wasAnythingGenerated: Boolean)

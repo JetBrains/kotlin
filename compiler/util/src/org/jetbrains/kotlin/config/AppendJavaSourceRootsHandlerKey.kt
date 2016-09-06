@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.config
 
-fun ClassBuilderMode.shouldGenerateMetadata() =
-        this == ClassBuilderMode.FULL || this == ClassBuilderMode.KAPT
+import com.intellij.openapi.util.Key
+import java.io.File
+
+val APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY = Key<(List<File>) -> Unit>("AppendJavaSourceRootsHandlerKey")

@@ -1,0 +1,24 @@
+== f ==
+fun f() {
+    var foo = 1
+    try {
+        foo = 2
+        throw RuntimeException()
+    } catch (e: Throwable) {
+        println(foo)
+    }
+}
+---------------------
+                                                                                                 <v4>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v4>
+1                                                                                                <v0>: Int              NEW: r(1) -> <v0>
+2                                                                                                <v1>: Int              NEW: r(2) -> <v1>
+RuntimeException()                                                                               <v2>: {<: Throwable}   NEW: call(RuntimeException(), <init>) -> <v2>
+throw RuntimeException()                                                                         !<v3>: *
+{ foo = 2 throw RuntimeException() }                                                             !<v3>: *               COPY
+println                                                                                          !<v6>: *
+foo                                                                                              <v5>: *                NEW: r(foo) -> <v5>
+println(foo)                                                                                     <v7>: *                NEW: magic[UNRESOLVED_CALL](println(foo)|<v5>, !<v6>) -> <v7>
+{ println(foo) }                                                                                 <v7>: *                COPY
+try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) }                   <v8>: *                NEW: merge(try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) }|!<v3>, <v7>) -> <v8>
+{ var foo = 1 try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) } }   <v8>: *                COPY
+=====================

@@ -24,12 +24,19 @@ import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
 
-class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Filer {
+class KotlinFiler(
+        val generatedSourceDir: File, 
+        val classesOutputDir: File,
+        internal var onFileCreatedHandler: (File) -> Unit = {}
+) : Filer {
     private companion object {
         val PACKAGE_INFO_SUFFIX = ".packageInfo"
     }
     
-    private fun getGeneratedFile(nameCharSequence: CharSequence, extension: String): File {
+    internal var wasAnythingGenerated: Boolean = false
+        private set
+    
+    private fun getGeneratedFile(nameCharSequence: CharSequence, extension: String, baseDir: File = generatedSourceDir): Pair<File, String> {
         val name = nameCharSequence.toString()
         val isPackageInfo = name.endsWith(PACKAGE_INFO_SUFFIX)
         val fqName = if (isPackageInfo) name.substring(0, PACKAGE_INFO_SUFFIX.length) else name
@@ -37,22 +44,30 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
         val packageName = fqName.substringBeforeLast('.', "")
         
         val packageDir = if (packageName.isNotEmpty()) {
-            File(generatedSourceDir, packageName.replace('.', '/')).apply { mkdirs() }
+            File(baseDir, packageName.replace('.', '/')).apply { mkdirs() }
         } 
         else {
-            generatedSourceDir
+            baseDir
         }
         
         val fileName = fqName.substringAfterLast('.') + (if (isPackageInfo) PACKAGE_INFO_SUFFIX else extension)
-        return File(packageDir, fileName)
+        val file = File(packageDir, fileName)
+        return Pair(file, file.toRelativeString(baseDir))
+    }
+    
+    private fun File.notifyCreated() = apply {
+        wasAnythingGenerated = true
+        onFileCreatedHandler(this)
     }
     
     override fun createSourceFile(name: CharSequence, vararg originatingElements: Element?): JavaFileObject {
-        return KotlinJavaFileObject(getGeneratedFile(name, ".java"))
+        val (file, fileName) = getGeneratedFile(name, ".java")
+        return KotlinJavaFileObject(file.notifyCreated(), fileName)
     }
 
     override fun getResource(location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence): FileObject? {
-        return KotlinFileObject(getResourceFile(location, pkg, relativeName))
+        val (file, fileName) = getResourceFile(location, pkg, relativeName)
+        return KotlinFileObject(file, fileName)
     }
 
     override fun createResource(
@@ -61,12 +76,12 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
             relativeName: CharSequence,
             vararg originatingElements: Element?
     ): FileObject? {
-        val resourceFile = getResourceFile(location, pkg, relativeName)
+        val (resourceFile, fileName) = getResourceFile(location, pkg, relativeName)
         resourceFile.parentFile.mkdirs()
-        return KotlinFileObject(resourceFile)
+        return KotlinFileObject(resourceFile.notifyCreated(), fileName)
     }
     
-    private fun getResourceFile(location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence): File {
+    private fun getResourceFile(location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence): Pair<File, String> {
         val baseDir = when (location) {
             StandardLocation.CLASS_OUTPUT -> classesOutputDir
             StandardLocation.SOURCE_OUTPUT -> generatedSourceDir
@@ -76,10 +91,12 @@ class KotlinFiler(val generatedSourceDir: File, val classesOutputDir: File) : Fi
         val targetDir = File(baseDir, pkg.toString().replace('.', '/'))
         targetDir.mkdirs()
 
-        return File(targetDir, relativeName.toString())
+        val resourceFile = File(targetDir, relativeName.toString())
+        return Pair(resourceFile, resourceFile.toRelativeString(baseDir))
     }
 
     override fun createClassFile(name: CharSequence, vararg originatingElements: Element?): JavaFileObject {
-        return KotlinJavaFileObject(getGeneratedFile(name, ".class"))
+        val (file, fileName) = getGeneratedFile(name, ".class")
+        return KotlinJavaFileObject(file.notifyCreated(), fileName)
     }
 }

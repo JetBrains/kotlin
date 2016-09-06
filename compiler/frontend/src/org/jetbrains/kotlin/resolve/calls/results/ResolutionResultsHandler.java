@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.resolve.calls.results;
 
 import com.google.common.collect.Sets;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
@@ -32,7 +29,9 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
@@ -42,14 +41,6 @@ public class ResolutionResultsHandler {
                 @Override
                 public CallableDescriptor invoke(MutableResolvedCall<?> resolvedCall) {
                     return resolvedCall.getResultingDescriptor();
-                }
-            };
-
-    private static final Function1<MutableResolvedCall<?>, Integer> MAP_RESOLVED_CALL_TO_SOURCE_PRESENCE =
-            new Function1<MutableResolvedCall<?>, Integer>() {
-                @Override
-                public Integer invoke(MutableResolvedCall<?> resolvedCall) {
-                    return DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.getResultingDescriptor()) != null ? 0 : 1;
                 }
             };
 
@@ -195,35 +186,6 @@ public class ResolutionResultsHandler {
         return true;
     }
 
-    // Sometimes we should compare "copies" from sources and from binary files.
-    // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
-    // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
-    @NotNull
-    private static <D extends CallableDescriptor> Set<MutableResolvedCall<D>> filterOutEquivalentCalls(
-            @NotNull Set<MutableResolvedCall<D>> candidates
-    ) {
-        if (candidates.size() <= 1) return candidates;
-
-        List<MutableResolvedCall<D>> fromSourcesGoesFirst = CollectionsKt.sortedBy(candidates, MAP_RESOLVED_CALL_TO_SOURCE_PRESENCE);
-
-        Set<MutableResolvedCall<D>> result = new LinkedHashSet<MutableResolvedCall<D>>();
-        outerLoop:
-        for (MutableResolvedCall<D> meD : fromSourcesGoesFirst) {
-            for (MutableResolvedCall<D> otherD : result) {
-                D me = meD.getResultingDescriptor();
-                D other = otherD.getResultingDescriptor();
-                boolean ignoreReturnType = (DescriptorToSourceUtils.descriptorToDeclaration(me) == null) !=
-                                           (DescriptorToSourceUtils.descriptorToDeclaration(other) == null);
-                if (DescriptorEquivalenceForOverrides.INSTANCE.areCallableDescriptorsEquivalent(me, other, ignoreReturnType)) {
-                    continue outerLoop;
-                }
-            }
-            result.add(meD);
-        }
-
-        return result;
-    }
-
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
@@ -239,7 +201,7 @@ public class ResolutionResultsHandler {
             candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates);
         }
 
-        Set<MutableResolvedCall<D>> noEquivalentCalls = filterOutEquivalentCalls(candidates);
+        Set<MutableResolvedCall<D>> noEquivalentCalls = overloadingConflictResolver.filterOutEquivalentCalls(candidates);
         Set<MutableResolvedCall<D>> noOverrides =
                 OverridingUtil.filterOverrides(noEquivalentCalls, MAP_RESOLVED_CALL_TO_RESULTING_DESCRIPTOR);
         if (noOverrides.size() == 1) {

@@ -134,7 +134,9 @@ object KotlinToJVMBytecodeCompiler {
             configuration.addJavaSourceRoots(result.additionalJavaRoots)
             configuration.isReadOnly = oldReadOnlyValue
 
-            environment.addJavaSourceRoots(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+            if (result.addToEnvironment) {
+                environment.addJavaSourceRoots(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+            }
 
             // Clear package caches (see KotlinJavaPsiFacade)
             (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
@@ -409,9 +411,11 @@ object KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).fqNameForClassNameWithoutDollars)
             }
         }
+        
+        val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
         val generationState = GenerationState(
                 environment.project,
-                ClassBuilderFactories.BINARIES,
+                ClassBuilderFactories.binaries(isKapt2Enabled),
                 result.moduleDescriptor,
                 result.bindingContext,
                 sourceFiles,

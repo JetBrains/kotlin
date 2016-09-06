@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -206,7 +207,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
-        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
+        val sourceRetentionAnnotationHandler = SourceRetentionAnnotationHandlerImpl()
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, sourceRetentionAnnotationHandler, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
             return ABORT
@@ -409,11 +411,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun createCompileEnvironment(
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>,
             lookupTracker: LookupTracker,
+            sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
             context: CompileContext
     ): CompilerEnvironment {
         val compilerServices = Services.Builder()
                 .register(IncrementalCompilationComponents::class.java,
-                          IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) }, lookupTracker))
+                          IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
+                                                               lookupTracker, sourceRetentionAnnotationHandler))
                 .register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                     override fun checkCanceled() {
                         if (context.cancelStatus.isCanceled) throw CompilationCanceledException()

@@ -20,7 +20,7 @@ import java.io.File
 import javax.tools.FileObject
 import javax.tools.JavaFileObject
 
-class KotlinJavaFileObject(file: File) : KotlinAbstractFileObject(file), JavaFileObject {
+class KotlinJavaFileObject(file: File, fileName: String) : KotlinAbstractFileObject(file, fileName), JavaFileObject {
     //TODO
     override fun isNameCompatible(simpleName: String, kind: JavaFileObject.Kind) = true
 
@@ -38,12 +38,12 @@ class KotlinJavaFileObject(file: File) : KotlinAbstractFileObject(file), JavaFil
     override fun getNestingKind() = null
 }
 
-class KotlinFileObject(file: File) : KotlinAbstractFileObject(file)
+class KotlinFileObject(file: File, fileName: String) : KotlinAbstractFileObject(file, fileName)
 
-abstract class KotlinAbstractFileObject(val file: File) : FileObject {
+abstract class KotlinAbstractFileObject(val file: File, val fileName: String) : FileObject {
     override fun openOutputStream() = file.outputStream()
 
-    override fun getName() = file.name
+    override fun getName() = fileName
 
     override fun openWriter() = file.writer()
 

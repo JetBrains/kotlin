@@ -533,6 +533,8 @@ class ControlFlowInformationProvider private constructor(
     private fun markUnusedVariables() {
         val variableStatusData = pseudocodeVariablesData.variableUseStatusData
         val reportedDiagnosticMap = hashMapOf<Instruction, DiagnosticFactory<*>>()
+        val unusedValueExpressions = hashMapOf<KtExpression, Pair<VariableDescriptor, VariableUseContext>>()
+        val usedValueExpressions = hashSetOf<KtExpression>()
         pseudocode.traverse(TraversalOrder.BACKWARD, variableStatusData) {
             instruction: Instruction,
             enterData: Map<VariableDescriptor, VariableUseState>,
@@ -551,21 +553,12 @@ class ControlFlowInformationProvider private constructor(
             when (instruction) {
                 is WriteValueInstruction -> {
                     if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return@traverse
-                    if (variableUseState !== READ) {
-                        val element = instruction.element
-                        when (element) {
-                            is KtBinaryExpression -> if (element.operationToken === KtTokens.EQ) {
-                                element.right?.let {
-                                    report(Errors.UNUSED_VALUE.on(element, it, variableDescriptor), ctxt)
-                                }
-                            }
-                            is KtPostfixExpression -> {
-                                val operationToken = element.operationReference.getReferencedNameElementType()
-                                if (operationToken === KtTokens.PLUSPLUS || operationToken === KtTokens.MINUSMINUS) {
-                                    report(Errors.UNUSED_CHANGED_VALUE.on(element, element), ctxt)
-                                }
-                            }
-                        }
+                    val expressionInQuestion = instruction.element as? KtExpression ?: return@traverse
+                    if (variableUseState != READ) {
+                        unusedValueExpressions.put(expressionInQuestion, variableDescriptor to ctxt)
+                    }
+                    else {
+                        usedValueExpressions.add(expressionInQuestion)
                     }
                 }
                 is VariableDeclarationInstruction -> {
@@ -619,6 +612,23 @@ class ControlFlowInformationProvider private constructor(
                             is KtDestructuringDeclarationEntry ->
                                 report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt)
                         }
+                    }
+                }
+            }
+        }
+        unusedValueExpressions.keys.removeAll(usedValueExpressions)
+        for ((expressionInQuestion, variableInContext) in unusedValueExpressions) {
+            val (variableDescriptor, ctxt) = variableInContext
+            when (expressionInQuestion) {
+                is KtBinaryExpression -> if (expressionInQuestion.operationToken === KtTokens.EQ) {
+                    expressionInQuestion.right?.let {
+                        report(Errors.UNUSED_VALUE.on(expressionInQuestion, it, variableDescriptor), ctxt)
+                    }
+                }
+                is KtPostfixExpression -> {
+                    val operationToken = expressionInQuestion.operationReference.getReferencedNameElementType()
+                    if (operationToken === KtTokens.PLUSPLUS || operationToken === KtTokens.MINUSMINUS) {
+                        report(Errors.UNUSED_CHANGED_VALUE.on(expressionInQuestion, expressionInQuestion), ctxt)
                     }
                 }
             }

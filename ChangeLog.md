@@ -170,13 +170,11 @@
 
 ##### New features in intention actions, inspections and quickfixes
 
-- [`KT-12152`](https://youtrack.jetbrains.com/issue/KT-12152) "Leaking this" inspection
+- [`KT-12152`](https://youtrack.jetbrains.com/issue/KT-12152) "Leaking this" inspection reports dangerous operations inside constructors including:
 
-This inspection reports dangerous operations inside constructors including:
-
-Accessing non-final property in constructor
-Calling non-final function in constructor
-Using 'this' as function argument in constructor of non-final class
+   * Accessing non-final property in constructor
+   * Calling non-final function in constructor
+   * Using 'this' as function argument in constructor of non-final class
 
 - [`KT-13187`](https://youtrack.jetbrains.com/issue/KT-13187) "Make constructor parameter a val" should make the val private or public depending on its option
 - [`KT-5771`](https://youtrack.jetbrains.com/issue/KT-5771) Mark setter parameter type as redundant and provide quickfix to remove it

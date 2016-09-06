@@ -73,8 +73,10 @@ class DelegationTranslator(
             val field = fields[specifier]!!
             if (field.generateField) {
                 val expression = specifier.delegateExpression!!
-                val delegateInitExpr = Translation.translateAsExpression(expression, context())
-                statements.add(JsAstUtils.defineSimpleProperty(field.name, delegateInitExpr))
+                val context = context().innerBlock()
+                val delegateInitExpr = Translation.translateAsExpression(expression, context)
+                statements += context.dynamicContext().jsBlock().statements
+                statements += JsAstUtils.defineSimpleProperty(field.name, delegateInitExpr)
             }
         }
     }

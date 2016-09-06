@@ -93,7 +93,7 @@ public class ModifiersChecker {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return false;
         ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
-        return containingClass.isInner() || containingClass.getContainingDeclaration() instanceof FunctionDescriptor;
+        return containingClass.isInner() || DescriptorUtils.isLocal(containingClass);
     }
 
     @NotNull

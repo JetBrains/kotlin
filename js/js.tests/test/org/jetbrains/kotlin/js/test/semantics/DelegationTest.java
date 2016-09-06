@@ -99,4 +99,8 @@ public class DelegationTest extends SingleFileTranslationTest {
     public void testOnObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testComplexDelegation() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

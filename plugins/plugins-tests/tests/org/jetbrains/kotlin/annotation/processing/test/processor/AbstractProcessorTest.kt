@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.java.model.JeName
+import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -40,13 +42,26 @@ import javax.lang.model.element.*
 
 class AnnotationProcessingExtensionForTests(
         val processors: List<Processor>
-) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true) {
+) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true,
+                                          createIncrementalDataFile(), StubIncrementalCompilationComponents()) {
     override fun loadAnnotationProcessors() = processors
     
     private companion object {
         fun createTempDir(): File = Files.createTempDirectory("ap-test").toFile().apply {
             deleteOnExit()
         }
+        
+        fun createIncrementalDataFile(): File = File.createTempFile("incrementalData", "txt").apply {
+            deleteOnExit()
+        }
+    }
+    
+    private class StubIncrementalCompilationComponents : IncrementalCompilationComponents {
+        private val sourceRetentionAnnotationHandler = SourceRetentionAnnotationHandlerImpl()
+        
+        override fun getIncrementalCache(target: TargetId) = null!!
+        override fun getLookupTracker() = null!!
+        override fun getSourceRetentionAnnotationHandler() = sourceRetentionAnnotationHandler
     }
 }
 
@@ -92,7 +107,7 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
             vararg supportedAnnotations: String
     ) = testAP(false, name, { set, roundEnv, env -> fail("Should not run") }, *supportedAnnotations)
 
-    private fun testAP(
+    protected fun testAP(
             shouldRun: Boolean,
             name: String,
             process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,

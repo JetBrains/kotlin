@@ -22,3 +22,15 @@ fun bar(): String {
         }
     }
 }
+
+fun baz(): String {
+    outer@while (true) {
+        try {
+            inner@while (true) {
+                continue@inner
+            }
+        } finally {
+            return "OK"
+        }
+    }
+}

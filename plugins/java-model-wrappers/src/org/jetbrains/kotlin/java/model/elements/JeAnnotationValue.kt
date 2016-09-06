@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.java.model.elements
 import com.intellij.psi.*
 import org.jetbrains.kotlin.java.model.internal.calcConstantValue
 import org.jetbrains.kotlin.java.model.types.toJeType
+import java.util.*
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.AnnotationValueVisitor
 
@@ -90,6 +91,11 @@ class JeExpressionAnnotationValue(val psi: PsiExpression) : JePrimitiveAnnotatio
 
 class JeArrayAnnotationValue(val psi: PsiArrayInitializerMemberValue) : AnnotationValue {
     override fun getValue() = psi.initializers.map(::JeAnnotationValue)
+    override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
+}
+
+class JeSingletonArrayAnnotationValue(val psi: PsiAnnotationMemberValue) : AnnotationValue {
+    override fun getValue(): List<AnnotationValue> = Collections.singletonList(JeAnnotationValue(psi))
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
 }
 

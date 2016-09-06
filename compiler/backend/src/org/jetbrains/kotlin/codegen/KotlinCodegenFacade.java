@@ -82,7 +82,7 @@ public class KotlinCodegenFacade {
     }
 
     private static void doCheckCancelled(GenerationState state) {
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         }
     }
