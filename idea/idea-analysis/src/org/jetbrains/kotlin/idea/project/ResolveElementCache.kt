@@ -114,7 +114,7 @@ class ResolveElementCache(
     }
 
     override fun resolveFunctionBody(function: KtNamedFunction)
-            = getElementsAdditionalResolve(function, emptyList(), BodyResolveMode.FULL)
+            = getElementsAdditionalResolve(function, null, BodyResolveMode.FULL)
 
     fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
         return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingKtFile()).bindingContext
@@ -125,7 +125,11 @@ class ResolveElementCache(
         return getElementsAdditionalResolve(resolveElement, listOf(contextElement), bodyResolveMode)
     }
 
-    fun getElementsAdditionalResolve(resolveElement: KtElement, contextElements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
+    fun getElementsAdditionalResolve(resolveElement: KtElement, contextElements: Collection<KtElement>?, bodyResolveMode: BodyResolveMode): BindingContext {
+        if (contextElements == null) {
+            assert(bodyResolveMode == BodyResolveMode.FULL)
+        }
+
         // check if full additional resolve already performed and is up-to-date
         val fullResolveMap = fullResolveCache.value
         val cachedFullResolve = fullResolveMap[resolveElement]
@@ -140,18 +144,18 @@ class ResolveElementCache(
 
         when (bodyResolveMode) {
             BodyResolveMode.FULL -> {
-                val bindingContext = performElementAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL).first
+                val bindingContext = performElementAdditionalResolve(resolveElement, null, BodyResolveMode.FULL).first
                 fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                 return bindingContext
             }
 
             BodyResolveMode.PARTIAL -> {
                 if (resolveElement !is KtDeclaration) {
-                    return getElementsAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL)
+                    return getElementsAdditionalResolve(resolveElement, null, BodyResolveMode.FULL)
                 }
 
                 val file = resolveElement.getContainingKtFile()
-                val statementsToResolve = contextElements.map { PartialBodyResolveFilter.findStatementToResolve(it, resolveElement) }.distinct()
+                val statementsToResolve = contextElements!!.map { PartialBodyResolveFilter.findStatementToResolve(it, resolveElement) }.distinct()
                 val partialResolveMap = partialBodyResolveCache.value
                 val cachedResults = statementsToResolve.map { partialResolveMap[it ?: resolveElement] }
                 if (cachedResults.all { it != null && it.isUpToDate(file) }) { // partial resolve is already cached for these statements
@@ -181,7 +185,7 @@ class ResolveElementCache(
 
             BodyResolveMode.PARTIAL_FOR_COMPLETION -> {
                 if (resolveElement !is KtDeclaration) {
-                    return getElementsAdditionalResolve(resolveElement, emptyList(), BodyResolveMode.FULL)
+                    return getElementsAdditionalResolve(resolveElement, null, BodyResolveMode.FULL)
                 }
 
                 // not cached
@@ -280,8 +284,15 @@ class ResolveElementCache(
         }
     }
 
-    private fun performElementAdditionalResolve(resolveElement: KtElement, contextElements: Collection<KtElement>,
-                                                bodyResolveMode: BodyResolveMode): Pair<BindingContext, StatementFilter> {
+    private fun performElementAdditionalResolve(
+            resolveElement: KtElement,
+            contextElements: Collection<KtElement>?,
+            bodyResolveMode: BodyResolveMode
+    ): Pair<BindingContext, StatementFilter> {
+        if (contextElements == null) {
+            assert(bodyResolveMode == BodyResolveMode.FULL)
+        }
+
         val file = resolveElement.getContainingKtFile()
 
         var statementFilterUsed = StatementFilter.NONE
@@ -290,7 +301,7 @@ class ResolveElementCache(
             assert(resolveElement is KtDeclaration)
             if (bodyResolveMode != BodyResolveMode.FULL) {
                 statementFilterUsed = PartialBodyResolveFilter(
-                        contextElements,
+                        contextElements!!,
                         resolveElement as KtDeclaration,
                         probablyNothingCallableNames(),
                         bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION)
