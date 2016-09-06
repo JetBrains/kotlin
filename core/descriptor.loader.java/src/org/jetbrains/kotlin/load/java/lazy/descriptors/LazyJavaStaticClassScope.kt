@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.DFS
 
 class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
@@ -39,27 +40,21 @@ class LazyJavaStaticClassScope(
         override val ownerDescriptor: LazyJavaClassDescriptor
 ) : LazyJavaStaticScope(c) {
 
-    override fun computeMemberIndex(): MemberIndex {
-        val delegate = ClassMemberIndex(jClass) { it.isStatic }
-        return object : MemberIndex by delegate {
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name> {
-                // Should be a super call, but KT-2860
-                return delegate.getMethodNames(nameFilter) +
-                       // For SAM-constructors
-                       jClass.innerClasses.map { it.name }
+    override fun computeMemberIndex() = ClassMemberIndex(jClass) { it.isStatic }
+
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
+        super.computeFunctionNames(kindFilter, nameFilter).toMutableSet().apply {
+            addAll(ownerDescriptor.getParentJavaStaticClassScope()?.getFunctionNames().orEmpty())
+            if (jClass.isEnum) {
+                addAll(listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES))
             }
+            addAll(jClass.innerClasses.map(JavaClass::name))
         }
-    }
 
-    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
-        if (jClass.isEnum) {
-            return super.computeFunctionNames(kindFilter, nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
+        super.computePropertyNames(kindFilter, nameFilter).toMutableSet().apply {
+            flatMapJavaStaticSupertypesScopes(ownerDescriptor, this) { it.getVariableNames() }
         }
-        return super.computeFunctionNames(kindFilter, nameFilter)
-    }
-
-    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
-            memberIndex().getAllFieldNames()
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = emptySet()
 
@@ -85,7 +80,9 @@ class LazyJavaStaticClassScope(
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, ownerDescriptor)
+        val propertiesFromSupertypes = flatMapJavaStaticSupertypesScopes(ownerDescriptor, mutableSetOf()) {
+            it.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
+        }
 
         if (result.isNotEmpty()) {
             result.addAll(resolveOverridesForStaticMembers(
@@ -106,19 +103,34 @@ class LazyJavaStaticClassScope(
         return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).toSet()
     }
 
-    private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
+    private fun <R> flatMapJavaStaticSupertypesScopes(
+            root: ClassDescriptor,
+            result: MutableSet<R>,
+            onJavaStaticScope: (MemberScope) -> Collection<R>
+    ): Set<R> {
+        DFS.dfs(listOf(root),
+                {
+                    it.typeConstructor.supertypes.asSequence().mapNotNull {
+                        supertype -> supertype.constructor.declarationDescriptor as? ClassDescriptor
+                    }.asIterable()
+                },
+                object : DFS.AbstractNodeHandler<ClassDescriptor, Unit>() {
+                    override fun beforeChildren(current: ClassDescriptor): Boolean {
+                        if (current === root) return true
+                        val staticScope = current.staticScope
 
-        fun getStaticProperties(supertype: KotlinType): Iterable<PropertyDescriptor> {
-            val superTypeDescriptor = supertype.constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
+                        if (staticScope is LazyJavaStaticScope) {
+                            result.addAll(onJavaStaticScope(staticScope))
+                            return false
+                        }
+                        return true
+                    }
 
-            val staticScope = superTypeDescriptor.staticScope
+                    override fun result() {}
+                }
+        )
 
-            if (staticScope !is LazyJavaStaticClassScope) return getStaticPropertiesFromJavaSupertypes(name, superTypeDescriptor)
-
-            return staticScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
-        }
-
-        return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()
+        return result
     }
 
     private val PropertyDescriptor.realOriginal: PropertyDescriptor

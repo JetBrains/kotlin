@@ -67,13 +67,15 @@ class LazyJavaClassMemberScope(
         private val jClass: JavaClass
 ) : LazyJavaScope(c) {
 
-    override fun computeMemberIndex(): MemberIndex {
-        return object : ClassMemberIndex(jClass, { !it.isStatic }) {
-            // For SAM-constructors
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name>
-                    = super.getMethodNames(nameFilter) + computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
+    override fun computeMemberIndex() = ClassMemberIndex(jClass, { !it.isStatic })
+
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
+        ownerDescriptor.typeConstructor.supertypes.flatMapTo(HashSet()) {
+            it.memberScope.getFunctionNames()
+        }.apply {
+            addAll(super.computeFunctionNames(kindFilter, null))
+            addAll(computeClassNames(kindFilter, nameFilter))
         }
-    }
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.constructors
@@ -628,7 +630,7 @@ class LazyJavaClassMemberScope(
             val field = enumEntryIndex()[name]
             if (field != null) {
                 val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
-                    (memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })).toSet()
+                    getFunctionNames() + getVariableNames()
                 }
                 EnumEntrySyntheticClassDescriptor.create(
                         c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
@@ -664,13 +666,10 @@ class LazyJavaClassMemberScope(
             = nestedClassIndex().keys + enumEntryIndex().keys
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
-        if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter ?: alwaysTrue())
-
-        return memberIndex().getAllFieldNames() +
-               ownerDescriptor.getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
-            supertype.memberScope.getContributedDescriptors(kindFilter, nameFilter ?: alwaysTrue()).map { variable ->
-                variable.getName()
-            }
+        if (jClass.isAnnotationType) return getFunctionNames()
+        val result = LinkedHashSet(memberIndex().getAllFieldNames())
+        return ownerDescriptor.typeConstructor.supertypes.flatMapTo(result) { supertype ->
+            supertype.memberScope.getVariableNames()
         }
     }
 

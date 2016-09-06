@@ -21,13 +21,11 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 interface MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
-    fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name>
+    fun getMethodNames(): Set<Name>
 
     fun findFieldByName(name: Name): JavaField?
     fun getAllFieldNames(): Set<Name>
@@ -35,21 +33,11 @@ interface MemberIndex {
 
 object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
-    override fun getMethodNames(nameFilter: (Name) -> Boolean) = emptySet<Name>()
+    override fun getMethodNames() = emptySet<Name>()
 
     override fun findFieldByName(name: Name): JavaField? = null
     override fun getAllFieldNames() = emptySet<Name>()
 }
-
-private val ADDITIONAL_MEMBER_NAMES_MAP = mapOf(
-        FqName("java.util.List") to listOf(Name.identifier("removeAt")),
-        FqName("java.lang.CharSequence") to listOf(Name.identifier("get")),
-        FqName("java.util.Map") to listOf(Name.identifier("keys"), Name.identifier("entries")),
-        FqName("java.lang.Number") to listOf(
-                Name.identifier("toByte"), Name.identifier("toShort"), Name.identifier("toInt"), Name.identifier("toLong"),
-                Name.identifier("toFloat"), Name.identifier("toDouble")
-        )
-)
 
 open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
     private val methodFilter = {
@@ -61,39 +49,9 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     private val fields = jClass.fields.asSequence().filter(memberFilter).associateBy { m -> m.name }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
-    override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name> =
-            jClass.getAllMemberNames(methodFilter) { methods }
+    override fun getMethodNames(): Set<Name> = jClass.methods.asSequence().filter(methodFilter).mapTo(mutableSetOf(), JavaMethod::name)
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
-    override fun getAllFieldNames(): Set<Name> = jClass.getAllMemberNames(memberFilter) { fields }
+    override fun getAllFieldNames(): Set<Name> = jClass.fields.asSequence().filter(memberFilter).mapTo(mutableSetOf(), JavaField::name)
 }
 
-private fun JavaClass.getNonDeclaredMethodNames(): List<Name> {
-    return ADDITIONAL_MEMBER_NAMES_MAP[this.fqName].orEmpty()
-}
-
-private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean, getMembers: JavaClass.() -> Collection<M>): Set<Name> {
-    val result = HashSet<Name>()
-    val visitedSuperClasses = HashSet<JavaClass>()
-
-    fun JavaClass.visit(): Unit {
-        if (!visitedSuperClasses.add(this)) return
-
-        for (member in getMembers()) {
-            if (filter(member)) {
-                result.add(member.name)
-            }
-        }
-
-        for (supertype in supertypes) {
-            val classifier = supertype.classifier
-            if (classifier is JavaClass) {
-                result.addAll(classifier.getNonDeclaredMethodNames())
-                classifier.visit()
-            }
-        }
-    }
-
-    this.visit()
-    return result
-}

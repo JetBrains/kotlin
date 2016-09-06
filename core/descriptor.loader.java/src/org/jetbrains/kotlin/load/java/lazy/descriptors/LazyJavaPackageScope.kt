@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
+import java.util.*
 
 class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
@@ -133,10 +134,7 @@ class LazyJavaPackageScope(
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
-    override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
-        // For SAM-constructors
-        override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name> = computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
-    }
+    override fun computeMemberIndex(): MemberIndex = EMPTY_MEMBER_INDEX
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         // neither objects nor enum members can be in java package
@@ -151,7 +149,8 @@ class LazyJavaPackageScope(
         // optimization: only SAM-constructors may exist in java package
         if (kindFilter.excludes.contains(SamConstructorDescriptorKindExclude)) return emptySet()
 
-        return super.computeFunctionNames(kindFilter, nameFilter)
+        // For SAM-constructors
+        return computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
