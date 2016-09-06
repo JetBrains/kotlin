@@ -173,6 +173,42 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler ONLY_THIS_QUALIFIED_REFERENCES = new DirectiveHandler("ONLY_THIS_QUALIFIED_REFERENCES") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String fieldName = arguments.getPositionalArgument(0);
+            QualifiedReferenceCollector collector = new QualifiedReferenceCollector(fieldName);
+            ast.accept(collector);
+            assertTrue("No reference to field '" + fieldName + "' found", collector.hasReferences);
+            assertTrue("There are references to field '" + fieldName + "' not qualified by 'this' literal",
+                       collector.allReferencesQualifiedByThis);
+        }
+    };
+
+    static class QualifiedReferenceCollector extends RecursiveJsVisitor {
+        private final String nameToSearch;
+        boolean hasReferences;
+        boolean allReferencesQualifiedByThis = true;
+
+        public QualifiedReferenceCollector(String nameToSearch) {
+            this.nameToSearch = nameToSearch;
+        }
+
+        @Override
+        public void visitNameRef(@NotNull JsNameRef nameRef) {
+            super.visitNameRef(nameRef);
+            JsName name = nameRef.getName();
+            if (name == null) return;
+
+            if (name.getIdent().equals(nameToSearch)) {
+                hasReferences = true;
+                if (!(nameRef.getQualifier() instanceof JsLiteral.JsThisRef)) {
+                    allReferencesQualifiedByThis = false;
+                }
+            }
+        }
+    }
+
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -199,6 +235,7 @@ public class DirectiveTestUtils {
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
+            ONLY_THIS_QUALIFIED_REFERENCES,
             COUNT_LABELS,
             COUNT_VARS,
             COUNT_BREAKS,
