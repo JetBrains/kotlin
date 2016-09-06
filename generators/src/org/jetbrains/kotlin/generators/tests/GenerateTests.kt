@@ -1205,6 +1205,10 @@ fun main(args: Array<String>) {
         testClass<AbstractNonLocalReturnsTest>() {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractTypeAliasesTests>() {
+            model("codegen/box/typealias/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 

@@ -142,4 +142,10 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         }
         initializerStatements.add(statement);
     }
+
+    @Override
+    public Void visitTypeAlias(@NotNull KtTypeAlias typeAlias, TranslationContext data) {
+        // Resolved by front-end, not used by backend
+        return null;
+    }
 }
