@@ -199,7 +199,7 @@ object LightClassUtil {
                 }
             }
             else {
-                if (getterWrapper == null || getterWrapper == specialGetter) {
+                if (getterWrapper == null || getterWrapper === specialGetter) {
                     getterWrapper = wrapper
                 }
                 else {
