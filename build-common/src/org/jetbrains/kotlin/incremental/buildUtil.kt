@@ -70,20 +70,17 @@ fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToComp
 fun makeCompileServices(
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
-        compilationCanceledStatus: CompilationCanceledStatus?
-) = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, null)
-
-fun makeCompileServices(
-        incrementalCaches: Map<TargetId, IncrementalCache>,
-        lookupTracker: LookupTracker,
         compilationCanceledStatus: CompilationCanceledStatus?,
-        sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?
+        sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler? = null
 ): Services =
     with(Services.Builder()) {
         register(IncrementalCompilationComponents::class.java, 
-                 IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker, sourceRetentionAnnotationHandler))
+                 IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
         compilationCanceledStatus?.let {
             register(CompilationCanceledStatus::class.java, it)
+        }
+        sourceRetentionAnnotationHandler?.let {
+            register(SourceRetentionAnnotationHandler::class.java, it)
         }
         build()
     }

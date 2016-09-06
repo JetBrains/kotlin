@@ -233,10 +233,8 @@ class ProcessorTests : AbstractProcessorTest() {
     fun testSourceRetention() {
         test("SourceRetention", "*") { set, roundEnv, env -> }
         val ext = getKapt2Extension()
-        val incrementalCompilationComponents = ext.incrementalCompilationComponents
-        assertNotNull(incrementalCompilationComponents)
-        val annotationHandler = incrementalCompilationComponents!!.getSourceRetentionAnnotationHandler()
-        val annotations = (annotationHandler as SourceRetentionAnnotationHandlerImpl).sourceRetentionAnnotations.sorted()
+        val annotationHandler = ext.sourceRetentionAnnotationHandler as SourceRetentionAnnotationHandlerImpl
+        val annotations = annotationHandler.sourceRetentionAnnotations.sorted()
         assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
     }
     

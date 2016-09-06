@@ -23,5 +23,4 @@ import org.jetbrains.kotlin.modules.TargetId
 interface IncrementalCompilationComponents {
     fun getIncrementalCache(target: TargetId): IncrementalCache
     fun getLookupTracker(): LookupTracker
-    fun getSourceRetentionAnnotationHandler(): SourceRetentionAnnotationHandler?
 }

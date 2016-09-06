@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config;
 
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
@@ -63,6 +64,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
+
+    public static final CompilerConfigurationKey<SourceRetentionAnnotationHandler> SOURCE_RETENTION_ANNOTATION_HANDLER =
+            CompilerConfigurationKey.create("source retention annotation handler");
 
     public static final CompilerConfigurationKey<String> DECLARATIONS_JSON_PATH =
             CompilerConfigurationKey.create("path to declarations output");

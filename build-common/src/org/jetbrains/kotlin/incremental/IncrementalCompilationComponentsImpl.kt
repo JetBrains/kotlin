@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.modules.TargetId
 
 class IncrementalCompilationComponentsImpl(
         private val caches: Map<TargetId, IncrementalCache>,
-        private val lookupTracker: LookupTracker,
-        private val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?
+        private val lookupTracker: LookupTracker
 ): IncrementalCompilationComponents {
     override fun getIncrementalCache(target: TargetId): IncrementalCache =
             caches[target] ?: throw Exception("Incremental cache for target ${target.name} not found")
 
     override fun getLookupTracker(): LookupTracker = lookupTracker
-
-    override fun getSourceRetentionAnnotationHandler() = sourceRetentionAnnotationHandler 
 }
