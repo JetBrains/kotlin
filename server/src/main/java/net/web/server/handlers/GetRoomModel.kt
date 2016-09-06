@@ -46,6 +46,10 @@ class GetRoomModel : Handler {
             vector.length().toInt()
         }.toIntArray()
 
+        if (Environment.map.size == 0) {
+            return DebugResponse.BuilderDebugResponse(begin_x, begin_y, end_x, end_y, 0, 0,
+                    0, pointsX, pointsY, wallDistances).build()
+        }
         val car = Environment.map.values.last()
         return DebugResponse.BuilderDebugResponse(begin_x, begin_y, end_x, end_y, car.x.toInt(), car.y.toInt(),
                 car.angle.toInt(), pointsX, pointsY, wallDistances).build()

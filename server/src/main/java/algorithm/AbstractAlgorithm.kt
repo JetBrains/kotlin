@@ -93,7 +93,7 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         this.prevState = state
 
         command.distances.forEachIndexed { idx, distance ->
-            thisCar.moveCar(distance, command.directions[idx])
+            thisCar.moveCar(distance, command.directions[idx]).get()
         }
 
         Logger.outDent()
@@ -150,7 +150,7 @@ abstract class AbstractAlgorithm(val thisCar: Car) {
         Logger.log("Inverted cmd: ${invertedCommand.toString()}")
         Logger.outDent()
         invertedCommand.distances.forEachIndexed { idx, distance ->
-            thisCar.moveCar(distance, invertedCommand.directions[idx])
+            thisCar.moveCar(distance, invertedCommand.directions[idx]).get()
         }
     }
 
