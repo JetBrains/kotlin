@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.incremental
 
-fun ClassBuilderMode.shouldGenerateMetadata() =
-        this == ClassBuilderMode.FULL || this == ClassBuilderMode.KAPT
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
+
+class SourceRetentionAnnotationHandlerImpl : SourceRetentionAnnotationHandler {
+    private val mutableSourceRetentionAnnotations = mutableSetOf<String>()
+    
+    val sourceRetentionAnnotations: Set<String>
+        get() = mutableSourceRetentionAnnotations
+    
+    override fun register(internalName: String) {
+        mutableSourceRetentionAnnotations += internalName
+    }
+}

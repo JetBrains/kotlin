@@ -18,23 +18,40 @@ package org.jetbrains.kotlin.annotation.processing
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
+internal class RoundAnnotations(
+        val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
+        val bindingContext: BindingContext,
+        val typeMapper: KotlinTypeMapper
+) {
+    private companion object {
+        private val BLACKLISTED_ANNOTATATIONS = listOf(
+                "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
+                "java.lang.annotation.", // Java annotations
+                "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
+                "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
+        )
+    }
+    
     private val mutableAnnotationsMap = mutableMapOf<String, MutableList<PsiModifierListOwner>>()
     private val mutableAnalyzedClasses = mutableSetOf<String>()
     
-    private val acceptsAnyAnnotation = "*" in supportedAnnotationFqNames
-
     val annotationsMap: Map<String, List<PsiModifierListOwner>>
         get() = mutableAnnotationsMap
     
     val analyzedClasses: Set<String>
         get() = mutableAnalyzedClasses
+    
+    fun copy() = RoundAnnotations(sourceRetentionAnnotationHandler, bindingContext, typeMapper)
 
     fun analyzeFiles(files: Collection<KtFile>) = files.forEach { analyzeFile(it) }
     
@@ -63,6 +80,18 @@ internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
         is PsiClass -> containingClass?.let { it.getTopLevelClassParent() } ?: this
         else -> PsiTreeUtil.getParentOfType(this, PsiClass::class.java, true)?.getTopLevelClassParent()
     }
+    
+    private val PsiAnnotation.hasSourceRetention: Boolean
+        get() {
+            val annotationDeclaration = nameReferenceElement?.resolve() as? PsiClass ?: return false
+            val metaAnnotations = annotationDeclaration.modifierList?.annotations ?: return false
+            return metaAnnotations.any { anno ->
+                val declaration = anno.nameReferenceElement?.resolve() as? PsiClass ?: return@any false
+                if (declaration.qualifiedName != "java.lang.annotation.Retention") return@any false
+                val value = (anno.findAttributeValue("value") as? PsiReferenceExpression)?.resolve() ?: return@any false
+                value is PsiEnumConstant && value.name == "SOURCE"
+            }
+        }
 
     fun analyzeDeclaration(declaration: PsiElement): Boolean {
         if (declaration !is PsiModifierListOwner) return false
@@ -72,7 +101,17 @@ internal class RoundAnnotations(val supportedAnnotationFqNames: Set<String>) {
 
         for (annotation in declaration.getAnnotationsWithInherited()) {
             val fqName = annotation.qualifiedName ?: continue
-            if (!acceptsAnyAnnotation && fqName !in supportedAnnotationFqNames) continue
+            
+            val ktLightAnnotation = annotation as? KtLightAnnotation
+            if (ktLightAnnotation != null && sourceRetentionAnnotationHandler != null && ktLightAnnotation.hasSourceRetention) { 
+                val type = bindingContext[BindingContext.ANNOTATION, ktLightAnnotation.kotlinOrigin]?.type
+                if (type != null) {
+                    val internalName = typeMapper.mapType(type).internalName
+                    sourceRetentionAnnotationHandler.register(internalName)
+                }
+            }
+            
+            if (BLACKLISTED_ANNOTATATIONS.any { fqName.startsWith(it) }) continue
             mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)
 
             // Add only top-level classes

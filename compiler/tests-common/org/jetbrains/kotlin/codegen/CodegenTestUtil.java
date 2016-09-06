@@ -48,6 +48,14 @@ public class CodegenTestUtil {
 
     @NotNull
     public static ClassFileFactory generateFiles(@NotNull KotlinCoreEnvironment environment, @NotNull CodegenTestFiles files) {
+        return generateFiles(environment, files, ClassBuilderFactories.TEST);
+    }
+    
+    @NotNull
+    public static ClassFileFactory generateFiles(
+            @NotNull KotlinCoreEnvironment environment, 
+            @NotNull CodegenTestFiles files,
+            @NotNull ClassBuilderFactory classBuilderFactory) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(),
                 files.getPsiFiles(),
@@ -58,7 +66,7 @@ public class CodegenTestUtil {
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState state = new GenerationState(
                 environment.getProject(),
-                ClassBuilderFactories.TEST,
+                classBuilderFactory,
                 analysisResult.getModuleDescriptor(),
                 analysisResult.getBindingContext(),
                 files.getPsiFiles(),

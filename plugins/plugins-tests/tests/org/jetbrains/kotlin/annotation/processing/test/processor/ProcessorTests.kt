@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
@@ -189,15 +190,31 @@ class ProcessorTests : AbstractProcessorTest() {
     
     fun testIncrementalDataSimple() = incrementalDataTest(
             "IncrementalDataSimple",
-            "i Intf, i Test, i Test2, i Test3, i Test8")
+            "i Intf, i Test, i Test2, i Test3, i Test6, i Test7, i Test8")
+
+    fun testIncrementalDataKotlinAnnotations() = incrementalDataTest(
+            "KotlinAnnotations",
+            "i AnnoAnnotated")
+    
+    private fun getKapt2Extension() = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
+            .firstIsInstance<AnnotationProcessingExtensionForTests>()
     
     private fun incrementalDataTest(fileName: String, @Language("TEXT") expectedText: String) {
         test(fileName, "Anno", "Anno2", "Anno3") { set, roundEnv, env -> }
-        val ext = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
-                .firstIsInstance<AnnotationProcessingExtensionForTests>()
+        val ext = getKapt2Extension()
         val incrementalDataFile = ext.incrementalDataFile
         assertNotNull(incrementalDataFile)
         val text = incrementalDataFile!!.readText().lines().sorted().joinToString(", ")
         assertEquals(expectedText, text)
+    }
+    
+    fun testSourceRetention() {
+        test("SourceRetention", "*") { set, roundEnv, env -> }
+        val ext = getKapt2Extension()
+        val incrementalCompilationComponents = ext.incrementalCompilationComponents
+        assertNotNull(incrementalCompilationComponents)
+        val annotationHandler = incrementalCompilationComponents!!.getSourceRetentionAnnotationHandler()
+        val annotations = (annotationHandler as SourceRetentionAnnotationHandlerImpl).sourceRetentionAnnotations.sorted()
+        assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
     }
 }
