@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractPsi2IrAcceptanceTestCase : AbstractIrGeneratorTestCase() {
+abstract class AbstractPsi2IrBoxTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
         val irModule = generateIrModule(false)
         val irModuleDump = irModule.dump()

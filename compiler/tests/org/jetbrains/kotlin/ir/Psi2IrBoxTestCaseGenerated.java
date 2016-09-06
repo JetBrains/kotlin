@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceTestCase {
+public class Psi2IrBoxTestCaseGenerated extends AbstractPsi2IrBoxTestCase {
     public void testAllFilesPresentInBox() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -38,7 +38,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Annotations extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInAnnotations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -148,7 +148,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class AnnotatedLambda extends AbstractPsi2IrAcceptanceTestCase {
+        public static class AnnotatedLambda extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInAnnotatedLambda() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/annotations/annotatedLambda"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -182,7 +182,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/argumentOrder")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ArgumentOrder extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ArgumentOrder extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInArgumentOrder() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -257,7 +257,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/arrays")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Arrays extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Arrays extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInArrays() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -601,7 +601,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class MultiDecl extends AbstractPsi2IrAcceptanceTestCase {
+        public static class MultiDecl extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInMultiDecl() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -639,7 +639,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Int extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Int extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInInt() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -672,7 +672,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Long extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Long extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInLong() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -707,7 +707,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/binaryOp")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BinaryOp extends AbstractPsi2IrAcceptanceTestCase {
+    public static class BinaryOp extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInBinaryOp() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -800,7 +800,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BoxingOptimization extends AbstractPsi2IrAcceptanceTestCase {
+    public static class BoxingOptimization extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInBoxingOptimization() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -905,7 +905,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/bridges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Bridges extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Bridges extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInBridges() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -1183,7 +1183,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class SubstitutionInSuperClass extends AbstractPsi2IrAcceptanceTestCase {
+        public static class SubstitutionInSuperClass extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("abstractFun.kt")
             public void testAbstractFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass/abstractFun.kt");
@@ -1259,7 +1259,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BuiltinStubMethods extends AbstractPsi2IrAcceptanceTestCase {
+    public static class BuiltinStubMethods extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("abstractMember.kt")
         public void testAbstractMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/abstractMember.kt");
@@ -1405,7 +1405,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ExtendJavaCollections extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ExtendJavaCollections extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("abstractList.kt")
             public void testAbstractList() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractList.kt");
@@ -1457,7 +1457,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class CallableReference extends AbstractPsi2IrAcceptanceTestCase {
+    public static class CallableReference extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInCallableReference() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -1465,7 +1465,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Bound extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Bound extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInBound() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -1509,7 +1509,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound/inline")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Inline extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Inline extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInInline() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/inline"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -1531,7 +1531,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Function extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Function extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("abstractClassMember.kt")
             public void testAbstractClassMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/abstractClassMember.kt");
@@ -1785,7 +1785,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Local extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Local extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInLocal() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -1909,7 +1909,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/callableReference/property")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Property extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Property extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("accessViaSubclass.kt")
             public void testAccessViaSubclass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/accessViaSubclass.kt");
@@ -2051,7 +2051,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/casts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Casts extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Casts extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInCasts() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -2161,7 +2161,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/casts/functions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Functions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Functions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInFunctions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts/functions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2248,7 +2248,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class LiteralExpressionAsGenericArgument extends AbstractPsi2IrAcceptanceTestCase {
+        public static class LiteralExpressionAsGenericArgument extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInLiteralExpressionAsGenericArgument() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2299,7 +2299,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class MutableCollections extends AbstractPsi2IrAcceptanceTestCase {
+        public static class MutableCollections extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInMutableCollections() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts/mutableCollections"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2357,7 +2357,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/classLiteral")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ClassLiteral extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ClassLiteral extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInClassLiteral() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -2371,7 +2371,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Bound extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Bound extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInBound() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/bound"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2404,7 +2404,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Java extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Java extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInJava() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2462,7 +2462,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Classes extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Classes extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -3148,7 +3148,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/classes/inner")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Inner extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Inner extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInInner() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -3194,7 +3194,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/closures")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Closures extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Closures extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInClosures() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -3418,7 +3418,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class CaptureOuterProperty extends AbstractPsi2IrAcceptanceTestCase {
+        public static class CaptureOuterProperty extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInCaptureOuterProperty() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -3475,7 +3475,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ClosureInsideClosure extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ClosureInsideClosure extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInClosureInsideClosure() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -3521,7 +3521,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/collections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Collections extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Collections extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInCollections() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/collections"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -3620,7 +3620,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/constants")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Constants extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Constants extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInConstants() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/constants"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -3659,7 +3659,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ControlStructures extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ControlStructures extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInControlStructures() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -4063,7 +4063,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class BreakContinueInExpressions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class BreakContinueInExpressions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInBreakContinueInExpressions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4138,7 +4138,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ReturnsNothing extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ReturnsNothing extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInReturnsNothing() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4177,7 +4177,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class TryCatchInExpressions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class TryCatchInExpressions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInTryCatchInExpressions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4319,7 +4319,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Coroutines extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Coroutines extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -4585,7 +4585,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class IntLikeVarSpilling extends AbstractPsi2IrAcceptanceTestCase {
+        public static class IntLikeVarSpilling extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInIntLikeVarSpilling() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4655,7 +4655,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DataClasses extends AbstractPsi2IrAcceptanceTestCase {
+    public static class DataClasses extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInDataClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/dataClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -4753,7 +4753,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Copy extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Copy extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInCopy() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/copy"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4804,7 +4804,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Equals extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Equals extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInEquals() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/equals"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4849,7 +4849,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class HashCode extends AbstractPsi2IrAcceptanceTestCase {
+        public static class HashCode extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInHashCode() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/hashCode"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4936,7 +4936,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ToString extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ToString extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInToString() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/toString"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4988,7 +4988,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DeadCodeElimination extends AbstractPsi2IrAcceptanceTestCase {
+    public static class DeadCodeElimination extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInDeadCodeElimination() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -5015,7 +5015,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultArguments extends AbstractPsi2IrAcceptanceTestCase {
+    public static class DefaultArguments extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInDefaultArguments() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -5041,7 +5041,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Constructor extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Constructor extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInConstructor() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5128,7 +5128,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Convention extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Convention extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInConvention() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5155,7 +5155,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Function extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Function extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("abstractClass.kt")
             public void testAbstractClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/abstractClass.kt");
@@ -5284,7 +5284,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Private extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Private extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInPrivate() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5317,7 +5317,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Signature extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Signature extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInSignature() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5345,7 +5345,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DelegatedProperty extends AbstractPsi2IrAcceptanceTestCase {
+    public static class DelegatedProperty extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
         public void testAccessTopLevelDelegatedPropertyInClinit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/accessTopLevelDelegatedPropertyInClinit.kt");
@@ -5563,7 +5563,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Local extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Local extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInLocal() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5639,7 +5639,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/delegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Delegation extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Delegation extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInDelegation() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -5654,7 +5654,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Diagnostics extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Diagnostics extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInDiagnostics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -5662,7 +5662,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Functions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Functions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInFunctions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -5670,7 +5670,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Inference extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Inference extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInInference() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/inference"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -5685,7 +5685,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Invoke extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Invoke extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInInvoke() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -5693,7 +5693,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
                 @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class OnObjects extends AbstractPsi2IrAcceptanceTestCase {
+                public static class OnObjects extends AbstractPsi2IrBoxTestCase {
                     public void testAllFilesPresentInOnObjects() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
@@ -5763,7 +5763,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class TailRecursion extends AbstractPsi2IrAcceptanceTestCase {
+            public static class TailRecursion extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInTailRecursion() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -5995,7 +5995,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Vararg extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Vararg extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInVararg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -6011,7 +6011,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/elvis")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Elvis extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Elvis extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInElvis() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6044,7 +6044,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Enum extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Enum extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("abstractMethodInEnum.kt")
         public void testAbstractMethodInEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/abstractMethodInEnum.kt");
@@ -6215,7 +6215,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/evaluate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Evaluate extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Evaluate extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInEvaluate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/evaluate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6314,7 +6314,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/exclExcl")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExclExcl extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ExclExcl extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInExclExcl() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6335,7 +6335,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExtensionFunctions extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ExtensionFunctions extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInExtensionFunctions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6476,7 +6476,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExtensionProperties extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ExtensionProperties extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("accessorForPrivateSetter.kt")
         public void testAccessorForPrivateSetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/accessorForPrivateSetter.kt");
@@ -6569,7 +6569,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/external")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class External extends AbstractPsi2IrAcceptanceTestCase {
+    public static class External extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInExternal() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6596,7 +6596,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/fakeOverride")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FakeOverride extends AbstractPsi2IrAcceptanceTestCase {
+    public static class FakeOverride extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInFakeOverride() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6629,7 +6629,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/fieldRename")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FieldRename extends AbstractPsi2IrAcceptanceTestCase {
+    public static class FieldRename extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInFieldRename() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/fieldRename"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6656,7 +6656,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/finally")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Finally extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Finally extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInFinally() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6731,7 +6731,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/fullJdk")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FullJdk extends AbstractPsi2IrAcceptanceTestCase {
+    public static class FullJdk extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInFullJdk() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/fullJdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -6775,7 +6775,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Native extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Native extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInNative() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/native"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -6802,7 +6802,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Regressions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Regressions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInRegressions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -6818,7 +6818,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/functions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Functions extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Functions extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInFunctions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7084,7 +7084,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class FunctionExpression extends AbstractPsi2IrAcceptanceTestCase {
+        public static class FunctionExpression extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInFunctionExpression() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7111,7 +7111,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/functions/invoke")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Invoke extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Invoke extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInInvoke() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7198,7 +7198,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class LocalFunctions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class LocalFunctions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInLocalFunctions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7304,7 +7304,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/hashPMap")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class HashPMap extends AbstractPsi2IrAcceptanceTestCase {
+    public static class HashPMap extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInHashPMap() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/hashPMap"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7349,7 +7349,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/increment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Increment extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Increment extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInIncrement() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/increment"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7484,7 +7484,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/innerNested")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class InnerNested extends AbstractPsi2IrAcceptanceTestCase {
+    public static class InnerNested extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInInnerNested() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7630,7 +7630,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class SuperConstructorCall extends AbstractPsi2IrAcceptanceTestCase {
+        public static class SuperConstructorCall extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInSuperConstructorCall() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7760,7 +7760,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/instructions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Instructions extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Instructions extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInInstructions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7768,7 +7768,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/instructions/swap")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Swap extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Swap extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInSwap() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7790,7 +7790,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/intrinsics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Intrinsics extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Intrinsics extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInIntrinsics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7913,7 +7913,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JavaInterop extends AbstractPsi2IrAcceptanceTestCase {
+    public static class JavaInterop extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJavaInterop() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -7921,7 +7921,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Generics extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Generics extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInGenerics() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7948,7 +7948,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class NotNullAssertions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class NotNullAssertions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInNotNullAssertions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -7969,7 +7969,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ObjectMethods extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ObjectMethods extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInObjectMethods() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -8015,7 +8015,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/jdk")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jdk extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Jdk extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJdk() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8048,7 +8048,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/jvmField")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmField extends AbstractPsi2IrAcceptanceTestCase {
+    public static class JvmField extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJvmField() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8141,7 +8141,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/jvmName")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmName extends AbstractPsi2IrAcceptanceTestCase {
+    public static class JvmName extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJvmName() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8215,7 +8215,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class FileFacades extends AbstractPsi2IrAcceptanceTestCase {
+        public static class FileFacades extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInFileFacades() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmName/fileFacades"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -8243,7 +8243,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmOverloads extends AbstractPsi2IrAcceptanceTestCase {
+    public static class JvmOverloads extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJvmOverloads() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8318,7 +8318,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/jvmStatic")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmStatic extends AbstractPsi2IrAcceptanceTestCase {
+    public static class JvmStatic extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInJvmStatic() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8447,7 +8447,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/labels")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Labels extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Labels extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInLabels() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8492,7 +8492,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LazyCodegen extends AbstractPsi2IrAcceptanceTestCase {
+    public static class LazyCodegen extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInLazyCodegen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8554,7 +8554,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Optimizations extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Optimizations extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInOptimizations() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen/optimizations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -8618,7 +8618,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/localClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LocalClasses extends AbstractPsi2IrAcceptanceTestCase {
+    public static class LocalClasses extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInLocalClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8789,7 +8789,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/mangling")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Mangling extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Mangling extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInMangling() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8840,7 +8840,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MultiDecl extends AbstractPsi2IrAcceptanceTestCase {
+    public static class MultiDecl extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInMultiDecl() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8926,7 +8926,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForIterator extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ForIterator extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInForIterator() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -8964,7 +8964,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class LongIterator extends AbstractPsi2IrAcceptanceTestCase {
+            public static class LongIterator extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInLongIterator() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -8998,7 +8998,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForRange extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ForRange extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInForRange() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -9036,7 +9036,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class ExplicitRangeTo extends AbstractPsi2IrAcceptanceTestCase {
+            public static class ExplicitRangeTo extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInExplicitRangeTo() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -9074,7 +9074,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Int extends AbstractPsi2IrAcceptanceTestCase {
+                public static class Int extends AbstractPsi2IrBoxTestCase {
                     public void testAllFilesPresentInInt() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
@@ -9107,7 +9107,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Long extends AbstractPsi2IrAcceptanceTestCase {
+                public static class Long extends AbstractPsi2IrBoxTestCase {
                     public void testAllFilesPresentInLong() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
@@ -9141,7 +9141,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class ExplicitRangeToWithDot extends AbstractPsi2IrAcceptanceTestCase {
+            public static class ExplicitRangeToWithDot extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInExplicitRangeToWithDot() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -9179,7 +9179,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Int extends AbstractPsi2IrAcceptanceTestCase {
+                public static class Int extends AbstractPsi2IrBoxTestCase {
                     public void testAllFilesPresentInInt() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
@@ -9212,7 +9212,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Long extends AbstractPsi2IrAcceptanceTestCase {
+                public static class Long extends AbstractPsi2IrBoxTestCase {
                     public void testAllFilesPresentInLong() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
@@ -9246,7 +9246,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Int extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Int extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInInt() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -9279,7 +9279,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Long extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Long extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInLong() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -9314,7 +9314,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MultifileClasses extends AbstractPsi2IrAcceptanceTestCase {
+    public static class MultifileClasses extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInMultifileClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9382,7 +9382,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Optimized extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Optimized extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInOptimized() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -9476,7 +9476,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class NonLocalReturns extends AbstractPsi2IrAcceptanceTestCase {
+    public static class NonLocalReturns extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9509,7 +9509,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ObjectIntrinsics extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ObjectIntrinsics extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInObjectIntrinsics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9524,7 +9524,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/objects")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Objects extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Objects extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInObjects() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9791,7 +9791,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class OperatorConventions extends AbstractPsi2IrAcceptanceTestCase {
+    public static class OperatorConventions extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInOperatorConventions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9835,7 +9835,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class CompareTo extends AbstractPsi2IrAcceptanceTestCase {
+        public static class CompareTo extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInCompareTo() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -9905,7 +9905,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/package")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Package extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Package extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInPackage() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/package"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9974,7 +9974,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/platformTypes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PlatformTypes extends AbstractPsi2IrAcceptanceTestCase {
+    public static class PlatformTypes extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInPlatformTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -9982,7 +9982,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Primitives extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Primitives extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInPrimitives() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -10112,7 +10112,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PrimitiveTypes extends AbstractPsi2IrAcceptanceTestCase {
+    public static class PrimitiveTypes extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInPrimitiveTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -10427,7 +10427,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/private")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Private extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Private extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInPrivate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -10448,7 +10448,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/privateConstructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PrivateConstructors extends AbstractPsi2IrAcceptanceTestCase {
+    public static class PrivateConstructors extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInPrivateConstructors() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -10535,7 +10535,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Properties extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Properties extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("accessToPrivateProperty.kt")
         public void testAccessToPrivateProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/accessToPrivateProperty.kt");
@@ -10939,7 +10939,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/properties/const")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Const extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Const extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInConst() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -10966,7 +10966,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Lateinit extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Lateinit extends AbstractPsi2IrBoxTestCase {
             @TestMetadata("accessor.kt")
             public void testAccessor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/accessor.kt");
@@ -11036,7 +11036,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/ranges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Ranges extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Ranges extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInRanges() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -11086,7 +11086,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/ranges/expression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Expression extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Expression extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInExpression() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/expression"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11263,7 +11263,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInDownTo extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ForInDownTo extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInForInDownTo() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11296,7 +11296,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForInIndices extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ForInIndices extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInForInIndices() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11395,7 +11395,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/ranges/literal")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Literal extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Literal extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInLiteral() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/literal"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11572,7 +11572,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class NullableLoopParameter extends AbstractPsi2IrAcceptanceTestCase {
+        public static class NullableLoopParameter extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInNullableLoopParameter() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11600,7 +11600,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reflection extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Reflection extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInReflection() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -11608,7 +11608,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Annotations extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Annotations extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInAnnotations() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11677,7 +11677,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/call")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Call extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Call extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInCall() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11818,7 +11818,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class CallBy extends AbstractPsi2IrAcceptanceTestCase {
+        public static class CallBy extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInCallBy() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11917,7 +11917,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ClassLiterals extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ClassLiterals extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInClassLiterals() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/classLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -11968,7 +11968,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/classes")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Classes extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Classes extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInClasses() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12049,7 +12049,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Constructors extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Constructors extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInConstructors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12082,7 +12082,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/enclosing")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Enclosing extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Enclosing extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInEnclosing() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12229,7 +12229,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/functions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Functions extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Functions extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInFunctions() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/functions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12292,7 +12292,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/genericSignature")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class GenericSignature extends AbstractPsi2IrAcceptanceTestCase {
+        public static class GenericSignature extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInGenericSignature() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12349,7 +12349,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class IsInstance extends AbstractPsi2IrAcceptanceTestCase {
+        public static class IsInstance extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInIsInstance() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/isInstance"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12364,7 +12364,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class KClassInAnnotation extends AbstractPsi2IrAcceptanceTestCase {
+        public static class KClassInAnnotation extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInKClassInAnnotation() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/kClassInAnnotation"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12415,7 +12415,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class LambdaClasses extends AbstractPsi2IrAcceptanceTestCase {
+        public static class LambdaClasses extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInLambdaClasses() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12430,7 +12430,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Mapping extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Mapping extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInMapping() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12498,7 +12498,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class FakeOverrides extends AbstractPsi2IrAcceptanceTestCase {
+            public static class FakeOverrides extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInFakeOverrides() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -12519,7 +12519,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class JvmStatic extends AbstractPsi2IrAcceptanceTestCase {
+            public static class JvmStatic extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInJvmStatic() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -12540,7 +12540,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Types extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Types extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInTypes() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -12640,7 +12640,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class MethodsFromAny extends AbstractPsi2IrAcceptanceTestCase {
+        public static class MethodsFromAny extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInMethodsFromAny() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12739,7 +12739,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Modifiers extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Modifiers extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInModifiers() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12808,7 +12808,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class MultifileClasses extends AbstractPsi2IrAcceptanceTestCase {
+        public static class MultifileClasses extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInMultifileClasses() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12835,7 +12835,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class NoReflectAtRuntime extends AbstractPsi2IrAcceptanceTestCase {
+        public static class NoReflectAtRuntime extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInNoReflectAtRuntime() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12879,7 +12879,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class MethodsFromAny extends AbstractPsi2IrAcceptanceTestCase {
+            public static class MethodsFromAny extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInMethodsFromAny() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -12901,7 +12901,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Parameters extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Parameters extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -12958,7 +12958,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/properties")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Properties extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Properties extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInProperties() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -13134,7 +13134,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Accessors extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Accessors extends AbstractPsi2IrBoxTestCase {
                 @TestMetadata("accessorNames.kt")
                 public void testAccessorNames() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/accessors/accessorNames.kt");
@@ -13174,7 +13174,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/specialBuiltIns")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class SpecialBuiltIns extends AbstractPsi2IrAcceptanceTestCase {
+        public static class SpecialBuiltIns extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInSpecialBuiltIns() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/specialBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -13189,7 +13189,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Supertypes extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Supertypes extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInSupertypes() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -13228,7 +13228,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class TypeParameters extends AbstractPsi2IrAcceptanceTestCase {
+        public static class TypeParameters extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInTypeParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -13255,7 +13255,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reflection/types")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Types extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Types extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInTypes() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/types"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -13335,7 +13335,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class CreateType extends AbstractPsi2IrAcceptanceTestCase {
+            public static class CreateType extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInCreateType() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -13374,7 +13374,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
             @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Subtyping extends AbstractPsi2IrAcceptanceTestCase {
+            public static class Subtyping extends AbstractPsi2IrBoxTestCase {
                 public void testAllFilesPresentInSubtyping() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -13409,7 +13409,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/regressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Regressions extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Regressions extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInRegressions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -13808,7 +13808,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/reified")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Reified extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Reified extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInReified() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reified"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -13984,7 +13984,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ArraysReification extends AbstractPsi2IrAcceptanceTestCase {
+        public static class ArraysReification extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInArraysReification() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -14030,7 +14030,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SafeCall extends AbstractPsi2IrAcceptanceTestCase {
+    public static class SafeCall extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSafeCall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14093,7 +14093,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/sam")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Sam extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Sam extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSam() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14101,7 +14101,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/sam/constructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Constructors extends AbstractPsi2IrAcceptanceTestCase {
+        public static class Constructors extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInConstructors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/sam/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -14183,7 +14183,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/sealed")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Sealed extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Sealed extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSealed() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/sealed"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14204,7 +14204,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SecondaryConstructors extends AbstractPsi2IrAcceptanceTestCase {
+    public static class SecondaryConstructors extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("accessToCompanion.kt")
         public void testAccessToCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToCompanion.kt");
@@ -14369,7 +14369,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Smap extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Smap extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSmap() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14396,7 +14396,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SmartCasts extends AbstractPsi2IrAcceptanceTestCase {
+    public static class SmartCasts extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSmartCasts() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14477,7 +14477,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SpecialBuiltins extends AbstractPsi2IrAcceptanceTestCase {
+    public static class SpecialBuiltins extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSpecialBuiltins() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14606,7 +14606,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/statics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Statics extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Statics extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInStatics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/statics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14711,7 +14711,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class StoreStackBeforeInline extends AbstractPsi2IrAcceptanceTestCase {
+    public static class StoreStackBeforeInline extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInStoreStackBeforeInline() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14750,7 +14750,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/strings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Strings extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Strings extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInStrings() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -14855,7 +14855,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/super")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Super extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Super extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSuper() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15008,7 +15008,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/synchronized")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Synchronized extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Synchronized extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInSynchronized() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/synchronized"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15083,7 +15083,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SyntheticAccessors extends AbstractPsi2IrAcceptanceTestCase {
+    public static class SyntheticAccessors extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("accessorForProtected.kt")
         public void testAccessorForProtected() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/syntheticAccessors/accessorForProtected.kt");
@@ -15146,7 +15146,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/toArray")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ToArray extends AbstractPsi2IrAcceptanceTestCase {
+    public static class ToArray extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInToArray() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15185,7 +15185,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TopLevelPrivate extends AbstractPsi2IrAcceptanceTestCase {
+    public static class TopLevelPrivate extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInTopLevelPrivate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15230,7 +15230,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/traits")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Traits extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Traits extends AbstractPsi2IrBoxTestCase {
         @TestMetadata("abstractClassInheritsFromInterface.kt")
         public void testAbstractClassInheritsFromInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/abstractClassInheritsFromInterface.kt");
@@ -15407,7 +15407,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeInfo extends AbstractPsi2IrAcceptanceTestCase {
+    public static class TypeInfo extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInTypeInfo() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15458,7 +15458,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/typeMapping")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeMapping extends AbstractPsi2IrAcceptanceTestCase {
+    public static class TypeMapping extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInTypeMapping() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15527,7 +15527,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/typealias")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Typealias extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Typealias extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInTypealias() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15560,7 +15560,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/unaryOp")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class UnaryOp extends AbstractPsi2IrAcceptanceTestCase {
+    public static class UnaryOp extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInUnaryOp() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unaryOp"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15605,7 +15605,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/unit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Unit extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Unit extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInUnit() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unit"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15680,7 +15680,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/vararg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Vararg extends AbstractPsi2IrAcceptanceTestCase {
+    public static class Vararg extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInVararg() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15737,7 +15737,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class When extends AbstractPsi2IrAcceptanceTestCase {
+    public static class When extends AbstractPsi2IrBoxTestCase {
         public void testAllFilesPresentInWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -15943,7 +15943,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class EnumOptimization extends AbstractPsi2IrAcceptanceTestCase {
+        public static class EnumOptimization extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInEnumOptimization() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/enumOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -16018,7 +16018,7 @@ public class Psi2IrAcceptanceTestCaseGenerated extends AbstractPsi2IrAcceptanceT
         @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class StringOptimization extends AbstractPsi2IrAcceptanceTestCase {
+        public static class StringOptimization extends AbstractPsi2IrBoxTestCase {
             public void testAllFilesPresentInStringOptimization() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/stringOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
             }
