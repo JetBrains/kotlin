@@ -49,6 +49,52 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             descriptor ?: reportUnresolvedClass()
         }
 
+        val simpleName: String? by ReflectProperties.lazySoft {
+            if (jClass.isAnonymousClass) return@lazySoft null
+
+            val classId = classId
+            when {
+                classId.isLocal -> calculateLocalClassName(jClass)
+                else -> classId.shortClassName.asString()
+            }
+        }
+
+        val qualifiedName: String? by ReflectProperties.lazySoft {
+            if (jClass.isAnonymousClass) return@lazySoft null
+
+            val classId = classId
+            when {
+                classId.isLocal -> null
+                else -> classId.asSingleFqName().asString()
+            }
+        }
+
+        private fun calculateLocalClassName(jClass: Class<*>): String {
+            val name = jClass.simpleName
+            jClass.enclosingMethod?.let { method ->
+                return name.substringAfter(method.name + "$")
+            }
+            jClass.enclosingConstructor?.let { constructor ->
+                return name.substringAfter(constructor.name + "$")
+            }
+            return name.substringAfter('$')
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
+            constructorDescriptors.map { descriptor ->
+                KFunctionImpl(this@KClassImpl, descriptor) as KFunction<T>
+            }
+        }
+
+        val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
+            descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
+                nestedClass ->
+                val jClass = (nestedClass as ClassDescriptor).toJavaClass()
+                jClass?.let { KClassImpl(it) }
+            }
+        }
+
         @Suppress("UNCHECKED_CAST")
         val objectInstance: T? by ReflectProperties.lazy {
             val descriptor = descriptor
@@ -61,6 +107,31 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
                 jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
             }
             field.get(null) as T
+        }
+
+        val typeParameters: List<KTypeParameter> by ReflectProperties.lazySoft {
+            descriptor.declaredTypeParameters.map(::KTypeParameterImpl)
+        }
+
+        val supertypes: List<KType> by ReflectProperties.lazySoft {
+            descriptor.typeConstructor.supertypes.map { kotlinType ->
+                KTypeImpl(kotlinType) {
+                    val superClass = kotlinType.constructor.declarationDescriptor
+                    if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
+
+                    val superJavaClass = superClass.toJavaClass()
+                                         ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
+
+                    if (jClass.superclass == superJavaClass) {
+                        jClass.genericSuperclass
+                    }
+                    else {
+                        val index = jClass.interfaces.indexOf(superJavaClass)
+                        if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClass")
+                        jClass.genericInterfaces[index]
+                    }
+                }
+            }
         }
 
         val declaredNonStaticMembers: Sequence<KCallableImpl<*>>
@@ -112,49 +183,13 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
             memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
             staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
-    override val simpleName: String? get() {
-        if (jClass.isAnonymousClass) return null
+    override val simpleName: String? get() = data().simpleName
 
-        val classId = classId
-        return when {
-            classId.isLocal -> calculateLocalClassName(jClass)
-            else -> classId.shortClassName.asString()
-        }
-    }
+    override val qualifiedName: String? get() = data().qualifiedName
 
-    private fun calculateLocalClassName(jClass: Class<*>): String {
-        val name = jClass.simpleName
-        jClass.enclosingMethod?.let { method ->
-            return name.substringAfter(method.name + "$")
-        }
-        jClass.enclosingConstructor?.let { constructor ->
-            return name.substringAfter(constructor.name + "$")
-        }
-        return name.substringAfter('$')
-    }
+    override val constructors: Collection<KFunction<T>> get() = data().constructors
 
-    override val qualifiedName: String? get() {
-        if (jClass.isAnonymousClass) return null
-
-        val classId = classId
-        return when {
-            classId.isLocal -> null
-            else -> classId.asSingleFqName().asString()
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override val constructors: Collection<KFunction<T>>
-        get() = constructorDescriptors.map {
-            KFunctionImpl(this, it) as KFunction<T>
-        }
-
-    override val nestedClasses: Collection<KClass<*>>
-        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
-            nestedClass ->
-            val jClass = (nestedClass as ClassDescriptor).toJavaClass()
-            jClass?.let { KClassImpl(it) }
-        }
+    override val nestedClasses: Collection<KClass<*>> get() = data().nestedClasses
 
     override val objectInstance: T? get() = data().objectInstance
 
@@ -166,28 +201,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
         return (jClass.wrapperByPrimitive ?: jClass).isInstance(value)
     }
 
-    override val typeParameters: List<KTypeParameter>
-        get() = descriptor.declaredTypeParameters.map(::KTypeParameterImpl)
+    override val typeParameters: List<KTypeParameter> get() = data().typeParameters
 
-    override val supertypes: List<KType>
-        get() = descriptor.typeConstructor.supertypes.map { kotlinType ->
-            KTypeImpl(kotlinType) {
-                val superClass = kotlinType.constructor.declarationDescriptor
-                if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
-
-                val superJavaClass = superClass.toJavaClass()
-                                     ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
-
-                if (jClass.superclass == superJavaClass) {
-                    jClass.genericSuperclass
-                }
-                else {
-                    val index = jClass.interfaces.indexOf(superJavaClass)
-                    if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClass")
-                    jClass.genericInterfaces[index]
-                }
-            }
-        }
+    override val supertypes: List<KType> get() = data().supertypes
 
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
