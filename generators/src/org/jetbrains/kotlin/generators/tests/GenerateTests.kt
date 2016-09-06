@@ -124,6 +124,7 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractClosureAnnotatorTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.ir.AbstractPsi2IrBoxTestCase
+import org.jetbrains.kotlin.ir.AbstractPsi2IrDiagnosticsTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
@@ -246,9 +247,15 @@ fun main(args: Array<String>) {
             model("ir/irText")
         }
 
-        testClass<AbstractPsi2IrBoxTestCase>() {
-            model("codegen/box")
-        }
+//      Uncomment the following lines to generate IR generator tests based on existing compiler tests.
+//
+//        testClass<AbstractPsi2IrBoxTestCase>() {
+//            model("codegen/box")
+//        }
+//
+//        testClass<AbstractPsi2IrDiagnosticsTest>() {
+//            model("diagnostics/tests/controlFlowAnalysis")
+//        }
 
         testClass<AbstractClosureAnnotatorTestCase> {
             model("ir/closureAnnotator")
