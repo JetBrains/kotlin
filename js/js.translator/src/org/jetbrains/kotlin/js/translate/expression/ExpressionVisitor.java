@@ -86,34 +86,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private static JsNode translateConstantExpression(@NotNull KtConstantExpression expression, @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
         assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
-        KotlinType expectedType = context.bindingContext().getType(expression);
-        ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
-        if (constant instanceof NullValue) {
-            return JsLiteral.NULL;
-        }
-        Object value = constant.getValue();
-        if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
-            return context.program().getNumberLiteral(((Number) value).intValue());
-        }
-        else if (value instanceof Long) {
-            return JsAstUtils.newLong((Long) value, context);
-        }
-        else if (value instanceof Number) {
-            return context.program().getNumberLiteral(((Number) value).doubleValue());
-        }
-        else if (value instanceof Boolean) {
-            return JsLiteral.getBoolean((Boolean) value);
+
+        JsNode result = Translation.translateConstant(compileTimeValue, expression, context);
+        if (result == null) {
+            throw new AssertionError(message(expression, "Unsupported constant expression: " + expression.getText() + " "));
         }
 
-        //TODO: test
-        if (value instanceof String) {
-            return context.program().getStringLiteral((String) value);
-        }
-        if (value instanceof Character) {
-            return context.program().getStringLiteral(value.toString());
-        }
-
-        throw new AssertionError(message(expression, "Unsupported constant expression: " + expression.getText() + " "));
+        return result;
     }
 
     @Override
