@@ -16,6 +16,7 @@ val mainServerPort = 7925
 val config = Config()
 val fs: dynamic = require("fs")
 fun main(args: Array<String>) {
+
     if (!config.loadConfig()) {
         println("incorrect config format!")
         js("process.exit(1)")

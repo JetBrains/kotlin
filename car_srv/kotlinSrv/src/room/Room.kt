@@ -1,6 +1,7 @@
 package room
 
 import geometry.Line
+import require
 
 class Room() {
 
@@ -12,12 +13,18 @@ class Room() {
 
     companion object {
         fun roomFromString(roomString: String): Room? {
+            val xmlParser = require("xml-parser")
+            val xmlObject = xmlParser(roomString)
+            val wallsArray: dynamic
+            try {
+                wallsArray = xmlObject.root.children[0].children
+            } catch (e: Exception) {
+                return null
+            }
             val result = Room()
-            roomString.split("\n").forEach { wallString ->
-                if (!wallString.equals("")) {
-                    val wall = Wall.wallFromString(wallString) ?: return null
-                    result.walls.add(wall)
-                }
+            for (i in 0..(parseInt(wallsArray.length) - 1)) {
+                val wall = Wall.wallFromXml(wallsArray[i]) ?: return null
+                result.walls.add(wall)
             }
             return result
         }

@@ -1,5 +1,0 @@
-xFrom: 200, yFrom: 300, xTo: -150, yTo: 300
-xFrom: -150, yFrom: 300, xTo: -150, yTo: -45
-xFrom: -150, yFrom: -45, xTo: 200, yTo: -45
-xFrom: 200, yFrom: -45, xTo: 200, yTo: 300
-
