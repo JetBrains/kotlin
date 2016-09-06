@@ -47,14 +47,18 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
     }
 
     fun generateBreak(ktBreak: KtBreakExpression): IrExpression {
-        val parentLoop = findParentLoop(ktBreak)
+        val parentLoop = findParentLoop(ktBreak) ?:
+                         return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
+                                 ktBreak, RuntimeException("Loop not found for break expression: ${ktBreak.text}"))
         return IrBreakImpl(ktBreak.startOffset, ktBreak.endOffset, context.builtIns.nothingType, parentLoop).apply {
             label = ktBreak.getLabelName()
         }
     }
 
     fun generateContinue(ktContinue: KtContinueExpression): IrExpression {
-        val parentLoop = findParentLoop(ktContinue)
+        val parentLoop = findParentLoop(ktContinue) ?:
+                         return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
+                                 ktContinue, RuntimeException("Loop not found for continue expression: ${ktContinue.text}"))
         return IrContinueImpl(ktContinue.startOffset, ktContinue.endOffset, context.builtIns.nothingType, parentLoop).apply {
             label = ktContinue.getLabelName()
         }
@@ -63,10 +67,10 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
     private fun getLoopLabel(ktLoop: KtLoopExpression): String? =
             (ktLoop.parent as? KtLabeledExpression)?.getLabelName()
 
-    private fun findParentLoop(ktWithLabel: KtExpressionWithLabel): IrLoop =
+    private fun findParentLoop(ktWithLabel: KtExpressionWithLabel): IrLoop? =
             findParentLoop(ktWithLabel, ktWithLabel.getLabelName())
 
-    private fun findParentLoop(ktExpression: KtExpression, targetLabel: String?): IrLoop {
+    private fun findParentLoop(ktExpression: KtExpression, targetLabel: String?): IrLoop? {
         var finger: KtExpression? = ktExpression
         while (finger != null) {
             finger = finger.getParentOfType<KtLoopExpression>(true)
@@ -86,7 +90,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
                 }
             }
         }
-        throw AssertionError("No parent loop for break/continue @$targetLabel")
+        return null
     }
 
     private fun getLoop(ktLoop: KtLoopExpression): IrLoop? {

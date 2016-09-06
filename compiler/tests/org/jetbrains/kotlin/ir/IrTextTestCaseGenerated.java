@@ -280,6 +280,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("badBreakContinue.kt")
+        public void testBadBreakContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/badBreakContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("bangbang.kt")
         public void testBangbang() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/bangbang.kt");

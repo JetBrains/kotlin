@@ -1,0 +1,32 @@
+FILE /badBreakContinue.kt
+  FUN public fun test1(): kotlin.Unit
+    BLOCK_BODY
+      ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+      ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+  FUN public fun test2(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=L1 operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Nothing operator=null
+          ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
+          ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
+  FUN public fun test3(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=L1 operator=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value='true'
+        body: BLOCK type=kotlin.Unit operator=null
+          VAR val lambda: () -> kotlin.Nothing
+            BLOCK type=() -> kotlin.Nothing operator=LAMBDA
+              FUN local final fun <anonymous>(): kotlin.Nothing
+                BLOCK_BODY
+                  ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
+                  ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
+              CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing operator=LAMBDA
+  FUN public fun test4(): kotlin.Unit
+    BLOCK_BODY
+      WHILE label=null operator=WHILE_LOOP
+        condition: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+        body: BLOCK type=kotlin.Unit operator=null
+      WHILE label=null operator=WHILE_LOOP
+        condition: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+        body: BLOCK type=kotlin.Unit operator=null
