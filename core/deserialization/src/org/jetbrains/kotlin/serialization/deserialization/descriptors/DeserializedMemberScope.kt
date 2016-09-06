@@ -68,14 +68,25 @@ abstract class DeserializedMemberScope protected constructor(
             getNameIndex: (M) -> Int
     ) = groupBy { c.nameResolver.getName(getNameIndex(it)) }
 
-    private fun computeFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
-        val protos = functionProtos[name].orEmpty()
+    private fun computeFunctions(name: Name) =
+            computeDescriptors(
+                    name,
+                    functionProtos,
+                    { c.memberDeserializer.loadFunction(it) },
+                    { computeNonDeclaredFunctions(name, it)}
+            )
 
-        val descriptors = protos.mapTo(linkedSetOf()) {
-            c.memberDeserializer.loadFunction(it)
-        }
+    inline private fun <M : MessageLite, D : DeclarationDescriptor> computeDescriptors(
+            name: Name,
+            protosByName: Map<Name, Collection<M>>,
+            factory: (M) -> D,
+            computeNonDeclared: (MutableCollection<D>) -> Unit
+    ): Collection<D> {
+        val protos = protosByName[name].orEmpty()
 
-        computeNonDeclaredFunctions(name, descriptors)
+        val descriptors = protos.mapTo(linkedSetOf(), factory)
+
+        computeNonDeclared(descriptors)
         return descriptors.toReadOnlyList()
     }
 
@@ -84,28 +95,23 @@ abstract class DeserializedMemberScope protected constructor(
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
 
-    private fun computeProperties(name: Name): Collection<PropertyDescriptor> {
-        val protos = propertyProtos[name].orEmpty()
-
-        val descriptors = protos.mapTo(linkedSetOf()) {
-            c.memberDeserializer.loadProperty(it)
-        }
-
-        computeNonDeclaredProperties(name, descriptors)
-        return descriptors.toReadOnlyList()
-    }
+    private fun computeProperties(name: Name) =
+            computeDescriptors(
+                    name,
+                    propertyProtos,
+                    { c.memberDeserializer.loadProperty(it) },
+                    { computeNonDeclaredProperties(name, it) }
+            )
 
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    private fun computeTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
-        val protos = typeAliasProtos[name] ?: return emptyList()
-        val descriptors = protos.mapTo(linkedSetOf()) {
-            c.memberDeserializer.loadTypeAlias(it)
-        }
-
-        return descriptors.toReadOnlyList()
-    }
+    private fun computeTypeAliases(name: Name) =
+            computeDescriptors(
+                    name,
+                    typeAliasProtos,
+                    { c.memberDeserializer.loadTypeAlias(it) },
+                    { })
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
 
