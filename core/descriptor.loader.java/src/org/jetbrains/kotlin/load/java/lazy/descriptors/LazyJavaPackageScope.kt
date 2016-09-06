@@ -140,6 +140,9 @@ class LazyJavaPackageScope(
         // neither objects nor enum members can be in java package
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return emptySet()
 
+        val knownClassNamesInPackage = knownClassNamesInPackage()
+        if (knownClassNamesInPackage != null) return knownClassNamesInPackage.mapTo(HashSet()) { Name.identifier(it) }
+
         return jPackage.getClasses(nameFilter ?: alwaysTrue()).mapNotNullTo(linkedSetOf()) { klass ->
             if (klass.lightClassOriginKind == LightClassOriginKind.SOURCE) null else klass.name
         }
