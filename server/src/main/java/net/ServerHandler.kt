@@ -30,18 +30,18 @@ class ServerHandler(val handlers: Map<String, Handler>) : SimpleChannelInboundHa
                 HttpResponseStatus.OK,
                 Unpooled.copiedBuffer(Base64.getEncoder().encodeToString(responseBytes), CharsetUtil.UTF_8)
         )
-        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
+        response.headers().add("Content-Length", response.content().readableBytes())
         response.headers().add("Access-Control-Allow-Origin", "*")
         response.headers().add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
         response.headers().add("Access-Control-Allow-Headers", "X-Requested-With, Content-Direction, Content-Length")
-        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes())
+        response.headers().add("Content-Length", response.content().readableBytes())
         return response
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext, msg: Any) {
         if (msg is HttpRequest) {
-            path = msg.uri()
-            method = msg.method()
+            path = msg.getUri()
+            method = msg.getMethod()
         }
 
         if (msg is DefaultHttpContent) {
