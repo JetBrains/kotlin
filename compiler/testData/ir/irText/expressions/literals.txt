@@ -38,3 +38,15 @@ FILE /literals.kt
   PROPERTY public val test13: kotlin.Char = \u0061 ('a')
     EXPRESSION_BODY
       CONST Char type=kotlin.Char value='a'
+  PROPERTY public val testB: kotlin.Byte = 1.toByte()
+    EXPRESSION_BODY
+      CONST Byte type=kotlin.Byte value='1'
+  PROPERTY public val testS: kotlin.Short = 1.toShort()
+    EXPRESSION_BODY
+      CONST Short type=kotlin.Short value='1'
+  PROPERTY public val testI: kotlin.Int = 1
+    EXPRESSION_BODY
+      CONST Int type=kotlin.Int value='1'
+  PROPERTY public val testL: kotlin.Long = 1.toLong()
+    EXPRESSION_BODY
+      CONST Long type=kotlin.Long value='1'
