@@ -18,8 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -27,15 +29,61 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 
-internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
-    val javaField: Field?
+internal abstract class KPropertyImpl<out R> private constructor(
+        override val container: KDeclarationContainerImpl,
+        name: String,
+        val signature: String,
+        descriptorInitialValue: PropertyDescriptor?
+) : KProperty<R>, KCallableImpl<R> {
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(
+            container, name, signature, null
+    )
 
-    val signature: String
+    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : this(
+            container,
+            descriptor.name.asString(),
+            RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
+            descriptor
+    )
 
-    override val getter: Getter<R>
+    private val javaField_ = ReflectProperties.lazySoft {
+        val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
+        when (jvmSignature) {
+            is KotlinProperty -> {
+                val descriptor = jvmSignature.descriptor
+                JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
+                    val owner = if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+                        container.jClass.enclosingClass
+                    }
+                    else descriptor.containingDeclaration.let { containingDeclaration ->
+                        if (containingDeclaration is ClassDescriptor) containingDeclaration.toJavaClass()
+                        else container.jClass
+                    }
 
-    override val descriptor: PropertyDescriptor
+                    try {
+                        owner?.getDeclaredField(it.name)
+                    }
+                    catch (e: NoSuchFieldException) {
+                        null
+                    }
+                }
+            }
+            is JavaField -> jvmSignature.field
+            is JavaMethodProperty -> null
+        }
+    }
+
+    val javaField: Field? get() = javaField_()
+
+    override abstract val getter: Getter<R>
+
+    private val descriptor_ = ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
+        container.findPropertyDescriptor(name, signature)
+    }
+
+    override val descriptor: PropertyDescriptor get() = descriptor_()
 
     override val name: String get() = descriptor.name.asString()
 
@@ -43,11 +91,20 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val defaultCaller: FunctionCaller<*>? get() = getter.defaultCaller
 
-    override val isLateinit: Boolean
-        get() = descriptor.isLateInit
+    override val isLateinit: Boolean get() = descriptor.isLateInit
 
-    override val isConst: Boolean
-        get() = descriptor.isConst
+    override val isConst: Boolean get() = descriptor.isConst
+
+    override fun equals(other: Any?): Boolean {
+        val that = other.asKPropertyImpl() ?: return false
+        return container == that.container && name == that.name && signature == that.signature
+    }
+
+    override fun hashCode(): Int =
+            (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
+
+    override fun toString(): String =
+            ReflectionObjectRenderer.renderProperty(descriptor)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
             KCallableImpl<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
@@ -129,7 +186,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
 
     val jvmSignature = RuntimeTypeMapper.mapPropertySignature(property.descriptor)
     return when (jvmSignature) {
-        is JvmPropertySignature.KotlinProperty -> {
+        is KotlinProperty -> {
             val accessorSignature = jvmSignature.signature.run {
                 when {
                     isGetter -> if (hasGetter()) getter else null
@@ -152,10 +209,10 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                 else -> FunctionCaller.StaticMethod(accessor)
             }
         }
-        is JvmPropertySignature.JavaField -> {
+        is JavaField -> {
             computeFieldCaller(jvmSignature.field)
         }
-        is JvmPropertySignature.JavaMethodProperty -> {
+        is JavaMethodProperty -> {
             val method =
                     if (isGetter) jvmSignature.getterMethod
                     else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(

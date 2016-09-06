@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
-internal open class KProperty0Impl<out R> : DescriptorBasedProperty<R>, KProperty0<R>, KPropertyImpl<R> {
+internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
