@@ -60,7 +60,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
         if (componentType is ExecutableType || componentType is NoType) error(componentType)
         assertJeType(componentType); componentType as JePsiType
         
-        return JeArrayType(PsiArrayType(componentType.psiType), psiManager)
+        return JeArrayType(PsiArrayType(componentType.psiType), psiManager, isRaw = false)
     }
 
     override fun isAssignable(t1: TypeMirror, t2: TypeMirror): Boolean {
@@ -88,7 +88,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
             PsiWildcardType.createSuper(psiManager, (superBound as JePsiType).psiType)
         } else {
             PsiWildcardType.createUnbounded(psiManager)
-        })
+        }, isRaw = false)
     }
 
     override fun unboxedType(t: TypeMirror): PrimitiveType? {
@@ -103,8 +103,8 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     override fun erasure(t: TypeMirror): TypeMirror {
         if (t.kind == TypeKind.PACKAGE) throw IllegalArgumentException("Invalid type: $t")
         return when (t) {
-            is JeTypeVariableType -> TypeConversionUtil.typeParameterErasure(t.parameter).toJeType(t.psiManager)
-            is JePsiType -> TypeConversionUtil.erasure(t.psiType).toJeType(psiManager)
+            is JeTypeVariableType -> TypeConversionUtil.typeParameterErasure(t.parameter).toJeType(t.psiManager, isRaw = true)
+            is JePsiType -> TypeConversionUtil.erasure(t.psiType).toJeType(psiManager, isRaw = true)
             is JeMethodExecutableTypeMirror -> {
                 val oldSignature = t.signature
                 val parameterTypes = oldSignature?.parameterTypes?.toList() ?: t.psi.parameterList.parameters.map { it.type }
@@ -114,7 +114,9 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
                         emptyArray(),
                         PsiSubstitutor.EMPTY,
                         oldSignature?.isConstructor ?: t.psi.isConstructor)
-                JeMethodExecutableTypeMirror(t.psi, newSignature, TypeConversionUtil.erasure(t.returnType ?: t.psi.returnType))
+                JeMethodExecutableTypeMirror(
+                        t.psi, newSignature,
+                        TypeConversionUtil.erasure(t.returnType ?: t.psi.returnType), isRaw = true)
             }
             else -> t
         }

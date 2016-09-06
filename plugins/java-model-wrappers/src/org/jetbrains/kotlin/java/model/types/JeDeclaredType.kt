@@ -39,7 +39,8 @@ fun createDeclaredType(psiClass: PsiClass, typeArgs: List<PsiType>): PsiClassRef
 class JeDeclaredType(
         override val psiType: PsiClassType,
         val psiClass: PsiClass,
-        val enclosingDeclaredType: DeclaredType? = null
+        val enclosingDeclaredType: DeclaredType? = null,
+        val isRaw: Boolean = false
 ) : JePsiType(), JeTypeWithManager, DeclaredType {
     override fun getKind() = TypeKind.DECLARED
     
@@ -52,6 +53,8 @@ class JeDeclaredType(
         return when (psiType) {
             is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
             is PsiClassType -> {
+                if (isRaw) return emptyList()
+                
                 val substitutor = psiType.resolveGenerics().substitutor
                 val psiClass = psiType.resolve() ?: return psiType.parameters.map { it.toJeType(psiManager) }
 
@@ -89,14 +92,24 @@ class JeDeclaredType(
         return enclosingType == other.enclosingType
                && psiClass == other.psiClass
                && typeArguments == other.typeArguments
+               && isRaw == other.isRaw
     }
     
     override fun hashCode(): Int {
         var result = enclosingType.hashCode()
         result = 31 * result + psiClass.hashCode()
         result = 31 * result + typeArguments.hashCode()
+        result = 31 * result + isRaw.hashCode()
         return result
     }
     
-    override fun toString() = psiType.getCanonicalText(false)
+    override fun toString() = buildString {
+        append(psiClass.qualifiedName ?: psiClass.name)
+        val typeArgs = typeArguments
+        if (typeArgs.isNotEmpty()) {
+            append('<')
+            append(typeArguments.joinToString(","))
+            append('>')
+        }
+    }
 }
