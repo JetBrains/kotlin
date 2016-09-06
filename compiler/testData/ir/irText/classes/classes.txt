@@ -11,10 +11,6 @@ FILE /classes.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestObject'
   CLASS ANNOTATION_CLASS TestAnnotationClass
-    CONSTRUCTOR public constructor TestAnnotationClass()
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='TestAnnotationClass'
   CLASS ENUM_CLASS TestEnumClass
     CONSTRUCTOR private constructor TestEnumClass()
       BLOCK_BODY

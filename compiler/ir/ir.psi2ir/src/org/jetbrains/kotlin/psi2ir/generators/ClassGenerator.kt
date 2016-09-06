@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import java.lang.AssertionError
 import java.util.*
@@ -186,7 +187,10 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     }
 
     private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
-        val primaryConstructorDescriptor = irClass.descriptor.unsubstitutedPrimaryConstructor ?: return
+        val classDescriptor = irClass.descriptor
+        if (DescriptorUtils.isAnnotationClass(classDescriptor)) return
+
+        val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
 
         val irPrimaryConstructor = IrConstructorImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
                                                      primaryConstructorDescriptor)
