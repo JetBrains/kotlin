@@ -43,6 +43,11 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
         return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getParameters(), typeParameter, KtTokens.LT);
     }
 
+    @NotNull
+    public void removeParameter(@NotNull KtTypeParameter typeParameter) {
+        EditCommaSeparatedListHelper.INSTANCE.removeItem(typeParameter);
+    }
+
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterList(this, data);
