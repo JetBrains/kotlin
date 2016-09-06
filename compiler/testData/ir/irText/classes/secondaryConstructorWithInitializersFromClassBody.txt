@@ -23,3 +23,10 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitBlock'
+    CONSTRUCTOR public constructor TestInitBlock(z: kotlin.Any)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitBlock'
+    CONSTRUCTOR public constructor TestInitBlock(y: kotlin.Int)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor TestInitBlock()'

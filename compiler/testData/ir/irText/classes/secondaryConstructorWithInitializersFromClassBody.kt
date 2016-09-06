@@ -11,4 +11,7 @@ class TestInitBlock : Base {
         x = 0
     }
     constructor()
+    constructor(z: Any)
+
+    constructor(y: Int): this()
 }
