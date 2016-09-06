@@ -1,0 +1,3 @@
+// "Inline type parameter" "true"
+
+data class DC(val x: Int, val y: String)

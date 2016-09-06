@@ -409,5 +409,7 @@ class QuickFixRegistrar : QuickFixContributor {
         REIFIED_TYPE_PARAMETER_NO_INLINE.registerFactory(AddInlineToFunctionWithReifiedFix)
 
         VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.registerFactory(AddTypeAnnotationToValueParameterFix)
+
+        FINAL_UPPER_BOUND.registerFactory(InlineTypeParameterFix)
     }
 }
