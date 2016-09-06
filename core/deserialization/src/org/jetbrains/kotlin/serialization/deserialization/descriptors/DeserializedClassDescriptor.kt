@@ -251,19 +251,19 @@ class DeserializedClassDescriptor(
             })
         }
 
-        override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> {
+        override fun getNonDeclaredFunctionNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<SimpleFunctionDescriptor>().map { it.name }
-            } + c.components.additionalClassPartsProvider.getFunctionsNames(this@DeserializedClassDescriptor)
+                it.memberScope.getFunctionNames()
+            }.apply { addAll(c.components.additionalClassPartsProvider.getFunctionsNames(this@DeserializedClassDescriptor)) }
         }
 
-        override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> {
+        override fun getNonDeclaredVariableNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<PropertyDescriptor>().map { it.name }
+                it.memberScope.getVariableNames()
             }
         }
 
-        override fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name> {
+        override fun getNonDeclaredTypeAliasNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
                 it.memberScope.getContributedDescriptors().filterIsInstance<TypeAliasDescriptor>().map { it.name }
             }
@@ -339,7 +339,7 @@ class DeserializedClassDescriptor(
 
         fun findEnumEntry(name: Name): ClassDescriptor? = enumEntryByName(name)
 
-        private fun computeEnumMemberNames(): Collection<Name> {
+        private fun computeEnumMemberNames(): Set<Name> {
             // NOTE: order of enum entry members should be irrelevant
             // because enum entries are effectively invisible to user (as classes)
             val result = HashSet<Name>()

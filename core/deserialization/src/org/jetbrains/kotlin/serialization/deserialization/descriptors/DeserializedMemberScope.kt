@@ -64,6 +64,17 @@ abstract class DeserializedMemberScope protected constructor(
     private val typeAliases =
             c.storageManager.createMemoizedFunction<Name, Collection<TypeAliasDescriptor>> { computeTypeAliases(it) }
 
+    private val functionNamesLazy by c.storageManager.createLazyValue {
+        functionProtos.keys + getNonDeclaredFunctionNames()
+    }
+
+    private val variableNamesLazy by c.storageManager.createLazyValue {
+        propertyProtos.keys + getNonDeclaredVariableNames()
+    }
+
+    override fun getFunctionNames() = functionNamesLazy
+    override fun getVariableNames() = variableNamesLazy
+
     private inline fun <M : MessageLite> Collection<M>.groupByName(
             getNameIndex: (M) -> Int
     ) = groupBy { c.nameResolver.getName(getNameIndex(it)) }
@@ -93,7 +104,10 @@ abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        if (name !in getFunctionNames()) return emptyList()
+        return functions(name)
+    }
 
     private fun computeProperties(name: Name) =
             computeDescriptors(
@@ -113,9 +127,15 @@ abstract class DeserializedMemberScope protected constructor(
                     { c.memberDeserializer.loadTypeAlias(it) },
                     { })
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        if (name !in getVariableNames()) return emptyList()
+        return properties(name)
+    }
 
-    protected fun getContributedTypeAliases(name: Name): Collection<TypeAliasDescriptor> = typeAliases(name)
+    protected fun getContributedTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
+        if (name !in typeAliasNames) return emptyList()
+        return typeAliases(name)
+    }
 
     protected abstract fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
@@ -184,13 +204,13 @@ abstract class DeserializedMemberScope protected constructor(
     }
 
     protected fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        result.addAll(getNonDeclaredFunctionNames(location).flatMap { getContributedFunctions(it, location) })
-        result.addAll(getNonDeclaredVariableNames(location).flatMap { getContributedVariables(it, location) })
+        result.addAll(getNonDeclaredFunctionNames().flatMap { getContributedFunctions(it, location) })
+        result.addAll(getNonDeclaredVariableNames().flatMap { getContributedVariables(it, location) })
     }
 
-    protected abstract fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name>
-    protected abstract fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name>
-    protected abstract fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name>
+    protected abstract fun getNonDeclaredFunctionNames(): Set<Name>
+    protected abstract fun getNonDeclaredVariableNames(): Set<Name>
+    protected abstract fun getNonDeclaredTypeAliasNames(): Set<Name>
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
