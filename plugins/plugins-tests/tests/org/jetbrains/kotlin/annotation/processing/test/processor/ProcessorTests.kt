@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
+import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.DeclaredType
@@ -152,5 +156,65 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals(1, cai.typeArguments.size)
         val typeArg = cai.typeArguments.first()
         assertTrue(typeArg is TypeVariable)
+    }
+    
+    fun testErasureSimple() = test("ErasureSimple", "*") { set, roundEnv, env -> 
+        val test = env.findClass("Test")
+        val int = test.findMethod("a").returnType
+        val void = test.findMethod("b").returnType
+        assertEquals(int, env.typeUtils.erasure(int))
+        assertEquals(void, env.typeUtils.erasure(void))
+    }
+    
+    fun testErasure2() = test("Erasure2", "*") { set, roundEnv, env ->
+        val test = env.findClass("Test")
+        
+        val erasure = fun (t: JeMethodExecutableTypeMirror) = env.typeUtils.erasure(t)
+        fun check(methodName: String, toString: String, transform: (JeMethodExecutableTypeMirror) -> TypeMirror = { it }) {
+            val method = test.enclosedElements.first { it is JeMethodExecutableElement && it.simpleName.toString() == methodName }
+            assertEquals(toString, transform((method as JeMethodExecutableElement).asType()).toString())
+        }
+        
+        check("a", "()java.lang.String")
+        check("b", "(java.lang.String,java.lang.CharSequence)void")
+        check("c", "()int")
+        
+        check("d", "()T")
+        check("e", "<D>(D)D")
+        check("e", "(java.lang.Object)java.lang.Object", erasure)
+        check("f", "(java.util.List<? extends java.util.Map<java.lang.String,java.lang.Integer>>,int)void")
+        check("f", "(java.util.List,int)void", erasure)
+        check("g", "<D>(D)void")
+        check("g", "(java.lang.String)void", erasure)
+    }
+    
+    fun testIncrementalDataSimple() = incrementalDataTest(
+            "IncrementalDataSimple",
+            "i Intf, i Test, i Test2, i Test3, i Test6, i Test7, i Test8")
+
+    fun testIncrementalDataKotlinAnnotations() = incrementalDataTest(
+            "KotlinAnnotations",
+            "i AnnoAnnotated")
+    
+    private fun getKapt2Extension() = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
+            .firstIsInstance<AnnotationProcessingExtensionForTests>()
+    
+    private fun incrementalDataTest(fileName: String, @Language("TEXT") expectedText: String) {
+        test(fileName, "Anno", "Anno2", "Anno3") { set, roundEnv, env -> }
+        val ext = getKapt2Extension()
+        val incrementalDataFile = ext.incrementalDataFile
+        assertNotNull(incrementalDataFile)
+        val text = incrementalDataFile!!.readText().lines().sorted().joinToString(", ")
+        assertEquals(expectedText, text)
+    }
+    
+    fun testSourceRetention() {
+        test("SourceRetention", "*") { set, roundEnv, env -> }
+        val ext = getKapt2Extension()
+        val incrementalCompilationComponents = ext.incrementalCompilationComponents
+        assertNotNull(incrementalCompilationComponents)
+        val annotationHandler = incrementalCompilationComponents!!.getSourceRetentionAnnotationHandler()
+        val annotations = (annotationHandler as SourceRetentionAnnotationHandlerImpl).sourceRetentionAnnotations.sorted()
+        assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
     }
 }

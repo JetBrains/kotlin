@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolve
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import java.util.*
 
 class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
@@ -63,11 +66,37 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                 throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
-        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false, false) ?: return emptySet()
+        val maxSpecificVariableCall = findMaximallySpecificCall(filterOutEquivalentCalls(variableCalls), false, false) ?: return emptySet()
 
         return candidates.filterTo(newResolvedCallSet<MutableResolvedCall<D>>(2)) {
             it.resultingVariableDescriptor == maxSpecificVariableCall.resultingDescriptor
         }
+    }
+
+    // Sometimes we should compare "copies" from sources and from binary files.
+    // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
+    // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
+    fun <D : CallableDescriptor> filterOutEquivalentCalls(candidates: Set<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> {
+        if (candidates.size <= 1) return candidates
+
+        val fromSourcesGoesFirst = candidates.sortedBy {
+            if (descriptorToDeclaration(it.resultingDescriptor) != null) 0 else 1
+        }
+
+        val result = LinkedHashSet<MutableResolvedCall<D>>()
+        outerLoop@ for (meD in fromSourcesGoesFirst) {
+            for (otherD in result) {
+                val me = meD.resultingDescriptor
+                val other = otherD.resultingDescriptor
+                val ignoreReturnType = descriptorToDeclaration(me) == null != (descriptorToDeclaration(other) == null)
+                if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(me, other, ignoreReturnType)) {
+                    continue@outerLoop
+                }
+            }
+            result.add(meD)
+        }
+
+        return result
     }
 
     private fun <D : CallableDescriptor> findMaximallySpecificCall(

@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
-import org.jetbrains.kotlin.annotation.AnalysisContext
+import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
 import org.jetbrains.kotlin.java.model.toJeElement
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 
 internal class KotlinRoundEnvironment(
-        private val context: AnalysisContext,
-        private val isProcessingOver: Boolean = false) : RoundEnvironment {
+        val roundAnnotations: RoundAnnotations,
+        private val isProcessingOver: Boolean,
+        internal val roundNumber: Int
+) : RoundEnvironment {
     private var isError = false
     
     override fun getRootElements() = emptySet<Element>()
@@ -32,7 +34,7 @@ internal class KotlinRoundEnvironment(
     override fun processingOver() = isProcessingOver
 
     private fun getElementsAnnotatedWith(fqName: String): Set<Element> {
-        val declarations = context.annotationsMap[fqName] ?: return emptySet()
+        val declarations = roundAnnotations.annotationsMap[fqName] ?: return emptySet()
         return hashSetOf<Element>().apply {
             for (declaration in declarations) {
                 declaration.toJeElement()?.let { add(it) }

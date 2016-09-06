@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Kotlin2JsCompilerArguments">
+    <option name="moduleKind" value="plain" />
+  </component>
   <component name="KotlinCompilerSettings">
-    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
+    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check -language-version 1.0" />
   </component>
 </project>

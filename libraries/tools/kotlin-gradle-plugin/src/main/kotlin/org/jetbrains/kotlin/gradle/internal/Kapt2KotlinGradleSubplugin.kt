@@ -78,19 +78,24 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
                 kaptClasspath.addAll(kapt2Configuration.resolve())
             }
         }
-
-        val generatedFilesDir = if (variantData != null) {
+        
+        val sourceSetName = if (variantData != null) {
             for (provider in (variantData as BaseVariantData<*>).sourceProviders) {
                 handleSourceSet((provider as AndroidSourceSet).name)
             }
 
-            getKaptGeneratedDir(project, variantData.name).apply { variantData.addJavaSourceFoldersToModel(this) }
+            variantData.name
         }
         else {
             if (javaSourceSet == null) error("Java source set should not be null")
 
             handleSourceSet(javaSourceSet.name)
-            getKaptGeneratedDir(project, javaSourceSet.name)
+            javaSourceSet.name
+        }
+
+        val generatedFilesDir = getKaptGeneratedDir(project, sourceSetName)
+        if (variantData != null) {
+            (variantData as BaseVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
         }
 
         // Skip annotation processing in kotlinc if no kapt dependencies were provided
@@ -116,6 +121,9 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
         }
+        
+        val incrementalCompilationDataFile = File(project.buildDir, "tmp/kapt2/$sourceSetName/incrementalData.txt")
+        pluginOptions += SubpluginOption("incrementalData", incrementalCompilationDataFile.absolutePath)
         
         return pluginOptions
     }

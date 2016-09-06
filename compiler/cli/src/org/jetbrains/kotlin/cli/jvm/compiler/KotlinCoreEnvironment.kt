@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
@@ -169,6 +170,14 @@ class KotlinCoreEnvironment private constructor(
         val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
         return index
+    }
+
+    val appendJavaSourceRootsHandler = fun(roots: List<File>) {
+        addJavaSourceRoots(roots.map { JavaSourceRoot(it, null) })
+    }
+
+    init {
+        project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, appendJavaSourceRootsHandler)
     }
     
     fun addJavaSourceRoots(newRoots: List<JavaSourceRoot>) {

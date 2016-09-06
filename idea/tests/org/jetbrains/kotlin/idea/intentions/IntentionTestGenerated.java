@@ -3883,6 +3883,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("argumentWithReceiver.kt")
+        public void testArgumentWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/argumentWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/constructor.kt");
@@ -3946,6 +3952,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("extensionProperty.kt")
         public void testExtensionProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/extensionProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fqNameForReceiver.kt")
+        public void testFqNameForReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/fqNameForReceiver.kt");
             doTest(fileName);
         }
 
@@ -4042,6 +4054,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("toString.kt")
         public void testToString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/toString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeFromJava.kt")
+        public void testTypeFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeFromJavaFlexibleRecursive.kt")
+        public void testTypeFromJavaFlexibleRecursive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJavaFlexibleRecursive.kt");
             doTest(fileName);
         }
 
