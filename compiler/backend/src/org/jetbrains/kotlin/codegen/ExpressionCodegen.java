@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -2725,6 +2726,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     protected FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        if (descriptor instanceof TypeAliasConstructorDescriptor) {
+            descriptor = ((TypeAliasConstructorDescriptor) descriptor).getUnderlyingConstructorDescriptor();
+        }
         FunctionDescriptor originalIfSamAdapter = SamCodegenUtil.getOriginalIfSamAdapter(descriptor);
         if (originalIfSamAdapter != null) {
             descriptor = originalIfSamAdapter;
