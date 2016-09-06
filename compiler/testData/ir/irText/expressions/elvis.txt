@@ -4,77 +4,77 @@ FILE /elvis.kt
       CONST Null type=kotlin.Nothing? value='null'
   FUN public fun foo(): kotlin.Any?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo
+      RETURN type=kotlin.Nothing from='foo(): Any?'
         CONST Null type=kotlin.Nothing? value='null'
-  FUN public fun test1(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any): kotlin.Any
+  FUN public fun test1(a: kotlin.Any?, b: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
+      RETURN type=kotlin.Nothing from='test1(Any?, Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
-            GET_VAR a type=kotlin.Any? operator=null
+            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR b type=kotlin.Any operator=null
-            else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
-  FUN public fun test2(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.Any): kotlin.Any
+            then: GET_VAR 'value-parameter b: Any' type=kotlin.Any operator=null
+            else: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
+  FUN public fun test2(a: kotlin.String?, b: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(String?, Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.String?
-            GET_VAR a type=kotlin.String? operator=null
+            GET_VAR 'value-parameter a: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Any operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_elvis_lhs type=kotlin.String? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_elvis_lhs: String?' type=kotlin.String? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR b type=kotlin.Any operator=null
-            else: GET_VAR tmp0_elvis_lhs type=kotlin.String? operator=null
-  FUN public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.String
+            then: GET_VAR 'value-parameter b: Any' type=kotlin.Any operator=null
+            else: GET_VAR 'tmp0_elvis_lhs: String?' type=kotlin.String? operator=null
+  FUN public fun test3(a: kotlin.Any?, b: kotlin.Any?): kotlin.String
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR b type=kotlin.Any? operator=null
-        then: RETURN type=kotlin.Nothing from=test3
+          GET_VAR 'value-parameter b: Any?' type=kotlin.Any? operator=null
+        then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
           CONST String type=kotlin.String value=''
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String?
-          GET_VAR a type=kotlin.Any? operator=null
-        then: RETURN type=kotlin.Nothing from=test3
+          GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
+        then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from=test3
+      RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
         BLOCK type=kotlin.String operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
-            GET_VAR a type=kotlin.Any? operator=null
+            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.String operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR b type=kotlin.Any? operator=null
+              GET_VAR 'value-parameter b: Any?' type=kotlin.Any? operator=null
             else: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
-  FUN public fun test4(/*0*/ x: kotlin.Any): kotlin.Any
+              GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
+  FUN public fun test4(x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
+      RETURN type=kotlin.Nothing from='test4(Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
-            CALL .<get-p> type=kotlin.Any? operator=GET_PROPERTY
+            CALL '<get-p>(): Any?' type=kotlin.Any? operator=GET_PROPERTY
           WHEN type=kotlin.Any operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR x type=kotlin.Any operator=null
-            else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
-  FUN public fun test5(/*0*/ x: kotlin.Any): kotlin.Any
+            then: GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+            else: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
+  FUN public fun test5(x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5
+      RETURN type=kotlin.Nothing from='test5(Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
           VAR val tmp0_elvis_lhs: kotlin.Any?
-            CALL .foo type=kotlin.Any? operator=null
+            CALL 'foo(): Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: GET_VAR x type=kotlin.Any operator=null
-            else: GET_VAR tmp0_elvis_lhs type=kotlin.Any? operator=null
+            then: GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+            else: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? operator=null

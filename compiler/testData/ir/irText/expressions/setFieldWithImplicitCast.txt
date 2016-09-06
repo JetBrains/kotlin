@@ -2,15 +2,15 @@ FILE /Derived.kt
   CLASS CLASS Derived
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Base
-        INSTANCE_INITIALIZER_CALL classDescriptor=Derived
-    FUN public final fun setValue(/*0*/ v: kotlin.Any): kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
+    FUN public final fun setValue(v: kotlin.Any): kotlin.Unit
       BLOCK_BODY
         WHEN type=kotlin.Unit operator=IF
           if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.String
-            GET_VAR v type=kotlin.Any operator=null
+            GET_VAR 'value-parameter v: Any' type=kotlin.Any operator=null
           then: BLOCK type=kotlin.Unit operator=null
-            SET_BACKING_FIELD value type=kotlin.Unit operator=EQ
-              receiver: THIS public final class Derived : Base type=Derived
+            SET_BACKING_FIELD 'value: String!' type=kotlin.Unit operator=EQ
+              receiver: THIS of 'Derived' type=Derived
               value: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String!
-                GET_VAR v type=kotlin.Any operator=null
+                GET_VAR 'value-parameter v: Any' type=kotlin.Any operator=null

@@ -1,71 +1,71 @@
 FILE /initVar.kt
   CLASS CLASS TestInitVarFromParameter
-    CONSTRUCTOR public constructor TestInitVarFromParameter(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor TestInitVarFromParameter(x: kotlin.Int)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final class TestInitVarFromParameter type=TestInitVarFromParameter
-          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarFromParameter
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'TestInitVarFromParameter' type=TestInitVarFromParameter
+          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarFromParameter'
     PROPERTY public final var x: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS TestInitVarInClass
     CONSTRUCTOR public constructor TestInitVarInClass()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarInClass
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInClass'
     PROPERTY public final var x: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitVarInInitBlock
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarInInitBlock
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInInitBlock'
     PROPERTY public final var x: kotlin.Int
     ANONYMOUS_INITIALIZER TestInitVarInInitBlock
       BLOCK_BODY
-        CALL .<set-x> type=kotlin.Unit operator=EQ
-          $this: THIS public final class TestInitVarInInitBlock type=TestInitVarInInitBlock
+        CALL '<set-x>(Int): Unit' type=kotlin.Unit operator=EQ
+          $this: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
           <set-?>: CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitVarWithCustomSetter
     CONSTRUCTOR public constructor TestInitVarWithCustomSetter()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarWithCustomSetter
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetter'
     PROPERTY public final var x: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-      PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
+      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            value: GET_VAR value type=kotlin.Int operator=null
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
+            value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
-      PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
+      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            value: GET_VAR value type=kotlin.Int operator=null
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
+            value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
     ANONYMOUS_INITIALIZER TestInitVarWithCustomSetterWithExplicitCtor
       BLOCK_BODY
-        CALL .<set-x> type=kotlin.Unit operator=EQ
-          $this: THIS public final class TestInitVarWithCustomSetterWithExplicitCtor type=TestInitVarWithCustomSetterWithExplicitCtor
+        CALL '<set-x>(Int): Unit' type=kotlin.Unit operator=EQ
+          $this: THIS of 'TestInitVarWithCustomSetterWithExplicitCtor' type=TestInitVarWithCustomSetterWithExplicitCtor
           value: CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestInitVarWithCustomSetterWithExplicitCtor()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarWithCustomSetterWithExplicitCtor
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterWithExplicitCtor'
   CLASS CLASS TestInitVarWithCustomSetterInCtor
     PROPERTY public final var x: kotlin.Int
-      PROPERTY_SETTER public final fun <set-x>(/*0*/ value: kotlin.Int): kotlin.Unit
+      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD x type=kotlin.Unit operator=EQ
-            value: GET_VAR value type=kotlin.Int operator=null
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
+            value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
     CONSTRUCTOR public constructor TestInitVarWithCustomSetterInCtor()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitVarWithCustomSetterInCtor
-        CALL .<set-x> type=kotlin.Unit operator=EQ
-          $this: THIS public final class TestInitVarWithCustomSetterInCtor type=TestInitVarWithCustomSetterInCtor
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterInCtor'
+        CALL '<set-x>(Int): Unit' type=kotlin.Unit operator=EQ
+          $this: THIS of 'TestInitVarWithCustomSetterInCtor' type=TestInitVarWithCustomSetterInCtor
           value: CONST Int type=kotlin.Int value='42'

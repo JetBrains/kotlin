@@ -2,124 +2,124 @@ FILE /complexAugmentedAssignment.kt
   CLASS OBJECT X1
     CONSTRUCTOR private constructor X1()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=X1
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='X1'
     PROPERTY public final var x1: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
     CLASS OBJECT X2
       CONSTRUCTOR private constructor X2()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=X2
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='X2'
       PROPERTY public final var x2: kotlin.Int
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       CLASS OBJECT X3
         CONSTRUCTOR private constructor X3()
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL Any
-            INSTANCE_INITIALIZER_CALL classDescriptor=X3
+            DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+            INSTANCE_INITIALIZER_CALL classDescriptor='X3'
         PROPERTY public final var x3: kotlin.Int
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value='0'
-  FUN public fun test1(/*0*/ a: kotlin.IntArray): kotlin.Unit
+  FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
     BLOCK_BODY
       VAR var i: kotlin.Int
         CONST Int type=kotlin.Int value='0'
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
         VAR val tmp1_array: kotlin.IntArray
-          GET_VAR a type=kotlin.IntArray operator=null
+          GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray operator=null
         VAR val tmp2_index0: kotlin.Int
           BLOCK type=kotlin.Int operator=POSTFIX_INCR
             VAR val tmp0: kotlin.Int
-              GET_VAR i type=kotlin.Int operator=POSTFIX_INCR
-            SET_VAR i type=kotlin.Unit operator=POSTFIX_INCR
-              CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-                $this: GET_VAR tmp0 type=kotlin.Int operator=null
-            GET_VAR tmp0 type=kotlin.Int operator=null
+              GET_VAR 'i: Int' type=kotlin.Int operator=POSTFIX_INCR
+            SET_VAR 'i: Int' type=kotlin.Unit operator=POSTFIX_INCR
+              CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+                $this: GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
+            GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
         VAR val tmp3: kotlin.Int
-          CALL .get type=kotlin.Int operator=POSTFIX_INCR
-            $this: GET_VAR tmp1_array type=kotlin.IntArray operator=null
-            index: GET_VAR tmp2_index0 type=kotlin.Int operator=null
-        CALL .set type=kotlin.Unit operator=POSTFIX_INCR
-          $this: GET_VAR tmp1_array type=kotlin.IntArray operator=null
-          index: GET_VAR tmp2_index0 type=kotlin.Int operator=null
-          value: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-            $this: GET_VAR tmp3 type=kotlin.Int operator=null
-        GET_VAR tmp3 type=kotlin.Int operator=null
+          CALL 'get(Int): Int' type=kotlin.Int operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp1_array: IntArray' type=kotlin.IntArray operator=null
+            index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int operator=null
+        CALL 'set(Int, Int): Unit' type=kotlin.Unit operator=POSTFIX_INCR
+          $this: GET_VAR 'tmp1_array: IntArray' type=kotlin.IntArray operator=null
+          index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int operator=null
+          value: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp3: Int' type=kotlin.Int operator=null
+        GET_VAR 'tmp3: Int' type=kotlin.Int operator=null
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
         VAR val tmp0_this: X1
-          GET_OBJECT X1 type=X1
+          GET_OBJECT 'X1' type=X1
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp1: kotlin.Int
-            CALL .<get-x1> type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp0_this type=X1 operator=null
-          CALL .<set-x1> type=kotlin.Unit operator=POSTFIX_INCR
-            $this: GET_VAR tmp0_this type=X1 operator=null
-            <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp1 type=kotlin.Int operator=null
-          GET_VAR tmp1 type=kotlin.Int operator=null
+            CALL '<get-x1>(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp0_this: X1' type=X1 operator=null
+          CALL '<set-x1>(Int): Unit' type=kotlin.Unit operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp0_this: X1' type=X1 operator=null
+            <set-?>: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp1: Int' type=kotlin.Int operator=null
+          GET_VAR 'tmp1: Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
         VAR val tmp2_this: X1.X2
-          GET_OBJECT X2 type=X1.X2
+          GET_OBJECT 'X2' type=X1.X2
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp3: kotlin.Int
-            CALL .<get-x2> type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp2_this type=X1.X2 operator=null
-          CALL .<set-x2> type=kotlin.Unit operator=POSTFIX_INCR
-            $this: GET_VAR tmp2_this type=X1.X2 operator=null
-            <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp3 type=kotlin.Int operator=null
-          GET_VAR tmp3 type=kotlin.Int operator=null
+            CALL '<get-x2>(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp2_this: X1.X2' type=X1.X2 operator=null
+          CALL '<set-x2>(Int): Unit' type=kotlin.Unit operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp2_this: X1.X2' type=X1.X2 operator=null
+            <set-?>: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp3: Int' type=kotlin.Int operator=null
+          GET_VAR 'tmp3: Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
         VAR val tmp4_this: X1.X2.X3
-          GET_OBJECT X3 type=X1.X2.X3
+          GET_OBJECT 'X3' type=X1.X2.X3
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
           VAR val tmp5: kotlin.Int
-            CALL .<get-x3> type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp4_this type=X1.X2.X3 operator=null
-          CALL .<set-x3> type=kotlin.Unit operator=POSTFIX_INCR
-            $this: GET_VAR tmp4_this type=X1.X2.X3 operator=null
-            <set-?>: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-              $this: GET_VAR tmp5 type=kotlin.Int operator=null
-          GET_VAR tmp5 type=kotlin.Int operator=null
+            CALL '<get-x3>(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp4_this: X1.X2.X3' type=X1.X2.X3 operator=null
+          CALL '<set-x3>(Int): Unit' type=kotlin.Unit operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp4_this: X1.X2.X3' type=X1.X2.X3 operator=null
+            <set-?>: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+              $this: GET_VAR 'tmp5: Int' type=kotlin.Int operator=null
+          GET_VAR 'tmp5: Int' type=kotlin.Int operator=null
   CLASS CLASS B
-    CONSTRUCTOR public constructor B(/*0*/ s: kotlin.Int = ...)
+    CONSTRUCTOR public constructor B(s: kotlin.Int = ...)
       s: EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD s type=kotlin.Unit operator=null
-          receiver: THIS public final class B type=B
-          value: GET_VAR s type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=B
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 's: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'B' type=B
+          value: GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='B'
     PROPERTY public final var s: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR s type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS OBJECT Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Host
-    FUN public final operator fun B.plusAssign(/*0*/ b: B): kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Host'
+    FUN public final operator fun B.plusAssign(b: B): kotlin.Unit
       BLOCK_BODY
         BLOCK type=kotlin.Unit operator=PLUSEQ
           VAR val tmp0_this: B
-            $RECEIVER of: plusAssign type=B
-          CALL .<set-s> type=kotlin.Unit operator=PLUSEQ
-            $this: GET_VAR tmp0_this type=B operator=null
-            <set-?>: CALL .plus type=kotlin.Int operator=PLUSEQ
-              $this: CALL .<get-s> type=kotlin.Int operator=PLUSEQ
-                $this: GET_VAR tmp0_this type=B operator=null
-              other: CALL .<get-s> type=kotlin.Int operator=GET_PROPERTY
-                $this: GET_VAR b type=B operator=null
-  FUN public fun Host.test3(/*0*/ v: B): kotlin.Unit
+            $RECEIVER of 'plusAssign(B) on B: Unit' type=B
+          CALL '<set-s>(Int): Unit' type=kotlin.Unit operator=PLUSEQ
+            $this: GET_VAR 'tmp0_this: B' type=B operator=null
+            <set-?>: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ
+              $this: CALL '<get-s>(): Int' type=kotlin.Int operator=PLUSEQ
+                $this: GET_VAR 'tmp0_this: B' type=B operator=null
+              other: CALL '<get-s>(): Int' type=kotlin.Int operator=GET_PROPERTY
+                $this: GET_VAR 'value-parameter b: B' type=B operator=null
+  FUN public fun Host.test3(v: B): kotlin.Unit
     BLOCK_BODY
-      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-        $this: $RECEIVER of: test3 type=Host
-        $receiver: GET_VAR v type=B operator=PLUSEQ
-        b: CALL .<init> type=B operator=null
+      CALL 'plusAssign(B) on B: Unit' type=kotlin.Unit operator=PLUSEQ
+        $this: $RECEIVER of 'test3(B) on Host: Unit' type=Host
+        $receiver: GET_VAR 'value-parameter v: B' type=B operator=PLUSEQ
+        b: CALL 'constructor B(Int = ...)' type=B operator=null
           s: CONST Int type=kotlin.Int value='1000'

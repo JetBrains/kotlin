@@ -2,105 +2,105 @@ FILE /enum.kt
   CLASS ENUM_CLASS TestEnum1
     CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL Enum super
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum1
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum1'
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL TestEnum1 TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST1
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL TestEnum1 TEST2
-    FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnum1>
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST2
+    FUN public final fun values(): kotlin.Array<TestEnum1>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum1
+    FUN public final fun valueOf(value: kotlin.String): TestEnum1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
-    CONSTRUCTOR private constructor TestEnum2(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR private constructor TestEnum2(x: kotlin.Int)
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL Enum super
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final enum class TestEnum2 : kotlin.Enum<TestEnum2> type=TestEnum2
-          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum2
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'TestEnum2' type=TestEnum2
+          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST1
         x: CONST Int type=kotlin.Int value='1'
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST2
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST2
         x: CONST Int type=kotlin.Int value='2'
     ENUM_ENTRY enum entry TEST3
-      init: ENUM_CONSTRUCTOR_CALL TestEnum2 TEST3
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST3
         x: CONST Int type=kotlin.Int value='3'
-    FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnum2>
+    FUN public final fun values(): kotlin.Array<TestEnum2>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum2
+    FUN public final fun valueOf(value: kotlin.String): TestEnum2
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum3
     CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL Enum super
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum3
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum3'
     ENUM_ENTRY enum entry TEST
-      init: ENUM_CONSTRUCTOR_CALL TEST TEST
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()' TEST
       class: CLASS ENUM_ENTRY TEST
         CONSTRUCTOR private constructor TEST()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL TestEnum3 super
-            INSTANCE_INITIALIZER_CALL classDescriptor=TEST
-        FUN public open override /*1*/ fun foo(): kotlin.Unit
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()' super
+            INSTANCE_INITIALIZER_CALL classDescriptor='TEST'
+        FUN public open override fun foo(): kotlin.Unit
           BLOCK_BODY
-            CALL .println type=kotlin.Unit operator=null
+            CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
               message: CONST String type=kotlin.String value='Hello, world!'
     FUN public abstract fun foo(): kotlin.Unit
-    FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnum3>
+    FUN public final fun values(): kotlin.Array<TestEnum3>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum3
+    FUN public final fun valueOf(value: kotlin.String): TestEnum3
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
-    CONSTRUCTOR private constructor TestEnum4(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR private constructor TestEnum4(x: kotlin.Int)
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL Enum super
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final enum class TestEnum4 : kotlin.Enum<TestEnum4> type=TestEnum4
-          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestEnum4
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'TestEnum4' type=TestEnum4
+          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL TEST1 TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()' TEST1
       class: CLASS ENUM_ENTRY TEST1
         CONSTRUCTOR private constructor TEST1()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL TestEnum4 super
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)' super
               x: CONST Int type=kotlin.Int value='1'
-            INSTANCE_INITIALIZER_CALL classDescriptor=TEST1
-        FUN public open override /*1*/ fun foo(): kotlin.Unit
+            INSTANCE_INITIALIZER_CALL classDescriptor='TEST1'
+        FUN public open override fun foo(): kotlin.Unit
           BLOCK_BODY
-            CALL .println type=kotlin.Unit operator=null
-              message: GET_ENUM_VALUE TEST1 type=TestEnum4
+            CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+              message: GET_ENUM_VALUE 'TEST1' type=TestEnum4
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL TEST2 TEST2
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST2()' TEST2
       class: CLASS ENUM_ENTRY TEST2
         CONSTRUCTOR private constructor TEST2()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL TestEnum4 super
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)' super
               x: CONST Int type=kotlin.Int value='2'
-            INSTANCE_INITIALIZER_CALL classDescriptor=TEST2
+            INSTANCE_INITIALIZER_CALL classDescriptor='TEST2'
         PROPERTY public final val z: kotlin.Int
         ANONYMOUS_INITIALIZER TEST2
           BLOCK_BODY
-            SET_BACKING_FIELD z type=kotlin.Unit operator=null
-              receiver: THIS enum entry TEST2 type=TestEnum4.TEST2
-              value: CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
-                $this: THIS enum entry TEST2 type=TestEnum4.TEST2
-        FUN public open override /*1*/ fun foo(): kotlin.Unit
+            SET_BACKING_FIELD 'z: Int' type=kotlin.Unit operator=null
+              receiver: THIS of 'TEST2' type=TestEnum4.TEST2
+              value: CALL '<get-x>(): Int' type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS of 'TEST2' type=TestEnum4.TEST2
+        FUN public open override fun foo(): kotlin.Unit
           BLOCK_BODY
-            CALL .println type=kotlin.Unit operator=null
-              message: GET_ENUM_VALUE TEST2 type=TestEnum4
+            CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+              message: GET_ENUM_VALUE 'TEST2' type=TestEnum4
     FUN public abstract fun foo(): kotlin.Unit
-    FUN public final /*synthesized*/ fun values(): kotlin.Array<TestEnum4>
+    FUN public final fun values(): kotlin.Array<TestEnum4>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum4
+    FUN public final fun valueOf(value: kotlin.String): TestEnum4
       SYNTHETIC_BODY kind=ENUM_VALUEOF

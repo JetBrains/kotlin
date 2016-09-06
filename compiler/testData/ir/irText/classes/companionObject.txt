@@ -2,20 +2,20 @@ FILE /companionObject.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test1
-    CLASS OBJECT Companion
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+    CLASS OBJECT companion object of Test1
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=Companion
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Test1'
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test2
-    CLASS OBJECT Named
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
+    CLASS OBJECT companion object of Test2Named
       CONSTRUCTOR private constructor Named()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=Named
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Test2Named'

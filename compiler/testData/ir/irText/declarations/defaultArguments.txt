@@ -1,5 +1,5 @@
 FILE /defaultArguments.kt
-  FUN public fun test1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int = ..., /*2*/ z: kotlin.String = ...): kotlin.Unit
+  FUN public fun test1(x: kotlin.Int, y: kotlin.Int = ..., z: kotlin.String = ...): kotlin.Unit
     y: EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
     z: EXPRESSION_BODY

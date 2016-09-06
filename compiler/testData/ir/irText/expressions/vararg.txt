@@ -1,21 +1,21 @@
 FILE /vararg.kt
   PROPERTY public val test1: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
-      CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
+      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
   PROPERTY public val test2: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
-      CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
+      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
         elements: VARARG type=Array<out String> varargElementType=String
           CONST String type=kotlin.String value='1'
           CONST String type=kotlin.String value='2'
           CONST String type=kotlin.String value='3'
   PROPERTY public val test3: kotlin.Array<kotlin.String>
     EXPRESSION_BODY
-      CALL .arrayOf type=kotlin.Array<kotlin.String> operator=null
+      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
         elements: VARARG type=Array<out String> varargElementType=String
           CONST String type=kotlin.String value='0'
           SPREAD_ELEMENT
-            CALL .<get-test2> type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
+            CALL '<get-test2>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
           SPREAD_ELEMENT
-            CALL .<get-test1> type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
+            CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
           CONST String type=kotlin.String value='4'

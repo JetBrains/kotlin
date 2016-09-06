@@ -1,89 +1,89 @@
 FILE /forWithBreakContinue.kt
-  FUN public fun testForBreak1(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+  FUN public fun testForBreak1(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
         VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
-          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+          CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
-          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
           body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
             VAR val s: kotlin.String
-              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+              CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               BREAK label=null loop.label=null depth=0
-  FUN public fun testForBreak2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+  FUN public fun testForBreak2(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
         VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
-          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+          CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
-          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
           body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
             VAR val s1: kotlin.String
-              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+              CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               BLOCK type=kotlin.Unit operator=FOR_LOOP
                 VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
-                  CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-                    $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+                  CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+                    $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
                 WHILE label=INNER operator=FOR_LOOP_INNER_WHILE
-                  condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-                    $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+                  condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+                    $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
                   body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
                     VAR val s2: kotlin.String
-                      CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                        $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+                      CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                        $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
                     BLOCK type=kotlin.Nothing operator=null
                       BREAK label=OUTER loop.label=OUTER depth=1
                       BREAK label=INNER loop.label=INNER depth=0
                       BREAK label=null loop.label=INNER depth=0
               BREAK label=OUTER loop.label=OUTER depth=0
-  FUN public fun testForContinue1(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+  FUN public fun testForContinue1(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
         VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
-          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+          CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
-          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
           body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
             VAR val s: kotlin.String
-              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+              CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               CONTINUE label=null loop.label=null depth=0
-  FUN public fun testForContinue2(/*0*/ ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+  FUN public fun testForContinue2(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
         VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
-          CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-            $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+          CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+            $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
-          condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+          condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+            $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
           body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
             VAR val s1: kotlin.String
-              CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                $this: GET_VAR tmp0_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+              CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               BLOCK type=kotlin.Unit operator=FOR_LOOP
                 VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
-                  CALL .iterator type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
-                    $this: GET_VAR ss type=kotlin.collections.List<kotlin.String> operator=null
+                  CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
+                    $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
                 WHILE label=INNER operator=FOR_LOOP_INNER_WHILE
-                  condition: CALL .hasNext type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
-                    $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+                  condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
+                    $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
                   body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
                     VAR val s2: kotlin.String
-                      CALL .next type=kotlin.String operator=FOR_LOOP_NEXT
-                        $this: GET_VAR tmp1_iterator type=kotlin.collections.Iterator<kotlin.String> operator=null
+                      CALL 'next(): String' type=kotlin.String operator=FOR_LOOP_NEXT
+                        $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
                     BLOCK type=kotlin.Nothing operator=null
                       CONTINUE label=OUTER loop.label=OUTER depth=1
                       CONTINUE label=INNER loop.label=INNER depth=0

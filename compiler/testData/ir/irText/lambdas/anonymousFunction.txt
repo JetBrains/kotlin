@@ -4,5 +4,5 @@ FILE /anonymousFunction.kt
       BLOCK type=() -> kotlin.Unit operator=ANONYMOUS_FUNCTION
         FUN local final fun <no name provided>(): kotlin.Unit
           BLOCK_BODY
-            CALL .println type=kotlin.Unit operator=null
-        CALLABLE_REFERENCE <no name provided> type=() -> kotlin.Unit operator=ANONYMOUS_FUNCTION
+            CALL 'println(): Unit' type=kotlin.Unit operator=null
+        CALLABLE_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit operator=ANONYMOUS_FUNCTION

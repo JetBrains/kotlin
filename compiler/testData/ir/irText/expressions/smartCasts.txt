@@ -1,55 +1,55 @@
 FILE /smartCasts.kt
-  FUN public fun expectsString(/*0*/ s: kotlin.String): kotlin.Unit
+  FUN public fun expectsString(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  FUN public fun expectsInt(/*0*/ i: kotlin.Int): kotlin.Unit
+  FUN public fun expectsInt(i: kotlin.Int): kotlin.Unit
     BLOCK_BODY
-  FUN public fun overloaded(/*0*/ s: kotlin.String): kotlin.String
+  FUN public fun overloaded(s: kotlin.String): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=overloaded
-        GET_VAR s type=kotlin.String operator=null
-  FUN public fun overloaded(/*0*/ x: kotlin.Any): kotlin.Any
+      RETURN type=kotlin.Nothing from='overloaded(String): String'
+        GET_VAR 'value-parameter s: String' type=kotlin.String operator=null
+  FUN public fun overloaded(x: kotlin.Any): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=overloaded
-        GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit
+      RETURN type=kotlin.Nothing from='overloaded(Any): Any'
+        GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test1(x: kotlin.Any): kotlin.Unit
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing from=test1
-      CALL .println type=kotlin.Unit operator=null
-        message: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+        then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
+      CALL 'println(Int): Unit' type=kotlin.Unit operator=null
+        message: CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
           $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
-      CALL .expectsString type=kotlin.Unit operator=null
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+      CALL 'expectsString(String): Unit' type=kotlin.Unit operator=null
         s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-          GET_VAR x type=kotlin.Any operator=null
-      CALL .expectsInt type=kotlin.Unit operator=null
-        i: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+      CALL 'expectsInt(Int): Unit' type=kotlin.Unit operator=null
+        i: CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
           $this: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
-      CALL .expectsString type=kotlin.Unit operator=null
-        s: CALL .overloaded type=kotlin.String operator=null
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+      CALL 'expectsString(String): Unit' type=kotlin.Unit operator=null
+        s: CALL 'overloaded(String): String' type=kotlin.String operator=null
           s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test2(/*0*/ x: kotlin.Any): kotlin.String
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test2(x: kotlin.Any): kotlin.String
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing from=test2
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+        then: RETURN type=kotlin.Nothing from='test2(Any): String'
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from=test2
-        CALL .overloaded type=kotlin.String operator=null
+      RETURN type=kotlin.Nothing from='test2(Any): String'
+        CALL 'overloaded(String): String' type=kotlin.String operator=null
           s: TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-            GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test3(/*0*/ x: kotlin.Any): kotlin.String
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test3(x: kotlin.Any): kotlin.String
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR x type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing from=test3
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+        then: RETURN type=kotlin.Nothing from='test3(Any): String'
           CONST String type=kotlin.String value=''
-      RETURN type=kotlin.Nothing from=test3
+      RETURN type=kotlin.Nothing from='test3(Any): String'
         TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-          GET_VAR x type=kotlin.Any operator=null
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null

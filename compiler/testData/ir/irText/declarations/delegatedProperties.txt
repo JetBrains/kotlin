@@ -2,87 +2,87 @@ FILE /delegatedProperties.kt
   PROPERTY public val test1: kotlin.Int
     delegate: PROPERTY val `test1$delegate`: kotlin.Lazy<kotlin.Int>
       EXPRESSION_BODY
-        CALL .lazy type=kotlin.Lazy<kotlin.Int> operator=null
+        CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
           initializer: BLOCK type=() -> kotlin.Int operator=LAMBDA
             FUN local final fun <anonymous>(): kotlin.Int
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from=<anonymous>
+                RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                   CONST Int type=kotlin.Int value='42'
-            CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA
+            CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
     PROPERTY_GETTER public fun <get-test1>(): kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test1>
-          CALL .getValue type=kotlin.Int operator=null
-            $receiver: GET_BACKING_FIELD test1$delegate type=kotlin.Lazy<kotlin.Int> operator=null
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+          CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int operator=null
+            $receiver: GET_BACKING_FIELD '`test1$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE test1 type=kotlin.reflect.KProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: CALLABLE_REFERENCE 'test1: Int' type=kotlin.reflect.KProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
   CLASS CLASS C
-    CONSTRUCTOR public constructor C(/*0*/ map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>)
+    CONSTRUCTOR public constructor C(map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD map type=kotlin.Unit operator=null
-          receiver: THIS public final class C type=C
-          value: GET_VAR map type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=C
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 'map: MutableMap<String, Any>' type=kotlin.Unit operator=null
+          receiver: THIS of 'C' type=C
+          value: GET_VAR 'value-parameter map: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
     PROPERTY public final val map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
       EXPRESSION_BODY
-        GET_VAR map type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter map: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final val test2: kotlin.Int
       delegate: PROPERTY val `test2$delegate`: kotlin.Lazy<kotlin.Int>
         EXPRESSION_BODY
-          CALL .lazy type=kotlin.Lazy<kotlin.Int> operator=null
+          CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
             initializer: BLOCK type=() -> kotlin.Int operator=LAMBDA
               FUN local final fun <anonymous>(): kotlin.Int
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<anonymous>
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value='42'
-              CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA
+              CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
       PROPERTY_GETTER public final fun <get-test2>(): kotlin.Int
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test2>
-            CALL .getValue type=kotlin.Int operator=null
-              $receiver: GET_BACKING_FIELD test2$delegate type=kotlin.Lazy<kotlin.Int> operator=null
-                receiver: THIS public final class C type=C
-              thisRef: THIS public final class C type=C
-              property: CALLABLE_REFERENCE test2 type=kotlin.reflect.KProperty1<C, kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+          RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+            CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int operator=null
+              $receiver: GET_BACKING_FIELD '`test2$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
+                receiver: THIS of 'C' type=C
+              thisRef: THIS of 'C' type=C
+              property: CALLABLE_REFERENCE 'test2: Int' type=kotlin.reflect.KProperty1<C, kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test3: kotlin.Any
       delegate: PROPERTY val `test3$delegate`: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
         EXPRESSION_BODY
-          CALL .<get-map> type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=GET_PROPERTY
-            $this: THIS public final class C type=C
+          CALL '<get-map>(): MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=GET_PROPERTY
+            $this: THIS of 'C' type=C
       PROPERTY_GETTER public final fun <get-test3>(): kotlin.Any
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-test3>
-            CALL .getValue type=kotlin.Any operator=null
-              $receiver: GET_BACKING_FIELD test3$delegate type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
-                receiver: THIS public final class C type=C
-              thisRef: THIS public final class C type=C
-              property: CALLABLE_REFERENCE test3 type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-      PROPERTY_SETTER public final fun <set-test3>(/*0*/ <set-?>: kotlin.Any): kotlin.Unit
+          RETURN type=kotlin.Nothing from='<get-test3>(): Any'
+            CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Any>: Any' type=kotlin.Any operator=null
+              $receiver: GET_BACKING_FIELD '`test3$delegate`: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
+                receiver: THIS of 'C' type=C
+              thisRef: THIS of 'C' type=C
+              property: CALLABLE_REFERENCE 'test3: Any' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+      PROPERTY_SETTER public final fun <set-test3>(<set-?>: kotlin.Any): kotlin.Unit
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<set-test3>
-            CALL .setValue type=kotlin.Unit operator=null
-              $receiver: GET_BACKING_FIELD test3$delegate type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
-                receiver: THIS public final class C type=C
-              thisRef: THIS public final class C type=C
-              property: CALLABLE_REFERENCE test3 type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-              value: GET_VAR <set-?> type=kotlin.Any operator=null
+          RETURN type=kotlin.Nothing from='<set-test3>(Any): Unit'
+            CALL 'setValue(Any?, KProperty<*>, Any) on MutableMap<in String, in Any>: Unit' type=kotlin.Unit operator=null
+              $receiver: GET_BACKING_FIELD '`test3$delegate`: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> operator=null
+                receiver: THIS of 'C' type=C
+              thisRef: THIS of 'C' type=C
+              property: CALLABLE_REFERENCE 'test3: Any' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+              value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any operator=null
   PROPERTY public var test4: kotlin.Any
     delegate: PROPERTY val `test4$delegate`: java.util.HashMap<kotlin.String, kotlin.Any>
       EXPRESSION_BODY
-        CALL .hashMapOf type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
+        CALL 'hashMapOf(vararg Pair<String, Any>): HashMap<String, Any>' type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
     PROPERTY_GETTER public fun <get-test4>(): kotlin.Any
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<get-test4>
-          CALL .getValue type=kotlin.Any operator=null
-            $receiver: GET_BACKING_FIELD test4$delegate type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
+        RETURN type=kotlin.Nothing from='<get-test4>(): Any'
+          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Any>: Any' type=kotlin.Any operator=null
+            $receiver: GET_BACKING_FIELD '`test4$delegate`: HashMap<String, Any>' type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE test4 type=kotlin.reflect.KMutableProperty0<kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-    PROPERTY_SETTER public fun <set-test4>(/*0*/ <set-?>: kotlin.Any): kotlin.Unit
+            property: CALLABLE_REFERENCE 'test4: Any' type=kotlin.reflect.KMutableProperty0<kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY_SETTER public fun <set-test4>(<set-?>: kotlin.Any): kotlin.Unit
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=<set-test4>
-          CALL .setValue type=kotlin.Unit operator=null
-            $receiver: GET_BACKING_FIELD test4$delegate type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
+        RETURN type=kotlin.Nothing from='<set-test4>(Any): Unit'
+          CALL 'setValue(Any?, KProperty<*>, Any) on MutableMap<in String, in Any>: Unit' type=kotlin.Unit operator=null
+            $receiver: GET_BACKING_FIELD '`test4$delegate`: HashMap<String, Any>' type=java.util.HashMap<kotlin.String, kotlin.Any> operator=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE test4 type=kotlin.reflect.KMutableProperty0<kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-            value: GET_VAR <set-?> type=kotlin.Any operator=null
+            property: CALLABLE_REFERENCE 'test4: Any' type=kotlin.reflect.KMutableProperty0<kotlin.Any> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+            value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any operator=null

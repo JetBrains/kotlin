@@ -3,53 +3,53 @@ FILE /localDelegatedProperties.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY val x: kotlin.Int
         VAR val `x$delegate`: kotlin.Lazy<kotlin.Int>
-          CALL .lazy type=kotlin.Lazy<kotlin.Int> operator=null
+          CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
             initializer: BLOCK type=() -> kotlin.Int operator=LAMBDA
               FUN local final fun <anonymous>(): kotlin.Int
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from=<anonymous>
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value='42'
-              CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Int operator=LAMBDA
-        LOCAL_PROPERTY_ACCESSOR <get-x>
+              CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
+        LOCAL_PROPERTY_ACCESSOR <get-x>(): Int
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-x>
-              CALL .getValue type=kotlin.Int operator=null
-                $receiver: GET_VAR x$delegate type=kotlin.Lazy<kotlin.Int> operator=null
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
+              CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int operator=null
+                $receiver: GET_VAR '`x$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> operator=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
-                property: CALLABLE_REFERENCE x type=kotlin.reflect.KProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-      CALL .println type=kotlin.Unit operator=null
-        message: CALL .<get-x> type=kotlin.Int operator=GET_LOCAL_PROPERTY
+                property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+      CALL 'println(Int): Unit' type=kotlin.Unit operator=null
+        message: CALL '<get-x>(): Int' type=kotlin.Int operator=GET_LOCAL_PROPERTY
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
         VAR val `x$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
-          CALL .hashMapOf type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
-        LOCAL_PROPERTY_ACCESSOR <get-x>
+          CALL 'hashMapOf(vararg Pair<String, Int>): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
+        LOCAL_PROPERTY_ACCESSOR <get-x>(): Int
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<get-x>
-              CALL .getValue type=kotlin.Int operator=null
-                $receiver: GET_VAR x$delegate type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
+            RETURN type=kotlin.Nothing from='<get-x>(): Int'
+              CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int operator=null
+                $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
-                property: CALLABLE_REFERENCE x type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-        LOCAL_PROPERTY_ACCESSOR <set-x>
+                property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+        LOCAL_PROPERTY_ACCESSOR <set-x>(Int): Int
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from=<set-x>
+            RETURN type=kotlin.Nothing from='<set-x>(Int): Int'
               TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
-                CALL .setValue type=kotlin.Unit operator=null
-                  $receiver: GET_VAR x$delegate type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
+                CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit operator=null
+                  $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
                   thisRef: CONST Null type=kotlin.Nothing? value='null'
-                  property: CALLABLE_REFERENCE x type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-                  value: GET_VAR value type=kotlin.Int operator=null
-      CALL .<set-x> type=kotlin.Int operator=EQ
+                  property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
+                  value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
+      CALL '<set-x>(Int): Int' type=kotlin.Int operator=EQ
         value: CONST Int type=kotlin.Int value='0'
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
         VAR val tmp0: kotlin.Int
-          CALL .<get-x> type=kotlin.Int operator=POSTFIX_INCR
-        CALL .<set-x> type=kotlin.Int operator=POSTFIX_INCR
-          value: CALL .inc type=kotlin.Int operator=POSTFIX_INCR
-            $this: GET_VAR tmp0 type=kotlin.Int operator=null
-        GET_VAR tmp0 type=kotlin.Int operator=null
-      CALL .<set-x> type=kotlin.Int operator=PLUSEQ
-        value: CALL .plus type=kotlin.Int operator=PLUSEQ
-          $this: CALL .<get-x> type=kotlin.Int operator=PLUSEQ
+          CALL '<get-x>(): Int' type=kotlin.Int operator=POSTFIX_INCR
+        CALL '<set-x>(Int): Int' type=kotlin.Int operator=POSTFIX_INCR
+          value: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
+            $this: GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
+        GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
+      CALL '<set-x>(Int): Int' type=kotlin.Int operator=PLUSEQ
+        value: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ
+          $this: CALL '<get-x>(): Int' type=kotlin.Int operator=PLUSEQ
           other: CONST Int type=kotlin.Int value='1'

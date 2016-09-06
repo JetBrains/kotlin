@@ -5,7 +5,7 @@ FILE /qualifiedSuperCalls.kt
     PROPERTY public open val bar: kotlin.Int
       PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='1'
   CLASS INTERFACE IRight
     FUN public open fun foo(): kotlin.Unit
@@ -13,25 +13,25 @@ FILE /qualifiedSuperCalls.kt
     PROPERTY public open val bar: kotlin.Int
       PROPERTY_GETTER public open fun <get-bar>(): kotlin.Int
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='2'
   CLASS CLASS CBoth
     CONSTRUCTOR public constructor CBoth()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=CBoth
-    FUN public open override /*2*/ fun foo(): kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CBoth'
+    FUN public open override fun foo(): kotlin.Unit
       BLOCK_BODY
-        CALL .foo superQualifier=ILeft type=kotlin.Unit operator=null
-          $this: THIS public final class CBoth : ILeft, IRight type=ILeft
-        CALL .foo superQualifier=IRight type=kotlin.Unit operator=null
-          $this: THIS public final class CBoth : ILeft, IRight type=IRight
-    PROPERTY public open override /*2*/ val bar: kotlin.Int
-      PROPERTY_GETTER public open override /*2*/ fun <get-bar>(): kotlin.Int
+        CALL 'foo(): Unit' superQualifier=ILeft type=kotlin.Unit operator=null
+          $this: THIS of 'CBoth' type=ILeft
+        CALL 'foo(): Unit' superQualifier=IRight type=kotlin.Unit operator=null
+          $this: THIS of 'CBoth' type=IRight
+    PROPERTY public open override val bar: kotlin.Int
+      PROPERTY_GETTER public open override fun <get-bar>(): kotlin.Int
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from=<get-bar>
-            CALL .plus type=kotlin.Int operator=PLUS
-              $this: CALL .<get-bar> superQualifier=ILeft type=kotlin.Int operator=GET_PROPERTY
-                $this: THIS public final class CBoth : ILeft, IRight type=ILeft
-              other: CALL .<get-bar> superQualifier=IRight type=kotlin.Int operator=GET_PROPERTY
-                $this: THIS public final class CBoth : ILeft, IRight type=IRight
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+            CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
+              $this: CALL '<get-bar>(): Int' superQualifier=ILeft type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS of 'CBoth' type=ILeft
+              other: CALL '<get-bar>(): Int' superQualifier=IRight type=kotlin.Int operator=GET_PROPERTY
+                $this: THIS of 'CBoth' type=IRight

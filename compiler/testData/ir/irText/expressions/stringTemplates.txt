@@ -1,7 +1,7 @@
 FILE /stringTemplates.kt
   FUN public fun foo(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=foo
+      RETURN type=kotlin.Nothing from='foo(): String'
         CONST String type=kotlin.String value=''
   PROPERTY public val test1: kotlin.String = ""
     EXPRESSION_BODY
@@ -28,6 +28,6 @@ abc
   PROPERTY public val test6: kotlin.String
     EXPRESSION_BODY
       STRING_CONCATENATION type=kotlin.String
-        CALL .<get-test1> type=kotlin.String operator=GET_PROPERTY
+        CALL '<get-test1>(): String' type=kotlin.String operator=GET_PROPERTY
         CONST String type=kotlin.String value=' '
-        CALL .foo type=kotlin.String operator=null
+        CALL 'foo(): String' type=kotlin.String operator=null

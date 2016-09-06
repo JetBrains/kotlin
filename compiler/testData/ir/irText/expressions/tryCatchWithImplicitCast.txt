@@ -1,14 +1,14 @@
 FILE /tryCatchWithImplicitCast.kt
-  FUN public fun testImplicitCast(/*0*/ a: kotlin.Any): kotlin.Unit
+  FUN public fun testImplicitCast(a: kotlin.Any): kotlin.Unit
     BLOCK_BODY
       WHEN type=kotlin.Unit operator=IF
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR a type=kotlin.Any operator=null
-        then: RETURN type=kotlin.Nothing from=testImplicitCast
+          GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+        then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
       VAR val t: kotlin.String
         TRY_CATCH type=kotlin.String
           try: BLOCK type=kotlin.String operator=null
             TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR a type=kotlin.Any operator=null
+              GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
           catch e: BLOCK type=kotlin.String operator=null
             CONST String type=kotlin.String value=''

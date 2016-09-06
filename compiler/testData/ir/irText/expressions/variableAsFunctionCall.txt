@@ -1,49 +1,49 @@
 FILE /variableAsFunctionCall.kt
   FUN public fun kotlin.String.k(): () -> kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=k
+      RETURN type=kotlin.Nothing from='k() on String: () -> String'
         BLOCK type=() -> kotlin.String operator=LAMBDA
           FUN local final fun <anonymous>(): kotlin.String
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>
-                $RECEIVER of: k type=kotlin.String
-          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.String operator=LAMBDA
-  FUN public fun test1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+              RETURN type=kotlin.Nothing from='<anonymous>(): String'
+                $RECEIVER of 'k() on String: () -> String' type=kotlin.String
+          CALLABLE_REFERENCE '<anonymous>(): String' type=() -> kotlin.String operator=LAMBDA
+  FUN public fun test1(f: () -> kotlin.Unit): kotlin.Unit
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .invoke type=kotlin.Unit operator=INVOKE
-          $this: GET_VAR f type=() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
-  FUN public fun test2(/*0*/ f: kotlin.String.() -> kotlin.Unit): kotlin.Unit
+      RETURN type=kotlin.Nothing from='test1(() -> Unit): Unit'
+        CALL 'invoke(): Unit' type=kotlin.Unit operator=INVOKE
+          $this: GET_VAR 'value-parameter f: () -> Unit' type=() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
+  FUN public fun test2(f: kotlin.String.() -> kotlin.Unit): kotlin.Unit
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
-        CALL .invoke type=kotlin.Unit operator=INVOKE
-          $this: GET_VAR f type=kotlin.String.() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
+      RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
+        CALL 'invoke() on String: Unit' type=kotlin.Unit operator=INVOKE
+          $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit operator=VARIABLE_AS_FUNCTION
           $receiver: CONST String type=kotlin.String value='hello'
   FUN public fun test3(): kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .invoke type=kotlin.String operator=null
-          $this: CALL .k type=() -> kotlin.String operator=null
+      RETURN type=kotlin.Nothing from='test3(): String'
+        CALL 'invoke(): String' type=kotlin.String operator=null
+          $this: CALL 'k() on String: () -> String' type=() -> kotlin.String operator=null
             $receiver: CONST String type=kotlin.String value='hello'
-  FUN public fun test4(/*0*/ ns: kotlin.String?): kotlin.String?
+  FUN public fun test4(ns: kotlin.String?): kotlin.String?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
+      RETURN type=kotlin.Nothing from='test4(String?): String?'
         BLOCK type=kotlin.String? operator=SAFE_CALL
           VAR val tmp1_safe_receiver: (() -> kotlin.String)?
             BLOCK type=(() -> kotlin.String)? operator=SAFE_CALL
               VAR val tmp0_safe_receiver: kotlin.String?
-                GET_VAR ns type=kotlin.String? operator=null
+                GET_VAR 'value-parameter ns: String?' type=kotlin.String? operator=null
               WHEN type=(() -> kotlin.String)? operator=SAFE_CALL
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
                   arg1: CONST Null type=kotlin.Nothing? value='null'
                 then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL .k type=() -> kotlin.String operator=null
-                  $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+                else: CALL 'k() on String: () -> String' type=() -> kotlin.String operator=null
+                  $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.String? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp1_safe_receiver type=(() -> kotlin.String)? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .invoke type=kotlin.String operator=null
-              $this: GET_VAR tmp1_safe_receiver type=(() -> kotlin.String)? operator=null
+            else: CALL 'invoke(): String' type=kotlin.String operator=null
+              $this: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? operator=null

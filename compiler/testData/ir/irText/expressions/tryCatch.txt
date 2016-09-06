@@ -3,20 +3,20 @@ FILE /tryCatch.kt
     BLOCK_BODY
       TRY_CATCH type=kotlin.Unit
         try: BLOCK type=kotlin.Unit operator=null
-          CALL .println type=kotlin.Unit operator=null
+          CALL 'println(): Unit' type=kotlin.Unit operator=null
         catch e: BLOCK type=kotlin.Unit operator=null
-          CALL .println type=kotlin.Unit operator=null
+          CALL 'println(): Unit' type=kotlin.Unit operator=null
         finally: BLOCK type=kotlin.Unit operator=null
-          CALL .println type=kotlin.Unit operator=null
+          CALL 'println(): Unit' type=kotlin.Unit operator=null
   FUN public fun test2(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(): Int'
         TRY_CATCH type=kotlin.Int
           try: BLOCK type=kotlin.Int operator=null
-            CALL .println type=kotlin.Unit operator=null
+            CALL 'println(): Unit' type=kotlin.Unit operator=null
             CONST Int type=kotlin.Int value='42'
           catch e: BLOCK type=kotlin.Int operator=null
-            CALL .println type=kotlin.Unit operator=null
+            CALL 'println(): Unit' type=kotlin.Unit operator=null
             CONST Int type=kotlin.Int value='24'
           finally: BLOCK type=kotlin.Unit operator=null
-            CALL .println type=kotlin.Unit operator=null
+            CALL 'println(): Unit' type=kotlin.Unit operator=null

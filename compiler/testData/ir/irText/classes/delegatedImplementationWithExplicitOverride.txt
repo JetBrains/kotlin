@@ -5,23 +5,23 @@ FILE /delegatedImplementationWithExplicitOverride.kt
   CLASS OBJECT FooBarImpl
     CONSTRUCTOR private constructor FooBarImpl()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=FooBarImpl
-    FUN public open override /*1*/ fun foo(): kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='FooBarImpl'
+    FUN public open override fun foo(): kotlin.Unit
       BLOCK_BODY
-    FUN public open override /*1*/ fun bar(): kotlin.Unit
+    FUN public open override fun bar(): kotlin.Unit
       BLOCK_BODY
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=C
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
     PROPERTY val `C$IFooBar$delegate`: FooBarImpl
       EXPRESSION_BODY
-        GET_OBJECT FooBarImpl type=FooBarImpl
-    FUN public open override /*1*/ /*delegation*/ fun foo(): kotlin.Unit
+        GET_OBJECT 'FooBarImpl' type=FooBarImpl
+    FUN public open override fun foo(): kotlin.Unit
       BLOCK_BODY
-        CALL .foo type=kotlin.Unit operator=null
-          $this: GET_VAR C$IFooBar$delegate type=FooBarImpl operator=null
-    FUN public open override /*1*/ fun bar(): kotlin.Unit
+        CALL 'foo(): Unit' type=kotlin.Unit operator=null
+          $this: GET_VAR '`C$IFooBar$delegate`: FooBarImpl' type=FooBarImpl operator=null
+    FUN public open override fun bar(): kotlin.Unit
       BLOCK_BODY

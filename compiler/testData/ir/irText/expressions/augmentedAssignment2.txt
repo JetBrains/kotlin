@@ -2,59 +2,59 @@ FILE /augmentedAssignment2.kt
   CLASS CLASS A
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=A
-  FUN public operator fun A.plusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+  FUN public operator fun A.plusAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  FUN public operator fun A.minusAssign(/*0*/ s: kotlin.String): kotlin.Unit
+  FUN public operator fun A.minusAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  FUN public operator fun A.timesAssign(/*0*/ s: kotlin.String): kotlin.Unit
+  FUN public operator fun A.timesAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  FUN public operator fun A.divAssign(/*0*/ s: kotlin.String): kotlin.Unit
+  FUN public operator fun A.divAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
-  FUN public operator fun A.modAssign(/*0*/ s: kotlin.String): kotlin.Unit
+  FUN public operator fun A.modAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val p: A
     EXPRESSION_BODY
-      CALL .<init> type=A operator=null
+      CALL 'constructor A()' type=A operator=null
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR val a: A
-        CALL .<init> type=A operator=null
-      CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-        $receiver: GET_VAR a type=A operator=PLUSEQ
+        CALL 'constructor A()' type=A operator=null
+      CALL 'plusAssign(String) on A: Unit' type=kotlin.Unit operator=PLUSEQ
+        $receiver: GET_VAR 'a: A' type=A operator=PLUSEQ
         s: CONST String type=kotlin.String value='+='
-      CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-        $receiver: GET_VAR a type=A operator=MINUSEQ
+      CALL 'minusAssign(String) on A: Unit' type=kotlin.Unit operator=MINUSEQ
+        $receiver: GET_VAR 'a: A' type=A operator=MINUSEQ
         s: CONST String type=kotlin.String value='-='
-      CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-        $receiver: GET_VAR a type=A operator=MULTEQ
+      CALL 'timesAssign(String) on A: Unit' type=kotlin.Unit operator=MULTEQ
+        $receiver: GET_VAR 'a: A' type=A operator=MULTEQ
         s: CONST String type=kotlin.String value='*='
-      CALL .divAssign type=kotlin.Unit operator=DIVEQ
-        $receiver: GET_VAR a type=A operator=DIVEQ
+      CALL 'divAssign(String) on A: Unit' type=kotlin.Unit operator=DIVEQ
+        $receiver: GET_VAR 'a: A' type=A operator=DIVEQ
         s: CONST String type=kotlin.String value='/='
-      CALL .modAssign type=kotlin.Unit operator=PERCEQ
-        $receiver: GET_VAR a type=A operator=PERCEQ
+      CALL 'modAssign(String) on A: Unit' type=kotlin.Unit operator=PERCEQ
+        $receiver: GET_VAR 'a: A' type=A operator=PERCEQ
         s: CONST String type=kotlin.String value='*='
   FUN public fun testProperty(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ
-        CALL .plusAssign type=kotlin.Unit operator=PLUSEQ
-          $receiver: CALL .<get-p> type=A operator=PLUSEQ
+        CALL 'plusAssign(String) on A: Unit' type=kotlin.Unit operator=PLUSEQ
+          $receiver: CALL '<get-p>(): A' type=A operator=PLUSEQ
           s: CONST String type=kotlin.String value='+='
       BLOCK type=kotlin.Unit operator=MINUSEQ
-        CALL .minusAssign type=kotlin.Unit operator=MINUSEQ
-          $receiver: CALL .<get-p> type=A operator=MINUSEQ
+        CALL 'minusAssign(String) on A: Unit' type=kotlin.Unit operator=MINUSEQ
+          $receiver: CALL '<get-p>(): A' type=A operator=MINUSEQ
           s: CONST String type=kotlin.String value='-='
       BLOCK type=kotlin.Unit operator=MULTEQ
-        CALL .timesAssign type=kotlin.Unit operator=MULTEQ
-          $receiver: CALL .<get-p> type=A operator=MULTEQ
+        CALL 'timesAssign(String) on A: Unit' type=kotlin.Unit operator=MULTEQ
+          $receiver: CALL '<get-p>(): A' type=A operator=MULTEQ
           s: CONST String type=kotlin.String value='*='
       BLOCK type=kotlin.Unit operator=DIVEQ
-        CALL .divAssign type=kotlin.Unit operator=DIVEQ
-          $receiver: CALL .<get-p> type=A operator=DIVEQ
+        CALL 'divAssign(String) on A: Unit' type=kotlin.Unit operator=DIVEQ
+          $receiver: CALL '<get-p>(): A' type=A operator=DIVEQ
           s: CONST String type=kotlin.String value='/='
       BLOCK type=kotlin.Unit operator=PERCEQ
-        CALL .modAssign type=kotlin.Unit operator=PERCEQ
-          $receiver: CALL .<get-p> type=A operator=PERCEQ
+        CALL 'modAssign(String) on A: Unit' type=kotlin.Unit operator=PERCEQ
+          $receiver: CALL '<get-p>(): A' type=A operator=PERCEQ
           s: CONST String type=kotlin.String value='%='

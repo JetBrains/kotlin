@@ -1,13 +1,13 @@
 FILE /extensionLambda.kt
   FUN public fun test1(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .run type=kotlin.Int operator=null
+      RETURN type=kotlin.Nothing from='test1(): Int'
+        CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int operator=null
           $receiver: CONST String type=kotlin.String value='42'
           block: BLOCK type=kotlin.String.() -> kotlin.Int operator=LAMBDA
             FUN local final fun kotlin.String.<anonymous>(): kotlin.Int
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from=<anonymous>
-                  CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
-                    $this: $RECEIVER of: <anonymous> type=kotlin.String
-            CALLABLE_REFERENCE <anonymous> type=kotlin.String.() -> kotlin.Int operator=LAMBDA
+                RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
+                  CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
+                    $this: $RECEIVER of '<anonymous>() on String: Int' type=kotlin.String
+            CALLABLE_REFERENCE '<anonymous>() on String: Int' type=kotlin.String.() -> kotlin.Int operator=LAMBDA

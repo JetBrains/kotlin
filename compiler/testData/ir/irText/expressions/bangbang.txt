@@ -1,34 +1,34 @@
 FILE /bangbang.kt
-  FUN public fun test1(/*0*/ a: kotlin.Any?): kotlin.Any
+  FUN public fun test1(a: kotlin.Any?): kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
+      RETURN type=kotlin.Nothing from='test1(Any?): Any'
         BLOCK type=kotlin.Any operator=EXCLEXCL
           VAR val tmp0_notnull: kotlin.Any?
-            GET_VAR a type=kotlin.Any? operator=null
+            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_notnull type=kotlin.Any? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CALL .THROW_NPE type=kotlin.Nothing operator=EXCLEXCL
-            else: GET_VAR tmp0_notnull type=kotlin.Any? operator=null
-  FUN public fun test2(/*0*/ a: kotlin.Any?): kotlin.Int
+            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing operator=EXCLEXCL
+            else: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? operator=null
+  FUN public fun test2(a: kotlin.Any?): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(Any?): Int'
         BLOCK type=kotlin.Int operator=EXCLEXCL
           VAR val tmp1_notnull: kotlin.Int?
             BLOCK type=kotlin.Int? operator=SAFE_CALL
               VAR val tmp0_safe_receiver: kotlin.Any?
-                GET_VAR a type=kotlin.Any? operator=null
+                GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
               WHEN type=kotlin.Int? operator=SAFE_CALL
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR tmp0_safe_receiver type=kotlin.Any? operator=null
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? operator=null
                   arg1: CONST Null type=kotlin.Nothing? value='null'
                 then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL .hashCode type=kotlin.Int operator=null
-                  $this: GET_VAR tmp0_safe_receiver type=kotlin.Any? operator=null
+                else: CALL 'hashCode(): Int' type=kotlin.Int operator=null
+                  $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Int operator=null
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp1_notnull type=kotlin.Int? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CALL .THROW_NPE type=kotlin.Nothing operator=EXCLEXCL
-            else: GET_VAR tmp1_notnull type=kotlin.Int? operator=null
+            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing operator=EXCLEXCL
+            else: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? operator=null

@@ -1,42 +1,42 @@
 FILE /jvmStaticFieldReference.kt
   FUN public fun testFun(): kotlin.Unit
     BLOCK_BODY
-      CALL .println type=kotlin.Unit operator=null
+      CALL 'println(String!): Unit' type=kotlin.Unit operator=null
         $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-          GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
+          GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
         p0: CONST String type=kotlin.String value='testFun'
   PROPERTY public var testProp: kotlin.Any
     PROPERTY_GETTER public fun <get-testProp>(): kotlin.Any
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(String!): Unit' type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/get'
-        RETURN type=kotlin.Nothing from=<get-testProp>
+        RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
           CONST Int type=kotlin.Int value='42'
-    PROPERTY_SETTER public fun <set-testProp>(/*0*/ value: kotlin.Any): kotlin.Unit
+    PROPERTY_SETTER public fun <set-testProp>(value: kotlin.Any): kotlin.Unit
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(String!): Unit' type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='testProp/set'
   CLASS CLASS TestClass
     CONSTRUCTOR public constructor TestClass()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestClass
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestClass'
     PROPERTY public final val test: kotlin.Int
       EXPRESSION_BODY
         WHEN type=kotlin.Int operator=WHEN
           else: BLOCK type=kotlin.Int operator=null
-            CALL .println type=kotlin.Unit operator=null
+            CALL 'println(String!): Unit' type=kotlin.Unit operator=null
               $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-                GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
+                GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
               p0: CONST String type=kotlin.String value='TestClass/test'
             CONST Int type=kotlin.Int value='42'
     ANONYMOUS_INITIALIZER TestClass
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(String!): Unit' type=kotlin.Unit operator=null
           $this: TYPE_OP operator=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_BACKING_FIELD out type=java.io.PrintStream! operator=GET_PROPERTY
+            GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
           p0: CONST String type=kotlin.String value='TestClass/init'

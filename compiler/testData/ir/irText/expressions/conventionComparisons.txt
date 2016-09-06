@@ -1,36 +1,36 @@
 FILE /conventionComparisons.kt
   CLASS INTERFACE IA
   CLASS INTERFACE IB
-    FUN public abstract operator fun IA.compareTo(/*0*/ other: IA): kotlin.Int
-  FUN public fun IB.test1(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
+    FUN public abstract operator fun IA.compareTo(other: IA): kotlin.Int
+  FUN public fun IB.test1(a1: IA, a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .GT0 type=kotlin.Boolean operator=GT
-          arg0: CALL .compareTo type=kotlin.Int operator=GT
-            $this: $RECEIVER of: test1 type=IB
-            $receiver: GET_VAR a1 type=IA operator=null
-            other: GET_VAR a2 type=IA operator=null
-  FUN public fun IB.test2(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test1(IA, IA) on IB: Boolean'
+        CALL 'GT0(Int): Boolean' type=kotlin.Boolean operator=GT
+          arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int operator=GT
+            $this: $RECEIVER of 'test1(IA, IA) on IB: Boolean' type=IB
+            $receiver: GET_VAR 'value-parameter a1: IA' type=IA operator=null
+            other: GET_VAR 'value-parameter a2: IA' type=IA operator=null
+  FUN public fun IB.test2(a1: IA, a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
-        CALL .GTEQ0 type=kotlin.Boolean operator=GTEQ
-          arg0: CALL .compareTo type=kotlin.Int operator=GTEQ
-            $this: $RECEIVER of: test2 type=IB
-            $receiver: GET_VAR a1 type=IA operator=null
-            other: GET_VAR a2 type=IA operator=null
-  FUN public fun IB.test3(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test2(IA, IA) on IB: Boolean'
+        CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean operator=GTEQ
+          arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int operator=GTEQ
+            $this: $RECEIVER of 'test2(IA, IA) on IB: Boolean' type=IB
+            $receiver: GET_VAR 'value-parameter a1: IA' type=IA operator=null
+            other: GET_VAR 'value-parameter a2: IA' type=IA operator=null
+  FUN public fun IB.test3(a1: IA, a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .LT0 type=kotlin.Boolean operator=LT
-          arg0: CALL .compareTo type=kotlin.Int operator=LT
-            $this: $RECEIVER of: test3 type=IB
-            $receiver: GET_VAR a1 type=IA operator=null
-            other: GET_VAR a2 type=IA operator=null
-  FUN public fun IB.test4(/*0*/ a1: IA, /*1*/ a2: IA): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test3(IA, IA) on IB: Boolean'
+        CALL 'LT0(Int): Boolean' type=kotlin.Boolean operator=LT
+          arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int operator=LT
+            $this: $RECEIVER of 'test3(IA, IA) on IB: Boolean' type=IB
+            $receiver: GET_VAR 'value-parameter a1: IA' type=IA operator=null
+            other: GET_VAR 'value-parameter a2: IA' type=IA operator=null
+  FUN public fun IB.test4(a1: IA, a2: IA): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
-        CALL .LTEQ0 type=kotlin.Boolean operator=LTEQ
-          arg0: CALL .compareTo type=kotlin.Int operator=LTEQ
-            $this: $RECEIVER of: test4 type=IB
-            $receiver: GET_VAR a1 type=IA operator=null
-            other: GET_VAR a2 type=IA operator=null
+      RETURN type=kotlin.Nothing from='test4(IA, IA) on IB: Boolean'
+        CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean operator=LTEQ
+          arg0: CALL 'compareTo(IA) on IA: Int' type=kotlin.Int operator=LTEQ
+            $this: $RECEIVER of 'test4(IA, IA) on IB: Boolean' type=IB
+            $receiver: GET_VAR 'value-parameter a1: IA' type=IA operator=null
+            other: GET_VAR 'value-parameter a2: IA' type=IA operator=null

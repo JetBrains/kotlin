@@ -1,20 +1,20 @@
 FILE /equality.kt
-  FUN public fun test1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+  FUN public fun test1(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-          arg0: GET_VAR a type=kotlin.Int operator=null
-          arg1: GET_VAR b type=kotlin.Int operator=null
-  FUN public fun test2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test1(Int, Int): Boolean'
+        CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+          arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int operator=null
+          arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int operator=null
+  FUN public fun test2(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
-        CALL .NOT type=kotlin.Boolean operator=EXCLEQ
-          arg0: CALL .EQEQ type=kotlin.Boolean operator=EXCLEQ
-            arg0: GET_VAR a type=kotlin.Int operator=null
-            arg1: GET_VAR b type=kotlin.Int operator=null
-  FUN public fun test3(/*0*/ a: kotlin.Any?, /*1*/ b: kotlin.Any?): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test2(Int, Int): Boolean'
+        CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean operator=EXCLEQ
+          arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EXCLEQ
+            arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int operator=null
+            arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int operator=null
+  FUN public fun test3(a: kotlin.Any?, b: kotlin.Any?): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-          arg0: GET_VAR a type=kotlin.Any? operator=null
-          arg1: GET_VAR b type=kotlin.Any? operator=null
+      RETURN type=kotlin.Nothing from='test3(Any?, Any?): Boolean'
+        CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+          arg0: GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
+          arg1: GET_VAR 'value-parameter b: Any?' type=kotlin.Any? operator=null

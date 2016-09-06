@@ -2,24 +2,24 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Base
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Base'
   CLASS CLASS TestProperty
     PROPERTY public final val x: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestProperty()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Base
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestProperty
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestProperty'
   CLASS CLASS TestInitBlock
     PROPERTY public final val x: kotlin.Int
     ANONYMOUS_INITIALIZER TestInitBlock
       BLOCK_BODY
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final class TestInitBlock : Base type=TestInitBlock
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'TestInitBlock' type=TestInitBlock
           value: CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestInitBlock()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Base
-        INSTANCE_INITIALIZER_CALL classDescriptor=TestInitBlock
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestInitBlock'

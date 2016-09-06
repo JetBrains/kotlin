@@ -1,57 +1,57 @@
 FILE /nonLocalReturn.kt
   FUN public fun test0(): kotlin.Unit
     BLOCK_BODY
-      CALL .run type=kotlin.Nothing operator=null
+      CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing operator=null
         block: BLOCK type=() -> kotlin.Nothing operator=LAMBDA
           FUN local final fun <anonymous>(): kotlin.Nothing
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=test0
-          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Nothing operator=LAMBDA
+              RETURN type=kotlin.Nothing from='test0(): Unit'
+          CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing operator=LAMBDA
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
-      CALL .run type=kotlin.Unit operator=null
+      CALL 'run(() -> Unit): Unit' type=kotlin.Unit operator=null
         block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
           FUN local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>
-          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Unit operator=LAMBDA
+              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
-      CALL .run type=kotlin.Unit operator=null
+      CALL 'run(() -> Unit): Unit' type=kotlin.Unit operator=null
         block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
           FUN local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from=<anonymous>
-          CALLABLE_REFERENCE <anonymous> type=() -> kotlin.Unit operator=LAMBDA
-  FUN public fun testLrmFoo1(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
+  FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     BLOCK_BODY
-      CALL .forEach type=kotlin.Unit operator=null
-        $receiver: GET_VAR ints type=kotlin.collections.List<kotlin.Int> operator=null
+      CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit operator=null
+        $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> operator=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit
+          FUN local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
               WHEN type=kotlin.Unit operator=IF
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR it type=kotlin.Int operator=null
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int operator=null
                   arg1: CONST Int type=kotlin.Int value='0'
-                then: RETURN type=kotlin.Nothing from=<anonymous>
-              RETURN type=kotlin.Nothing from=<anonymous>
-                CALL .print type=kotlin.Unit operator=null
-                  message: GET_VAR it type=kotlin.Int operator=null
-          CALLABLE_REFERENCE <anonymous> type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
-  FUN public fun testLrmFoo2(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+                then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                CALL 'print(Int): Unit' type=kotlin.Unit operator=null
+                  message: GET_VAR 'value-parameter it: Int' type=kotlin.Int operator=null
+          CALLABLE_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
+  FUN public fun testLrmFoo2(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     BLOCK_BODY
-      CALL .forEach type=kotlin.Unit operator=null
-        $receiver: GET_VAR ints type=kotlin.collections.List<kotlin.Int> operator=null
+      CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit operator=null
+        $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> operator=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(/*0*/ it: kotlin.Int): kotlin.Unit
+          FUN local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
               WHEN type=kotlin.Unit operator=IF
-                if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR it type=kotlin.Int operator=null
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+                  arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int operator=null
                   arg1: CONST Int type=kotlin.Int value='0'
-                then: RETURN type=kotlin.Nothing from=<anonymous>
-              RETURN type=kotlin.Nothing from=<anonymous>
-                CALL .print type=kotlin.Unit operator=null
-                  message: GET_VAR it type=kotlin.Int operator=null
-          CALLABLE_REFERENCE <anonymous> type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
+                then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                CALL 'print(Int): Unit' type=kotlin.Unit operator=null
+                  message: GET_VAR 'value-parameter it: Int' type=kotlin.Int operator=null
+          CALLABLE_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA

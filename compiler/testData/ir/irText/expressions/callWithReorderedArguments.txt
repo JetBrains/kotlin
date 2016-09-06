@@ -1,40 +1,40 @@
 FILE /callWithReorderedArguments.kt
-  FUN public fun foo(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
+  FUN public fun foo(a: kotlin.Int, b: kotlin.Int): kotlin.Unit
     BLOCK_BODY
   FUN public fun noReorder1(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=noReorder1
+      RETURN type=kotlin.Nothing from='noReorder1(): Int'
         CONST Int type=kotlin.Int value='1'
   FUN public fun noReorder2(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=noReorder2
+      RETURN type=kotlin.Nothing from='noReorder2(): Int'
         CONST Int type=kotlin.Int value='2'
   FUN public fun reordered1(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=reordered1
+      RETURN type=kotlin.Nothing from='reordered1(): Int'
         CONST Int type=kotlin.Int value='1'
   FUN public fun reordered2(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=reordered2
+      RETURN type=kotlin.Nothing from='reordered2(): Int'
         CONST Int type=kotlin.Int value='2'
   FUN public fun test(): kotlin.Unit
     BLOCK_BODY
-      CALL .foo type=kotlin.Unit operator=null
-        a: CALL .noReorder1 type=kotlin.Int operator=null
-        b: CALL .noReorder2 type=kotlin.Int operator=null
+      CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
+        a: CALL 'noReorder1(): Int' type=kotlin.Int operator=null
+        b: CALL 'noReorder2(): Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
         VAR val tmp0_b: kotlin.Int
-          CALL .reordered1 type=kotlin.Int operator=null
+          CALL 'reordered1(): Int' type=kotlin.Int operator=null
         VAR val tmp1_a: kotlin.Int
-          CALL .reordered2 type=kotlin.Int operator=null
-        CALL .foo type=kotlin.Unit operator=null
-          a: GET_VAR tmp1_a type=kotlin.Int operator=null
-          b: GET_VAR tmp0_b type=kotlin.Int operator=null
+          CALL 'reordered2(): Int' type=kotlin.Int operator=null
+        CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
+          a: GET_VAR 'tmp1_a: Int' type=kotlin.Int operator=null
+          b: GET_VAR 'tmp0_b: Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
         VAR val tmp2_b: kotlin.Int
           CONST Int type=kotlin.Int value='1'
         VAR val tmp3_a: kotlin.Int
-          CALL .reordered2 type=kotlin.Int operator=null
-        CALL .foo type=kotlin.Unit operator=null
-          a: GET_VAR tmp3_a type=kotlin.Int operator=null
-          b: GET_VAR tmp2_b type=kotlin.Int operator=null
+          CALL 'reordered2(): Int' type=kotlin.Int operator=null
+        CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
+          a: GET_VAR 'tmp3_a: Int' type=kotlin.Int operator=null
+          b: GET_VAR 'tmp2_b: Int' type=kotlin.Int operator=null

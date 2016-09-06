@@ -1,85 +1,85 @@
 FILE /safeCalls.kt
   CLASS CLASS Ref
-    CONSTRUCTOR public constructor Ref(/*0*/ value: kotlin.Int)
+    CONSTRUCTOR public constructor Ref(value: kotlin.Int)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD value type=kotlin.Unit operator=null
-          receiver: THIS public final class Ref type=Ref
-          value: GET_VAR value type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=Ref
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'Ref' type=Ref
+          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='Ref'
     PROPERTY public final var value: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR value type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS INTERFACE IHost
     FUN public open fun kotlin.String.extLength(): kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=extLength
-          CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
-            $this: $RECEIVER of: extLength type=kotlin.String
-  FUN public fun test1(/*0*/ x: kotlin.String?): kotlin.Int?
+        RETURN type=kotlin.Nothing from='extLength() on String: Int'
+          CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
+            $this: $RECEIVER of 'extLength() on String: Int' type=kotlin.String
+  FUN public fun test1(x: kotlin.String?): kotlin.Int?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
+      RETURN type=kotlin.Nothing from='test1(String?): Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
           VAR val tmp0_safe_receiver: kotlin.String?
-            GET_VAR x type=kotlin.String? operator=null
+            GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .<get-length> type=kotlin.Int operator=GET_PROPERTY
-              $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
-  FUN public fun test2(/*0*/ x: kotlin.String?): kotlin.Int?
+            else: CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
+              $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
+  FUN public fun test2(x: kotlin.String?): kotlin.Int?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(String?): Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
           VAR val tmp0_safe_receiver: kotlin.String?
-            GET_VAR x type=kotlin.String? operator=null
+            GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .hashCode type=kotlin.Int operator=null
-              $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
-  FUN public fun test3(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.Any?): kotlin.Boolean?
+            else: CALL 'hashCode(): Int' type=kotlin.Int operator=null
+              $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
+  FUN public fun test3(x: kotlin.String?, y: kotlin.Any?): kotlin.Boolean?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
+      RETURN type=kotlin.Nothing from='test3(String?, Any?): Boolean?'
         BLOCK type=kotlin.Boolean? operator=SAFE_CALL
           VAR val tmp0_safe_receiver: kotlin.String?
-            GET_VAR x type=kotlin.String? operator=null
+            GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Boolean? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .equals type=kotlin.Boolean operator=null
-              $this: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
-              other: GET_VAR y type=kotlin.Any? operator=null
-  FUN public fun test4(/*0*/ x: Ref?): kotlin.Unit
+            else: CALL 'equals(Any?): Boolean' type=kotlin.Boolean operator=null
+              $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
+              other: GET_VAR 'value-parameter y: Any?' type=kotlin.Any? operator=null
+  FUN public fun test4(x: Ref?): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit? operator=SAFE_CALL
         VAR val tmp0_safe_receiver: Ref?
-          GET_VAR x type=Ref? operator=null
+          GET_VAR 'value-parameter x: Ref?' type=Ref? operator=null
         WHEN type=kotlin.Unit? operator=SAFE_CALL
-          if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-            arg0: GET_VAR tmp0_safe_receiver type=Ref? operator=null
+          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+            arg0: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? operator=null
             arg1: CONST Null type=kotlin.Nothing? value='null'
           then: CONST Null type=kotlin.Nothing? value='null'
-          else: CALL .<set-value> type=kotlin.Unit operator=EQ
-            $this: GET_VAR tmp0_safe_receiver type=Ref? operator=null
+          else: CALL '<set-value>(Int): Unit' type=kotlin.Unit operator=EQ
+            $this: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? operator=null
             <set-?>: CONST Int type=kotlin.Int value='0'
-  FUN public fun IHost.test5(/*0*/ s: kotlin.String?): kotlin.Int?
+  FUN public fun IHost.test5(s: kotlin.String?): kotlin.Int?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5
+      RETURN type=kotlin.Nothing from='test5(String?) on IHost: Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
           VAR val tmp0_safe_receiver: kotlin.String?
-            GET_VAR s type=kotlin.String? operator=null
+            GET_VAR 'value-parameter s: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
-            if: CALL .EQEQ type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
             then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL .extLength type=kotlin.Int operator=null
-              $this: $RECEIVER of: test5 type=IHost
-              $receiver: GET_VAR tmp0_safe_receiver type=kotlin.String? operator=null
+            else: CALL 'extLength() on String: Int' type=kotlin.Int operator=null
+              $this: $RECEIVER of 'test5(String?) on IHost: Int?' type=IHost
+              $receiver: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? operator=null

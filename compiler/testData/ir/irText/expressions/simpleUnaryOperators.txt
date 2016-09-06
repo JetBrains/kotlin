@@ -1,28 +1,28 @@
 FILE /simpleUnaryOperators.kt
-  FUN public fun test1(/*0*/ x: kotlin.Int): kotlin.Int
+  FUN public fun test1(x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .unaryMinus type=kotlin.Int operator=UMINUS
-          $this: GET_VAR x type=kotlin.Int operator=null
+      RETURN type=kotlin.Nothing from='test1(Int): Int'
+        CALL 'unaryMinus(): Int' type=kotlin.Int operator=UMINUS
+          $this: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
   FUN public fun test2(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(): Int'
         CONST Int type=kotlin.Int value='-42'
-  FUN public fun test3(/*0*/ x: kotlin.Int): kotlin.Int
+  FUN public fun test3(x: kotlin.Int): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .unaryPlus type=kotlin.Int operator=UPLUS
-          $this: GET_VAR x type=kotlin.Int operator=null
+      RETURN type=kotlin.Nothing from='test3(Int): Int'
+        CALL 'unaryPlus(): Int' type=kotlin.Int operator=UPLUS
+          $this: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
   FUN public fun test4(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
+      RETURN type=kotlin.Nothing from='test4(): Int'
         CONST Int type=kotlin.Int value='42'
-  FUN public fun test5(/*0*/ x: kotlin.Boolean): kotlin.Boolean
+  FUN public fun test5(x: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test5
-        CALL .not type=kotlin.Boolean operator=EXCL
-          $this: GET_VAR x type=kotlin.Boolean operator=null
+      RETURN type=kotlin.Nothing from='test5(Boolean): Boolean'
+        CALL 'not(): Boolean' type=kotlin.Boolean operator=EXCL
+          $this: GET_VAR 'value-parameter x: Boolean' type=kotlin.Boolean operator=null
   FUN public fun test6(): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test6
+      RETURN type=kotlin.Nothing from='test6(): Boolean'
         CONST Boolean type=kotlin.Boolean value='false'

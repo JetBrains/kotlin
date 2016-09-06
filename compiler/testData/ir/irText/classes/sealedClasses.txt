@@ -2,38 +2,38 @@ FILE /sealedClasses.kt
   CLASS CLASS Expr
     CONSTRUCTOR private constructor Expr()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Expr
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Expr'
     CLASS CLASS Const
-      CONSTRUCTOR public constructor Const(/*0*/ number: kotlin.Double)
+      CONSTRUCTOR public constructor Const(number: kotlin.Double)
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Expr
-          SET_BACKING_FIELD number type=kotlin.Unit operator=null
-            receiver: THIS public final class Const : Expr type=Expr.Const
-            value: GET_VAR number type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-          INSTANCE_INITIALIZER_CALL classDescriptor=Const
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
+          SET_BACKING_FIELD 'number: Double' type=kotlin.Unit operator=null
+            receiver: THIS of 'Const' type=Expr.Const
+            value: GET_VAR 'value-parameter number: Double' type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          INSTANCE_INITIALIZER_CALL classDescriptor='Const'
       PROPERTY public final val number: kotlin.Double
         EXPRESSION_BODY
-          GET_VAR number type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter number: Double' type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     CLASS CLASS Sum
-      CONSTRUCTOR public constructor Sum(/*0*/ e1: Expr, /*1*/ e2: Expr)
+      CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Expr
-          SET_BACKING_FIELD e1 type=kotlin.Unit operator=null
-            receiver: THIS public final class Sum : Expr type=Expr.Sum
-            value: GET_VAR e1 type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-          SET_BACKING_FIELD e2 type=kotlin.Unit operator=null
-            receiver: THIS public final class Sum : Expr type=Expr.Sum
-            value: GET_VAR e2 type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-          INSTANCE_INITIALIZER_CALL classDescriptor=Sum
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
+          SET_BACKING_FIELD 'e1: Expr' type=kotlin.Unit operator=null
+            receiver: THIS of 'Sum' type=Expr.Sum
+            value: GET_VAR 'value-parameter e1: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          SET_BACKING_FIELD 'e2: Expr' type=kotlin.Unit operator=null
+            receiver: THIS of 'Sum' type=Expr.Sum
+            value: GET_VAR 'value-parameter e2: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          INSTANCE_INITIALIZER_CALL classDescriptor='Sum'
       PROPERTY public final val e1: Expr
         EXPRESSION_BODY
-          GET_VAR e1 type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter e1: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
       PROPERTY public final val e2: Expr
         EXPRESSION_BODY
-          GET_VAR e2 type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter e2: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     CLASS OBJECT NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Expr
-          INSTANCE_INITIALIZER_CALL classDescriptor=NotANumber
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='NotANumber'

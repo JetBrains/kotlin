@@ -1,27 +1,27 @@
 FILE /in.kt
-  FUN public fun test1(/*0*/ a: kotlin.Any, /*1*/ x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
+  FUN public fun test1(a: kotlin.Any, x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        CALL .contains type=kotlin.Boolean operator=IN
-          $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any> operator=null
-          element: GET_VAR a type=kotlin.Any operator=null
-  FUN public fun test2(/*0*/ a: kotlin.Any, /*1*/ x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test1(Any, Collection<Any>): Boolean'
+        CALL 'contains(Any): Boolean' type=kotlin.Boolean operator=IN
+          $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> operator=null
+          element: GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+  FUN public fun test2(a: kotlin.Any, x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
-        CALL .NOT type=kotlin.Boolean operator=NOT_IN
-          arg0: CALL .contains type=kotlin.Boolean operator=NOT_IN
-            $this: GET_VAR x type=kotlin.collections.Collection<kotlin.Any> operator=null
-            element: GET_VAR a type=kotlin.Any operator=null
-  FUN public fun </*0*/ T> test3(/*0*/ a: T, /*1*/ x: kotlin.collections.Collection<T>): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test2(Any, Collection<Any>): Boolean'
+        CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean operator=NOT_IN
+          arg0: CALL 'contains(Any): Boolean' type=kotlin.Boolean operator=NOT_IN
+            $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> operator=null
+            element: GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+  FUN public fun <T> test3(a: T, x: kotlin.collections.Collection<T>): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .contains type=kotlin.Boolean operator=IN
-          $this: GET_VAR x type=kotlin.collections.Collection<T> operator=null
-          element: GET_VAR a type=T operator=null
-  FUN public fun </*0*/ T> test4(/*0*/ a: T, /*1*/ x: kotlin.collections.Collection<T>): kotlin.Boolean
+      RETURN type=kotlin.Nothing from='test3(T, Collection<T>): Boolean'
+        CALL 'contains(T): Boolean' type=kotlin.Boolean operator=IN
+          $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> operator=null
+          element: GET_VAR 'value-parameter a: T' type=T operator=null
+  FUN public fun <T> test4(a: T, x: kotlin.collections.Collection<T>): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
-        CALL .NOT type=kotlin.Boolean operator=NOT_IN
-          arg0: CALL .contains type=kotlin.Boolean operator=NOT_IN
-            $this: GET_VAR x type=kotlin.collections.Collection<T> operator=null
-            element: GET_VAR a type=T operator=null
+      RETURN type=kotlin.Nothing from='test4(T, Collection<T>): Boolean'
+        CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean operator=NOT_IN
+          arg0: CALL 'contains(T): Boolean' type=kotlin.Boolean operator=NOT_IN
+            $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> operator=null
+            element: GET_VAR 'value-parameter a: T' type=T operator=null

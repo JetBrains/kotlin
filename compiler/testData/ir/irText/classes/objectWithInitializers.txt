@@ -2,20 +2,20 @@ FILE /objectWithInitializers.kt
   CLASS CLASS Base
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Base
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Base'
   CLASS OBJECT Test
     CONSTRUCTOR private constructor Test()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Base
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY public final val x: kotlin.Int = 1
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='1'
     PROPERTY public final val y: kotlin.Int
     ANONYMOUS_INITIALIZER Test
       BLOCK_BODY
-        SET_BACKING_FIELD y type=kotlin.Unit operator=null
-          receiver: THIS public object Test : Base type=Test
-          value: CALL .<get-x> type=kotlin.Int operator=GET_PROPERTY
-            $this: THIS public object Test : Base type=Test
+        SET_BACKING_FIELD 'y: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'Test' type=Test
+          value: CALL '<get-x>(): Int' type=kotlin.Int operator=GET_PROPERTY
+            $this: THIS of 'Test' type=Test

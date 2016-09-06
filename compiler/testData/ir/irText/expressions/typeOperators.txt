@@ -1,22 +1,22 @@
 FILE /typeOperators.kt
   CLASS INTERFACE IThing
-  FUN public fun test1(/*0*/ x: kotlin.Any): kotlin.Boolean
+  FUN public fun test1(x: kotlin.Any): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
+      RETURN type=kotlin.Nothing from='test1(Any): Boolean'
         TYPE_OP operator=INSTANCEOF typeOperand=IThing
-          GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test2(/*0*/ x: kotlin.Any): kotlin.Boolean
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test2(x: kotlin.Any): kotlin.Boolean
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
+      RETURN type=kotlin.Nothing from='test2(Any): Boolean'
         TYPE_OP operator=NOT_INSTANCEOF typeOperand=IThing
-          GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test3(/*0*/ x: kotlin.Any): IThing
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test3(x: kotlin.Any): IThing
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
+      RETURN type=kotlin.Nothing from='test3(Any): IThing'
         TYPE_OP operator=CAST typeOperand=IThing
-          GET_VAR x type=kotlin.Any operator=null
-  FUN public fun test4(/*0*/ x: kotlin.Any): IThing?
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null
+  FUN public fun test4(x: kotlin.Any): IThing?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
+      RETURN type=kotlin.Nothing from='test4(Any): IThing?'
         TYPE_OP operator=SAFE_CAST typeOperand=IThing
-          GET_VAR x type=kotlin.Any operator=null
+          GET_VAR 'value-parameter x: Any' type=kotlin.Any operator=null

@@ -2,31 +2,31 @@ FILE /destructuring1.kt
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=A
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
   CLASS OBJECT B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=B
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='B'
     FUN public final operator fun A.component1(): kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=component1
+        RETURN type=kotlin.Nothing from='component1() on A: Int'
           CONST Int type=kotlin.Int value='1'
     FUN public final operator fun A.component2(): kotlin.Int
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=component2
+        RETURN type=kotlin.Nothing from='component2() on A: Int'
           CONST Int type=kotlin.Int value='2'
   FUN public fun B.test(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
         VAR val tmp0_container: A
-          GET_OBJECT A type=A
+          GET_OBJECT 'A' type=A
         VAR val x: kotlin.Int
-          CALL .component1 type=kotlin.Int operator=COMPONENT_N(index=1)
-            $this: $RECEIVER of: test type=B
-            $receiver: GET_VAR tmp0_container type=A operator=null
+          CALL 'component1() on A: Int' type=kotlin.Int operator=COMPONENT_N(index=1)
+            $this: $RECEIVER of 'test() on B: Unit' type=B
+            $receiver: GET_VAR 'tmp0_container: A' type=A operator=null
         VAR val y: kotlin.Int
-          CALL .component2 type=kotlin.Int operator=COMPONENT_N(index=2)
-            $this: $RECEIVER of: test type=B
-            $receiver: GET_VAR tmp0_container type=A operator=null
+          CALL 'component2() on A: Int' type=kotlin.Int operator=COMPONENT_N(index=2)
+            $this: $RECEIVER of 'test() on B: Unit' type=B
+            $receiver: GET_VAR 'tmp0_container: A' type=A operator=null

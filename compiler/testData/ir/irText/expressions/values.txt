@@ -2,45 +2,45 @@ FILE /values.kt
   CLASS ENUM_CLASS Enum
     CONSTRUCTOR private constructor Enum()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL Enum super
-        INSTANCE_INITIALIZER_CALL classDescriptor=Enum
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        INSTANCE_INITIALIZER_CALL classDescriptor='Enum'
     ENUM_ENTRY enum entry A
-      init: ENUM_CONSTRUCTOR_CALL Enum A
-    FUN public final /*synthesized*/ fun values(): kotlin.Array<Enum>
+      init: ENUM_CONSTRUCTOR_CALL 'constructor Enum()' A
+    FUN public final fun values(): kotlin.Array<Enum>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enum
+    FUN public final fun valueOf(value: kotlin.String): Enum
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=A
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
   PROPERTY public val a: kotlin.Int = 0
     EXPRESSION_BODY
       CONST Int type=kotlin.Int value='0'
   CLASS CLASS Z
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Z
-    CLASS OBJECT Companion
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Z'
+    CLASS OBJECT companion object of Z
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=Companion
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'
   FUN public fun test1(): Enum
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test1
-        GET_ENUM_VALUE A type=Enum
+      RETURN type=kotlin.Nothing from='test1(): Enum'
+        GET_ENUM_VALUE 'A' type=Enum
   FUN public fun test2(): A
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test2
-        GET_OBJECT A type=A
+      RETURN type=kotlin.Nothing from='test2(): A'
+        GET_OBJECT 'A' type=A
   FUN public fun test3(): kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test3
-        CALL .<get-a> type=kotlin.Int operator=GET_PROPERTY
+      RETURN type=kotlin.Nothing from='test3(): Int'
+        CALL '<get-a>(): Int' type=kotlin.Int operator=GET_PROPERTY
   FUN public fun test4(): Z.Companion
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
-        GET_OBJECT Companion type=Z.Companion
+      RETURN type=kotlin.Nothing from='test4(): Z.Companion'
+        GET_OBJECT 'companion object of Z' type=Z.Companion

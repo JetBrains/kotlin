@@ -7,59 +7,59 @@ FILE /objectLiteralExpressions.kt
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
-              DELEGATING_CONSTRUCTOR_CALL Any
-              INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
-        CALL .<init> type=test1.<no name provided> operator=OBJECT_LITERAL
+              DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+              INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+        CALL 'constructor <no name provided>()' type=test1.<no name provided> operator=OBJECT_LITERAL
   PROPERTY public val test2: IFoo
     EXPRESSION_BODY
       BLOCK type=test2.<no name provided> operator=OBJECT_LITERAL
         CLASS CLASS <no name provided>
           CONSTRUCTOR public constructor <no name provided>()
             BLOCK_BODY
-              DELEGATING_CONSTRUCTOR_CALL Any
-              INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
-          FUN public open override /*1*/ fun foo(): kotlin.Unit
+              DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+              INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+          FUN public open override fun foo(): kotlin.Unit
             BLOCK_BODY
-              CALL .println type=kotlin.Unit operator=null
+              CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
                 message: CONST String type=kotlin.String value='foo'
-        CALL .<init> type=test2.<no name provided> operator=OBJECT_LITERAL
+        CALL 'constructor <no name provided>()' type=test2.<no name provided> operator=OBJECT_LITERAL
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Outer
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
       CONSTRUCTOR public constructor Inner()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=Inner
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
     FUN public final fun test3(): Outer.Inner
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from=test3
+        RETURN type=kotlin.Nothing from='test3(): Outer.Inner'
           BLOCK type=Outer.test3.<no name provided> operator=OBJECT_LITERAL
             CLASS CLASS <no name provided>
               CONSTRUCTOR public constructor <no name provided>()
                 BLOCK_BODY
-                  DELEGATING_CONSTRUCTOR_CALL Inner
-                    $this: THIS public final class Outer type=Outer
-                  INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
-              FUN public open override /*1*/ fun foo(): kotlin.Unit
+                  DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+                    $this: THIS of 'Outer' type=Outer
+                  INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+              FUN public open override fun foo(): kotlin.Unit
                 BLOCK_BODY
-                  CALL .println type=kotlin.Unit operator=null
+                  CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
                     message: CONST String type=kotlin.String value='foo'
-            CALL .<init> type=Outer.test3.<no name provided> operator=OBJECT_LITERAL
+            CALL 'constructor <no name provided>()' type=Outer.test3.<no name provided> operator=OBJECT_LITERAL
   FUN public fun Outer.test4(): Outer.Inner
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from=test4
+      RETURN type=kotlin.Nothing from='test4() on Outer: Outer.Inner'
         BLOCK type=test4.<no name provided> operator=OBJECT_LITERAL
           CLASS CLASS <no name provided>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
-                DELEGATING_CONSTRUCTOR_CALL Inner
-                  $this: $RECEIVER of: test4 type=Outer
-                INSTANCE_INITIALIZER_CALL classDescriptor=<no name provided>
-            FUN public open override /*1*/ fun foo(): kotlin.Unit
+                DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+                  $this: $RECEIVER of 'test4() on Outer: Outer.Inner' type=Outer
+                INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+            FUN public open override fun foo(): kotlin.Unit
               BLOCK_BODY
-                CALL .println type=kotlin.Unit operator=null
+                CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
                   message: CONST String type=kotlin.String value='foo'
-          CALL .<init> type=test4.<no name provided> operator=OBJECT_LITERAL
+          CALL 'constructor <no name provided>()' type=test4.<no name provided> operator=OBJECT_LITERAL

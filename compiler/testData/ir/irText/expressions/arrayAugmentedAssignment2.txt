@@ -1,21 +1,21 @@
 FILE /arrayAugmentedAssignment2.kt
   CLASS INTERFACE IA
-    FUN public abstract operator fun get(/*0*/ index: kotlin.String): kotlin.Int
+    FUN public abstract operator fun get(index: kotlin.String): kotlin.Int
   CLASS INTERFACE IB
-    FUN public abstract operator fun IA.set(/*0*/ index: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Unit
-  FUN public fun IB.test(/*0*/ a: IA): kotlin.Unit
+    FUN public abstract operator fun IA.set(index: kotlin.String, value: kotlin.Int): kotlin.Unit
+  FUN public fun IB.test(a: IA): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ
         VAR val tmp0_array: IA
-          GET_VAR a type=IA operator=null
+          GET_VAR 'value-parameter a: IA' type=IA operator=null
         VAR val tmp1_index0: kotlin.String
           CONST String type=kotlin.String value=''
-        CALL .set type=kotlin.Unit operator=PLUSEQ
-          $this: $RECEIVER of: test type=IB
-          $receiver: GET_VAR tmp0_array type=IA operator=null
-          index: GET_VAR tmp1_index0 type=kotlin.String operator=null
-          value: CALL .plus type=kotlin.Int operator=PLUSEQ
-            $this: CALL .get type=kotlin.Int operator=PLUSEQ
-              $this: GET_VAR tmp0_array type=IA operator=null
-              index: GET_VAR tmp1_index0 type=kotlin.String operator=null
+        CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit operator=PLUSEQ
+          $this: $RECEIVER of 'test(IA) on IB: Unit' type=IB
+          $receiver: GET_VAR 'tmp0_array: IA' type=IA operator=null
+          index: GET_VAR 'tmp1_index0: String' type=kotlin.String operator=null
+          value: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ
+            $this: CALL 'get(String): Int' type=kotlin.Int operator=PLUSEQ
+              $this: GET_VAR 'tmp0_array: IA' type=IA operator=null
+              index: GET_VAR 'tmp1_index0: String' type=kotlin.String operator=null
             other: CONST Int type=kotlin.Int value='42'

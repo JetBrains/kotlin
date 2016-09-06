@@ -2,9 +2,9 @@ FILE /secondaryConstructors.kt
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL C
+        DELEGATING_CONSTRUCTOR_CALL 'constructor C(Int)'
           x: CONST Int type=kotlin.Int value='0'
-    CONSTRUCTOR public constructor C(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor C(x: kotlin.Int)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=C
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'

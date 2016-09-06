@@ -1,27 +1,27 @@
 FILE /assignments.kt
   CLASS CLASS Ref
-    CONSTRUCTOR public constructor Ref(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor Ref(x: kotlin.Int)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final class Ref type=Ref
-          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=Ref
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'Ref' type=Ref
+          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='Ref'
     PROPERTY public final var x: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int
         CONST Int type=kotlin.Int value='0'
-      SET_VAR x type=kotlin.Unit operator=EQ
+      SET_VAR 'x: Int' type=kotlin.Unit operator=EQ
         CONST Int type=kotlin.Int value='1'
-      SET_VAR x type=kotlin.Unit operator=EQ
-        CALL .plus type=kotlin.Int operator=PLUS
-          $this: GET_VAR x type=kotlin.Int operator=null
+      SET_VAR 'x: Int' type=kotlin.Unit operator=EQ
+        CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
+          $this: GET_VAR 'x: Int' type=kotlin.Int operator=null
           other: CONST Int type=kotlin.Int value='1'
-  FUN public fun test2(/*0*/ r: Ref): kotlin.Unit
+  FUN public fun test2(r: Ref): kotlin.Unit
     BLOCK_BODY
-      CALL .<set-x> type=kotlin.Unit operator=EQ
-        $this: GET_VAR r type=Ref operator=null
+      CALL '<set-x>(Int): Unit' type=kotlin.Unit operator=EQ
+        $this: GET_VAR 'value-parameter r: Ref' type=Ref operator=null
         <set-?>: CONST Int type=kotlin.Int value='0'

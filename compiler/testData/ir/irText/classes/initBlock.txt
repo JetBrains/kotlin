@@ -2,61 +2,61 @@ FILE /initBlock.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test1
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     ANONYMOUS_INITIALIZER Test1
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit operator=null
   CLASS CLASS Test2
-    CONSTRUCTOR public constructor Test2(/*0*/ x: kotlin.Int)
+    CONSTRUCTOR public constructor Test2(x: kotlin.Int)
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        SET_BACKING_FIELD x type=kotlin.Unit operator=null
-          receiver: THIS public final class Test2 type=Test2
-          value: GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test2
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+          receiver: THIS of 'Test2' type=Test2
+          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY
-        GET_VAR x type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     ANONYMOUS_INITIALIZER Test2
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit operator=null
   CLASS CLASS Test3
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit operator=null
     CONSTRUCTOR public constructor Test3()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test3
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
   CLASS CLASS Test4
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
           message: CONST String type=kotlin.String value='1'
     CONSTRUCTOR public constructor Test4()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test4
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test4'
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
           message: CONST String type=kotlin.String value='2'
   CLASS CLASS Test5
     CONSTRUCTOR public constructor Test5()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Test5
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test5'
     ANONYMOUS_INITIALIZER Test5
       BLOCK_BODY
-        CALL .println type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
           message: CONST String type=kotlin.String value='1'
     CLASS CLASS TestInner
       CONSTRUCTOR public constructor TestInner()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=TestInner
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'
       ANONYMOUS_INITIALIZER TestInner
         BLOCK_BODY
-          CALL .println type=kotlin.Unit operator=null
+          CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
             message: CONST String type=kotlin.String value='2'

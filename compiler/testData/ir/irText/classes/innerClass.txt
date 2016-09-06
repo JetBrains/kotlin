@@ -2,16 +2,16 @@ FILE /innerClass.kt
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL Any
-        INSTANCE_INITIALIZER_CALL classDescriptor=Outer
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS TestInnerClass
       CONSTRUCTOR public constructor TestInnerClass()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL Any
-          INSTANCE_INITIALIZER_CALL classDescriptor=TestInnerClass
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestInnerClass'
     CLASS CLASS DerivedInnerClass
       CONSTRUCTOR public constructor DerivedInnerClass()
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL TestInnerClass
-            $this: THIS public final class Outer type=Outer
-          INSTANCE_INITIALIZER_CALL classDescriptor=DerivedInnerClass
+          DELEGATING_CONSTRUCTOR_CALL 'constructor TestInnerClass()'
+            $this: THIS of 'Outer' type=Outer
+          INSTANCE_INITIALIZER_CALL classDescriptor='DerivedInnerClass'
