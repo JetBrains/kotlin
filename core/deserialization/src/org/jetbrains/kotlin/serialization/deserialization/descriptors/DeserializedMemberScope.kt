@@ -154,8 +154,6 @@ abstract class DeserializedMemberScope protected constructor(
 
         addFunctionsAndProperties(result, kindFilter, nameFilter, location)
 
-        addNonDeclaredDescriptors(result, location)
-
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addClassifierDescriptors(result, nameFilter)
         }
@@ -171,7 +169,7 @@ abstract class DeserializedMemberScope protected constructor(
     ) {
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
             addMembers(
-                    propertyProtos.keys,
+                    getVariableNames(),
                     nameFilter,
                     result
             ) { getContributedVariables(it, location) }
@@ -179,7 +177,7 @@ abstract class DeserializedMemberScope protected constructor(
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
             addMembers(
-                    functionProtos.keys,
+                    getFunctionNames(),
                     nameFilter,
                     result
             ) { getContributedFunctions(it, location) }
@@ -201,11 +199,6 @@ abstract class DeserializedMemberScope protected constructor(
 
         subResult.sortWith(MemberComparator.INSTANCE)
         result.addAll(subResult)
-    }
-
-    protected fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        result.addAll(getNonDeclaredFunctionNames().flatMap { getContributedFunctions(it, location) })
-        result.addAll(getNonDeclaredVariableNames().flatMap { getContributedVariables(it, location) })
     }
 
     protected abstract fun getNonDeclaredFunctionNames(): Set<Name>
