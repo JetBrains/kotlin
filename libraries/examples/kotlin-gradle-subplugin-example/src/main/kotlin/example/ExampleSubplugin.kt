@@ -22,7 +22,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
-class ExampleSubplugin : KotlinGradleSubplugin {
+class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
         return true

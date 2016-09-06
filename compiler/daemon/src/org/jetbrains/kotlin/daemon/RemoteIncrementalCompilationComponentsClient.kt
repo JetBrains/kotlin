@@ -32,6 +32,4 @@ class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackS
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(facade, target, profiler)
 
     override fun getLookupTracker(): LookupTracker = remoteLookupTrackerClient
-
-    override fun getSourceRetentionAnnotationHandler() = null
 }

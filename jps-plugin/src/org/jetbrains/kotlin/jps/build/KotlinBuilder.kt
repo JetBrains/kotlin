@@ -414,16 +414,20 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
             context: CompileContext
     ): CompilerEnvironment {
-        val compilerServices = Services.Builder()
-                .register(IncrementalCompilationComponents::class.java,
-                          IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
-                                                               lookupTracker, sourceRetentionAnnotationHandler))
-                .register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
-                    override fun checkCanceled() {
-                        if (context.cancelStatus.isCanceled) throw CompilationCanceledException()
-                    }
-                })
-                .build()
+        val compilerServices = with(Services.Builder()) {
+            register(IncrementalCompilationComponents::class.java,
+                  IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) },
+                                                       lookupTracker))
+            register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
+                override fun checkCanceled() {
+                    if (context.cancelStatus.isCanceled) throw CompilationCanceledException()
+                }
+            })
+            sourceRetentionAnnotationHandler?.let {
+                register(SourceRetentionAnnotationHandler::class.java, it)
+            }
+            build()
+        }
 
         return CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),

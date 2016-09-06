@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
+import org.jetbrains.kotlin.gradle.util.checkBytecodeNotContains
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.After
@@ -160,6 +161,14 @@ abstract class BaseGradleIT {
             assertTrue(output.contains(str.normalize()), "Output should contain '$str'")
         }
         return this
+    }
+
+    fun CompiledProject.assertClassFilesNotContain(dir: File, vararg strings: String) {
+        val classFiles = dir.walk().filter { it.isFile && it.extension.toLowerCase() == "class" }
+
+        for (cf in classFiles) {
+            checkBytecodeNotContains(cf, strings.toList())
+        }
     }
 
     fun CompiledProject.assertSubstringCount(substring: String, expectedCount: Int) {

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.util.allJavaFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.io.File
 
 class KaptIT: BaseGradleIT() {
 
@@ -32,6 +33,7 @@ class KaptIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
             assertContains("example.JavaTest PASSED")
             assertContains("example.KotlinTest PASSED")
+            assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
         }
 
         // clean build is important
