@@ -51,17 +51,17 @@ class LazyJavaStaticClassScope(
         }
     }
 
-    override fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> {
         if (jClass.isEnum) {
-            return super.getFunctionNames(kindFilter, nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
+            return super.computeFunctionNames(kindFilter, nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
         }
-        return super.getFunctionNames(kindFilter, nameFilter)
+        return super.computeFunctionNames(kindFilter, nameFilter)
     }
 
-    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> =
             memberIndex().getAllFieldNames()
 
-    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> = listOf()
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope

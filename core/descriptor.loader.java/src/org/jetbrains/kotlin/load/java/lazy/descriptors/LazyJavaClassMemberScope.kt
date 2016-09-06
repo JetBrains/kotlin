@@ -71,7 +71,7 @@ class LazyJavaClassMemberScope(
         return object : ClassMemberIndex(jClass, { !it.isStatic }) {
             // For SAM-constructors
             override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
-                    = super.getMethodNames(nameFilter) + getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
+                    = super.getMethodNames(nameFilter) + computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
         }
     }
 
@@ -660,15 +660,15 @@ class LazyJavaClassMemberScope(
         return super.getContributedVariables(name, location)
     }
 
-    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name>
             = nestedClassIndex().keys + enumEntryIndex().keys
 
-    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
-        if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter)
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> {
+        if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter ?: alwaysTrue())
 
         return memberIndex().getAllFieldNames() +
                ownerDescriptor.getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
-            supertype.memberScope.getContributedDescriptors(kindFilter, nameFilter).map { variable ->
+            supertype.memberScope.getContributedDescriptors(kindFilter, nameFilter ?: alwaysTrue()).map { variable ->
                 variable.getName()
             }
         }
