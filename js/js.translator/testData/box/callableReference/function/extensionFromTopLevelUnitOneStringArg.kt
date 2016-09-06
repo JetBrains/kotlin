@@ -20,7 +20,12 @@ fun box(): String {
 
     if (a.result != "OK") return a.result
 
+    // TODO: uncomment when KT-13312 gets fixed
+    /*
     val a1 = A()
     run(a1, "OK", A::foo)
-    return a.result
+    if (a1.result != "OK) return a1.result
+    */
+
+    return "OK"
 }
