@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KotlinReflectionInternalError
@@ -48,40 +49,26 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     override val isConst: Boolean
         get() = descriptor.isConst
 
-    abstract class Accessor<out R> : KProperty.Accessor<R> {
-        abstract override val property: KPropertyImpl<R>
+    abstract class Accessor<out PropertyType, out ReturnType> :
+            KCallableImpl<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        abstract override val property: KPropertyImpl<PropertyType>
 
-        internal abstract val descriptor: PropertyAccessorDescriptor
-
-        @Suppress("unused") // Used as an implementation of KFunction#isInline in subclasses
-        val isInline: Boolean
-            get() = descriptor.isInline
-
-        @Suppress("unused")
-        val isExternal: Boolean
-            get() = descriptor.isExternal
-
-        @Suppress("unused")
-        val isOperator: Boolean
-            get() = descriptor.isOperator
-
-        @Suppress("unused")
-        val isInfix: Boolean
-            get() = descriptor.isInfix
-
-        @Suppress("unused")
-        val isTailrec: Boolean
-            get() = descriptor.isTailrec
-
-        @Suppress("unused")
-        val isSuspend: Boolean
-            get() = descriptor.isSuspend
-    }
-
-    abstract class Getter<out R> : Accessor<R>(), KProperty.Getter<R>, KCallableImpl<R> {
-        override val name: String get() = "<get-${property.name}>"
+        abstract override val descriptor: PropertyAccessorDescriptor
 
         override val container: KDeclarationContainerImpl get() = property.container
+
+        override val defaultCaller: FunctionCaller<*>? get() = null
+
+        override val isInline: Boolean get() = descriptor.isInline
+        override val isExternal: Boolean get() = descriptor.isExternal
+        override val isOperator: Boolean get() = descriptor.isOperator
+        override val isInfix: Boolean get() = descriptor.isInfix
+        override val isTailrec: Boolean get() = descriptor.isTailrec
+        override val isSuspend: Boolean get() = descriptor.isSuspend
+    }
+
+    abstract class Getter<out R> : Accessor<R, R>(), KProperty.Getter<R> {
+        override val name: String get() = "<get-${property.name}>"
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default getter created this way won't have any source information
@@ -91,14 +78,10 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = true)
         }
-
-        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 
-    abstract class Setter<R> : Accessor<R>(), KMutableProperty.Setter<R>, KCallableImpl<Unit> {
+    abstract class Setter<R> : Accessor<R, Unit>(), KMutableProperty.Setter<R> {
         override val name: String get() = "<set-${property.name}>"
-
-        override val container: KDeclarationContainerImpl get() = property.container
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information
@@ -108,13 +91,11 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
-
-        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 }
 
 
-private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
+private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
     fun isInsideClassCompanionObject(): Boolean {
         val possibleCompanionObject = property.descriptor.containingDeclaration
         if (DescriptorUtils.isCompanionObject(possibleCompanionObject) && !DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration)) {
