@@ -28,7 +28,7 @@ import javax.script.*
 
 class KotlinJsr232ScriptEngine(
         disposable: Disposable,
-        private val factory: KotlinJsr232StandardScriptEngineFactory,
+        private val factory: ScriptEngineFactory,
         private val scriptDefinition: KotlinScriptDefinition,
         private val compilerConfiguration: CompilerConfiguration
 ) : AbstractScriptEngine(), ScriptEngine {

@@ -90,7 +90,7 @@ class ScriptTemplateTest {
 
     @Test
     fun testScriptWithOverridenParam() {
-        val aClass = compileScript("overriden_parameter.kts", ScriptBaseClassWithOverridenProperty::class, null)
+        val aClass = compileScript("overridden_parameter.kts", ScriptBaseClassWithOverriddenProperty::class, null)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
     }
@@ -176,11 +176,11 @@ class ScriptTemplateTest {
 
     private fun compileScript(
             scriptPath: String,
-            scriptBase: KClass<out Any>,
+            scriptTemplate: KClass<out Any>,
             environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptBase, null, null, environment), runIsolated, suppressOutput)
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
@@ -294,7 +294,7 @@ abstract class ScriptWithoutParams(num: Int)
 @ScriptTemplateDefinition(
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
-abstract class ScriptBaseClassWithOverridenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
+abstract class ScriptBaseClassWithOverriddenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
 
 @ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithArrayParam(val myArgs: Array<String>)

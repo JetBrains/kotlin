@@ -67,7 +67,8 @@ open class GenericRepl(
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
     private val analyzerEngine = CliReplAnalyzerEngine(environment)
 
-    private class ChunkState(
+    // "line" - is the unit of evaluation here, could in fact consists of several character lines
+    private class LineState(
             val code: String,
             val psiFile: KtFile,
             val errorHolder: DiagnosticMessageHolder)
@@ -89,7 +90,7 @@ open class GenericRepl(
         override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
     }
 
-    private var chunkState: ChunkState? = null
+    private var lineState: LineState? = null
 
     private var lastDependencies: KotlinScriptExternalDependencies? = null
 
@@ -117,7 +118,7 @@ open class GenericRepl(
             val syntaxErrorReport = AnalyzerWithCompilerReport.Companion.reportSyntaxErrors(psiFile, errorHolder)
 
             if (!syntaxErrorReport.isHasErrors) {
-                chunkState = ChunkState(code, psiFile, errorHolder)
+                lineState = LineState(code, psiFile, errorHolder)
             }
 
             return when {
@@ -131,11 +132,11 @@ open class GenericRepl(
     fun eval(executionNumber: Long, code: String): EvalResult {
         synchronized(this) {
             val (psiFile, errorHolder) = run {
-                if (chunkState == null || chunkState!!.code != code) {
+                if (lineState == null || lineState!!.code != code) {
                     val res = checkComplete(executionNumber, code)
                     if (res != EvalResult.Ready) return@eval res
                 }
-                Pair(chunkState!!.psiFile, chunkState!!.errorHolder)
+                Pair(lineState!!.psiFile, lineState!!.errorHolder)
             }
 
             val newDependencies = scriptDefinition.getDependenciesFor(psiFile, environment.project, lastDependencies)
