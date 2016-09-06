@@ -27,18 +27,18 @@ import java.util.*
 
 interface MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
-    fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
+    fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name>
 
     fun findFieldByName(name: Name): JavaField?
-    fun getAllFieldNames(): Collection<Name>
+    fun getAllFieldNames(): Set<Name>
 }
 
 object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
-    override fun getMethodNames(nameFilter: (Name) -> Boolean) = listOf<Name>()
+    override fun getMethodNames(nameFilter: (Name) -> Boolean) = emptySet<Name>()
 
     override fun findFieldByName(name: Name): JavaField? = null
-    override fun getAllFieldNames() = listOf<Name>()
+    override fun getAllFieldNames() = emptySet<Name>()
 }
 
 private val ADDITIONAL_MEMBER_NAMES_MAP = mapOf(
@@ -61,11 +61,11 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     private val fields = jClass.fields.asSequence().filter(memberFilter).associateBy { m -> m.name }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
-    override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> =
+    override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name> =
             jClass.getAllMemberNames(methodFilter) { methods }
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
-    override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { fields }
+    override fun getAllFieldNames(): Set<Name> = jClass.getAllMemberNames(memberFilter) { fields }
 }
 
 private fun JavaClass.getNonDeclaredMethodNames(): List<Name> {

@@ -42,7 +42,7 @@ class LazyJavaStaticClassScope(
     override fun computeMemberIndex(): MemberIndex {
         val delegate = ClassMemberIndex(jClass) { it.isStatic }
         return object : MemberIndex by delegate {
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> {
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name> {
                 // Should be a super call, but KT-2860
                 return delegate.getMethodNames(nameFilter) +
                        // For SAM-constructors
@@ -51,17 +51,17 @@ class LazyJavaStaticClassScope(
         }
     }
 
-    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> {
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         if (jClass.isEnum) {
             return super.computeFunctionNames(kindFilter, nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
         }
         return super.computeFunctionNames(kindFilter, nameFilter)
     }
 
-    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> =
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
             memberIndex().getAllFieldNames()
 
-    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> = listOf()
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = emptySet()
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope

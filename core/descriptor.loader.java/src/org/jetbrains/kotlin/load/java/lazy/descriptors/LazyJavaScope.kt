@@ -217,12 +217,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
 
-    protected open fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name>
+    protected open fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
             = memberIndex().getMethodNames(nameFilter ?: alwaysTrue())
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
-    protected abstract fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name>
+    protected abstract fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
 
     private val properties = c.storageManager.createMemoizedFunction {
         name: Name ->
@@ -328,7 +328,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return result.toReadOnlyList()
     }
 
-    protected abstract fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name>
+    protected abstract fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
 
     override fun toString() = "Lazy scope for $ownerDescriptor"
 

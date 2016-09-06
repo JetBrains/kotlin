@@ -70,7 +70,7 @@ class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic }) {
             // For SAM-constructors
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Set<Name>
                     = super.getMethodNames(nameFilter) + computeClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
         }
     }
@@ -660,10 +660,10 @@ class LazyJavaClassMemberScope(
         return super.getContributedVariables(name, location)
     }
 
-    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name>
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
             = nestedClassIndex().keys + enumEntryIndex().keys
 
-    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Collection<Name> {
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter ?: alwaysTrue())
 
         return memberIndex().getAllFieldNames() +
