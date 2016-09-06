@@ -3,15 +3,6 @@ FILE /dataClasses.kt
     CONSTRUCTOR public constructor Test1(x: kotlin.Int, y: kotlin.String, z: kotlin.Any)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
-          receiver: THIS of 'Test1' type=Test1
-          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        SET_BACKING_FIELD 'y: String' type=kotlin.Unit operator=null
-          receiver: THIS of 'Test1' type=Test1
-          value: GET_VAR 'value-parameter y: String' type=kotlin.String operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        SET_BACKING_FIELD 'z: Any' type=kotlin.Unit operator=null
-          receiver: THIS of 'Test1' type=Test1
-          value: GET_VAR 'value-parameter z: Any' type=kotlin.Any operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY

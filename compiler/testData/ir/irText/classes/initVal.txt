@@ -3,9 +3,6 @@ FILE /initVal.kt
     CONSTRUCTOR public constructor TestInitValFromParameter(x: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
-          receiver: THIS of 'TestInitValFromParameter' type=TestInitValFromParameter
-          value: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValFromParameter'
     PROPERTY public final val x: kotlin.Int
       EXPRESSION_BODY

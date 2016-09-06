@@ -165,7 +165,6 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
-        generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody, ktClassOrObject)
 
         val classDescriptor = (scopeOwner as ConstructorDescriptor).containingDeclaration
         irBlockBody.addStatement(IrInstanceInitializerCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, classDescriptor))
@@ -280,33 +279,5 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                                          enumClassConstructor, enumEntryOrNull)
     }
 
-    private fun generateInitializersForPropertiesDefinedInPrimaryConstructor(irBlockBody: IrBlockBodyImpl, ktClassOrObject: KtClassOrObject) {
-        ktClassOrObject.getPrimaryConstructor()?.let { ktPrimaryConstructor ->
-            for (ktParameter in ktPrimaryConstructor.valueParameters) {
-                if (ktParameter.hasValOrVar()) {
-                    val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
-                    val valueParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
-
-                    irBlockBody.addStatement(
-                            initializePropertyInPrimaryConstructor(
-                                    ktParameter, propertyDescriptor,
-                                    IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
-                                                      valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
-                            ))
-                }
-            }
-        }
-    }
-
-    private fun initializePropertyInPrimaryConstructor(
-            ktElement: KtElement,
-            propertyDescriptor: PropertyDescriptor,
-            value: IrExpression
-    ): IrExpression {
-        val thisClass = propertyDescriptor.containingDeclaration as ClassDescriptor
-        return IrSetBackingFieldImpl(ktElement.startOffset, ktElement.endOffset, propertyDescriptor,
-                              IrThisReferenceImpl(ktElement.startOffset, ktElement.endOffset, thisClass.defaultType, thisClass),
-                              value)
-    }
 }
 

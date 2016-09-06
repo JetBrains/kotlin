@@ -8,9 +8,6 @@ FILE /forWithImplicitReceivers.kt
     CONSTRUCTOR public constructor IntCell(value: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=null
-          receiver: THIS of 'IntCell' type=IntCell
-          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
         INSTANCE_INITIALIZER_CALL classDescriptor='IntCell'
     PROPERTY public final var value: kotlin.Int
       EXPRESSION_BODY
