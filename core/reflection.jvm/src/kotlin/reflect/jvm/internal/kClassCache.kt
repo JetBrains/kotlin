@@ -34,7 +34,7 @@ internal fun <T : Any> getOrCreateKotlinClass(jClass: Class<T>): KClassImpl<T> {
         @Suppress("UNCHECKED_CAST")
         val kClass = cached.get() as KClassImpl<T>?
         if (kClass?.jClass == jClass) {
-            return kClass
+            return kClass!!
         }
     }
     else if (cached != null) {
