@@ -226,6 +226,7 @@ class ResolveElementCache(
             bindingContexts.add(resolveSession.bindingContext)
         }
 
+        //TODO: it can be slow if too many contexts
         return CompositeBindingContext.create(bindingContexts)
     }
 
