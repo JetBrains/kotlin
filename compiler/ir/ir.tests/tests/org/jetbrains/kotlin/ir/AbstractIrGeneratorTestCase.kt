@@ -20,11 +20,14 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModule
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -80,14 +83,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     protected fun generateIrModule(ignoreErrors: Boolean = false): IrModule {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        val analysisResult = JvmResolveUtil.analyze(myFiles.psiFiles, myEnvironment)
-        if (!ignoreErrors) {
-            analysisResult.throwIfError()
-            AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
-        }
-        val psi2ir = Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors))
-        val irModule = psi2ir.generateModule(analysisResult.moduleDescriptor, myFiles.psiFiles, analysisResult.bindingContext)
-        return irModule
+        return generateIrModule(myFiles.psiFiles, myEnvironment, ignoreErrors)
     }
 
     protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
@@ -112,6 +108,18 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             }
             return textFile
         }
+
+        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, ignoreErrors: Boolean = false): IrModule {
+            val analysisResult = JvmResolveUtil.analyze(ktFiles, environment)
+            if (!ignoreErrors) {
+                analysisResult.throwIfError()
+                AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
+            }
+            return generateIrModule(ktFiles, analysisResult.moduleDescriptor, analysisResult.bindingContext, ignoreErrors)
+        }
+
+        fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, ignoreErrors: Boolean = false) =
+                Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)).generateModule(moduleDescriptor, ktFiles, bindingContext)
     }
 }
 

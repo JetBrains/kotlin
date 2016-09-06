@@ -208,6 +208,18 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         if (exceptionFromDynamicCallDescriptorsValidation != null) {
             throw ExceptionUtilsKt.rethrow(exceptionFromDynamicCallDescriptorsValidation);
         }
+
+        performAdditionalChecksAfterDiagnostics(testDataFile, testFiles, groupedByModule, modules, moduleBindings);
+    }
+
+    protected void performAdditionalChecksAfterDiagnostics(
+            File testDataFile,
+            List<TestFile> testFiles,
+            Map<TestModule, List<TestFile>> moduleFiles,
+            Map<TestModule, ModuleDescriptorImpl> moduleDescriptors,
+            Map<TestModule, BindingContext> moduleBindings
+    ) {
+        // To be overridden by diagnostic-like tests.
     }
 
     @Nullable

@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="ir.psi2ir" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="module" module-name="backend.common" scope="TEST" />
+    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
   </component>
 </module>
