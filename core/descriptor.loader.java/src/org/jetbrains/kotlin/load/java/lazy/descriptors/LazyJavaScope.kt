@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -215,10 +216,18 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = functions(name)
+    private val functionNamesLazy by c.storageManager.createLazyValue { computeFunctionNames(DescriptorKindFilter.FUNCTIONS, null) }
+    private val propertyNamesLazy by c.storageManager.createLazyValue { computePropertyNames(DescriptorKindFilter.VARIABLES, null) }
 
+    override fun getFunctionNames() = functionNamesLazy
+    override fun getVariableNames() = propertyNamesLazy
     protected open fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
             = memberIndex().getMethodNames(nameFilter ?: alwaysTrue())
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        if (name !in getFunctionNames()) return emptyList()
+        return functions(name)
+    }
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
@@ -289,7 +298,10 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return propertyType
     }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        if (name !in getVariableNames()) return emptyList()
+        return properties(name)
+    }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = allDescriptors()
 
