@@ -22,12 +22,12 @@ import org.gradle.api.tasks.compile.AbstractCompile
 
 class SubpluginOption(val key: String, val value: String)
 
-interface KotlinGradleSubplugin {
-    fun isApplicable(project: Project, task: AbstractCompile): Boolean
+interface KotlinGradleSubplugin<KotlinCompile : AbstractCompile> {
+    fun isApplicable(project: Project, task: KotlinCompile): Boolean
     
     fun apply(
             project: Project, 
-            kotlinCompile: AbstractCompile, 
+            kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
             javaSourceSet: SourceSet?
