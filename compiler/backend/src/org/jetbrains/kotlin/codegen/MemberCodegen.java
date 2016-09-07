@@ -88,7 +88,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     protected final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
-    protected final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
+    private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
@@ -270,6 +270,18 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
         for (ClassDescriptor innerClass : innerClasses) {
             writeInnerClass(innerClass);
+        }
+    }
+
+    // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
+    // See FileBasedKotlinClass.convertAnnotationVisitor
+    public void addInnerClassInfoFromAnnotation(@NotNull ClassDescriptor classDescriptor) {
+        DeclarationDescriptor current = classDescriptor;
+        while (current != null && !isTopLevelDeclaration(current)) {
+            if (current instanceof ClassDescriptor) {
+                innerClasses.add(((ClassDescriptor) current));
+            }
+            current = current.getContainingDeclaration();
         }
     }
 

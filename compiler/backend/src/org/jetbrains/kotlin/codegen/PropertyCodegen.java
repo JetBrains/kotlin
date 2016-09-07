@@ -233,7 +233,7 @@ public class PropertyCodegen {
             assert state.getClassBuilderMode() != ClassBuilderMode.FULL || constant != null
                     : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
             if (constant != null) {
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, typeMapper);
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, memberCodegen, typeMapper);
                 annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
             }
         }
@@ -279,7 +279,7 @@ public class PropertyCodegen {
             Method syntheticMethod = getSyntheticMethodSignature(descriptor);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                            syntheticMethod.getDescriptor(), null, null);
-            AnnotationCodegen.forMethod(mv, typeMapper)
+            AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper)
                     .genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
@@ -354,7 +354,7 @@ public class PropertyCodegen {
         );
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
-        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(
+        AnnotationCodegen.forField(fv, memberCodegen, typeMapper).genAnnotations(
                 fieldAnnotated, type, isDelegate ? AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD : AnnotationUseSiteTarget.FIELD);
     }
 

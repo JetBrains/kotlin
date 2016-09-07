@@ -42,12 +42,13 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
     fun generatePrimaryConstructorOverloadsIfNeeded(
             constructorDescriptor: ConstructorDescriptor,
             classBuilder: ClassBuilder,
+            memberCodegen: MemberCodegen<*>,
             contextKind: OwnerKind,
             classOrObject: KtClassOrObject
     ) {
         val methodElement = classOrObject.getPrimaryConstructor() ?: classOrObject
 
-        if (generateOverloadsIfNeeded(methodElement, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
+        if (generateOverloadsIfNeeded(methodElement, constructorDescriptor, constructorDescriptor, contextKind, classBuilder, memberCodegen)) {
             return
         }
 
@@ -55,8 +56,9 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             return
         }
 
-        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, methodElement, contextKind,
-                                                  constructorDescriptor.countDefaultParameters())
+        generateOverloadWithSubstitutedParameters(
+                constructorDescriptor, constructorDescriptor, classBuilder, memberCodegen, methodElement, contextKind,
+                constructorDescriptor.countDefaultParameters())
     }
 
     /**
@@ -77,7 +79,8 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             functionDescriptor: FunctionDescriptor,
             delegateFunctionDescriptor: FunctionDescriptor,
             contextKind: OwnerKind,
-            classBuilder: ClassBuilder
+            classBuilder: ClassBuilder,
+            memberCodegen: MemberCodegen<*>
     ): Boolean {
         if (!functionDescriptor.hasJvmOverloadsAnnotation()) {
             return false
@@ -87,7 +90,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         for (i in 1..count) {
             generateOverloadWithSubstitutedParameters(
-                    functionDescriptor, delegateFunctionDescriptor, classBuilder, methodElement, contextKind, i
+                    functionDescriptor, delegateFunctionDescriptor, classBuilder, memberCodegen, methodElement, contextKind, i
             )
         }
 
@@ -112,6 +115,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             functionDescriptor: FunctionDescriptor,
             delegateFunctionDescriptor: FunctionDescriptor,
             classBuilder: ClassBuilder,
+            memberCodegen: MemberCodegen<*>,
             methodElement: KtElement?,
             contextKind: OwnerKind,
             substituteCount: Int
@@ -127,10 +131,10 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                         signature.genericsSignature,
                                         FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper))
 
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, signature.returnType)
+        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, signature.returnType)
 
         remainingParameters.withIndex().forEach {
-            val annotationCodegen = AnnotationCodegen.forParameter(it.index, mv, typeMapper)
+            val annotationCodegen = AnnotationCodegen.forParameter(it.index, mv, memberCodegen, typeMapper)
             annotationCodegen.genAnnotations(it.value, signature.valueParameters[it.index].asmType)
         }
 

@@ -67,10 +67,12 @@ public abstract class AnnotationCodegen {
 
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};
 
+    private final MemberCodegen<?> memberCodegen;
     private final KotlinTypeMapper typeMapper;
 
-    private AnnotationCodegen(KotlinTypeMapper mapper) {
-        typeMapper = mapper;
+    private AnnotationCodegen(@NotNull MemberCodegen<?> memberCodegen, @NotNull KotlinTypeMapper mapper) {
+        this.memberCodegen = memberCodegen;
+        this.typeMapper = mapper;
     }
 
     /**
@@ -284,6 +286,11 @@ public abstract class AnnotationCodegen {
         }
 
         String descriptor = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
+
+        if (classifierDescriptor instanceof ClassDescriptor) {
+            memberCodegen.addInnerClassInfoFromAnnotation(((ClassDescriptor) classifierDescriptor));
+        }
+
         AnnotationVisitor annotationVisitor = visitAnnotation(descriptor, rp == RetentionPolicy.RUNTIME);
 
         genAnnotationArguments(annotationDescriptor, annotationVisitor);
@@ -481,8 +488,12 @@ public abstract class AnnotationCodegen {
     @NotNull
     abstract AnnotationVisitor visitAnnotation(String descr, boolean visible);
 
-    public static AnnotationCodegen forClass(final ClassVisitor cv, KotlinTypeMapper mapper) {
-        return new AnnotationCodegen(mapper) {
+    public static AnnotationCodegen forClass(
+            final @NotNull ClassVisitor cv,
+            @NotNull MemberCodegen<?> memberCodegen,
+            @NotNull KotlinTypeMapper mapper
+    ) {
+        return new AnnotationCodegen(memberCodegen, mapper) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
@@ -491,8 +502,12 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forMethod(final MethodVisitor mv, KotlinTypeMapper mapper) {
-        return new AnnotationCodegen(mapper) {
+    public static AnnotationCodegen forMethod(
+            final @NotNull MethodVisitor mv,
+            @NotNull MemberCodegen<?> memberCodegen,
+            @NotNull KotlinTypeMapper mapper
+    ) {
+        return new AnnotationCodegen(memberCodegen, mapper) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
@@ -501,8 +516,12 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forField(final FieldVisitor fv, KotlinTypeMapper mapper) {
-        return new AnnotationCodegen(mapper) {
+    public static AnnotationCodegen forField(
+            final @NotNull FieldVisitor fv,
+            @NotNull MemberCodegen<?> memberCodegen,
+            @NotNull KotlinTypeMapper mapper
+    ) {
+        return new AnnotationCodegen(memberCodegen, mapper) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
@@ -511,8 +530,13 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forParameter(final int parameter, final MethodVisitor mv, KotlinTypeMapper mapper) {
-        return new AnnotationCodegen(mapper) {
+    public static AnnotationCodegen forParameter(
+            final int parameter,
+            final @NotNull MethodVisitor mv,
+            @NotNull MemberCodegen<?> memberCodegen,
+            @NotNull KotlinTypeMapper mapper
+    ) {
+        return new AnnotationCodegen(memberCodegen, mapper) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
@@ -521,8 +545,12 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forAnnotationDefaultValue(final MethodVisitor mv, KotlinTypeMapper mapper) {
-        return new AnnotationCodegen(mapper) {
+    public static AnnotationCodegen forAnnotationDefaultValue(
+            final @NotNull MethodVisitor mv,
+            @NotNull MemberCodegen<?> memberCodegen,
+            @NotNull KotlinTypeMapper mapper
+    ) {
+        return new AnnotationCodegen(memberCodegen, mapper) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {

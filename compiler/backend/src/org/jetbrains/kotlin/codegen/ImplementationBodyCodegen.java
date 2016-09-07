@@ -224,7 +224,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeEnclosingMethod();
 
-        AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
+        AnnotationCodegen.forClass(v.getVisitor(), this, typeMapper).genAnnotations(descriptor, null);
 
         generateEnumEntries();
     }
@@ -871,7 +871,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
                                          info.defaultValue);
 
-            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property, type);
+            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(property, type);
 
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
@@ -939,7 +939,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
+        new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, this, kind, myClass);
     }
 
     private void generateSecondaryConstructor(@NotNull final ConstructorDescriptor constructorDescriptor) {
@@ -964,7 +964,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
-                constructor, constructorDescriptor, constructorDescriptor, kind, v
+                constructor, constructorDescriptor, constructorDescriptor, kind, v, this
         );
     }
 
@@ -1545,7 +1545,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int isDeprecated = KotlinBuiltIns.isDeprecated(descriptor) ? ACC_DEPRECATED : 0;
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL | isDeprecated,
                                          descriptor.getName().asString(), classAsmType.getDescriptor(), null, null);
-            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(descriptor, null);
+            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(descriptor, null);
         }
 
         initializeEnumConstants(enumEntries);
