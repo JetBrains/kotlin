@@ -40,10 +40,10 @@ class LazyJavaStaticClassScope(
         override val ownerDescriptor: LazyJavaClassDescriptor
 ) : LazyJavaStaticScope(c) {
 
-    override fun computeMemberIndex() = ClassMemberIndex(jClass) { it.isStatic }
+    override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass) { it.isStatic }
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
-        super.computeFunctionNames(kindFilter, nameFilter).toMutableSet().apply {
+        declaredMemberIndex().getMethodNames().toMutableSet().apply {
             addAll(ownerDescriptor.getParentJavaStaticClassScope()?.getFunctionNames().orEmpty())
             if (jClass.isEnum) {
                 addAll(listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES))
@@ -52,7 +52,7 @@ class LazyJavaStaticClassScope(
         }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
-        super.computePropertyNames(kindFilter, nameFilter).toMutableSet().apply {
+        declaredMemberIndex().getFieldNames().toMutableSet().apply {
             flatMapJavaStaticSupertypesScopes(ownerDescriptor, this) { it.getVariableNames() }
         }
 

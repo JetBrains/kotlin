@@ -67,13 +67,13 @@ class LazyJavaClassMemberScope(
         private val jClass: JavaClass
 ) : LazyJavaScope(c) {
 
-    override fun computeMemberIndex() = ClassMemberIndex(jClass, { !it.isStatic })
+    override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass, { !it.isStatic })
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
         ownerDescriptor.typeConstructor.supertypes.flatMapTo(HashSet()) {
             it.memberScope.getFunctionNames()
         }.apply {
-            addAll(super.computeFunctionNames(kindFilter, null))
+            addAll(declaredMemberIndex().getMethodNames())
             addAll(computeClassNames(kindFilter, nameFilter))
         }
 
@@ -138,7 +138,7 @@ class LazyJavaClassMemberScope(
     }
 
     private fun searchMethodsByNameWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
-            memberIndex().findMethodsByName(name).map { resolveMethodToFunctionDescriptor(it) }
+            declaredMemberIndex().findMethodsByName(name).map { resolveMethodToFunctionDescriptor(it) }
 
     private fun searchMethodsInSupertypesWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
             getFunctionsFromSupertypes(name).filterNot {
@@ -408,7 +408,7 @@ class LazyJavaClassMemberScope(
     }
 
     private fun computeAnnotationProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val method = memberIndex().findMethodsByName(name).singleOrNull() ?: return
+        val method = declaredMemberIndex().findMethodsByName(name).singleOrNull() ?: return
         result.add(createPropertyDescriptorWithDefaultGetter(method, modality = Modality.FINAL))
     }
 
@@ -667,7 +667,7 @@ class LazyJavaClassMemberScope(
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         if (jClass.isAnnotationType) return getFunctionNames()
-        val result = LinkedHashSet(memberIndex().getAllFieldNames())
+        val result = LinkedHashSet(declaredMemberIndex().getFieldNames())
         return ownerDescriptor.typeConstructor.supertypes.flatMapTo(result) { supertype ->
             supertype.memberScope.getVariableNames()
         }

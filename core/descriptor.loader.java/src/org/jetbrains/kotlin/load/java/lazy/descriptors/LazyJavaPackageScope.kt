@@ -143,7 +143,7 @@ class LazyJavaPackageScope(
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
-    override fun computeMemberIndex(): MemberIndex = EMPTY_MEMBER_INDEX
+    override fun computeMemberIndex(): DeclaredMemberIndex = DeclaredMemberIndex.Empty
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         // neither objects nor enum members can be in java package

@@ -63,9 +63,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             listOf()
     )
 
-    protected val memberIndex: NotNullLazyValue<MemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
+    protected val declaredMemberIndex: NotNullLazyValue<DeclaredMemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
 
-    protected abstract fun computeMemberIndex(): MemberIndex
+    protected abstract fun computeMemberIndex(): DeclaredMemberIndex
 
     // Fake overrides, SAM constructors/adapters, values()/valueOf(), etc.
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
@@ -76,7 +76,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         name ->
         val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
-        for (method in memberIndex().findMethodsByName(name)) {
+        for (method in declaredMemberIndex().findMethodsByName(name)) {
             val descriptor = resolveMethodToFunctionDescriptor(method)
             if (!descriptor.isVisibleAsFunction()) continue
 
@@ -227,18 +227,18 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     }
 
     protected open fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
-            memberIndex().getMethodNames()
+            declaredMemberIndex().getMethodNames()
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
     protected open fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> =
-            memberIndex().getAllFieldNames()
+            declaredMemberIndex().getFieldNames()
 
     private val properties = c.storageManager.createMemoizedFunction {
         name: Name ->
         val properties = ArrayList<PropertyDescriptor>()
 
-        val field = memberIndex().findFieldByName(name)
+        val field = declaredMemberIndex().findFieldByName(name)
         if (field != null && !field.isEnumEntry) {
             properties.add(resolveProperty(field))
         }

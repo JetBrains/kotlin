@@ -23,23 +23,23 @@ import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.Name
 
-interface MemberIndex {
+interface DeclaredMemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
     fun getMethodNames(): Set<Name>
 
     fun findFieldByName(name: Name): JavaField?
-    fun getAllFieldNames(): Set<Name>
+    fun getFieldNames(): Set<Name>
+
+    object Empty : DeclaredMemberIndex {
+        override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
+        override fun getMethodNames() = emptySet<Name>()
+
+        override fun findFieldByName(name: Name): JavaField? = null
+        override fun getFieldNames() = emptySet<Name>()
+    }
 }
 
-object EMPTY_MEMBER_INDEX : MemberIndex {
-    override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
-    override fun getMethodNames() = emptySet<Name>()
-
-    override fun findFieldByName(name: Name): JavaField? = null
-    override fun getAllFieldNames() = emptySet<Name>()
-}
-
-open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
+open class ClassDeclaredMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : DeclaredMemberIndex {
     private val methodFilter = {
         m: JavaMethod ->
         memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)
@@ -52,6 +52,6 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     override fun getMethodNames(): Set<Name> = jClass.methods.asSequence().filter(methodFilter).mapTo(mutableSetOf(), JavaMethod::name)
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
-    override fun getAllFieldNames(): Set<Name> = jClass.fields.asSequence().filter(memberFilter).mapTo(mutableSetOf(), JavaField::name)
+    override fun getFieldNames(): Set<Name> = jClass.fields.asSequence().filter(memberFilter).mapTo(mutableSetOf(), JavaField::name)
 }
 
