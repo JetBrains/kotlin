@@ -388,16 +388,14 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             failedToImportDescriptors: Set<DeclarationDescriptor>
     ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
 
+        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+            if (expression.receiverExpression is KtThisExpression && !options.removeThis) return
+            super.visitDotQualifiedExpression(expression)
+        }
+
         override fun analyzeQualifiedElement(element: KtDotQualifiedExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
             val receiver = element.receiverExpression
-            when (receiver) {
-                is KtThisExpression -> {
-                    if (!options.removeThis) return AnalyzeQualifiedElementResult.Skip
-                }
-                else -> {
-                    if (bindingContext[BindingContext.QUALIFIER, receiver] == null) return AnalyzeQualifiedElementResult.Skip
-                }
-            }
+            if (receiver !is KtThisExpression && bindingContext[BindingContext.QUALIFIER, receiver] == null) return AnalyzeQualifiedElementResult.Skip
 
             if (PsiTreeUtil.getParentOfType(
                     element,
@@ -471,8 +469,6 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         private val simpleThis = KtPsiFactory(file).createExpression("this") as KtThisExpression
 
         override fun analyzeQualifiedElement(element: KtThisExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
-            if (!options.removeThisLabels || element.getTargetLabel() == null) return AnalyzeQualifiedElementResult.Skip
-
             val targetBefore = element.instanceReference.targets(bindingContext).singleOrNull() ?: return AnalyzeQualifiedElementResult.Skip
             val scope = element.getResolutionScope(bindingContext, resolutionFacade)
             val newContext = simpleThis.analyzeInContext(scope, element)
@@ -481,7 +477,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         override fun visitThisExpression(expression: KtThisExpression) {
-            if (elementFilter(expression) == FilterResult.PROCESS) {
+            if (options.removeThisLabels && elementFilter(expression) == FilterResult.PROCESS && expression.getTargetLabel() != null) {
                 addQualifiedElementToAnalyze(expression)
             }
         }
