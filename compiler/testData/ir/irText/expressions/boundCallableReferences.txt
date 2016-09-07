@@ -1,0 +1,25 @@
+FILE /boundCallableReferences.kt
+  CLASS CLASS A
+    CONSTRUCTOR public constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN public final fun foo(): kotlin.Unit
+      BLOCK_BODY
+    PROPERTY public final val bar: kotlin.Int = 0
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+  FUN public fun A.qux(): kotlin.Unit
+    BLOCK_BODY
+  PROPERTY public val test1: kotlin.reflect.KFunction0<kotlin.Unit>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
+        $this: CALL 'constructor A()' type=A operator=null
+  PROPERTY public val test2: kotlin.reflect.KProperty0<kotlin.Int>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE 'bar: Int' type=kotlin.reflect.KProperty0<kotlin.Int> operator=null
+        $this: CALL 'constructor A()' type=A operator=null
+  PROPERTY public val test3: kotlin.reflect.KFunction0<kotlin.Unit>
+    EXPRESSION_BODY
+      CALLABLE_REFERENCE 'qux() on A: Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
+        $receiver: CALL 'constructor A()' type=A operator=null

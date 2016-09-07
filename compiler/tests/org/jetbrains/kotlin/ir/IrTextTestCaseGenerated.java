@@ -298,6 +298,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("boundCallableReferences.kt")
+        public void testBoundCallableReferences() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/boundCallableReferences.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boxOk.kt")
         public void testBoxOk() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/boxOk.kt");

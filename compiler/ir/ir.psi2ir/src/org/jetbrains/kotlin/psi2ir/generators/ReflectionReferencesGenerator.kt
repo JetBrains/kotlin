@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -48,10 +49,22 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
-        // TODO bound method references
-        return IrCallableReferenceImpl(ktCallableReference.startOffset, ktCallableReference.endOffset,
-                                       getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                                       resolvedCall.resultingDescriptor)
+        val irCallableRef = IrCallableReferenceImpl(ktCallableReference.startOffset, ktCallableReference.endOffset,
+                                                    getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                                                    resolvedCall.resultingDescriptor)
+        resolvedCall.dispatchReceiver?.let { dispatchReceiver ->
+            if (dispatchReceiver !is TransientReceiver) {
+                irCallableRef.dispatchReceiver = statementGenerator.generateReceiver(ktCallableReference, dispatchReceiver).load()
+            }
+        }
+        resolvedCall.extensionReceiver?.let { extensionReceiver ->
+            if (extensionReceiver !is TransientReceiver) {
+                irCallableRef.extensionReceiver = statementGenerator.generateReceiver(ktCallableReference, extensionReceiver).load()
+            }
+        }
+
+        return irCallableRef
     }
+
 
 }

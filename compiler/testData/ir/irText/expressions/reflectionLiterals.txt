@@ -27,6 +27,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
     EXPRESSION_BODY
       CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
+        $this: CALL 'constructor A()' type=A operator=null
   PROPERTY public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
     EXPRESSION_BODY
       CALLABLE_REFERENCE 'bar(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
