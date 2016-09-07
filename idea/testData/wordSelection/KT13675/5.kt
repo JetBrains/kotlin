@@ -1,0 +1,1 @@
+<selection>fun f(): List<AAA<caret>>{}</selection>
