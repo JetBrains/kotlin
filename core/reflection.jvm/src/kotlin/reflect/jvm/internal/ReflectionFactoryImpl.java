@@ -105,9 +105,4 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         KDeclarationContainer owner = reference.getOwner();
         return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
     }
-
-    private static KDeclarationContainerImpl getOwner(FunctionReference reference) {
-        KDeclarationContainer owner = reference.getOwner();
-        return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
-    }
 }

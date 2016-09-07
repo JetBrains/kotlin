@@ -45,8 +45,7 @@ public abstract class PropertyReference extends CallableReference implements KPr
                    getSignature().equals(other.getSignature());
         }
         if (obj instanceof KProperty) {
-            compute();
-            return obj.equals(reflected);
+            return obj.equals(compute());
         }
         return false;
     }
