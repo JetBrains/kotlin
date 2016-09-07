@@ -63,4 +63,8 @@ public final class ObjectTest extends SingleFileTranslationTest {
     public void testDontPolluteObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testKt3684() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

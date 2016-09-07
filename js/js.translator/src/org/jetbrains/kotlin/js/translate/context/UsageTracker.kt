@@ -104,8 +104,14 @@ class UsageTracker(
         if (descriptor !is ReceiverParameterDescriptor) return false
         if (containingDescriptor !is ClassDescriptor && containingDescriptor !is ConstructorDescriptor) return false
 
+        // Class in which we are trying to capture variable
         val containingClass = getParentOfType(containingDescriptor, ClassDescriptor::class.java, false) ?: return false
+
+        // Class which instance we are trying to capture
         val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
+
+        // We always capture enclosing class if it's not outer (i.e. we are capturing members of enclosing class to a local class)
+        if (containingClass.containingDeclaration !is ClassDescriptor) return false
 
         for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
             if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
