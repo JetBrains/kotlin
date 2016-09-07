@@ -103,7 +103,7 @@ class ScriptTest : KtUsefulTestCase() {
 
         val rootDisposable = Disposer.newDisposable()
         try {
-            val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
+            val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)

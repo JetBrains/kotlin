@@ -43,4 +43,3 @@ internal fun captureOut(body: () -> Unit): String {
     System.setOut(prevOut)
     return outStream.toString()
 }
-
