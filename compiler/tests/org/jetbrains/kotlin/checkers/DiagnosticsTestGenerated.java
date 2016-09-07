@@ -19077,6 +19077,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("inlineFunctionAlways.kt")
+            public void testInlineFunctionAlways() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/inlineFunctionAlways.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noDataClassInheritance.kt")
             public void testNoDataClassInheritance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noDataClassInheritance.kt");
