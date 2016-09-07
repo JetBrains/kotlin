@@ -8,7 +8,7 @@ object Environment {
     @Synchronized
     fun connectCar(host: String, port: Int): Int {
         uid++
-        val car = Car(uid, host, port)
+        val car = CarReal(uid, host, port)
         onConnect.forEach { it(car) }
         map.put(uid, car)
         return uid

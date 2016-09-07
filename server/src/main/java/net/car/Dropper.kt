@@ -1,6 +1,7 @@
 package net.car
 
 import net.car.client.Client
+import objects.CarReal
 import objects.Environment
 import java.net.ConnectException
 import kotlin.concurrent.thread
@@ -34,6 +35,9 @@ object Dropper {
         for (key in environment.map.keys) {
             try {
                 val carValue = environment.map[key] ?: continue
+                if (!(carValue is CarReal)) {
+                    continue
+                }
                 carValue.carConnection.sendRequest(Client.Request.PING, ByteArray(0))
             } catch (e: ConnectException) {
                 environment.map.remove(key)

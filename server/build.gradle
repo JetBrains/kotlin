@@ -46,12 +46,15 @@ jar {
                 "Main-Class": "ServerMainKt")
     }
 
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile group: 'org.asynchttpclient', name: 'async-http-client', version: '2.0.0-RC9'
+    compile group: "com.martiansoftware", name: "jsap", version: "2.1"
 
     compile files ("../proto/compiler/build/protokot-runtime.jar")
 }

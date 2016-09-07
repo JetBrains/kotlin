@@ -1,0 +1,9 @@
+<room>
+<walls>
+<wall startX="200" startY="300" endX="-150" endY="300"/>
+<wall startX="-150" startY="300" endX="-150" endY="-45"/>
+<wall startX="-150" startY="-45" endX="200" endY="-45"/>
+<wall startX="200" startY="-45" endX="200" endY="300"/>
+</walls>
+</room>
+

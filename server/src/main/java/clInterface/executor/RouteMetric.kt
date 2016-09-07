@@ -4,6 +4,7 @@ import CodedOutputStream
 import RouteMetricRequest
 import net.car.client.Client
 import objects.Car
+import objects.CarReal
 import objects.Environment
 import java.net.ConnectException
 
@@ -39,7 +40,11 @@ class RouteMetric : CommandExecutor {
         val requestBytes = ByteArray(routeMessage.getSizeNoTag())
         routeMessage.writeTo(CodedOutputStream(requestBytes))
         try {
-            car.carConnection.sendRequest(Client.Request.ROUTE_METRIC, requestBytes)
+            routeMessage.distances.forEachIndexed { idx, distance ->
+                val direction = roomScanner.CarController.Direction.values()
+                        .filter { it.id == routeMessage.directions[idx] }.first()
+                car.moveCar(distance, direction).get()
+            }
         } catch (e: ConnectException) {
             synchronized(Environment, {
                 Environment.map.remove(id)

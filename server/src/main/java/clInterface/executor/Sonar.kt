@@ -2,7 +2,6 @@ package clInterface.executor
 
 import CodedOutputStream
 import SonarRequest
-import net.car.client.Client
 import objects.Car
 import objects.Environment
 import java.net.ConnectException
@@ -35,7 +34,7 @@ class Sonar : CommandExecutor {
         val requestBytes = ByteArray(requestMessage.getSizeNoTag())
         requestMessage.writeTo(CodedOutputStream(requestBytes))
         try {
-            car.carConnection.sendRequest(Client.Request.SONAR, requestBytes)
+            car.scan(requestMessage.angles, requestMessage.attempts.first(), requestMessage.windowSize, requestMessage.smoothing)
         } catch (e: ConnectException) {
             synchronized(Environment, {
                 Environment.map.remove(id)

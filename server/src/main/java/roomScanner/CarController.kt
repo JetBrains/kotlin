@@ -5,9 +5,9 @@ import RouteMetricRequest
 import SonarRequest
 import SonarResponse
 import net.car.client.Client
-import objects.Car
+import objects.CarReal
 
-class CarController(var car: Car) {
+class CarController(var car: CarReal) {
     enum class Direction(val id: Int) {
         FORWARD(0),
         BACKWARD(1),

@@ -6,7 +6,7 @@ class RoomScanner(val controller: CarController) : Thread() {
     private val GHOST_LEVEL = 50
 
     override fun run() {
-        println("Car connected ${controller.car.carConnection.host}")
+        println("CarReal connected ${controller.car.carConnection.host}")
         for (i in 1..100) {
             step()
             println(plot(points))
