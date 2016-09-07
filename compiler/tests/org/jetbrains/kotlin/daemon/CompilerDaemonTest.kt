@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.rmi.server.UnicastRemoteObject

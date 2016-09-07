@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.tryConstructScriptClass
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.daemon.toFile
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -50,84 +52,125 @@ class ScriptTemplateTest {
     fun testScriptWithParam() {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testScriptWithClassParameter() {
         val aClass = compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
+        val out = captureOut {
+            aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
+        }
+        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testScriptWithBaseClassWithParam() {
         val aClass = compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
+        }
+        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testScriptWithDependsAnn() {
         val aClass = compileScript("fib_ext_ann.kts", ScriptWithIntParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testScriptWithDependsAnn2() {
         val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testScriptWithoutParams() {
         val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        Assert.assertEquals("10\n", out)
     }
 
     @Test
-    fun testScriptWithOverridenParam() {
+    fun testScriptWithOverriddenParam() {
         val aClass = compileScript("overridden_parameter.kts", ScriptBaseClassWithOverriddenProperty::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        val out = captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }
+        Assert.assertEquals("14\n", out)
     }
 
     @Test
     fun testScriptWithArrayParam() {
         val aClass = compileScript("array_parameter.kts", ScriptWithArrayParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("one", "two"))
+        captureOut {
+            aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("one", "two"))
+        }.let {
+            Assert.assertEquals("one and two\n", it)
+        }
     }
 
     @Test
     fun testScriptWithNullableParam() {
         val aClass = compileScript("nullable_parameter.kts", ScriptWithNullableParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Int::class.javaObjectType).newInstance(null)
+        captureOut {
+            aClass!!.getConstructor(Int::class.javaObjectType).newInstance(null)
+        }.let {
+            Assert.assertEquals("Param is null\n", it)
+        }
     }
 
     @Test
     fun testScriptVarianceParams() {
         val aClass = compileScript("variance_parameters.kts", ScriptVarianceParams::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Array<in Number>::class.java, Array<out Number>::class.java).newInstance(arrayOf("one"), arrayOf(1, 2))
+        captureOut {
+            aClass!!.getConstructor(Array<in Number>::class.java, Array<out Number>::class.java).newInstance(arrayOf("one"), arrayOf(1, 2))
+        }.let {
+            Assert.assertEquals("one and 1\n", it)
+        }
     }
 
     @Test
     fun testScriptWithNullableProjection() {
         val aClass = compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf<String?>(null))
+        captureOut {
+            aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf<String?>(null))
+        }.let {
+            Assert.assertEquals("nullable\n", it)
+        }
     }
 
     @Test
     fun testScriptWithArray2DParam() {
         val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, null)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Array<Array<in String>>::class.java).newInstance(arrayOf(arrayOf("one"), arrayOf("two")))
+        captureOut {
+            aClass!!.getConstructor(Array<Array<in String>>::class.java).newInstance(arrayOf(arrayOf("one"), arrayOf("two")))
+        }.let {
+            Assert.assertEquals("first: one, size: 1\n", it)
+        }
     }
 
     @Test
@@ -155,7 +198,7 @@ class ScriptTemplateTest {
     fun testScriptWithParamConversion() {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4"))
+        val anObj =  tryConstructScriptClass(aClass!!, listOf("4"))
         Assert.assertNotNull(anObj)
     }
 
@@ -165,7 +208,7 @@ class ScriptTemplateTest {
         Assert.assertNotNull(aClass)
         var exceptionThrown = false
         try {
-            KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
+            tryConstructScriptClass(aClass!!, emptyList())
         }
         catch (e: InvocationTargetException) {
             Assert.assertTrue(e.cause is IllegalStateException)
@@ -224,7 +267,31 @@ class ScriptTemplateTest {
     }
 }
 
-class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
+open class TestKotlinScriptDummyDependenciesResolver : ScriptDependenciesResolver {
+
+    private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
+
+    @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
+    override fun resolve(script: ScriptContents,
+                         environment: Map<String, Any?>?,
+                         report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+                         previousDependencies: KotlinScriptExternalDependencies?
+    ): Future<KotlinScriptExternalDependencies?>
+    {
+        return object : KotlinScriptExternalDependencies {
+            override val classpath: Iterable<File> = classpathFromClassloader()
+            override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
+        }.asFuture()
+    }
+
+    protected fun classpathFromClassloader(): List<File> =
+            (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
+                    ?.mapNotNull(URL::toFile)
+                    ?.filter { it.path.contains("out") && it.path.contains("test") }
+            ?: emptyList()
+}
+
+class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesResolver() {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
