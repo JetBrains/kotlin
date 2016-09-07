@@ -147,33 +147,34 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         val failedToImportDescriptors = LinkedHashSet<DeclarationDescriptor>()
 
         while (true) {
-            // Visitor order is important here so that enclosing elements are not shortened before their children are, e.g.
+            // Processors order is important here so that enclosing elements are not shortened before their children are, e.g.
             // test.foo(this@A) -> foo(this)
-            val visitors: List<ShorteningVisitor<*>> = listOf(
-                    ShortenTypesVisitor(file, elementFilter, failedToImportDescriptors),
-                    ShortenThisExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
-                    ShortenQualifiedExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
-                    RemoveExplicitCompanionObjectReferenceVisitor(file, elementFilter, failedToImportDescriptors)
+            val processors: List<ShorteningProcessor<*>> = listOf(
+                    ShortenTypesProcessor(file, elementFilter, failedToImportDescriptors),
+                    ShortenThisExpressionsProcessor(file, elementFilter, failedToImportDescriptors),
+                    ShortenQualifiedExpressionsProcessor(file, elementFilter, failedToImportDescriptors),
+                    RemoveExplicitCompanionObjectReferenceProcessor(file, elementFilter, failedToImportDescriptors)
             )
 
             // step 1: collect qualified elements to analyze (no resolve at this step)
+            val visitors = processors.map { it.collectElementsVisitor }
             for (visitor in visitors) {
                 for (element in elementsToUse) {
                     visitor.options = options(element)
                     element.accept(visitor)
                 }
             }
-            val elementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze() }
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
-            val bindingContext = file.getResolutionFacade().analyze(elementsToAnalyze, BodyResolveMode.PARTIAL)
-            visitors.forEach { it.analyzeCollectedElements(bindingContext) }
+            val allElementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze().map { it.element } }
+            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL)
+            processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
-            visitors.forEach { it.shortenElements(elementsToUse) }
+            processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse) }
 
             // step 4: try to import descriptors needed to shorten other elements
-            val descriptorsToImport = visitors.flatMap { it.getDescriptorsToImport() }.toSet()
+            val descriptorsToImport = processors.flatMap { it.getDescriptorsToImport() }.toSet()
             var anyChange = false
             for (descriptor in descriptorsToImport) {
                 assert(descriptor !in failedToImportDescriptors)
@@ -199,20 +200,15 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    private abstract class ShorteningVisitor<TElement : KtElement>(
-            protected val file: KtFile,
-            protected val elementFilter: (PsiElement) -> FilterResult,
-            protected val failedToImportDescriptors: Set<DeclarationDescriptor>
+    private data class ElementToAnalyze<TElement>(val element: TElement, val level: Int)
+
+    private abstract class CollectElementsVisitor<TElement : KtElement>(
+            protected val elementFilter: (PsiElement) -> FilterResult
     ) : KtVisitorVoid() {
+
         var options: Options = Options.DEFAULT
 
-        private data class ElementToAnalyze<TElement>(val element: TElement, val level: Int)
-
         private val elementsToAnalyze = ArrayList<ElementToAnalyze<TElement>>()
-        private val elementsToShorten = ArrayList<TElement>()
-        private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
-
-        protected val resolutionFacade = file.getResolutionFacade()
 
         private var level = 0
 
@@ -232,10 +228,31 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             elementsToAnalyze.add(ElementToAnalyze(element, level))
         }
 
+        override fun visitElement(element: PsiElement) {
+            if (elementFilter(element) != FilterResult.SKIP) {
+                element.acceptChildren(this)
+            }
+        }
+
+        fun getElementsToAnalyze(): List<ElementToAnalyze<TElement>> = elementsToAnalyze
+    }
+
+    private abstract class ShorteningProcessor<TElement : KtElement>(
+            protected val file: KtFile,
+            protected val failedToImportDescriptors: Set<DeclarationDescriptor>
+    ) {
+        protected val resolutionFacade = file.getResolutionFacade()
+        private val elementsToShorten = ArrayList<TElement>()
+        private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
+
+        abstract val collectElementsVisitor: CollectElementsVisitor<TElement>
+
         fun analyzeCollectedElements(bindingContext: BindingContext) {
+            val elements = collectElementsVisitor.getElementsToAnalyze()
+
             var index = 0
-            while (index < elementsToAnalyze.size) {
-                val (element, level) = elementsToAnalyze[index++]
+            while (index < elements.size) {
+                val (element, level) = elements[index++]
 
                 val result = analyzeQualifiedElement(element, bindingContext)
 
@@ -266,7 +283,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                 if (toBeShortened) {
                     // we are going to shorten qualified element - we must skip all elements inside its qualifier
-                    while (index < elementsToAnalyze.size && elementsToAnalyze[index].level > level) {
+                    while (index < elements.size && elements[index].level > level) {
                         index++
                     }
                 }
@@ -292,12 +309,6 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         protected abstract fun shortenElement(element: TElement): KtElement
 
-        override fun visitElement(element: PsiElement) {
-            if (elementFilter(element) != FilterResult.SKIP) {
-                element.acceptChildren(this)
-            }
-        }
-
         fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
             for (element in elementsToShorten) {
                 if (!element.isValid) continue
@@ -315,30 +326,33 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
         }
 
-        fun getElementsToAnalyze(): Collection<TElement> = elementsToAnalyze.map { it.element }
         fun getDescriptorsToImport(): Set<DeclarationDescriptor> = descriptorsToImport
     }
 
-    private class ShortenTypesVisitor(
+    private class ShortenTypesProcessor(
             file: KtFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : ShorteningVisitor<KtUserType>(file, elementFilter, failedToImportDescriptors) {
-        override fun visitUserType(userType: KtUserType) {
-            val filterResult = elementFilter(userType)
-            if (filterResult == FilterResult.SKIP) return
+    ) : ShorteningProcessor<KtUserType>(file, failedToImportDescriptors) {
 
-            userType.typeArgumentList?.accept(this)
+        override val collectElementsVisitor: CollectElementsVisitor<KtUserType> =
+                object : CollectElementsVisitor<KtUserType>(elementFilter) {
+                    override fun visitUserType(userType: KtUserType) {
+                        val filterResult = elementFilter(userType)
+                        if (filterResult == FilterResult.SKIP) return
 
-            if (filterResult == FilterResult.PROCESS) {
-                addQualifiedElementToAnalyze(userType)
-            }
+                        userType.typeArgumentList?.accept(this)
 
-            // elements in qualifier must be under
-            nextLevel()
-            userType.qualifier?.accept(this)
-            prevLevel()
-        }
+                        if (filterResult == FilterResult.PROCESS) {
+                            addQualifiedElementToAnalyze(userType)
+                        }
+
+                        // elements in qualifier must be under
+                        nextLevel()
+                        userType.qualifier?.accept(this)
+                        prevLevel()
+                    }
+                }
 
         override fun analyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
             if (element.qualifier == null) return Skip
@@ -363,38 +377,44 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    private abstract class QualifiedExpressionShorteningVisitor(
+    private abstract class QualifiedExpressionShorteningProcessor(
             file: KtFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : ShorteningVisitor<KtDotQualifiedExpression>(file, elementFilter, failedToImportDescriptors) {
+    ) : ShorteningProcessor<KtDotQualifiedExpression>(file, failedToImportDescriptors) {
 
-        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-            val filterResult = elementFilter(expression)
-            if (filterResult == FilterResult.SKIP) return
+        protected open class MyVisitor(elementFilter: (PsiElement) -> FilterResult) : CollectElementsVisitor<KtDotQualifiedExpression>(elementFilter) {
+            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+                val filterResult = elementFilter(expression)
+                if (filterResult == FilterResult.SKIP) return
 
-            expression.selectorExpression?.acceptChildren(this)
+                expression.selectorExpression?.acceptChildren(this)
 
-            if (filterResult == FilterResult.PROCESS) {
-                addQualifiedElementToAnalyze(expression)
+                if (filterResult == FilterResult.PROCESS) {
+                    addQualifiedElementToAnalyze(expression)
+                }
+
+                // elements in receiver must be under
+                nextLevel()
+                expression.receiverExpression.accept(this)
+                prevLevel()
             }
-
-            // elements in receiver must be under
-            nextLevel()
-            expression.receiverExpression.accept(this)
-            prevLevel()
         }
+
+        override val collectElementsVisitor = MyVisitor(elementFilter)
     }
 
-    private class ShortenQualifiedExpressionsVisitor(
+    private class ShortenQualifiedExpressionsProcessor(
             file: KtFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
+    ) : QualifiedExpressionShorteningProcessor(file, elementFilter, failedToImportDescriptors) {
 
-        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-            if (expression.receiverExpression is KtThisExpression && !options.removeThis) return
-            super.visitDotQualifiedExpression(expression)
+        override val collectElementsVisitor = object : MyVisitor(elementFilter) {
+            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+                if (expression.receiverExpression is KtThisExpression && !options.removeThis) return
+                super.visitDotQualifiedExpression(expression)
+            }
         }
 
         override fun analyzeQualifiedElement(element: KtDotQualifiedExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
@@ -434,7 +454,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             return when {
                 targetsMatch -> ShortenNow
 
-                // it makes no sense to insert import when there is a conflict with function, property etc
+            // it makes no sense to insert import when there is a conflict with function, property etc
                 targetsWhenShort.any { it !is ClassDescriptor && it !is PackageViewDescriptor } -> Skip
 
                 else -> ImportDescriptors(targets)
@@ -456,12 +476,22 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    private class ShortenThisExpressionsVisitor(
+    private class ShortenThisExpressionsProcessor(
             file: KtFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : ShorteningVisitor<KtThisExpression>(file, elementFilter, failedToImportDescriptors) {
+    ) : ShorteningProcessor<KtThisExpression>(file, failedToImportDescriptors) {
+
         private val simpleThis = KtPsiFactory(file).createExpression("this") as KtThisExpression
+
+        override val collectElementsVisitor: CollectElementsVisitor<KtThisExpression> =
+                object : CollectElementsVisitor<KtThisExpression>(elementFilter) {
+                    override fun visitThisExpression(expression: KtThisExpression) {
+                        if (options.removeThisLabels && elementFilter(expression) == FilterResult.PROCESS && expression.getTargetLabel() != null) {
+                            addQualifiedElementToAnalyze(expression)
+                        }
+                    }
+                }
 
         override fun analyzeQualifiedElement(element: KtThisExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
             val targetBefore = element.instanceReference.targets(bindingContext).singleOrNull() ?: return Skip
@@ -471,22 +501,16 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             return if (targetBefore == targetAfter) ShortenNow else Skip
         }
 
-        override fun visitThisExpression(expression: KtThisExpression) {
-            if (options.removeThisLabels && elementFilter(expression) == FilterResult.PROCESS && expression.getTargetLabel() != null) {
-                addQualifiedElementToAnalyze(expression)
-            }
-        }
-
         override fun shortenElement(element: KtThisExpression): KtElement {
             return element.replace(simpleThis) as KtElement
         }
     }
 
-    private class RemoveExplicitCompanionObjectReferenceVisitor(
+    private class RemoveExplicitCompanionObjectReferenceProcessor(
             file: KtFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
+    ) : QualifiedExpressionShorteningProcessor(file, elementFilter, failedToImportDescriptors) {
 
         private fun KtExpression.singleTarget(context: BindingContext): DeclarationDescriptor? {
             return (getCalleeExpressionIfAny() as? KtReferenceExpression)?.targets(context)?.singleOrNull()
