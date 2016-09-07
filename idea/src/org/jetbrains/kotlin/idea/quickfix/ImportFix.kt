@@ -197,6 +197,8 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) :
                     indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
                 }
 
+                indicesHelper.getTopLevelTypeAliases { it == name }.filterTo(result, filterByCallType)
+
                 indicesHelper.getTopLevelCallablesByName(name).filterTo(result, filterByCallType)
             }
         }

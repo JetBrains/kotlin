@@ -473,6 +473,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("typeAliasImport.before.Main.kt")
+        public void testTypeAliasImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/typeAliasImport.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("unaryMinusOperator.before.Main.kt")
         public void testUnaryMinusOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/unaryMinusOperator.before.Main.kt");
