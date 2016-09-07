@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.+'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
         classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
     }
 }

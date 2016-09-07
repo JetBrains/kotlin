@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.+'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT"
         classpath("io.realm:realm-gradle-plugin:$realm_version") {
             exclude group: 'com.android.tools.build', module: 'gradle'
         }
@@ -57,7 +57,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
-    compile "org.jetbrains.kotlin:kotlin-reflect:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.1-SNAPSHOT"
     compile 'org.jetbrains.anko:anko-common:0.9'
 }

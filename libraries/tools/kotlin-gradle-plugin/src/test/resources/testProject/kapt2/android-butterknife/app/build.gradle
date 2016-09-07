@@ -33,5 +33,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.jakewharton:butterknife:8.0.1'
     kapt 'com.jakewharton:butterknife-compiler:8.0.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
 }

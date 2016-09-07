@@ -29,7 +29,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
 
     compile 'com.google.dagger:dagger:2.2'
     kapt 'com.google.dagger:dagger-compiler:2.2'
