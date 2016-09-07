@@ -33,9 +33,12 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
             val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
             context.sourceManager.putFileEntry(irFile, fileEntry)
 
+            for (ktAnnotationEntry in ktFile.annotationEntries) {
+                irFile.addAnnotation(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
+            }
+
             for (ktDeclaration in ktFile.declarations) {
-                val irDeclaration = irDeclarationGenerator.generateMemberDeclaration(ktDeclaration)
-                irFile.addDeclaration(irDeclaration)
+                irFile.addDeclaration(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
             }
 
             irModule.addFile(irFile)

@@ -1,0 +1,8 @@
+FILE /fileWithAnnotations.kt
+  fileAnnotations:
+    @kotlin.jvm.JvmName(name = "FileWithAnnotations")
+  FUN public fun foo(): kotlin.Unit
+    BLOCK_BODY
+  PROPERTY public val bar: kotlin.Int = 42
+    EXPRESSION_BODY
+      CONST Int type=kotlin.Int value='42'

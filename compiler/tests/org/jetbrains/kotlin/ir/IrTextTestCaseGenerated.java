@@ -202,6 +202,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("fileWithAnnotations.kt")
+        public void testFileWithAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/fileWithAnnotations.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");

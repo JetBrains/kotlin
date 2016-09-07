@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(): String {
@@ -41,8 +42,26 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     val printer = Printer(out, "  ")
     val elementRenderer = RenderIrElementVisitor()
 
+    companion object {
+        val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions { verbose = true }
+    }
+
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledSubTree(data)
+    }
+
+    override fun visitFile(declaration: IrFile, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            if (declaration.fileAnnotations.isNotEmpty()) {
+                printer.println("fileAnnotations:")
+                indented {
+                    declaration.fileAnnotations.forEach {
+                        printer.println(ANNOTATIONS_RENDERER.renderAnnotation(it))
+                    }
+                }
+            }
+            declaration.declarations.forEach { it.accept(this, "") }
+        }
     }
 
     override fun visitFunction(declaration: IrFunction, data: String) {

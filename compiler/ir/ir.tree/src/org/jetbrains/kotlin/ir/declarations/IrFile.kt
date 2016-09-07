@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 interface IrFile : IrElement {
     val name: String
     val fileEntry: SourceLocationManager.FileEntry
+    val fileAnnotations: List<AnnotationDescriptor>
     val packageFragmentDescriptor: PackageFragmentDescriptor
     val declarations: List<IrDeclaration>
 }
@@ -33,6 +36,12 @@ class IrFileImpl(
         override val name: String,
         override val packageFragmentDescriptor: PackageFragmentDescriptor
 ) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+    override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
+
+    fun addAnnotation(annotation: AnnotationDescriptor) {
+        fileAnnotations.add(annotation)
+    }
+
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     fun addDeclaration(declaration: IrDeclaration) {
