@@ -62,7 +62,8 @@ enum class TypeCheck {
     INSTANCEOF,
     OR_NULL,
     IS_ANY,
-    AND_PREDICATE
+    AND_PREDICATE,
+    SAME_AS
 }
 
 enum class SideEffectKind {

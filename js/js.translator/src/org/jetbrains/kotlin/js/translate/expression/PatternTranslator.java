@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -170,8 +167,10 @@ public final class PatternTranslator extends AbstractTranslator {
             return result;
         }
 
-        JsNameRef typeName = getClassNameReference(type);
-        return namer().isInstanceOf(typeName);
+
+        ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
+        JsNameRef typeName = context().getQualifiedReference(referencedClass);
+        return referencedClass.getKind() != ClassKind.OBJECT ? namer().isInstanceOf(typeName) : namer().isInstanceOfObject(typeName);
     }
 
     @Nullable
@@ -233,12 +232,6 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression alias = context().getAliasForDescriptor(typeParameter);
         assert alias != null: "No alias found for reified type parameter: " + typeParameter;
         return alias;
-    }
-
-    @NotNull
-    private JsNameRef getClassNameReference(@NotNull KotlinType type) {
-        ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
-        return context().getQualifiedReference(referencedClass);
     }
 
     @NotNull
