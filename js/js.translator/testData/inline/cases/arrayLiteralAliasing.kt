@@ -21,7 +21,11 @@ inline fun moveTo(source: Array<Int>, sink: Array<Int>): PairArray<Int, Int> {
 
 fun box(): String {
     val expected = PairArray<Int, Int>(arrayOf(), arrayOf(1,2,3,4))
-    assertEquals(expected, moveTo(arrayOf(3, 4),  arrayOf(1, 2)))
+    assertTrue(expected.deepEquals(moveTo(arrayOf(3, 4),  arrayOf(1, 2))))
 
     return "OK"
+}
+
+fun <T, R> PairArray<T, R>.deepEquals(other: PairArray<T, R>): Boolean {
+    return fst.asList() == other.fst.asList() && snd.asList() == other.snd.asList()
 }
