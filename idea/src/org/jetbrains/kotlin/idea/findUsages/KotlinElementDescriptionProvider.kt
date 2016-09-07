@@ -52,7 +52,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
 
         fun elementKind() = when (targetElement) {
             is KtClass -> if (targetElement.isInterface()) "interface" else "class"
-            is KtObjectDeclaration -> "object"
+            is KtObjectDeclaration -> if (targetElement.isCompanion()) "companion object" else "object"
             is KtNamedFunction -> "function"
             is KtPropertyAccessor -> (if (targetElement.isGetter) "getter" else "setter") + " for property "
             is KtFunctionLiteral -> "lambda"
