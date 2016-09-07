@@ -10608,6 +10608,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithParameter.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("sameLets.kt")
+        public void testSameLets() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/sameLets.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/replaceSubstringWithDropLast")
