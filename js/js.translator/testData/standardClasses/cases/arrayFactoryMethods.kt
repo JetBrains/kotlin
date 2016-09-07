@@ -3,8 +3,19 @@ package foo
 class Fail(message: String) : Exception(message)
 
 fun test(testName: String, actual: Any, expectedAsString: String) {
-    val expected = eval("[$expectedAsString]")
-    assertEquals(expected, actual)
+    val expected = eval("[$expectedAsString]") as Array<in Any>
+    val expectedJs: dynamic = expected
+    val actualJs: dynamic = actual
+    if (expectedJs.length != actualJs.length) {
+        fail("Lengths do not match: ${expectedJs} vs. ${actualJs}")
+    }
+    for (index in 0..(expectedJs.length)) {
+        val expectedElem = expectedJs[index] as Any?
+        val actualElem = actualJs[index] as Any?
+        if (expectedElem != actualElem) {
+            fail("Content do not match: ${expectedJs} vs. ${actualJs}")
+        }
+    }
 }
 
 fun box(): String {

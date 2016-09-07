@@ -53,10 +53,6 @@
             return false;
         }
 
-        if (Array.isArray(obj1)) {
-            return Kotlin.arrayEquals(obj1, obj2);
-        }
-
         if (typeof obj1 == "object" && typeof obj1.equals_za3rmp$ === "function") {
             return obj1.equals_za3rmp$(obj2);
         }

@@ -9,7 +9,8 @@ fun box(): String {
     success("10 as Any") { assertEquals<Any>(10, 10 as Any) }
     success("\"abc\" as Any") { assertEquals<Any>("abc", "abc" as Any) }
     success("\"abc\" as Any") { assertEquals<Any>(true, true as Any) }
-    success("arrayOf(1, 2) as Any") { assertEquals<Any>(arrayOf(1, 2), arrayOf(1, 2) as Any) }
+    val array = arrayOf(1, 2)
+    success("arrayOf(1, 2) as Any") { assertEquals<Any>(array, array as Any) }
     success("{ 0 } as Any") { { 0 } as Any }
     success("a as Any") { assertEquals<Any>(a, a as Any) }
     success("object{} as Any") { object{} as Any }
