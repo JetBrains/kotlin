@@ -1,5 +1,15 @@
 <node text="Object (java.lang)">
   <node text="Enum (java.lang)" base="true">
+    <node text="TimeUnit (java.util.concurrent)"/>
+    <node text="UnicodeScript in Character (java.lang)"/>
+    <node text="Category in Locale (java.util)"/>
+    <node text="Type in Cache in InetAddress (java.net)"/>
+    <node text="BaselineResizeBehavior in Component (java.awt)"/>
+    <node text="PrintMode in JTable (javax.swing)"/>
+    <node text="ElementType (java.lang.annotation)"/>
+    <node text="State in Thread (java.lang)"/>
+    <node text="RetentionPolicy (java.lang.annotation)"/>
+    <node text="Type in Window (java.awt)"/>
     <node text="One ()"/>
     <node text="G ()"/>
   </node>
