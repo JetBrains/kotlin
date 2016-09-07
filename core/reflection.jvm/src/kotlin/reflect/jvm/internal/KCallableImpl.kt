@@ -24,14 +24,14 @@ import java.util.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaType
 
-internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
-    val descriptor: CallableMemberDescriptor
+internal abstract class KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
+    abstract val descriptor: CallableMemberDescriptor
 
-    val caller: FunctionCaller<*>
+    abstract val caller: FunctionCaller<*>
 
-    val defaultCaller: FunctionCaller<*>?
+    abstract val defaultCaller: FunctionCaller<*>?
 
-    val container: KDeclarationContainerImpl
+    abstract val container: KDeclarationContainerImpl
 
     override val annotated: Annotated get() = descriptor
 

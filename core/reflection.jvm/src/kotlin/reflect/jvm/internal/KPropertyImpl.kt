@@ -36,7 +36,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
         override val name: String,
         val signature: String,
         descriptorInitialValue: PropertyDescriptor?
-) : KProperty<R>, KCallableImpl<R> {
+) : KCallableImpl<R>(), KProperty<R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(
             container, name, signature, null
     )
@@ -105,7 +105,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             ReflectionObjectRenderer.renderProperty(descriptor)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-            KCallableImpl<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+            KCallableImpl<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
         abstract override val property: KPropertyImpl<PropertyType>
 
         abstract override val descriptor: PropertyAccessorDescriptor

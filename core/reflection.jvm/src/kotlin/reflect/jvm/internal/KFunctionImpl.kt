@@ -33,7 +33,7 @@ internal class KFunctionImpl private constructor(
         name: String,
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl, FunctionWithAllInvokes {
+) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionImpl, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
