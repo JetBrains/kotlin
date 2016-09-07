@@ -263,12 +263,6 @@ class DeserializedClassDescriptor(
             }
         }
 
-        override fun getNonDeclaredTypeAliasNames(): Set<Name> {
-            return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<TypeAliasDescriptor>().map { it.name }
-            }
-        }
-
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             recordLookup(name, location)
             return classDescriptor.enumEntries?.findEnumEntry(name) ?:

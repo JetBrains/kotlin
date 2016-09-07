@@ -52,17 +52,13 @@ abstract class DeserializedMemberScope protected constructor(
             c.storageManager.createLazyValue {
                 typeAliasList.groupByName { it.name }
             }
-    protected val typeAliasNames by
-            c.storageManager.createLazyValue {
-                typeAliasList.map { c.nameResolver.getName(it.name) }
-            }
 
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
-    private val typeAliases =
-            c.storageManager.createMemoizedFunction<Name, Collection<TypeAliasDescriptor>> { computeTypeAliases(it) }
+    private val typeAliasByName =
+            c.storageManager.createMemoizedFunctionWithNullableValues<Name, TypeAliasDescriptor> { createTypeAlias(it) }
 
     private val functionNamesLazy by c.storageManager.createLazyValue {
         functionProtos.keys + getNonDeclaredFunctionNames()
@@ -71,6 +67,8 @@ abstract class DeserializedMemberScope protected constructor(
     private val variableNamesLazy by c.storageManager.createLazyValue {
         propertyProtos.keys + getNonDeclaredVariableNames()
     }
+
+    protected val typeAliasNames: Set<Name> get() = typeAliasProtos.keys
 
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = variableNamesLazy
@@ -120,21 +118,19 @@ abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    private fun computeTypeAliases(name: Name) =
-            computeDescriptors(
-                    name,
-                    typeAliasProtos,
-                    { c.memberDeserializer.loadTypeAlias(it) },
-                    { })
+    private fun createTypeAlias(name: Name) =
+            typeAliasProtos[name]?.singleOrNull()?.let {
+                c.memberDeserializer.loadTypeAlias(it)
+            }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         if (name !in getVariableNames()) return emptyList()
         return properties(name)
     }
 
-    protected fun getContributedTypeAliases(name: Name): Collection<TypeAliasDescriptor> {
-        if (name !in typeAliasNames) return emptyList()
-        return typeAliases(name)
+    protected fun getTypeAlias(name: Name): TypeAliasDescriptor? {
+        if (name !in typeAliasNames) return null
+        return typeAliasByName(name)
     }
 
     protected abstract fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
@@ -203,7 +199,6 @@ abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun getNonDeclaredFunctionNames(): Set<Name>
     protected abstract fun getNonDeclaredVariableNames(): Set<Name>
-    protected abstract fun getNonDeclaredTypeAliasNames(): Set<Name>
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
