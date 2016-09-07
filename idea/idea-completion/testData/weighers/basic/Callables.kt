@@ -8,7 +8,7 @@ open class Base {
     val aaBaseProp = 1
 }
 
-class Derived : Base() {
+class Derived : Base(), Common {
     fun aaDerivedFun(){}
     val aaDerivedProp = 1
 
@@ -32,7 +32,7 @@ interface Y : X {
     fun aaY()
 }
 
-interface Z1 {
+interface Z1 : Common {
     fun aaaZ1()
     fun aabZ1()
 }
@@ -40,6 +40,10 @@ interface Z1 {
 interface Z2 {
     fun aaaZ2()
     fun aabZ2()
+}
+
+interface Common {
+    fun aazCommon()
 }
 
 fun Any.aaAnyExtensionFun(){}
@@ -69,6 +73,7 @@ fun Y.aaYExt(){}
 // ORDER: aaBaseFun
 // ORDER: aaExtensionProp
 // ORDER: aaExtensionFun
+// ORDER: aazCommon
 // ORDER: aaAnyExtensionProp
 // ORDER: aaAnyExtensionFun
 // ORDER: aaGlobalProp
