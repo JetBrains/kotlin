@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
-import java.io.FileFilter
 
 class Kapt2IT: BaseGradleIT() {
     companion object {
@@ -56,6 +55,7 @@ class Kapt2IT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
             assertContains("example.JavaTest PASSED")
+            assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
         }
 
         project.build("build") {
@@ -69,24 +69,32 @@ class Kapt2IT: BaseGradleIT() {
     fun testSimpleWithIC() {
         val options = defaultBuildOptions().copy(incremental = true)
         val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val classesDir = File(project.projectDir, "build/classes")
 
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
+            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
         }
 
-        val files = listOf("InternalDummy.kt", "test.kt")
-        kotlin.repeat(2) { i ->
-            project.projectDir.getFileByName(files[i]).appendText(" ")
+        project.projectDir.getFilesByNames("InternalDummy.kt", "test.kt").forEach { it.appendText(" ") }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+        }
 
-            project.build("build", options = options) {
-                assertSuccessful()
-                assertKaptSuccessful()
-                assertContains(":compileKotlin")
-                assertContains(":compileJava")
-            }
+        // emulating wipe by android plugin's IncrementalSafeguardTask
+        classesDir.deleteRecursively()
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertContains(":compileKotlin UP-TO-DATE")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
         }
     }
 

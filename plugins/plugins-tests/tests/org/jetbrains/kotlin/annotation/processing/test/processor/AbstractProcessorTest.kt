@@ -43,7 +43,7 @@ import javax.lang.model.element.*
 class AnnotationProcessingExtensionForTests(
         val processors: List<Processor>
 ) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true,
-                                          createIncrementalDataFile(), StubIncrementalCompilationComponents()) {
+                                          createIncrementalDataFile(), SourceRetentionAnnotationHandlerImpl()) {
     override fun loadAnnotationProcessors() = processors
     
     private companion object {
@@ -54,14 +54,6 @@ class AnnotationProcessingExtensionForTests(
         fun createIncrementalDataFile(): File = File.createTempFile("incrementalData", "txt").apply {
             deleteOnExit()
         }
-    }
-    
-    private class StubIncrementalCompilationComponents : IncrementalCompilationComponents {
-        private val sourceRetentionAnnotationHandler = SourceRetentionAnnotationHandlerImpl()
-        
-        override fun getIncrementalCache(target: TargetId) = null!!
-        override fun getLookupTracker() = null!!
-        override fun getSourceRetentionAnnotationHandler() = sourceRetentionAnnotationHandler
     }
 }
 
