@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
@@ -42,22 +43,26 @@ class LazyJavaPackageScope(
         private val jPackage: JavaPackage,
         override val ownerDescriptor: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c) {
-
     // Null means that it's impossible to determine list of class names in package, i.e. in IDE where special finders exist
     // But for compiler though we can determine full list of class names by getting all class-file names in classpath and sources
     private val knownClassNamesInPackage: NullableLazyValue<Set<String>> = c.storageManager.createNullableLazyValue {
         c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
     }
 
-    private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> { request ->
-        val classId = ClassId(ownerDescriptor.fqName, request.name)
+    private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> classByRequest@{ request ->
+        val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
 
         val kotlinBinaryClass =
                 // These branches should be semantically equal, but the first one could be faster
                 if (request.javaClass != null)
                     c.components.kotlinClassFinder.findKotlinClass(request.javaClass)
                 else
-                    c.components.kotlinClassFinder.findKotlinClass(classId)
+                    c.components.kotlinClassFinder.findKotlinClass(requestClassId)
+
+        val classId = kotlinBinaryClass?.classId
+        // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
+        // It happens because KotlinClassFinder searches through a file-based index that does not differ classes containing $-sign and nested ones
+        if (classId != null && (classId.isNestedClass || classId.isLocal)) return@classByRequest null
 
         val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)
 
@@ -65,21 +70,25 @@ class LazyJavaPackageScope(
             is KotlinClassLookupResult.Found -> kotlinResult.descriptor
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
-                val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
+                val javaClass = request.javaClass ?: c.components.finder.findClass(requestClassId)
 
                 if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
                     throw IllegalStateException(
                             "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
                             "JavaClass: $javaClass\n" +
-                            "ClassId: $classId\n" +
+                            "ClassId: $requestClassId\n" +
                             "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
-                            "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(classId)}\n"
+                            "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
                     )
                 }
 
-                javaClass?.let { it ->
-                    LazyJavaClassDescriptor(c, ownerDescriptor, it)
+
+                val javaClassFqName = javaClass?.fqName ?: return@classByRequest null
+                assert(!javaClassFqName.isRoot && javaClassFqName.parent() == ownerDescriptor.fqName) {
+                    "Java class by request $requestClassId should be contained in package ${ownerDescriptor.fqName}, but it's fq-name: $javaClassFqName"
                 }
+
+                LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
             }
         }
     }

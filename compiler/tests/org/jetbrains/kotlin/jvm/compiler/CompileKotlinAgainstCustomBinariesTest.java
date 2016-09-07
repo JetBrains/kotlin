@@ -386,4 +386,21 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         File library2 = compileLibrary("library-2");
         doTestWithTxt(usage, library2);
     }
+
+    public void testProhibitNestedClassesByDollarName() throws Exception {
+        File library = compileLibrary("library");
+
+        KotlinTestUtils.compileJavaFiles(
+                Collections.singletonList(
+                        new File(getTestDataDirectory() + "/library/test/JavaOuter.java")
+                ),
+                Arrays.asList("-d", tmpdir.getPath())
+        );
+
+        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, tmpdir, library);
+
+        KotlinTestUtils.assertEqualsToFile(
+                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
+        );
+    }
 }
