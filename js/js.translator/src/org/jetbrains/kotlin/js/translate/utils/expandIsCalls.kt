@@ -86,6 +86,12 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
                 if (calleeArguments.size == 1) context.namer().isInstanceOf(argument, calleeArguments[0]) else null
             }
 
+            TypeCheck.SAME_AS -> {
+                // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument === calleeArgument`
+                // when it's known at compile time that `argument` represents an object type
+                if (calleeArguments.size == 1) JsAstUtils.equality(argument, calleeArguments[0]) else null
+            }
+
             TypeCheck.OR_NULL -> {
                 // `Kotlin.orNull(calleeArgument)(argument)` -> `(tmp = argument) == null || calleeArgument(tmp)`
                 if (calleeArguments.size == 1) getReplacementForOrNull(argument, calleeArguments[0]) else null

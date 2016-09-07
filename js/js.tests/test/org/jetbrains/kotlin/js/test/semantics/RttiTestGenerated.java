@@ -59,6 +59,12 @@ public class RttiTestGenerated extends AbstractRttiTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isReifiedObject.kt")
+    public void testIsReifiedObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isReifiedObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("isSameClass.kt")
     public void testIsSameClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isSameClass.kt");
