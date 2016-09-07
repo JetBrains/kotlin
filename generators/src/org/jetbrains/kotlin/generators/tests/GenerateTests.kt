@@ -498,6 +498,10 @@ fun main(args: Array<String>) {
             model("joinLines")
         }
 
+        testClass<AbstractBreadcrumbsTest>() {
+            model("codeInsight/breadcrumbs")
+        }
+
         testClass<AbstractIntentionTest>() {
             model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
         }

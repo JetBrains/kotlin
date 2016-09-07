@@ -1,0 +1,6 @@
+Crumbs:
+  foo()
+  when (x)
+Tooltips:
+  function <b><code>foo()</code></b>
+  when (x)

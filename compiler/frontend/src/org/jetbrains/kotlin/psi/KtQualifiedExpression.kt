@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.lang.AssertionError
 
 interface KtQualifiedExpression : KtExpression {
     val receiverExpression: KtExpression
@@ -33,8 +34,8 @@ interface KtQualifiedExpression : KtExpression {
     val operationTokenNode: ASTNode
         get() = node.findChildByType(KtTokens.OPERATIONS)!!
 
-    val operationSign: KtToken
-        get() = operationTokenNode.elementType as KtToken
+    val operationSign: KtSingleValueToken
+        get() = operationTokenNode.elementType as KtSingleValueToken
 
     private fun KtQualifiedExpression.getExpression(afterOperation: Boolean): KtExpression? {
         return operationTokenNode.psi?.siblings(afterOperation, false)?.firstIsInstanceOrNull<KtExpression>()
