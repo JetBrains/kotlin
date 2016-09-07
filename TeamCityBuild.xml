@@ -157,14 +157,16 @@
 
     <condition property="need.remove.artifacts" value="true">
         <and>
-            <matches pattern="rr/.*" string="${teamcity.build.branch}"/>
+            <matches pattern="rri?/.*" string="${teamcity.build.branch}"/>
             <not>
-                <matches pattern="rr/internal/.*" string="${teamcity.build.branch}"/>
+                <matches pattern="rri?/internal/.*" string="${teamcity.build.branch}"/>
             </not>
         </and>
     </condition>
 
-    <target name="remove_internal_artifacts" description="Remove internal artifacts for rr/* branches, but store them for rr/internal/*" if="need.remove.artifacts">
+    <target name="remove_internal_artifacts"
+            description="Remove internal artifacts for rri?/* branches, but store them for rri?/internal/*"
+            if="need.remove.artifacts">
         <echo message="Remove internal artifacts" />
 
         <delete failonerror="false" verbose="true">
