@@ -169,7 +169,7 @@ class BasicLookupElementFactory(
                 element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.type), parametersAndTypeGrayed)
             }
 
-            is ClassDescriptor -> {
+            is ClassifierDescriptorWithTypeParameters -> {
                 val typeParams = descriptor.declaredTypeParameters
                 if (includeClassTypeArguments && typeParams.isNotEmpty()) {
                     element = element.appendTailText(typeParams.map { it.name.asString() }.joinToString(", ", "<", ">"), true)
@@ -191,6 +191,10 @@ class BasicLookupElementFactory(
 
                 if (container is PackageFragmentDescriptor || container is ClassDescriptor) {
                     element = element.appendTailText(" (" + DescriptorUtils.getFqName(container) + ")", true)
+                }
+
+                if (descriptor is TypeAliasDescriptor) {
+                    element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.underlyingType), false)
                 }
             }
 
