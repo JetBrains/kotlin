@@ -24,20 +24,12 @@ import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
 
-import java.util.List;
-
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 public final class InitializerVisitor extends TranslatorVisitor<Void> {
-    private final List<JsStatement> result;
-
-    public InitializerVisitor(List<JsStatement> result) {
-        this.result = result;
-    }
-
     @Override
     protected Void emptyResult(@NotNull TranslationContext context) {
         return null;
@@ -50,12 +42,14 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
             JsStatement statement = generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
                                                                    Translation.translateAsExpression(initializer, context));
             if (!JsAstUtils.isEmptyStatement(statement)) {
-                result.add(statement);
+                context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(statement));
             }
         }
 
         JsStatement delegate = generateInitializerForDelegate(context, property);
-        if (delegate != null) result.add(delegate);
+        if (delegate != null) {
+            context.addStatementToCurrentBlock(delegate);
+        }
 
         return null;
     }
@@ -64,7 +58,8 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     public Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, @NotNull TranslationContext context) {
         KtExpression initializerBody = initializer.getBody();
         if (initializerBody != null) {
-            result.add(translateAsStatementAndMergeInBlockIfNeeded(initializerBody, context));
+            context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(
+                    translateAsStatementAndMergeInBlockIfNeeded(initializerBody, context)));
         }
         return null;
     }
