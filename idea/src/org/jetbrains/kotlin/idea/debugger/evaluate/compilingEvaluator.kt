@@ -65,11 +65,11 @@ private fun defineClasses(
     }
 }
 
-// The order is relevant here: if we load Lambda first instead, during the definition of Lambda the class loader will look for
-// its superclasses and will try to load FunctionImpl itself. It will succeed, probably with the help of some parent class loader,
-// and the subsequent attempt to define the patched version of FunctionImpl will fail with LinkageError (cannot redefine class)
+// This list should contain all superclasses of lambda classes.
+// The order is relevant here: if we load Lambda first instead, during the definition of Lambda the class loader will try
+// to load its superclass. It will succeed, probably with the help of some parent class loader, and the subsequent attempt to define
+// the patched version of that superclass will fail with LinkageError (cannot redefine class)
 private val LAMBDA_SUPERCLASSES = listOf(
-        ClassBytes("kotlin.jvm.internal.FunctionImpl"),
         ClassBytes("kotlin.jvm.internal.Lambda")
 )
 

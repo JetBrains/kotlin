@@ -28,12 +28,12 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 
-internal open class KFunctionImpl protected constructor(
+internal class KFunctionImpl private constructor(
         override val container: KDeclarationContainerImpl,
         name: String,
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl() {
+) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unchecked", "NullableProblems"})
-public class FunctionReference extends FunctionImpl implements KFunction {
+public class FunctionReference implements FunctionImpl, KFunction {
     private final int arity;
     private KFunction reflected;
 

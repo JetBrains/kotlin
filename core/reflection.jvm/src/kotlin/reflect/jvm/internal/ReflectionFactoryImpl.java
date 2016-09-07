@@ -66,7 +66,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return new KFunctionFromReferenceImpl(f);
+        return new KFunctionImpl(getOwner(f), f.getName(), f.getSignature());
     }
 
     // Properties
@@ -102,6 +102,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     private static KDeclarationContainerImpl getOwner(CallableReference reference) {
+        KDeclarationContainer owner = reference.getOwner();
+        return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
+    }
+
+    private static KDeclarationContainerImpl getOwner(FunctionReference reference) {
         KDeclarationContainer owner = reference.getOwner();
         return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
     }
