@@ -74,31 +74,31 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KProperty0 property0(PropertyReference0 p) {
-        return p instanceof PropertyReference0Impl ? new KProperty0Augmented(p) : new KProperty0FromReferenceImpl(p);
+        return new KProperty0Augmented(p);
     }
 
     @Override
     public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
-        return p instanceof MutablePropertyReference0Impl ? new KMutableProperty0Augmented(p) : new KMutableProperty0FromReferenceImpl(p);
+        return new KMutableProperty0Augmented(p);
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
-        return p instanceof PropertyReference1Impl ? new KProperty1Augmented(p) : new KProperty1FromReferenceImpl(p);
+        return new KProperty1Augmented(p);
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
-        return p instanceof MutablePropertyReference1Impl ? new KMutableProperty1Augmented(p) : new KMutableProperty1FromReferenceImpl(p);
+        return new KMutableProperty1Augmented(p);
     }
 
     @Override
     public KProperty2 property2(PropertyReference2 p) {
-        return p instanceof PropertyReference2Impl ? new KProperty2Augmented(p) : new KProperty2FromReferenceImpl(p);
+        return new KProperty2Augmented(p);
     }
 
     @Override
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
-        return p instanceof MutablePropertyReference2Impl ? new KMutableProperty2Augmented(p) : new KMutableProperty2FromReferenceImpl(p);
+        return new KMutableProperty2Augmented(p);
     }
 }
