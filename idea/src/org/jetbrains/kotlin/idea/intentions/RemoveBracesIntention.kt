@@ -24,24 +24,32 @@ import org.jetbrains.kotlin.psi.*
 class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove braces") {
     override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
         val singleStatement = element.statements.singleOrNull() ?: return false
+        val container = element.parent
+        when (container) {
+            is KtContainerNode -> {
+                if (singleStatement is KtIfExpression && container.parent is KtIfExpression) return false
 
-        val containerNode = element.parent as? KtContainerNode ?: return false
-        if (singleStatement is KtIfExpression && containerNode.parent is KtIfExpression) return false
+                val lBrace = element.lBrace ?: return false
+                val rBrace = element.rBrace ?: return false
+                if (!lBrace.textRange.containsOffset(caretOffset) && !rBrace.textRange.containsOffset(caretOffset)) return false
 
-        val lBrace = element.lBrace ?: return false
-        val rBrace = element.rBrace ?: return false
-        if (!lBrace.textRange.containsOffset(caretOffset) && !rBrace.textRange.containsOffset(caretOffset)) return false
-
-        val description = containerNode.description() ?: return false
-        text = "Remove braces from '$description' statement"
-        return true
+                val description = container.description() ?: return false
+                text = "Remove braces from '$description' statement"
+                return true
+            }
+            is KtWhenEntry -> {
+                text = "Remove braces from 'when' entry"
+                return singleStatement !is KtNamedDeclaration
+            }
+            else -> return false
+        }
     }
 
     override fun applyTo(element: KtBlockExpression, editor: Editor?) {
         val statement = element.statements.single()
 
-        val containerNode = element.parent as KtContainerNode
-        val construct = containerNode.parent as KtExpression
+        val container = element.parent!!
+        val construct = container.parent as KtExpression
         handleComments(construct, element)
 
         val newElement = element.replace(statement.copy())

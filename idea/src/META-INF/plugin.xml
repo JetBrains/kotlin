@@ -1326,11 +1326,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveBracesFromWhenEntryIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ReplaceRangeToWithUntilIntention</className>
       <category>Kotlin</category>
     </intentionAction>
