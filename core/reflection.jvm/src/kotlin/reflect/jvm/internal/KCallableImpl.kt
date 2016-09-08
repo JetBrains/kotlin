@@ -18,13 +18,12 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaType
 
-internal abstract class KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
+internal abstract class KCallableImpl<out R> : KCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
     abstract val caller: FunctionCaller<*>
@@ -33,35 +32,47 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KAnnotatedElementIm
 
     abstract val container: KDeclarationContainerImpl
 
-    override val annotated: Annotated get() = descriptor
+    private val annotations_ = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
-    override val parameters: List<KParameter>
-        get() {
-            val descriptor = descriptor
-            val result = ArrayList<KParameter>()
-            var index = 0
+    override val annotations: List<Annotation> get() = annotations_()
 
-            if (descriptor.dispatchReceiverParameter != null) {
-                result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
-            }
+    private val parameters_ = ReflectProperties.lazySoft {
+        val descriptor = descriptor
+        val result = ArrayList<KParameter>()
+        var index = 0
 
-            if (descriptor.extensionReceiverParameter != null) {
-                result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
-            }
-
-            for (i in descriptor.valueParameters.indices) {
-                result.add(KParameterImpl(this, index++, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
-            }
-
-            result.trimToSize()
-            return result
+        if (descriptor.dispatchReceiverParameter != null) {
+            result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
         }
 
+        if (descriptor.extensionReceiverParameter != null) {
+            result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
+        }
+
+        for (i in descriptor.valueParameters.indices) {
+            result.add(KParameterImpl(this, index++, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
+        }
+
+        result.trimToSize()
+        result
+    }
+
+    override val parameters: List<KParameter>
+        get() = parameters_()
+
+    private val returnType_ = ReflectProperties.lazySoft {
+        KTypeImpl(descriptor.returnType!!) { caller.returnType }
+    }
+
     override val returnType: KType
-        get() = KTypeImpl(descriptor.returnType!!) { caller.returnType }
+        get() = returnType_()
+
+    private val typeParameters_ = ReflectProperties.lazySoft {
+        descriptor.typeParameters.map(::KTypeParameterImpl)
+    }
 
     override val typeParameters: List<KTypeParameter>
-        get() = descriptor.typeParameters.map(::KTypeParameterImpl)
+        get() = typeParameters_()
 
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
@@ -134,15 +145,15 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KAnnotatedElementIm
     private fun defaultPrimitiveValue(type: Type): Any? =
             if (type is Class<*> && type.isPrimitive) {
                 when (type) {
-                    java.lang.Boolean.TYPE -> false
-                    java.lang.Character.TYPE -> 0.toChar()
-                    java.lang.Byte.TYPE -> 0.toByte()
-                    java.lang.Short.TYPE -> 0.toShort()
-                    java.lang.Integer.TYPE -> 0
-                    java.lang.Float.TYPE -> 0f
-                    java.lang.Long.TYPE -> 0L
-                    java.lang.Double.TYPE -> 0.0
-                    java.lang.Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
+                    Boolean::class.java -> false
+                    Char::class.java -> 0.toChar()
+                    Byte::class.java -> 0.toByte()
+                    Short::class.java -> 0.toShort()
+                    Int::class.java -> 0
+                    Float::class.java -> 0f
+                    Long::class.java -> 0L
+                    Double::class.java -> 0.0
+                    Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
                     else -> throw UnsupportedOperationException("Unknown primitive: $type")
                 }
             }

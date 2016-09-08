@@ -26,12 +26,13 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
     override val name: String
         get() = descriptor.name.asString()
 
-    override val upperBounds: List<KType>
-        get() = descriptor.upperBounds.map { kotlinType ->
+    override val upperBounds: List<KType> by ReflectProperties.lazySoft {
+        descriptor.upperBounds.map { kotlinType ->
             KTypeImpl(kotlinType) {
                 TODO("Java type is not yet supported for type parameters: $descriptor")
             }
         }
+    }
 
     override val variance: KVariance
         get() = when (descriptor.variance) {

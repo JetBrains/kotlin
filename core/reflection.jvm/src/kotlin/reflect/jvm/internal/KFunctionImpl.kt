@@ -40,7 +40,7 @@ internal class KFunctionImpl private constructor(
             container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
     )
 
-    override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
+    override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
     }
 

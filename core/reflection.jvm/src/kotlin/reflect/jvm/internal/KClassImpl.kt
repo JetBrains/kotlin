@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.reflect.functionClassArity
@@ -35,8 +34,7 @@ import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
 
-internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
-        KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KAnnotatedElementImpl {
+internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
@@ -48,6 +46,8 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
 
             descriptor ?: reportUnresolvedClass()
         }
+
+        val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
         val simpleName: String? by ReflectProperties.lazySoft {
             if (jClass.isAnonymousClass) return@lazySoft null
@@ -156,7 +156,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) :
 
     override val descriptor: ClassDescriptor get() = data().descriptor
 
-    override val annotated: Annotated get() = descriptor
+    override val annotations: List<Annotation> get() = data().annotations
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
