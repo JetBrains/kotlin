@@ -201,7 +201,9 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                 (lambdaArgument.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
             }
             else {
-                (argumentList.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
+                (argumentList.replace(newArgumentList) as? KtValueArgumentList)?.let {
+                    ShortenReferences.DEFAULT.process(it.arguments.last())
+                }
                 lambdaArgument.delete()
             }
         }
