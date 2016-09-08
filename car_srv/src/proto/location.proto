@@ -1,0 +1,18 @@
+syntax = "proto3";
+package carkot;
+
+option java_package = "proto.car";
+option java_outer_classname = "Location";
+
+message LocationResponse {
+
+    LocationData locationResponseData = 1;
+    int32 code = 2;
+    string errorMsg = 3;
+
+    message LocationData {
+        double x = 1;
+        double y = 2;
+        double angle = 3;
+    }
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package carkot;
+
+message ConnectionRequest {
+    repeated int32 ipValues = 1;
+    int32 port = 2;
+}
+
+message ConnectionResponse {
+    int32 uid = 1;
+    int32 code = 2;   
+}

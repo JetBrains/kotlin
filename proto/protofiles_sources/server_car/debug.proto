@@ -1,0 +1,25 @@
+syntax = "proto3";
+package carkot;
+
+message DebugRequest {
+    Type type = 1;
+
+    enum Type {
+        MEMORY_STATS = 0;
+        SONAR_STATS = 1;
+    }
+}
+
+message DebugResponseMemoryStats {
+    int32 heapDynamicTail = 1;
+    int32 heapStaticTail = 2;
+    int32 heapDynamicMaxBytes = 3;
+    int32 heapDynamicTotalBytes = 4;
+}
+
+message DebugResponseSonarStats {
+    int32 measurementCount = 1;
+    int32 measurementFailedChecksum = 2;
+    int32 measurementFailedDistance = 3;
+    int32 measurementFailedCommand = 4;
+}

@@ -1,0 +1,5 @@
+.idea/workspace.xml
+.gradle
+build
+out
+*.log

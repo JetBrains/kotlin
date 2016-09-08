@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "java_msg";
+
+message MessageRepeatedVarints {
+  repeated int32 int = 1;
+  repeated int64 long = 2;
+  repeated sint32 sint = 3;
+  repeated sint64 slong = 4;
+  repeated bool bl = 5;
+  repeated uint32 uint = 7;
+  repeated uint64 ulong = 8;
+}

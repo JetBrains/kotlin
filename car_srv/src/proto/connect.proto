@@ -1,0 +1,17 @@
+syntax = "proto3";
+package carkot;
+
+option java_package = "proto.car";
+option java_outer_classname = "Connect";
+
+message ConnectionRequest {
+    string ip = 1;
+    int32 port = 2;
+}
+
+message ConnectionResponse {
+    int32 uid = 1;
+    int32 code = 2;
+    string errorMsg = 3;
+    
+}

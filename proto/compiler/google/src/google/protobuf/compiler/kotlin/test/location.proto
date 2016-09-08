@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "java_msg";
+
+message LocationResponse {
+
+    LocationData locationResponseData = 1;
+    int32 code = 2;
+    int32 errorMsg = 3;
+
+    message LocationData {
+        int32 x = 1;
+        int32 y = 2;
+        int32 angle = 3;
+    }
+}

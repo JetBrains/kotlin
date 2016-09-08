@@ -1,0 +1,4 @@
+testRepZigZag() == 0
+testArraysOfMinValues() == 0
+testArraysOfMaxValues() == 0
+testArraysOfDefaultValues() == 0

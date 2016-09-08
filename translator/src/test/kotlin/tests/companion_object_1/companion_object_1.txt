@@ -1,0 +1,1 @@
+companion_object_1_test() == 5

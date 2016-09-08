@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message DebugResponse {
+
+    repeated int32 begin_x = 1 [packed = true];
+    repeated int32 begin_y = 2 [packed = true];	
+    repeated int32 end_x = 3 [packed = true];
+    repeated int32 end_y = 4 [packed = true];
+
+    int32 carX = 5;
+    int32 carY = 6;
+    int32 carAngle = 7;
+
+    repeated int32 x = 8 [packed = true];
+    repeated int32 y = 9 [packed = true];
+    repeated int32 wall_distances = 10 [packed = true];
+
+}
+

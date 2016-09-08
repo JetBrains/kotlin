@@ -1,0 +1,16 @@
+syntax = "proto3";
+package carkot;
+
+message Upload {
+  // Firmware data.
+  bytes data = 1;
+}
+
+message UploadResult {
+  int32 resultCode = 3;
+}
+
+message LogMessage {
+//  string source = 1;
+  bytes message = 2;
+}

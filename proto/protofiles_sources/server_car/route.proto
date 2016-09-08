@@ -1,0 +1,16 @@
+syntax = "proto3";
+package carkot;
+
+message RouteRequest {
+    repeated int32 times = 1;
+    repeated int32 directions = 2;
+}
+
+message RouteMetricRequest {
+    repeated int32 distances = 1;
+    repeated int32 directions = 2;
+}
+
+message RouteResponse {
+    int32 code = 1;
+}

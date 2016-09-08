@@ -1,0 +1,1 @@
+variables_assigment_1_Int(56789) == 56789

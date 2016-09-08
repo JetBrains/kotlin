@@ -1,0 +1,15 @@
+{
+  "name": "js_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js_tests.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "protobufjs": "^5.0.1",
+    "seedrandom": "^2.4.2"
+  }
+}

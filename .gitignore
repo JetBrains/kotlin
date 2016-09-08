@@ -1,0 +1,37 @@
+.DS_Store
+.idea/shelf
+dependencies
+dist
+translator/src/test/kotlin/tests/*/linked
+out
+tmp
+workspace.xml
+*.versionsBackup
+
+.gradle
+build
+translator/.gradle/2.9/taskArtifacts
+
+kotstd/kotstd.iml
+
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# local project files
+lib/
+.idea/
+proto/compiler/protoc-artifacts
+proto/compiler/tests
+
+proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
+proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
+
+# translator auto generated artifacts
+kotstd/ll

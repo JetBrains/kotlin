@@ -1,0 +1,13 @@
+syntax = "proto3";
+package carkot;
+
+message LocationResponse {
+    LocationData locationResponseData = 1;
+    int32 code = 2;
+
+    message LocationData {
+        int32 x = 1;
+        int32 y = 2;
+        int32 angle = 3;
+    }
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package carkot;
+
+message RouteDoneRequest {
+    int32 uid = 1;
+}
+
+message RouteDoneResponse {
+    int32 code = 1;
+}

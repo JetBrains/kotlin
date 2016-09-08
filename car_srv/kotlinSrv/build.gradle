@@ -1,0 +1,44 @@
+group 'CarServer'
+version '1.0'
+
+buildscript {
+    ext.kotlin_version = '1.0.3'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: "kotlin2js"
+apply plugin: 'kotlin'
+
+sourceSets {
+    main.kotlin.srcDirs += 'src'
+    main.kotlin.srcDirs += '../../proto/compiler/build/sources'
+    main.kotlin.srcDirs += '../../proto/protofiles_sources/out'
+    main.java.srcDirs += 'src/main/kotlin'
+}
+
+task copyKotlinLib(type: Copy) {
+    from "${projectDir}/kotlinJsRequiredFiles/kotlin.js"
+    from "${projectDir}/package.json"
+
+    into "${projectDir}/build/js"
+}
+
+build.dependsOn copyKotlinLib
+
+compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/js/main.js"
+compileKotlin2Js.kotlinOptions.outputPrefix = "${projectDir}/kotlinJsRequiredFiles/connectKotlinLib.js"
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

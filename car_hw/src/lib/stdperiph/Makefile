@@ -1,0 +1,9 @@
+LIB_STDPERIPH_OBJ_PREFIX=libstdperiph_
+
+$(LIB_STDPERIPH_OBJ): \
+	$(call dircs_to_prefxd_objs,$(LIB_STDPERIPH_DIR),$(LIB_STDPERIPH_OBJ_PREFIX))
+	$(LD_ALL_DEPS)
+
+$(BIN_DIR)/$(LIB_STDPERIPH_OBJ_PREFIX)%.o: $(LIB_STDPERIPH_DIR)/%.c \
+	$(call dirhs,$(LIB_STDPERIPH_DIR))
+	$(CC_ALL_DEPS)
