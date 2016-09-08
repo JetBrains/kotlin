@@ -49,6 +49,7 @@ class IrGetClassImpl(startOffset: Int, endOffset: Int, type: KotlinType) : IrExp
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             CHILD_EXPRESSION_SLOT -> argument = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

@@ -96,6 +96,7 @@ class IrLocalDelegatedPropertyImpl(
             DELEGATE_SLOT -> delegate = newChild.assertCast()
             PROPERTY_GETTER_SLOT -> getter = newChild.assertCast()
             PROPERTY_SETTER_SLOT -> setter = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

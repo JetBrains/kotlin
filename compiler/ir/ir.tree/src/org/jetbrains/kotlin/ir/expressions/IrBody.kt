@@ -63,6 +63,7 @@ class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(sta
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             CHILD_EXPRESSION_SLOT -> expression = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

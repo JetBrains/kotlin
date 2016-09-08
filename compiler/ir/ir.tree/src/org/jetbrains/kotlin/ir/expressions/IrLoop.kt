@@ -68,6 +68,7 @@ abstract class IrLoopBase(
         when (slot) {
             LOOP_BODY_SLOT -> body = newChild.assertCast()
             LOOP_CONDITION_SLOT -> condition = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 }

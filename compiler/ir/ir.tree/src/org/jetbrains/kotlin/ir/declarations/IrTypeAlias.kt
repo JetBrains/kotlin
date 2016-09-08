@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrTypeAlias : IrDeclaration {
@@ -44,6 +45,6 @@ class IrTypeAliasImpl(
     override fun getChild(slot: Int): IrElement? = null
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        // no children
+        throwNoSuchSlot(slot)
     }
 }

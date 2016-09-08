@@ -51,6 +51,7 @@ class IrVarargImpl(
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= elements.size) throwNoSuchSlot(slot)
+
         newChild.assertDetached()
         elements[slot].detach()
         elements[slot] = newChild.assertCast()
@@ -94,6 +95,7 @@ class IrSpreadElementImpl(
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             CHILD_EXPRESSION_SLOT -> expression = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

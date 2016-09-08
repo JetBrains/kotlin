@@ -66,6 +66,7 @@ class IrEnumEntryImpl(
         when (slot) {
             ENUM_ENTRY_CLASS_SLOT -> correspondingClass = newChild.assertCast()
             ENUM_ENTRY_INITIALIZER_SLOT -> initializerExpression = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

@@ -94,10 +94,14 @@ class IrTryCatchImpl(
                 putCatchClauseElement(catchClauseResults, newChild, slot)
             slot == FINALLY_EXPRESSION_SLOT ->
                 finallyExpression = newChild.assertCast()
+            else ->
+                throwNoSuchSlot(slot)
         }
     }
 
     private inline fun <reified T : IrElement> putCatchClauseElement(list: MutableList<T>, newChild: IrElement, slot: Int) {
+        if (slot < 0 || slot >= list.size) throwNoSuchSlot(slot)
+
         list[slot].detach()
         list[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

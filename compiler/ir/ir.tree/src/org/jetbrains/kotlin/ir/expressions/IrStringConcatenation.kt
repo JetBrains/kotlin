@@ -43,15 +43,12 @@ class IrStringConcatenationImpl(
             arguments.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
+        if (slot < 0 || slot >= arguments.size) throwNoSuchSlot(slot)
+
         newChild.assertDetached()
-        if (0 <= slot && slot < arguments.size) {
-            arguments[slot].detach()
-            arguments[slot] = newChild.assertCast()
-            newChild.setTreeLocation(this, slot)
-        }
-        else {
-            throwNoSuchSlot(slot)
-        }
+        arguments[slot].detach()
+        arguments[slot] = newChild.assertCast()
+        newChild.setTreeLocation(this, slot)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

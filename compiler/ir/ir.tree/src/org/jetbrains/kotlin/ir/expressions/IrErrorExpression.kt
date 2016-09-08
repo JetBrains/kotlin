@@ -82,6 +82,8 @@ class IrErrorCallExpressionImpl(
             arguments.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
+        if (slot < 0 || slot >= arguments.size) throwNoSuchSlot(slot)
+
         newChild.assertDetached()
         arguments[slot].detach()
         arguments[slot] = newChild.assertCast()

@@ -62,7 +62,7 @@ class IrNullaryPrimitiveImpl constructor(
     override fun getChild(slot: Int): IrElement? = null
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        // no children
+        throwNoSuchSlot(slot)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

@@ -55,6 +55,7 @@ class IrAnonymousInitializerImpl(
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             ANONYMOUS_INITIALIZER_BODY_SLOT -> body = newChild.assertCast()
+            else -> throwNoSuchSlot(slot)
         }
     }
 

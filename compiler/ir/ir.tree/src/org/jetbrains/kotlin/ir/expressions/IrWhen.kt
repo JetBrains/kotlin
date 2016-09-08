@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 interface IrWhen : IrExpression {
@@ -74,6 +72,8 @@ class IrWhenImpl(
                 branchParts[slot] = newChild.assertCast()
                 newChild.setTreeLocation(this, slot)
             }
+            else ->
+                throwNoSuchSlot(slot)
         }
     }
 

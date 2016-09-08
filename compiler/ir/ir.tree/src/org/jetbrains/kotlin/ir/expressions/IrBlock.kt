@@ -39,7 +39,7 @@ class IrEmptyBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, overr
     override fun getChild(slot: Int): IrElement? = null
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        // no children
+        throwNoSuchSlot(slot)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -79,12 +79,12 @@ class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override v
             statements.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
+        if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
+
         newChild.assertDetached()
-        if (0 <= slot && slot < statements.size) {
-            statements[slot].detach()
-            statements[slot] = newChild.assertCast()
-            newChild.setTreeLocation(this, slot)
-        }
+        statements[slot].detach()
+        statements[slot] = newChild.assertCast()
+        newChild.setTreeLocation(this, slot)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
