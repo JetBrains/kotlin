@@ -22,17 +22,29 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.lang.IllegalArgumentException
 
-class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Add braces") {
-    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
+class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
+    override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val expression = element.getTargetExpression(caretOffset) ?: return false
         if (expression is KtBlockExpression) return false
 
-        val description = (expression.parent as KtContainerNode).description()!!
-        text = "Add braces to '$description' statement"
-        return true
+        val parent = expression.parent
+        when (parent) {
+            is KtContainerNode -> {
+                val description = parent.description()!!
+                text = "Add braces to '$description' statement"
+                return true
+            }
+            is KtWhenEntry -> {
+                text = "Add braces to 'when' entry"
+                return true
+            }
+            else -> {
+                return false
+            }
+        }
     }
 
-    override fun applyTo(element: KtExpression, editor: Editor?) {
+    override fun applyTo(element: KtElement, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
 
@@ -48,24 +60,22 @@ class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::cl
         }
     }
 
-    private fun KtExpression.getTargetExpression(caretLocation: Int): KtExpression? {
-        when (this) {
+    private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
+        return when (this) {
             is KtIfExpression -> {
                 val thenExpr = then ?: return null
                 val elseExpr = `else`
                 if (elseExpr != null && caretLocation >= elseKeyword!!.startOffset) {
-                    return elseExpr
+                    elseExpr
                 }
-                return thenExpr
+                else {
+                    thenExpr
+                }
             }
 
-            is KtWhileExpression -> return body
-
-            is KtDoWhileExpression -> return body
-
-            is KtForExpression -> return body
-
-            else -> return null
+            is KtLoopExpression -> body
+            is KtWhenEntry -> expression
+            else -> null
         }
     }
 }
