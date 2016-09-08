@@ -107,7 +107,7 @@ class Kapt2IT: BaseGradleIT() {
         val project = Project("android-butterknife", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
-        project.build("assembleRelease", options = options) {
+        project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt2/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
@@ -115,7 +115,7 @@ class Kapt2IT: BaseGradleIT() {
             assertFileExists("app/build/intermediates/classes/release/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
         }
 
-        project.build("assembleRelease", options = options) {
+        project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertContains(":compileReleaseKotlin UP-TO-DATE")
             assertContains(":compileReleaseJavaWithJavac UP-TO-DATE")
@@ -127,7 +127,7 @@ class Kapt2IT: BaseGradleIT() {
         val project = Project("android-dagger", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
-        project.build("assembleRelease", options = options) {
+        project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt2/release/com/example/dagger/kotlin/DaggerApplicationComponent.java")
@@ -142,7 +142,7 @@ class Kapt2IT: BaseGradleIT() {
         val project = Project("android-dbflow", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
-        project.build("assembleRelease", options = options) {
+        project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt2/release/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
@@ -157,7 +157,7 @@ class Kapt2IT: BaseGradleIT() {
         val project = Project("android-realm", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
-        project.build("assembleRelease", options = options) {
+        project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt2/release/io/realm/CatRealmProxy.java")
