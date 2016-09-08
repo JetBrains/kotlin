@@ -12270,6 +12270,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("instanceOfFunction.kt")
+            public void testInstanceOfFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/functions/instanceOfFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaClassGetFunctions.kt")
             public void testJavaClassGetFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/functions/javaClassGetFunctions.kt");

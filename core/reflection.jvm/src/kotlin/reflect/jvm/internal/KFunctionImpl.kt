@@ -33,7 +33,7 @@ internal class KFunctionImpl private constructor(
         name: String,
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl {
+) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
@@ -103,11 +103,7 @@ internal class KFunctionImpl private constructor(
         }
     }
 
-    override fun getArity(): Int {
-        return descriptor.valueParameters.size +
-               (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
-               (if (descriptor.extensionReceiverParameter != null) 1 else 0)
-    }
+    override fun getArity() = caller.arity
 
     override val isInline: Boolean
         get() = descriptor.isInline
