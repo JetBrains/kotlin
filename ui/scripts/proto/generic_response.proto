@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-message Result {
-	int32 error = 1;
-}
-
-message GenericResponse {
-	Result result = 1;
-}

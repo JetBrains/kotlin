@@ -1,3 +1,0 @@
-target remote :4242
-monitor reset
-monitor halt

@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-message Waypoints {
-	repeated int32 begin_x = 1;
-	repeated int32 begin_y = 2;	
-	repeated int32 end_x = 3;
-	repeated int32 end_y = 4;
-	bool stop = 5;
-}
