@@ -75,6 +75,9 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean) = _allDescriptors
 
+    override fun getFunctionNames() = workerScope.getFunctionNames()
+    override fun getVariableNames() = workerScope.getVariableNames()
+
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName, " {")
         p.pushIndent()

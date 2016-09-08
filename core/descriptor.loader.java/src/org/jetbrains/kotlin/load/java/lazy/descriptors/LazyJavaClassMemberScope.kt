@@ -627,8 +627,8 @@ class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
-                val enumMemberNames: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
-                    memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
+                val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
+                    (memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })).toSet()
                 }
                 EnumEntrySyntheticClassDescriptor.create(
                         c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),

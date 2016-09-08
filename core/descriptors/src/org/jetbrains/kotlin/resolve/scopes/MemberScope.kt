@@ -29,6 +29,12 @@ interface MemberScope : ResolutionScope {
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor>
 
     /**
+     * These methods may return a superset of an actual names' set
+     */
+    fun getFunctionNames(): Set<Name>
+    fun getVariableNames(): Set<Name>
+
+    /**
      * Is supposed to be used in tests and debug only
      */
     fun printScopeStructure(p: Printer)
@@ -37,6 +43,9 @@ interface MemberScope : ResolutionScope {
         override fun printScopeStructure(p: Printer) {
             p.println("Empty member scope")
         }
+
+        override fun getFunctionNames() = emptySet<Name>()
+        override fun getVariableNames() = emptySet<Name>()
     }
 
     companion object {

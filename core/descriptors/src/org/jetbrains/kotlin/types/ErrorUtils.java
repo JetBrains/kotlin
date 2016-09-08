@@ -208,6 +208,18 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Set<Name> getFunctionNames() {
+            return Collections.emptySet();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getVariableNames() {
+            return Collections.emptySet();
+        }
+
+        @NotNull
+        @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
@@ -259,6 +271,18 @@ public class ErrorUtils {
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getFunctionNames() {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getVariableNames() {
             throw new IllegalStateException();
         }
 
