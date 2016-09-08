@@ -9665,6 +9665,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("whenSimpleOutsideBlock.kt")
+        public void testWhenSimpleOutsideBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenSimpleOutsideBlock.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("whenStatement.kt")
         public void testWhenStatement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenStatement.kt");
@@ -9674,6 +9680,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/while.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whileOutsideBlock.kt")
+        public void testWhileOutsideBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whileOutsideBlock.kt");
             doTest(fileName);
         }
 
