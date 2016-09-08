@@ -1720,7 +1720,7 @@
                      displayName="Can be replaced with function reference"
                      groupName="Kotlin"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
