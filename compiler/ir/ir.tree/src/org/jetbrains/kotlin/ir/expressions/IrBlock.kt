@@ -32,13 +32,33 @@ fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
     if (statement != null) addStatement(statement)
 }
 
-class IrBlockImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val operator: IrOperator? = null
-) : IrExpressionBase(startOffset, endOffset, type), IrBlock {
-    override val statements: MutableList<IrStatement> = ArrayList()
+class IrEmptyBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null) :
+        IrExpressionBase(startOffset, endOffset, type), IrBlock {
+    override val statements: List<IrStatement> get() = emptyList()
+
+    override fun getChild(slot: Int): IrElement? = null
+
+    override fun replaceChild(slot: Int, newChild: IrElement) {
+        // no children
+    }
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitBlock(this, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+}
+
+class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null):
+        IrExpressionBase(startOffset, endOffset, type), IrBlock {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator?, statements: List<IrStatement>) :
+            this(startOffset, endOffset, type, operator) {
+        addAll(statements)
+    }
+
+    override val statements: MutableList<IrStatement> = ArrayList(2)
 
     fun addStatement(statement: IrStatement) {
         statement.assertDetached()
@@ -46,11 +66,11 @@ class IrBlockImpl(
         statements.add(statement)
     }
 
-    fun addAll(statements: List<IrStatement>) {
-        statements.forEach { it.assertDetached() }
-        val originalSize = statements.size
-        this.statements.addAll(statements)
-        statements.forEachIndexed { i, irStatement ->
+    fun addAll(newStatements: List<IrStatement>) {
+        newStatements.forEach { it.assertDetached() }
+        val originalSize = this.statements.size
+        this.statements.addAll(newStatements)
+        newStatements.forEachIndexed { i, irStatement ->
             irStatement.setTreeLocation(this, originalSize + i)
         }
     }
