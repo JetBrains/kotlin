@@ -22,10 +22,6 @@ import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
-import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
-import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
-import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractJavaModelWrappersTest
-import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractKotlinModelWrappersTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
@@ -117,16 +113,12 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
@@ -995,44 +987,9 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/plugins-tests/tests",  "plugins/android-extensions/android-extensions-compiler/testData") {
-        testClass<AbstractAndroidSyntheticPropertyDescriptorTest>() {
-            model("descriptors", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidBoxTest>() {
-            model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
-            model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
-        }
-
-        testClass<AbstractAndroidBytecodeShapeTest>() {
-            model("codegen/bytecodeShape", recursive = false, extension = null)
-        }
-    }
-
     testGroup("plugins/uast-kotlin/test", "plugins/uast-kotlin/testData") {
         testClass<AbstractKotlinLintTest>() {
             model("lint", excludeParentDirs = true)
-        }
-    }
-
-    testGroup("plugins/plugins-tests/tests", "plugins/annotation-collector/testData") {
-        testClass<AbstractAnnotationProcessorBoxTest>() {
-            model("collectToFile", recursive = false, extension = null)
-        }
-    }
-    
-    testGroup("plugins/plugins-tests/tests", "plugins/annotation-processing/testData") {
-        testClass<AbstractJavaModelWrappersTest>() {
-            model("javaWrappers", extension = null)
-        }
-        
-        testClass<AbstractKotlinModelWrappersTest>() {
-            model("kotlinWrappers", extension = "kt")
-        }
-        
-        testClass<AbstractBytecodeListingTestForSourceRetention>() {
-            model("sourceRetention", extension = "kt")
         }
     }
 
@@ -1061,12 +1018,6 @@ fun main(args: Array<String>) {
     testGroup("idea/idea-android/tests", "idea/testData") {
         testClass<AbstractConfigureProjectTest>() {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
-        }
-    }
-
-    testGroup("plugins/plugins-tests/tests", "plugins/android-extensions/android-extensions-jps/testData") {
-        testClass<AbstractAndroidJpsTestCase>() {
-            model("android", recursive = false, extension = null)
         }
     }
 
