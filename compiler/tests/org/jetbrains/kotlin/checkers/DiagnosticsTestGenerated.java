@@ -8339,6 +8339,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ClassDereference.kt")
+                public void testClassDereference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/ClassDereference.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("Conventions.kt")
                 public void testConventions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/Conventions.kt");

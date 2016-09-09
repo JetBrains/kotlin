@@ -1,0 +1,12 @@
+// FILE: basic.before.kt
+// "Add 'reified' modifier" "true"
+// ERROR: Cannot use 'T' as reified type parameter. Use a class instead.
+fun <T:Any> dereferenceClass():Any
+        = T::class<caret>
+
+// FILE: basic.after.kt
+// "Add 'reified' modifier" "true"
+// ERROR: Cannot use 'T' as reified type parameter. Use a class instead.
+fun <reified T:Any> dereferenceClass():Any
+        = T::class<caret>
+

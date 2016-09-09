@@ -1,0 +1,15 @@
+// FILE: basic.before.kt
+// "Add 'reified' modifier" "true"
+// ERROR: Cannot use 'R' as reified type parameter. Use a class instead.
+// WITH_RUNTIME
+fun <T: Iterable<Array<R>>, R> T.flatten(): Array<R> {
+    return this.flatMap { it.asIterable() }.toTypedArray<caret>()
+}
+
+// FILE: basic.after.kt
+// "Add 'reified' modifier" "true"
+// ERROR: Cannot use 'R' as reified type parameter. Use a class instead.
+// WITH_RUNTIME
+fun <T: Iterable<Array<R>>, reified R> T.flatten(): Array<R> {
+    return this.flatMap { it.asIterable() }.toTypedArray<caret>()
+}

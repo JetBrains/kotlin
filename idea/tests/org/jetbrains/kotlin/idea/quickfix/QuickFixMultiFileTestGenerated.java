@@ -35,6 +35,33 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
     }
 
+    @TestMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddReifiedToTypeParameterOfFunctionFix extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInAddReifiedToTypeParameterOfFunctionFix() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+        @TestMetadata("doubleColonClass.test")
+        public void testDoubleColonClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/doubleColonClass.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("secondTypeParameter.test")
+        public void testSecondTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/secondTypeParameter.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("toTypedArray.test")
+        public void testToTypedArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/toTypedArray.test");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
