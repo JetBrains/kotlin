@@ -9,34 +9,37 @@ nc = '\033[0m'
 KOTSTD='../kotstd'
 SOURCELIB=build/sources
 
-stdlib:
-	cd $(KOTSTD) && make clean && make
+#
+# ! Disabled stdlib/test compilation (because we've imported only translator)
+#
 
-%.out: stdlib %.txt
-	@./run_one_test.sh $(@:.out=.txt)
-
-tests: stdlib $(OBJECTS)
-	@date
+#stdlib:
+#	cd $(KOTSTD) && make clean && make
+#
+#%.out: stdlib %.txt
+#	@./run_one_test.sh $(@:.out=.txt)
+#
+#tests: stdlib $(OBJECTS)
+#	@date
 
 
 build:
 	./gradlew jar
 
-all: build tests;
+all: build #tests;
 
 clean:
 	./gradlew clean
 
-compile: build	
-	mkdir -p $(SOURCELIB)
-	rm -f $(SOURCELIB)/linked.ll
-	rm -f $(SOURCELIB)/linked.ll
-	java -jar build/libs/translator-1.0.jar -I $(KOTSTD)/kt $(files) -o $(SOURCELIB)/build.ll
-	llvm-link-3.6 -S $(KOTSTD)/build/stdlib_x86.ll $(SOURCELIB)/build.ll >> $(SOURCELIB)/linked.ll
-	clang-3.6 $(SOURCELIB)/linked.ll -o $(output)
-	rm $(SOURCELIB)/linked.ll
-	rm $(SOURCELIB)/build.ll
-	
+#compile: build	
+#	mkdir -p $(SOURCELIB)
+#	rm -f $(SOURCELIB)/linked.ll
+#	rm -f $(SOURCELIB)/linked.ll
+#	java -jar build/libs/translator-1.0.jar -I $(KOTSTD)/kt $(files) -o $(SOURCELIB)/build.ll
+#	llvm-link-3.6 -S $(KOTSTD)/build/stdlib_x86.ll $(SOURCELIB)/build.ll >> $(SOURCELIB)/linked.ll
+#	clang-3.6 $(SOURCELIB)/linked.ll -o $(output)
+#	rm $(SOURCELIB)/linked.ll
+#	rm $(SOURCELIB)/build.ll
 
 .DEFAULT_GOAL := all
 .FORCE: build, all
