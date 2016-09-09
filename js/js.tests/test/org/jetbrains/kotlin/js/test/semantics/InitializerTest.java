@@ -38,12 +38,4 @@ public class InitializerTest extends SingleFileTranslationTest {
     public void testDeclarationInitializedWithThrow() throws Exception {
         checkFooBoxIsOk();
     }
-
-    public void testComplexPropertyInitializer() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testComplexTopLevelPropertyInitializer() throws Exception {
-        checkFooBoxIsOk();
-    }
 }

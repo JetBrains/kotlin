@@ -36,11 +36,16 @@ class FileDeclarationVisitor(
 ) : DeclarationBodyVisitor(initializers, SmartList(), scope) {
 
     private val initializer = JsAstUtils.createFunctionWithEmptyBody(context.scope())
-    private val initializerContext = context.contextWithScope(initializer).innerBlock(initializer.body)
-    private val initializerVisitor = InitializerVisitor()
+    private val initializerContext = context.contextWithScope(initializer)
+    private val initializerStatements = initializer.body.statements
+    private val initializerVisitor = InitializerVisitor(initializerStatements)
 
     fun computeInitializer(): JsFunction? {
-        return if (initializer.body.statements.isNotEmpty()) initializer else null
+        if (initializerStatements.isEmpty()) {
+            return null
+        } else {
+            return initializer
+        }
     }
 
     override fun visitClassOrObject(declaration: KtClassOrObject, context: TranslationContext?): Void? {
@@ -56,10 +61,12 @@ class FileDeclarationVisitor(
         if (initializer != null) {
             val value = Translation.translateAsExpression(initializer, initializerContext)
             val propertyDescriptor: PropertyDescriptor = getPropertyDescriptor(context.bindingContext(), expression)
-            this.initializer.body.statements += generateInitializerForProperty(context, propertyDescriptor, value)
+            initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value))
         }
 
-        generateInitializerForDelegate(context, expression)?.let { this.initializer.body.statements += it }
+        val delegate = generateInitializerForDelegate(context, expression)
+        if (delegate != null)
+            initializerStatements.add(delegate)
 
         return null
     }

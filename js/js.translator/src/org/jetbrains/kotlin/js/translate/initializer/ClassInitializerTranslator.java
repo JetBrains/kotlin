@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
@@ -51,6 +52,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     private final KtClassOrObject classDeclaration;
     @NotNull
+    private final List<JsStatement> initializerStatements = new SmartList<JsStatement>();
     private final JsFunction initFunction;
     private final TranslationContext context;
 
@@ -103,15 +105,26 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         if (primaryConstructor != null) {
             initFunction.getBody().getStatements().addAll(setDefaultValueForArguments(primaryConstructor, context()));
 
-            mayBeAddCallToSuperMethod(initFunction, classDescriptor);
-
             //NOTE: while we translate constructor parameters we also add property initializer statements
             // for properties declared as constructor parameters
             initFunction.getParameters().addAll(translatePrimaryConstructorParameters());
+
+            mayBeAddCallToSuperMethod(initFunction, classDescriptor);
         }
 
-        delegationTranslator.addInitCode(initFunction.getBody().getStatements());
-        new InitializerVisitor().traverseContainer(classDeclaration, context().innerBlock(initFunction.getBody()));
+        delegationTranslator.addInitCode(initializerStatements);
+        new InitializerVisitor(initializerStatements).traverseContainer(classDeclaration, context());
+
+        List<JsStatement> statements = initFunction.getBody().getStatements();
+
+        for (JsStatement statement : initializerStatements) {
+            if (statement instanceof JsBlock) {
+                statements.addAll(((JsBlock) statement).getStatements());
+            }
+            else {
+                statements.add(statement);
+            }
+        }
 
         return initFunction;
     }
@@ -157,7 +170,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
                 JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(), 0,
                                                                            JsLiteral.THIS);
-                initFunction.getBody().getStatements().add(fixedInvocation.makeStmt());
+                initializerStatements.add(0, fixedInvocation.makeStmt());
             }
             else {
                 List<JsExpression> arguments = new ArrayList<JsExpression>();
@@ -204,7 +217,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(initializer.getName())));
         call.getArguments().add(JsLiteral.THIS);
         call.getArguments().addAll(arguments);
-        initFunction.getBody().getStatements().add(call.makeStmt());
+        initializerStatements.add(0, call.makeStmt());
     }
 
     @NotNull
@@ -239,7 +252,6 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addInitializerOrPropertyDefinition(@NotNull JsNameRef initialValue, @NotNull PropertyDescriptor propertyDescriptor) {
-        initFunction.getBody().getStatements().add(
-                InitializerUtils.generateInitializerForProperty(context(), propertyDescriptor, initialValue));
+        initializerStatements.add(InitializerUtils.generateInitializerForProperty(context(), propertyDescriptor, initialValue));
     }
 }
