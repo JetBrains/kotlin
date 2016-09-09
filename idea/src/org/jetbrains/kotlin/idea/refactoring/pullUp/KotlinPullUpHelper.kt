@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
+import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
@@ -497,7 +498,8 @@ class KotlinPullUpHelper(
     }
 
     override fun postProcessMember(member: PsiMember) {
-
+        val declaration = member.unwrapped as? KtNamedDeclaration ?: return
+        dropOverrideKeywordIfNecessary(declaration)
     }
 
     override fun moveFieldInitializations(movedFields: LinkedHashSet<PsiField>) {
