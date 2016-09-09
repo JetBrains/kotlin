@@ -411,6 +411,7 @@ class QuickFixRegistrar : QuickFixContributor {
         VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.registerFactory(AddTypeAnnotationToValueParameterFix)
 
         FINAL_UPPER_BOUND.registerFactory(InlineTypeParameterFix)
+        FINAL_UPPER_BOUND.registerFactory(RemoveFinalUpperBoundFix)
 
         TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
     }
