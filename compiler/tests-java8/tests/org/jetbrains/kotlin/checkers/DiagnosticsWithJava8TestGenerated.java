@@ -98,6 +98,21 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava8/specialBuiltIns")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecialBuiltIns extends AbstractDiagnosticsWithFullJdkTest {
+        public void testAllFilesPresentInSpecialBuiltIns() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/specialBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("hashtableInheritance.kt")
+        public void testHashtableInheritance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/specialBuiltIns/hashtableInheritance.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/statics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
