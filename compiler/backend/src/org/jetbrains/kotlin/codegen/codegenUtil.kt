@@ -17,6 +17,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
@@ -35,14 +36,17 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.*
 
 fun generateIsCheck(
@@ -189,3 +193,24 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
 
 fun CallableMemberDescriptor.isDefinitelyNotDefaultImplsMethod() =
         this is JavaCallableMemberDescriptor || this.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
+
+
+fun ClassBuilder.generateMethod(
+        debugString: String,
+        access: Int,
+        method: Method,
+        element: PsiElement?,
+        origin: JvmDeclarationOrigin,
+        state: GenerationState,
+        generate: InstructionAdapter.() -> Unit
+) {
+    val mv = this.newMethod(origin, access, method.name, method.descriptor, null, null)
+
+    if (state.classBuilderMode.generateBodies) {
+        val iv = InstructionAdapter(mv)
+        iv.visitCode()
+        iv.generate()
+        iv.areturn(method.returnType)
+        FunctionCodegen.endVisit(mv, debugString, element)
+    }
+}
