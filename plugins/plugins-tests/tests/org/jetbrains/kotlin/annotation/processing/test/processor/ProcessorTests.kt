@@ -157,6 +157,10 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals(1, cai.typeArguments.size)
         val typeArg = cai.typeArguments.first()
         assertTrue(typeArg is TypeVariable)
+
+        val a2 = env.findClass("A2")
+        val i2 = env.typeUtils.directSupertypes(a2.asType()).first { it.toString().matches("I2(<.*>)?".toRegex()) } as JeDeclaredType
+        assertEquals("I2<T>", i2.toString())
     }
     
     fun testErasureSimple() = test("ErasureSimple", "*") { set, roundEnv, env -> 
