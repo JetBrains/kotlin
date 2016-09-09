@@ -48,12 +48,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
@@ -119,7 +118,12 @@ class DoubleColonExpressionResolver(
             reportError = !isAllowedInClassLiteral(type)
         }
 
-        if (type.isMarkedNullable || reportError) {
+
+        val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
+        if (type is SimpleType && !type.isMarkedNullable && typeParameterDescriptor != null && !typeParameterDescriptor.isReified) {
+            c.trace.report(TYPE_PARAMETER_AS_REIFIED.on(expression, typeParameterDescriptor))
+        }
+        else if (type.isMarkedNullable || reportError) {
             c.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
         }
     }

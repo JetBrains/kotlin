@@ -413,6 +413,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddReifiedToTypeParameterOfFunctionFix extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddReifiedToTypeParameterOfFunctionFix() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("doubleColonClass.kt")
+        public void testDoubleColonClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/doubleColonClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondTypeParameter.kt")
+        public void testSecondTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/secondTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toTypedArray.kt")
+        public void testToTypedArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix/toTypedArray.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addRunBeforeLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
