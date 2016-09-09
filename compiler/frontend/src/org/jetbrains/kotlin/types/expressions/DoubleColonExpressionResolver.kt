@@ -95,6 +95,13 @@ class DoubleColonExpressionResolver(
             if (isAllowedInClassLiteral(actualType)) {
                 type = actualType
             }
+            else {
+                val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(actualType)
+                if (!actualType.isMarkedNullable && typeParameterDescriptor != null && !typeParameterDescriptor.isReified) {
+                    c.trace.report(TYPE_PARAMETER_AS_REIFIED.on(expression, typeParameterDescriptor))
+                    return null
+                }
+            }
         }
 
         if (type != null) {

@@ -9,7 +9,7 @@ val l1 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List<String>?::class<!>
 val l2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List?::class<!>
 
 fun <T : Any> foo() {
-    val t1 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>T::class<!>
+    val t1 = <!TYPE_PARAMETER_AS_REIFIED!>T::class<!>
     val t2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>T?::class<!>
 }
 
