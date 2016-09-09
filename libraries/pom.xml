@@ -104,6 +104,7 @@
         <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-extensions</module>
         <module>tools/kotlin-maven-plugin-test</module>
+        <module>tools/kotlin-script-util</module>
 
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
