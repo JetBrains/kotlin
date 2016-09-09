@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.types
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 
 /**
  * Parse the given FQ name with possible generic arguments to a **top-level** ClassId instance.
@@ -31,19 +32,22 @@ internal fun parseCanonicalFqNameIgnoringTypeArguments(fqName: String): ClassId 
 
 // "test.A<B.C>.D<E<F.G, H>, I.J>" -> ["test", "A<B.C>", "D<E<F.G, H>, I.J>"]
 private fun String.splitCanonicalFqName(): List<String> {
+    fun String.toNonEmpty(): String =
+            if (this.isNotEmpty()) this else SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString()
+
     val result = arrayListOf<String>()
     var balance = 0
     var currentNameStart = 0
     for ((index, character) in this.withIndex()) {
         when (character) {
             '.' -> if (balance == 0) {
-                result.add(this.substring(currentNameStart, index))
+                result.add(this.substring(currentNameStart, index).toNonEmpty())
                 currentNameStart = index + 1
             }
             '<' -> balance++
             '>' -> balance--
         }
     }
-    result.add(this.substring(currentNameStart))
+    result.add(this.substring(currentNameStart).toNonEmpty())
     return result
 }
