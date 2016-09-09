@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.java.model.elements.JeVariableElement
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -152,8 +151,12 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
             parameterTypes.zip(it.parameters).all { it.first == it.second.asType().toString() }
         } as JeMethodExecutableElement
     }
-    
-    protected fun ProcessingEnvironment.findClass(fqName: String) = elementUtils.getTypeElement(fqName) as JeTypeElement 
+
+    protected fun TypeElement.findField(name: String): JeVariableElement {
+        return enclosedElements.first { it is JeVariableElement && it.simpleName.toString() == name } as JeVariableElement
+    }
+
+    protected fun ProcessingEnvironment.findClass(fqName: String) = elementUtils.getTypeElement(fqName) as JeTypeElement
 
     protected fun assertEquals(expected: String, actual: Name) = assertEquals(expected, actual.toString())
 }
