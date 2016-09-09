@@ -21,7 +21,7 @@ LLVM_DWARF_DUMP=llvm-dwarfdump-mp-${LLVM_VERSION}
 
 .PHONY: clean all
 
-all:main.asc classfields_1.asc
+all:main.asc classfields_1.asc 2-functions.asc
 
 clean:
 	${RM} *.o *.asc *.bc *.s main.ll
