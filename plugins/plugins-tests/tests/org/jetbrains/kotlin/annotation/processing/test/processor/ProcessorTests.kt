@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.element.Element
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
@@ -248,5 +249,24 @@ class ProcessorTests : AbstractProcessorTest() {
         check(true, "Test")
         check(true, "TestTrue")
         check(false, "TestFalse")
+    }
+
+    fun testAsMemberOf() = test("AsMemberOf", "*") { set, roundEnv, env ->
+        val f = env.findClass("Test").findField("f")
+        val fType = f.asType() as JeDeclaredType
+
+        val base = env.findClass("Base")
+        val baseF = base.findField("f")
+        val baseM = base.findMethod("m", "T")
+
+        fun check(element: Element, expectedTypeSignature: String) {
+            assertEquals(expectedTypeSignature, env.typeUtils.asMemberOf(fType, element).toString())
+        }
+
+        assertEquals("(T)T", baseM.asType().toString())
+        check(baseM, "(java.lang.String)java.lang.String")
+
+        assertEquals("T", baseF.asType().toString())
+        check(baseF, "java.lang.String")
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.annotation.processing.impl
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.*
+import org.jetbrains.kotlin.java.model.JeElement
 import org.jetbrains.kotlin.java.model.elements.JeClassInitializerExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
@@ -219,27 +220,33 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
         return JeDeclaredType(psiType, psiClass, containing)
     }
 
-    override fun asMemberOf(containing: DeclaredType, element: Element): TypeMirror {
-        val substitutor = when (containing) {
-            is JeDeclaredType -> {
-                val result = containing.psiType.resolveGenerics()
-                if (result.isValidResult) result.substitutor else PsiSubstitutor.EMPTY
-            }
-            else -> throw IllegalArgumentException("Invalid containing type: $containing")
+    private fun Array<out PsiType>.findSuperType(superTypeClass: PsiClass): PsiClassType? {
+        for (supertype in this) {
+            if (supertype is PsiClassType && supertype.resolve() == superTypeClass) return supertype
+            supertype.superTypes.findSuperType(superTypeClass)?.let { return it }
         }
-        
+        return null
+    }
+
+    override fun asMemberOf(containing: DeclaredType, element: Element): TypeMirror {
+        if (containing !is JeDeclaredType || element is JeClassInitializerExecutableElement) return element.asType()
+        val containingType = containing.psiType
+
+        val member = (element as JeElement).psi as? PsiMember ?: return element.asType()
+        val methodContainingClass = member.containingClass ?: return element.asType()
+
+        val relevantSuperType = containingType.superTypes.findSuperType(methodContainingClass) ?: return element.asType()
+        val resolveResult = relevantSuperType.resolveGenerics()
+        if (!resolveResult.isValidResult) return element.asType()
+        val substitutor = resolveResult.substitutor
+
         return when (element) {
             is JeMethodExecutableElement -> {
                 val method = element.psi
-                if (method.hasModifierProperty(PsiModifier.STATIC) || !method.hasTypeParameters()) {
-                    JeMethodExecutableTypeMirror(method)
-                } else {
-                    val signature = method.getSignature(substitutor)
-                    val returnType = substitutor.substitute(element.psi.returnType)
-                    JeMethodExecutableTypeMirror(method, signature, returnType)
-                }
+                val signature = method.getSignature(substitutor)
+                val returnType = substitutor.substitute(element.psi.returnType)
+                JeMethodExecutableTypeMirror(method, signature, returnType)
             }
-            is JeClassInitializerExecutableElement -> element.asType()
             is JeVariableElement -> substitutor.substitute(element.psi.type).toJeType(psiManager)
             else -> throw IllegalArgumentException("Invalid element type: $element")
         }
