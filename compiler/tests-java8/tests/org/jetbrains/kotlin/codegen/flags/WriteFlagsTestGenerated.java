@@ -41,6 +41,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("defaultProperty.kt")
+    public void testDefaultProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaultProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("interfaceAndDefaultImpls.kt")
     public void testInterfaceAndDefaultImpls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/interfaceAndDefaultImpls.kt");

@@ -34,6 +34,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
+    public static final String DEFAULT_IMPLS_DELEGATE_SUFFIX = "$defaultImpl";
 
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
 
