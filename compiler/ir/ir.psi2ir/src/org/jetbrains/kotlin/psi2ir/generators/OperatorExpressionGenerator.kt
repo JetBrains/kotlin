@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -72,7 +75,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
 
         return IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
-                                      statementGenerator.generateExpression(expression.left))
+                                                                          statementGenerator.generateExpression(expression.left))
     }
 
     fun generateInstanceOfExpression(expression: KtIsExpression): IrStatement {
@@ -81,7 +84,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val againstType = getOrFail(BindingContext.TYPE, expression.typeReference)
 
         return IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
-                                      againstType, statementGenerator.generateExpression(expression.leftHandSide))
+                                                                          againstType, statementGenerator.generateExpression(expression.leftHandSide))
     }
 
     fun generateBinaryExpression(expression: KtBinaryExpression): IrExpression {

@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 interface IrThisReference : IrExpression, IrExpressionWithCopy {
     val classDescriptor: ClassDescriptor
@@ -29,15 +27,3 @@ interface IrThisReference : IrExpression, IrExpressionWithCopy {
 val IrThisReference.receiverParameter: ReceiverParameterDescriptor
     get() = classDescriptor.thisAsReceiverParameter
 
-class IrThisReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val classDescriptor: ClassDescriptor
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisReference {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitThisReference(this, data)
-
-    override fun copy(): IrThisReference =
-            IrThisReferenceImpl(startOffset, endOffset, type, classDescriptor)
-}

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 
 interface IrDeclaration : IrStatement {
@@ -55,8 +54,3 @@ enum class IrDeclarationOrigin {
     IR_TEMPORARY_VARIABLE,
 }
 
-abstract class IrDeclarationBase(
-        startOffset: Int,
-        endOffset: Int,
-        override val origin: IrDeclarationOrigin
-) : IrElementBase(startOffset, endOffset), IrDeclaration

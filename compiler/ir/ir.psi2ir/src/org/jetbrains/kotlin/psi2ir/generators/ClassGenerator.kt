@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -111,7 +113,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                          throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
         val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
         val irDelegate = IrSimplePropertyImpl(ktDelegateExpression.startOffset, ktDelegateExpression.endOffset, IrDeclarationOrigin.DELEGATE,
-                                                   delegateDescriptor)
+                                                                                   delegateDescriptor)
         val bodyGenerator = BodyGenerator(irClass.descriptor, context)
         irDelegate.initializer = bodyGenerator.generatePropertyInitializerBody(ktDelegateExpression)
         irClass.addMember(irDelegate)
@@ -193,7 +195,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
 
         val irPrimaryConstructor = IrConstructorImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
-                                                     primaryConstructorDescriptor)
+                                                                                          primaryConstructorDescriptor)
 
         val bodyGenerator = BodyGenerator(primaryConstructorDescriptor, context)
         ktClassOrObject.getPrimaryConstructor()?.valueParameterList?.let { ktValueParameterList ->
@@ -228,7 +230,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
         val irProperty = IrSimplePropertyImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFINED, propertyDescriptor)
         val irGetParameter = IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
-                                               valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
+                                                                                   valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
         irProperty.initializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
         return irProperty
     }

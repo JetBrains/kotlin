@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi2ir.transformations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid

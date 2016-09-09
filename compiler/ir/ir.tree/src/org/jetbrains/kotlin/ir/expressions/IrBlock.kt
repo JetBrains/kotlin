@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.detach
 
 
 interface IrBlock : IrExpression {
@@ -28,79 +26,3 @@ interface IrBlock : IrExpression {
     val statements: List<IrStatement>
 }
 
-fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
-    if (statement != null) addStatement(statement)
-}
-
-class IrEmptyBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null) :
-        IrExpressionBase(startOffset, endOffset, type), IrBlock {
-    override val statements: List<IrStatement> get() = emptyList()
-
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        throwNoSuchSlot(slot)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitBlock(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // no children
-    }
-}
-
-class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null):
-        IrExpressionBase(startOffset, endOffset, type), IrBlock {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator?, statements: List<IrStatement>) :
-            this(startOffset, endOffset, type, operator) {
-        addAll(statements)
-    }
-
-    override val statements: MutableList<IrStatement> = ArrayList(2)
-
-    fun addStatement(statement: IrStatement) {
-        statement.assertDetached()
-        statement.setTreeLocation(this, statements.size)
-        statements.add(statement)
-    }
-
-    fun addAll(newStatements: List<IrStatement>) {
-        newStatements.forEach { it.assertDetached() }
-        val originalSize = this.statements.size
-        this.statements.addAll(newStatements)
-        newStatements.forEachIndexed { i, irStatement ->
-            irStatement.setTreeLocation(this, originalSize + i)
-        }
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            statements.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
-
-        newChild.assertDetached()
-        statements[slot].detach()
-        statements[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBlock(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        statements.forEach { it.accept(visitor, data) }
-    }
-}
-
-fun IrBlockImpl.inlineStatement(statement: IrStatement) {
-    if (statement is IrBlock) {
-        statement.statements.forEach { it.detach() }
-        addAll(statement.statements)
-    }
-    else {
-        addStatement(statement)
-    }
-}

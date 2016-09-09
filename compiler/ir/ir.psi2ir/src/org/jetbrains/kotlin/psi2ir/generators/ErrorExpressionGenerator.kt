@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorCallExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -36,8 +36,8 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     fun generateErrorExpression(ktElement: KtElement, e: Exception): IrExpression =
             generateErrorExpression(ktElement, e) {
                 IrErrorExpressionImpl(ktElement.startOffset, ktElement.endOffset,
-                                      if (ktElement is KtExpression) getErrorExpressionType(ktElement) else ErrorUtils.createErrorType(""),
-                                      e.message ?: "")
+                                                                          if (ktElement is KtExpression) getErrorExpressionType(ktElement) else ErrorUtils.createErrorType(""),
+                                                                          e.message ?: "")
             }
 
     fun generateErrorCall(ktCall: KtCallExpression): IrExpression = generateErrorExpression(ktCall) {

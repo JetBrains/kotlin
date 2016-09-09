@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.inlineStatement
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError

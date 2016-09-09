@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenationImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid

@@ -16,53 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
-
 interface IrMemberAccessExpression : IrDeclarationReference {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
 }
 
-abstract class IrMemberAccessExpressionBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
-    override var dispatchReceiver: IrExpression? = null
-        set(newReceiver) {
-            newReceiver?.assertDetached()
-            field?.detach()
-            field = newReceiver
-            newReceiver?.setTreeLocation(this, DISPATCH_RECEIVER_SLOT)
-        }
-
-    override var extensionReceiver: IrExpression? = null
-        set(newReceiver) {
-            newReceiver?.assertDetached()
-            field?.detach()
-            field = newReceiver
-            newReceiver?.setTreeLocation(this, EXTENSION_RECEIVER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                DISPATCH_RECEIVER_SLOT -> dispatchReceiver
-                EXTENSION_RECEIVER_SLOT -> extensionReceiver
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            DISPATCH_RECEIVER_SLOT -> dispatchReceiver = newChild.assertCast()
-            EXTENSION_RECEIVER_SLOT -> extensionReceiver = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-    }
-}

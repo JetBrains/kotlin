@@ -16,23 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 interface IrCall : IrGeneralCall {
     val superQualifier: ClassDescriptor?
 }
 
-class IrCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val descriptor: CallableDescriptor,
-        override val operator: IrOperator? = null,
-        override val superQualifier: ClassDescriptor? = null
-) : IrGeneralCallBase(startOffset, endOffset, type, descriptor.valueParameters.size), IrCall {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitCall(this, data)
-}

@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -31,12 +32,12 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression =
             generateConditionalLoop(ktWhile,
                                     IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,
-                                                    context.builtIns.unitType, IrOperator.WHILE_LOOP))
+                                                                                        context.builtIns.unitType, IrOperator.WHILE_LOOP))
 
     fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression =
             generateConditionalLoop(ktDoWhile,
                                     IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
-                                                      context.builtIns.unitType, IrOperator.DO_WHILE_LOOP))
+                                                                                          context.builtIns.unitType, IrOperator.DO_WHILE_LOOP))
 
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
@@ -139,7 +140,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val irLoopParameter = if (ktLoopParameter != null) {
             val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
             IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
-                           loopParameterDescriptor, irNextCall)
+                                                                loopParameterDescriptor, irNextCall)
         }
         else {
             scope.createTemporaryVariable(irNextCall, "loop_parameter")

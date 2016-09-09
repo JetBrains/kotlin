@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceLocationManager
 
 interface IrFile : IrElement {
     val name: String
@@ -31,41 +29,3 @@ interface IrFile : IrElement {
     val declarations: List<IrDeclaration>
 }
 
-class IrFileImpl(
-        override val fileEntry: SourceLocationManager.FileEntry,
-        override val name: String,
-        override val packageFragmentDescriptor: PackageFragmentDescriptor
-) : IrElementBase(0, fileEntry.maxOffset), IrFile {
-    override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
-
-    fun addAnnotation(annotation: AnnotationDescriptor) {
-        fileAnnotations.add(annotation)
-    }
-
-    override val declarations: MutableList<IrDeclaration> = ArrayList()
-
-    fun addDeclaration(declaration: IrDeclaration) {
-        declaration.assertDetached()
-        declaration.setTreeLocation(this, declarations.size)
-        declarations.add(declaration)
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            declarations.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
-        declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        declarations[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitFile(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
-    }
-
-
-}

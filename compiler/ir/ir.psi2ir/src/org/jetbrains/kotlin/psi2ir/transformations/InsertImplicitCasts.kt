@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.replaceWith
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -155,7 +156,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitorVoid {
 
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType)) {
             return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
-                                          IrTypeOperator.IMPLICIT_CAST, expectedType, this.detach())
+                                                                              IrTypeOperator.IMPLICIT_CAST, expectedType, this.detach())
         }
 
         return this

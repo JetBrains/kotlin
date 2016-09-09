@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.psi2ir.generators.Scope

@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrFunctionBase
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -62,7 +63,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpressionBody =
             IrExpressionBodyImpl(ktInitializer.startOffset, ktInitializer.endOffset,
-                                 createStatementGenerator().generateExpression(ktInitializer))
+                                                                     createStatementGenerator().generateExpression(ktInitializer))
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
         val statementGenerator = createStatementGenerator()
@@ -251,7 +252,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         if (ktEnumEntry.declarations.isNotEmpty()) {
             val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
             return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                                             enumEntryConstructor, enumEntryDescriptor)
+                                                                                 enumEntryConstructor, enumEntryDescriptor)
         }
 
         return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, enumEntryDescriptor)
@@ -276,7 +277,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         // No-argument enum entry constructor
         val enumClassConstructor = enumClassDescriptor.unsubstitutedPrimaryConstructor!!
         return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                                         enumClassConstructor, enumEntryOrNull)
+                                                                             enumClassConstructor, enumEntryOrNull)
     }
 
 }

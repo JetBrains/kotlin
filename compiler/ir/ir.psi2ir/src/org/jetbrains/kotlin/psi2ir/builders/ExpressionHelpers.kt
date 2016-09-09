@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi2ir.generators.eqeqeq
 import org.jetbrains.kotlin.psi2ir.generators.primitiveOp1
 import org.jetbrains.kotlin.psi2ir.generators.primitiveOp2

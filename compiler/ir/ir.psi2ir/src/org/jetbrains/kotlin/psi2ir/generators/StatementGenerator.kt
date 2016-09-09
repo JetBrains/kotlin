@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrTypeAliasImpl
-import org.jetbrains.kotlin.ir.declarations.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -95,7 +96,7 @@ class StatementGenerator(
         // TODO use some special form that introduces multiple declarations into surrounding scope?
 
         val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
-                                  context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
+                                                                      context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
         val ktInitializer = multiDeclaration.initializer!!
         val containerValue = scope.createTemporaryVariableInBlock(ktInitializer.genExpr(), irBlock, "container")
 
@@ -116,7 +117,7 @@ class StatementGenerator(
             val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
                                                              IrOperator.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
-                                                componentVariable, irComponentCall)
+                                                                                     componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
         }
     }
@@ -211,7 +212,7 @@ class StatementGenerator(
         }
 
         val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset,
-                                                         getInferredTypeWithImplicitCastsOrFail(expression))
+                                                                                             getInferredTypeWithImplicitCastsOrFail(expression))
         entries.forEach {
             irStringTemplate.addArgument(it.genExpr())
         }
@@ -268,7 +269,7 @@ class StatementGenerator(
                             IrGetEnumValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
                         else -> {
                             IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType,
-                                                 descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
+                                                                                     descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
                         }
                     }
                 }
@@ -380,7 +381,7 @@ class StatementGenerator(
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Nothing?): IrStatement =
             IrTypeAliasImpl(typeAlias.startOffset, typeAlias.endOffset, IrDeclarationOrigin.DEFINED,
-                            getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
+                                                                 getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
 
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Nothing?): IrStatement =
             ReflectionReferencesGenerator(this).generateClassLiteral(expression)

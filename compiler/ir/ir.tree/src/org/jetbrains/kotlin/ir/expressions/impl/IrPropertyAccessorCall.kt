@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.expressions
+package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrPropertyAccessorCallBase(

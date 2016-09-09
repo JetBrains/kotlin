@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -92,8 +93,8 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                                  IrOperator.GET_PROPERTY,
                                  call.superQualifier)
             } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                       dispatchReceiverValue?.load(),
-                                       IrOperator.GET_PROPERTY, call.superQualifier)
+                                                                           dispatchReceiverValue?.load(),
+                                                                           IrOperator.GET_PROPERTY, call.superQualifier)
         }
     }
 

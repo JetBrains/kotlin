@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
@@ -44,7 +45,7 @@ class SimplePropertyLValue(
                                      irOperator,
                                      superQualifier)
                 } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                           dispatchReceiverValue?.load(), irOperator, superQualifier)
+                                                                               dispatchReceiverValue?.load(), irOperator, superQualifier)
             }
 
     override fun store(irExpression: IrExpression) =
@@ -57,7 +58,7 @@ class SimplePropertyLValue(
                                      irOperator,
                                      superQualifier)
                 } ?: IrSetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                           dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
+                                                                               dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
             }
 
     override fun assign(withLValue: (LValue) -> IrExpression) =

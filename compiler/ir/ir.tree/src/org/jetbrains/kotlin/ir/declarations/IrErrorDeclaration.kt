@@ -16,29 +16,5 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-
 interface IrErrorDeclaration : IrDeclaration
 
-class IrErrorDeclarationImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val descriptor: DeclarationDescriptor
-) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED), IrErrorDeclaration {
-    override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.DUMMY
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitErrorDeclaration(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // no children
-    }
-
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) = throwNoSuchSlot(slot)
-}

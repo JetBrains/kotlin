@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
-import org.jetbrains.kotlin.ir.expressions.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -41,7 +41,7 @@ class VariableLValue(
 
     override fun store(irExpression: IrExpression): IrExpression =
             IrSetVariableImpl(startOffset, endOffset, descriptor,
-                              irExpression, irOperator)
+                                                                  irExpression, irOperator)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

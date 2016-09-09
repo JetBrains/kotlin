@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrPropertyAccessor : IrGeneralFunction {
     override val descriptor: PropertyAccessorDescriptor
@@ -39,48 +37,3 @@ interface IrPropertySetter : IrPropertyAccessor {
     override val descriptor: PropertySetterDescriptor
 }
 
-abstract class IrPropertyAccessorBase(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin
-) : IrGeneralFunctionBase(startOffset, endOffset, origin), IrPropertyAccessor
-
-class IrPropertyGetterImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: PropertyGetterDescriptor
-) : IrPropertyAccessorBase(startOffset, endOffset, origin), IrPropertyGetter {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: PropertyGetterDescriptor,
-            body: IrBody
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.body = body
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitPropertyGetter(this, data)
-}
-
-class IrPropertySetterImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: PropertySetterDescriptor
-) : IrPropertyAccessorBase(startOffset, endOffset, origin), IrPropertySetter {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: PropertySetterDescriptor,
-            body: IrBody
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.body = body
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitPropertySetter(this, data)
-}

@@ -17,19 +17,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 interface IrInstanceInitializerCall : IrExpression {
     val classDescriptor: ClassDescriptor
 }
 
-class IrInstanceInitializerCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val classDescriptor: ClassDescriptor
-) : IrTerminalExpressionBase(startOffset, endOffset, classDescriptor.builtIns.unitType), IrInstanceInitializerCall {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitInstanceInitializerCall(this, data)
-    }
-}

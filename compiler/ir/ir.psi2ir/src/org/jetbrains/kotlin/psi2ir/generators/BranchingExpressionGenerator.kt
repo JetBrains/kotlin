@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -54,7 +55,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         return if (irBranches.size == 1) {
             val (irCondition, irThenBranch) = irBranches[0]
             IrIfThenElseImpl(expression.startOffset, expression.endOffset, resultType,
-                             irCondition, irThenBranch, irElseBranch, IrOperator.IF)
+                                                                 irCondition, irThenBranch, irElseBranch, IrOperator.IF)
         }
         else {
             val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrOperator.WHEN)

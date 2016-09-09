@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression

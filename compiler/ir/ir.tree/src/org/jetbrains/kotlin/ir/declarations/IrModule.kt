@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.MODULE_SLOT
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.util.*
+import java.lang.AssertionError
 
 interface IrModule : IrElement {
     override val startOffset: Int get() = UNDEFINED_OFFSET
@@ -37,30 +38,3 @@ interface IrModule : IrElement {
     val files: List<IrFile>
 }
 
-class IrModuleImpl(
-        override val descriptor: ModuleDescriptor,
-        override val irBuiltins: IrBuiltIns
-) : IrModule {
-    override val files: MutableList<IrFile> = ArrayList()
-
-    fun addFile(file: IrFile) {
-        file.assertDetached()
-        file.setTreeLocation(this, files.size)
-        files.add(file)
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            files.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
-        files.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitModule(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        files.forEach { it.accept(visitor, data) }
-    }
-}

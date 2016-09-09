@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -49,10 +50,10 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
             generateExpression(receiver.expression)
         is ClassValueReceiver ->
             IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
-                                 receiver.classQualifier.descriptor)
+                                                                     receiver.classQualifier.descriptor)
         is ExtensionReceiver ->
             IrGetExtensionReceiverImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset,
-                                       receiver.declarationDescriptor.extensionReceiverParameter!!)
+                                                                           receiver.declarationDescriptor.extensionReceiverParameter!!)
         else ->
             TODO("Receiver: ${receiver.javaClass.simpleName}")
     }
@@ -116,7 +117,7 @@ fun StatementGenerator.generateVarargExpression(varargArgument: VarargValueArgum
         val irVarargElement =
                 if (argument.getSpreadElement() != null)
                     IrSpreadElementImpl(ktArgumentExpression.startOffset, ktArgumentExpression.endOffset,
-                                        generateExpression(ktArgumentExpression))
+                                                                            generateExpression(ktArgumentExpression))
                 else
                     generateExpression(ktArgumentExpression)
 

@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
+import java.lang.AssertionError
 
 interface IrBreakContinue : IrExpression {
     var loop: IrLoop
@@ -46,31 +45,3 @@ fun IrBreakContinue.getDepth(): Int {
     }
 }
 
-abstract class IrBreakContinueBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override var loop: IrLoop
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrBreakContinue {
-    override var label: String? = null
-}
-
-class IrBreakImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        loop: IrLoop
-) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrBreak {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBreak(this, data)
-}
-
-class IrContinueImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        loop: IrLoop
-) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrContinue {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitContinue(this, data)
-}

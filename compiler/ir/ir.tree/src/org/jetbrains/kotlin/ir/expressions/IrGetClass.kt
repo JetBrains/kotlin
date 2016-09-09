@@ -16,49 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
-
 
 interface IrGetClass : IrExpression {
     var argument : IrExpression
 }
 
-class IrGetClassImpl(startOffset: Int, endOffset: Int, type: KotlinType) : IrExpressionBase(startOffset, endOffset, type), IrGetClass {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, argument: IrExpression) : this(startOffset, endOffset, type) {
-        this.argument = argument
-    }
-
-    private var argumentImpl: IrExpression? = null
-    override var argument: IrExpression
-        get() = argumentImpl!!
-        set(value) {
-            value.assertDetached()
-            argumentImpl?.detach()
-            argumentImpl = value
-            value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                CHILD_EXPRESSION_SLOT -> argument
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            CHILD_EXPRESSION_SLOT -> argument = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitGetClass(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument.accept(visitor, data)
-    }
-
-}

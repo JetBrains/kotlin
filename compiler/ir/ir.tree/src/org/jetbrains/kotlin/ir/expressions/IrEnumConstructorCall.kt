@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 
 interface IrEnumConstructorCall : IrGeneralCall {
@@ -29,13 +28,3 @@ interface IrEnumConstructorCall : IrGeneralCall {
 val IrEnumConstructorCall.isSuper: Boolean
     get() = enumEntryDescriptor == null
 
-class IrEnumConstructorCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val descriptor: ConstructorDescriptor,
-        override val enumEntryDescriptor: ClassDescriptor? = null
-) : IrGeneralCallBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size), IrEnumConstructorCall {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitEnumConstructorCall(this, data)
-    }
-}

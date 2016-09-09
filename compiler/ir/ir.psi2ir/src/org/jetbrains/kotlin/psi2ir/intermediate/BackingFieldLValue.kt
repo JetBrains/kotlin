@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetBackingFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetBackingFieldImpl
 import org.jetbrains.kotlin.types.KotlinType
 
 class BackingFieldLValue(

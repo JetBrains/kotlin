@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrGeneralFunction
-import org.jetbrains.kotlin.ir.declarations.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction

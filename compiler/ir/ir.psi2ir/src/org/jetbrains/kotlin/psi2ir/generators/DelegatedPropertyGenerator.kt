@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -86,7 +89,7 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
 
     private fun createCallableReference(ktElement: KtElement, type: KotlinType, referencedDescriptor: CallableDescriptor): IrCallableReference =
             IrCallableReferenceImpl(ktElement.startOffset, ktElement.endOffset, type,
-                                    referencedDescriptor, IrOperator.PROPERTY_REFERENCE_FOR_DELEGATE)
+                                                                        referencedDescriptor, IrOperator.PROPERTY_REFERENCE_FOR_DELEGATE)
 
     fun generateLocalDelegatedProperty(
             ktProperty: KtProperty,
@@ -130,7 +133,7 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
 
     private fun createLocalPropertyAccessor(getterDescriptor: VariableAccessorDescriptor, ktDelegate: KtPropertyDelegate, body: IrBody) =
             IrLocalPropertyAccessorImpl(ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-                                        getterDescriptor, body)
+                                                                             getterDescriptor, body)
 
     private fun createLocalPropertyDelegatedDescriptor(
             ktDelegate: KtPropertyDelegate,

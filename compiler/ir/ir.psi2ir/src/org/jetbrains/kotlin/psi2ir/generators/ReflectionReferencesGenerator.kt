@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrCallableReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetClassImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetClassImpl
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -37,7 +37,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return if (lhs is DoubleColonLHS.Expression && !lhs.isObject) {
             IrGetClassImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                           statementGenerator.generateExpression(ktArgument))
+                                                               statementGenerator.generateExpression(ktArgument))
         }
         else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor
@@ -50,8 +50,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
         val irCallableRef = IrCallableReferenceImpl(ktCallableReference.startOffset, ktCallableReference.endOffset,
-                                                    getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                                                    resolvedCall.resultingDescriptor)
+                                                                                        getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                                                                                        resolvedCall.resultingDescriptor)
         resolvedCall.dispatchReceiver?.let { dispatchReceiver ->
             if (dispatchReceiver !is TransientReceiver) {
                 irCallableRef.dispatchReceiver = statementGenerator.generateReceiver(ktCallableReference, dispatchReceiver).load()

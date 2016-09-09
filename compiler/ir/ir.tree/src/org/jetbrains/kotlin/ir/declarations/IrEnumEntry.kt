@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrEnumEntry : IrDeclaration {
     override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.ENUM_ENTRY
@@ -30,52 +28,3 @@ interface IrEnumEntry : IrDeclaration {
     var initializerExpression: IrExpression
 }
 
-class IrEnumEntryImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor
-) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
-    override var correspondingClass: IrClass? = null
-        set(value) {
-            value?.assertDetached()
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, ENUM_ENTRY_CLASS_SLOT)
-        }
-
-    private var initializerExpressionImpl: IrExpression? = null
-    override var initializerExpression: IrExpression
-        get() = initializerExpressionImpl!!
-        set(value) {
-            value.assertDetached()
-            initializerExpressionImpl?.detach()
-            initializerExpressionImpl = value
-            value.setTreeLocation(this, ENUM_ENTRY_INITIALIZER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? {
-        return when (slot) {
-            ENUM_ENTRY_CLASS_SLOT -> correspondingClass
-            ENUM_ENTRY_INITIALIZER_SLOT -> initializerExpression
-            else -> null
-        }
-    }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            ENUM_ENTRY_CLASS_SLOT -> correspondingClass = newChild.assertCast()
-            ENUM_ENTRY_INITIALIZER_SLOT -> initializerExpression = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitEnumEntry(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializerExpression.accept(visitor, data)
-        correspondingClass?.accept(visitor, data)
-    }
-}

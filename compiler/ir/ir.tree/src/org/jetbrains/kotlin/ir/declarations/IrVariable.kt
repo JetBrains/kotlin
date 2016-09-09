@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 interface IrVariable : IrDeclaration {
     override val descriptor: VariableDescriptor
@@ -30,48 +28,3 @@ interface IrVariable : IrDeclaration {
     var initializer: IrExpression?
 }
 
-class IrVariableImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: VariableDescriptor
-) : IrDeclarationBase(startOffset, endOffset, origin), IrVariable {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: VariableDescriptor,
-            initializer: IrExpression
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.initializer = initializer
-    }
-
-    override var initializer: IrExpression? = null
-        set(value) {
-            value?.assertDetached()
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, INITIALIZER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                INITIALIZER_SLOT -> initializer
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            INITIALIZER_SLOT -> initializer = newChild.assertCast<IrExpression>()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitVariable(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializer?.accept(visitor, data)
-    }
-}

@@ -17,18 +17,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrDelegatingConstructorCall : IrGeneralCall {
     override val descriptor: ConstructorDescriptor
 }
 
-class IrDelegatingConstructorCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val descriptor: ConstructorDescriptor
-) : IrGeneralCallBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size), IrDelegatingConstructorCall {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitDelegatingConstructorCall(this, data)
-    }
-}

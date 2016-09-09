@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 
 interface IrConstructor : IrFunction {
@@ -28,23 +26,3 @@ interface IrConstructor : IrFunction {
     override val descriptor: ConstructorDescriptor
 }
 
-class IrConstructorImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: ConstructorDescriptor
-) : IrFunctionBase(startOffset, endOffset, origin), IrConstructor {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: ConstructorDescriptor,
-            body: IrBody
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.body = body
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitConstructor(this, data)
-    }
-}
