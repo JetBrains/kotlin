@@ -38,6 +38,7 @@ class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<K
             val typeReference = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>()?.right
                                 ?: diagnostic.psiElement.getNonStrictParentOfType<KtTypeReference>()
             val typeElement = typeReference?.typeElement ?: return null
+            if (typeElement is KtFunctionType) return null
             if (typeElement.typeArgumentsAsTypes.isNotEmpty()) {
                 return ChangeToStarProjectionFix(typeElement)
             }
