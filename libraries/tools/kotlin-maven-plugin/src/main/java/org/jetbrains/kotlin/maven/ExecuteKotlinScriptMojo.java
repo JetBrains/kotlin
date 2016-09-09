@@ -180,7 +180,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
-            GenerationState state = KotlinToJVMBytecodeCompiler.INSTANCE.analyzeAndGenerate(environment);
+            GenerationState state = KotlinToJVMBytecodeCompiler.INSTANCE.analyzeAndGenerate(environment, configuration);
 
             if (state == null) {
                 throw new ScriptExecutionException(scriptFile, "compile error");

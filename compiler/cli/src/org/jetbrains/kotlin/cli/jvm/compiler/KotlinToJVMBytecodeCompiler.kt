@@ -128,28 +128,8 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
-        var result = analyze(environment, targetDescription)
-
-        if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
-            val oldReadOnlyValue = projectConfiguration.isReadOnly
-            projectConfiguration.isReadOnly = false
-            projectConfiguration.addJavaSourceRoots(result.additionalJavaRoots)
-            projectConfiguration.isReadOnly = oldReadOnlyValue
-
-            if (result.addToEnvironment) {
-                environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
-            }
-
-            // Clear package caches (see KotlinJavaPsiFacade)
-            (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
-
-            // Clear all diagnostic messages
-            projectConfiguration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
-
-            // Repeat analysis with additional Java roots (kapt generated sources)
-            result = analyze(environment, targetDescription)
-        }
-
+        
+        val result = repeatAnalysisIfNeeded(analyze(environment, targetDescription), environment, targetDescription)
         if (result == null || !result.shouldGenerateCode) return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -263,6 +243,36 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         return ExitCode.OK
+    }
+    
+    private fun repeatAnalysisIfNeeded(
+            result: AnalysisResult?, 
+            environment: KotlinCoreEnvironment, 
+            targetDescription: String?
+    ): AnalysisResult? {
+        if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
+            val configuration = environment.configuration
+            
+            val oldReadOnlyValue = configuration.isReadOnly
+            configuration.isReadOnly = false
+            configuration.addJavaSourceRoots(result.additionalJavaRoots)
+            configuration.isReadOnly = oldReadOnlyValue
+
+            if (result.addToEnvironment) {
+                environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+            }
+
+            // Clear package caches (see KotlinJavaPsiFacade)
+            (PsiManager.getInstance(environment.project).modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
+
+            // Clear all diagnostic messages
+            configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
+
+            // Repeat analysis with additional Java roots (kapt generated sources)
+            return analyze(environment, targetDescription)
+        }
+        
+        return result
     }
 
     private fun reportExceptionFromScript(exception: Throwable) {
@@ -380,7 +390,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
-        val result = analyze(environment, null) ?: return null
+        val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
 
         if (!result.shouldGenerateCode) return null
 
