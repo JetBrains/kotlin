@@ -23,10 +23,10 @@ TRANSLATOR_JAR=../translator/build/libs/translator-1.0.jar
 %.asc:%.o
 	${LLVM_DWARF_DUMP} $< > $@
 
-.PHONY: clean all
-
 all:main.asc classfields_1.asc 2-functions.asc
 
 clean:
 	${RM} *.o *.asc *.bc *.s main.ll
 
+.PHONY: clean all
+.PRECIOUS:%.ll %.bc %.s %.o
