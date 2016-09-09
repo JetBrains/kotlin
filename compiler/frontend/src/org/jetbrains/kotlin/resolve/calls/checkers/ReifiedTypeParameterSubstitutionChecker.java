@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
 
             if (argumentDeclarationDescriptor instanceof TypeParameterDescriptor &&
                 !((TypeParameterDescriptor) argumentDeclarationDescriptor).isReified()) {
-                context.getTrace().report(Errors.TYPE_PARAMETER_AS_REIFIED.on(reportErrorOn, parameter));
+                context.getTrace().report(Errors.TYPE_PARAMETER_AS_REIFIED.on(reportErrorOn, (TypeParameterDescriptor) argumentDeclarationDescriptor));
             }
             else if (TypeUtilsKt.cannotBeReified(argument)) {
                 context.getTrace().report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(reportErrorOn, argument));
