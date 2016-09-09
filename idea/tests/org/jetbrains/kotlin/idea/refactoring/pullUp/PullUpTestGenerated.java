@@ -55,6 +55,30 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("dropModifierWhenMovingSideOverride.kt")
+        public void testDropModifierWhenMovingSideOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropModifierWhenMovingSideOverride.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("dropModifierWhenMovingSideOverrideWithAbstract.kt")
+        public void testDropModifierWhenMovingSideOverrideWithAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropModifierWhenMovingSideOverrideWithAbstract.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("dropModifierWhenMovingSideOverrideWithSuperEntry.kt")
+        public void testDropModifierWhenMovingSideOverrideWithSuperEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropModifierWhenMovingSideOverrideWithSuperEntry.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("dropModifierWhenMovingSideOverrideWithSuperEntryAndAbstract.kt")
+        public void testDropModifierWhenMovingSideOverrideWithSuperEntryAndAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropModifierWhenMovingSideOverrideWithSuperEntryAndAbstract.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("fromClassToClass.kt")
         public void testFromClassToClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToClass.kt");
