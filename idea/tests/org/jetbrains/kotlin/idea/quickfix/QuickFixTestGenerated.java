@@ -5122,6 +5122,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/foldTryCatch")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FoldTryCatch extends AbstractQuickFixTest {
+        public void testAllFilesPresentInFoldTryCatch() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/foldTryCatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("conditional.kt")
+        public void testConditional() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/foldTryCatch/conditional.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyFinally.kt")
+        public void testEmptyFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/foldTryCatch/emptyFinally.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleExceptions.kt")
+        public void testMultipleExceptions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/foldTryCatch/multipleExceptions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shadow.kt")
+        public void testShadow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/foldTryCatch/shadow.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/foldTryCatch/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/implement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
