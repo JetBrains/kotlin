@@ -63,7 +63,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        TestUtilsKt.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
+        TestUtilsKt.doKotlinTearDown(getProject(), new RunnableWithException() {
             @Override
             public void run() throws Exception {
                 KotlinConfidenceTest.super.tearDown();
