@@ -122,17 +122,19 @@ public abstract class CallableReference implements KCallable {
     }
 
     public KCallable compute() {
-        if (reflected == null) {
-            reflected = computeReflected();
+        KCallable result = reflected;
+        if (result == null) {
+            result = computeReflected();
+            reflected = result;
         }
-        return reflected;
+        return result;
     }
 
     protected KCallable getReflected() {
-        compute();
-        if (reflected == this) {
+        KCallable result = compute();
+        if (result == this) {
             throw new KotlinReflectionNotSupportedError();
         }
-        return reflected;
+        return result;
     }
 }

@@ -39,8 +39,15 @@ class KotlinTypeParameterFindUsagesHandler(
         )
     }
 
-    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        return ReferencesSearch.search(element, options.searchScope).all { KotlinFindUsagesHandler.processUsage(processor, it ) }
+    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+        return object: Searcher(element, processor, options) {
+            override fun buildTaskList(): Boolean {
+                addTask {
+                    ReferencesSearch.search(element, options.searchScope).all { KotlinFindUsagesHandler.processUsage(processor, it ) }
+                }
+                return true
+            }
+        }
     }
 
     override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {

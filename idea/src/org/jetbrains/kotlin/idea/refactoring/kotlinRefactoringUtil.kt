@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.unwrap.RangeSplitter
 import com.intellij.codeInsight.unwrap.UnwrapHandler
+import com.intellij.ide.IdeBundle
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
@@ -36,6 +37,7 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
@@ -62,11 +64,14 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
@@ -84,6 +89,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -795,3 +801,68 @@ val PsiFile.isInjectedFragment: Boolean
 
 val PsiElement.isInsideInjectedFragment: Boolean
     get() = containingFile.isInjectedFragment
+
+fun checkSuperMethods(
+        declaration: KtDeclaration,
+        ignore: Collection<PsiElement>?,
+        actionStringKey: String
+): List<PsiElement> {
+    fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
+        return overriddenElementsToDescriptor.entries.map { entry ->
+            val (element, descriptor) = entry
+            val description = when (element) {
+                is KtNamedFunction, is KtProperty -> formatClassDescriptor(descriptor.containingDeclaration)
+                is PsiMethod -> {
+                    val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
+                    formatPsiClass(psiClass, true, false)
+                }
+                else -> error("Unexpected element: ${element.getElementTextWithContext()}")
+            }
+            "    $description\n"
+        }
+    }
+
+    fun askUserForMethodsToSearch(
+            declarationDescriptor: CallableDescriptor,
+            overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>
+    ): List<PsiElement> {
+        if (ApplicationManager.getApplication().isUnitTestMode) return overriddenElementsToDescriptor.keys.toList()
+
+        val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
+
+        val message = KotlinBundle.message(
+                "x.overrides.y.in.class.list",
+                DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
+                "\n${superClassDescriptions.joinToString(separator = "")}",
+                KotlinBundle.message(actionStringKey)
+        )
+
+        val exitCode = Messages.showYesNoCancelDialog(declaration.project, message, IdeBundle.message("title.warning"), Messages.getQuestionIcon())
+        when (exitCode) {
+            Messages.YES -> return overriddenElementsToDescriptor.keys.toList()
+            Messages.NO -> return listOf(declaration)
+            else -> return emptyList()
+        }
+    }
+
+
+    val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
+
+    if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
+
+    val project = declaration.project
+    val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
+    for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
+        val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
+        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod) {
+            overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
+        }
+    }
+    if (ignore != null) {
+        overriddenElementsToDescriptor.keys.removeAll(ignore)
+    }
+
+    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
+
+    return askUserForMethodsToSearch(declarationDescriptor, overriddenElementsToDescriptor)
+}

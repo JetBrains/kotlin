@@ -2,6 +2,9 @@
 
 class A {
     init {
-        <caret>
+        ca<caret>ll()
     }
 }
+
+// TODO:
+// SKIP_ANALYZE_CHECK

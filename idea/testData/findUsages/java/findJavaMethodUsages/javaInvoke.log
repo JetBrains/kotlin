@@ -1,0 +1,3 @@
+Resolved c()
+Searched references to JavaClass
+Searched references to parameter c of f(c: JavaClass) in non-Java files

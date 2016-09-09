@@ -30,7 +30,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     with.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
     with.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
-    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    with.<!RESOLUTION_TO_CLASSIFIER!>NestedObj<!>()
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
 
     without.<!UNRESOLVED_REFERENCE!>Nested<!>()
@@ -39,7 +39,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     without.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
     without.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
-    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    without.<!RESOLUTION_TO_CLASSIFIER!>NestedObj<!>()
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
 
     obj.<!UNRESOLVED_REFERENCE!>Nested<!>()
@@ -48,6 +48,6 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     obj.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
     obj.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
-    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    obj.<!RESOLUTION_TO_CLASSIFIER!>NestedObj<!>()
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
 }

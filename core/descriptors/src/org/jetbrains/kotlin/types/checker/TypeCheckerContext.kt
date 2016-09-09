@@ -28,7 +28,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
     private var supertypesDeque: ArrayDeque<SimpleType>? = null
     private var supertypesSet: MutableSet<SimpleType>? = null
 
-    open fun isSubtypeByExternalRule(subType: SimpleType, superType: SimpleType) = false
+    open fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? = null
 
     inline fun <T> runWithArgumentsSettings(subArgument: UnwrappedType, f: TypeCheckerContext.() -> T): T {
         if (argumentsDepth > 100) {

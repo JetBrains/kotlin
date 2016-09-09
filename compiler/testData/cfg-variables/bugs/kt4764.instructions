@@ -32,6 +32,7 @@ L0:
     r(false) -> <v0>
     jf(L3|<v0>)
   4 mark({ return "fail" })
+    jmp?(L2)
     mark("fail")
     r("fail") -> <v1>
 L4 [start finally]:
@@ -60,12 +61,15 @@ L3 [else branch]:
     mark("test")
     r("test") -> <v6>                                                                                                                                                                                                                                                                                                                USE: in: {foo=WRITTEN_AFTER_READ} out: {foo=WRITTEN_AFTER_READ}
     w(foo|<v6>)                                                                                                                                                                                                                                                                                                                      USE: in: {foo=READ} out: {foo=WRITTEN_AFTER_READ}
-  6 jmp(L11)
+  6 jmp?(L9)
+    jmp?(L10)
+    jmp(L11)
 L9 [onException]:
   7 v(e: Exception)                                                                                                                                                                                                                                                                  INIT: in: {foo=ID} out: {e=D, foo=ID}
     magic[FAKE_INITIALIZER](e: Exception) -> <v8>                                                                                                                                                                                                                                    INIT: in: {e=D, foo=ID} out: {e=D, foo=ID}
     w(e|<v8>)                                                                                                                                                                                                                                                                        INIT: in: {e=D, foo=ID} out: {e=ID, foo=ID}
   8 mark({ return "fail" })                                                                                                                                                                                                                                                          INIT: in: {e=ID, foo=ID} out: {e=ID, foo=ID}
+    jmp?(L2)
     mark("fail")
     r("fail") -> <v9>
 L12 [start finally]:
@@ -99,6 +103,7 @@ L8 [else branch]:
     read (Unit)
 L15 ['if' expression result]:
     merge(if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } }|<v14>) -> <v15>
+    jmp?(L2)
     mark("fail")
     r("fail") -> <v16>
     mark({})
@@ -111,7 +116,8 @@ L16 ['if' expression result]:
     merge(if (false) { if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } } return "fail" }|!<v17>) -> <v18>
 L6 ['if' expression result]:
   3 merge(if (false) { return "fail" } else { if (false) { if (false) { var foo: String? = null try { foo = "test" } catch (e: Exception) { return "fail" } finally { println(foo) // Variable 'foo' must be initialized } } return "fail" } }|!<v2>, <v18>) -> <v19>
-  2 jmp(L17)
+  2 jmp?(L2)
+    jmp(L17)
 L2 [onExceptionToFinallyBlock]:
   5 mark({})
     read (Unit)

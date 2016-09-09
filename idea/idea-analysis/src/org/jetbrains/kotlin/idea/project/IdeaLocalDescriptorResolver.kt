@@ -31,7 +31,7 @@ class IdeaLocalDescriptorResolver(
         private val absentDescriptorHandler: AbsentDescriptorHandler
 ) : LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {
-        val context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL)
+        val context = resolveElementCache.resolveToElements(listOf(declaration), BodyResolveMode.FULL)
         return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                ?: absentDescriptorHandler.diagnoseDescriptorNotFound(declaration)
     }

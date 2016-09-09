@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtWhenEntry
@@ -32,5 +33,9 @@ class RemoveBracesFromWhenEntryIntention : SelfTargetingIntention<KtWhenEntry>(K
     override fun applyTo(element: KtWhenEntry, editor: Editor?) {
         val block = element.expression as KtBlockExpression
         block.replace(block.statements.single())
+    }
+
+    override fun allowCaretInsideElement(element: PsiElement): Boolean {
+        return element !is KtBlockExpression || element.parent is KtWhenEntry
     }
 }

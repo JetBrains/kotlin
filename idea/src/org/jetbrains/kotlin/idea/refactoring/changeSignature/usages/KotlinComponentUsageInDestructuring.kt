@@ -24,21 +24,23 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator.Target
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.buildDestructuringDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class KotlinComponentUsageInDestructuring(element: KtDestructuringDeclaration) : KotlinUsageInfo<KtDestructuringDeclaration>(element) {
-    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtDestructuringDeclaration, allUsages: Array<out UsageInfo>): Boolean {
+class KotlinComponentUsageInDestructuring(element: KtDestructuringDeclarationEntry) : KotlinUsageInfo<KtDestructuringDeclarationEntry>(element) {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtDestructuringDeclarationEntry, allUsages: Array<out UsageInfo>): Boolean {
         if (!changeInfo.isParameterSetOrOrderChanged) return true
 
-        val currentEntries = element.entries
+        val declaration = element.parent as KtDestructuringDeclaration
+        val currentEntries = declaration.entries
         val newParameterInfos = changeInfo.getNonReceiverParameters()
 
         val newDestructuring = KtPsiFactory(element).buildDestructuringDeclaration {
             val lastIndex = newParameterInfos.indexOfLast { it.oldIndex in currentEntries.indices }
-            val nameValidator = CollectingNameValidator(filter = NewDeclarationNameValidator(element.parent, null, Target.VARIABLES))
+            val nameValidator = CollectingNameValidator(filter = NewDeclarationNameValidator(declaration.parent, null, Target.VARIABLES))
 
             appendFixedText("val (")
             for (i in 0..lastIndex) {
@@ -58,7 +60,7 @@ class KotlinComponentUsageInDestructuring(element: KtDestructuringDeclaration) :
             appendFixedText(")")
         }
         replaceListPsiAndKeepDelimiters(
-                element,
+                declaration,
                 newDestructuring,
                 {
                     apply {

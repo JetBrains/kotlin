@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,4 +42,6 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? =
             findChildByType(KtNodeTypes.TYPE_REFERENCE)
+
+    override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 }

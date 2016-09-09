@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
@@ -42,6 +43,8 @@ class UsageTracker(
 
     fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
+
+        if (descriptor is FakeCallableDescriptorForObject) return
 
         // local named function
         if (descriptor is FunctionDescriptor && descriptor.visibility == Visibilities.LOCAL) {

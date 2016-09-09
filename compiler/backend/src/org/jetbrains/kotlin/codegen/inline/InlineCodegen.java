@@ -372,7 +372,8 @@ public class InlineCodegen extends CallGenerator {
             smap = createSMAPWithDefaultMapping(inliningFunction, parentCodegen.getOrCreateSourceMapper().getResultMappings());
         }
         else {
-            smap = generateMethodBody(maxCalcAdapter, callableDescriptor, methodContext, inliningFunction, jvmSignature, false, codegen);
+            smap = generateMethodBody(maxCalcAdapter, callableDescriptor, methodContext, inliningFunction, jvmSignature, codegen,
+                                      null);
         }
         maxCalcAdapter.visitMaxs(-1, -1);
         maxCalcAdapter.visitEnd();
@@ -504,8 +505,10 @@ public class InlineCodegen extends CallGenerator {
         KtExpression declaration = info.getFunctionWithBodyOrCallableReference();
         FunctionDescriptor descriptor = info.getFunctionDescriptor();
 
-        MethodContext context =
-                codegen.getContext().intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor, info.isCrossInline);
+        ClassContext closureContext = info.isPropertyReference()
+                                        ? codegen.getContext().intoAnonymousClass(info.getClassDescriptor(), codegen, OwnerKind.IMPLEMENTATION)
+                                        : codegen.getContext().intoClosure(descriptor, codegen, typeMapper);
+        MethodContext context = closureContext.intoInlinedLambda(descriptor, info.isCrossInline, info.isPropertyReference());
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
@@ -516,7 +519,7 @@ public class InlineCodegen extends CallGenerator {
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
-        SMAP smap = generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature, true, codegen);
+        SMAP smap = generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature, codegen, info);
         adapter.visitMaxs(-1, -1);
         return new SMAPAndMethodNode(methodNode, smap);
     }
@@ -528,9 +531,10 @@ public class InlineCodegen extends CallGenerator {
             @NotNull MethodContext context,
             @NotNull KtExpression expression,
             @NotNull JvmMethodSignature jvmMethodSignature,
-            boolean isLambda,
-            @NotNull ExpressionCodegen codegen
+            @NotNull ExpressionCodegen codegen,
+            @Nullable LambdaInfo lambdaInfo
     ) {
+        boolean isLambda = lambdaInfo != null;
         GenerationState state = codegen.getState();
 
         // Wrapping for preventing marking actual parent codegen as containing reified markers
@@ -544,18 +548,28 @@ public class InlineCodegen extends CallGenerator {
         if (expression instanceof KtCallableReferenceExpression) {
             KtCallableReferenceExpression callableReferenceExpression = (KtCallableReferenceExpression) expression;
             KtExpression receiverExpression = callableReferenceExpression.getReceiverExpression();
-            Type receiverValue =
+            Type receiverType =
                     receiverExpression != null && codegen.getBindingContext().getType(receiverExpression) != null
                     ? codegen.getState().getTypeMapper().mapType(codegen.getBindingContext().getType(receiverExpression))
                     : null;
 
-            strategy = new FunctionReferenceGenerationStrategy(
-                    state,
-                    descriptor,
-                    CallUtilKt.getResolvedCallWithAssert(callableReferenceExpression.getCallableReference(), codegen.getBindingContext()),
-                    receiverValue,
-                    null
-            );
+            if (isLambda && lambdaInfo.isPropertyReference()) {
+                Type asmType = state.getTypeMapper().mapClass(lambdaInfo.getClassDescriptor());
+                PropertyReferenceInfo info = lambdaInfo.getPropertyReferenceInfo();
+                strategy = new PropertyReferenceCodegen.PropertyReferenceGenerationStrategy(
+                        true, info.getGetFunction(), info.getTarget(), asmType, receiverType, lambdaInfo.expression, state
+                );
+            }
+            else {
+                strategy = new FunctionReferenceGenerationStrategy(
+                        state,
+                        descriptor,
+                        CallUtilKt
+                                .getResolvedCallWithAssert(callableReferenceExpression.getCallableReference(), codegen.getBindingContext()),
+                        receiverType,
+                        null
+                );
+            }
         }
         else {
             strategy = new FunctionGenerationStrategy.FunctionDefault(state, (KtDeclarationWithBody) expression);
@@ -746,15 +760,9 @@ public class InlineCodegen extends CallGenerator {
     }
 
     /*lambda or callable reference*/
-    private boolean isInliningParameter(@NotNull KtExpression expression, @NotNull ValueParameterDescriptor valueParameterDescriptor) {
+    private static boolean isInliningParameter(@NotNull KtExpression expression, @NotNull ValueParameterDescriptor valueParameterDescriptor) {
         //TODO deparenthisise typed
         KtExpression deparenthesized = KtPsiUtil.deparenthesize(expression);
-
-        if (deparenthesized instanceof KtCallableReferenceExpression) {
-            // TODO: support inline of property references passed to inlinable function parameters
-            SimpleFunctionDescriptor functionReference = state.getBindingContext().get(BindingContext.FUNCTION, deparenthesized);
-            if (functionReference == null) return false;
-        }
 
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
                isInlinableParameterExpression(deparenthesized);
@@ -770,12 +778,12 @@ public class InlineCodegen extends CallGenerator {
         KtExpression lambda = KtPsiUtil.deparenthesize(expression);
         assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
-        LambdaInfo info = new LambdaInfo(lambda, typeMapper, parameter.isCrossinline());
+        LambdaInfo info =
+                new LambdaInfo(lambda, typeMapper, parameter.isCrossinline(), getBoundCallableReferenceReceiver(expression) != null);
 
         ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.getIndex());
         closureInfo.setLambda(info);
         expressionMap.put(closureInfo.getIndex(), info);
-        info.setBoundCallableReference(getBoundCallableReferenceReceiver(expression) != null);
         return info;
     }
 

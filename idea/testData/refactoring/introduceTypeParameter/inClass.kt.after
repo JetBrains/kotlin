@@ -1,0 +1,11 @@
+class A
+
+open class X<T : A>(x: List<T>, f: (T) -> Int) {
+    val a: T? = x.firstOrNull()
+}
+
+class Y : X<A>(listOf(A()), { 1 })
+
+fun test() {
+    X(listOf(A())) { 1 }
+}

@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunctionStub>
-        implements KtFunction, KtWithExpressionInitializer, PsiModifiableCodeBlock {
+        implements KtFunction, KtDeclarationWithInitializer, PsiModifiableCodeBlock {
     public KtNamedFunction(@NotNull ASTNode node) {
         super(node);
     }

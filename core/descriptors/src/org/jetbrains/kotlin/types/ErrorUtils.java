@@ -566,9 +566,9 @@ public class ErrorUtils {
     }
 
     public static boolean containsUninferredParameter(@Nullable KotlinType type) {
-        return TypeUtils.contains(type, new Function1<KotlinType, Boolean>() {
+        return TypeUtils.contains(type, new Function1<UnwrappedType, Boolean>() {
             @Override
-            public Boolean invoke(KotlinType argumentType) {
+            public Boolean invoke(UnwrappedType argumentType) {
                 return isUninferredParameter(argumentType);
             }
         });

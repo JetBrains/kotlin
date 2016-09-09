@@ -32,8 +32,8 @@ final class ConsPStack<E> implements Iterable<E> {
         return (ConsPStack<E>) EMPTY;
     }
 
-    private final E first;
-    private final ConsPStack<E> rest;
+    final E first;
+    final ConsPStack<E> rest;
     private final int size;
 
     private ConsPStack() { // EMPTY constructor
@@ -67,27 +67,33 @@ final class ConsPStack<E> implements Iterable<E> {
         return size;
     }
 
-    private Iterator<E> iterator(final int index) {
-        return new Iterator<E>() {
-            ConsPStack<E> next = subList(index);
+    private Iterator<E> iterator(int index) {
+        return new Itr<E>(subList(index));
+    }
 
-            @Override
-            public boolean hasNext() {
-                return next.size > 0;
-            }
+    private static class Itr<E> implements Iterator<E> {
+        private ConsPStack<E> next;
 
-            @Override
-            public E next() {
-                E e = next.first;
-                next = next.rest;
-                return e;
-            }
+        public Itr(ConsPStack<E> first) {
+            this.next = first;
+        }
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        @Override
+        public boolean hasNext() {
+            return next.size > 0;
+        }
+
+        @Override
+        public E next() {
+            E e = next.first;
+            next = next.rest;
+            return e;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public ConsPStack<E> plus(E e) {

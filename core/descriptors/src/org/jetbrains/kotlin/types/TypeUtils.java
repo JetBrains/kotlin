@@ -377,9 +377,9 @@ public class TypeUtils {
     }
 
     public static boolean contains(@Nullable KotlinType type, @NotNull final KotlinType specialType) {
-        return contains(type, new Function1<KotlinType, Boolean>() {
+        return contains(type, new Function1<UnwrappedType, Boolean>() {
             @Override
-            public Boolean invoke(KotlinType type) {
+            public Boolean invoke(UnwrappedType type) {
                 return specialType.equals(type);
             }
         });
@@ -387,12 +387,13 @@ public class TypeUtils {
 
     public static boolean contains(
             @Nullable KotlinType type,
-            @NotNull Function1<KotlinType, Boolean> isSpecialType
+            @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
         if (type == null) return false;
-        if (isSpecialType.invoke(type)) return true;
 
         UnwrappedType unwrappedType = type.unwrap();
+        if (isSpecialType.invoke(unwrappedType)) return true;
+
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
             && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {

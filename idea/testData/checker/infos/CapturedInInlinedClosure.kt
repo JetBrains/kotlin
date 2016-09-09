@@ -20,45 +20,45 @@ fun inline() {
 }
 
 fun notInline() {
-    val <info descr="Value captured in a closure">y2</info> = 1
+    val y2 = 1
     run { <info descr="Value captured in a closure">y2</info> }
     run2 { <warning><info descr="Value captured in a closure">y2</info></warning> }
 
-    val <info descr="Value captured in a closure">y3</info> = 1
+    val y3 = 1
     run2 { <warning><info descr="Value captured in a closure">y3</info></warning> }
     run { <info descr="Value captured in a closure">y3</info> }
 
     // wrapped, using in not inline
-    val <info descr="Value captured in a closure">z</info> = 2
+    val z = 2
     { <info descr="Value captured in a closure">z</info> }()
 
-    val <info descr="Value captured in a closure">z1</info> = 3
+    val z1 = 3
     run2 { <warning><info descr="Value captured in a closure">z1</info></warning> }
 }
 
 fun nestedDifferent() { // inline within non-inline and vice-versa
-    val <info descr="Value captured in a closure">y</info> = 1
+    val y = 1
     {
         run {
             <info descr="Value captured in a closure">y</info>
         }
     }()
 
-    val <info descr="Value captured in a closure">y1</info> = 1
+    val y1 = 1
     run {
         { <info descr="Value captured in a closure">y1</info> }()
     }
 }
 
 fun localFunctionAndClass() {
-    val <info descr="Value captured in a closure">u</info> = 1
+    val u = 1
     fun localFun() {
         run {
             <info descr="Value captured in a closure">u</info>
         }
     }
 
-    val <info descr="Value captured in a closure">v</info> = 1
+    val v = 1
     class LocalClass {
         fun f() {
             run {
@@ -69,7 +69,7 @@ fun localFunctionAndClass() {
 }
 
 fun objectExpression() {
-    val <info descr="Value captured in a closure">u1</info> = 1
+    val u1 = 1
     object : Any() {
         fun f() {
             run {
@@ -78,14 +78,14 @@ fun objectExpression() {
         }
     }
 
-    val <info descr="Value captured in a closure">u2</info> = 1
+    val u2 = 1
     object : Any() {
         val prop = run {
             <info descr="Value captured in a closure">u2</info>
         }
     }
 
-    val <info descr="Value captured in a closure">u3</info> = ""
+    val u3 = ""
     object : Throwable(run { <info descr="Value captured in a closure">u3</info> }) {
     }
 }
@@ -95,7 +95,7 @@ fun objectExpression() {
     task2()
 }
 
-fun usage(<info descr="Value captured in a closure">param1</info>: Int, param2: Int) {
+fun usage(param1: Int, param2: Int) {
     withNoInlineParam({ println(<info descr="Value captured in a closure">param1</info>) }, { println(param2) })
 }
 

@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -49,25 +49,24 @@ class PropertyReferenceCodegen(
         classBuilder: ClassBuilder,
         private val localVariableDescriptorForReference: VariableDescriptor,
         private val target: VariableDescriptor,
-        dispatchReceiver: ReceiverValue?,
-        private val receiverType: Type? // non-null for bound references
+        private val receiverType: Type?
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val classDescriptor = context.contextDescriptor
     private val asmType = typeMapper.mapClass(classDescriptor)
 
-    private val dispatchReceiverType = dispatchReceiver?.type
-    private val extensionReceiverType = target.extensionReceiverParameter?.type
-
-    private val receiverCount =
-            (if (dispatchReceiverType != null) 1 else 0) +
-            (if (extensionReceiverType != null) 1 else 0) -
-            (if (receiverType != null) 1 else 0)
-
     // e.g. MutablePropertyReference0
     private val superAsmType = typeMapper.mapClass(classDescriptor.getSuperClassNotAny().sure { "No super class for $classDescriptor" })
 
+    private val isLocalDelegatedProperty = target is LocalVariableDescriptor
+
+    val getFunction =
+            if (isLocalDelegatedProperty)
+                (localVariableDescriptorForReference as VariableDescriptorWithAccessors).getter!!
+            else
+                findGetFunction(localVariableDescriptorForReference).original
+
     // e.g. mutableProperty0(Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
-    private val wrapperMethod = getWrapperMethodForPropertyReference(target, receiverCount)
+    private val wrapperMethod = getWrapperMethodForPropertyReference(target, getFunction.valueParameters.size)
 
     private val closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)!!.apply {
         assert((captureReceiverType != null) == (receiverType != null)) {
@@ -114,7 +113,7 @@ class PropertyReferenceCodegen(
             aconst(getPropertyReferenceSignature(target as VariableDescriptorWithAccessors, state))
         }
 
-        if (target !is LocalVariableDescriptor) {
+        if (!isLocalDelegatedProperty) {
             generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
                 ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
             }
@@ -135,58 +134,17 @@ class PropertyReferenceCodegen(
     }
 
     private fun generateAccessors() {
-        fun generateAccessor(method: Method, accessorBody: InstructionAdapter.(StackValue) -> Unit) {
-            generateMethod("property reference $method", ACC_PUBLIC, method) {
-                // Note: this descriptor is an inaccurate representation of the get/set method. In particular, it has incorrect
-                // return type and value parameter types. However, it's created only to be able to use
-                // ExpressionCodegen#intermediateValueForProperty, which is poorly coupled with everything else.
-                val fakeDescriptor = SimpleFunctionDescriptorImpl.create(
-                        classDescriptor, Annotations.EMPTY, Name.identifier(method.name), CallableMemberDescriptor.Kind.DECLARATION,
-                        SourceElement.NO_SOURCE
-                )
-                fakeDescriptor.initialize(null, classDescriptor.thisAsReceiverParameter, emptyList(), emptyList(),
-                                          classDescriptor.builtIns.anyType, Modality.OPEN, Visibilities.PUBLIC)
-
-                val fakeCodegen = ExpressionCodegen(
-                        this, FrameMap(), OBJECT_TYPE, context.intoFunction(fakeDescriptor), state, this@PropertyReferenceCodegen
-                )
-                if (target is PropertyImportedFromObject) {
-                    val containingObject = target.containingObject
-                    StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), this)
-                }
-
-                if (receiverType != null) {
-                    StackValue.field(receiverType, asmType, AsmUtil.CAPTURED_RECEIVER_FIELD, /* isStatic = */ false, StackValue.LOCAL_0)
-                            .put(receiverType, this)
-                }
-                else {
-                    for ((index, type) in listOfNotNull(dispatchReceiverType, extensionReceiverType).withIndex()) {
-                        StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
-                    }
-                }
-
-                val value = if (target is LocalVariableDescriptor) {
-                    fakeCodegen.findLocalOrCapturedValue(target)!!
-                }
-                else fakeCodegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
-
-                accessorBody(value)
-            }
-        }
-
-        val getterParameters = (1..receiverCount).map { OBJECT_TYPE }.toTypedArray()
-        generateAccessor(method("get", OBJECT_TYPE, *getterParameters)) { value ->
-            value.put(OBJECT_TYPE, this)
-        }
+        val getFunction = findGetFunction(localVariableDescriptorForReference)
+        val getImpl = createFakeOpenDescriptor(getFunction, classDescriptor)
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, receiverType, element, state))
 
         if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
-
-        val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE))
-        generateAccessor(method("set", Type.VOID_TYPE, *setterParameters)) { value ->
-            // Number of receivers (not size) is safe here because there's only java/lang/Object in the signature, no double/long parameters
-            value.store(StackValue.local(receiverCount + 1, OBJECT_TYPE), this)
-        }
+        val setFunction = localVariableDescriptorForReference.type.memberScope.getContributedFunctions(OperatorNameConventions.SET, NoLookupLocation.FROM_BACKEND).single()
+        val setImpl = createFakeOpenDescriptor(setFunction, classDescriptor)
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, receiverType, element, state))
     }
+
+
 
     private fun generateMethod(debugString: String, access: Int, method: Method, generate: InstructionAdapter.() -> Unit) {
         val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, method.name, method.descriptor, null, null)
@@ -249,5 +207,60 @@ class PropertyReferenceCodegen(
                 }
             }
         }
+
+        @JvmStatic
+        fun createFakeOpenDescriptor(getFunction: FunctionDescriptor, classDescriptor: ClassDescriptor): FunctionDescriptor {
+            return getFunction.original.copy(classDescriptor, Modality.OPEN, getFunction.visibility, getFunction.kind, false)
+        }
+
+        @JvmStatic
+        fun findGetFunction(localVariableDescriptorForReference: VariableDescriptor) = localVariableDescriptorForReference.type.memberScope.getContributedFunctions(OperatorNameConventions.GET, NoLookupLocation.FROM_BACKEND).single()
+    }
+
+    class PropertyReferenceGenerationStrategy(
+            val isGetter: Boolean,
+            val originalFunctionDesc: FunctionDescriptor,
+            val target: VariableDescriptor,
+            val asmType: Type,
+            val receiverType: Type?,
+            val expression: KtElement,
+            state: GenerationState
+    ) :
+            FunctionGenerationStrategy.CodegenBased(state) {
+        override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+            val v = codegen.v
+            val typeMapper = state.typeMapper
+            if (target is PropertyImportedFromObject) {
+                val containingObject = target.containingObject
+                StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), v)
+            }
+
+            if (receiverType != null) {
+                capturedReceiver(asmType, receiverType).put(receiverType, v)
+            }
+            else {
+                val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)
+                receivers.forEachIndexed { i, valueParameterDescriptor ->
+                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), v)
+                }
+            }
+
+            val value = if (target is LocalVariableDescriptor) {
+                codegen.findLocalOrCapturedValue(target)!!
+            }
+            else
+                codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
+
+            codegen.markStartLineNumber(expression)
+            if (isGetter) {
+                value.put(OBJECT_TYPE, v)
+            }
+            else {
+                val functionDescriptor = codegen.context.functionDescriptor
+                value.store(StackValue.local(codegen.frameMap.getIndex(functionDescriptor.valueParameters.last()), OBJECT_TYPE), v)
+            }
+            v.areturn(signature.returnType)
+        }
     }
 }
+

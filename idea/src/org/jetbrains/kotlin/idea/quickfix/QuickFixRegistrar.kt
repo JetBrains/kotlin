@@ -417,6 +417,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(CreateTypeParameterByRefActionFactory)
 
+        FINAL_UPPER_BOUND.registerFactory(InlineTypeParameterFix)
+
         TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
     }
 }

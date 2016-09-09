@@ -47,6 +47,13 @@ fun resolveQualifierAsStandaloneExpression(
     val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, classifierUsageCheckers)
 
     when (referenceTarget) {
+        is TypeAliasDescriptor -> {
+            referenceTarget.classDescriptor?.let { classDescriptor ->
+                if (!classDescriptor.kind.isSingleton) {
+                    context.trace.report(Errors.NO_COMPANION_OBJECT.on(qualifier.referenceExpression, referenceTarget))
+                }
+            }
+        }
         is TypeParameterDescriptor -> {
             context.trace.report(Errors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(qualifier.referenceExpression, referenceTarget))
         }

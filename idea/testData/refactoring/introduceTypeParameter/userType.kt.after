@@ -1,0 +1,9 @@
+class A
+
+fun <T : List<A?>> foo(x: (T) -> Int) {
+
+}
+
+fun test() {
+    foo<List<A?>> { 1 }
+}

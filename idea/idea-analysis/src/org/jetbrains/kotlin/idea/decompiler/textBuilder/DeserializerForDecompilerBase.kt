@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -26,9 +28,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierResolver
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.SimpleType
 
 abstract class DeserializerForDecompilerBase(
         val packageDirectory: VirtualFile,
@@ -66,7 +69,7 @@ abstract class DeserializerForDecompilerBase(
     }
 }
 
-class ResolveEverythingToKotlinAnyLocalClassifierResolver(private val builtIns: KotlinBuiltIns) : LocalClassifierResolver {
-    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = builtIns.any
-    override fun resolveLocalTypeAlias(typeAliasId: ClassId): ClassifierDescriptor = builtIns.any
+class ResolveEverythingToKotlinAnyLocalClassifierResolver(private val builtIns: KotlinBuiltIns) : LocalClassifierTypeSettings {
+    override val replacementTypeForLocalClassifiers: SimpleType?
+        get() = builtIns.anyType
 }

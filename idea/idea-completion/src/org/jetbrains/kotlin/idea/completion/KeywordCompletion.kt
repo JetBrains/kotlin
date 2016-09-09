@@ -212,7 +212,7 @@ object KeywordCompletion {
                     }
                 }
 
-                is KtWithExpressionInitializer -> {
+                is KtDeclarationWithInitializer -> {
                     val initializer = parent.initializer
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)

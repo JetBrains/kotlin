@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.search
 
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -62,6 +64,23 @@ fun SearchScope.restrictToKotlinSources(): SearchScope {
             }
         }
         else -> this
+    }
+}
+
+fun SearchScope.excludeKotlinSources(): SearchScope = excludeFileTypes(KotlinFileType.INSTANCE)
+
+fun SearchScope.excludeFileTypes(vararg fileTypes: FileType): SearchScope {
+    if (this is GlobalSearchScope) {
+        val includedFileTypes = FileTypeRegistry.getInstance().registeredFileTypes.filter { it !in fileTypes }.toTypedArray()
+        return GlobalSearchScope.getScopeRestrictedByFileTypes(this, *includedFileTypes)
+    }
+    else {
+        this as LocalSearchScope
+        val filteredElements = scope.filter { it.containingFile.fileType !in fileTypes }
+        return if (filteredElements.isNotEmpty())
+            LocalSearchScope(filteredElements.toTypedArray())
+        else
+            GlobalSearchScope.EMPTY_SCOPE
     }
 }
 

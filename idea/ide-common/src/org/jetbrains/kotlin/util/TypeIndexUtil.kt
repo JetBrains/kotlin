@@ -63,6 +63,7 @@ fun KtTypeReference?.isProbablyNothing(): Boolean {
     return userType.isProbablyNothing()
 }
 
+//TODO: support type aliases
 fun KtUserType?.isProbablyNothing(): Boolean {
     if (this == null) return false
     val referencedName = referencedName

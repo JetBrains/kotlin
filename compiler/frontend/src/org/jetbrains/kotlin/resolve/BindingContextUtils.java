@@ -181,7 +181,7 @@ public class BindingContextUtils {
     @Nullable
     public static KotlinTypeInfo getRecordedTypeInfo(@NotNull KtExpression expression, @NotNull BindingContext context) {
         // noinspection ConstantConditions
-        if (!context.get(BindingContext.PROCESSED, expression)) return null;
+        if (context.get(BindingContext.PROCESSED, expression) != Boolean.TRUE) return null;
         // NB: should never return null if expression is already processed
         KotlinTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         return result != null ? result : TypeInfoFactoryKt.noTypeInfo(DataFlowInfoFactory.EMPTY);

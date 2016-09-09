@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -68,6 +70,14 @@ class TypeDeserializer(
     }
 
     fun simpleType(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): SimpleType {
+        val localClassifierType = when {
+            proto.hasClassName() -> computeLocalClassifierReplacementType(proto.className)
+            proto.hasTypeAliasName() -> computeLocalClassifierReplacementType(proto.typeAliasName)
+            else -> null
+        }
+
+        if (localClassifierType != null) return localClassifierType
+
         val constructor = typeConstructor(proto)
         if (ErrorUtils.isError(constructor.declarationDescriptor)) {
             return ErrorUtils.createErrorTypeWithCustomConstructor(constructor.toString(), constructor)
@@ -122,15 +132,23 @@ class TypeDeserializer(
         val id = c.nameResolver.getClassId(fqNameIndex)
         if (id.isLocal) {
             // Local classes can't be found in scopes
-            return c.components.localClassifierResolver.resolveLocalClass(id)
+            return c.components.deserializeClass(id)
         }
         return c.components.moduleDescriptor.findClassAcrossModuleDependencies(id)
+    }
+
+    private fun computeLocalClassifierReplacementType(className: Int): SimpleType? {
+        if (c.nameResolver.getClassId(className).isLocal) {
+            return c.components.localClassifierTypeSettings.replacementTypeForLocalClassifiers
+        }
+        return null
     }
 
     private fun computeTypeAliasDescriptor(fqNameIndex: Int): ClassifierDescriptor? {
         val id = c.nameResolver.getClassId(fqNameIndex)
         return if (id.isLocal) {
-            c.components.localClassifierResolver.resolveLocalTypeAlias(id)
+            // TODO: support deserialization of local type aliases (see KT-13692)
+            return null
         }
         else {
             c.components.moduleDescriptor.findTypeAliasAcrossModuleDependencies(id)

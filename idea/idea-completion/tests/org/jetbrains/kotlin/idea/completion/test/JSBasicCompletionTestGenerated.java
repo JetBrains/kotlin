@@ -1184,6 +1184,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/boldOrGrayed/SafeCallAfterNullable.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("TwoReceivers.kt")
+            public void testTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/boldOrGrayed/TwoReceivers.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/callableReference")

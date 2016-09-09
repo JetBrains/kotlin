@@ -1,5 +1,5 @@
 class A() {
-    fun p<caret>lus(rhs: A): A {
+    operator fun p<caret>lus(rhs: A): A {
         return A()
     }
 }

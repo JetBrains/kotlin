@@ -119,6 +119,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
         doTest(fileName);
     }
 
+    @TestMetadata("showDiagnosticsWhenFileIsRed.kt")
+    public void testShowDiagnosticsWhenFileIsRed() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/uast-kotlin/testData/lint/showDiagnosticsWhenFileIsRed.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("sqlite.kt")
     public void testSqlite() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/uast-kotlin/testData/lint/sqlite.kt");

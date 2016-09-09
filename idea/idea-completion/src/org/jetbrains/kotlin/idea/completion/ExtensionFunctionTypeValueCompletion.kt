@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.ReceiverType
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 class ExtensionFunctionTypeValueCompletion(
-        private val receiverTypes: Collection<KotlinType>,
+        private val receiverTypes: Collection<ReceiverType>,
         private val callType: CallType<*>,
         private val lookupElementFactory: LookupElementFactory
 ) {
@@ -49,7 +49,7 @@ class ExtensionFunctionTypeValueCompletion(
 
             val invokes = variableType.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_IDE)
             for (invoke in createSynthesizedInvokes(invokes)) {
-                for (substituted in invoke.substituteExtensionIfCallable(receiverTypes, callType)) {
+                for (substituted in invoke.substituteExtensionIfCallable(receiverTypes.map { it.type }, callType)) {
                     val factory = object : AbstractLookupElementFactory {
                         override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
                             if (!useReceiverTypes) return emptyList()

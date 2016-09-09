@@ -191,6 +191,24 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("InSuperTypeCallCallInLambdaInCall.kt")
+    public void testInSuperTypeCallCallInLambdaInCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InSuperTypeCallCallInLambdaInCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InSuperTypeCallInLambaInBody.kt")
+    public void testInSuperTypeCallInLambaInBody() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InSuperTypeCallInLambaInBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InSuperTypeCallInLambdaParameters.kt")
+    public void testInSuperTypeCallInLambdaParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InSuperTypeCallInLambdaParameters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InitBlock.kt")
     public void testInitBlock() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InitBlock.kt");

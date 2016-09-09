@@ -37,7 +37,6 @@ import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -45,7 +44,9 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODUCE_PROPERTY
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.KotlinIntroduceTypeParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -114,7 +115,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             with (handler) {
                 val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
-                    KotlinRefactoringUtil.selectElement(fixture.getEditor(), file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
+                    selectElement(fixture.getEditor(), file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
                         invoke(fixture.getProject(), fixture.getEditor(), element as KtExpression, target)
                     }
                 }
@@ -310,6 +311,18 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             )
             handler.selectElements(editor, file) { elements, previousSibling ->
                 handler.doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
+            }
+        }
+    }
+
+    protected fun doIntroduceTypeParameterTest(path: String) {
+        doTest(path) { file ->
+            file as KtFile
+
+            val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
+            val editor = fixture.editor
+            KotlinIntroduceTypeParameterHandler.selectElements(editor, file) { elements, previousSibling ->
+                KotlinIntroduceTypeParameterHandler.doInvoke(project, editor, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }

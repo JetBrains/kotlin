@@ -66,7 +66,7 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<TCallable> {
-    var types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
+    val types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
     return substituteExtensionIfCallable(types, callType)
 }
 

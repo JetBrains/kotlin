@@ -191,18 +191,17 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             return null
         }
 
-        val referenceInternalName: String
-        try {
+        val referenceInternalName = try {
             if (location.declaringType().containsKotlinStrata()) {
                 //replace is required for windows
-                referenceInternalName = location.sourcePath().replace('\\', '/')
+                location.sourcePath().replace('\\', '/')
             }
             else {
-                referenceInternalName = defaultInternalName(location)
+                defaultInternalName(location)
             }
         }
         catch (e: AbsentInformationException) {
-            referenceInternalName = defaultInternalName(location)
+            defaultInternalName(location)
         }
 
         val className = JvmClassName.byInternalName(referenceInternalName)

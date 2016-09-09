@@ -22,8 +22,6 @@ import com.intellij.find.findUsages.JavaFindUsagesHelper
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -44,9 +42,10 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchPar
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.isConstructorUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
-import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -71,19 +70,60 @@ class KotlinFindClassUsagesHandler(
                                            this)
     }
 
-    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        val kotlinOptions = options as KotlinClassFindUsagesOptions
+    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+        return MySearcher(element, processor, options)
+    }
 
-        fun processInheritors(): Boolean {
-            val request = HierarchySearchRequest(element, options.searchScope, options.isCheckDeepInheritance)
-            return runReadAction {
+    private class MySearcher(
+            element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions
+    ) : Searcher(element, processor, options) {
+
+        private val kotlinOptions = options as KotlinClassFindUsagesOptions
+        private val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
+
+        override fun buildTaskList(): Boolean {
+            val classOrObject = element as KtClassOrObject
+
+            if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
+                processClassReferencesLater(classOrObject)
+            }
+
+            if (kotlinOptions.isFieldsUsages || kotlinOptions.isMethodsUsages) {
+                processMemberReferencesLater(classOrObject)
+            }
+
+            if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion() && classOrObject in options.searchScope ) {
+                if (!processCompanionObjectInternalReferences(classOrObject)) return false
+            }
+
+            if (kotlinOptions.searchConstructorUsages) {
+                classOrObject.toLightClass()?.constructors?.filterIsInstance<KtLightMethod>()?.forEach { constructor ->
+                    val scope = constructor.useScope.intersectWith(options.searchScope)
+                    val task = constructor.buildProcessDelegationCallConstructorUsagesTask(scope) {
+                        it.calleeExpression?.mainReference?.let { referenceProcessor.process(it) } ?: false
+                    }
+                    addTask(task)
+                }
+            }
+
+            if (kotlinOptions.isDerivedClasses || kotlinOptions.isDerivedInterfaces) {
+                processInheritorsLater()
+            }
+
+            return true
+        }
+
+        private fun processInheritorsLater() {
+            val request = HierarchySearchRequest(element, options.searchScope, kotlinOptions.isCheckDeepInheritance)
+            addTask {
                 request.searchInheritors().forEach(
                         PsiElementProcessorAdapter(
-                                object : PsiElementProcessor<PsiClass> {
-                                    override fun execute(element: PsiClass): Boolean {
+                                PsiElementProcessor<PsiClass> { element ->
+                                    runReadAction {
+                                        if (!element.isValid) return@runReadAction false
                                         val isInterface = element.isInterface
-                                        return when {
-                                            isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
+                                        when {
+                                            isInterface && kotlinOptions.isDerivedInterfaces || !isInterface && kotlinOptions.isDerivedClasses ->
                                                 KotlinFindUsagesHandler.processUsage(processor, element.navigationElement)
                                             else -> true
                                         }
@@ -94,101 +134,49 @@ class KotlinFindClassUsagesHandler(
             }
         }
 
-        val classOrObject = element as KtClassOrObject
-        val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
+        private fun processClassReferencesLater(classOrObject: KtClassOrObject) {
+            val searchParameters = KotlinReferencesSearchParameters(classOrObject,
+                                                                    scope = options.searchScope,
+                                                                    kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
+            var usagesQuery = ReferencesSearch.search(searchParameters)
 
-        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
-            if (!processClassReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
-        }
-
-        if (kotlinOptions.isFieldsUsages || kotlinOptions.isMethodsUsages) {
-            if (!processMemberReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
-        }
-
-        if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion() && classOrObject in options.searchScope) {
-            if (!processCompanionObjectInternalReferences(classOrObject, referenceProcessor)) {
-                return false
+            if (kotlinOptions.isSkipImportStatements) {
+                usagesQuery = FilteredQuery(usagesQuery) { !it.isImportUsage() }
             }
-        }
 
-        if (kotlinOptions.searchConstructorUsages) {
-            val result = runReadAction {
-                val constructors = classOrObject.toLightClass()?.constructors ?: PsiMethod.EMPTY_ARRAY
-                constructors.filterIsInstance<KtLightMethod>().all { constructor ->
-                    constructor.processDelegationCallConstructorUsages(constructor.useScope.intersectWith(options.searchScope)) {
-                        it.calleeExpression?.mainReference?.let { referenceProcessor.process(it) } ?: false
-                    }
-                }
+            if (!kotlinOptions.searchConstructorUsages) {
+                usagesQuery = FilteredQuery(usagesQuery) { !it.isConstructorUsage(classOrObject) }
             }
-            if (!result) return false
+            else if (!options.isUsages) {
+                usagesQuery = FilteredQuery(usagesQuery) { it.isConstructorUsage(classOrObject) }
+            }
+            addTask { usagesQuery.forEach(referenceProcessor) }
         }
 
-        if (options.isDerivedClasses || options.isDerivedInterfaces) {
-            if (!processInheritors()) return false
-        }
-
-        return true
-    }
-
-    private fun processClassReferences(classOrObject: KtClassOrObject,
-                                       options: KotlinClassFindUsagesOptions,
-                                       processor: Processor<PsiReference>): Boolean {
-        val searchParameters = KotlinReferencesSearchParameters(classOrObject,
-                                                                scope = options.searchScope,
-                                                                kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
-        var usagesQuery = ReferencesSearch.search(searchParameters)
-
-        if (options.isSkipImportStatements) {
-            usagesQuery = FilteredQuery(usagesQuery) { !it.isImportUsage() }
-        }
-
-        if (!options.searchConstructorUsages) {
-            usagesQuery = FilteredQuery(usagesQuery) { !it.isConstructorUsage(classOrObject) }
-        }
-        else if (!options.isUsages) {
-            usagesQuery = FilteredQuery(usagesQuery) { it.isConstructorUsage(classOrObject) }
-        }
-        return usagesQuery.forEach(processor)
-    }
-
-    private fun processCompanionObjectInternalReferences(companionObject: KtObjectDeclaration,
-                                                         processor: Processor<PsiReference>): Boolean {
-        var stop: Boolean = false
-        runReadAction {
-            val klass = companionObject.getStrictParentOfType<KtClass>() ?: return@runReadAction
+        private fun processCompanionObjectInternalReferences(companionObject: KtObjectDeclaration): Boolean {
+            val klass = companionObject.getStrictParentOfType<KtClass>() ?: return true
             val companionObjectDescriptor = companionObject.descriptor
-            klass.acceptChildren(object : KtVisitorVoid() {
-                override fun visitKtElement(element: KtElement) {
-                    if (element == companionObject) return // skip companion object itself
-                    if (stop) return
-                    element.acceptChildren(this)
+            return !klass.anyDescendantOfType<KtElement>(fun (element: KtElement): Boolean {
+                if (element == companionObject) return false // skip companion object itself
 
-                    val bindingContext = element.analyze()
-                    val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
-                    if ((resolvedCall.dispatchReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
-                        || (resolvedCall.extensionReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
-                        element.references.forEach {
-                            if (!stop && !processor.process(it)) {
-                                stop = true
-                            }
-                        }
-                    }
+                val bindingContext = element.analyze()
+                val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return false
+                if ((resolvedCall.dispatchReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
+                    || (resolvedCall.extensionReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
+                    return  element.references.any { !referenceProcessor.process(it) }
                 }
+                return false
             })
         }
-        return !stop
-    }
 
-    private fun processMemberReferences(classOrObject: KtClassOrObject,
-                                        options: KotlinClassFindUsagesOptions,
-                                        processor: Processor<PsiReference>): Boolean {
-        for (decl in classOrObject.effectiveDeclarations()) {
-            if ((decl is KtNamedFunction && options.isMethodsUsages) ||
-                ((decl is KtProperty || decl is KtParameter) && options.isFieldsUsages)) {
-                if (!ReferencesSearch.search(decl, options.searchScope).forEach(processor)) return false
+        private fun processMemberReferencesLater(classOrObject: KtClassOrObject) {
+            for (declaration in classOrObject.effectiveDeclarations()) {
+                if ((declaration is KtNamedFunction && kotlinOptions.isMethodsUsages) ||
+                    ((declaration is KtProperty || declaration is KtParameter) && kotlinOptions.isFieldsUsages)) {
+                    addTask { ReferencesSearch.search(declaration, options.searchScope).forEach(referenceProcessor) }
+                }
             }
         }
-        return true
     }
 
     override fun getStringsToSearch(element: PsiElement): Collection<String> {

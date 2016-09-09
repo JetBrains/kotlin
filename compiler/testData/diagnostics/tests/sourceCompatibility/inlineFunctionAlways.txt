@@ -1,0 +1,13 @@
+package
+
+public inline fun test(): kotlin.Unit
+public inline fun kotlin.String.test(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final inline fun kotlin.String.test(): kotlin.Unit
+}

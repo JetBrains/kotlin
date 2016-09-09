@@ -541,8 +541,8 @@ class KotlinPsiUnifier(
                 is KtDeclarationWithBody ->
                     doUnify(decl1.bodyExpression, (decl2 as KtDeclarationWithBody).bodyExpression)
 
-                is KtWithExpressionInitializer ->
-                    doUnify(decl1.initializer, (decl2 as KtWithExpressionInitializer).initializer)
+                is KtDeclarationWithInitializer ->
+                    doUnify(decl1.initializer, (decl2 as KtDeclarationWithInitializer).initializer)
 
                 is KtParameter ->
                     doUnify(decl1.defaultValue, (decl2 as KtParameter).defaultValue)
@@ -689,7 +689,7 @@ class KotlinPsiUnifier(
 
             declarationPatternsToTargets.putValue(desc1, desc2)
             val status = when (decl1) {
-                is KtDeclarationWithBody, is KtWithExpressionInitializer, is KtParameter ->
+                is KtDeclarationWithBody, is KtDeclarationWithInitializer, is KtParameter ->
                     matchCallables(decl1, decl2, desc1 as CallableDescriptor, desc2 as CallableDescriptor)
 
                 is KtClassOrObject ->

@@ -51,6 +51,7 @@ object IdeDescriptorRenderers {
         overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
         unitReturnType = false
         modifiers = DescriptorRendererModifier.ALL
+        renderUnabbreviatedType = false
     }
 
     @JvmField val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {

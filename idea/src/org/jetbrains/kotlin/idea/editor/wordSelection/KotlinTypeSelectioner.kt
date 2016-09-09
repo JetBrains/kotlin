@@ -37,8 +37,10 @@ class KotlinTypeSelectioner : ExtendWordSelectionHandlerBase() {
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        if (e.getStrictParentOfType<KtObjectDeclaration>() != null) return null
-        val colonPosition = e.getStrictParentOfType<KtCallableDeclaration>()?.colon?.startOffset ?: return null
+        if (e !is KtTypeReference) return null
+        val callableDeclaration = e.parent as? KtCallableDeclaration ?: return null
+        if (e != callableDeclaration.typeReference) return null
+        val colonPosition = callableDeclaration.colon?.startOffset ?: return null
         return listOf(TextRange(colonPosition, e.endOffset))
     }
 }

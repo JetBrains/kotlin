@@ -65,7 +65,7 @@ class DeserializedClassDescriptor(
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
-    private val nestedTypeAliases = c.storageManager.createLazyValue { computeTypeAliases() }
+    private val nestedTypeAliases = c.storageManager.createLazyValue { NestedTypeAliases() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
@@ -271,13 +271,14 @@ class DeserializedClassDescriptor(
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             recordLookup(name, location)
-            return classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
+            return classDescriptor.enumEntries?.findEnumEntry(name) ?:
+                   classDescriptor.nestedClasses?.findNestedClass(name) ?:
+                   classDescriptor.nestedTypeAliases().findTypeAlias(name)
         }
 
         override fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.nestedClasses?.all().orEmpty())
-            result.addAll(classDescriptor.nestedTypeAliases())
-            // TODO non-declared type aliases
+            result.addAll(classDescriptor.nestedTypeAliases().all())
         }
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
@@ -306,6 +307,15 @@ class DeserializedClassDescriptor(
 
         fun all(): Collection<ClassDescriptor> =
                 nestedClassNames.mapNotNull { name -> nestedClassByName(name) }
+    }
+
+    private inner class NestedTypeAliases {
+        private val nestedTypeAliases = computeTypeAliases()
+        private val nestedTypeAliasesByName = nestedTypeAliases.associateBy { it.name }
+
+        fun all() = nestedTypeAliases
+
+        fun findTypeAlias(name: Name): TypeAliasDescriptor? = nestedTypeAliasesByName[name]
     }
 
     private inner class EnumEntryClassDescriptors {

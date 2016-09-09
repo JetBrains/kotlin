@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.lang.RuntimeException
+import java.util.*
 
 sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: DescriptorKindFilter) {
     object UNKNOWN : CallType<Nothing?>(DescriptorKindFilter.ALL)
@@ -208,6 +210,8 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     }
 }
 
+data class ReceiverType(val type: KotlinType, val receiverIndex: Int)
+
 fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
         contextElement: PsiElement,
@@ -215,17 +219,28 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
         resolutionFacade: ResolutionFacade,
         stableSmartCastsOnly: Boolean
 ): Collection<KotlinType>? {
+    return receiverTypesWithIndex(bindingContext, contextElement, moduleDescriptor, resolutionFacade, stableSmartCastsOnly)?.map { it.type }
+}
+
+fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
+        bindingContext: BindingContext,
+        contextElement: PsiElement,
+        moduleDescriptor: ModuleDescriptor,
+        resolutionFacade: ResolutionFacade,
+        stableSmartCastsOnly: Boolean
+): Collection<ReceiverType>? {
     val receiverExpression: KtExpression?
     when (this) {
         is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
             if (receiver != null) {
                 val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] ?: return emptyList()
                 when (lhs) {
-                    is DoubleColonLHS.Type -> return listOf(lhs.type)
+                    is DoubleColonLHS.Type -> return listOf(ReceiverType(lhs.type, 0))
 
                     is DoubleColonLHS.Expression -> {
                         val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
                         return receiverValueTypes(receiverValue, lhs.dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
+                                .map { ReceiverType(it, 0) }
                     }
                 }
             }
@@ -245,12 +260,12 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
         is CallTypeAndReceiver.SUPER_MEMBERS -> {
             val qualifier = receiver.superTypeQualifier
             if (qualifier != null) {
-                return bindingContext.getType(receiver).singletonOrEmptyList()
+                return bindingContext.getType(receiver).singletonOrEmptyList().map { ReceiverType(it, 0) }
             }
             else {
                 val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
                 val classDescriptor = resolutionScope.ownerDescriptor.parentsWithSelf.firstIsInstanceOrNull<ClassDescriptor>() ?: return emptyList()
-                return classDescriptor.typeConstructor.supertypesWithAny()
+                return classDescriptor.typeConstructor.supertypesWithAny().map { ReceiverType(it, 0) }
             }
         }
 
@@ -280,9 +295,12 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
 
     val dataFlowInfo = bindingContext.getDataFlowInfo(contextElement)
 
-    return receiverValues.flatMap {
-        receiverValueTypes(it, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
+    val result = ArrayList<ReceiverType>()
+    for ((receiverIndex, receiverValue) in receiverValues.withIndex()) {
+        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly)
+        types.mapTo(result) { ReceiverType(it, receiverIndex) }
     }
+    return result
 }
 
 private fun receiverValueTypes(

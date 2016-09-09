@@ -146,8 +146,7 @@ public class FunctionReference extends FunctionImpl implements KFunction {
                    getSignature().equals(other.getSignature());
         }
         if (obj instanceof KFunction) {
-            compute();
-            return obj.equals(reflected);
+            return obj.equals(compute());
         }
         return false;
     }
@@ -159,7 +158,7 @@ public class FunctionReference extends FunctionImpl implements KFunction {
 
     @Override
     public String toString() {
-        compute();
+        KFunction reflected = compute();
         if (reflected != this) {
             return reflected.toString();
         }
@@ -171,17 +170,19 @@ public class FunctionReference extends FunctionImpl implements KFunction {
     }
 
     public KFunction compute() {
-        if (reflected == null) {
-            reflected = Reflection.function(this);
+        KFunction result = reflected;
+        if (result == null) {
+            result = Reflection.function(this);
+            reflected = result;
         }
-        return reflected;
+        return result;
     }
 
     private KFunction getReflected() {
-        compute();
-        if (reflected == this) {
+        KFunction result = compute();
+        if (result == this) {
             throw new KotlinReflectionNotSupportedError();
         }
-        return reflected;
+        return result;
     }
 }

@@ -1,0 +1,6 @@
+package
+
+public fun exc(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun f1(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun f2(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun f3(/*0*/ flag: kotlin.Boolean): kotlin.Unit

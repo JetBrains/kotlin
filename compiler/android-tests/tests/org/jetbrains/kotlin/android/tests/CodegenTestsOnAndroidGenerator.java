@@ -155,7 +155,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         }
 
         private KotlinCoreEnvironment createEnvironment(boolean isFullJdkAndRuntime) {
-            ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.JDK_ONLY;
+            ConfigurationKind configurationKind = isFullJdkAndRuntime ? ConfigurationKind.ALL : ConfigurationKind.NO_KOTLIN_REFLECT;
             TestJdkKind testJdkKind = isFullJdkAndRuntime ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
             CompilerConfiguration configuration =
                     KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, KotlinTestUtils.getAnnotationsJar());

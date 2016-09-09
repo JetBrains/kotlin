@@ -98,6 +98,10 @@ object ModifierCheckerCore {
             INLINE_KEYWORD   to LanguageFeature.InlineProperties
     )
 
+    val featureDependenciesTargets = mapOf(
+            LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
+    )
+
     // NOTE: deprecated targets must be possible!
     private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
 
@@ -261,7 +265,8 @@ object ModifierCheckerCore {
         val dependency = featureDependencies[modifier] ?: return true
 
         if (!languageFeatureSettings.supportsFeature(dependency)) {
-            if (dependency == LanguageFeature.InlineProperties && actualTargets.size == 1 && actualTargets.contains(FUNCTION)) {
+            val restrictedTargets = featureDependenciesTargets[dependency]
+            if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 return true
             }
             trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
