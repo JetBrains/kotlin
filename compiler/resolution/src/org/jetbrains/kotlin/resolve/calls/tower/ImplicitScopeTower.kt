@@ -43,21 +43,21 @@ interface ImplicitScopeTower {
 }
 
 interface ScopeTowerLevel {
-    fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
-    fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
-    fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
+    fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 }
 
-interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
-    val descriptor: D
+interface CandidateWithBoundDispatchReceiver {
+    val descriptor: CallableDescriptor
 
     val diagnostics: List<ResolutionDiagnostic>
 
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
 
-    fun copy(newDescriptor: @UnsafeVariance D): CandidateWithBoundDispatchReceiver<D>
+    fun copy(newDescriptor: CallableDescriptor): CandidateWithBoundDispatchReceiver
 }
 
 data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {

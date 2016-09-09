@@ -78,14 +78,14 @@ class NewResolutionOldInference(
                 scopeTower: ImplicitScopeTower,
                 explicitReceiver: DetailedReceiver?,
                 context: BasicCallResolutionContext
-        ): ScopeTowerProcessor<MyCandidate<D>>
+        ): ScopeTowerProcessor<MyCandidate>
 
         object Function : ResolutionKind<FunctionDescriptor>() {
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
-            ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
-                val functionFactory = outer.CandidateFactoryImpl<FunctionDescriptor>(name, context, tracing)
+            ): ScopeTowerProcessor<MyCandidate> {
+                val functionFactory = outer.CandidateFactoryImpl(name, context, tracing)
                 return createFunctionProcessor(scopeTower, name, functionFactory, outer.CandidateFactoryProviderForInvokeImpl(functionFactory), explicitReceiver)
             }
         }
@@ -94,8 +94,8 @@ class NewResolutionOldInference(
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
-            ): ScopeTowerProcessor<MyCandidate<VariableDescriptor>> {
-                val variableFactory = outer.CandidateFactoryImpl<VariableDescriptor>(name, context, tracing)
+            ): ScopeTowerProcessor<MyCandidate> {
+                val variableFactory = outer.CandidateFactoryImpl(name, context, tracing)
                 return createVariableAndObjectProcessor(scopeTower, name, variableFactory, explicitReceiver)
             }
         }
@@ -104,9 +104,9 @@ class NewResolutionOldInference(
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
-            ): ScopeTowerProcessor<MyCandidate<CallableDescriptor>> {
-                val functionFactory = outer.CandidateFactoryImpl<FunctionDescriptor>(name, context, tracing)
-                val variableFactory = outer.CandidateFactoryImpl<VariableDescriptor>(name, context, tracing)
+            ): ScopeTowerProcessor<MyCandidate> {
+                val functionFactory = outer.CandidateFactoryImpl(name, context, tracing)
+                val variableFactory = outer.CandidateFactoryImpl(name, context, tracing)
                 return CompositeScopeTowerProcessor(
                         createSimpleFunctionProcessor(scopeTower, name, functionFactory, explicitReceiver, classValueReceiver = false),
                         createVariableProcessor(scopeTower, name, variableFactory, explicitReceiver, classValueReceiver = false)
@@ -118,8 +118,8 @@ class NewResolutionOldInference(
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
-            ): ScopeTowerProcessor<MyCandidate<FunctionDescriptor>> {
-                val functionFactory = outer.CandidateFactoryImpl<FunctionDescriptor>(name, context, tracing)
+            ): ScopeTowerProcessor<MyCandidate> {
+                val functionFactory = outer.CandidateFactoryImpl(name, context, tracing)
                 // todo
                 val call = (context.call as? CallTransformer.CallForImplicitInvoke).sure {
                     "Call should be CallForImplicitInvoke, but it is: ${context.call}"
@@ -135,7 +135,7 @@ class NewResolutionOldInference(
             override fun createTowerProcessor(
                     outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                     scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
-            ): ScopeTowerProcessor<MyCandidate<D>> {
+            ): ScopeTowerProcessor<MyCandidate> {
                 throw IllegalStateException("Should be not called")
             }
         }
@@ -190,7 +190,7 @@ class NewResolutionOldInference(
             }
         }
 
-        val overloadResults = convertToOverloadResults(candidates, tracing, context, languageVersionSettings)
+        val overloadResults = convertToOverloadResults<D>(candidates, tracing, context, languageVersionSettings)
         coroutineInferenceSupport.checkCoroutineCalls(context, tracing, overloadResults)
         return overloadResults
     }
@@ -229,13 +229,13 @@ class NewResolutionOldInference(
         return convertToOverloadResults(processedCandidates, tracing, basicCallContext, languageVersionSettings)
     }
 
-    private fun <D: CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate<D>>)
+    private fun <D: CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate>)
             = OverloadResolutionResultsImpl.nameNotFound<D>().apply {
-        this.allCandidates = allCandidates.map { it.resolvedCall }
+        this.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<D> }
     }
 
     private fun <D : CallableDescriptor> convertToOverloadResults(
-            candidates: Collection<MyCandidate<D>>,
+            candidates: Collection<MyCandidate>,
             tracing: TracingStrategy,
             basicCallContext: BasicCallResolutionContext,
             languageVersionSettings: LanguageVersionSettings
@@ -269,7 +269,7 @@ class NewResolutionOldInference(
                 }
             }
 
-            resolvedCall
+            resolvedCall as MutableResolvedCall<D>
         }
 
         return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls, languageVersionSettings)
@@ -318,9 +318,9 @@ class NewResolutionOldInference(
         override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
     }
 
-    internal data class MyCandidate<out D: CallableDescriptor>(
+    internal data class MyCandidate(
             val candidateStatus: ResolutionCandidateStatus,
-            val resolvedCall: MutableResolvedCall<@UnsafeVariance D>
+            val resolvedCall: MutableResolvedCall<*>
     ) : Candidate {
         override val isSuccessful: Boolean
             get() = candidateStatus.resultingApplicability.isSuccess
@@ -328,16 +328,16 @@ class NewResolutionOldInference(
             get() = candidateStatus
     }
 
-    private inner class CandidateFactoryImpl<D : CallableDescriptor>(
+    private inner class CandidateFactoryImpl(
             val name: Name,
             val basicCallContext: BasicCallResolutionContext,
             val tracing: TracingStrategy
-    ) : CandidateFactory<D, MyCandidate<D>> {
+    ) : CandidateFactory<MyCandidate> {
         override fun createCandidate(
-                towerCandidate: CandidateWithBoundDispatchReceiver<D>,
+                towerCandidate: CandidateWithBoundDispatchReceiver,
                 explicitReceiverKind: ExplicitReceiverKind,
                 extensionReceiver: ReceiverValueWithSmartCastInfo?
-        ): MyCandidate<D> {
+        ): MyCandidate {
 
             val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
             val candidateCall = ResolvedCallImpl(
@@ -394,16 +394,16 @@ class NewResolutionOldInference(
     }
 
     private inner class CandidateFactoryProviderForInvokeImpl(
-            val functionContext: CandidateFactoryImpl<FunctionDescriptor>
-    ) : CandidateFactoryProviderForInvoke<MyCandidate<FunctionDescriptor>, MyCandidate<VariableDescriptor>> {
+            val functionContext: CandidateFactoryImpl
+    ) : CandidateFactoryProviderForInvoke<MyCandidate> {
 
         override fun transformCandidate(
-                variable: MyCandidate<VariableDescriptor>,
-                invoke: MyCandidate<FunctionDescriptor>
-        ): MyCandidate<FunctionDescriptor> {
+                variable: MyCandidate,
+                invoke: MyCandidate
+        ): MyCandidate {
             val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
-                    invoke.resolvedCall,
-                    variable.resolvedCall
+                    invoke.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
+                    variable.resolvedCall as MutableResolvedCall<VariableDescriptor>
             )
             assert(variable.candidateStatus.resultingApplicability.isSuccess) {
                 "Variable call must be success: $variable"
@@ -412,7 +412,7 @@ class NewResolutionOldInference(
             return MyCandidate(ResolutionCandidateStatus(variable.candidateStatus.diagnostics + invoke.candidateStatus.diagnostics), resolvedCallImpl)
         }
 
-        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<VariableDescriptor, MyCandidate<VariableDescriptor>> {
+        override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<MyCandidate> {
             val newCall = CallTransformer.stripCallArguments(functionContext.basicCallContext.call).let {
                 if (stripExplicitReceiver) CallTransformer.stripReceiver(it) else it
             }
@@ -420,15 +420,15 @@ class NewResolutionOldInference(
         }
 
         override fun factoryForInvoke(
-                variable: MyCandidate<VariableDescriptor>,
+                variable: MyCandidate,
                 useExplicitReceiver: Boolean
-        ): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<FunctionDescriptor, MyCandidate<FunctionDescriptor>>>? {
+        ): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<MyCandidate>>? {
             assert(variable.resolvedCall.status.possibleTransformToSuccess()) {
                 "Incorrect status: ${variable.resolvedCall.status} for variable call: ${variable.resolvedCall} " +
                 "and descriptor: ${variable.resolvedCall.candidateDescriptor}"
             }
             val calleeExpression = variable.resolvedCall.call.calleeExpression
-            val variableDescriptor = variable.resolvedCall.resultingDescriptor
+            val variableDescriptor = variable.resolvedCall.resultingDescriptor as VariableDescriptor
             assert(variable.resolvedCall.status.possibleTransformToSuccess() && calleeExpression != null) {
                 "Unexpected variable candidate: $variable"
             }
@@ -452,7 +452,7 @@ class NewResolutionOldInference(
                     .replaceCall(functionCall)
                     .replaceContextDependency(ContextDependency.DEPENDENT) // todo
 
-            val newContext = CandidateFactoryImpl<FunctionDescriptor>(OperatorNameConventions.INVOKE, basicCallResolutionContext, tracingForInvoke)
+            val newContext = CandidateFactoryImpl(OperatorNameConventions.INVOKE, basicCallResolutionContext, tracingForInvoke)
 
             return basicCallResolutionContext.transformToReceiverWithSmartCastInfo(variableReceiver) to newContext
         }

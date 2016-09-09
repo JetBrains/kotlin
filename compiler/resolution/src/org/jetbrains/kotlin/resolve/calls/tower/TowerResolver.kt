@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
@@ -34,23 +31,23 @@ interface Candidate {
     val status: ResolutionCandidateStatus
 }
 
-interface CandidateFactory<in D : CallableDescriptor, out C: Candidate> {
+interface CandidateFactory<out C: Candidate> {
     fun createCandidate(
-            towerCandidate: CandidateWithBoundDispatchReceiver<D>,
+            towerCandidate: CandidateWithBoundDispatchReceiver,
             explicitReceiverKind: ExplicitReceiverKind,
             extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): C
 }
 
-interface CandidateFactoryProviderForInvoke<F : Candidate, V : Candidate> {
+interface CandidateFactoryProviderForInvoke<C : Candidate> {
 
-    fun transformCandidate(variable: V, invoke: F): F
+    fun transformCandidate(variable: C, invoke: C): C
 
-    fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<VariableDescriptor, V>
+    fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<C>
 
     // foo() -> ReceiverValue(foo), context for invoke
     // null means that there is no invoke on variable
-    fun factoryForInvoke(variable: V, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<FunctionDescriptor, F>>?
+    fun factoryForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<C>>?
 }
 
 sealed class TowerData {

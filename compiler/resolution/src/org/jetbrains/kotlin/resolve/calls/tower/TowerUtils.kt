@@ -26,14 +26,14 @@ val ResolutionCandidateApplicability.isSuccess: Boolean
 val CallableDescriptor.isSynthesized: Boolean
     get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)
 
-val CandidateWithBoundDispatchReceiver<*>.requiresExtensionReceiver: Boolean
+val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
 
-internal class CandidateWithBoundDispatchReceiverImpl<out D : CallableDescriptor>(
+internal class CandidateWithBoundDispatchReceiverImpl(
         override val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-        override val descriptor: D,
+        override val descriptor: CallableDescriptor,
         override val diagnostics: List<ResolutionDiagnostic>
-) : CandidateWithBoundDispatchReceiver<D> {
-    override fun copy(newDescriptor: @UnsafeVariance D) =
+) : CandidateWithBoundDispatchReceiver {
+    override fun copy(newDescriptor: CallableDescriptor) =
             CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, newDescriptor, diagnostics)
 }
