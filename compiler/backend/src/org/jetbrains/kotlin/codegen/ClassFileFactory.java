@@ -193,14 +193,14 @@ public class ClassFileFactory implements OutputFileCollection {
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerPackagePartSourceFiles(files);
-        return new PackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
+        return state.getCodegenFactory().createPackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerPackagePartSourceFiles(files);
-        return new MultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
+        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
     }
 
     private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {

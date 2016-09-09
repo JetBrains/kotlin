@@ -69,6 +69,7 @@ class GenerationState @JvmOverloads constructor(
         // TODO: get rid of it with the proper module infrastructure
         val outDirectory: File? = null,
         private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
+        val codegenFactory: CodegenFactory = DefaultCodegenFactory,
         wantsDiagnostics: Boolean = true
 ) {
     abstract class GenerateClassFilter {
