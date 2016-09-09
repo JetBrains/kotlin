@@ -480,6 +480,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/cast"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("changeFunctionalToStarProjection.kt")
+            public void testChangeFunctionalToStarProjection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/cast/changeFunctionalToStarProjection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("changeToStarProjection.kt")
             public void testChangeToStarProjection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/cast/changeToStarProjection.kt");
