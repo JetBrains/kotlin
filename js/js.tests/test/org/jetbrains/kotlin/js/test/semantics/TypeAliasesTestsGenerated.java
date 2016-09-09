@@ -35,6 +35,12 @@ public class TypeAliasesTestsGenerated extends AbstractTypeAliasesTests {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("genericTypeAliasConstructor.kt")
+    public void testGenericTypeAliasConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/genericTypeAliasConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("localTypeAlias.kt")
     public void testLocalTypeAlias() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/localTypeAlias.kt");
@@ -56,6 +62,12 @@ public class TypeAliasesTestsGenerated extends AbstractTypeAliasesTests {
     @TestMetadata("typeAliasConstructor.kt")
     public void testTypeAliasConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeAliasConstructorAccessor.kt")
+    public void testTypeAliasConstructorAccessor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasConstructorAccessor.kt");
         doTest(fileName);
     }
 
