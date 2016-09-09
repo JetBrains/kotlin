@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation.processing.impl
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.JeElement
@@ -124,7 +125,12 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     }
 
     override fun directSupertypes(t: TypeMirror): List<TypeMirror> {
-        if (t is NoType) throw IllegalArgumentException("Invalid type: $t")
+        if (t is NoType || t is ExecutableType) throw IllegalArgumentException("Invalid type: $t")
+
+        if (t is JeDeclaredType && t.psiType is PsiImmediateClassType) {
+            return t.psiClass.superTypes.map { it.toJeType(psiManager) }
+        }
+
         val psiType = (t as? JePsiType)?.psiType as? PsiClassType ?: return emptyList()
         return psiType.superTypes.map { it.toJeType(psiManager) }
     }
