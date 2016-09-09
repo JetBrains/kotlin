@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceLocationManager
+import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -184,7 +184,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 }
 
 class DumpTreeFromSourceLineVisitor(
-        val fileEntry: SourceLocationManager.FileEntry,
+        val fileEntry: SourceManager.FileEntry,
         val lineNumber: Int,
         out: Appendable
 ): IrElementVisitorVoid {

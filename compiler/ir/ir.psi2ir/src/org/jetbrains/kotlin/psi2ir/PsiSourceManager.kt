@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.psi2ir
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.ir.SourceLocationManager
+import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import java.util.*
 
-class PsiSourceManager : SourceLocationManager {
-    class PsiFileEntry(psiFile: PsiFile) : SourceLocationManager.FileEntry {
+class PsiSourceManager : SourceManager {
+    class PsiFileEntry(psiFile: PsiFile) : SourceManager.FileEntry {
         private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
 
         override val maxOffset: Int
@@ -85,6 +85,6 @@ class PsiSourceManager : SourceLocationManager {
     fun getFileEntry(psiFile: PsiFile): PsiFileEntry? =
             fileEntriesByPsiFile[psiFile]
 
-    override fun getFileEntry(irFile: IrFile): SourceLocationManager.FileEntry =
+    override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry =
             fileEntriesByIrFile[irFile]!!
 }

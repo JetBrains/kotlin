@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceLocationManager
+import org.jetbrains.kotlin.ir.SourceManager
 
 interface IrFile : IrElement {
     val name: String
-    val fileEntry: SourceLocationManager.FileEntry
+    val fileEntry: SourceManager.FileEntry
     val fileAnnotations: List<AnnotationDescriptor>
     val packageFragmentDescriptor: PackageFragmentDescriptor
     val declarations: List<IrDeclaration>

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 class IrFileImpl(
-        override val fileEntry: SourceLocationManager.FileEntry,
+        override val fileEntry: SourceManager.FileEntry,
         override val name: String,
         override val packageFragmentDescriptor: PackageFragmentDescriptor
 ) : IrElementBase(0, fileEntry.maxOffset), IrFile {

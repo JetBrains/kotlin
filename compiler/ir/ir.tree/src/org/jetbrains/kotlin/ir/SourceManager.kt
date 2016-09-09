@@ -30,7 +30,7 @@ data class SourceRangeInfo(
         val endColumnNumber: Int
 )
 
-interface SourceLocationManager {
+interface SourceManager {
     interface FileEntry {
         val maxOffset: Int
         fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
