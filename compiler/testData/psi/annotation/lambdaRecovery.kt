@@ -38,3 +38,6 @@ fun foo() {
 
     }
 }
+
+// No '}'
+val test = {
