@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModule
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -80,7 +80,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)
 
-    protected fun generateIrModule(ignoreErrors: Boolean = false): IrModule {
+    protected fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
         return generateIrModule(myFiles.psiFiles, myEnvironment, ignoreErrors)
@@ -109,7 +109,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             return textFile
         }
 
-        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, ignoreErrors: Boolean = false): IrModule {
+        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, ignoreErrors: Boolean = false): IrModuleFragment {
             val analysisResult = JvmResolveUtil.analyze(ktFiles, environment)
             if (!ignoreErrors) {
                 analysisResult.throwIfError()

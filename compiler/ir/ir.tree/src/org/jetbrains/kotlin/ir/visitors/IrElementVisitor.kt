@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 
 interface IrElementVisitor<out R, in D> {
     fun visitElement(element: IrElement, data: D): R
-    fun visitModule(declaration: IrModule, data: D) = visitElement(declaration, data)
+    fun visitModuleFragment(declaration: IrModuleFragment, data: D) = visitElement(declaration, data)
     fun visitFile(declaration: IrFile, data: D) = visitElement(declaration, data)
 
     fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)

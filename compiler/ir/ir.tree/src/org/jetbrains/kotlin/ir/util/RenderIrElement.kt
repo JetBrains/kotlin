@@ -36,8 +36,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
             "? ${declaration.javaClass.simpleName} ${declaration.descriptor.ref()}"
 
-    override fun visitModule(declaration: IrModule, data: Nothing?): String =
-            "MODULE ${declaration.descriptor.ref()}"
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
+            "MODULE_FRAGMENT ${declaration.descriptor.ref()}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
             "FILE ${declaration.name}"

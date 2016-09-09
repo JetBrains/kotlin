@@ -24,8 +24,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitElement(element: IrElement)
     override fun visitElement(element: IrElement, data: Nothing?) = visitElement(element)
     
-    fun visitModule(declaration: IrModule) = visitElement(declaration)
-    override fun visitModule(declaration: IrModule, data: Nothing?) = visitModule(declaration)
+    fun visitModuleFragment(declaration: IrModuleFragment) = visitElement(declaration)
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?) = visitModuleFragment(declaration)
     
     fun visitFile(declaration: IrFile) = visitElement(declaration)
     override fun visitFile(declaration: IrFile, data: Nothing?) = visitFile(declaration)

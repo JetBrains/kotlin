@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.xbackend.common.AbstractClosureAnnotator
-import org.jetbrains.kotlin.xbackend.common.Closure
+import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
+import org.jetbrains.kotlin.backend.common.Closure
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter

@@ -18,22 +18,19 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
-    fun generateModule(ktFiles: List<KtFile>): IrModule {
+    fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
+            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns, generateFiles(ktFiles))
+
+    fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
         val irDeclarationGenerator = DeclarationGenerator(context)
 
-        val irModule = IrModuleImpl(context.moduleDescriptor, context.irBuiltIns)
-
-        for (ktFile in ktFiles) {
-            val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
-            val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
-            val fileName = fileEntry.getRecognizableName()
-            val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
-            context.sourceManager.putFileEntry(irFile, fileEntry)
+        return ktFiles.map { ktFile ->
+            val irFile = createEmptyIrFile(ktFile)
 
             for (ktAnnotationEntry in ktFile.annotationEntries) {
                 irFile.addAnnotation(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
@@ -43,9 +40,16 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
                 irFile.addDeclaration(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
             }
 
-            irModule.addFile(irFile)
+            irFile
         }
-        return irModule
     }
 
+    fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
+        val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
+        val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
+        val fileName = fileEntry.getRecognizableName()
+        val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
+        context.sourceManager.putFileEntry(irFile, fileEntry)
+        return irFile
+    }
 }

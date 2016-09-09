@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import java.lang.AssertionError
 
-interface IrModule : IrElement {
+interface IrModuleFragment : IrElement {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
 
