@@ -144,11 +144,12 @@ open class SyncOutputTask : DefaultTask() {
         if (!fileInKotlinDir.isFile) return
 
         fileInJavaDir.parentFile.mkdirs()
-        if (sourceAnnotations.isEmpty()) {
-            fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
+        if (sourceAnnotations.isNotEmpty() && fileInKotlinDir.extension.toLowerCase() == "class") {
+            logger.kotlinDebug { "Removing source annotations from class: $fileInKotlinDir" }
+            annotationsRemover.transformClassFile(fileInKotlinDir, fileInJavaDir)
         }
         else {
-            annotationsRemover.transformClassFile(fileInKotlinDir, fileInJavaDir)
+            fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
         }
 
         timestamps[fileInJavaDir] = fileInJavaDir.lastModified()
