@@ -258,14 +258,14 @@ class LazyJavaClassMemberScope(
                 name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING)
 
         // add declarations
-        addOverriddenBuiltinMethods(name, result, mergedFunctionFromSuperTypes, result) {
-            searchMethodsByNameWithoutBuiltinMagic(it)
-        }
+        addOverriddenBuiltinMethods(
+                name, result, mergedFunctionFromSuperTypes, result,
+                this::searchMethodsByNameWithoutBuiltinMagic)
 
         // add from super types
-        addOverriddenBuiltinMethods(name, result, mergedFunctionFromSuperTypes, specialBuiltinsFromSuperTypes) {
-            searchMethodsInSupertypesWithoutBuiltinMagic(it)
-        }
+        addOverriddenBuiltinMethods(
+                name, result, mergedFunctionFromSuperTypes, specialBuiltinsFromSuperTypes,
+                this::searchMethodsInSupertypesWithoutBuiltinMagic)
 
         val visibleFunctionsFromSupertypes =
                 functionsFromSupertypes.filter { isVisibleAsFunctionInCurrentClass(it) } + specialBuiltinsFromSuperTypes
