@@ -65,6 +65,7 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
+
         if (descriptor == null || isCaptured(descriptor) || !isInLocalDeclaration() ||
             isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
             isReceiverAncestor(descriptor) || isSingletonReceiver(descriptor)
@@ -111,7 +112,9 @@ class UsageTracker(
         val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
 
         // We always capture enclosing class if it's not outer (i.e. we are capturing members of enclosing class to a local class)
-        if (containingClass.containingDeclaration !is ClassDescriptor) return false
+        if (containingClass != currentClass && containingClass.containingDeclaration !is ClassDescriptor) {
+            return false
+        }
 
         for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
             if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
