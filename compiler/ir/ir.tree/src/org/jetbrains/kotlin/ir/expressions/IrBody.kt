@@ -25,9 +25,11 @@ interface IrExpressionBody : IrBody {
     var expression: IrExpression
 }
 
-interface IrBlockBody : IrBody {
+interface IrStatementContainer {
     val statements: List<IrStatement>
 }
+
+interface IrBlockBody : IrBody, IrStatementContainer
 
 interface IrSyntheticBody : IrBody {
     val kind: IrSyntheticBodyKind

@@ -102,7 +102,13 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSpreadElement(spread: IrSpreadElement) = visitElement(spread)
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?) = visitSpreadElement(spread)
 
-    fun visitBlock(expression: IrBlock) = visitExpression(expression)
+    fun visitContainerExpression(expression: IrContainerExpression) = visitExpression(expression)
+    override fun visitContainerExpression(expression: IrContainerExpression, data: Nothing?) = visitContainerExpression(expression)
+
+    fun visitComposite(expression: IrComposite) = visitContainerExpression(expression)
+    override fun visitComposite(expression: IrComposite, data: Nothing?) = visitComposite(expression)
+
+    fun visitBlock(expression: IrBlock) = visitContainerExpression(expression)
     override fun visitBlock(expression: IrBlock, data: Nothing?) = visitBlock(expression)
 
     fun visitStringConcatenation(expression: IrStringConcatenation) = visitExpression(expression)

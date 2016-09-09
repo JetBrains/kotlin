@@ -52,7 +52,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
     fun visitSpreadElement(spread: IrSpreadElement, data: D) = visitElement(spread, data)
 
-    fun visitBlock(expression: IrBlock, data: D) = visitExpression(expression, data)
+    fun visitContainerExpression(expression: IrContainerExpression, data: D) = visitExpression(expression, data)
+    fun visitBlock(expression: IrBlock, data: D) = visitContainerExpression(expression, data)
+    fun visitComposite(expression: IrComposite, data: D) = visitContainerExpression(expression, data)
     fun visitStringConcatenation(expression: IrStringConcatenation, data: D) = visitExpression(expression, data)
     fun visitThisReference(expression: IrThisReference, data: D) = visitExpression(expression, data)
 

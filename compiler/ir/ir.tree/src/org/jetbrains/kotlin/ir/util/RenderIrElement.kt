@@ -102,6 +102,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
             "BLOCK type=${expression.type.render()} operator=${expression.operator}"
 
+    override fun visitComposite(expression: IrComposite, data: Nothing?): String =
+            "COMPOSITE type=${expression.type.render()} operator=${expression.operator}"
+
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
             "RETURN type=${expression.type.render()} from='${expression.returnTarget.ref()}'"
 

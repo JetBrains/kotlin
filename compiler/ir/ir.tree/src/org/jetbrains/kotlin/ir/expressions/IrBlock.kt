@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.detach
-
-
-interface IrBlock : IrExpression {
+interface IrContainerExpression : IrExpression, IrStatementContainer {
     val operator: IrOperator?
-
-    val statements: List<IrStatement>
+    val isTransparentScope: Boolean
 }
 
+interface IrBlock : IrContainerExpression {
+    override val isTransparentScope: Boolean
+        get() = false
+}
+
+interface IrComposite : IrContainerExpression {
+    override val isTransparentScope: Boolean
+        get() = true
+}

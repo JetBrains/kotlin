@@ -93,10 +93,8 @@ class StatementGenerator(
             )
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
-        // TODO use some special form that introduces multiple declarations into surrounding scope?
-
-        val irBlock = IrBlockImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
-                                                                      context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
+        val irBlock = IrCompositeImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
+                                      context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
         val ktInitializer = multiDeclaration.initializer!!
         val containerValue = scope.createTemporaryVariableInBlock(ktInitializer.genExpr(), irBlock, "container")
 
@@ -105,7 +103,7 @@ class StatementGenerator(
         return irBlock
     }
 
-    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrBlockImpl, containerValue: IntermediateValue) {
+    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrContainerExpressionBase, containerValue: IntermediateValue) {
         val callGenerator = CallGenerator(this)
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)

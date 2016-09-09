@@ -19,7 +19,7 @@ FILE /destructuring1.kt
           CONST Int type=kotlin.Int value='2'
   FUN public fun B.test(): kotlin.Unit
     BLOCK_BODY
-      BLOCK type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
+      COMPOSITE type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
         VAR val tmp0_container: A
           GET_OBJECT 'A' type=A
         VAR val x: kotlin.Int

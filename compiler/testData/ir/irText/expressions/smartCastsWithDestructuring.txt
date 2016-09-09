@@ -15,7 +15,7 @@ FILE /smartCastsWithDestructuring.kt
         if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=I2
           GET_VAR 'value-parameter x: I1' type=I1 operator=null
         then: RETURN type=kotlin.Nothing from='test(I1): Unit'
-      BLOCK type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
+      COMPOSITE type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
         VAR val tmp0_container: I1
           GET_VAR 'value-parameter x: I1' type=I1 operator=null
         VAR val c1: kotlin.Int

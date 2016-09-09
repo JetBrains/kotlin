@@ -17,37 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator? = null):
-        IrContainerExpressionBase(startOffset, endOffset, type, operator), IrBlock {
+
+class IrCompositeImpl(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator? = null) :
+        IrContainerExpressionBase(startOffset, endOffset, type, operator), IrComposite {
     constructor(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator?, statements: List<IrStatement>) :
             this(startOffset, endOffset, type, operator) {
         addAll(statements)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBlock(this, data)
+            visitor.visitComposite(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
-    }
-}
-
-fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
-    if (statement != null) addStatement(statement)
-}
-
-fun IrBlockImpl.inlineStatement(statement: IrStatement) {
-    if (statement is IrBlock) {
-        statement.statements.forEach { it.detach() }
-        addAll(statement.statements)
-    }
-    else {
-        addStatement(statement)
     }
 }
