@@ -346,7 +346,7 @@ class LazyJavaClassMemberScope(
             specialBuiltin: CallableDescriptor,
             alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
     ): SimpleFunctionDescriptor =
-        if (alreadyDeclaredFunctions.none { this != it && it.doesOverride(specialBuiltin) })
+        if (alreadyDeclaredFunctions.none { this != it && it.initialSignatureDescriptor == null && it.doesOverride(specialBuiltin) })
             this
         else
             newCopyBuilder().setHiddenToOvercomeSignatureClash().build()!!

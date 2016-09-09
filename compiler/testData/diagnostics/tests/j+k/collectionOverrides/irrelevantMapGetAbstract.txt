@@ -1,0 +1,66 @@
+package
+
+public abstract class C1 : MHashtable<kotlin.String, kotlin.Int> {
+    public constructor C1()
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String!, kotlin.Int!>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<kotlin.String!>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int!>
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String!): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
+    public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String!, kotlin.Int!>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class C2 : MHashtable<kotlin.String, kotlin.Int> {
+    public constructor C2()
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String!, kotlin.Int!>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<kotlin.String!>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int!>
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String!): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun get(/*0*/ key: kotlin.String): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
+    public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String!, kotlin.Int!>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Dict</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
+    public constructor Dict</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract operator fun get(/*0*/ key: kotlin.Any!): V!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class MHashtable</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!> : Dict<X!, Y!>, kotlin.collections.MutableMap<X!, Y!> {
+    public constructor MHashtable</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!>()
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<X!, Y!>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<X!>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<Y!>
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: X!): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: Y!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun get(/*0*/ key: X!): Y?
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: X!, /*1*/ value: Y!): Y?
+    public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out X!, Y!>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: X!): Y?
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
