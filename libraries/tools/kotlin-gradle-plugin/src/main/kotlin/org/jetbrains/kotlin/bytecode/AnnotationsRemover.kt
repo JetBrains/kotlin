@@ -8,6 +8,7 @@ class AnnotationsRemover(annotations: Iterable<String>) {
     private val annotations = annotations.mapTo(HashSet()) { "L$it;" }
 
     fun transformClassFile(inputFile: File, outputFile: File) {
+        assert(inputFile.extension.toLowerCase() == "class") { "Expected class file: $inputFile" }
         val bytes = inputFile.readBytes()
         val reader = ClassReader(bytes)
         val classWriter = ClassWriter(0)
