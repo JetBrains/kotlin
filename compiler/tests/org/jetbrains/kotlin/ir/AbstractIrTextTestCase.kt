@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
 import java.util.*
 import java.util.regex.Pattern
 

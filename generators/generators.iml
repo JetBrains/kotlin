@@ -40,6 +40,5 @@
     <orderEntry type="module" module-name="idea-android-output-parser" scope="TEST" />
     <orderEntry type="module" module-name="idea-maven" scope="TEST" />
     <orderEntry type="module" module-name="uast-kotlin" scope="TEST" />
-    <orderEntry type="module" module-name="ir.tests" scope="TEST" />
   </component>
 </module>

@@ -66,6 +66,10 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="ir.tests" scope="TEST" />
+    <orderEntry type="module" module-name="ir.tree" scope="TEST" />
+    <orderEntry type="module" module-name="ir.tree" scope="TEST" />
+    <orderEntry type="module" module-name="ir.tree" scope="TEST" />
+    <orderEntry type="module" module-name="backend.common" scope="TEST" />
+    <orderEntry type="module" module-name="ir.psi2ir" scope="TEST" />
   </component>
 </module>
