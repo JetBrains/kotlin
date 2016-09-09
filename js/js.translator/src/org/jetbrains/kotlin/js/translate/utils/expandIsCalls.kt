@@ -71,11 +71,6 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
     private fun getReplacement(callee: JsInvocation, calleeArguments: List<JsExpression>, argument: JsExpression): JsExpression? {
         val typeCheck = callee.typeCheck
         return when (typeCheck) {
-            TypeCheck.IS_ANY -> {
-                // `Kotlin.isAny()(argument)` -> `argument != null`
-                if (calleeArguments.isEmpty()) TranslationUtils.isNotNullCheck(argument) else null
-            }
-
             TypeCheck.TYPEOF -> {
                 // `Kotlin.isTypeOf(calleeArgument)(argument)` -> `typeOf argument === calleeArgument`
                 if (calleeArguments.size == 1) typeOfIs(argument, calleeArguments[0] as JsStringLiteral) else null

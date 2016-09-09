@@ -1765,12 +1765,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("noRuntimeTypeCheck.kt")
-            public void testNoRuntimeTypeCheck() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/cast/noRuntimeTypeCheck.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("primitiveToClass.kt")
             public void testPrimitiveToClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/cast/primitiveToClass.kt");
@@ -6972,6 +6966,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     public static class StandardClasses extends AbstractBoxJsTest {
         public void testAllFilesPresentInStandardClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/standardClasses"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("any.kt")
+        public void testAny() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/any.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("array.kt")

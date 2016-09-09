@@ -109,7 +109,7 @@ class CatchTranslator(
 
         // translateIsCheck won't ever return `null` if its second argument is `null`
         val typeCheck = with (patternTranslator(nextContext)) {
-            translateIsCheck(parameterRef, null, paramType)
+            translateIsCheck(parameterRef, paramType)
         }!!
 
         val elseBlock = translateCatches(nextContext, parameterDescriptor, parameterRef, catches)

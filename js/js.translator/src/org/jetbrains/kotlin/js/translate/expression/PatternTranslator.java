@@ -44,18 +44,14 @@ import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.getNameIfStandardType;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
@@ -86,8 +82,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
         KtTypeReference typeReference = expression.getRight();
         assert typeReference != null: "Cast expression must have type reference";
-        KotlinType sourceType = getTypeForExpression(bindingContext(), left);
-        JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), sourceType, typeReference);
+        JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), typeReference);
         if (isCheck == null) return expressionToCast;
 
         JsExpression onFail;
@@ -108,8 +103,7 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), context());
         KtTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
-        KotlinType sourceType = getTypeForExpression(bindingContext(), expression.getLeftHandSide());
-        JsExpression result = translateIsCheck(left, sourceType, typeReference);
+        JsExpression result = translateIsCheck(left, typeReference);
         if (result == null) return JsLiteral.getBoolean(!expression.isNegated());
 
         if (expression.isNegated()) {
@@ -119,10 +113,8 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    public JsExpression translateIsCheck(@NotNull JsExpression subject, @Nullable KotlinType sourceType,
-            @NotNull KtTypeReference targetTypeReference) {
+    public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference targetTypeReference) {
         KotlinType targetType = getTypeByReference(bindingContext(), targetTypeReference);
-        if (sourceType != null && !DynamicTypesKt.isDynamic(sourceType) && TypeUtilsKt.isSubtypeOf(sourceType, targetType)) return null;
 
         JsExpression checkFunReference = doGetIsTypeCheckCallable(targetType);
         if (checkFunReference == null) {
@@ -191,8 +183,6 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
-        if (isAnyOrNullableAny(type)) return namer().isAny();
-
         if (isFunctionTypeOrSubtype(type) && !ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(type)) {
             return namer().isTypeOf(program().getStringLiteral("function"));
         }

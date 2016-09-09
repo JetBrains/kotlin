@@ -92,6 +92,18 @@
      * @returns {Boolean}
      */
     Kotlin.isType = function (object, klass) {
+        if (klass === Object) {
+            switch (typeof object) {
+                case "string":
+                case "number":
+                case "boolean":
+                case "function":
+                    return true;
+                default:
+                    return object instanceof Object;
+            }
+        }
+
         if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
             return false;
         }
@@ -256,12 +268,6 @@
     Kotlin.orNull = function (fn) {
         return function (object) {
             return object == null || fn(object);
-        }
-    };
-
-    Kotlin.isAny = function () {
-        return function (object) {
-            return object != null;
         }
     };
     

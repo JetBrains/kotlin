@@ -319,11 +319,6 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression isAny() {
-        return invokeFunctionAndSetTypeCheckMetadata("isAny", Collections.<JsExpression>emptyList(), TypeCheck.IS_ANY);
-    }
-
-    @NotNull
     public JsExpression isComparable() {
         return kotlin("isComparable");
     }

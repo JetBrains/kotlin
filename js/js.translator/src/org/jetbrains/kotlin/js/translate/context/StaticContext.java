@@ -279,6 +279,9 @@ public final class StaticContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isAny((ClassDescriptor) descriptor)) {
+            return rootScope.declareName("Object");
+        }
         SuggestedName suggested = nameSuggestion.suggest(descriptor);
         if (suggested == null) {
             throw new IllegalArgumentException("Can't generate name for root declarations: " + descriptor);

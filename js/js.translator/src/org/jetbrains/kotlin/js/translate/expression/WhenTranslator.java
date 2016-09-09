@@ -174,9 +174,7 @@ public final class WhenTranslator extends AbstractTranslator {
         KtExpression expressionToMatchNonTranslated = whenExpression.getSubjectExpression();
         assert expressionToMatchNonTranslated != null : "expressionToMatch != null => expressionToMatchNonTranslated != null: " +
                                                         PsiUtilsKt.getTextWithLocation(conditionIsPattern);
-        KotlinType expressionToMatchType = BindingUtils.getTypeForExpression(bindingContext(), expressionToMatchNonTranslated);
-        JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, expressionToMatchType,
-                                                                                      typeReference);
+        JsExpression result = Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
         return result != null ? result : JsLiteral.TRUE;
     }
 

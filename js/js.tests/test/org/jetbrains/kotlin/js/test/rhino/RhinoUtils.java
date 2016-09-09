@@ -137,7 +137,7 @@ public final class RhinoUtils {
         }
 
         try {
-            ScriptableObject scope = getScope(ecmaVersion, context, jsLibraries);
+            Scriptable scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
 
             context.evaluateString(scope, "kotlin.out = new kotlin.BufferedOutput();", "setup Kotlin.out", 0, null);
@@ -158,10 +158,8 @@ public final class RhinoUtils {
     }
 
     @NotNull
-    private static ScriptableObject getScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
-        ScriptableObject scope = context.initStandardObjects(null, false);
-        scope.setParentScope(getParentScope(version, context, jsLibraries));
-        return scope;
+    private static Scriptable getScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
+        return context.newObject(getParentScope(version, context, jsLibraries));
     }
 
     @NotNull
