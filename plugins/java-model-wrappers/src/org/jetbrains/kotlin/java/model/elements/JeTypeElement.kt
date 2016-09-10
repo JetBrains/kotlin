@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTypesUtil
+import org.jetbrains.kotlin.asJava.elements.LightParameter
 import org.jetbrains.kotlin.java.model.*
 import org.jetbrains.kotlin.java.model.internal.DefaultConstructorPsiMethod
 import org.jetbrains.kotlin.java.model.types.JeNoneType
@@ -93,7 +94,7 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
                 declarations += JeMethodExecutableElement(DefaultConstructorPsiMethod(psi, psi.language).apply {
                     val containingClass = psi.containingClass
                     if (containingClass != null && !psi.hasModifierProperty(PsiModifier.STATIC)) {
-                        addParameter("\$instance", PsiTypesUtil.getClassType(containingClass))
+                        addParameter(LightParameter("\$instance", PsiTypesUtil.getClassType(containingClass), this, psi.language))
                     }
                 })
             }

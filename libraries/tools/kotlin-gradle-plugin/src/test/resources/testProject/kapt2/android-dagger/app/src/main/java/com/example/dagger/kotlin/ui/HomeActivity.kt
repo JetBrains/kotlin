@@ -35,4 +35,6 @@ class HomeActivity : DemoActivity() {
         // TODO do something with the injected dependencies here!
         locationInfo.text = "Injected LocationManager:\n$locationManager"
     }
+
+    inner class InnerClass
 }
