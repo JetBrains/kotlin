@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
@@ -30,10 +33,11 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import java.lang.UnsupportedOperationException
 
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
-        private val lightMemberOrigin: LightMemberOrigin?,
+        override val lightMemberOrigin: LightMemberOrigin?,
         override val clsDelegate: PsiField,
         private val containingClass: KtLightClass
 ) : LightElement(clsDelegate.manager, KotlinLanguage.INSTANCE), KtLightField {
@@ -43,6 +47,8 @@ sealed class KtLightFieldImpl(
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
 
     override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
+
+    override fun getPresentation(): ItemPresentation? = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
 
     override fun getName() = clsDelegate.name
 
@@ -92,6 +98,20 @@ sealed class KtLightFieldImpl(
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
 
+    override fun equals(other: Any?): Boolean =
+            other is KtLightField &&
+            name == other.name &&
+            lightMemberOrigin == other.lightMemberOrigin &&
+            containingClass == other.containingClass &&
+            clsDelegate == other.clsDelegate
+
+    override fun hashCode(): Int {
+        var result = lightMemberOrigin?.hashCode() ?: 0
+        result = 31 * result + clsDelegate.hashCode()
+        result = 31 * result + containingClass.hashCode()
+        return result
+    }
+
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 
     override fun getNavigationElement() = kotlinOrigin ?: super.getNavigationElement()
@@ -110,6 +130,7 @@ sealed class KtLightFieldImpl(
     override fun isWritable() = kotlinOrigin?.isWritable ?: false
 
     override fun copy() = Factory.create(lightMemberOrigin?.copy(), clsDelegate, containingClass)
+
 
     class KtLightEnumConstant(
             origin: LightMemberOrigin?,

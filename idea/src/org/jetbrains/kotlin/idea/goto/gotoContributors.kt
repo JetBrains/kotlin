@@ -24,10 +24,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
 
 class KotlinGotoClassContributor : GotoClassContributor {
@@ -78,8 +80,11 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
         val noLibrarySourceScope = KotlinSourceFilterScope.projectSourceAndClassFiles(baseScope, project)
 
         val result = ArrayList<NavigationItem>()
-        result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
-        result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
+        result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
+            val method = LightClassUtil.getLightClassMethod(it)
+            method == null || it.name != method.name
+        }
+        result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter { it.containingClass()?.isInterface() ?: false }
         result += KotlinClassShortNameIndex.getInstance().get(name, project, BuiltInClassesScope(noLibrarySourceScope))
         result += KotlinTypeAliasShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
 
