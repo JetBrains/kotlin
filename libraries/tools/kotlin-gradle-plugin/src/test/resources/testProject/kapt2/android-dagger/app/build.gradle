@@ -31,7 +31,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
 
-    compile 'com.google.dagger:dagger:2.2'
-    kapt 'com.google.dagger:dagger-compiler:2.2'
+    compile 'com.google.dagger:dagger:2.6.1'
+    kapt 'com.google.dagger:dagger-compiler:2.6.1'
     provided 'org.glassfish:javax.annotation:10.0-b28'
 }
