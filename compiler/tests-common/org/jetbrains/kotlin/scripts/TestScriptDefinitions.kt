@@ -21,12 +21,9 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
-import java.util.concurrent.Future
-import kotlin.reflect.KClass
 
 abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
@@ -38,50 +35,13 @@ abstract class BaseScriptDefinition (val extension: String, val cp: List<File>? 
             }
 }
 
-open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<File>? = null, val extraDependencies: KotlinScriptExternalDependencies? = null)
+open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<File>? = null)
     : BaseScriptDefinition(extension, classpath)
 {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
 }
 
 open class SimpleParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>) : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters)
-
-class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>, classpath: List<File>? = null)
-    : BaseScriptDefinition(extension, classpath)
-{
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
-            listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
-}
-
-open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>, classpath: List<File>? = null)
-    : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters, classpath)
-{
-    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
-            listOf(getKotlinType(scriptDescriptor, superclass))
-}
-
-class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String,
-                                                        parameters: List<ScriptParameter>,
-                                                        superclass: KClass<out Any>,
-                                                        val superclassParameters: List<ScriptParameter>,
-                                                        classpath: List<File>? = null)
-    : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass, classpath)
-{
-    override fun getScriptParametersToPassToSuperclass(scriptDescriptor: ScriptDescriptor): List<Name> =
-            superclassParameters.map { it.name }
-}
-
-class StandardWithClasspathScriptDefinition(extension: String, classpath: List<File>? = null)
-    : BaseScriptDefinition(extension, classpath)
-{
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
-            StandardScriptDefinition.getScriptParameters(scriptDescriptor)
-}
-
-class SimpleScriptExtraDependencies(
-        override val classpath: Iterable<File>,
-        override val imports: List<String> = emptyList()
-) : KotlinScriptExternalDependencies
 
 fun classpathFromProperty(): List<File> =
     System.getProperty("java.class.path")?.let {
