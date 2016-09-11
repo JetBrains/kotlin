@@ -1,8 +1,8 @@
 package
 
-public final class Script {
+public final class Script : kotlin.script.StandardScriptTemplate {
     public constructor Script(/*0*/ args: kotlin.Array<kotlin.String>)
-    public final val args: kotlin.Array<kotlin.String>
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
     public final val prop: kotlin.Int
     public final val prop2: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -37,6 +37,7 @@ import java.lang.Exception
 import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
+import kotlin.script.StandardScriptTemplate
 
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
 // as soon as the the latter is removed from the codebase
@@ -124,6 +125,13 @@ class ScriptTest2 {
         val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, null)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Array<Array<in String>>::class.java).newInstance(arrayOf(arrayOf("one"), arrayOf("two")))
+    }
+
+    @Test
+    fun testScriptWithStandardTemplate() {
+        val aClass = compileScript("fib_std.kts", StandardScriptTemplate::class, runIsolated = false)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("4", "other"))
     }
 
     private fun compileScript(

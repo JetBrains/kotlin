@@ -1,8 +1,8 @@
 package
 
-public final class SimpleScript {
+public final class SimpleScript : kotlin.script.StandardScriptTemplate {
     public constructor SimpleScript(/*0*/ args: kotlin.Array<kotlin.String>)
-    public final val args: kotlin.Array<kotlin.String>
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
     public final val x: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

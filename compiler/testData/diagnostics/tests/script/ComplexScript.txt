@@ -1,8 +1,8 @@
 package
 
-public final class ComplexScript {
+public final class ComplexScript : kotlin.script.StandardScriptTemplate {
     public constructor ComplexScript(/*0*/ args: kotlin.Array<kotlin.String>)
-    public final val args: kotlin.Array<kotlin.String>
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
     public final val y: kotlin.Int = 2
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(/*0*/ x: kotlin.Int): kotlin.Int

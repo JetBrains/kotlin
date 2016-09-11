@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcrossDependencies
@@ -39,6 +38,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
+import kotlin.script.StandardScriptTemplate
 
 interface KotlinScriptDefinition {
     val name: String get() = "Kotlin Script"
@@ -78,23 +78,7 @@ class KotlinScriptExternalDependenciesUnion(val dependencies: Iterable<KotlinScr
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
 
-object StandardScriptDefinition : KotlinScriptDefinition {
-    private val ARGS_NAME = Name.identifier("args")
-
-    // NOTE: for now we treat .kts files as if they have 'args: Array<String>' parameter
-    // this is not supposed to be final design
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-            makeStringListScriptParameters(scriptDescriptor, ARGS_NAME)
-}
-
-fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyName: Name): List<ScriptParameter> {
-    val builtIns = scriptDescriptor.builtIns
-    val arrayOfStrings = builtIns.getArrayType(Variance.INVARIANT, builtIns.stringType)
-    return listOf(ScriptParameter(propertyName, arrayOfStrings))
-}
-
-fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptParameter =
-        ScriptParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
+object StandardScriptDefinition : KotlinScriptDefinitionFromTemplate(StandardScriptTemplate::class)
 
 fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
         getKotlinTypeByFqName(scriptDescriptor,
