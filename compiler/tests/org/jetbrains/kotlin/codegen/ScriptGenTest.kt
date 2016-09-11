@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,88 +14,78 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.script.ScriptParameter;
-import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.org.objectweb.asm.Opcodes
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static java.util.Collections.singletonList;
-
-public class ScriptGenTest extends CodegenTestCase {
-    private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
-            new SimpleParamsTestScriptDefinition(
-                    ".lang.kt",
-                    singletonList(new ScriptParameter(Name.identifier("num"), DefaultBuiltIns.getInstance().getIntType()))
-            );
-    private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
-            new SimpleParamsTestScriptDefinition(
-                    ".kts",
-                    Collections.<ScriptParameter>emptyList()
-            );
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).setScriptDefinitions(
-                Arrays.asList(FIB_SCRIPT_DEFINITION, NO_PARAM_SCRIPT_DEFINITION)
-        );
+class ScriptGenTest : CodegenTestCase() {
+    companion object {
+        private val FIB_SCRIPT_DEFINITION = SimpleParamsTestScriptDefinition(
+                ".lang.kt",
+                listOf(ScriptParameter(Name.identifier("num"), DefaultBuiltIns.Instance.intType))
+        )
+        private val NO_PARAM_SCRIPT_DEFINITION = SimpleParamsTestScriptDefinition(
+                ".kts",
+                emptyList<ScriptParameter>()
+        )
     }
 
-    public void testLanguage() throws Exception {
-        loadFile("scriptCustom/fib.lang.kt");
-        Class<?> aClass = generateClass("Fib");
-        Constructor constructor = aClass.getConstructor(int.class);
-        Field result = aClass.getDeclaredField("result");
-        result.setAccessible(true);
-        Object script = constructor.newInstance(5);
-        assertEquals(8, result.get(script));
+    override fun setUp() {
+        super.setUp()
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
+        KotlinScriptDefinitionProvider.getInstance(myEnvironment.project).setScriptDefinitions(
+                listOf(FIB_SCRIPT_DEFINITION, NO_PARAM_SCRIPT_DEFINITION)
+        )
     }
 
-    public void testLanguageWithPackage() throws Exception {
-        loadFile("scriptCustom/fibwp.lang.kt");
-        Class<?> aClass = generateClass("test.Fibwp");
-        Constructor constructor = aClass.getConstructor(int.class);
-        Field result = aClass.getDeclaredField("result");
-        result.setAccessible(true);
-        Object script = constructor.newInstance(5);
-        assertEquals(8, result.get(script));
+    fun testLanguage() {
+        loadFile("scriptCustom/fib.lang.kt")
+        val aClass = generateClass("Fib")
+        val constructor = aClass.getConstructor(Integer.TYPE)
+        val result = aClass.getDeclaredField("result")
+        result.isAccessible = true
+        val script = constructor.newInstance(5)
+        assertEquals(8, result.get(script))
     }
 
-    public void testDependentScripts() throws Exception {
-        loadFiles("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts");
-        Class<?> aClass = generateClass("Fibwprunner");
-        Constructor constructor = aClass.getConstructor();
-        Field result = aClass.getDeclaredField("result");
-        result.setAccessible(true);
-        Method resultMethod = aClass.getDeclaredMethod("getResult");
-        assertTrue((resultMethod.getModifiers() & Opcodes.ACC_FINAL) != 0);
-        assertTrue((resultMethod.getModifiers() & Opcodes.ACC_PUBLIC) != 0);
-        assertTrue((result.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
-        Object script = constructor.newInstance();
-        assertEquals(8, result.get(script));
-        assertEquals(8, resultMethod.invoke(script));
+    fun testLanguageWithPackage() {
+        loadFile("scriptCustom/fibwp.lang.kt")
+        val aClass = generateClass("test.Fibwp")
+        val constructor = aClass.getConstructor(Integer.TYPE)
+        val result = aClass.getDeclaredField("result")
+        result.isAccessible = true
+        val script = constructor.newInstance(5)
+        assertEquals(8, result.get(script))
     }
 
-    public void testScriptWhereMethodHasClosure() throws Exception {
-        loadFile("scriptCustom/methodWithClosure.lang.kt");
-        Class<?> aClass = generateClass("MethodWithClosure");
-        Constructor constructor = aClass.getConstructor(int.class);
-        Object script = constructor.newInstance(239);
-        Method fib = aClass.getMethod("method");
-        Object invoke = fib.invoke(script);
-        assertEquals(239, ((Integer) invoke) / 2);
+    fun testDependentScripts() {
+        loadFiles("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts")
+        val aClass = generateClass("Fibwprunner")
+        val constructor = aClass.getConstructor()
+        val result = aClass.getDeclaredField("result")
+        result.isAccessible = true
+        val resultMethod = aClass.getDeclaredMethod("getResult")
+        assertTrue(resultMethod.modifiers and Opcodes.ACC_FINAL != 0)
+        assertTrue(resultMethod.modifiers and Opcodes.ACC_PUBLIC != 0)
+        assertTrue(result.modifiers and Opcodes.ACC_PRIVATE != 0)
+        val script = constructor.newInstance()
+        assertEquals(8, result.get(script))
+        assertEquals(8, resultMethod.invoke(script))
+    }
+
+    fun testScriptWhereMethodHasClosure() {
+        loadFile("scriptCustom/methodWithClosure.lang.kt")
+        val aClass = generateClass("MethodWithClosure")
+        val constructor = aClass.getConstructor(Integer.TYPE)
+        val script = constructor.newInstance(239)
+        val fib = aClass.getMethod("method")
+        val invoke = fib.invoke(script)
+        assertEquals(239, invoke as Int / 2)
     }
 }
