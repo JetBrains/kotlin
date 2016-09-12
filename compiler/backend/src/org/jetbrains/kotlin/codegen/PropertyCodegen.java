@@ -58,8 +58,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -274,8 +273,10 @@ public class PropertyCodegen {
     private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, @NotNull Annotations annotations) {
         if (annotations.getAllAnnotations().isEmpty()) return;
 
-        if (!isInterface(context.getContextDescriptor()) || kind == OwnerKind.DEFAULT_IMPLS) {
-            int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        if (!isInterface(contextDescriptor) ||
+            (isJvm8Interface(contextDescriptor, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS)) {
+            int flags = ACC_DEPRECATED | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             Method syntheticMethod = getSyntheticMethodSignature(descriptor);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                            syntheticMethod.getDescriptor(), null, null);
