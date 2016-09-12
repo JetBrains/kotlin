@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.script.ScriptParameter;
+import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -122,53 +124,23 @@ public class CodegenTestFiles {
             expectedValues.add(Pair.create(fieldName, expectedValue));
         }
 
-        List<ScriptParameter> scriptParameterTypes = Lists.newArrayList();
         List<Object> scriptParameterValues = Lists.newArrayList();
 
         if (file.isScript()) {
-            Pattern scriptParametersPattern = Pattern.compile("param: (\\S+): (\\S+): (\\S.*)");
+            Pattern scriptParametersPattern = Pattern.compile("param: (\\S.*)");
             Matcher scriptParametersMatcher = scriptParametersPattern.matcher(file.getText());
 
-            while (scriptParametersMatcher.find()) {
-                String name = scriptParametersMatcher.group(1);
-                String type = scriptParametersMatcher.group(2);
-                String valueString = scriptParametersMatcher.group(3);
-                Object value;
+            if (scriptParametersMatcher.find()) {
+                String valueString = scriptParametersMatcher.group(1);
+                String[] values = valueString.split(" ");
 
-                KotlinType jetType;
-                KotlinBuiltIns builtIns = DefaultBuiltIns.getInstance();
-                if (type.equals("kotlin.String")) {
-                    value = valueString;
-                    jetType = builtIns.getStringType();
-                }
-                else if (type.equals("kotlin.Long")) {
-                    value = Long.parseLong(valueString);
-                    jetType = builtIns.getLongType();
-                }
-                else if (type.equals("kotlin.Int")) {
-                    value = Integer.parseInt(valueString);
-                    jetType = builtIns.getIntType();
-                }
-                else if (type.equals("kotlin.Array<kotlin.String>")) {
-                    value = valueString.split(" ");
-                    jetType = builtIns.getArrayType(Variance.INVARIANT, builtIns.getStringType());
-                }
-                else {
-                    throw new AssertionError("TODO: " + type);
-                }
-
-                scriptParameterTypes.add(new ScriptParameter(Name.identifier(name), jetType));
-                scriptParameterValues.add(value);
+                scriptParameterValues.add(values);
+            } else {
+                scriptParameterValues.add(ArrayUtil.EMPTY_STRING_ARRAY);
             }
-
-            KotlinScriptDefinitionProvider definitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
-            definitionProvider.addScriptDefinition(
-                    new SimpleParamsTestScriptDefinition(
-                            ".kts",
-                            scriptParameterTypes
-                    )
-            );
         }
+
+        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinition(StandardScriptDefinition.INSTANCE);
 
         return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
     }

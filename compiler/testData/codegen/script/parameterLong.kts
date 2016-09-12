@@ -1,5 +1,4 @@
 // expected: rv: 19
-// param: aa: kotlin.Long: 17
-// param: bb: kotlin.Int: 2
+// param: 17 2
 
-val rv = aa + bb
+val rv = java.lang.Long.parseLong(args[0]) + java.lang.Integer.parseInt(args[1])
