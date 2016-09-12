@@ -1,0 +1,37 @@
+// JVM_TARGET: 1.8
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.INTERFACE_COMPATIBILITY
+
+interface Test {
+    var z: String
+        get() = "OK"
+        set(value) {}
+}
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, getZ
+// FLAGS: ACC_PUBLIC
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, setZ
+// FLAGS: ACC_PUBLIC
+
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, getZ$defaultImpl
+// FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, setZ$defaultImpl
+// FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Test$DefaultImpls
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test$DefaultImpls, getZ
+// FLAGS: ACC_PUBLIC, ACC_STATIC
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test$DefaultImpls, setZ
+// FLAGS: ACC_PUBLIC, ACC_STATIC

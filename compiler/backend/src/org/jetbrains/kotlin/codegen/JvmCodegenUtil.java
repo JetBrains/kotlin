@@ -79,7 +79,7 @@ public class JvmCodegenUtil {
         return !state.isJvm8Target();
     }
 
-    private static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
         return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, state);
     }
 

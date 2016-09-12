@@ -209,6 +209,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/reflection/propertyAnnotations.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("propertyAnnotationsCompatibility.kt")
+            public void testPropertyAnnotationsCompatibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/reflection/propertyAnnotationsCompatibility.kt");
+                doTest(fileName);
+            }
         }
     }
 

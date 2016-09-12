@@ -231,7 +231,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDefaultImplsIfNeeded() {
-        if (isInterface(descriptor) && !isLocal) {
+        if (isInterface(descriptor) && !isLocal && (!isJvm8Interface(descriptor, state) || state.getGenerateDefaultImplsForJvm8())) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
                     state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass, descriptor), defaultImplsType, myClass.getContainingFile());

@@ -1,0 +1,25 @@
+// JVM_TARGET: 1.8
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.INTERFACE_COMPATIBILITY
+
+
+interface Test {
+    fun test(): String {
+        return "OK"
+    }
+}
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, test
+// FLAGS: ACC_PUBLIC
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test, test$defaultImpl
+// FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Test$DefaultImpls
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Test$DefaultImpls, test
+// FLAGS: ACC_PUBLIC, ACC_STATIC

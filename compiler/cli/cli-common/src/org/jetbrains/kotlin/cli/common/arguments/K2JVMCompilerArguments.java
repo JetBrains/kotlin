@@ -98,6 +98,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
     public boolean singleModule;
 
+    @Argument(value = "Xinterface-compatibility", description = "Generate DefaultImpls classes for interfaces in JVM target bytecode version 1.8 for binary compatibility with 1.6")
+    public boolean interfaceCompatibility;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

@@ -62,6 +62,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmTarget> JVM_TARGET =
             CompilerConfigurationKey.create("JVM bytecode target version");
 
+    public static final CompilerConfigurationKey<Boolean> INTERFACE_COMPATIBILITY =
+            CompilerConfigurationKey.create("Generate additional 'DefaultImpls' class files for jvm 8 target for compatibility with 6 target interfaces");
+
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
 

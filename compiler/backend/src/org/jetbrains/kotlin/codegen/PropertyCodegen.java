@@ -275,7 +275,8 @@ public class PropertyCodegen {
 
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
         if (!isInterface(contextDescriptor) ||
-            (isJvm8Interface(contextDescriptor, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS)) {
+            (FunctionCodegen.processInterface(contextDescriptor, kind, state) ||
+             (kind == OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()))) {
             int flags = ACC_DEPRECATED | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             Method syntheticMethod = getSyntheticMethodSignature(descriptor);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
