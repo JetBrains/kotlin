@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -42,11 +39,12 @@ sealed class LocalVariableAccessorDescriptor(
     init {
         val valueParameters =
                 if (isGetter) emptyList() else createValueParameter(Name.identifier("value"), correspondingVariable.type).singletonList()
-        initialize(null, null, emptyList(), valueParameters, correspondingVariable.type, null, Visibilities.LOCAL)
+        initialize(null, null, emptyList(), valueParameters, correspondingVariable.type, Modality.FINAL, Visibilities.LOCAL)
     }
 
     private fun createValueParameter(name: Name, type: KotlinType): ValueParameterDescriptorImpl {
         return ValueParameterDescriptorImpl(this, null, 0, Annotations.EMPTY, name, type,
                                             false, false, false, false, null, SourceElement.NO_SOURCE)
     }
+
 }
