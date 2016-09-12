@@ -1,0 +1,14 @@
+package p
+
+object OOO {
+    val vvv = 1
+}
+
+class C {
+    fun foo() {
+        "${OOO.vvv}"
+    }
+}
+
+// ELEMENT: vvv
+// INVOCATION_COUNT: 2
