@@ -21,15 +21,13 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-interface IrGeneralFunction : IrDeclaration {
+interface IrFunction : IrDeclaration {
     override val descriptor: FunctionDescriptor
     var body: IrBody?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
-}
 
-interface IrFunction : IrGeneralFunction {
     fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody)
     fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody?
 }

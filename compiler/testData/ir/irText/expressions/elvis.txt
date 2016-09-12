@@ -1,7 +1,12 @@
 FILE /elvis.kt
   PROPERTY public val p: kotlin.Any? = null
-    EXPRESSION_BODY
-      CONST Null type=kotlin.Nothing? value='null'
+    FIELD public val p: kotlin.Any? = null
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value='null'
+    FUN public fun <get-p>(): kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-p>(): Any?'
+          GET_BACKING_FIELD 'p: Any?' type=kotlin.Any? operator=null
   FUN public fun foo(): kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Any?'

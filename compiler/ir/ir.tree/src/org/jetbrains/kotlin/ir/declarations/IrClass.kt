@@ -32,10 +32,10 @@ fun IrClass.getInstanceInitializerMembers() =
             when (it) {
                 is IrAnonymousInitializer ->
                     true
-                is IrSimpleProperty ->
+                is IrProperty ->
+                    it.backingField?.initializer != null
+                is IrField ->
                     it.initializer != null
-                is IrDelegatedProperty ->
-                    true
                 else -> false
             }
         }

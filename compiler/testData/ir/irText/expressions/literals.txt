@@ -1,52 +1,137 @@
 FILE /literals.kt
   PROPERTY public val test1: kotlin.Int = 1
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='1'
+    FIELD public val test1: kotlin.Int = 1
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='1'
+    FUN public fun <get-test1>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+          GET_BACKING_FIELD 'test1: Int' type=kotlin.Int operator=null
   PROPERTY public val test2: kotlin.Int = -1
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='-1'
+    FIELD public val test2: kotlin.Int = -1
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='-1'
+    FUN public fun <get-test2>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+          GET_BACKING_FIELD 'test2: Int' type=kotlin.Int operator=null
   PROPERTY public val test3: kotlin.Boolean = true
-    EXPRESSION_BODY
-      CONST Boolean type=kotlin.Boolean value='true'
+    FIELD public val test3: kotlin.Boolean = true
+      EXPRESSION_BODY
+        CONST Boolean type=kotlin.Boolean value='true'
+    FUN public fun <get-test3>(): kotlin.Boolean
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): Boolean'
+          GET_BACKING_FIELD 'test3: Boolean' type=kotlin.Boolean operator=null
   PROPERTY public val test4: kotlin.Boolean = false
-    EXPRESSION_BODY
-      CONST Boolean type=kotlin.Boolean value='false'
+    FIELD public val test4: kotlin.Boolean = false
+      EXPRESSION_BODY
+        CONST Boolean type=kotlin.Boolean value='false'
+    FUN public fun <get-test4>(): kotlin.Boolean
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test4>(): Boolean'
+          GET_BACKING_FIELD 'test4: Boolean' type=kotlin.Boolean operator=null
   PROPERTY public val test5: kotlin.String = "abc"
-    EXPRESSION_BODY
-      CONST String type=kotlin.String value='abc'
+    FIELD public val test5: kotlin.String = "abc"
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
+    FUN public fun <get-test5>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test5>(): String'
+          GET_BACKING_FIELD 'test5: String' type=kotlin.String operator=null
   PROPERTY public val test6: kotlin.Nothing? = null
-    EXPRESSION_BODY
-      CONST Null type=kotlin.Nothing? value='null'
+    FIELD public val test6: kotlin.Nothing? = null
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value='null'
+    FUN public fun <get-test6>(): kotlin.Nothing?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test6>(): Nothing?'
+          GET_BACKING_FIELD 'test6: Nothing?' type=kotlin.Nothing? operator=null
   PROPERTY public val test7: kotlin.Long = 1.toLong()
-    EXPRESSION_BODY
-      CONST Long type=kotlin.Long value='1'
+    FIELD public val test7: kotlin.Long = 1.toLong()
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value='1'
+    FUN public fun <get-test7>(): kotlin.Long
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test7>(): Long'
+          GET_BACKING_FIELD 'test7: Long' type=kotlin.Long operator=null
   PROPERTY public val test8: kotlin.Long = -1.toLong()
-    EXPRESSION_BODY
-      CONST Long type=kotlin.Long value='-1'
+    FIELD public val test8: kotlin.Long = -1.toLong()
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value='-1'
+    FUN public fun <get-test8>(): kotlin.Long
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test8>(): Long'
+          GET_BACKING_FIELD 'test8: Long' type=kotlin.Long operator=null
   PROPERTY public val test9: kotlin.Double = 1.0.toDouble()
-    EXPRESSION_BODY
-      CONST Double type=kotlin.Double value='1.0'
+    FIELD public val test9: kotlin.Double = 1.0.toDouble()
+      EXPRESSION_BODY
+        CONST Double type=kotlin.Double value='1.0'
+    FUN public fun <get-test9>(): kotlin.Double
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test9>(): Double'
+          GET_BACKING_FIELD 'test9: Double' type=kotlin.Double operator=null
   PROPERTY public val test10: kotlin.Double = -1.0.toDouble()
-    EXPRESSION_BODY
-      CONST Double type=kotlin.Double value='-1.0'
+    FIELD public val test10: kotlin.Double = -1.0.toDouble()
+      EXPRESSION_BODY
+        CONST Double type=kotlin.Double value='-1.0'
+    FUN public fun <get-test10>(): kotlin.Double
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test10>(): Double'
+          GET_BACKING_FIELD 'test10: Double' type=kotlin.Double operator=null
   PROPERTY public val test11: kotlin.Float = 1.0.toFloat()
-    EXPRESSION_BODY
-      CONST Float type=kotlin.Float value='1.0'
+    FIELD public val test11: kotlin.Float = 1.0.toFloat()
+      EXPRESSION_BODY
+        CONST Float type=kotlin.Float value='1.0'
+    FUN public fun <get-test11>(): kotlin.Float
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test11>(): Float'
+          GET_BACKING_FIELD 'test11: Float' type=kotlin.Float operator=null
   PROPERTY public val test12: kotlin.Float = -1.0.toFloat()
-    EXPRESSION_BODY
-      CONST Float type=kotlin.Float value='-1.0'
+    FIELD public val test12: kotlin.Float = -1.0.toFloat()
+      EXPRESSION_BODY
+        CONST Float type=kotlin.Float value='-1.0'
+    FUN public fun <get-test12>(): kotlin.Float
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test12>(): Float'
+          GET_BACKING_FIELD 'test12: Float' type=kotlin.Float operator=null
   PROPERTY public val test13: kotlin.Char = \u0061 ('a')
-    EXPRESSION_BODY
-      CONST Char type=kotlin.Char value='a'
+    FIELD public val test13: kotlin.Char = \u0061 ('a')
+      EXPRESSION_BODY
+        CONST Char type=kotlin.Char value='a'
+    FUN public fun <get-test13>(): kotlin.Char
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test13>(): Char'
+          GET_BACKING_FIELD 'test13: Char' type=kotlin.Char operator=null
   PROPERTY public val testB: kotlin.Byte = 1.toByte()
-    EXPRESSION_BODY
-      CONST Byte type=kotlin.Byte value='1'
+    FIELD public val testB: kotlin.Byte = 1.toByte()
+      EXPRESSION_BODY
+        CONST Byte type=kotlin.Byte value='1'
+    FUN public fun <get-testB>(): kotlin.Byte
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testB>(): Byte'
+          GET_BACKING_FIELD 'testB: Byte' type=kotlin.Byte operator=null
   PROPERTY public val testS: kotlin.Short = 1.toShort()
-    EXPRESSION_BODY
-      CONST Short type=kotlin.Short value='1'
+    FIELD public val testS: kotlin.Short = 1.toShort()
+      EXPRESSION_BODY
+        CONST Short type=kotlin.Short value='1'
+    FUN public fun <get-testS>(): kotlin.Short
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testS>(): Short'
+          GET_BACKING_FIELD 'testS: Short' type=kotlin.Short operator=null
   PROPERTY public val testI: kotlin.Int = 1
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='1'
+    FIELD public val testI: kotlin.Int = 1
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='1'
+    FUN public fun <get-testI>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testI>(): Int'
+          GET_BACKING_FIELD 'testI: Int' type=kotlin.Int operator=null
   PROPERTY public val testL: kotlin.Long = 1.toLong()
-    EXPRESSION_BODY
-      CONST Long type=kotlin.Long value='1'
+    FIELD public val testL: kotlin.Long = 1.toLong()
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value='1'
+    FUN public fun <get-testL>(): kotlin.Long
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testL>(): Long'
+          GET_BACKING_FIELD 'testL: Long' type=kotlin.Long operator=null

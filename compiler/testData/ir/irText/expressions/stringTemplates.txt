@@ -4,30 +4,62 @@ FILE /stringTemplates.kt
       RETURN type=kotlin.Nothing from='foo(): String'
         CONST String type=kotlin.String value=''
   PROPERTY public val test1: kotlin.String = ""
-    EXPRESSION_BODY
-      CONST String type=kotlin.String value=''
+    FIELD public val test1: kotlin.String = ""
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=''
+    FUN public fun <get-test1>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): String'
+          GET_BACKING_FIELD 'test1: String' type=kotlin.String operator=null
   PROPERTY public val test2: kotlin.String = "abc"
-    EXPRESSION_BODY
-      CONST String type=kotlin.String value='abc'
+    FIELD public val test2: kotlin.String = "abc"
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
+    FUN public fun <get-test2>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): String'
+          GET_BACKING_FIELD 'test2: String' type=kotlin.String operator=null
   PROPERTY public val test3: kotlin.String = ""
-    EXPRESSION_BODY
-      CONST String type=kotlin.String value=''
+    FIELD public val test3: kotlin.String = ""
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=''
+    FUN public fun <get-test3>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): String'
+          GET_BACKING_FIELD 'test3: String' type=kotlin.String operator=null
   PROPERTY public val test4: kotlin.String = "abc"
-    EXPRESSION_BODY
-      CONST String type=kotlin.String value='abc'
+    FIELD public val test4: kotlin.String = "abc"
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
+    FUN public fun <get-test4>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test4>(): String'
+          GET_BACKING_FIELD 'test4: String' type=kotlin.String operator=null
   PROPERTY public val test5: kotlin.String = "
 abc
 "
-    EXPRESSION_BODY
-      STRING_CONCATENATION type=kotlin.String
-        CONST String type=kotlin.String value='
+    FIELD public val test5: kotlin.String = "
+abc
+"
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CONST String type=kotlin.String value='
 '
-        CONST String type=kotlin.String value='abc'
-        CONST String type=kotlin.String value='
+          CONST String type=kotlin.String value='abc'
+          CONST String type=kotlin.String value='
 '
+    FUN public fun <get-test5>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test5>(): String'
+          GET_BACKING_FIELD 'test5: String' type=kotlin.String operator=null
   PROPERTY public val test6: kotlin.String
-    EXPRESSION_BODY
-      STRING_CONCATENATION type=kotlin.String
-        CALL '<get-test1>(): String' type=kotlin.String operator=GET_PROPERTY
-        CONST String type=kotlin.String value=' '
-        CALL 'foo(): String' type=kotlin.String operator=null
+    FIELD public val test6: kotlin.String
+      EXPRESSION_BODY
+        STRING_CONCATENATION type=kotlin.String
+          CALL '<get-test1>(): String' type=kotlin.String operator=GET_PROPERTY
+          CONST String type=kotlin.String value=' '
+          CALL 'foo(): String' type=kotlin.String operator=null
+    FUN public fun <get-test6>(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test6>(): String'
+          GET_BACKING_FIELD 'test6: String' type=kotlin.String operator=null

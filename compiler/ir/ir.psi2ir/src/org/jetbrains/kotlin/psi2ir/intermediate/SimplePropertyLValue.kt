@@ -44,8 +44,8 @@ class SimplePropertyLValue(
                                      extensionReceiverValue?.load(),
                                      irOperator,
                                      superQualifier)
-                } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                                                               dispatchReceiverValue?.load(), irOperator, superQualifier)
+                } ?: IrGetFieldImpl(startOffset, endOffset, descriptor,
+                                    dispatchReceiverValue?.load(), irOperator, superQualifier)
             }
 
     override fun store(irExpression: IrExpression) =
@@ -57,8 +57,8 @@ class SimplePropertyLValue(
                                      irExpression,
                                      irOperator,
                                      superQualifier)
-                } ?: IrSetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                                                               dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
+                } ?: IrSetFieldImpl(startOffset, endOffset, descriptor,
+                                    dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
             }
 
     override fun assign(withLValue: (LValue) -> IrExpression) =

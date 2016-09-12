@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrLocalPropertyAccessor
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -47,11 +44,11 @@ class IrLocalDelegatedPropertyImpl(
         set(value) {
             delegateImpl?.detach()
             delegateImpl = value
-            value.setTreeLocation(this, DELEGATE_SLOT)
+            value.setTreeLocation(this, LOCAL_DELEGATE_SLOT)
         }
 
-    private var getterImpl: IrLocalPropertyAccessor? = null
-    override var getter: IrLocalPropertyAccessor
+    private var getterImpl: IrFunction? = null
+    override var getter: IrFunction
         get() = getterImpl!!
         set(value) {
             getterImpl?.detach()
@@ -59,7 +56,7 @@ class IrLocalDelegatedPropertyImpl(
             value.setTreeLocation(this, PROPERTY_GETTER_SLOT)
         }
 
-    override var setter: IrLocalPropertyAccessor? = null
+    override var setter: IrFunction? = null
         set(value) {
             field?.detach()
             field = value
@@ -68,7 +65,7 @@ class IrLocalDelegatedPropertyImpl(
 
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
-                DELEGATE_SLOT -> delegate
+                LOCAL_DELEGATE_SLOT -> delegate
                 PROPERTY_GETTER_SLOT -> getter
                 PROPERTY_SETTER_SLOT -> setter
                 else -> null
@@ -76,7 +73,7 @@ class IrLocalDelegatedPropertyImpl(
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
-            DELEGATE_SLOT -> delegate = newChild.assertCast()
+            LOCAL_DELEGATE_SLOT -> delegate = newChild.assertCast()
             PROPERTY_GETTER_SLOT -> getter = newChild.assertCast()
             PROPERTY_SETTER_SLOT -> setter = newChild.assertCast()
             else -> throwNoSuchSlot(slot)

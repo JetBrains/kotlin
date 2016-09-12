@@ -1,15 +1,25 @@
 FILE /field.kt
   PROPERTY public var testSimple: kotlin.Int
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
-    PROPERTY_SETTER public fun <set-testSimple>(value: kotlin.Int): kotlin.Unit
+    FIELD public var testSimple: kotlin.Int
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public fun <get-testSimple>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
+          GET_BACKING_FIELD 'testSimple: Int' type=kotlin.Int operator=null
+    FUN public fun <set-testSimple>(value: kotlin.Int): kotlin.Unit
       BLOCK_BODY
         SET_BACKING_FIELD 'testSimple: Int' type=kotlin.Unit operator=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
   PROPERTY public var testAugmented: kotlin.Int
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
-    PROPERTY_SETTER public fun <set-testAugmented>(value: kotlin.Int): kotlin.Unit
+    FIELD public var testAugmented: kotlin.Int
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public fun <get-testAugmented>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
+          GET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Int operator=null
+    FUN public fun <set-testAugmented>(value: kotlin.Int): kotlin.Unit
       BLOCK_BODY
         SET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Unit operator=PLUSEQ
           value: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ

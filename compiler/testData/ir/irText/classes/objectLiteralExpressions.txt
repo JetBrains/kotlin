@@ -2,27 +2,37 @@ FILE /objectLiteralExpressions.kt
   CLASS INTERFACE IFoo
     FUN public abstract fun foo(): kotlin.Unit
   PROPERTY public val test1: kotlin.Any
-    EXPRESSION_BODY
-      BLOCK type=test1.<no name provided> operator=OBJECT_LITERAL
-        CLASS CLASS <no name provided>
-          CONSTRUCTOR public constructor <no name provided>()
-            BLOCK_BODY
-              DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-              INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
-        CALL 'constructor <no name provided>()' type=test1.<no name provided> operator=OBJECT_LITERAL
+    FIELD public val test1: kotlin.Any
+      EXPRESSION_BODY
+        BLOCK type=test1.<no name provided> operator=OBJECT_LITERAL
+          CLASS CLASS <no name provided>
+            CONSTRUCTOR public constructor <no name provided>()
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+                INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+          CALL 'constructor <no name provided>()' type=test1.<no name provided> operator=OBJECT_LITERAL
+    FUN public fun <get-test1>(): kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Any'
+          GET_BACKING_FIELD 'test1: Any' type=kotlin.Any operator=null
   PROPERTY public val test2: IFoo
-    EXPRESSION_BODY
-      BLOCK type=test2.<no name provided> operator=OBJECT_LITERAL
-        CLASS CLASS <no name provided>
-          CONSTRUCTOR public constructor <no name provided>()
-            BLOCK_BODY
-              DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-              INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
-          FUN public open override fun foo(): kotlin.Unit
-            BLOCK_BODY
-              CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
-                message: CONST String type=kotlin.String value='foo'
-        CALL 'constructor <no name provided>()' type=test2.<no name provided> operator=OBJECT_LITERAL
+    FIELD public val test2: IFoo
+      EXPRESSION_BODY
+        BLOCK type=test2.<no name provided> operator=OBJECT_LITERAL
+          CLASS CLASS <no name provided>
+            CONSTRUCTOR public constructor <no name provided>()
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+                INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+            FUN public open override fun foo(): kotlin.Unit
+              BLOCK_BODY
+                CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+                  message: CONST String type=kotlin.String value='foo'
+          CALL 'constructor <no name provided>()' type=test2.<no name provided> operator=OBJECT_LITERAL
+    FUN public fun <get-test2>(): IFoo
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): IFoo'
+          GET_BACKING_FIELD 'test2: IFoo' type=IFoo operator=null
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY

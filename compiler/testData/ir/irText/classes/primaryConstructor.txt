@@ -5,31 +5,47 @@ FILE /primaryConstructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY public final val x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final val y: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val y: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY public final val y: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val y: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final val x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
+      FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'Test2' type=Test2
   CLASS CLASS Test3
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
     PROPERTY public final val y: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val y: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final val x: kotlin.Int
+      FIELD public final val x: kotlin.Int
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'Test3' type=Test3
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
         SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null

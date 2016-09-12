@@ -1,21 +1,36 @@
 FILE /vararg.kt
   PROPERTY public val test1: kotlin.Array<kotlin.String>
-    EXPRESSION_BODY
-      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
+    FIELD public val test1: kotlin.Array<kotlin.String>
+      EXPRESSION_BODY
+        CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
+    FUN public fun <get-test1>(): kotlin.Array<kotlin.String>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Array<String>'
+          GET_BACKING_FIELD 'test1: Array<String>' type=kotlin.Array<kotlin.String> operator=null
   PROPERTY public val test2: kotlin.Array<kotlin.String>
-    EXPRESSION_BODY
-      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
-        elements: VARARG type=Array<out String> varargElementType=String
-          CONST String type=kotlin.String value='1'
-          CONST String type=kotlin.String value='2'
-          CONST String type=kotlin.String value='3'
+    FIELD public val test2: kotlin.Array<kotlin.String>
+      EXPRESSION_BODY
+        CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
+          elements: VARARG type=Array<out String> varargElementType=String
+            CONST String type=kotlin.String value='1'
+            CONST String type=kotlin.String value='2'
+            CONST String type=kotlin.String value='3'
+    FUN public fun <get-test2>(): kotlin.Array<kotlin.String>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): Array<String>'
+          GET_BACKING_FIELD 'test2: Array<String>' type=kotlin.Array<kotlin.String> operator=null
   PROPERTY public val test3: kotlin.Array<kotlin.String>
-    EXPRESSION_BODY
-      CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
-        elements: VARARG type=Array<out String> varargElementType=String
-          CONST String type=kotlin.String value='0'
-          SPREAD_ELEMENT
-            CALL '<get-test2>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
-          SPREAD_ELEMENT
-            CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
-          CONST String type=kotlin.String value='4'
+    FIELD public val test3: kotlin.Array<kotlin.String>
+      EXPRESSION_BODY
+        CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> operator=null
+          elements: VARARG type=Array<out String> varargElementType=String
+            CONST String type=kotlin.String value='0'
+            SPREAD_ELEMENT
+              CALL '<get-test2>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
+            SPREAD_ELEMENT
+              CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> operator=GET_PROPERTY
+            CONST String type=kotlin.String value='4'
+    FUN public fun <get-test3>(): kotlin.Array<kotlin.String>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): Array<String>'
+          GET_BACKING_FIELD 'test3: Array<String>' type=kotlin.Array<kotlin.String> operator=null

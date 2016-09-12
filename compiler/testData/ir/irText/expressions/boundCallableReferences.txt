@@ -7,19 +7,40 @@ FILE /boundCallableReferences.kt
     FUN public final fun foo(): kotlin.Unit
       BLOCK_BODY
     PROPERTY public final val bar: kotlin.Int = 0
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      FIELD public final val bar: kotlin.Int = 0
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
+      FUN public final fun <get-bar>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+            GET_BACKING_FIELD 'bar: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'A' type=A
   FUN public fun A.qux(): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val test1: kotlin.reflect.KFunction0<kotlin.Unit>
-    EXPRESSION_BODY
-      CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
-        $this: CALL 'constructor A()' type=A operator=null
+    FIELD public val test1: kotlin.reflect.KFunction0<kotlin.Unit>
+      EXPRESSION_BODY
+        CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
+          $this: CALL 'constructor A()' type=A operator=null
+    FUN public fun <get-test1>(): kotlin.reflect.KFunction0<kotlin.Unit>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): KFunction0<Unit>'
+          GET_BACKING_FIELD 'test1: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
   PROPERTY public val test2: kotlin.reflect.KProperty0<kotlin.Int>
-    EXPRESSION_BODY
-      CALLABLE_REFERENCE 'bar: Int' type=kotlin.reflect.KProperty0<kotlin.Int> operator=null
-        $this: CALL 'constructor A()' type=A operator=null
+    FIELD public val test2: kotlin.reflect.KProperty0<kotlin.Int>
+      EXPRESSION_BODY
+        CALLABLE_REFERENCE 'bar: Int' type=kotlin.reflect.KProperty0<kotlin.Int> operator=null
+          $this: CALL 'constructor A()' type=A operator=null
+    FUN public fun <get-test2>(): kotlin.reflect.KProperty0<kotlin.Int>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): KProperty0<Int>'
+          GET_BACKING_FIELD 'test2: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> operator=null
   PROPERTY public val test3: kotlin.reflect.KFunction0<kotlin.Unit>
-    EXPRESSION_BODY
-      CALLABLE_REFERENCE 'qux() on A: Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
-        $receiver: CALL 'constructor A()' type=A operator=null
+    FIELD public val test3: kotlin.reflect.KFunction0<kotlin.Unit>
+      EXPRESSION_BODY
+        CALLABLE_REFERENCE 'qux() on A: Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null
+          $receiver: CALL 'constructor A()' type=A operator=null
+    FUN public fun <get-test3>(): kotlin.reflect.KFunction0<kotlin.Unit>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): KFunction0<Unit>'
+          GET_BACKING_FIELD 'test3: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> operator=null

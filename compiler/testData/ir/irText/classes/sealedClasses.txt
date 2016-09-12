@@ -10,19 +10,22 @@ FILE /sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Const'
       PROPERTY public final val number: kotlin.Double
-        EXPRESSION_BODY
-          GET_VAR 'value-parameter number: Double' type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FIELD public final val number: kotlin.Double
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter number: Double' type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     CLASS CLASS Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Sum'
       PROPERTY public final val e1: Expr
-        EXPRESSION_BODY
-          GET_VAR 'value-parameter e1: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FIELD public final val e1: Expr
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter e1: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
       PROPERTY public final val e2: Expr
-        EXPRESSION_BODY
-          GET_VAR 'value-parameter e2: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FIELD public final val e2: Expr
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter e2: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     CLASS OBJECT NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY

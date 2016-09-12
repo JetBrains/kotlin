@@ -16,8 +16,13 @@ FILE /values.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
   PROPERTY public val a: kotlin.Int = 0
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
+    FIELD public val a: kotlin.Int = 0
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public fun <get-a>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-a>(): Int'
+          GET_BACKING_FIELD 'a: Int' type=kotlin.Int operator=null
   CLASS CLASS Z
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY

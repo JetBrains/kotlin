@@ -39,35 +39,20 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
 
-    fun visitGeneralFunction(declaration: IrGeneralFunction) = visitDeclaration(declaration)
-    override fun visitGeneralFunction(declaration: IrGeneralFunction, data: Nothing?) = visitGeneralFunction(declaration)
-
-    fun visitFunction(declaration: IrFunction) = visitGeneralFunction(declaration)
+    fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
     override fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
-    fun visitPropertyGetter(declaration: IrPropertyGetter) = visitGeneralFunction(declaration)
-    override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?) = visitPropertyGetter(declaration)
-
-    fun visitPropertySetter(declaration: IrPropertySetter) = visitGeneralFunction(declaration)
-    override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?) = visitPropertySetter(declaration)
-
-    fun visitConstructor(declaration: IrConstructor) = visitGeneralFunction(declaration)
+    fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?) = visitConstructor(declaration)
 
     fun visitProperty(declaration: IrProperty) = visitDeclaration(declaration)
     override fun visitProperty(declaration: IrProperty, data: Nothing?) = visitProperty(declaration)
 
-    fun visitSimpleProperty(declaration: IrSimpleProperty) = visitProperty(declaration)
-    override fun visitSimpleProperty(declaration: IrSimpleProperty, data: Nothing?) = visitSimpleProperty(declaration)
-
-    fun visitDelegatedProperty(declaration: IrDelegatedProperty) = visitProperty(declaration)
-    override fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: Nothing?) = visitDelegatedProperty(declaration)
+    fun visitField(declaration: IrField) = visitDeclaration(declaration)
+    override fun visitField(declaration: IrField, data: Nothing?) = visitField(declaration)
 
     fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) = visitDeclaration(declaration)
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = visitLocalDelegatedProperty(declaration)
-
-    fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor) = visitGeneralFunction(declaration)
-    override fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor, data: Nothing?) = visitLocalPropertyAccessor(declaration)
 
     fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
     override fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
@@ -138,14 +123,14 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
-    fun visitBackingFieldReference(expression: IrBackingFieldExpression) = visitDeclarationReference(expression)
-    override fun visitBackingFieldReference(expression: IrBackingFieldExpression, data: Nothing?) = visitBackingFieldReference(expression)
+    fun visitBackingFieldReference(expression: IrFieldExpression) = visitDeclarationReference(expression)
+    override fun visitBackingFieldReference(expression: IrFieldExpression, data: Nothing?) = visitBackingFieldReference(expression)
 
-    fun visitGetBackingField(expression: IrGetBackingField) = visitBackingFieldReference(expression)
-    override fun visitGetBackingField(expression: IrGetBackingField, data: Nothing?) = visitGetBackingField(expression)
+    fun visitGetBackingField(expression: IrGetField) = visitBackingFieldReference(expression)
+    override fun visitGetField(expression: IrGetField, data: Nothing?) = visitGetBackingField(expression)
 
-    fun visitSetBackingField(expression: IrSetBackingField) = visitBackingFieldReference(expression)
-    override fun visitSetBackingField(expression: IrSetBackingField, data: Nothing?) = visitSetBackingField(expression)
+    fun visitSetBackingField(expression: IrSetField) = visitBackingFieldReference(expression)
+    override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetBackingField(expression)
 
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)

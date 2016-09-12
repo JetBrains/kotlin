@@ -1,16 +1,26 @@
 FILE /justLambda.kt
   PROPERTY public val test1: () -> kotlin.Int
-    EXPRESSION_BODY
-      BLOCK type=() -> kotlin.Int operator=LAMBDA
-        FUN local final fun <anonymous>(): kotlin.Int
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='<anonymous>(): Int'
-              CONST Int type=kotlin.Int value='42'
-        CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
+    FIELD public val test1: () -> kotlin.Int
+      EXPRESSION_BODY
+        BLOCK type=() -> kotlin.Int operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<anonymous>(): Int'
+                CONST Int type=kotlin.Int value='42'
+          CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
+    FUN public fun <get-test1>(): () -> kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): () -> Int'
+          GET_BACKING_FIELD 'test1: () -> Int' type=() -> kotlin.Int operator=null
   PROPERTY public val test2: () -> kotlin.Unit
-    EXPRESSION_BODY
-      BLOCK type=() -> kotlin.Unit operator=LAMBDA
-        FUN local final fun <anonymous>(): kotlin.Unit
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-        CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
+    FIELD public val test2: () -> kotlin.Unit
+      EXPRESSION_BODY
+        BLOCK type=() -> kotlin.Unit operator=LAMBDA
+          FUN local final fun <anonymous>(): kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
+    FUN public fun <get-test2>(): () -> kotlin.Unit
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): () -> Unit'
+          GET_BACKING_FIELD 'test2: () -> Unit' type=() -> kotlin.Unit operator=null

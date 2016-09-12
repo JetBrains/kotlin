@@ -10,9 +10,21 @@ FILE /objectWithInitializers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY public final val x: kotlin.Int = 1
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='1'
+      FIELD public final val x: kotlin.Int = 1
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='1'
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'Test' type=Test
     PROPERTY public final val y: kotlin.Int
+      FIELD public final val y: kotlin.Int
+      FUN public final fun <get-y>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+            GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'Test' type=Test
     ANONYMOUS_INITIALIZER Test
       BLOCK_BODY
         SET_BACKING_FIELD 'y: Int' type=kotlin.Unit operator=null

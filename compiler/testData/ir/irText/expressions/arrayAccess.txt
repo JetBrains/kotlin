@@ -1,7 +1,12 @@
 FILE /arrayAccess.kt
   PROPERTY public val p: kotlin.Int = 0
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
+    FIELD public val p: kotlin.Int = 0
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public fun <get-p>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-p>(): Int'
+          GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
   FUN public fun foo(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Int'

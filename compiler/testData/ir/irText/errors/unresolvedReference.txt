@@ -1,15 +1,35 @@
 FILE /unresolvedReference.kt
   PROPERTY public val test1: [ERROR : Type for unresolved]
-    EXPRESSION_BODY
-      ERROR_CALL '' type=[ERROR : ]
+    FIELD public val test1: [ERROR : Type for unresolved]
+      EXPRESSION_BODY
+        ERROR_CALL '' type=[ERROR : ]
+    FUN public fun <get-test1>(): [ERROR : Type for unresolved]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): [ERROR : Type for unresolved]'
+          GET_BACKING_FIELD 'test1: [ERROR : Type for unresolved]' type=[ERROR : Type for unresolved] operator=null
   PROPERTY public val test2: [ERROR : Unresolved]
-    EXPRESSION_BODY
-      ERROR_CALL '' type=[ERROR : ]
+    FIELD public val test2: [ERROR : Unresolved]
+      EXPRESSION_BODY
+        ERROR_CALL '' type=[ERROR : ]
+    FUN public fun <get-test2>(): [ERROR : Unresolved]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): [ERROR : Unresolved]'
+          GET_BACKING_FIELD 'test2: [ERROR : Unresolved]' type=[ERROR : Unresolved] operator=null
   PROPERTY public val test3: [ERROR : Type for 42.unresolved(56)]
-    EXPRESSION_BODY
-      ERROR_CALL '' type=[ERROR : ]
-        receiver: CONST Int type=kotlin.Int value='42'
-        CONST Int type=kotlin.Int value='56'
+    FIELD public val test3: [ERROR : Type for 42.unresolved(56)]
+      EXPRESSION_BODY
+        ERROR_CALL '' type=[ERROR : ]
+          receiver: CONST Int type=kotlin.Int value='42'
+          CONST Int type=kotlin.Int value='56'
+    FUN public fun <get-test3>(): [ERROR : Type for 42.unresolved(56)]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): [ERROR : Type for 42.unresolved(56)]'
+          GET_BACKING_FIELD 'test3: [ERROR : Type for 42.unresolved(56)]' type=[ERROR : Type for 42.unresolved(56)] operator=null
   PROPERTY public val test4: [ERROR : Type for 42 *]
-    EXPRESSION_BODY
-      ERROR_EXPR '' type=[ERROR : ]
+    FIELD public val test4: [ERROR : Type for 42 *]
+      EXPRESSION_BODY
+        ERROR_EXPR '' type=[ERROR : ]
+    FUN public fun <get-test4>(): [ERROR : Type for 42 *]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test4>(): [ERROR : Type for 42 *]'
+          GET_BACKING_FIELD 'test4: [ERROR : Type for 42 *]' type=[ERROR : Type for 42 *] operator=null

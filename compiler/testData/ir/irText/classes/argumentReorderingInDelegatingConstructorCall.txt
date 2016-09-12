@@ -5,11 +5,13 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
     PROPERTY public final val x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     PROPERTY public final val y: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val y: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1(xx: kotlin.Int, yy: kotlin.Int)
       BLOCK_BODY

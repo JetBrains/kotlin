@@ -4,20 +4,34 @@ FILE /smoke.kt
       RETURN type=kotlin.Nothing from='testFun(): String'
         CONST String type=kotlin.String value='OK'
   PROPERTY public val testSimpleVal: kotlin.Int = 1
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='1'
+    FIELD public val testSimpleVal: kotlin.Int = 1
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='1'
+    FUN public fun <get-testSimpleVal>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testSimpleVal>(): Int'
+          GET_BACKING_FIELD 'testSimpleVal: Int' type=kotlin.Int operator=null
   PROPERTY public val testValWithGetter: kotlin.Int
-    PROPERTY_GETTER public fun <get-testValWithGetter>(): kotlin.Int
+    FUN public fun <get-testValWithGetter>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testValWithGetter>(): Int'
           CONST Int type=kotlin.Int value='42'
   PROPERTY public var testSimpleVar: kotlin.Int
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='2'
+    FIELD public var testSimpleVar: kotlin.Int
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='2'
+    FUN public fun <get-testSimpleVar>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testSimpleVar>(): Int'
+          GET_BACKING_FIELD 'testSimpleVar: Int' type=kotlin.Int operator=null
+    FUN public fun <set-testSimpleVar>(<set-?>: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+        SET_BACKING_FIELD 'testSimpleVar: Int' type=kotlin.Unit operator=null
+          value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   PROPERTY public var testVarWithAccessors: kotlin.Int
-    PROPERTY_GETTER public fun <get-testVarWithAccessors>(): kotlin.Int
+    FUN public fun <get-testVarWithAccessors>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testVarWithAccessors>(): Int'
           CONST Int type=kotlin.Int value='42'
-    PROPERTY_SETTER public fun <set-testVarWithAccessors>(v: kotlin.Int): kotlin.Unit
+    FUN public fun <set-testVarWithAccessors>(v: kotlin.Int): kotlin.Unit
       BLOCK_BODY

@@ -19,18 +19,24 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleProperty
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrSimplePropertyImpl(
+
+class IrFieldImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        valueInitializer: IrBody? = null
-) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrSimpleProperty {
-    override var initializer: IrBody? = valueInitializer
+        override val descriptor: PropertyDescriptor
+): IrDeclarationBase(startOffset, endOffset, origin), IrField {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
+                initializer: IrExpressionBody?
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        this.initializer = initializer
+    }
+
+    override var initializer: IrExpressionBody? = null
         set(value) {
             field?.detach()
             field = value
@@ -40,22 +46,21 @@ class IrSimplePropertyImpl(
     override fun getChild(slot: Int): IrElement? =
             when (slot) {
                 INITIALIZER_SLOT -> initializer
-                else -> super.getChild(slot)
+                else -> null
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
         when (slot) {
             INITIALIZER_SLOT -> initializer = newChild.assertCast()
-            else -> super.replaceChild(slot, newChild)
+            else -> throwNoSuchSlot(slot)
         }
     }
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitSimpleProperty(this, data)
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitField(this, data)
+    }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
     }
 }

@@ -4,5 +4,10 @@ FILE /fileWithAnnotations.kt
   FUN public fun foo(): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val bar: kotlin.Int = 42
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='42'
+    FIELD public val bar: kotlin.Int = 42
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='42'
+    FUN public fun <get-bar>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-bar>(): Int'
+          GET_BACKING_FIELD 'bar: Int' type=kotlin.Int operator=null

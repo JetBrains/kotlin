@@ -15,8 +15,13 @@ FILE /augmentedAssignment2.kt
   FUN public operator fun A.modAssign(s: kotlin.String): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val p: A
-    EXPRESSION_BODY
-      CALL 'constructor A()' type=A operator=null
+    FIELD public val p: A
+      EXPRESSION_BODY
+        CALL 'constructor A()' type=A operator=null
+    FUN public fun <get-p>(): A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-p>(): A'
+          GET_BACKING_FIELD 'p: A' type=A operator=null
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR val a: A

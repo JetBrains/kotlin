@@ -33,6 +33,7 @@ enum class IrDeclarationKind {
     FUNCTION,
     CONSTRUCTOR,
     PROPERTY,
+    FIELD,
     PROPERTY_ACCESSOR,
     VARIABLE,
     LOCAL_PROPERTY,
@@ -44,6 +45,8 @@ enum class IrDeclarationKind {
 
 enum class IrDeclarationOrigin {
     DEFINED,
+    PROPERTY_BACKING_FIELD,
+    DEFAULT_PROPERTY_ACCESSOR,
     DELEGATE,
     DELEGATED_PROPERTY_ACCESSOR,
     DELEGATED_MEMBER,

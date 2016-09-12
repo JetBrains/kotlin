@@ -5,24 +5,57 @@ FILE /complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='X1'
     PROPERTY public final var x1: kotlin.Int
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      FIELD public final var x1: kotlin.Int
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
+      FUN public final fun <get-x1>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x1>(): Int'
+            GET_BACKING_FIELD 'x1: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'X1' type=X1
+      FUN public final fun <set-x1>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'x1: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'X1' type=X1
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
     CLASS OBJECT X2
       CONSTRUCTOR private constructor X2()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='X2'
       PROPERTY public final var x2: kotlin.Int
-        EXPRESSION_BODY
-          CONST Int type=kotlin.Int value='0'
+        FIELD public final var x2: kotlin.Int
+          EXPRESSION_BODY
+            CONST Int type=kotlin.Int value='0'
+        FUN public final fun <get-x2>(): kotlin.Int
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-x2>(): Int'
+              GET_BACKING_FIELD 'x2: Int' type=kotlin.Int operator=null
+                receiver: THIS of 'X2' type=X1.X2
+        FUN public final fun <set-x2>(<set-?>: kotlin.Int): kotlin.Unit
+          BLOCK_BODY
+            SET_BACKING_FIELD 'x2: Int' type=kotlin.Unit operator=null
+              receiver: THIS of 'X2' type=X1.X2
+              value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
       CLASS OBJECT X3
         CONSTRUCTOR private constructor X3()
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='X3'
         PROPERTY public final var x3: kotlin.Int
-          EXPRESSION_BODY
-            CONST Int type=kotlin.Int value='0'
+          FIELD public final var x3: kotlin.Int
+            EXPRESSION_BODY
+              CONST Int type=kotlin.Int value='0'
+          FUN public final fun <get-x3>(): kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-x3>(): Int'
+                GET_BACKING_FIELD 'x3: Int' type=kotlin.Int operator=null
+                  receiver: THIS of 'X3' type=X1.X2.X3
+          FUN public final fun <set-x3>(<set-?>: kotlin.Int): kotlin.Unit
+            BLOCK_BODY
+              SET_BACKING_FIELD 'x3: Int' type=kotlin.Unit operator=null
+                receiver: THIS of 'X3' type=X1.X2.X3
+                value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
     BLOCK_BODY
       VAR var i: kotlin.Int
@@ -94,8 +127,9 @@ FILE /complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     PROPERTY public final var s: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final var s: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS OBJECT Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY

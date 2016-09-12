@@ -1,14 +1,28 @@
 FILE /incrementDecrement.kt
   PROPERTY public var p: kotlin.Int
-    EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
+    FIELD public var p: kotlin.Int
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    FUN public fun <get-p>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-p>(): Int'
+          GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
+    FUN public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+        SET_BACKING_FIELD 'p: Int' type=kotlin.Unit operator=null
+          value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   PROPERTY public val arr: kotlin.IntArray
-    EXPRESSION_BODY
-      CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
-        elements: VARARG type=IntArray varargElementType=Int
-          CONST Int type=kotlin.Int value='1'
-          CONST Int type=kotlin.Int value='2'
-          CONST Int type=kotlin.Int value='3'
+    FIELD public val arr: kotlin.IntArray
+      EXPRESSION_BODY
+        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
+          elements: VARARG type=IntArray varargElementType=Int
+            CONST Int type=kotlin.Int value='1'
+            CONST Int type=kotlin.Int value='2'
+            CONST Int type=kotlin.Int value='3'
+    FUN public fun <get-arr>(): kotlin.IntArray
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-arr>(): IntArray'
+          GET_BACKING_FIELD 'arr: IntArray' type=kotlin.IntArray operator=null
   FUN public fun testVarPrefix(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

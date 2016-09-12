@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 
-interface IrBackingFieldExpression : IrDeclarationReference {
+interface IrFieldExpression : IrDeclarationReference {
     override val descriptor: PropertyDescriptor
     val superQualifier: ClassDescriptor?
     var receiver: IrExpression?
     val operator: IrOperator?
 }
 
-interface IrGetBackingField : IrBackingFieldExpression
+interface IrGetField : IrFieldExpression
 
-interface IrSetBackingField : IrBackingFieldExpression {
+interface IrSetField : IrFieldExpression {
     var value: IrExpression
 }

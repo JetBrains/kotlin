@@ -19,19 +19,19 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.expressions.IrBackingFieldExpression
+import org.jetbrains.kotlin.ir.expressions.IrFieldExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrBackingFieldExpressionBase(
+abstract class IrFieldExpressionBase(
         startOffset: Int,
         endOffset: Int,
         descriptor: PropertyDescriptor,
         type: KotlinType,
         override val operator: IrOperator? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrDeclarationReferenceBase<PropertyDescriptor>(startOffset, endOffset, type, descriptor), IrBackingFieldExpression {
+) : IrDeclarationReferenceBase<PropertyDescriptor>(startOffset, endOffset, type, descriptor), IrFieldExpression {
     override final var receiver: IrExpression? = null
         set(value) {
             field?.detach()

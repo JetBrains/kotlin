@@ -17,22 +17,24 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 interface IrProperty : IrDeclaration {
     override val descriptor: PropertyDescriptor
-    var getter: IrPropertyGetter?
-    var setter: IrPropertySetter?
+    val isDelegated: Boolean
+    var backingField: IrField?
+    var getter: IrFunction?
+    var setter: IrFunction?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.PROPERTY
 }
 
-interface IrSimpleProperty : IrProperty {
-    var initializer: IrBody?
-}
+interface IrField : IrDeclaration {
+    override val descriptor: PropertyDescriptor
 
-interface IrDelegatedProperty : IrProperty {
-    var delegate: IrSimpleProperty
-}
+    override val declarationKind: IrDeclarationKind
+        get() = IrDeclarationKind.FIELD
 
+    var initializer: IrExpressionBody?
+}

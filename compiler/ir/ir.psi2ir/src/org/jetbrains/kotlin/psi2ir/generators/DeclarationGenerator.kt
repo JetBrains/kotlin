@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -74,7 +75,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return irAnonymousInitializer
     }
 
-    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrGeneralFunction {
+    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction {
         val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
         val irFunction = IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset, IrDeclarationOrigin.DEFINED, functionDescriptor)
         val bodyGenerator = createBodyGenerator(functionDescriptor)
@@ -83,7 +84,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return irFunction
     }
 
-    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor) : IrGeneralFunction {
+    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor): IrFunction {
         if (ktConstructor.isConstructorDelegatingToSuper(context.bindingContext)) {
             return generateSecondaryConstructorWithNestedInitializers(ktConstructor)
         }
@@ -96,7 +97,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     }
 
 
-    private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrGeneralFunction {
+    private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrFunction {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
         val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
         val bodyGenerator = createBodyGenerator(constructorDescriptor)
@@ -120,30 +121,87 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return DelegatedPropertyGenerator(context).generateDelegatedProperty(ktProperty, ktDelegate, propertyDescriptor, irDelegateInitializer)
     }
 
-    private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrSimplePropertyImpl {
-        val initializer = ktProperty.initializer?.let { generateInitializerBody(propertyDescriptor, it) }
-        val irProperty = IrSimplePropertyImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                                   propertyDescriptor, initializer)
+    private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty {
+        val irProperty = IrPropertyImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFINED, false, propertyDescriptor)
+
+        val irField = if (propertyDescriptor.hasBackingField()) {
+            IrFieldImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, propertyDescriptor,
+                        ktProperty.initializer?.let { generateInitializerBody(propertyDescriptor, it) })
+        }
+        else null
+        irProperty.backingField = irField
 
         irProperty.getter = ktProperty.getter?.let { ktGetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktGetter)
             val getterDescriptor = accessorDescriptor as? PropertyGetterDescriptor ?: TODO("not a getter?")
-            val irGetter = IrPropertyGetterImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED, getterDescriptor)
+            val irGetter = IrFunctionImpl(ktGetter.startOffset, ktGetter.endOffset, IrDeclarationOrigin.DEFINED, getterDescriptor)
             irGetter.body = ktGetter.bodyExpression?.let { generateFunctionBody(getterDescriptor, it ) }
             irGetter
-        }
+        } ?: generateDefaultGetterIfRequired(ktProperty, irField)
 
         irProperty.setter = ktProperty.setter?.let { ktSetter ->
             val accessorDescriptor = getOrFail(BindingContext.PROPERTY_ACCESSOR, ktSetter)
             val setterDescriptor = accessorDescriptor as? PropertySetterDescriptor ?: TODO("not a setter?")
-            val irSetter = IrPropertySetterImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED, setterDescriptor)
+            val irSetter = IrFunctionImpl(ktSetter.startOffset, ktSetter.endOffset, IrDeclarationOrigin.DEFINED, setterDescriptor)
             irSetter.body = ktSetter.bodyExpression?.let { generateFunctionBody(setterDescriptor, it ) }
             irSetter
-        }
+        } ?: generateDefaultSetterIfRequired(ktProperty, irField)
 
         return irProperty
     }
 
+    private fun PropertyDescriptor.hasBackingField(): Boolean =
+            get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
+
+    private fun generateDefaultGetterIfRequired(ktProperty: KtProperty, irField: IrField?): IrFunction? {
+        if (irField == null) return null
+
+        val property = irField.descriptor
+        val getter = property.getter ?: return null
+
+        val irGetter = IrFunctionImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, getter)
+        val irBody = IrBlockBodyImpl(ktProperty.startOffset, ktProperty.endOffset)
+        irGetter.body = irBody
+
+        val containingDeclaration = property.containingDeclaration
+        val receiver =
+                if (containingDeclaration is ClassDescriptor)
+                    IrThisReferenceImpl(ktProperty.startOffset, ktProperty.endOffset, containingDeclaration.defaultType,
+                                        containingDeclaration)
+                else
+                    null
+
+        irBody.addStatement(IrReturnImpl(ktProperty.startOffset, ktProperty.endOffset, context.builtIns.nothingType, getter,
+                                         IrGetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver)))
+
+        return irGetter
+    }
+
+    private fun generateDefaultSetterIfRequired(ktProperty: KtProperty, irField: IrField?): IrFunction? {
+        if (irField == null) return null
+
+        val property = irField.descriptor
+        if (!property.isVar) return null
+        val setter = property.setter ?: return null
+
+        val irSetter = IrFunctionImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, setter)
+        val irBody = IrBlockBodyImpl(ktProperty.startOffset, ktProperty.endOffset)
+        irSetter.body = irBody
+
+        val containingDeclaration = property.containingDeclaration
+        val receiver =
+                if (containingDeclaration is ClassDescriptor)
+                    IrThisReferenceImpl(ktProperty.startOffset, ktProperty.endOffset, containingDeclaration.defaultType,
+                                        containingDeclaration)
+                else
+                    null
+
+        val setterParameter = setter.valueParameters.single()
+        irBody.addStatement(IrSetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver,
+                                           IrGetVariableImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)))
+
+        return irSetter
+    }
 
     private fun getPropertyDescriptor(ktProperty: KtProperty): PropertyDescriptor {
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty)

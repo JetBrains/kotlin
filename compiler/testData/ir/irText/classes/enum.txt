@@ -18,8 +18,9 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY public final val x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST1
         x: CONST Int type=kotlin.Int value='1'
@@ -60,8 +61,9 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY public final val x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()' TEST1
       class: CLASS ENUM_ENTRY TEST1
@@ -83,6 +85,12 @@ FILE /enum.kt
               x: CONST Int type=kotlin.Int value='2'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST2'
         PROPERTY public final val z: kotlin.Int
+          FIELD public final val z: kotlin.Int
+          FUN public final fun <get-z>(): kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-z>(): Int'
+                GET_BACKING_FIELD 'z: Int' type=kotlin.Int operator=null
+                  receiver: THIS of 'TEST2' type=TestEnum4.TEST2
         ANONYMOUS_INITIALIZER TEST2
           BLOCK_BODY
             SET_BACKING_FIELD 'z: Int' type=kotlin.Unit operator=null

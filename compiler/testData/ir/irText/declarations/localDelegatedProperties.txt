@@ -10,7 +10,7 @@ FILE /localDelegatedProperties.kt
                   RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value='42'
               CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int operator=LAMBDA
-        LOCAL_PROPERTY_ACCESSOR <get-x>(): Int
+        FUN local final fun <get-x>(): kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int operator=null
@@ -24,14 +24,14 @@ FILE /localDelegatedProperties.kt
       LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
         VAR val `x$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
           CALL 'hashMapOf(vararg Pair<String, Int>): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
-        LOCAL_PROPERTY_ACCESSOR <get-x>(): Int
+        FUN local final fun <get-x>(): kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int operator=null
                 $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> operator=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
                 property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> operator=PROPERTY_REFERENCE_FOR_DELEGATE
-        LOCAL_PROPERTY_ACCESSOR <set-x>(Int): Int
+        FUN local final fun <set-x>(value: kotlin.Int): kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<set-x>(Int): Int'
               TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int

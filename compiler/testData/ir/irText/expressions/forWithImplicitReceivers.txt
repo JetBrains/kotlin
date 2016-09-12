@@ -10,8 +10,9 @@ FILE /forWithImplicitReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='IntCell'
     PROPERTY public final var value: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final var value: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS INTERFACE IReceiver
     FUN public open operator fun FiveTimes.iterator(): IntCell
       BLOCK_BODY

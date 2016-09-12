@@ -22,17 +22,9 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 interface IrLocalDelegatedProperty : IrDeclaration {
     override val descriptor: VariableDescriptorWithAccessors
     var delegate: IrVariable
-    var getter: IrLocalPropertyAccessor
-    var setter: IrLocalPropertyAccessor?
+    var getter: IrFunction
+    var setter: IrFunction?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.LOCAL_PROPERTY
 }
-
-interface IrLocalPropertyAccessor : IrGeneralFunction {
-    override val descriptor: VariableAccessorDescriptor
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.LOCAL_PROPERTY_ACCESSOR
-}
-

@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrGeneralFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -27,16 +26,7 @@ abstract class IrGeneralFunctionBase(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin
-) : IrDeclarationBase(startOffset, endOffset, origin), IrGeneralFunction {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            body: IrBody
-    ) : this(startOffset, endOffset, origin) {
-        this.body = body
-    }
-
+) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     final override var body: IrBody? = null
         set(newValue) {
             field?.detach()

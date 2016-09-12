@@ -1,6 +1,6 @@
 FILE /extensionPropertyGetterCall.kt
   PROPERTY public val kotlin.String.okext: kotlin.String
-    PROPERTY_GETTER public fun kotlin.String.<get-okext>(): kotlin.String
+    FUN public fun kotlin.String.<get-okext>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-okext>() on String: String'
           CONST String type=kotlin.String value='OK'

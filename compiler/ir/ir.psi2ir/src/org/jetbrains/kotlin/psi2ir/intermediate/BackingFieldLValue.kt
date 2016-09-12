@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetBackingFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetBackingFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.types.KotlinType
 
 class BackingFieldLValue(
@@ -32,10 +32,10 @@ class BackingFieldLValue(
     override val type: KotlinType get() = descriptor.type
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetBackingFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), irExpression, operator)
+            IrSetFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), irExpression, operator)
 
     override fun load(): IrExpression =
-            IrGetBackingFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), operator)
+            IrGetFieldImpl(startOffset, endOffset, descriptor, receiver?.load(), operator)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

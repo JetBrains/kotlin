@@ -5,22 +5,45 @@ FILE /initVar.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarFromParameter'
     PROPERTY public final var x: kotlin.Int
-      EXPRESSION_BODY
-        GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FIELD public final var x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
   CLASS CLASS TestInitVarInClass
     CONSTRUCTOR public constructor TestInitVarInClass()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInClass'
     PROPERTY public final var x: kotlin.Int
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      FIELD public final var x: kotlin.Int
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestInitVarInClass' type=TestInitVarInClass
+      FUN public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'TestInitVarInClass' type=TestInitVarInClass
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   CLASS CLASS TestInitVarInInitBlock
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInInitBlock'
     PROPERTY public final var x: kotlin.Int
+      FIELD public final var x: kotlin.Int
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
+      FUN public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
     ANONYMOUS_INITIALIZER TestInitVarInInitBlock
       BLOCK_BODY
         CALL '<set-x>(Int): Unit' type=kotlin.Unit operator=EQ
@@ -32,15 +55,27 @@ FILE /initVar.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetter'
     PROPERTY public final var x: kotlin.Int
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
-      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+      FIELD public final var x: kotlin.Int
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestInitVarWithCustomSetter' type=TestInitVarWithCustomSetter
+      FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
-      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+      FIELD public final var x: kotlin.Int
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestInitVarWithCustomSetterWithExplicitCtor' type=TestInitVarWithCustomSetterWithExplicitCtor
+      FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
@@ -55,7 +90,13 @@ FILE /initVar.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterWithExplicitCtor'
   CLASS CLASS TestInitVarWithCustomSetterInCtor
     PROPERTY public final var x: kotlin.Int
-      PROPERTY_SETTER public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+      FIELD public final var x: kotlin.Int
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestInitVarWithCustomSetterInCtor' type=TestInitVarWithCustomSetterInCtor
+      FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=EQ
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null

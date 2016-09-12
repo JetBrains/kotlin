@@ -11,7 +11,7 @@ FILE /multipleImplicitReceivers.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B
-      PROPERTY_GETTER public open fun A.<get-foo>(): B
+      FUN public open fun A.<get-foo>(): B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-foo>() on A: B'
             GET_OBJECT 'B' type=B

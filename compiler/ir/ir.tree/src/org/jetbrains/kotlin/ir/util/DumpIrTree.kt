@@ -72,14 +72,6 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         visitFunctionWithParameters(declaration, data)
     }
 
-    override fun visitDelegatedProperty(declaration: IrDelegatedProperty, data: String) {
-        declaration.dumpLabeledElementWith(data) {
-            declaration.delegate.accept(this, "delegate")
-            declaration.getter?.accept(this, "")
-            declaration.setter?.accept(this, "")
-        }
-    }
-
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.explicitReceiver?.accept(this, "receiver")
@@ -113,13 +105,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitGetBackingField(expression: IrGetBackingField, data: String) {
+    override fun visitGetField(expression: IrGetField, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.receiver?.accept(this, "receiver")
         }
     }
 
-    override fun visitSetBackingField(expression: IrSetBackingField, data: String) {
+    override fun visitSetField(expression: IrSetField, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.receiver?.accept(this, "receiver")
             expression.value.accept(this, "value")

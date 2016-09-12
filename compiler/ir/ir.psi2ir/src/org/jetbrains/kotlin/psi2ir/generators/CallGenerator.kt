@@ -92,9 +92,9 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                                  extensionReceiverValue?.load(),
                                  IrOperator.GET_PROPERTY,
                                  call.superQualifier)
-            } ?: IrGetBackingFieldImpl(startOffset, endOffset, descriptor,
-                                                                           dispatchReceiverValue?.load(),
-                                                                           IrOperator.GET_PROPERTY, call.superQualifier)
+            } ?: IrGetFieldImpl(startOffset, endOffset, descriptor,
+                                dispatchReceiverValue?.load(),
+                                IrOperator.GET_PROPERTY, call.superQualifier)
         }
     }
 

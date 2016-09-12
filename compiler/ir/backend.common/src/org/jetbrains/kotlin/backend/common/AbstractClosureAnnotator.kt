@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrGeneralFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalPropertyAccessor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
@@ -103,7 +104,7 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
         closuresStack.peek()?.addNested(closure)
     }
 
-    override fun visitGeneralFunction(declaration: IrGeneralFunction) {
+    override fun visitFunction(declaration: IrFunction) {
         val functionDescriptor = declaration.descriptor
         val closureBuilder = ClosureBuilder(functionDescriptor)
 
@@ -120,8 +121,9 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
         closuresStack.peek()?.addNested(closure)
     }
 
-    override fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor) {
-        // Local property accessors are created for delegated local properties and have no closure.
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+        // Getter and setter of local delegated properties are special generated functions and don't have closure.
+        declaration.delegate.initializer?.acceptVoid(this)
     }
 
     override fun visitThisReference(expression: IrThisReference) {

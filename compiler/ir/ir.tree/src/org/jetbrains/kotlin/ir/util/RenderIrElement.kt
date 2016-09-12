@@ -51,11 +51,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
             "PROPERTY ${declaration.renderDeclared()}"
 
-    override fun visitPropertyGetter(declaration: IrPropertyGetter, data: Nothing?): String =
-            "PROPERTY_GETTER ${declaration.renderDeclared()}"
-
-    override fun visitPropertySetter(declaration: IrPropertySetter, data: Nothing?): String =
-            "PROPERTY_SETTER ${declaration.renderDeclared()}"
+    override fun visitField(declaration: IrField, data: Nothing?): String =
+            "FIELD ${declaration.renderDeclared()}"
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
             "CLASS ${declaration.descriptor.kind} ${declaration.descriptor.ref()}"
@@ -74,9 +71,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
             "LOCAL_DELEGATED_PROPERTY ${declaration.renderDeclared()}"
-
-    override fun visitLocalPropertyAccessor(declaration: IrLocalPropertyAccessor, data: Nothing?): String =
-            "LOCAL_PROPERTY_ACCESSOR ${declaration.descriptor.ref()}" // can't render, see nullability for modality
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "EXPRESSION_BODY"
@@ -140,10 +134,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
             "SET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
 
-    override fun visitGetBackingField(expression: IrGetBackingField, data: Nothing?): String =
+    override fun visitGetField(expression: IrGetField, data: Nothing?): String =
             "GET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
 
-    override fun visitSetBackingField(expression: IrSetBackingField, data: Nothing?): String =
+    override fun visitSetField(expression: IrSetField, data: Nothing?): String =
             "SET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
