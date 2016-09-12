@@ -78,9 +78,7 @@ open class HashMap<K, V> : AbstractMap<K, V> {
 
     override fun containsKey(key: K): Boolean = internalMap.contains(key)
 
-    override fun containsValue(value: V): Boolean = containsValue(value, internalMap)
-
-    private fun containsValue(value: V, entries: Iterable<Entry<K, V>>): Boolean = entries.any { equality.equals(it.value, value) }
+    override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = EntrySet()

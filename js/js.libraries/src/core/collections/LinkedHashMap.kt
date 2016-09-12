@@ -35,64 +35,19 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
      * small modifications. Paying a small storage cost only if you use
      * LinkedHashMap and minimizing code size seemed like a better tradeoff
      */
-    private inner class ChainEntry(key: K, value: V) : AbstractMap.SimpleEntry<K, V>(key, value) {
-        internal var next: ChainEntry? = null
-        internal var prev: ChainEntry? = null
-
-        /**
-         * Add this node to the end of the chain.
-         */
-        fun addToEnd() {
-            // This entry is not in the list.
-            check(next == null && prev == null)
-
-            if (head == null) {
-                head = this
-                next = this
-                prev = this
-            } else {
-                // Chain is valid.
-                val tail = checkNotNull(head).prev
-                checkNotNull(tail)
-                // Update me.
-                prev = tail
-                next = head
-                // Update my new siblings: current head and old tail
-                head!!.prev = this
-                tail!!.next = this
-            }
-
-        }
-
-        /**
-         * Remove this node from any list it may be a part of.
-         */
-        fun remove() {
-            if (this.next === this) {
-                // if this is single element, remove head
-                head = null
-            }
-            else {
-                if (head === this) {
-                    // if this is first element, move head to next
-                    head = next
-                }
-                next!!.prev = prev
-                prev!!.next = next
-            }
-            next = null
-            prev = null
-        }
+    private class ChainEntry<K, V>(key: K, value: V) : AbstractMap.SimpleEntry<K, V>(key, value) {
+        internal var next: ChainEntry<K, V>? = null
+        internal var prev: ChainEntry<K, V>? = null
     }
 
     private inner class EntrySet : AbstractSet<MutableEntry<K, V>>() {
 
         private inner class EntryIterator : MutableIterator<MutableEntry<K, V>> {
             // The last entry that was returned from this iterator.
-            private var last: ChainEntry? = null
+            private var last: ChainEntry<K, V>? = null
 
             // The next entry to return from this iterator.
-            private var next: ChainEntry? = null
+            private var next: ChainEntry<K, V>? = null
 
             init {
                 next = head
@@ -144,40 +99,81 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         override val size: Int get() = this@LinkedHashMap.size
     }
 
-//    // True if we should use the access order (ie, for LRU caches) instead of
-//    // insertion order.
-//    private val accessOrder: Boolean
 
     /*
-   * The head of the LRU/insert order chain, which is a doubly-linked circular
-   * list. The key and value of head should never be read.
+   * The head of the insert order chain, which is a doubly-linked circular
+   * list.
    *
-   * The most recently inserted/accessed node is at the end of the chain, ie.
+   * The most recently inserted node is at the end of the chain, ie.
    * chain.prev.
    */
-    private var head: ChainEntry? = null
+    private var head: ChainEntry<K, V>? = null
+
+    /**
+     * Add this node to the end of the chain.
+     */
+    private fun ChainEntry<K, V>.addToEnd() {
+        // This entry is not in the list.
+        check(next == null && prev == null)
+
+        val _head = head
+        if (_head == null) {
+            head = this
+            next = this
+            prev = this
+        } else {
+            // Chain is valid.
+            val _tail = checkNotNull(_head.prev)
+            // Update me.
+            prev = _tail
+            next = _head
+            // Update my new siblings: current head and old tail
+            _head.prev = this
+            _tail.next = this
+        }
+    }
+
+    /**
+     * Remove this node from the chain it is a part of.
+     */
+    private fun ChainEntry<K, V>.remove() {
+        if (this.next === this) {
+            // if this is single element, remove head
+            head = null
+        }
+        else {
+            if (head === this) {
+                // if this is first element, move head to next
+                head = next
+            }
+            next!!.prev = prev
+            prev!!.next = next
+        }
+        next = null
+        prev = null
+    }
 
     /*
    * The hashmap that keeps track of our entries and the chain. Note that we
    * duplicate the key here to eliminate changes to HashMap and minimize the
    * code here, at the expense of additional space.
    */
-    private val map: HashMap<K, ChainEntry>
+    private val map: HashMap<K, ChainEntry<K, V>>
 
     constructor() : super()  {
-        map = HashMap<K, ChainEntry>()
+        map = HashMap<K, ChainEntry<K, V>>()
     }
 
     internal constructor(backingMap: HashMap<K, Any>) : super() {
-        map = backingMap as HashMap<K, ChainEntry>
+        map = backingMap as HashMap<K, ChainEntry<K, V>>
     }
 
     constructor(initialCapacity: Int, loadFactor: Float = 0f) : super(initialCapacity, loadFactor) {
-        map = HashMap<K, ChainEntry>()
+        map = HashMap<K, ChainEntry<K, V>>()
     }
 
     constructor(original: Map<out K, V>) {
-        map = HashMap<K, ChainEntry>()
+        map = HashMap<K, ChainEntry<K, V>>()
         this.putAll(original)
     }
 
@@ -194,7 +190,7 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
     override fun containsKey(key: K): Boolean = map.containsKey(key)
 
     override fun containsValue(value: V): Boolean {
-        var node: ChainEntry = head ?: return false
+        var node: ChainEntry<K, V> = head ?: return false
         do {
             if (node.value == value) {
                 return true
@@ -208,14 +204,7 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = EntrySet()
 
-    override operator fun get(key: K): V? {
-        val entry = map.get(key)
-        if (entry != null) {
-            recordAccess(entry)
-            return entry.value
-        }
-        return null
-    }
+    override operator fun get(key: K): V? = map.get(key)?.value
 
     override fun put(key: K, value: V): V? {
         val old = map.get(key)
@@ -223,17 +212,10 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
             val newEntry = ChainEntry(key, value)
             map.put(key, newEntry)
             newEntry.addToEnd()
-//            val eldest = head.next!!
-//            if (removeEldestEntry(eldest)) {
-//                eldest.remove()
-//                map.remove(eldest.key)
-//            }
             return null
         }
         else {
-            val oldValue = old.setValue(value)
-            recordAccess(old)
-            return oldValue
+            return old.setValue(value)
         }
     }
 
@@ -248,18 +230,6 @@ open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
     override val size: Int get() = map.size
 
-//    @SuppressWarnings("unused")
-//    protected fun removeEldestEntry(eldest: Entry<K, V>): Boolean {
-//        return false
-//    }
-
-    private fun recordAccess(entry: ChainEntry) {
-//        if (accessOrder) {
-//            // Move to the tail of the chain on access.
-//            entry.remove()
-//            entry.addToEnd()
-//        }
-    }
 }
 
 
