@@ -533,42 +533,6 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
-    @TestMetadata("Lambda1.kt")
-    public void testLambda1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda1.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("Lambda2.kt")
-    public void testLambda2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda2.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("Lambda3.kt")
-    public void testLambda3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda3.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("Lambda4.kt")
-    public void testLambda4() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda4.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("Lambda5.kt")
-    public void testLambda5() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda5.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("LambdaInsertImport.kt")
-    public void testLambdaInsertImport() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LambdaInsertImport.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("LambdaValue1.kt")
     public void testLambdaValue1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LambdaValue1.kt");
@@ -897,5 +861,50 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     public void testWhenElse() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/WhenElse.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/smart/lambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lambda extends AbstractSmartCompletionHandlerTest {
+        @TestMetadata("1.kt")
+        public void test1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("2.kt")
+        public void test2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("3.kt")
+        public void test3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("4.kt")
+        public void test4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("5.kt")
+        public void test5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/5.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("InsertImport.kt")
+        public void testInsertImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/InsertImport.kt");
+            doTest(fileName);
+        }
     }
 }
