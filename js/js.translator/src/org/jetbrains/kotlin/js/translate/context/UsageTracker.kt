@@ -115,13 +115,8 @@ class UsageTracker(
         // Class which instance we are trying to capture
         val currentClass = descriptor.containingDeclaration as? ClassDescriptor ?: return false
 
-        // We always capture enclosing class if it's not outer (i.e. we are capturing members of enclosing class to a local class)
-        if (containingClass != currentClass && containingClass.containingDeclaration !is ClassDescriptor) {
-            return false
-        }
-
         for (outerDeclaration in generateSequence(containingClass) { it.containingDeclaration as? ClassDescriptor }) {
-            if (DescriptorUtils.isSubclass(outerDeclaration, currentClass)) return true
+            if (outerDeclaration == currentClass) return true
         }
 
         return false

@@ -704,6 +704,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("enclosingClassFromInnerLocalClass.kt")
+        public void testEnclosingClassFromInnerLocalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/closure/enclosingClassFromInnerLocalClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enclosingClassFromLocalClass.kt")
         public void testEnclosingClassFromLocalClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/closure/enclosingClassFromLocalClass.kt");
