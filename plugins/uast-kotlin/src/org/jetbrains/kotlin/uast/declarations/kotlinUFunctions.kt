@@ -67,7 +67,7 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
         }
 
         val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
-                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, null)
         typeMapper.mapAsmMethod(descriptor).descriptor
     }
 

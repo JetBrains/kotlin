@@ -99,6 +99,7 @@ public class KotlinTypeMapper {
     private final IncrementalCache incrementalCache;
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
+    @Nullable private GenerationState state;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
         @Override
@@ -126,7 +127,8 @@ public class KotlinTypeMapper {
             @NotNull JvmFileClassesProvider fileClassesProvider,
             @Nullable IncrementalCache incrementalCache,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
-            @NotNull String moduleName
+            @NotNull String moduleName,
+            @Nullable GenerationState state
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
@@ -134,6 +136,7 @@ public class KotlinTypeMapper {
         this.incrementalCache = incrementalCache;
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
+        this.state = state;
     }
 
     @NotNull

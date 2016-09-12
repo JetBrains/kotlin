@@ -63,7 +63,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache,
-                                           IncompatibleClassTracker.DoNothing, moduleName)
+                                              IncompatibleClassTracker.DoNothing, moduleName, null)
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 
     fun reportDiagnostics() {

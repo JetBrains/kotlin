@@ -130,7 +130,7 @@ class GenerationState @JvmOverloads constructor(
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
             this.bindingContext, classBuilderMode, fileClassesProvider, incrementalCacheForThisTarget,
-            IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace), this.moduleName
+            IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace), this.moduleName, this
     )
     val intrinsics: IntrinsicMethods = IntrinsicMethods()
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
