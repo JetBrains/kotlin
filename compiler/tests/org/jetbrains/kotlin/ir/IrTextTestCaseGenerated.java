@@ -190,6 +190,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("classLevelProperties.kt")
+        public void testClassLevelProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/classLevelProperties.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultArguments.kt")
         public void testDefaultArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/defaultArguments.kt");
@@ -211,6 +217,18 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageLevelProperties.kt")
+        public void testPackageLevelProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/packageLevelProperties.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryCtorProperties.kt")
+        public void testPrimaryCtorProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/primaryCtorProperties.kt");
             doTest(fileName);
         }
 

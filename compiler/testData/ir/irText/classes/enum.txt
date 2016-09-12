@@ -21,6 +21,11 @@ FILE /enum.kt
       FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestEnum2' type=TestEnum2
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST1
         x: CONST Int type=kotlin.Int value='1'
@@ -64,6 +69,11 @@ FILE /enum.kt
       FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'TestEnum4' type=TestEnum4
     ENUM_ENTRY enum entry TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()' TEST1
       class: CLASS ENUM_ENTRY TEST1

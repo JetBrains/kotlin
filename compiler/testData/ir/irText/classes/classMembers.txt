@@ -10,10 +10,25 @@ FILE /classMembers.kt
       FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-y>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+            GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'C' type=C
     PROPERTY public final var z: kotlin.Int
       FIELD public final var z: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-z>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-z>(): Int'
+            GET_BACKING_FIELD 'z: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'C' type=C
+      FUN public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'z: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'C' type=C
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor C(Int, Int, Int = ...)'

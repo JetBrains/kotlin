@@ -130,6 +130,16 @@ FILE /complexAugmentedAssignment.kt
       FIELD public final var s: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-s>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-s>(): Int'
+            GET_BACKING_FIELD 's: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'B' type=B
+      FUN public final fun <set-s>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 's: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'B' type=B
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   CLASS OBJECT Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY

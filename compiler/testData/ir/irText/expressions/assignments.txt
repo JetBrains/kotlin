@@ -8,6 +8,16 @@ FILE /assignments.kt
       FIELD public final var x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'Ref' type=Ref
+      FUN public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'Ref' type=Ref
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int

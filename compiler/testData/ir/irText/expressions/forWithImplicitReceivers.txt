@@ -13,6 +13,16 @@ FILE /forWithImplicitReceivers.kt
       FIELD public final var value: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-value>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): Int'
+            GET_BACKING_FIELD 'value: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'IntCell' type=IntCell
+      FUN public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'IntCell' type=IntCell
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   CLASS INTERFACE IReceiver
     FUN public open operator fun FiveTimes.iterator(): IntCell
       BLOCK_BODY

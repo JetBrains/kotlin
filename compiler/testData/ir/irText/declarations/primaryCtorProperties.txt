@@ -1,0 +1,29 @@
+FILE /primaryCtorProperties.kt
+  CLASS CLASS C
+    CONSTRUCTOR public constructor C(test1: kotlin.Int, test2: kotlin.Int)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    PROPERTY public final val test1: kotlin.Int
+      FIELD public final val test1: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter test1: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-test1>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+            GET_BACKING_FIELD 'test1: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'C' type=C
+    PROPERTY public final var test2: kotlin.Int
+      FIELD public final var test2: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter test2: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN public final fun <get-test2>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+            GET_BACKING_FIELD 'test2: Int' type=kotlin.Int operator=null
+              receiver: THIS of 'C' type=C
+      FUN public final fun <set-test2>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_BACKING_FIELD 'test2: Int' type=kotlin.Unit operator=null
+            receiver: THIS of 'C' type=C
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null

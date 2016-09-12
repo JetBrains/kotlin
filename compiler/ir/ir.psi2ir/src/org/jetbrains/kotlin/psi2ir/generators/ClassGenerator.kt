@@ -212,7 +212,8 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         ktClassOrObject.getPrimaryConstructor()?.let { ktPrimaryConstructor ->
             for (ktParameter in ktPrimaryConstructor.valueParameters) {
                 if (ktParameter.hasValOrVar()) {
-                    irClass.addMember(generatePropertyForPrimaryConstructorParameter(ktParameter))
+                    val irProperty = PropertyGenerator(declarationGenerator).generatePropertyForPrimaryConstructorParameter(ktParameter)
+                    irClass.addMember(irProperty)
                 }
             }
         }
@@ -225,18 +226,6 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
                 irClass.addMember(irMember)
             }
         }
-    }
-
-    private fun generatePropertyForPrimaryConstructorParameter(ktParameter: KtParameter): IrDeclaration {
-        val valueParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
-        val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
-        val irProperty = IrPropertyImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFINED, false, propertyDescriptor)
-        val irField = IrFieldImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, propertyDescriptor)
-        irProperty.backingField = irField
-        val irGetParameter = IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
-                                               valueParameterDescriptor, IrOperator.INITIALIZE_PROPERTY_FROM_PARAMETER)
-        irField.initializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
-        return irProperty
     }
 
     fun generateEnumEntry(ktEnumEntry: KtEnumEntry): IrEnumEntry {
