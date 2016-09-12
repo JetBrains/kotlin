@@ -22,18 +22,29 @@ import javax.lang.model.type.ArrayType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
-class JeArrayType(override val psiType: PsiArrayType, override val psiManager: PsiManager) : JePsiType(), JeTypeWithManager, ArrayType {
+class JeArrayType(
+        override val psiType: PsiArrayType, 
+        override val psiManager: PsiManager,
+        private val isRaw: Boolean
+) : JePsiType(), JeTypeWithManager, ArrayType {
     override fun getKind() = TypeKind.ARRAY
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitArray(this, p)
-    override fun getComponentType() = psiType.componentType.toJeType(psiManager)
+    override fun getComponentType() = psiType.componentType.toJeType(psiManager, isRaw = isRaw)
     
     override fun toString() = psiType.getCanonicalText(false)
-    
-    override fun equals(other: Any?): Boolean{
+
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
-        return componentType == (other as? JeArrayType)?.componentType
+        other as? JeArrayType ?: return false
+
+        return componentType == other.componentType
+               && isRaw == other.isRaw
     }
 
-    override fun hashCode() = componentType.hashCode()
+    override fun hashCode(): Int {
+        var result = componentType.hashCode()
+        result = 31 * result + isRaw.hashCode()
+        return result
+    }
 }
