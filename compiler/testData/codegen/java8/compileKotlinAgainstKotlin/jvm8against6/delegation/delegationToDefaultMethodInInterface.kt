@@ -1,6 +1,3 @@
-// WITH_REFLECT
-// FULL_JDK
-
 // FILE: 1.kt
 interface Test {
     fun test() {
