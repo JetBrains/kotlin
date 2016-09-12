@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEnumValueOfMethod
 import java.util.*
 
@@ -184,12 +185,17 @@ class NameSuggestion {
             if (nativeName != null) return Pair(nativeName, true)
 
             val stable = shouldBeStable(descriptor)
-            val finalName = if (overriddenDescriptor is CallableDescriptor && stable) {
-                getStableMangledName(baseName, getArgumentTypesAsString(overriddenDescriptor))
+            val finalName = when {
+                overriddenDescriptor is CallableDescriptor && stable -> {
+                    getStableMangledName(baseName, getArgumentTypesAsString(overriddenDescriptor))
+                }
+                shouldMangleUnstable(overriddenDescriptor) -> {
+                    val ownerName = descriptor.containingDeclaration!!.fqNameUnsafe.asString()
+                    getStableMangledName(baseName, ownerName + ":" + getArgumentTypesAsString(overriddenDescriptor as CallableDescriptor))
+                }
+                else -> baseName
             }
-            else {
-                baseName
-            }
+
             return Pair(finalName, stable)
         }
 
@@ -204,6 +210,20 @@ class NameSuggestion {
             argTypes.append(descriptor.valueParameters.joinToString(",") { it.type.getJetTypeFqName(true) })
 
             return argTypes.toString()
+        }
+
+        // Sometimes private members of a class can clash with public members of subclasses, therefore we must
+        // mangle them
+        private fun shouldMangleUnstable(descriptor: DeclarationDescriptor): Boolean {
+            if (descriptor is ClassDescriptor) return false
+            if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return false
+
+            val containingClass = DescriptorUtils.getContainingClass(descriptor)
+            if (containingClass != null && descriptor is CallableMemberDescriptor && !descriptor.isOverridable) {
+                return containingClass.visibility.isPublicAPI
+            }
+
+            return false
         }
 
         fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
