@@ -39,7 +39,10 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
                 continue
             }
             pendingSelectors.add(codeConverter.convertStatement(case.label) as WhenEntrySelector)
-            if (case.statements.isNotEmpty()) {
+            if (!case.label.isDefaultCase && case.statements.isEmpty() && cases[i + 1]?.label!!.isDefaultCase){
+                result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(cases, i + 1)).assignNoPrototype())
+                pendingSelectors = ArrayList()
+            }else if (case.statements.isNotEmpty()) {
                 result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 pendingSelectors = ArrayList()
             }
