@@ -1,3 +1,5 @@
+package ppp
+
 fun foo(p: String): String {
     val s = "$<caret>"
 }
