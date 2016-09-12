@@ -1,5 +1,6 @@
-package java.<caret>
+package kotlin.<caret>
 
 
-// EXIST: util, lang
-// EXIST_JAVA_ONLY: awt
+// EXIST: collections, sequences
+// EXIST_JAVA_ONLY: concurrent
+// EXIST_JS_ONLY: js
