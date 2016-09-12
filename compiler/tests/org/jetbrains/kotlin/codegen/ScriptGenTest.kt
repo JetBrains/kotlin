@@ -16,37 +16,36 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptParameter
-import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.ScriptTemplateDefinition
+import org.jetbrains.kotlin.scripts.ScriptWithIntParam
+import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
-        private val FIB_SCRIPT_DEFINITION = SimpleParamsTestScriptDefinition(
-                ".lang.kt",
-                listOf(ScriptParameter(Name.identifier("num"), DefaultBuiltIns.Instance.intType))
-        )
-        private val NO_PARAM_SCRIPT_DEFINITION = SimpleParamsTestScriptDefinition(
-                ".kts",
-                emptyList<ScriptParameter>()
-        )
+        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromTemplate(ScriptWithIntParam::class, scriptFilePattern = ".*\\.lang\\.kt")
+        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromTemplate(Any::class, scriptFilePattern = ".*\\.kts")
     }
 
     override fun setUp() {
         super.setUp()
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
-        KotlinScriptDefinitionProvider.getInstance(myEnvironment.project).setScriptDefinitions(
-                listOf(FIB_SCRIPT_DEFINITION, NO_PARAM_SCRIPT_DEFINITION)
-        )
     }
 
     fun testLanguage() {
-        loadFile("scriptCustom/fib.lang.kt")
-        val aClass = generateClass("Fib")
+        setUpEnvironment("scriptCustom/fib.lang.kt")
+
+        val aClass = generateClass("Fib_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
         val result = aClass.getDeclaredField("result")
         result.isAccessible = true
@@ -55,8 +54,9 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testLanguageWithPackage() {
-        loadFile("scriptCustom/fibwp.lang.kt")
-        val aClass = generateClass("test.Fibwp")
+        setUpEnvironment("scriptCustom/fibwp.lang.kt")
+
+        val aClass = generateClass("test.Fibwp_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
         val result = aClass.getDeclaredField("result")
         result.isAccessible = true
@@ -65,7 +65,8 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testDependentScripts() {
-        loadFiles("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts")
+        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts"))
+
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
         val result = aClass.getDeclaredField("result")
@@ -80,12 +81,34 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testScriptWhereMethodHasClosure() {
-        loadFile("scriptCustom/methodWithClosure.lang.kt")
-        val aClass = generateClass("MethodWithClosure")
+        setUpEnvironment("scriptCustom/methodWithClosure.lang.kt")
+
+        val aClass = generateClass("MethodWithClosure_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
         val script = constructor.newInstance(239)
         val fib = aClass.getMethod("method")
         val invoke = fib.invoke(script)
         assertEquals(239, invoke as Int / 2)
+    }
+
+    private fun setUpEnvironment(sourcePath: String) {
+        setUpEnvironment(listOf(sourcePath))
+    }
+
+    private fun setUpEnvironment(sourcePaths: List<String>) {
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK).apply {
+            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false))
+            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, FIB_SCRIPT_DEFINITION)
+            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
+            put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+            addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
+        }
+
+        myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+        for (path in sourcePaths) {
+            loadFile(path)
+        }
     }
 }
