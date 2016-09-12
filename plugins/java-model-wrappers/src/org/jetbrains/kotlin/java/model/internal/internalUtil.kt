@@ -52,7 +52,7 @@ private fun PsiModifierList.getJavaModifiers(): Set<Modifier> {
 internal fun PsiExpression.calcConstantValue(evaluator: PsiConstantEvaluationHelper? = null): Any? {
     return when (this) {
         is PsiLiteral -> value
-        is KtLightAnnotation.LightExpressionValue<*> -> getConstantValue()
+        is KtLightAnnotation.LightExpressionValue<*> -> getConstantValue() ?: delegate.calcConstantValue(evaluator)
         is PsiExpression -> (evaluator ?: getConstantEvaluator(this)).computeConstantExpression(this)
         else -> null
     }

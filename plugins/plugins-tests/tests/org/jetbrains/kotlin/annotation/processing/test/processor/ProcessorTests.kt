@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.element.Element
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
@@ -156,6 +157,10 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals(1, cai.typeArguments.size)
         val typeArg = cai.typeArguments.first()
         assertTrue(typeArg is TypeVariable)
+
+        val a2 = env.findClass("A2")
+        val i2 = env.typeUtils.directSupertypes(a2.asType()).first { it.toString().matches("I2(<.*>)?".toRegex()) } as JeDeclaredType
+        assertEquals("I2<T>", i2.toString())
     }
     
     fun testErasureSimple() = test("ErasureSimple", "*") { set, roundEnv, env -> 
@@ -167,25 +172,47 @@ class ProcessorTests : AbstractProcessorTest() {
     }
     
     fun testErasure2() = test("Erasure2", "*") { set, roundEnv, env ->
-        val test = env.findClass("Test")
-        
         val erasure = fun (t: JeMethodExecutableTypeMirror) = env.typeUtils.erasure(t)
-        fun check(methodName: String, toString: String, transform: (JeMethodExecutableTypeMirror) -> TypeMirror = { it }) {
-            val method = test.enclosedElements.first { it is JeMethodExecutableElement && it.simpleName.toString() == methodName }
+        fun JeTypeElement.check(methodName: String, toString: String, transform: (JeMethodExecutableTypeMirror) -> TypeMirror = { it }) {
+            val method = enclosedElements.first { it is JeMethodExecutableElement && it.simpleName.toString() == methodName }
             assertEquals(toString, transform((method as JeMethodExecutableElement).asType()).toString())
         }
+
+        with (env.findClass("Test")) {
+            val classType = asType() as DeclaredType
+            assertEquals(1, classType.typeArguments.size)
+            assertEquals("Test<T>", classType.toString())
+
+            val erasedType = env.typeUtils.erasure(asType()) as DeclaredType
+            assertEquals(0, erasedType.typeArguments.size)
+            assertEquals("Test", erasedType.toString())
+            
+            check("a", "()java.lang.String")
+            check("b", "(java.lang.String,java.lang.CharSequence)void")
+            check("c", "()int")
+
+            check("d", "()T")
+            check("e", "<D>(D)D")
+            check("e", "(java.lang.Object)java.lang.Object", erasure)
+            check("f", "(java.util.List<? extends java.util.Map<java.lang.String,java.lang.Integer>>,int)void")
+            check("f", "(java.util.List,int)void", erasure)
+            check("g", "<D>(D)void")
+            check("g", "(java.lang.String)void", erasure)
+            check("h", "()java.util.List<java.lang.String>[]")
+            check("h", "()java.util.List[]", erasure)
+            check("i", "<T>()T")
+            check("i", "()java.lang.CharSequence", erasure)
+        }
         
-        check("a", "()java.lang.String")
-        check("b", "(java.lang.String,java.lang.CharSequence)void")
-        check("c", "()int")
-        
-        check("d", "()T")
-        check("e", "<D>(D)D")
-        check("e", "(java.lang.Object)java.lang.Object", erasure)
-        check("f", "(java.util.List<? extends java.util.Map<java.lang.String,java.lang.Integer>>,int)void")
-        check("f", "(java.util.List,int)void", erasure)
-        check("g", "<D>(D)void")
-        check("g", "(java.lang.String)void", erasure)
+        with (env.findClass("Test2")) {
+            assertEquals("Test2<A,B>", asType().toString())
+            assertEquals("Test2", env.typeUtils.erasure(asType()).toString())
+            
+            check("a", "(A)void")
+            check("a", "(java.util.List)void", erasure)
+            check("b", "()B")
+            check("b", "()java.util.List", erasure)
+        }
     }
     
     fun testIncrementalDataSimple() = incrementalDataTest(
@@ -214,5 +241,36 @@ class ProcessorTests : AbstractProcessorTest() {
         val annotationHandler = ext.sourceRetentionAnnotationHandler as SourceRetentionAnnotationHandlerImpl
         val annotations = annotationHandler.sourceRetentionAnnotations.sorted()
         assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
+    }
+    
+    fun testKotlinAnnotationDefaultValueFromBinary() = test("DefaultValueFromBinary", "*") { set, roundEnv, env ->
+        fun check(expectedValue: Boolean, className: String) {
+            val clazz = env.findClass(className)
+            val anno = clazz.getAnnotation(JvmSuppressWildcards::class.java)!!
+            assertEquals(expectedValue, anno.suppress)
+        }
+        
+        check(true, "Test")
+        check(true, "TestTrue")
+        check(false, "TestFalse")
+    }
+
+    fun testAsMemberOf() = test("AsMemberOf", "*") { set, roundEnv, env ->
+        val f = env.findClass("Test").findField("f")
+        val fType = f.asType() as JeDeclaredType
+
+        val base = env.findClass("Base")
+        val baseF = base.findField("f")
+        val baseM = base.findMethod("m", "T")
+
+        fun check(element: Element, expectedTypeSignature: String) {
+            assertEquals(expectedTypeSignature, env.typeUtils.asMemberOf(fType, element).toString())
+        }
+
+        assertEquals("(T)T", baseM.asType().toString())
+        check(baseM, "(java.lang.String)java.lang.String")
+
+        assertEquals("T", baseF.asType().toString())
+        check(baseF, "java.lang.String")
     }
 }
