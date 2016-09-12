@@ -62,3 +62,18 @@ ret i32 %var26
 unreachable
 }
 
+!llvm.dbg.cu = !{!0}
+!llvm.module.flags = !{!1, !2}
+!llvm.ident = !{!3}
+
+!0 = distinct !{!"0x11\000x801\00cotkat 1.0 3015852d7a7854269c4d3e906a7b97bf0d365a94\000\00\000\00\001", !4, !6, !6}
+!1 = !{i32 2, !"Dwarf Version", i32 2}
+!2 = !{i32 2, !"Debug Info Version", i32 2}
+!3 =!{!"LLVM (http://llvm.org/): LLVM version 3.6.2 Optimized build. Built Jul 28 2016 (03:09:45). Default target: x86_64-apple-darwin15.6.0 Host CPU: core-avx2"}
+!4 = !{!"classfields_1.kt", !"../translator/"}
+!5 = !{!"0x2e\00\00test_simple_field_Int\00test_simple_field_Int\00\001\000\001\000\000\000\001", !4, !6, null, i32 (i32)* @test_field_assignment_Int, null, null, null, !7 } ; [DW_TAG_subprogram]
+!6 = !{!"0x29", !4} ; what is this ?
+!7 = !{} ; Huh?!
+!8 = !{!"0x15\00\000\000\000\000\000\000", null, null, null, !9, null, null, null} ; [ DW_TAG_subroutine_type ] [line 0, size 0, align 0, offset 0] [from ]
+!9 = !{!10}
+!10 = !{!"0x24\00int\000\0032\0032\000\000\005", null, null} ; [ DW_TAG_base_type ] [int] [line 0, size 32, align 32, offset 0, enc DW_ATE_signed]
