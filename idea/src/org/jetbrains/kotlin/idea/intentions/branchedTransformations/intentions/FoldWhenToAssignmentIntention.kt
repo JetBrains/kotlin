@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFold
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' expression with assignment") {
+class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpression>(
+        KtWhenExpression::class.java,
+        "Lift assignment out of 'when' expression"
+) {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 
