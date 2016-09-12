@@ -32,6 +32,7 @@ data class SourceRangeInfo(
 
 interface SourceManager {
     interface FileEntry {
+        val name: String
         val maxOffset: Int
         fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
         fun getLineNumber(offset: Int): Int

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
@@ -30,20 +31,36 @@ class IrClassImpl(
         origin: IrDeclarationOrigin,
         override val descriptor: ClassDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrClass {
-    override val members: MutableList<IrDeclaration> = ArrayList()
-
-    fun addMember(member: IrDeclaration) {
-        member.setTreeLocation(this, members.size)
-        members.add(member)
+    constructor(
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+            members: List<IrDeclaration>
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        addAll(members)
     }
 
+    override val declarations: MutableList<IrDeclaration> = ArrayList()
+
+    fun addMember(member: IrDeclaration) {
+        member.setTreeLocation(this, declarations.size)
+        declarations.add(member)
+    }
+
+    fun addAll(members: List<IrDeclaration>) {
+        val originalSize = declarations.size
+        declarations.addAll(members)
+        members.forEachIndexed { i, irDeclaration -> irDeclaration.setTreeLocation(this, originalSize + i) }
+    }
+
+    override fun toBuilder(): IrDeclarationContainer.Builder =
+            IrClassBuilderImpl(this)
+
     override fun getChild(slot: Int): IrElement? =
-            members.getOrNull(slot)
+            declarations.getOrNull(slot)
 
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        members.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        members[slot] = newChild.assertCast()
+        declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
+        declarations[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)
     }
 
@@ -51,6 +68,20 @@ class IrClassImpl(
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        members.forEach { it.accept(visitor, data) }
+        declarations.forEach { it.accept(visitor, data) }
     }
+}
+
+class IrClassBuilderImpl(
+        override val startOffset: Int,
+        override val endOffset: Int,
+        override var origin: IrDeclarationOrigin,
+        override val descriptor: ClassDescriptor,
+        override val declarations: MutableList<IrDeclaration>
+) : IrClass.Builder {
+    constructor(irClass: IrClass) : this(irClass.startOffset, irClass.endOffset, irClass.origin, irClass.descriptor,
+                                         irClass.declarations.toMutableList())
+
+    override fun build(): IrClass =
+            IrClassImpl(startOffset, endOffset, origin, descriptor, declarations)
 }

@@ -21,11 +21,20 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 
-interface IrFile : IrElement {
-    val name: String
+interface IrFile : IrElement, IrDeclarationContainer {
     val fileEntry: SourceManager.FileEntry
     val fileAnnotations: List<AnnotationDescriptor>
     val packageFragmentDescriptor: PackageFragmentDescriptor
-    val declarations: List<IrDeclaration>
+
+    override fun toBuilder(): Builder
+
+    interface Builder : IrDeclarationContainer.Builder {
+        val fileEntry: SourceManager.FileEntry
+        val fileAnnotations: MutableList<AnnotationDescriptor>
+        val packageFragmentDescriptor: PackageFragmentDescriptor
+
+        override fun build(): IrFile
+    }
 }
 
+val IrFile.name: String get() = fileEntry.name

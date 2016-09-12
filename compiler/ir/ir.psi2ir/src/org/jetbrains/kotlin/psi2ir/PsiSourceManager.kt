@@ -62,6 +62,8 @@ class PsiSourceManager : SourceManager {
 
         fun getRecognizableName(): String = psiFileName
 
+        override val name: String get() = getRecognizableName()
+
         override fun toString(): String = getRecognizableName()
     }
 

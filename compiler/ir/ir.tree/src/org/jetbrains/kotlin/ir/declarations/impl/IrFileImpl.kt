@@ -27,13 +27,24 @@ import java.util.*
 
 class IrFileImpl(
         override val fileEntry: SourceManager.FileEntry,
-        override val name: String,
         override val packageFragmentDescriptor: PackageFragmentDescriptor
 ) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+    constructor(
+            fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor,
+            fileAnnotations: List<AnnotationDescriptor>, declarations: List<IrDeclaration>
+    ) : this(fileEntry, packageFragmentDescriptor) {
+        addAllAnnotations(fileAnnotations)
+        addAll(declarations)
+    }
+
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
 
     fun addAnnotation(annotation: AnnotationDescriptor) {
         fileAnnotations.add(annotation)
+    }
+
+    fun addAllAnnotations(annotations: List<AnnotationDescriptor>) {
+        fileAnnotations.addAll(annotations)
     }
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
@@ -41,6 +52,14 @@ class IrFileImpl(
     fun addDeclaration(declaration: IrDeclaration) {
         declaration.setTreeLocation(this, declarations.size)
         declarations.add(declaration)
+    }
+
+    fun addAll(newDeclarations: List<IrDeclaration>) {
+        val originalSize = declarations.size
+        declarations.addAll(newDeclarations)
+        newDeclarations.forEachIndexed { i, irDeclaration ->
+            irDeclaration.setTreeLocation(this, originalSize + i)
+        }
     }
 
     override fun getChild(slot: Int): IrElement? =
@@ -52,6 +71,9 @@ class IrFileImpl(
         newChild.setTreeLocation(this, slot)
     }
 
+    override fun toBuilder(): IrFile.Builder =
+            IrFileBuilderImpl(this)
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFile(this, data)
 
@@ -60,4 +82,19 @@ class IrFileImpl(
     }
 
 
+}
+
+class IrFileBuilderImpl(
+        override val fileEntry: SourceManager.FileEntry,
+        override val packageFragmentDescriptor: PackageFragmentDescriptor,
+        override val fileAnnotations: MutableList<AnnotationDescriptor>,
+        override val declarations: MutableList<IrDeclaration>
+) : IrFile.Builder {
+    constructor(irFile: IrFile) : this(irFile.fileEntry,
+                                       irFile.packageFragmentDescriptor,
+                                       irFile.fileAnnotations.toMutableList(),
+                                       irFile.declarations.toMutableList())
+
+    override fun build(): IrFile =
+            IrFileImpl(fileEntry, packageFragmentDescriptor, fileAnnotations, declarations)
 }

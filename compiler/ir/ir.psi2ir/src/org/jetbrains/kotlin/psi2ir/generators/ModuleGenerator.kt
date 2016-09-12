@@ -47,8 +47,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
         val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
         val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
-        val fileName = fileEntry.getRecognizableName()
-        val irFile = IrFileImpl(fileEntry, fileName, packageFragmentDescriptor)
+        val irFile = IrFileImpl(fileEntry, packageFragmentDescriptor)
         context.sourceManager.putFileEntry(irFile, fileEntry)
         return irFile
     }

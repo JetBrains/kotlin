@@ -18,17 +18,24 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-interface IrClass : IrDeclaration {
+interface IrClass : IrDeclaration, IrDeclarationContainer {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.CLASS
 
     override val descriptor: ClassDescriptor
 
-    val members: List<IrDeclaration>
+    interface Builder : IrDeclarationContainer.Builder {
+        val startOffset: Int
+        val endOffset: Int
+        var origin: IrDeclarationOrigin
+        val descriptor: ClassDescriptor
+
+        override fun build(): IrClass
+    }
 }
 
 fun IrClass.getInstanceInitializerMembers() =
-        members.filter {
+        declarations.filter {
             when (it) {
                 is IrAnonymousInitializer ->
                     true
