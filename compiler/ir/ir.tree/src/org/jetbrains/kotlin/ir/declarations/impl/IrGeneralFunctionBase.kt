@@ -39,7 +39,6 @@ abstract class IrGeneralFunctionBase(
 
     final override var body: IrBody? = null
         set(newValue) {
-            newValue?.assertDetached()
             field?.detach()
             field = newValue
             newValue?.setTreeLocation(this, FUNCTION_BODY_SLOT)

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.assertDetached
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.detach
@@ -36,7 +35,6 @@ abstract class IrFunctionBase(
             defaults[parameter]
 
     override fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-        expressionBody.assertDetached()
         defaults[parameter]?.detach()
         defaults[parameter] = expressionBody
         expressionBody.setTreeLocation(this, parameter.index)

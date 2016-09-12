@@ -45,7 +45,6 @@ class IrSetVariableImpl(
     override var value: IrExpression
         get() = valueImpl!!
         set(value) {
-            value.assertDetached()
             valueImpl?.detach()
             valueImpl = value
             value.setTreeLocation(this, ARGUMENT0_SLOT)

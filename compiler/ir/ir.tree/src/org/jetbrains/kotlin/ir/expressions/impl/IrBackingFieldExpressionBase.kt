@@ -34,7 +34,6 @@ abstract class IrBackingFieldExpressionBase(
 ) : IrDeclarationReferenceBase<PropertyDescriptor>(startOffset, endOffset, type, descriptor), IrBackingFieldExpression {
     override final var receiver: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, BACKING_FIELD_RECEIVER_SLOT)

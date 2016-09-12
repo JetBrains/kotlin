@@ -98,7 +98,6 @@ class IrSetterCallImpl(
     override fun putArgument(index: Int, valueArgument: IrExpression?) {
         if (index != SETTER_ARGUMENT_INDEX) return
         argumentImpl?.detach()
-        valueArgument?.assertDetached()
         argumentImpl = valueArgument
         valueArgument?.setTreeLocation(this, SETTER_ARGUMENT_INDEX)
     }

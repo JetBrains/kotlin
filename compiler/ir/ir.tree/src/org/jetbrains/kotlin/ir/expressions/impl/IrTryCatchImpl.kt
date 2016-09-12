@@ -34,7 +34,6 @@ class IrTryCatchImpl(
     override var tryResult: IrExpression
         get() = tryResultImpl!!
         set(value) {
-            value.assertDetached()
             tryResultImpl?.detach()
             tryResultImpl = value
             value.setTreeLocation(this, TRY_RESULT_SLOT)
@@ -46,7 +45,6 @@ class IrTryCatchImpl(
     override val catchClausesCount: Int get() = catchClauseResults.size
 
     fun addCatchClause(parameter: VariableDescriptor, result: IrExpression) {
-        result.assertDetached()
         result.setTreeLocation(this, catchClausesCount)
         catchClauseParameters.add(parameter)
         catchClauseResults.add(result)
@@ -60,7 +58,6 @@ class IrTryCatchImpl(
 
     override var finallyExpression: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, FINALLY_EXPRESSION_SLOT)

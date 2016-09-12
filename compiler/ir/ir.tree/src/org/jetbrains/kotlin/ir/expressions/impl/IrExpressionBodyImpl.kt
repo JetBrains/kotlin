@@ -30,7 +30,6 @@ class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(sta
     override var expression: IrExpression
         get() = expressionImpl!!
         set(newValue) {
-            newValue.assertDetached()
             expressionImpl?.detach()
             expressionImpl = newValue
             newValue.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

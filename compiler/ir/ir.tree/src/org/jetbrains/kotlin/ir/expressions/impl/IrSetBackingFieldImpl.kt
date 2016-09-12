@@ -50,7 +50,6 @@ class IrSetBackingFieldImpl(
     override var value: IrExpression
         get() = valueImpl!!
         set(value) {
-            value.assertDetached()
             valueImpl?.detach()
             valueImpl = value
             value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

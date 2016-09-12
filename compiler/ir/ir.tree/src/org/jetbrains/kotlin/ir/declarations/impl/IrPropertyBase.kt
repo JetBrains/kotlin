@@ -32,7 +32,6 @@ abstract class IrPropertyBase(
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
     override var getter: IrPropertyGetter? = null
         set(newGetter) {
-            newGetter?.assertDetached()
             field?.detach()
             field = newGetter
             newGetter?.setTreeLocation(this, PROPERTY_GETTER_SLOT)
@@ -40,7 +39,6 @@ abstract class IrPropertyBase(
 
     override var setter: IrPropertySetter? = null
         set(newSetter) {
-            newSetter?.assertDetached()
             field?.detach()
             field = newSetter
             newSetter?.setTreeLocation(this, PROPERTY_SETTER_SLOT)

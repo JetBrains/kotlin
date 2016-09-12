@@ -33,7 +33,6 @@ class IrClassImpl(
     override val members: MutableList<IrDeclaration> = ArrayList()
 
     fun addMember(member: IrDeclaration) {
-        member.assertDetached()
         member.setTreeLocation(this, members.size)
         members.add(member)
     }
@@ -43,7 +42,6 @@ class IrClassImpl(
 
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
         members.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
         members[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

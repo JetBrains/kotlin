@@ -39,7 +39,6 @@ class IrFileImpl(
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     fun addDeclaration(declaration: IrDeclaration) {
-        declaration.assertDetached()
         declaration.setTreeLocation(this, declarations.size)
         declarations.add(declaration)
     }
@@ -48,7 +47,6 @@ class IrFileImpl(
             declarations.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
         declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
         declarations[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

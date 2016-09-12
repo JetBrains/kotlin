@@ -30,7 +30,6 @@ abstract class IrMemberAccessExpressionBase(
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null
         set(newReceiver) {
-            newReceiver?.assertDetached()
             field?.detach()
             field = newReceiver
             newReceiver?.setTreeLocation(this, DISPATCH_RECEIVER_SLOT)
@@ -38,7 +37,6 @@ abstract class IrMemberAccessExpressionBase(
 
     override var extensionReceiver: IrExpression? = null
         set(newReceiver) {
-            newReceiver?.assertDetached()
             field?.detach()
             field = newReceiver
             newReceiver?.setTreeLocation(this, EXTENSION_RECEIVER_SLOT)

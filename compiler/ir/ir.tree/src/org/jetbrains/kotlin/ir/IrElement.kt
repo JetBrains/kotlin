@@ -65,14 +65,6 @@ inline fun <T : IrElement> T.replaceWith(transformation: (T) -> IrElement) {
     }
 }
 
-fun IrElement.assertChild(child: IrElement) {
-    assert(getChild(child.slot) == child) { "$this: Invalid child: $child" }
-}
-
-fun IrElement.assertDetached() {
-    assert(parent == null && slot == DETACHED_SLOT) { "$this: should be detached" }
-}
-
 fun IrElement.throwNoSuchSlot(slot: Int): Nothing =
         throw AssertionError("${this.render()}: no such slot $slot")
 

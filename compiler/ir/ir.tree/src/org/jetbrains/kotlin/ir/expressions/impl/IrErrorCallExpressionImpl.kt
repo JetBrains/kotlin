@@ -31,7 +31,6 @@ class IrErrorCallExpressionImpl(
 ) : IrExpressionBase(startOffset, endOffset, type), IrErrorCallExpression {
     override var explicitReceiver: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, DISPATCH_RECEIVER_SLOT)
@@ -40,7 +39,6 @@ class IrErrorCallExpressionImpl(
     override val arguments: MutableList<IrExpression> = SmartList()
 
     fun addArgument(argument: IrExpression) {
-        argument.assertDetached()
         argument.setTreeLocation(this, arguments.size)
         arguments.add(argument)
     }
@@ -60,7 +58,6 @@ class IrErrorCallExpressionImpl(
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= arguments.size) throwNoSuchSlot(slot)
 
-        newChild.assertDetached()
         arguments[slot].detach()
         arguments[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

@@ -32,7 +32,6 @@ class IrEnumEntryImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
     override var correspondingClass: IrClass? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, ENUM_ENTRY_CLASS_SLOT)
@@ -42,7 +41,6 @@ class IrEnumEntryImpl(
     override var initializerExpression: IrExpression
         get() = initializerExpressionImpl!!
         set(value) {
-            value.assertDetached()
             initializerExpressionImpl?.detach()
             initializerExpressionImpl = value
             value.setTreeLocation(this, ENUM_ENTRY_INITIALIZER_SLOT)

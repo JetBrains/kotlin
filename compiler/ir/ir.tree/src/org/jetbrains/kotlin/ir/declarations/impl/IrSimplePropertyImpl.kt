@@ -32,7 +32,6 @@ class IrSimplePropertyImpl(
 ) : IrPropertyBase(startOffset, endOffset, origin, descriptor), IrSimpleProperty {
     override var initializer: IrBody? = valueInitializer
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, INITIALIZER_SLOT)

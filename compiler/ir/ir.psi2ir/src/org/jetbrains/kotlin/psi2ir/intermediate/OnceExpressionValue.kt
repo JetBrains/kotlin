@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.assertDetached
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
 class OnceExpressionValue(val irExpression: IrExpression) : IntermediateValue {
-    init {
-        irExpression.assertDetached()
-    }
-
     private var instantiated = false
 
     override fun load(): IrExpression {

@@ -27,13 +27,11 @@ abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type:
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     fun addStatement(statement: IrStatement) {
-        statement.assertDetached()
         statement.setTreeLocation(this, statements.size)
         statements.add(statement)
     }
 
     fun addAll(newStatements: List<IrStatement>) {
-        newStatements.forEach { it.assertDetached() }
         val originalSize = this.statements.size
         this.statements.addAll(newStatements)
         newStatements.forEachIndexed { i, irStatement ->
@@ -47,7 +45,6 @@ abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type:
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
 
-        newChild.assertDetached()
         statements[slot].detach()
         statements[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

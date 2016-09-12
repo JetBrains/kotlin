@@ -33,7 +33,6 @@ class IrSpreadElementImpl(
     override var expression: IrExpression
         get() = expressionImpl!!
         set(value) {
-            value.assertDetached()
             expressionImpl?.detach()
             expressionImpl = value
             value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

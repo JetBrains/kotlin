@@ -43,7 +43,6 @@ class IrDelegatedPropertyImpl(
     override var delegate: IrSimpleProperty
         get() = delegateImpl!!
         set(value) {
-            value.assertDetached()
             delegateImpl?.detach()
             delegateImpl = value
             value.setTreeLocation(this, DELEGATE_SLOT)

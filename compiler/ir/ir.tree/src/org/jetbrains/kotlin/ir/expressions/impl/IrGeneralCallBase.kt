@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.assertDetached
 import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
@@ -44,7 +43,6 @@ abstract class IrGeneralCallBase(
         if (index >= argumentsByParameterIndex.size) {
             throw AssertionError("$this: No such argument slot: $index")
         }
-        valueArgument?.assertDetached()
         argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = valueArgument
         valueArgument?.setTreeLocation(this, index)

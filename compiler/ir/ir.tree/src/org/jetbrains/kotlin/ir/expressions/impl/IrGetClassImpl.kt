@@ -32,7 +32,6 @@ class IrGetClassImpl(startOffset: Int, endOffset: Int, type: KotlinType) : IrExp
     override var argument: IrExpression
         get() = argumentImpl!!
         set(value) {
-            value.assertDetached()
             argumentImpl?.detach()
             argumentImpl = value
             value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

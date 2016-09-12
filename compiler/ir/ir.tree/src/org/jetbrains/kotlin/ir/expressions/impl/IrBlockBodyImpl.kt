@@ -25,7 +25,6 @@ class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOff
     override val statements: MutableList<IrStatement> = ArrayList()
 
     fun addStatement(statement: IrStatement) {
-        statement.assertDetached()
         statement.setTreeLocation(this, statements.size)
         statements.add(statement)
     }
@@ -36,7 +35,6 @@ class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOff
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
 
-        newChild.assertDetached()
         statements[slot].detach()
         statements[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

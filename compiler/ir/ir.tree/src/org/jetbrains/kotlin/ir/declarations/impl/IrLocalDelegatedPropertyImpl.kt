@@ -45,7 +45,6 @@ class IrLocalDelegatedPropertyImpl(
     override var delegate: IrVariable
         get() = delegateImpl!!
         set(value) {
-            value.assertDetached()
             delegateImpl?.detach()
             delegateImpl = value
             value.setTreeLocation(this, DELEGATE_SLOT)
@@ -55,7 +54,6 @@ class IrLocalDelegatedPropertyImpl(
     override var getter: IrLocalPropertyAccessor
         get() = getterImpl!!
         set(value) {
-            value.assertDetached()
             getterImpl?.detach()
             getterImpl = value
             value.setTreeLocation(this, PROPERTY_GETTER_SLOT)
@@ -63,7 +61,6 @@ class IrLocalDelegatedPropertyImpl(
 
     override var setter: IrLocalPropertyAccessor? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, PROPERTY_SETTER_SLOT)

@@ -35,7 +35,6 @@ abstract class IrLoopBase(
     override var condition: IrExpression
         get() = conditionImpl!!
         set(value) {
-            value.assertDetached()
             conditionImpl?.detach()
             conditionImpl = value
             value.setTreeLocation(this, LOOP_CONDITION_SLOT)
@@ -43,7 +42,6 @@ abstract class IrLoopBase(
 
     override var body: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, LOOP_BODY_SLOT)

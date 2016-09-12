@@ -32,7 +32,6 @@ class IrStringConcatenationImpl(
     override val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun addArgument(argument: IrExpression) {
-        argument.assertDetached()
         argument.setTreeLocation(this, arguments.size)
         arguments.add(argument)
     }
@@ -43,7 +42,6 @@ class IrStringConcatenationImpl(
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= arguments.size) throwNoSuchSlot(slot)
 
-        newChild.assertDetached()
         arguments[slot].detach()
         arguments[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

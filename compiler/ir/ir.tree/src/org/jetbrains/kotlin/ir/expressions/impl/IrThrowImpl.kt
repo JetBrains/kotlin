@@ -41,7 +41,6 @@ class IrThrowImpl(
     override var value: IrExpression
         get() = valueImpl!!
         set(newValue) {
-            newValue.assertDetached()
             valueImpl?.detach()
             valueImpl = newValue
             newValue.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

@@ -46,7 +46,6 @@ class IrTypeOperatorCallImpl(
     override var argument: IrExpression
         get() = argumentImpl!!
         set(value) {
-            value.assertDetached()
             argumentImpl?.detach()
             argumentImpl = value
             value.setTreeLocation(this, ARGUMENT0_SLOT)

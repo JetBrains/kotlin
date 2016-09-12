@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.assertDetached
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -38,13 +35,11 @@ class IrModuleFragmentImpl(
     override val files: MutableList<IrFile> = ArrayList()
 
     fun addFile(file: IrFile) {
-        file.assertDetached()
         file.setTreeLocation(this, files.size)
         files.add(file)
     }
 
     fun addAll(newFiles: List<IrFile>) {
-        newFiles.forEach { it.assertDetached() }
         val originalSize = files.size
         files.addAll(newFiles)
         newFiles.forEachIndexed { i, irFile ->  irFile.setTreeLocation(this, originalSize + i) }
@@ -54,8 +49,8 @@ class IrModuleFragmentImpl(
             files.getOrNull(slot)
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
         files.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
+        files[slot] = newChild.assertCast()
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

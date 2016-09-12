@@ -42,7 +42,6 @@ class IrReturnImpl(
 
     override var value: IrExpression? = null
         set(newValue) {
-            newValue?.assertDetached()
             field?.detach()
             field = newValue
             newValue?.setTreeLocation(this, CHILD_EXPRESSION_SLOT)

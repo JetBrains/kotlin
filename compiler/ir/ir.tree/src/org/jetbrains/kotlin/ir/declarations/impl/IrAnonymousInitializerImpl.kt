@@ -34,7 +34,6 @@ class IrAnonymousInitializerImpl(
     override var body: IrBlockBody
         get() = bodyImpl!!
         set(value) {
-            value.assertDetached()
             bodyImpl?.detach()
             bodyImpl = value
             value.setTreeLocation(this, ANONYMOUS_INITIALIZER_BODY_SLOT)

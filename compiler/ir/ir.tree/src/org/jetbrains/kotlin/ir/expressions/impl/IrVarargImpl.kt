@@ -33,7 +33,6 @@ class IrVarargImpl(
     override val elements: MutableList<IrVarargElement> = SmartList()
 
     fun addElement(varargElement: IrVarargElement) {
-        varargElement.assertDetached()
         varargElement.setTreeLocation(this, elements.size)
         elements.add(varargElement)
     }
@@ -44,7 +43,6 @@ class IrVarargImpl(
     override fun replaceChild(slot: Int, newChild: IrElement) {
         if (slot < 0 || slot >= elements.size) throwNoSuchSlot(slot)
 
-        newChild.assertDetached()
         elements[slot].detach()
         elements[slot] = newChild.assertCast()
         newChild.setTreeLocation(this, slot)

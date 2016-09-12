@@ -42,7 +42,6 @@ class IrVariableImpl(
 
     override var initializer: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             field?.detach()
             field = value
             value?.setTreeLocation(this, INITIALIZER_SLOT)

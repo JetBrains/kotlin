@@ -34,8 +34,6 @@ class IrWhenImpl(
     private val branchParts = ArrayList<IrExpression>()
 
     fun addBranch(condition: IrExpression, result: IrExpression) {
-        condition.assertDetached()
-        result.assertDetached()
         condition.setTreeLocation(this, branchParts.size)
         branchParts.add(condition)
         result.setTreeLocation(this, branchParts.size)
@@ -44,7 +42,6 @@ class IrWhenImpl(
 
     override var elseBranch: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             value?.detach()
             field = value
             value?.setTreeLocation(this, IF_ELSE_SLOT)
@@ -61,7 +58,6 @@ class IrWhenImpl(
         when (slot) {
             IF_ELSE_SLOT -> elseBranch = newChild.assertCast()
             in branchParts.indices -> {
-                newChild.assertDetached()
                 branchParts[slot].detach()
                 branchParts[slot] = newChild.assertCast()
                 newChild.setTreeLocation(this, slot)

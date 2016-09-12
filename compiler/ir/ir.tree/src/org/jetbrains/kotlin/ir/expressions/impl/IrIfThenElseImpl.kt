@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -56,7 +55,6 @@ class IrIfThenElseImpl(
     var condition: IrExpression
         get() = conditionImpl!!
         set(value) {
-            value.assertDetached()
             value.detach()
             conditionImpl = value
             value.setTreeLocation(this, IF_CONDITION_SLOT)
@@ -66,7 +64,6 @@ class IrIfThenElseImpl(
     var thenBranch: IrExpression
         get() = thenBranchImpl!!
         set(value) {
-            value.assertDetached()
             value.detach()
             thenBranchImpl = value
             value.setTreeLocation(this, IF_THEN_SLOT)
@@ -74,7 +71,6 @@ class IrIfThenElseImpl(
 
     override var elseBranch: IrExpression? = null
         set(value) {
-            value?.assertDetached()
             value?.detach()
             field = value
             value?.setTreeLocation(this, IF_ELSE_SLOT)
@@ -89,7 +85,6 @@ class IrIfThenElseImpl(
             }
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
-        newChild.assertDetached()
         when (slot) {
             IF_CONDITION_SLOT ->
                 condition = newChild.assertCast()

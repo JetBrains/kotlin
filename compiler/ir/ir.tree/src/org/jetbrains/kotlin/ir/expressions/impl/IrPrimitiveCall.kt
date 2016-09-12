@@ -93,7 +93,6 @@ class IrUnaryPrimitiveImpl private constructor(
     var argument: IrExpression
         get() = argumentImpl!!
         set(value) {
-            value.assertDetached()
             argumentImpl?.detach()
             argumentImpl = value
             value.setTreeLocation(this, ARGUMENT0_SLOT)
@@ -139,7 +138,6 @@ class IrBinaryPrimitiveImpl(
     var argument0: IrExpression
         get() = argument0Impl!!
         set(value) {
-            value.assertDetached()
             argument0Impl?.detach()
             argument0Impl = value
             value.setTreeLocation(this, ARGUMENT0_SLOT)
@@ -149,7 +147,6 @@ class IrBinaryPrimitiveImpl(
     var argument1: IrExpression
         get() = argument1Impl!!
         set(value) {
-            value.assertDetached()
             argument1Impl?.detach()
             argument1Impl = value
             value.setTreeLocation(this, ARGUMENT1_SLOT)
