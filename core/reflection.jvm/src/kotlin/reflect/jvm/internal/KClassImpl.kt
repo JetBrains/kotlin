@@ -134,22 +134,23 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             }
         }
 
-        val declaredNonStaticMembers: Sequence<KCallableImpl<*>>
+        val declaredNonStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
-        val declaredStaticMembers: Sequence<KCallableImpl<*>>
+        val declaredStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        val inheritedNonStaticMembers: Sequence<KCallableImpl<*>>
+        val inheritedNonStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        val inheritedStaticMembers: Sequence<KCallableImpl<*>>
+        val inheritedStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
-        val allNonStaticMembers: Sequence<KCallableImpl<*>> get() = declaredNonStaticMembers + inheritedNonStaticMembers
-        val allStaticMembers: Sequence<KCallableImpl<*>> get() = declaredStaticMembers + inheritedStaticMembers
-        val declaredMembers: Sequence<KCallableImpl<*>> get() = declaredNonStaticMembers + declaredStaticMembers
-
-        val allMembers: Collection<KCallable<*>> by ReflectProperties.lazySoft {
-            (allNonStaticMembers + allStaticMembers).toList()
-        }
+        val allNonStaticMembers: Collection<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { declaredNonStaticMembers + inheritedNonStaticMembers }
+        val allStaticMembers: Collection<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { declaredStaticMembers + inheritedStaticMembers }
+        val declaredMembers: Collection<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
+        val allMembers: Collection<KCallableImpl<*>>
+                by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
     }
 
     val data = ReflectProperties.lazy { Data() }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.*
@@ -47,7 +48,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Sequence<KCallableImpl<*>> {
+    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
             override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> =
                     createProperty(descriptor)
@@ -59,15 +60,13 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     throw IllegalStateException("No constructors should appear in this scope: $descriptor")
         }
 
-        return scope.getContributedDescriptors().asSequence()
-                .filter { descriptor ->
-                    descriptor is CallableMemberDescriptor &&
-                    descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
-                    belonginess.accept(descriptor)
-                }
-                .mapNotNull { descriptor ->
-                    descriptor.accept(visitor, Unit)
-                }
+        return scope.getContributedDescriptors().mapNotNull { descriptor ->
+            if (descriptor is CallableMemberDescriptor &&
+                descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
+                belonginess.accept(descriptor))
+                descriptor.accept(visitor, Unit)
+            else null
+        }.toReadOnlyList()
     }
 
     protected enum class MemberBelonginess {

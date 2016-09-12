@@ -56,7 +56,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
                 val packageFragment = callableDescriptor.containingDeclaration as PackageFragmentDescriptor
                 val source = (packageFragment as? LazyJavaPackageFragment)?.source as? KotlinJvmBinaryPackageSourceElement
                 (source?.getContainingBinaryClass(callableDescriptor) as? ReflectKotlinClass)?.klass == jClass
-            }.toList()
+            }
         }
     }
 
