@@ -671,7 +671,7 @@ class TypeResolver(
             fromIndex: Int,
             constructorParameters: List<TypeParameterDescriptor>
     ) = constructorParameters.subList(fromIndex, constructorParameters.size).map {
-        TypeProjectionImpl((it.original as TypeParameterDescriptor).defaultType)
+        TypeProjectionImpl(it.original.defaultType)
     }
 
     fun resolveTypeProjections(
