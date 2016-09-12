@@ -658,7 +658,9 @@ public class KotlinTypeMapper {
 
             baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
-            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
+            ownerForDefaultImpl =
+                    isJvmInterface(ownerForDefault) && (state == null || !isJvm8Interface(ownerForDefault, state)) ?
+                    mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);

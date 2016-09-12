@@ -139,6 +139,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("defaultArgs.kt")
+        public void testDefaultArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaultArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("diamond.kt")
         public void testDiamond() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/diamond.kt");
