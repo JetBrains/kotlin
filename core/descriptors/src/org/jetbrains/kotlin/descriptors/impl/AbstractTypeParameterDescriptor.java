@@ -130,6 +130,12 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
+    public TypeParameterDescriptor getOriginal() {
+        return (TypeParameterDescriptor) super.getOriginal();
+    }
+
+    @NotNull
+    @Override
     @Deprecated
     public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException("Don't call substitute() on type parameters");
