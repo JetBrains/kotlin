@@ -49,6 +49,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
+    fun testTopLevelValImportInStringTemplate() {
+        doTest()
+    }
+
     fun testNoParenthesisInImports() {
         doTest()
     }
