@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
-class OnceExpressionValue(val irExpression: IrExpression) : IntermediateValue {
+class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
     private var instantiated = false
 
     override fun load(): IrExpression {
@@ -31,4 +31,11 @@ class OnceExpressionValue(val irExpression: IrExpression) : IntermediateValue {
     }
 
     override val type: KotlinType get() = irExpression.type
+
+    override fun store(irExpression: IrExpression): IrExpression {
+        throw AssertionError("Expression value ${irExpression.render()} can't be used in store operation")
+    }
+
+    override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
+            withLValue(this)
 }

@@ -1,0 +1,33 @@
+FILE /augmentedAssignmentWithExpression.kt
+  CLASS CLASS Host
+    CONSTRUCTOR public constructor Host()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Host'
+    FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+    FUN public final fun test1(): kotlin.Unit
+      BLOCK_BODY
+        CALL 'plusAssign(Int): Unit' type=kotlin.Unit operator=PLUSEQ
+          $this: THIS of 'Host' type=Host
+          x: CONST Int type=kotlin.Int value='1'
+  FUN public fun foo(): Host
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(): Host'
+        CALL 'constructor Host()' type=Host operator=null
+  FUN public fun Host.test2(): kotlin.Unit
+    BLOCK_BODY
+      CALL 'plusAssign(Int): Unit' type=kotlin.Unit operator=PLUSEQ
+        $this: $RECEIVER of 'test2() on Host: Unit' type=Host
+        x: CONST Int type=kotlin.Int value='1'
+  FUN public fun test3(): kotlin.Unit
+    BLOCK_BODY
+      CALL 'plusAssign(Int): Unit' type=kotlin.Unit operator=PLUSEQ
+        $this: CALL 'foo(): Host' type=Host operator=null
+        x: CONST Int type=kotlin.Int value='1'
+  FUN public fun test4(a: () -> Host): kotlin.Unit
+    BLOCK_BODY
+      CALL 'plusAssign(Int): Unit' type=kotlin.Unit operator=PLUSEQ
+        $this: CALL 'invoke(): Host' type=Host operator=INVOKE
+          $this: GET_VAR 'value-parameter a: () -> Host' type=() -> Host operator=VARIABLE_AS_FUNCTION
+        x: CONST Int type=kotlin.Int value='1'

@@ -310,6 +310,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("augmentedAssignmentWithExpression.kt")
+        public void testAugmentedAssignmentWithExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/augmentedAssignmentWithExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("badBreakContinue.kt")
         public void testBadBreakContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/badBreakContinue.kt");

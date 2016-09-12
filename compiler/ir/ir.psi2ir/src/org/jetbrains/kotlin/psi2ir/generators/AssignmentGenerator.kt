@@ -127,7 +127,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             is VariableDescriptor ->
                 VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
             else ->
-                TODO("Other cases of LHS")
+                OnceExpressionValue(statementGenerator.generateExpression(ktLeft))
         }
     }
 
