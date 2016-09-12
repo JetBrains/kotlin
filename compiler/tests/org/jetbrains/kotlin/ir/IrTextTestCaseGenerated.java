@@ -226,6 +226,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("primaryCtorDefaultArguments.kt")
+        public void testPrimaryCtorDefaultArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/primaryCtorDefaultArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primaryCtorProperties.kt")
         public void testPrimaryCtorProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/primaryCtorProperties.kt");
