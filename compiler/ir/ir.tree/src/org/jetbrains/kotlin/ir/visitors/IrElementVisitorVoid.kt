@@ -123,14 +123,14 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
-    fun visitBackingFieldReference(expression: IrFieldExpression) = visitDeclarationReference(expression)
-    override fun visitBackingFieldReference(expression: IrFieldExpression, data: Nothing?) = visitBackingFieldReference(expression)
+    fun visitFieldAccess(expression: IrFieldAccessExpression) = visitDeclarationReference(expression)
+    override fun visitFieldAccess(expression: IrFieldAccessExpression, data: Nothing?) = visitFieldAccess(expression)
 
-    fun visitGetBackingField(expression: IrGetField) = visitBackingFieldReference(expression)
-    override fun visitGetField(expression: IrGetField, data: Nothing?) = visitGetBackingField(expression)
+    fun visitGetField(expression: IrGetField) = visitFieldAccess(expression)
+    override fun visitGetField(expression: IrGetField, data: Nothing?) = visitGetField(expression)
 
-    fun visitSetBackingField(expression: IrSetField) = visitBackingFieldReference(expression)
-    override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetBackingField(expression)
+    fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
+    override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
 
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)

@@ -79,7 +79,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitorVoid {
         expression.value.replaceWithCast(expression.descriptor.type)
     }
 
-    override fun visitSetBackingField(expression: IrSetField) {
+    override fun visitSetField(expression: IrSetField) {
         expression.acceptChildrenVoid(this)
 
         expression.value.replaceWithCast(expression.descriptor.type)
