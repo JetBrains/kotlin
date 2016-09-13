@@ -16,10 +16,16 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
+import java.util.*
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
@@ -57,6 +63,28 @@ class FunctionType(
          */
         val parameterNames: List<Name>
 ) : DelegatingSimpleType() {
+
+    override val memberScope = object: MemberScope by delegate.memberScope {
+        private val cache = HashMap<FunctionInvokeDescriptor, FunctionInvokeDescriptor>(2)
+
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+            return delegate.memberScope.getContributedFunctions(name, location).replaceParameterNames()
+        }
+
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+            return delegate.memberScope.getContributedDescriptors(kindFilter, nameFilter).replaceParameterNames()
+        }
+
+        private fun <TDescriptor : DeclarationDescriptor> Collection<TDescriptor>.replaceParameterNames(): List<TDescriptor>
+                = map { it.replaceParameterNames() }
+
+        private fun <TDescriptor : DeclarationDescriptor> TDescriptor.replaceParameterNames(): TDescriptor {
+            if (this !is FunctionInvokeDescriptor) return this
+            @Suppress("UNCHECKED_CAST")
+            return cache.getOrPut(this) { this.replaceParameterNames(parameterNames) } as TDescriptor
+        }
+    }
+
     override fun replaceAnnotations(newAnnotations: Annotations)
             = FunctionType(delegate.replaceAnnotations(newAnnotations), parameterNames)
 

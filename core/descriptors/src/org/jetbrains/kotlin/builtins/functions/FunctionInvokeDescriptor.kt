@@ -23,23 +23,29 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FunctionInvokeDescriptor private constructor(
         container: DeclarationDescriptor,
         original: FunctionInvokeDescriptor?,
-        callableKind: CallableMemberDescriptor.Kind
+        callableKind: CallableMemberDescriptor.Kind,
+        private val hasSynthesizedParameterNames: Boolean
 ) : SimpleFunctionDescriptorImpl(
         container,
         original,
         Annotations.EMPTY,
-        Name.identifier("invoke"),
+        OperatorNameConventions.INVOKE,
         callableKind,
         SourceElement.NO_SOURCE
 ) {
+    init {
+        this.isOperator = true
+    }
+
     // "p0", "p1", etc. should not be baked into the language
     override fun hasStableParameterNames(): Boolean = false
 
-    override fun hasSynthesizedParameterNames(): Boolean = true
+    override fun hasSynthesizedParameterNames(): Boolean = hasSynthesizedParameterNames
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -49,7 +55,7 @@ class FunctionInvokeDescriptor private constructor(
             annotations: Annotations,
             source: SourceElement
     ): FunctionDescriptorImpl {
-        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
+        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind, hasSynthesizedParameterNames)
     }
 
     override fun isExternal(): Boolean = false
@@ -58,11 +64,33 @@ class FunctionInvokeDescriptor private constructor(
 
     override fun isTailrec(): Boolean = false
 
+    fun replaceParameterNames(parameterNames: List<Name>): FunctionInvokeDescriptor {
+        val indexShift = valueParameters.size - parameterNames.size
+        assert(indexShift == 0 || indexShift == 1) // indexShift == 1 for extension function type
+
+        val hasSynthesizedParameterNames = parameterNames.any { it.isSpecial }
+        val newDescriptor = FunctionInvokeDescriptor(containingDeclaration, this, kind, hasSynthesizedParameterNames)
+        val newValueParameters = valueParameters.map {
+            var newName = it.name
+            val parameterIndex = it.index
+            val nameIndex = parameterIndex - indexShift
+            if (nameIndex >= 0) {
+                val parameterName = parameterNames[nameIndex]
+                if (!parameterName.isSpecial) {
+                    newName = parameterName
+                }
+            }
+            it.copy(newDescriptor, newName, parameterIndex)
+        }
+        newDescriptor.initialize(extensionReceiverParameterType, dispatchReceiverParameter, typeParameters, newValueParameters, returnType, modality, visibility)
+        return newDescriptor
+    }
+
     companion object Factory {
         fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
             val typeParameters = functionClass.declaredTypeParameters
 
-            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
+            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION, hasSynthesizedParameterNames = true)
             result.initialize(
                     null,
                     functionClass.thisAsReceiverParameter,
@@ -74,7 +102,6 @@ class FunctionInvokeDescriptor private constructor(
                     Modality.ABSTRACT,
                     Visibilities.PUBLIC
             )
-            result.isOperator = true
             return result
         }
 
