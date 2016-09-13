@@ -20,7 +20,7 @@ FILE /destructuring1.kt
   FUN public fun B.test(): kotlin.Unit
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit operator=DESTRUCTURING_DECLARATION
-        VAR val tmp0_container: A
+        VAR IR_TEMPORARY_VARIABLE val tmp0_container: A
           GET_OBJECT 'A' type=A
         VAR val x: kotlin.Int
           CALL 'component1() on A: Int' type=kotlin.Int operator=COMPONENT_N(index=1)

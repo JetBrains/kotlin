@@ -1,9 +1,9 @@
 FILE /field.kt
   PROPERTY public var testSimple: kotlin.Int
-    FIELD public var testSimple: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public var testSimple: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public fun <get-testSimple>(): kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testSimple>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
           GET_BACKING_FIELD 'testSimple: Int' type=kotlin.Int operator=null
@@ -12,10 +12,10 @@ FILE /field.kt
         SET_BACKING_FIELD 'testSimple: Int' type=kotlin.Unit operator=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
   PROPERTY public var testAugmented: kotlin.Int
-    FIELD public var testAugmented: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public var testAugmented: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public fun <get-testAugmented>(): kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testAugmented>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
           GET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Int operator=null

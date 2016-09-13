@@ -5,15 +5,15 @@ FILE /safeCalls.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Ref'
     PROPERTY public final var value: kotlin.Int
-      FIELD public final var value: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final var value: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-value>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_BACKING_FIELD 'value: Int' type=kotlin.Int operator=null
               receiver: THIS of 'Ref' type=Ref
-      FUN public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=null
             receiver: THIS of 'Ref' type=Ref
@@ -28,7 +28,7 @@ FILE /safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String?): Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
             GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -41,7 +41,7 @@ FILE /safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String?): Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
             GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -54,7 +54,7 @@ FILE /safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(String?, Any?): Boolean?'
         BLOCK type=kotlin.Boolean? operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
             GET_VAR 'value-parameter x: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Boolean? operator=SAFE_CALL
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -67,7 +67,7 @@ FILE /safeCalls.kt
   FUN public fun test4(x: Ref?): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit? operator=SAFE_CALL
-        VAR val tmp0_safe_receiver: Ref?
+        VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: Ref?
           GET_VAR 'value-parameter x: Ref?' type=Ref? operator=null
         WHEN type=kotlin.Unit? operator=SAFE_CALL
           if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -81,7 +81,7 @@ FILE /safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(String?) on IHost: Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
             GET_VAR 'value-parameter s: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

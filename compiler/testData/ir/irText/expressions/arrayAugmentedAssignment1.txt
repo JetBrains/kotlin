@@ -17,10 +17,10 @@ FILE /arrayAugmentedAssignment1.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     PROPERTY public final val x: kotlin.IntArray
-      FIELD public final val x: kotlin.IntArray
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.IntArray
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: IntArray' type=kotlin.IntArray operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.IntArray
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.IntArray
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
             GET_BACKING_FIELD 'x: IntArray' type=kotlin.IntArray operator=null
@@ -30,9 +30,9 @@ FILE /arrayAugmentedAssignment1.kt
       VAR var x: kotlin.IntArray
         CALL 'foo(): IntArray' type=kotlin.IntArray operator=null
       BLOCK type=kotlin.Unit operator=PLUSEQ
-        VAR val tmp0_array: kotlin.IntArray
+        VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
           GET_VAR 'x: IntArray' type=kotlin.IntArray operator=null
-        VAR val tmp1_index0: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
           CONST Int type=kotlin.Int value='0'
         CALL 'set(Int, Int): Unit' type=kotlin.Unit operator=PLUSEQ
           $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray operator=null
@@ -45,9 +45,9 @@ FILE /arrayAugmentedAssignment1.kt
   FUN public fun testCall(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=MULTEQ
-        VAR val tmp0_array: kotlin.IntArray
+        VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
           CALL 'foo(): IntArray' type=kotlin.IntArray operator=null
-        VAR val tmp1_index0: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
           CALL 'bar(): Int' type=kotlin.Int operator=null
         CALL 'set(Int, Int): Unit' type=kotlin.Unit operator=MULTEQ
           $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray operator=null
@@ -60,12 +60,12 @@ FILE /arrayAugmentedAssignment1.kt
   FUN public fun testMember(c: C): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Int operator=POSTFIX_INCR
-        VAR val tmp0_array: kotlin.IntArray
+        VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
           CALL '<get-x>(): IntArray' type=kotlin.IntArray operator=GET_PROPERTY
             $this: GET_VAR 'value-parameter c: C' type=C operator=null
-        VAR val tmp1_index0: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
           CONST Int type=kotlin.Int value='0'
-        VAR val tmp2: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
           CALL 'get(Int): Int' type=kotlin.Int operator=POSTFIX_INCR
             $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray operator=null
             index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int operator=null

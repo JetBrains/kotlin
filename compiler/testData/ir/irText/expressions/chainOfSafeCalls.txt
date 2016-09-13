@@ -16,13 +16,13 @@ FILE /chainOfSafeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(C?): C?'
         BLOCK type=C? operator=SAFE_CALL
-          VAR val tmp3_safe_receiver: C?
+          VAR IR_TEMPORARY_VARIABLE val tmp3_safe_receiver: C?
             BLOCK type=C? operator=SAFE_CALL
-              VAR val tmp2_safe_receiver: C?
+              VAR IR_TEMPORARY_VARIABLE val tmp2_safe_receiver: C?
                 BLOCK type=C? operator=SAFE_CALL
-                  VAR val tmp1_safe_receiver: C?
+                  VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: C?
                     BLOCK type=C? operator=SAFE_CALL
-                      VAR val tmp0_safe_receiver: C?
+                      VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: C?
                         GET_VAR 'value-parameter nc: C?' type=C? operator=null
                       WHEN type=C? operator=SAFE_CALL
                         if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

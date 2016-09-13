@@ -26,7 +26,7 @@ FILE /jvmStaticFieldReference.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestClass'
     PROPERTY public final val test: kotlin.Int
-      FIELD public final val test: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val test: kotlin.Int
         EXPRESSION_BODY
           WHEN type=kotlin.Int operator=WHEN
             else: BLOCK type=kotlin.Int operator=null
@@ -35,7 +35,7 @@ FILE /jvmStaticFieldReference.kt
                   GET_BACKING_FIELD 'out: PrintStream!' type=java.io.PrintStream! operator=GET_PROPERTY
                 p0: CONST String type=kotlin.String value='TestClass/test'
               CONST Int type=kotlin.Int value='42'
-      FUN public final fun <get-test>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test>(): Int'
             GET_BACKING_FIELD 'test: Int' type=kotlin.Int operator=null

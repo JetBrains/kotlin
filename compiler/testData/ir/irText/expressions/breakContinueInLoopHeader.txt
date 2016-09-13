@@ -6,7 +6,7 @@ FILE /breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit operator=null
           WHILE label=null operator=WHILE_LOOP
             condition: BLOCK type=kotlin.Boolean operator=ELVIS
-              VAR val tmp0_elvis_lhs: kotlin.Boolean?
+              VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Boolean?
                 GET_VAR 'value-parameter c: Boolean?' type=kotlin.Boolean? operator=null
               WHEN type=kotlin.Boolean operator=null
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -21,7 +21,7 @@ FILE /breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit operator=null
           WHILE label=null operator=WHILE_LOOP
             condition: BLOCK type=kotlin.Boolean operator=ELVIS
-              VAR val tmp0_elvis_lhs: kotlin.Boolean?
+              VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Boolean?
                 GET_VAR 'value-parameter c: Boolean?' type=kotlin.Boolean? operator=null
               WHEN type=kotlin.Boolean operator=null
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -35,10 +35,10 @@ FILE /breakContinueInLoopHeader.kt
         condition: CONST Boolean type=kotlin.Boolean value='true'
         body: BLOCK type=kotlin.Unit operator=null
           BLOCK type=kotlin.Unit operator=FOR_LOOP
-            VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+            VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
               CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> operator=ELVIS
-                  VAR val tmp0_elvis_lhs: kotlin.collections.List<kotlin.String>?
+                  VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.collections.List<kotlin.String>?
                     GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? operator=null
                   WHEN type=kotlin.collections.List<kotlin.String> operator=null
                     if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -59,10 +59,10 @@ FILE /breakContinueInLoopHeader.kt
         condition: CONST Boolean type=kotlin.Boolean value='true'
         body: BLOCK type=kotlin.Unit operator=null
           BLOCK type=kotlin.Unit operator=FOR_LOOP
-            VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+            VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
               CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> operator=ELVIS
-                  VAR val tmp0_elvis_lhs: kotlin.collections.List<kotlin.String>?
+                  VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.collections.List<kotlin.String>?
                     GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? operator=null
                   WHEN type=kotlin.collections.List<kotlin.String> operator=null
                     if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

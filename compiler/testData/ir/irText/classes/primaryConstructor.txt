@@ -5,19 +5,19 @@ FILE /primaryConstructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
               receiver: THIS of 'Test1' type=Test1
     PROPERTY public final val y: kotlin.Int
-      FIELD public final val y: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-y>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
@@ -28,19 +28,19 @@ FILE /primaryConstructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY public final val y: kotlin.Int
-      FIELD public final val y: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-y>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
               receiver: THIS of 'Test2' type=Test2
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
@@ -51,17 +51,17 @@ FILE /primaryConstructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
     PROPERTY public final val y: kotlin.Int
-      FIELD public final val y: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-y>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
               receiver: THIS of 'Test3' type=Test3
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
-      FUN public final fun <get-x>(): kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null

@@ -5,10 +5,10 @@ FILE /initVal.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValFromParameter'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
@@ -19,10 +19,10 @@ FILE /initVal.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValInClass'
     PROPERTY public final val x: kotlin.Int = 0
-      FIELD public final val x: kotlin.Int = 0
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int = 0
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
@@ -33,8 +33,8 @@ FILE /initVal.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValInInitBlock'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
-      FUN public final fun <get-x>(): kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null

@@ -3,7 +3,7 @@ FILE /bangbang.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any?): Any'
         BLOCK type=kotlin.Any operator=EXCLEXCL
-          VAR val tmp0_notnull: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_notnull: kotlin.Any?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -15,9 +15,9 @@ FILE /bangbang.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any?): Int'
         BLOCK type=kotlin.Int operator=EXCLEXCL
-          VAR val tmp1_notnull: kotlin.Int?
+          VAR IR_TEMPORARY_VARIABLE val tmp1_notnull: kotlin.Int?
             BLOCK type=kotlin.Int? operator=SAFE_CALL
-              VAR val tmp0_safe_receiver: kotlin.Any?
+              VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Any?
                 GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
               WHEN type=kotlin.Int? operator=SAFE_CALL
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

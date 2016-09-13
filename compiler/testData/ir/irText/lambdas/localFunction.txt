@@ -6,7 +6,7 @@ FILE /localFunction.kt
       FUN local final fun local(): kotlin.Unit
         BLOCK_BODY
           BLOCK type=kotlin.Int operator=POSTFIX_INCR
-            VAR val tmp0: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
               GET_VAR 'x: Int' type=kotlin.Int operator=POSTFIX_INCR
             SET_VAR 'x: Int' type=kotlin.Unit operator=POSTFIX_INCR
               CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR

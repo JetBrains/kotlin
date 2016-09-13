@@ -1,17 +1,17 @@
 FILE /references.kt
   PROPERTY public val ok: kotlin.String = "OK"
-    FIELD public val ok: kotlin.String = "OK"
+    FIELD PROPERTY_BACKING_FIELD public val ok: kotlin.String = "OK"
       EXPRESSION_BODY
         CONST String type=kotlin.String value='OK'
-    FUN public fun <get-ok>(): kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok>(): String'
           GET_BACKING_FIELD 'ok: String' type=kotlin.String operator=null
   PROPERTY public val ok2: kotlin.String = "OK"
-    FIELD public val ok2: kotlin.String = "OK"
+    FIELD PROPERTY_BACKING_FIELD public val ok2: kotlin.String = "OK"
       EXPRESSION_BODY
         CALL '<get-ok>(): String' type=kotlin.String operator=GET_PROPERTY
-    FUN public fun <get-ok2>(): kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok2>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok2>(): String'
           GET_BACKING_FIELD 'ok2: String' type=kotlin.String operator=null

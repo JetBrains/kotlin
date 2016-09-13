@@ -6,9 +6,9 @@ FILE /arrayAugmentedAssignment2.kt
   FUN public fun IB.test(a: IA): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=PLUSEQ
-        VAR val tmp0_array: IA
+        VAR IR_TEMPORARY_VARIABLE val tmp0_array: IA
           GET_VAR 'value-parameter a: IA' type=IA operator=null
-        VAR val tmp1_index0: kotlin.String
+        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.String
           CONST String type=kotlin.String value=''
         CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit operator=PLUSEQ
           $this: $RECEIVER of 'test(IA) on IB: Unit' type=IB

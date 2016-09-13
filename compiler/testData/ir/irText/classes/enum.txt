@@ -8,9 +8,9 @@ FILE /enum.kt
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST1
     ENUM_ENTRY enum entry TEST2
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST2
-    FUN public final fun values(): kotlin.Array<TestEnum1>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum1>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final fun valueOf(value: kotlin.String): TestEnum1
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
     CONSTRUCTOR private constructor TestEnum2(x: kotlin.Int)
@@ -18,10 +18,10 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
@@ -35,9 +35,9 @@ FILE /enum.kt
     ENUM_ENTRY enum entry TEST3
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST3
         x: CONST Int type=kotlin.Int value='3'
-    FUN public final fun values(): kotlin.Array<TestEnum2>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum2>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final fun valueOf(value: kotlin.String): TestEnum2
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum2
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum3
     CONSTRUCTOR private constructor TestEnum3()
@@ -56,9 +56,9 @@ FILE /enum.kt
             CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
               message: CONST String type=kotlin.String value='Hello, world!'
     FUN public abstract fun foo(): kotlin.Unit
-    FUN public final fun values(): kotlin.Array<TestEnum3>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum3>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final fun valueOf(value: kotlin.String): TestEnum3
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum3
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
     CONSTRUCTOR private constructor TestEnum4(x: kotlin.Int)
@@ -66,10 +66,10 @@ FILE /enum.kt
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
@@ -95,8 +95,8 @@ FILE /enum.kt
               x: CONST Int type=kotlin.Int value='2'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST2'
         PROPERTY public final val z: kotlin.Int
-          FIELD public final val z: kotlin.Int
-          FUN public final fun <get-z>(): kotlin.Int
+          FIELD PROPERTY_BACKING_FIELD public final val z: kotlin.Int
+          FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-z>(): Int'
                 GET_BACKING_FIELD 'z: Int' type=kotlin.Int operator=null
@@ -112,7 +112,7 @@ FILE /enum.kt
             CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
               message: GET_ENUM_VALUE 'TEST2' type=TestEnum4
     FUN public abstract fun foo(): kotlin.Unit
-    FUN public final fun values(): kotlin.Array<TestEnum4>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum4>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final fun valueOf(value: kotlin.String): TestEnum4
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum4
       SYNTHETIC_BODY kind=ENUM_VALUEOF

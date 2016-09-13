@@ -17,7 +17,7 @@ FILE /badBreakContinue.kt
         body: BLOCK type=kotlin.Unit operator=null
           VAR val lambda: () -> kotlin.Nothing
             BLOCK type=() -> kotlin.Nothing operator=LAMBDA
-              FUN local final fun <anonymous>(): kotlin.Nothing
+              FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
                   ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing

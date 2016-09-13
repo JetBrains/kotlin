@@ -1,9 +1,9 @@
 FILE /elvis.kt
   PROPERTY public val p: kotlin.Any? = null
-    FIELD public val p: kotlin.Any? = null
+    FIELD PROPERTY_BACKING_FIELD public val p: kotlin.Any? = null
       EXPRESSION_BODY
         CONST Null type=kotlin.Nothing? value='null'
-    FUN public fun <get-p>(): kotlin.Any?
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Any?'
           GET_BACKING_FIELD 'p: Any?' type=kotlin.Any? operator=null
@@ -15,7 +15,7 @@ FILE /elvis.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any?, Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
-          VAR val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -27,7 +27,7 @@ FILE /elvis.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String?, Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
-          VAR val tmp0_elvis_lhs: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.String?
             GET_VAR 'value-parameter a: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Any operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -49,7 +49,7 @@ FILE /elvis.kt
           CONST String type=kotlin.String value=''
       RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
         BLOCK type=kotlin.String operator=ELVIS
-          VAR val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.String operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -63,7 +63,7 @@ FILE /elvis.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
-          VAR val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
             CALL '<get-p>(): Any?' type=kotlin.Any? operator=GET_PROPERTY
           WHEN type=kotlin.Any operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -75,7 +75,7 @@ FILE /elvis.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(Any): Any'
         BLOCK type=kotlin.Any operator=ELVIS
-          VAR val tmp0_elvis_lhs: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_elvis_lhs: kotlin.Any?
             CALL 'foo(): Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.Any operator=null
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

@@ -8,7 +8,7 @@ FILE /dotQualified.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='lengthN(String?): Int?'
         BLOCK type=kotlin.Int? operator=SAFE_CALL
-          VAR val tmp0_safe_receiver: kotlin.String?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
             GET_VAR 'value-parameter s: String?' type=kotlin.String? operator=null
           WHEN type=kotlin.Int? operator=SAFE_CALL
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

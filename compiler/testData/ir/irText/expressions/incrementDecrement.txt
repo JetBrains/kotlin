@@ -1,25 +1,25 @@
 FILE /incrementDecrement.kt
   PROPERTY public var p: kotlin.Int
-    FIELD public var p: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public var p: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public fun <get-p>(): kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
-    FUN public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
       BLOCK_BODY
         SET_BACKING_FIELD 'p: Int' type=kotlin.Unit operator=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
   PROPERTY public val arr: kotlin.IntArray
-    FIELD public val arr: kotlin.IntArray
+    FIELD PROPERTY_BACKING_FIELD public val arr: kotlin.IntArray
       EXPRESSION_BODY
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
           elements: VARARG type=IntArray varargElementType=Int
             CONST Int type=kotlin.Int value='1'
             CONST Int type=kotlin.Int value='2'
             CONST Int type=kotlin.Int value='3'
-    FUN public fun <get-arr>(): kotlin.IntArray
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-arr>(): kotlin.IntArray
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-arr>(): IntArray'
           GET_BACKING_FIELD 'arr: IntArray' type=kotlin.IntArray operator=null
@@ -29,7 +29,7 @@ FILE /incrementDecrement.kt
         CONST Int type=kotlin.Int value='0'
       VAR val x1: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_INCR
-          VAR val tmp0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
             CALL 'inc(): Int' type=kotlin.Int operator=PREFIX_INCR
               $this: GET_VAR 'x: Int' type=kotlin.Int operator=PREFIX_INCR
           SET_VAR 'x: Int' type=kotlin.Unit operator=PREFIX_INCR
@@ -37,7 +37,7 @@ FILE /incrementDecrement.kt
           GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
       VAR val x2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
-          VAR val tmp1: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
             CALL 'dec(): Int' type=kotlin.Int operator=PREFIX_DECR
               $this: GET_VAR 'x: Int' type=kotlin.Int operator=PREFIX_DECR
           SET_VAR 'x: Int' type=kotlin.Unit operator=PREFIX_DECR
@@ -49,7 +49,7 @@ FILE /incrementDecrement.kt
         CONST Int type=kotlin.Int value='0'
       VAR val x1: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
-          VAR val tmp0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
             GET_VAR 'x: Int' type=kotlin.Int operator=POSTFIX_INCR
           SET_VAR 'x: Int' type=kotlin.Unit operator=POSTFIX_INCR
             CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
@@ -57,7 +57,7 @@ FILE /incrementDecrement.kt
           GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
       VAR val x2: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_DECR
-          VAR val tmp1: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
             GET_VAR 'x: Int' type=kotlin.Int operator=POSTFIX_DECR
           SET_VAR 'x: Int' type=kotlin.Unit operator=POSTFIX_DECR
             CALL 'dec(): Int' type=kotlin.Int operator=POSTFIX_DECR
@@ -68,7 +68,7 @@ FILE /incrementDecrement.kt
       VAR val p1: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_INCR
           BLOCK type=kotlin.Int operator=PREFIX_INCR
-            VAR val tmp0: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
               CALL 'inc(): Int' type=kotlin.Int operator=PREFIX_INCR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int operator=PREFIX_INCR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=PREFIX_INCR
@@ -77,7 +77,7 @@ FILE /incrementDecrement.kt
       VAR val p2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
           BLOCK type=kotlin.Int operator=PREFIX_DECR
-            VAR val tmp1: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
               CALL 'dec(): Int' type=kotlin.Int operator=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int operator=PREFIX_DECR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=PREFIX_DECR
@@ -88,7 +88,7 @@ FILE /incrementDecrement.kt
       VAR val p1: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
           BLOCK type=kotlin.Int operator=POSTFIX_INCR
-            VAR val tmp0: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
               CALL '<get-p>(): Int' type=kotlin.Int operator=POSTFIX_INCR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=POSTFIX_INCR
               <set-?>: CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
@@ -97,7 +97,7 @@ FILE /incrementDecrement.kt
       VAR val p2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
           BLOCK type=kotlin.Int operator=PREFIX_DECR
-            VAR val tmp1: kotlin.Int
+            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
               CALL 'dec(): Int' type=kotlin.Int operator=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int operator=PREFIX_DECR
             CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=PREFIX_DECR
@@ -107,11 +107,11 @@ FILE /incrementDecrement.kt
     BLOCK_BODY
       VAR val a1: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_INCR
-          VAR val tmp0_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray operator=GET_PROPERTY
-          VAR val tmp1_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
-          VAR val tmp2: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
             CALL 'inc(): Int' type=kotlin.Int operator=PREFIX_INCR
               $this: CALL 'get(Int): Int' type=kotlin.Int operator=PREFIX_INCR
                 $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray operator=null
@@ -123,11 +123,11 @@ FILE /incrementDecrement.kt
           GET_VAR 'tmp2: Int' type=kotlin.Int operator=null
       VAR val a2: kotlin.Int
         BLOCK type=kotlin.Int operator=PREFIX_DECR
-          VAR val tmp3_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE val tmp3_array: kotlin.IntArray
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray operator=GET_PROPERTY
-          VAR val tmp4_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp4_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
-          VAR val tmp5: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
             CALL 'dec(): Int' type=kotlin.Int operator=PREFIX_DECR
               $this: CALL 'get(Int): Int' type=kotlin.Int operator=PREFIX_DECR
                 $this: GET_VAR 'tmp3_array: IntArray' type=kotlin.IntArray operator=null
@@ -141,11 +141,11 @@ FILE /incrementDecrement.kt
     BLOCK_BODY
       VAR val a1: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_INCR
-          VAR val tmp0_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray operator=GET_PROPERTY
-          VAR val tmp1_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
-          VAR val tmp2: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
             CALL 'get(Int): Int' type=kotlin.Int operator=POSTFIX_INCR
               $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray operator=null
               index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int operator=null
@@ -157,11 +157,11 @@ FILE /incrementDecrement.kt
           GET_VAR 'tmp2: Int' type=kotlin.Int operator=null
       VAR val a2: kotlin.Int
         BLOCK type=kotlin.Int operator=POSTFIX_DECR
-          VAR val tmp3_array: kotlin.IntArray
+          VAR IR_TEMPORARY_VARIABLE val tmp3_array: kotlin.IntArray
             CALL '<get-arr>(): IntArray' type=kotlin.IntArray operator=GET_PROPERTY
-          VAR val tmp4_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp4_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
-          VAR val tmp5: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
             CALL 'get(Int): Int' type=kotlin.Int operator=POSTFIX_DECR
               $this: GET_VAR 'tmp3_array: IntArray' type=kotlin.IntArray operator=null
               index: GET_VAR 'tmp4_index0: Int' type=kotlin.Int operator=null

@@ -1,13 +1,13 @@
 FILE /augmentedAssignment1.kt
   PROPERTY public var p: kotlin.Int
-    FIELD public var p: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public var p: kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public fun <get-p>(): kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
-    FUN public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
       BLOCK_BODY
         SET_BACKING_FIELD 'p: Int' type=kotlin.Unit operator=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null

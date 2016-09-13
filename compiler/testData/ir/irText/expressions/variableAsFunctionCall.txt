@@ -3,7 +3,7 @@ FILE /variableAsFunctionCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='k() on String: () -> String'
         BLOCK type=() -> kotlin.String operator=LAMBDA
-          FUN local final fun <anonymous>(): kotlin.String
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.String
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): String'
                 $RECEIVER of 'k() on String: () -> String' type=kotlin.String
@@ -29,9 +29,9 @@ FILE /variableAsFunctionCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(String?): String?'
         BLOCK type=kotlin.String? operator=SAFE_CALL
-          VAR val tmp1_safe_receiver: (() -> kotlin.String)?
+          VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: (() -> kotlin.String)?
             BLOCK type=(() -> kotlin.String)? operator=SAFE_CALL
-              VAR val tmp0_safe_receiver: kotlin.String?
+              VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.String?
                 GET_VAR 'value-parameter ns: String?' type=kotlin.String? operator=null
               WHEN type=(() -> kotlin.String)? operator=SAFE_CALL
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

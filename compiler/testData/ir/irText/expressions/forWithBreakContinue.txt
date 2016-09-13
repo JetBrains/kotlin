@@ -2,7 +2,7 @@ FILE /forWithBreakContinue.kt
   FUN public fun testForBreak1(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
@@ -17,7 +17,7 @@ FILE /forWithBreakContinue.kt
   FUN public fun testForBreak2(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
@@ -29,7 +29,7 @@ FILE /forWithBreakContinue.kt
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               BLOCK type=kotlin.Unit operator=FOR_LOOP
-                VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+                VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                   CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                     $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
                 WHILE label=INNER operator=FOR_LOOP_INNER_WHILE
@@ -47,7 +47,7 @@ FILE /forWithBreakContinue.kt
   FUN public fun testForContinue1(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
@@ -62,7 +62,7 @@ FILE /forWithBreakContinue.kt
   FUN public fun testForContinue2(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=OUTER operator=FOR_LOOP_INNER_WHILE
@@ -74,7 +74,7 @@ FILE /forWithBreakContinue.kt
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=null
             BLOCK type=kotlin.Nothing operator=null
               BLOCK type=kotlin.Unit operator=FOR_LOOP
-                VAR val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
+                VAR IR_TEMPORARY_VARIABLE val tmp1_iterator: kotlin.collections.Iterator<kotlin.String>
                   CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
                     $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
                 WHILE label=INNER operator=FOR_LOOP_INNER_WHILE

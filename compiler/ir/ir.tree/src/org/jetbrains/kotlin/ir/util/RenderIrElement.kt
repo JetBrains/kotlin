@@ -43,34 +43,34 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "FILE ${declaration.name}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-            "FUN ${declaration.renderDeclared()}"
+            "FUN ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
-            "CONSTRUCTOR ${declaration.renderDeclared()}"
+            "CONSTRUCTOR ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-            "PROPERTY ${declaration.renderDeclared()}"
+            "PROPERTY ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
-            "FIELD ${declaration.renderDeclared()}"
+            "FIELD ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
-            "CLASS ${declaration.descriptor.kind} ${declaration.descriptor.ref()}"
+            "CLASS ${declaration.renderOrigin()}${declaration.descriptor.kind} ${declaration.descriptor.ref()}"
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
-            "TYPEALIAS ${declaration.descriptor.ref()} type=${declaration.descriptor.underlyingType.render()}"
+            "TYPEALIAS ${declaration.renderOrigin()}${declaration.descriptor.ref()} type=${declaration.descriptor.underlyingType.render()}"
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
-            "VAR ${declaration.renderDeclared()}"
+            "VAR ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
-            "ENUM_ENTRY ${declaration.renderDeclared()}"
+            "ENUM_ENTRY ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
             "ANONYMOUS_INITIALIZER ${declaration.descriptor.ref()}"
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
-            "LOCAL_DELEGATED_PROPERTY ${declaration.renderDeclared()}"
+            "LOCAL_DELEGATED_PROPERTY ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
             "EXPRESSION_BODY"
@@ -214,5 +214,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
         internal fun KotlinType.render(): String =
                 DECLARATION_RENDERER.renderType(this)
+
+        internal fun IrDeclaration.renderOrigin(): String =
+                if (origin != IrDeclarationOrigin.DEFINED) origin.toString() + " " else ""
     }
 }

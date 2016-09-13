@@ -8,7 +8,7 @@ FILE /when.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='testWithSubject(Any?): String'
         BLOCK type=kotlin.String operator=WHEN
-          VAR val tmp0_subject: kotlin.Any?
+          VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.Any?
             GET_VAR 'value-parameter x: Any?' type=kotlin.Any? operator=null
           WHEN type=kotlin.String operator=WHEN
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -51,7 +51,7 @@ FILE /when.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='testComma(Int): String'
         BLOCK type=kotlin.String operator=WHEN
-          VAR val tmp0_subject: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.Int
             GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
           WHEN type=kotlin.String operator=WHEN
             if: WHEN type=kotlin.Boolean operator=WHEN_COMMA

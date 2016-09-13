@@ -23,17 +23,17 @@ FILE /callWithReorderedArguments.kt
         a: CALL 'noReorder1(): Int' type=kotlin.Int operator=null
         b: CALL 'noReorder2(): Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
-        VAR val tmp0_b: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp0_b: kotlin.Int
           CALL 'reordered1(): Int' type=kotlin.Int operator=null
-        VAR val tmp1_a: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp1_a: kotlin.Int
           CALL 'reordered2(): Int' type=kotlin.Int operator=null
         CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
           a: GET_VAR 'tmp1_a: Int' type=kotlin.Int operator=null
           b: GET_VAR 'tmp0_b: Int' type=kotlin.Int operator=null
       BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
-        VAR val tmp2_b: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp2_b: kotlin.Int
           CONST Int type=kotlin.Int value='1'
-        VAR val tmp3_a: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp3_a: kotlin.Int
           CALL 'reordered2(): Int' type=kotlin.Int operator=null
         CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
           a: GET_VAR 'tmp3_a: Int' type=kotlin.Int operator=null

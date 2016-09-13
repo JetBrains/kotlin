@@ -4,7 +4,7 @@ FILE /samAdapter.kt
       VAR val hello: java.lang.Runnable
         CALL 'Runnable(() -> Unit): Runnable' type=java.lang.Runnable operator=null
           function: BLOCK type=() -> kotlin.Unit operator=LAMBDA
-            FUN local final fun <anonymous>(): kotlin.Unit
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                   CALL 'println(Any?): Unit' type=kotlin.Unit operator=null

@@ -7,10 +7,10 @@ FILE /superCalls.kt
     FUN public open fun foo(): kotlin.Unit
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.String = ""
-      FIELD public open val bar: kotlin.String = ""
+      FIELD PROPERTY_BACKING_FIELD public open val bar: kotlin.String = ""
         EXPRESSION_BODY
           CONST String type=kotlin.String value=''
-      FUN public open fun <get-bar>(): kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR public open fun <get-bar>(): kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): String'
             GET_BACKING_FIELD 'bar: String' type=kotlin.String operator=null

@@ -6,9 +6,9 @@ FILE /values.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Enum'
     ENUM_ENTRY enum entry A
       init: ENUM_CONSTRUCTOR_CALL 'constructor Enum()' A
-    FUN public final fun values(): kotlin.Array<Enum>
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Enum>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN public final fun valueOf(value: kotlin.String): Enum
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Enum
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS OBJECT A
     CONSTRUCTOR private constructor A()
@@ -16,10 +16,10 @@ FILE /values.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
   PROPERTY public val a: kotlin.Int = 0
-    FIELD public val a: kotlin.Int = 0
+    FIELD PROPERTY_BACKING_FIELD public val a: kotlin.Int = 0
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value='0'
-    FUN public fun <get-a>(): kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-a>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-a>(): Int'
           GET_BACKING_FIELD 'a: Int' type=kotlin.Int operator=null

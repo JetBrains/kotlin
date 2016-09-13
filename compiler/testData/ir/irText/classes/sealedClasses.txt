@@ -10,10 +10,10 @@ FILE /sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Const'
       PROPERTY public final val number: kotlin.Double
-        FIELD public final val number: kotlin.Double
+        FIELD PROPERTY_BACKING_FIELD public final val number: kotlin.Double
           EXPRESSION_BODY
             GET_VAR 'value-parameter number: Double' type=kotlin.Double operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN public final fun <get-number>(): kotlin.Double
+        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-number>(): kotlin.Double
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
               GET_BACKING_FIELD 'number: Double' type=kotlin.Double operator=null
@@ -24,19 +24,19 @@ FILE /sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Sum'
       PROPERTY public final val e1: Expr
-        FIELD public final val e1: Expr
+        FIELD PROPERTY_BACKING_FIELD public final val e1: Expr
           EXPRESSION_BODY
             GET_VAR 'value-parameter e1: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN public final fun <get-e1>(): Expr
+        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e1>(): Expr
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e1>(): Expr'
               GET_BACKING_FIELD 'e1: Expr' type=Expr operator=null
                 receiver: THIS of 'Sum' type=Expr.Sum
       PROPERTY public final val e2: Expr
-        FIELD public final val e2: Expr
+        FIELD PROPERTY_BACKING_FIELD public final val e2: Expr
           EXPRESSION_BODY
             GET_VAR 'value-parameter e2: Expr' type=Expr operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN public final fun <get-e2>(): Expr
+        FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e2>(): Expr
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
               GET_BACKING_FIELD 'e2: Expr' type=Expr operator=null

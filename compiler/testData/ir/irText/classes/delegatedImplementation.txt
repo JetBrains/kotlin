@@ -31,24 +31,24 @@ FILE /delegatedImplementation.kt
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             PROPERTY public open override val x: kotlin.String
-              FIELD public open override val x: kotlin.String
+              FIELD PROPERTY_BACKING_FIELD public open override val x: kotlin.String
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter x0: String' type=kotlin.String operator=null
-              FUN public open override fun <get-x>(): kotlin.String
+              FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-x>(): kotlin.String
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-x>(): String'
                     GET_BACKING_FIELD 'x: String' type=kotlin.String operator=null
                       receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
             PROPERTY public open override var y: kotlin.Int
-              FIELD public open override var y: kotlin.Int
+              FIELD PROPERTY_BACKING_FIELD public open override var y: kotlin.Int
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter y0: Int' type=kotlin.Int operator=null
-              FUN public open override fun <get-y>(): kotlin.Int
+              FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-y>(): kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-y>(): Int'
                     GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
                       receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
-              FUN public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+              FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
                 BLOCK_BODY
                   SET_BACKING_FIELD 'y: Int' type=kotlin.Unit operator=null
                     receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
@@ -71,21 +71,21 @@ FILE /delegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
-    FIELD val `Test1$IBase$delegate`: BaseImpl
+    FIELD DELEGATE val `Test1$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
-    FUN public open override fun bar(): kotlin.Int
+    FUN DELEGATED_MEMBER public open override fun bar(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int operator=null
             $this: GET_VAR '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
-    FUN public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+    FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
       BLOCK_BODY
         CALL 'foo(Int, String): Unit' type=kotlin.Unit operator=null
           $this: GET_VAR '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
           s: GET_VAR 'value-parameter s: String' type=kotlin.String operator=null
-    FUN public open override fun kotlin.String.qux(): kotlin.Unit
+    FUN DELEGATED_MEMBER public open override fun kotlin.String.qux(): kotlin.Unit
       BLOCK_BODY
         CALL 'qux() on String: Unit' type=kotlin.Unit operator=null
           $this: GET_VAR '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
@@ -95,63 +95,63 @@ FILE /delegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
-    FIELD val `Test2$IBase$delegate`: BaseImpl
+    FIELD DELEGATE val `Test2$IBase$delegate`: BaseImpl
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
-    FUN public open override fun bar(): kotlin.Int
+    FUN DELEGATED_MEMBER public open override fun bar(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int operator=null
             $this: GET_VAR '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
-    FUN public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+    FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
       BLOCK_BODY
         CALL 'foo(Int, String): Unit' type=kotlin.Unit operator=null
           $this: GET_VAR '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
           s: GET_VAR 'value-parameter s: String' type=kotlin.String operator=null
-    FUN public open override fun kotlin.String.qux(): kotlin.Unit
+    FUN DELEGATED_MEMBER public open override fun kotlin.String.qux(): kotlin.Unit
       BLOCK_BODY
         CALL 'qux() on String: Unit' type=kotlin.Unit operator=null
           $this: GET_VAR '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl operator=null
           $receiver: $RECEIVER of 'qux() on String: Unit' type=kotlin.String
-    FIELD val `Test2$IOther$delegate`: IOther
+    FIELD DELEGATE val `Test2$IOther$delegate`: IOther
       EXPRESSION_BODY
         CALL 'otherImpl(String, Int): IOther' type=IOther operator=null
           x0: CONST String type=kotlin.String value=''
           y0: CONST Int type=kotlin.Int value='42'
-    PROPERTY public open override val kotlin.Byte.z1: kotlin.Int
-      FUN public open override fun kotlin.Byte.<get-z1>(): kotlin.Int
+    PROPERTY DELEGATED_MEMBER public open override val kotlin.Byte.z1: kotlin.Int
+      FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<get-z1>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
             CALL '<get-z1>() on Byte: Int' type=kotlin.Int operator=null
               $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null
               $receiver: $RECEIVER of 'z1: Int on Byte' type=kotlin.Byte
-    PROPERTY public open override val x: kotlin.String
-      FUN public open override fun <get-x>(): kotlin.String
+    PROPERTY DELEGATED_MEMBER public open override val x: kotlin.String
+      FUN DELEGATED_MEMBER public open override fun <get-x>(): kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
             CALL '<get-x>(): String' type=kotlin.String operator=null
               $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null
-    PROPERTY public open override var kotlin.Byte.z2: kotlin.Int
-      FUN public open override fun kotlin.Byte.<get-z2>(): kotlin.Int
+    PROPERTY DELEGATED_MEMBER public open override var kotlin.Byte.z2: kotlin.Int
+      FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<get-z2>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
             CALL '<get-z2>() on Byte: Int' type=kotlin.Int operator=null
               $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null
               $receiver: $RECEIVER of 'z2: Int on Byte' type=kotlin.Byte
-      FUN public open override fun kotlin.Byte.<set-z2>(<set-?>: kotlin.Int): kotlin.Unit
+      FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<set-z2>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           CALL '<set-z2>(Int) on Byte: Unit' type=kotlin.Unit operator=null
             $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null
             $receiver: $RECEIVER of 'z2: Int on Byte' type=kotlin.Byte
             <set-?>: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
-    PROPERTY public open override var y: kotlin.Int
-      FUN public open override fun <get-y>(): kotlin.Int
+    PROPERTY DELEGATED_MEMBER public open override var y: kotlin.Int
+      FUN DELEGATED_MEMBER public open override fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             CALL '<get-y>(): Int' type=kotlin.Int operator=null
               $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null
-      FUN public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+      FUN DELEGATED_MEMBER public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           CALL '<set-y>(Int): Unit' type=kotlin.Unit operator=null
             $this: GET_VAR '`Test2$IOther$delegate`: IOther' type=IOther operator=null

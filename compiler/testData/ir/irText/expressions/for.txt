@@ -2,7 +2,7 @@ FILE /for.kt
   FUN public fun testEmpty(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
@@ -15,7 +15,7 @@ FILE /for.kt
   FUN public fun testIterable(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
           CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter ss: List<String>' type=kotlin.collections.List<kotlin.String> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
@@ -31,14 +31,14 @@ FILE /for.kt
   FUN public fun testDestructuring(pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>>
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>>
           CALL 'iterator(): Iterator<Pair<Int, String>>' type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=FOR_LOOP_ITERATOR
             $this: GET_VAR 'value-parameter pp: List<Pair<Int, String>>' type=kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
         WHILE label=null operator=FOR_LOOP_INNER_WHILE
           condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean operator=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'tmp0_iterator: Iterator<Pair<Int, String>>' type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
           body: BLOCK type=kotlin.Unit operator=FOR_LOOP_INNER_WHILE
-            VAR val tmp1_loop_parameter: kotlin.Pair<kotlin.Int, kotlin.String>
+            VAR IR_TEMPORARY_VARIABLE val tmp1_loop_parameter: kotlin.Pair<kotlin.Int, kotlin.String>
               CALL 'next(): Pair<Int, String>' type=kotlin.Pair<kotlin.Int, kotlin.String> operator=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<Pair<Int, String>>' type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> operator=null
             VAR val i: kotlin.Int

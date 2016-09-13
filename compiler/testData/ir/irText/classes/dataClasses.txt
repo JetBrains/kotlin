@@ -5,55 +5,55 @@ FILE /dataClasses.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY public final val x: kotlin.Int
-      FIELD public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-x>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
               receiver: THIS of 'Test1' type=Test1
     PROPERTY public final val y: kotlin.String
-      FIELD public final val y: kotlin.String
+      FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.String
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-y>(): kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_BACKING_FIELD 'y: String' type=kotlin.String operator=null
               receiver: THIS of 'Test1' type=Test1
     PROPERTY public final val z: kotlin.Any
-      FIELD public final val z: kotlin.Any
+      FIELD PROPERTY_BACKING_FIELD public final val z: kotlin.Any
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Any' type=kotlin.Any operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-z>(): kotlin.Any
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Any
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Any'
             GET_BACKING_FIELD 'z: Any' type=kotlin.Any operator=null
               receiver: THIS of 'Test1' type=Test1
-    FUN public final operator fun component1(): kotlin.Int
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): Int'
           CALL '<get-x>(): Int' type=kotlin.Int operator=GET_PROPERTY
             $this: THIS of 'Test1' type=Test1
-    FUN public final operator fun component2(): kotlin.String
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2(): String'
           CALL '<get-y>(): String' type=kotlin.String operator=GET_PROPERTY
             $this: THIS of 'Test1' type=Test1
-    FUN public final operator fun component3(): kotlin.Any
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component3(): kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component3(): Any'
           CALL '<get-z>(): Any' type=kotlin.Any operator=GET_PROPERTY
             $this: THIS of 'Test1' type=Test1
-    FUN public final fun copy(x: kotlin.Int = ..., y: kotlin.String = ..., z: kotlin.Any = ...): Test1
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.String = ..., z: kotlin.Any = ...): Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Int = ..., String = ..., Any = ...): Test1'
           CALL 'constructor Test1(Int, String, Any)' type=Test1 operator=null
             x: GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int operator=null
             y: GET_VAR 'value-parameter y: String = ...' type=kotlin.String operator=null
             z: GET_VAR 'value-parameter z: Any = ...' type=kotlin.Any operator=null
-    FUN public open override fun toString(): kotlin.String
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
@@ -70,9 +70,9 @@ FILE /dataClasses.kt
             CALL '<get-z>(): Any' type=kotlin.Any operator=GET_PROPERTY
               $this: THIS of 'Test1' type=Test1
             CONST String type=kotlin.String value=')'
-    FUN public open override fun hashCode(): kotlin.Int
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
       BLOCK_BODY
-        VAR val tmp0_result: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE val tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit operator=EQ
           CALL 'hashCode(): Int' type=kotlin.Int operator=null
@@ -96,7 +96,7 @@ FILE /dataClasses.kt
                 $this: THIS of 'Test1' type=Test1
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int operator=null
-    FUN public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       BLOCK_BODY
         WHEN type=kotlin.Unit operator=null
           if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQEQ
@@ -109,7 +109,7 @@ FILE /dataClasses.kt
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? operator=null
           then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
             CONST Boolean type=kotlin.Boolean value='false'
-        VAR val tmp0_other_with_cast: Test1
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test1
           TYPE_OP operator=CAST typeOperand=Test1
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? operator=null
         WHEN type=kotlin.Unit operator=null

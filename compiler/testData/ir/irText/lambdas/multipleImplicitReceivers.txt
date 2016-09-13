@@ -25,19 +25,19 @@ FILE /multipleImplicitReceivers.kt
       CALL 'with(A, A.() -> Int): Int' type=kotlin.Int operator=null
         receiver: GET_OBJECT 'A' type=A
         block: BLOCK type=A.() -> kotlin.Int operator=LAMBDA
-          FUN local final fun A.<anonymous>(): kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(): kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
                 CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int operator=null
                   receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo operator=null
                   block: BLOCK type=IFoo.() -> kotlin.Int operator=LAMBDA
-                    FUN local final fun IFoo.<anonymous>(): kotlin.Int
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IFoo.<anonymous>(): kotlin.Int
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
                           CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int operator=null
                             receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke operator=null
                             block: BLOCK type=IInvoke.() -> kotlin.Int operator=LAMBDA
-                              FUN local final fun IInvoke.<anonymous>(): kotlin.Int
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IInvoke.<anonymous>(): kotlin.Int
                                 BLOCK_BODY
                                   RETURN type=kotlin.Nothing from='<anonymous>() on IInvoke: Int'
                                     CALL 'invoke() on B: Int' type=kotlin.Int operator=INVOKE

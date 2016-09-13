@@ -10,15 +10,15 @@ FILE /forWithImplicitReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='IntCell'
     PROPERTY public final var value: kotlin.Int
-      FIELD public final var value: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final var value: kotlin.Int
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN public final fun <get-value>(): kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_BACKING_FIELD 'value: Int' type=kotlin.Int operator=null
               receiver: THIS of 'IntCell' type=IntCell
-      FUN public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=null
             receiver: THIS of 'IntCell' type=IntCell
@@ -41,10 +41,10 @@ FILE /forWithImplicitReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='next() on IntCell: Int'
           BLOCK type=kotlin.Int operator=POSTFIX_DECR
-            VAR val tmp0_this: IntCell
+            VAR IR_TEMPORARY_VARIABLE val tmp0_this: IntCell
               $RECEIVER of 'next() on IntCell: Int' type=IntCell
             BLOCK type=kotlin.Int operator=POSTFIX_DECR
-              VAR val tmp1: kotlin.Int
+              VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
                 CALL '<get-value>(): Int' type=kotlin.Int operator=POSTFIX_DECR
                   $this: GET_VAR 'tmp0_this: IntCell' type=IntCell operator=null
               CALL '<set-value>(Int): Unit' type=kotlin.Unit operator=POSTFIX_DECR
@@ -55,7 +55,7 @@ FILE /forWithImplicitReceivers.kt
   FUN public fun IReceiver.test(): kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit operator=FOR_LOOP
-        VAR val tmp0_iterator: IntCell
+        VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: IntCell
           CALL 'iterator() on FiveTimes: IntCell' type=IntCell operator=FOR_LOOP_ITERATOR
             $this: $RECEIVER of 'test() on IReceiver: Unit' type=IReceiver
             $receiver: GET_OBJECT 'FiveTimes' type=FiveTimes

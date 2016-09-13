@@ -3,7 +3,7 @@ FILE /nonLocalReturn.kt
     BLOCK_BODY
       CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing operator=null
         block: BLOCK type=() -> kotlin.Nothing operator=LAMBDA
-          FUN local final fun <anonymous>(): kotlin.Nothing
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='test0(): Unit'
           CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing operator=LAMBDA
@@ -11,7 +11,7 @@ FILE /nonLocalReturn.kt
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit operator=null
         block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
@@ -19,7 +19,7 @@ FILE /nonLocalReturn.kt
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit operator=null
         block: BLOCK type=() -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
@@ -28,7 +28,7 @@ FILE /nonLocalReturn.kt
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit operator=null
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> operator=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
               WHEN type=kotlin.Unit operator=IF
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
@@ -44,7 +44,7 @@ FILE /nonLocalReturn.kt
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit operator=null
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> operator=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit operator=LAMBDA
-          FUN local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
               WHEN type=kotlin.Unit operator=IF
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ

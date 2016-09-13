@@ -5,7 +5,7 @@ FILE /extensionLambda.kt
         CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int operator=null
           $receiver: CONST String type=kotlin.String value='42'
           block: BLOCK type=kotlin.String.() -> kotlin.Int operator=LAMBDA
-            FUN local final fun kotlin.String.<anonymous>(): kotlin.Int
+            FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.String.<anonymous>(): kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
                   CALL '<get-length>(): Int' type=kotlin.Int operator=GET_PROPERTY
