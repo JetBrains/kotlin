@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -257,14 +257,14 @@ object ModifierCheckerCore {
     private fun checkLanguageLevelSupport(
             trace: BindingTrace,
             node: ASTNode,
-            languageFeatureSettings: LanguageFeatureSettings,
+            languageVersionSettings: LanguageVersionSettings,
             actualTargets: List<KotlinTarget>
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
         val dependency = featureDependencies[modifier] ?: return true
 
-        if (!languageFeatureSettings.supportsFeature(dependency)) {
+        if (!languageVersionSettings.supportsFeature(dependency)) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 return true
@@ -304,7 +304,7 @@ object ModifierCheckerCore {
             trace: BindingTrace,
             parentDescriptor: DeclarationDescriptor?,
             actualTargets: List<KotlinTarget>,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageVersionSettings: LanguageVersionSettings
     ) {
         // It's a list of all nodes with error already reported
         // General strategy: report no more than one error but any number of warnings
@@ -324,7 +324,7 @@ object ModifierCheckerCore {
                 else if (!checkParent(trace, second, parentDescriptor)) {
                     incorrectNodes += second
                 }
-                else if (!checkLanguageLevelSupport(trace, second, languageFeatureSettings, actualTargets)) {
+                else if (!checkLanguageLevelSupport(trace, second, languageVersionSettings, actualTargets)) {
                     incorrectNodes += second
                 }
             }
@@ -335,18 +335,18 @@ object ModifierCheckerCore {
             listOwner: KtModifierListOwner,
             trace: BindingTrace,
             descriptor: DeclarationDescriptor?,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageVersionSettings: LanguageVersionSettings
     ) {
         if (listOwner is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {
-                    check(parameter, trace, null, languageFeatureSettings)
+                    check(parameter, trace, null, languageVersionSettings)
                 }
             }
         }
         val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(listOwner, descriptor as? ClassDescriptor, trace)
         val list = listOwner.modifierList ?: return
-        checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageFeatureSettings)
+        checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageVersionSettings)
     }
 }

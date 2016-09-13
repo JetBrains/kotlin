@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
@@ -135,9 +135,9 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
-            LanguageFeatureSettings languageFeatureSettings = loadCustomLanguageFeatureSettings(testFilesInModule);
+            LanguageVersionSettings languageVersionSettings = loadCustomLanguageVersionSettings(testFilesInModule);
             ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
-            analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageFeatureSettings);
+            analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageVersionSettings);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
@@ -197,17 +197,17 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
     }
 
     @Nullable
-    private LanguageFeatureSettings loadCustomLanguageFeatureSettings(List<? extends TestFile> module) {
-        LanguageFeatureSettings result = null;
+    private LanguageVersionSettings loadCustomLanguageVersionSettings(List<? extends TestFile> module) {
+        LanguageVersionSettings result = null;
         for (TestFile file : module) {
-            if (file.customLanguageFeatureSettings != null) {
+            if (file.customLanguageVersionSettings != null) {
                 if (result != null) {
                     Assert.fail(
                             "More than one file in the module has " + BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive specified. " +
                             "This is not supported. Please move all directives into one file"
                     );
                 }
-                result = file.customLanguageFeatureSettings;
+                result = file.customLanguageVersionSettings;
             }
         }
 
@@ -264,12 +264,12 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             @NotNull ModuleContext moduleContext,
             @NotNull List<KtFile> files,
             @NotNull BindingTrace moduleTrace,
-            @Nullable LanguageFeatureSettings languageFeatureSettings
+            @Nullable LanguageVersionSettings languageVersionSettings
     ) {
         CompilerConfiguration configuration;
-        if (languageFeatureSettings != null) {
+        if (languageVersionSettings != null) {
             configuration = getEnvironment().getConfiguration().copy();
-            configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, languageFeatureSettings);
+            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageVersionSettings);
         }
         else {
             configuration = getEnvironment().getConfiguration();

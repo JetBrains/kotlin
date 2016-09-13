@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
@@ -66,7 +66,7 @@ fun createContainerForBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         statementFilter: StatementFilter,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("BodyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
@@ -74,7 +74,7 @@ fun createContainerForBodyResolve(
 
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(BodyResolveCache.ThrowException)
-    useInstance(languageFeatureSettings)
+    useInstance(languageVersionSettings)
 
     useImpl<BodyResolver>()
 }
@@ -85,7 +85,7 @@ fun createContainerForLazyBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
@@ -93,7 +93,7 @@ fun createContainerForLazyBodyResolve(
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
     useInstance(bodyResolveCache)
-    useInstance(languageFeatureSettings)
+    useInstance(languageVersionSettings)
     useImpl<LazyTopDownAnalyzerForTopLevel>()
     useImpl<BasicAbsentDescriptorHandler>()
 }
@@ -103,7 +103,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         lookupTracker: LookupTracker,
-        languageFeatureSettings: LanguageFeatureSettings,
+        languageVersionSettings: LanguageVersionSettings,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer") {
     configureModule(moduleContext, platform, bindingTrace)
@@ -122,7 +122,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
 
-    useInstance(languageFeatureSettings)
+    useInstance(languageVersionSettings)
 }
 
 fun createContainerForLazyResolve(
@@ -131,13 +131,13 @@ fun createContainerForLazyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         targetEnvironment: TargetEnvironment,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
-    useInstance(languageFeatureSettings)
+    useInstance(languageVersionSettings)
 
     useImpl<FileScopeProviderImpl>()
     targetEnvironment.configure(this)
@@ -152,8 +152,8 @@ fun createLazyResolveSession(
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
-        languageFeatureSettings: LanguageFeatureSettings,
+        languageVersionSettings: LanguageVersionSettings,
         targetEnvironment: TargetEnvironment = CompilerEnvironment
 ): ResolveSession = createContainerForLazyResolve(
-        moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment, languageFeatureSettings
+        moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment, languageVersionSettings
 ).get<ResolveSession>()

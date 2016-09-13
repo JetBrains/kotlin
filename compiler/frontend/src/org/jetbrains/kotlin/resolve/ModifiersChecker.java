@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
@@ -161,11 +161,11 @@ public class ModifiersChecker {
         @NotNull
         private final BindingTrace trace;
         @NotNull
-        private final LanguageFeatureSettings languageFeatureSettings;
+        private final LanguageVersionSettings languageVersionSettings;
 
-        private ModifiersCheckingProcedure(@NotNull BindingTrace trace, LanguageFeatureSettings languageFeatureSettings) {
+        private ModifiersCheckingProcedure(@NotNull BindingTrace trace, LanguageVersionSettings languageVersionSettings) {
             this.trace = trace;
-            this.languageFeatureSettings = languageFeatureSettings;
+            this.languageVersionSettings = languageVersionSettings;
         }
 
         public void checkParameterHasNoValOrVar(
@@ -188,7 +188,7 @@ public class ModifiersChecker {
             AnnotationUseSiteTargetChecker.INSTANCE.check(modifierListOwner, descriptor, trace);
             runDeclarationCheckers(modifierListOwner, descriptor);
             annotationChecker.check(modifierListOwner, trace, descriptor);
-            ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor, languageFeatureSettings);
+            ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor, languageVersionSettings);
         }
 
         public void checkModifiersForLocalDeclaration(
@@ -200,10 +200,10 @@ public class ModifiersChecker {
 
         public void checkModifiersForDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration) {
             annotationChecker.check(multiDeclaration, trace, null);
-            ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null, languageFeatureSettings);
+            ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null, languageVersionSettings);
             for (KtDestructuringDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
-                ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null, languageFeatureSettings);
+                ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null, languageVersionSettings);
                 UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace);
             }
         }
@@ -239,16 +239,16 @@ public class ModifiersChecker {
                 @NotNull DeclarationDescriptor descriptor
         ) {
             for (DeclarationChecker checker : declarationCheckers) {
-                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageFeatureSettings);
+                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageVersionSettings);
             }
-            OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageFeatureSettings);
+            OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
         }
 
         public void checkTypeParametersModifiers(@NotNull KtModifierListOwner modifierListOwner) {
             if (!(modifierListOwner instanceof KtTypeParameterListOwner)) return;
             List<KtTypeParameter> typeParameters = ((KtTypeParameterListOwner) modifierListOwner).getTypeParameters();
             for (KtTypeParameter typeParameter : typeParameters) {
-                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null, languageFeatureSettings);
+                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null, languageVersionSettings);
             }
         }
     }
@@ -260,20 +260,20 @@ public class ModifiersChecker {
     private final Iterable<DeclarationChecker> declarationCheckers;
 
     @NotNull
-    private final LanguageFeatureSettings languageFeatureSettings;
+    private final LanguageVersionSettings languageVersionSettings;
 
     public ModifiersChecker(
             @NotNull AnnotationChecker annotationChecker,
             @NotNull Iterable<DeclarationChecker> declarationCheckers,
-            @NotNull LanguageFeatureSettings languageFeatureSettings
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
-        this.languageFeatureSettings = languageFeatureSettings;
+        this.languageVersionSettings = languageVersionSettings;
     }
 
     @NotNull
     public ModifiersCheckingProcedure withTrace(@NotNull BindingTrace trace) {
-        return new ModifiersCheckingProcedure(trace, languageFeatureSettings);
+        return new ModifiersCheckingProcedure(trace, languageVersionSettings);
     }
 }

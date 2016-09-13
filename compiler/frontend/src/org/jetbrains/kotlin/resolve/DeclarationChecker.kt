@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -28,7 +28,7 @@ interface DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageVersionSettings: LanguageVersionSettings
     )
 }
 
@@ -37,7 +37,7 @@ interface SimpleDeclarationChecker : DeclarationChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext, languageFeatureSettings: LanguageFeatureSettings
+            bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings
     ) = check(declaration, descriptor, diagnosticHolder, bindingContext)
 
     fun check(

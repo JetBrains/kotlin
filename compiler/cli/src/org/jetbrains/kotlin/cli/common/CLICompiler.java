@@ -249,7 +249,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (arguments.languageVersion != null) {
             LanguageVersion languageVersion = LanguageVersion.fromVersionString(arguments.languageVersion);
             if (languageVersion != null) {
-                configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, new LanguageVersionSettingsImpl(languageVersion));
+                configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, new LanguageVersionSettingsImpl(languageVersion));
             }
             else {
                 List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), new Function1<LanguageVersion, String>() {

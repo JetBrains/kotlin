@@ -49,11 +49,11 @@ enum class LanguageVersion(val versionString: String) {
     }
 }
 
-interface LanguageFeatureSettings {
+interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
 }
 
-class LanguageVersionSettingsImpl(private val languageVersion: LanguageVersion) : LanguageFeatureSettings {
+class LanguageVersionSettingsImpl(private val languageVersion: LanguageVersion) : LanguageVersionSettings {
     override fun supportsFeature(feature: LanguageFeature): Boolean {
         return languageVersion.ordinal >= feature.sinceVersion.ordinal
     }

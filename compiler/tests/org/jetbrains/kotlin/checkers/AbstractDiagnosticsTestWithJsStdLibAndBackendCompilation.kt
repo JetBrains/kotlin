@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
@@ -30,9 +30,9 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
             moduleContext: ModuleContext,
             ktFiles: MutableList<KtFile>,
             moduleTrace: BindingTrace,
-            languageFeatureSettings: LanguageFeatureSettings?
+            languageVersionSettings: LanguageVersionSettings?
     ): JsAnalysisResult {
-        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageFeatureSettings)
+        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageVersionSettings)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {

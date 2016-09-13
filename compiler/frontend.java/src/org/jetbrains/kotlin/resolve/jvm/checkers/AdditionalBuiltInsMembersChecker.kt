@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequenc
 
 object AdditionalBuiltInsMembersCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (context.languageFeatureSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
 
         reportErrorIfAdditionalBuiltinDescriptor(resultingDescriptor, context.trace, reportOn)
@@ -49,9 +49,9 @@ object AdditionalBuiltInsMemberOverrideDeclarationChecker : DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageVersionSettings: LanguageVersionSettings
     ) {
-        if (languageFeatureSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
+        if (languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
         val resultingDescriptor = descriptor as? CallableMemberDescriptor ?: return
         val overrideKeyword = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: return
 

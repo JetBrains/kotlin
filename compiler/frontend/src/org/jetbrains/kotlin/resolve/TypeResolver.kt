@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -60,7 +60,7 @@ class TypeResolver(
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val identifierChecker: IdentifierChecker,
-        private val languageFeatureSettings: LanguageFeatureSettings
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     open class TypeTransformerForTests {
@@ -454,7 +454,7 @@ class TypeResolver(
         if (ErrorUtils.isError(descriptor)) {
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
-        if (!languageFeatureSettings.supportsFeature(LanguageFeature.TypeAliases)) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
             c.trace.report(UNSUPPORTED_TYPEALIAS.on(type))
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
@@ -703,7 +703,7 @@ class TypeResolver(
     ): List<TypeProjection> {
         return argumentElements.mapIndexed { i, argumentElement ->
             val projectionKind = argumentElement.projectionKind
-            ModifierCheckerCore.check(argumentElement, c.trace, null, languageFeatureSettings)
+            ModifierCheckerCore.check(argumentElement, c.trace, null, languageVersionSettings)
             if (projectionKind == KtProjectionKind.STAR) {
                 val parameters = constructor.parameters
                 if (parameters.size > i) {

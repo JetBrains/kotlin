@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
@@ -73,10 +73,10 @@ internal class DeclarationsCheckerBuilder(
         private val originalModifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
-        private val languageFeatureSettings: LanguageFeatureSettings
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun withTrace(trace: BindingTrace) =
-            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageFeatureSettings)
+            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings)
 }
 
 class DeclarationsChecker(
@@ -85,7 +85,7 @@ class DeclarationsChecker(
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
         private val trace: BindingTrace,
-        private val languageFeatureSettings: LanguageFeatureSettings
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
@@ -249,7 +249,7 @@ class DeclarationsChecker(
             }
         }
         annotationChecker.check(packageDirective, trace, null)
-        ModifierCheckerCore.check(packageDirective, trace, descriptor = null, languageFeatureSettings = languageFeatureSettings)
+        ModifierCheckerCore.check(packageDirective, trace, descriptor = null, languageVersionSettings = languageVersionSettings)
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {

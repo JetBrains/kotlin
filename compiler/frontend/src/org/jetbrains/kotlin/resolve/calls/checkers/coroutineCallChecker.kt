@@ -43,7 +43,7 @@ object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
         if (descriptor.valueParameters.any { it.isCoroutine } &&
-            !context.languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)) {
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
             context.trace.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
         }
     }

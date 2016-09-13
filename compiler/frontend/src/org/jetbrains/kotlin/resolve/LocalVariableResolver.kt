@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -43,7 +43,7 @@ class LocalVariableResolver(
         private val annotationResolver: AnnotationResolver,
         private val variableTypeResolver: VariableTypeResolver,
         private val delegatedPropertyResolver: DelegatedPropertyResolver,
-        private val languageFeatureSettings: LanguageFeatureSettings
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun process(
@@ -72,7 +72,7 @@ class LocalVariableResolver(
 
         val delegateExpression = property.delegateExpression
         if (delegateExpression != null) {
-            if (!languageFeatureSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
                 context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.delegate!!))
             }
 

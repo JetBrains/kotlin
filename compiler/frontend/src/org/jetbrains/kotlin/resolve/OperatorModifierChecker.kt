@@ -33,7 +33,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -49,7 +49,7 @@ object OperatorModifierChecker {
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            languageFeatureSettings: LanguageFeatureSettings
+            languageVersionSettings: LanguageVersionSettings
     ) {
         val functionDescriptor = descriptor as? FunctionDescriptor ?: return
         if (!functionDescriptor.isOperator) return
@@ -58,7 +58,7 @@ object OperatorModifierChecker {
         val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
             if (functionDescriptor.name in COROUTINE_OPERATOR_NAMES
-                    && !languageFeatureSettings.supportsFeature(LanguageFeature.Coroutines)) {
+                    && !languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
                 diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.Coroutines))
             }
             return
