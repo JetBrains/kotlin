@@ -112,6 +112,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionalValueAndTypeAlias.kt")
+        public void testFunctionalValueAndTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/FunctionalValueAndTypeAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InheritedFunctions.kt")
         public void testInheritedFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/InheritedFunctions.kt");
