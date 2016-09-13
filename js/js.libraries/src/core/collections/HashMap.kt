@@ -80,8 +80,15 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 
     override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
 
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() = EntrySet()
+    private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
+        if (_entries == null) {
+            _entries = createEntrySet()
+        }
+        return _entries!!
+    }
+
+    protected open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
     override operator fun get(key: K): V? = internalMap.get(key)
 

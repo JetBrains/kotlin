@@ -62,21 +62,24 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
     override fun isEmpty(): Boolean = size == 0
     override val size: Int get() = entries.size
 
-
+    private @Volatile var _keys: Set<K>? = null
     override val keys: Set<K> get() {
-        return object : AbstractSet<K>() {
-            override operator fun contains(element: K): Boolean = containsKey(element)
+        if (_keys == null) {
+            _keys = object : AbstractSet<K>() {
+                override operator fun contains(element: K): Boolean = containsKey(element)
 
-            override operator fun iterator(): Iterator<K> {
-                val outerIter = entries.iterator()
-                return object : Iterator<K> {
-                    override fun hasNext(): Boolean = outerIter.hasNext()
-                    override fun next(): K = outerIter.next().key
+                override operator fun iterator(): Iterator<K> {
+                    val entryIterator = entries.iterator()
+                    return object : Iterator<K> {
+                        override fun hasNext(): Boolean = entryIterator.hasNext()
+                        override fun next(): K = entryIterator.next().key
+                    }
                 }
-            }
 
-            override val size: Int get() = this@AbstractMap.size
+                override val size: Int get() = this@AbstractMap.size
+            }
         }
+        return _keys!!
     }
 
     override fun toString(): String = entries.joinToString(", ", "{", "}") { toString(it) }
@@ -85,28 +88,33 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
 
     private fun toString(o: Any?): String = if (o === this) "(this Map)" else o.toString()
 
+    private @Volatile var _values: Collection<V>? = null
     override val values: Collection<V> get() {
-        return object : AbstractCollection<V>() {
-            override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
+        if (_values == null) {
+            _values = object : AbstractCollection<V>() {
+                override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
 
-            override operator fun iterator(): Iterator<V> {
-                val outerIter = entries.iterator()
-                return object : Iterator<V> {
-                    override fun hasNext(): Boolean = outerIter.hasNext()
-                    override fun next(): V = outerIter.next().value
+                override operator fun iterator(): Iterator<V> {
+                    val entryIterator = entries.iterator()
+                    return object : Iterator<V> {
+                        override fun hasNext(): Boolean = entryIterator.hasNext()
+                        override fun next(): V = entryIterator.next().value
+                    }
                 }
-            }
 
-            override val size: Int get() = this@AbstractMap.size
+                override val size: Int get() = this@AbstractMap.size
 
-            // TODO: should we implement them this way? Currently it's unspecified in JVM
-            override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (other !is Collection<*>) return false
-                return AbstractList.orderedEquals(this, other)
+                // TODO: should we implement them this way? Currently it's unspecified in JVM
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) return true
+                    if (other !is Collection<*>) return false
+                    return AbstractList.orderedEquals(this, other)
+                }
+
+                override fun hashCode(): Int = AbstractList.orderedHashCode(this)
             }
-            override fun hashCode(): Int = AbstractList.orderedHashCode(this)
         }
+        return _values!!
     }
 
     private fun implFindEntry(key: K): Map.Entry<K, V>? = entries.firstOrNull { it.key == key }

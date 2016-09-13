@@ -48,33 +48,37 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
         entries.clear()
     }
 
+    private var _keys: MutableSet<K>? = null
     override val keys: MutableSet<K> get() {
-        return object : AbstractMutableSet<K>() {
-            override fun clear() {
-                this@AbstractMutableMap.clear()
-            }
-
-            override operator fun contains(element: K): Boolean = containsKey(element)
-
-            override operator fun iterator(): MutableIterator<K> {
-                val outerIter = entries.iterator()
-                return object : MutableIterator<K> {
-                    override fun hasNext(): Boolean = outerIter.hasNext()
-                    override fun next(): K = outerIter.next().key
-                    override fun remove() = outerIter.remove()
+        if (_keys == null) {
+            _keys = object : AbstractMutableSet<K>() {
+                override fun clear() {
+                    this@AbstractMutableMap.clear()
                 }
-            }
 
-            override fun remove(element: K): Boolean {
-                if (containsKey(element)) {
-                    this@AbstractMutableMap.remove(element)
-                    return true
+                override operator fun contains(element: K): Boolean = containsKey(element)
+
+                override operator fun iterator(): MutableIterator<K> {
+                    val entryIterator = entries.iterator()
+                    return object : MutableIterator<K> {
+                        override fun hasNext(): Boolean = entryIterator.hasNext()
+                        override fun next(): K = entryIterator.next().key
+                        override fun remove() = entryIterator.remove()
+                    }
                 }
-                return false
-            }
 
-            override val size: Int get() = this@AbstractMutableMap.size
+                override fun remove(element: K): Boolean {
+                    if (containsKey(element)) {
+                        this@AbstractMutableMap.remove(element)
+                        return true
+                    }
+                    return false
+                }
+
+                override val size: Int get() = this@AbstractMutableMap.size
+            }
         }
+        return _keys!!
     }
 
     override fun put(key: K, value: V): V? {
@@ -87,31 +91,35 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
         }
     }
 
+    private var _values: MutableCollection<V>? = null
     override val values: MutableCollection<V> get() {
-        return object : AbstractMutableCollection<V>() {
-            override fun clear() = this@AbstractMutableMap.clear()
+        if (_values == null) {
+            _values = object : AbstractMutableCollection<V>() {
+                override fun clear() = this@AbstractMutableMap.clear()
 
-            override operator fun contains(element: V): Boolean = containsValue(element)
+                override operator fun contains(element: V): Boolean = containsValue(element)
 
-            override operator fun iterator(): MutableIterator<V> {
-                val outerIter = entries.iterator()
-                return object : MutableIterator<V> {
-                    override fun hasNext(): Boolean = outerIter.hasNext()
-                    override fun next(): V = outerIter.next().value
-                    override fun remove() = outerIter.remove()
+                override operator fun iterator(): MutableIterator<V> {
+                    val entryIterator = entries.iterator()
+                    return object : MutableIterator<V> {
+                        override fun hasNext(): Boolean = entryIterator.hasNext()
+                        override fun next(): V = entryIterator.next().value
+                        override fun remove() = entryIterator.remove()
+                    }
                 }
-            }
 
-            override val size: Int get() = this@AbstractMutableMap.size
+                override val size: Int get() = this@AbstractMutableMap.size
 
-            // TODO: should we implement them this way? Currently it's unspecified in JVM
-            override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (other !is Collection<*>) return false
-                return AbstractList.orderedEquals(this, other)
+                // TODO: should we implement them this way? Currently it's unspecified in JVM
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) return true
+                    if (other !is Collection<*>) return false
+                    return AbstractList.orderedEquals(this, other)
+                }
+                override fun hashCode(): Int = AbstractList.orderedHashCode(this)
             }
-            override fun hashCode(): Int = AbstractList.orderedHashCode(this)
         }
+        return _values!!
     }
 
     override fun remove(key: K): V? {
