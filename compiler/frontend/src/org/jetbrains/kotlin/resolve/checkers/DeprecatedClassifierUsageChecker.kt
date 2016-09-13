@@ -17,13 +17,19 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
 import org.jetbrains.kotlin.resolve.getDeprecation
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
-    override fun check(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
+    override fun check(
+            targetDescriptor: ClassifierDescriptor,
+            trace: BindingTrace,
+            element: PsiElement,
+            languageVersionSettings: LanguageVersionSettings
+    ) {
         val deprecation = targetDescriptor.getDeprecation()
         if (deprecation != null) {
             trace.report(createDeprecationDiagnostic(element, deprecation))

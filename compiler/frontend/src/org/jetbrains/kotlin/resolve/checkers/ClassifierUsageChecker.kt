@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -29,10 +30,20 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 interface ClassifierUsageChecker {
-    fun check(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement)
+    fun check(
+            targetDescriptor: ClassifierDescriptor,
+            trace: BindingTrace,
+            element: PsiElement,
+            languageVersionSettings: LanguageVersionSettings
+    )
 
     companion object {
-        fun check(declarations: Collection<PsiElement>, trace: BindingTrace, checkers: Iterable<ClassifierUsageChecker>) {
+        fun check(
+                declarations: Collection<PsiElement>,
+                trace: BindingTrace,
+                languageVersionSettings: LanguageVersionSettings,
+                checkers: Iterable<ClassifierUsageChecker>
+        ) {
             val visitor = object : KtTreeVisitorVoid() {
                 override fun visitReferenceExpression(expression: KtReferenceExpression) {
                     super.visitReferenceExpression(expression)
@@ -46,13 +57,13 @@ interface ClassifierUsageChecker {
                     val target = getReferencedClassifier(expression) ?: return
 
                     for (checker in checkers) {
-                        checker.check(target, trace, expression)
+                        checker.check(target, trace, expression, languageVersionSettings)
                     }
 
                     if (isReferenceToCompanionViaOuterClass(expression, target)) {
                         val outerClass = target.containingDeclaration as ClassDescriptor
                         for (checker in checkers) {
-                            checker.check(outerClass, trace, expression)
+                            checker.check(outerClass, trace, expression, languageVersionSettings)
                         }
                     }
                 }
