@@ -112,16 +112,6 @@ public final class Namer {
     public static final String ENUM_NAME_FIELD = "name$";
     public static final String ENUM_ORDINAL_FIELD = "ordinal$";
 
-    public static boolean isUndefined(@NotNull JsExpression expr) {
-        if (expr instanceof JsPrefixOperation) {
-            JsUnaryOperator op = ((JsPrefixOperation) expr).getOperator();
-
-            return op == JsUnaryOperator.VOID;
-        }
-
-        return false;
-    }
-
     @NotNull
     public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
         String moduleName = getModuleName(functionDescriptor);

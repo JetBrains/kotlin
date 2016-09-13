@@ -63,9 +63,14 @@ object ModuleWrapperTranslation {
         else {
             JsNameRef(scope.declareName(moduleId), rootName.makeRef())
         }
-        val plainExpr = JsAstUtils.assignment(lhs, plainInvocation)
 
-        val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainExpr.makeStmt()))
+        val plainBlock = JsBlock()
+        for (importedModule in importedModules) {
+            plainBlock.statements += addModuleValidation(moduleId, program, importedModule)
+        }
+        plainBlock.statements += JsAstUtils.assignment(lhs, plainInvocation).makeStmt()
+
+        val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainBlock))
         adapterBody.statements += selector
 
         return listOf(JsInvocation(adapter, JsLiteral.THIS, function).makeStmt())
@@ -102,15 +107,34 @@ object ModuleWrapperTranslation {
             importedModules: List<String>, program: JsProgram
     ): List<JsStatement> {
         val invocation = makePlainInvocation(moduleId, function, importedModules, program)
+        val statements = mutableListOf<JsStatement>()
 
-        val statement = if (Namer.requiresEscaping(moduleId)) {
+        for (importedModule in importedModules) {
+            statements += addModuleValidation(moduleId, program, importedModule)
+        }
+
+        statements += if (Namer.requiresEscaping(moduleId)) {
             JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt()
         }
         else {
             JsAstUtils.newVar(program.rootScope.declareName(moduleId), invocation)
         }
 
-        return listOf(statement)
+        return statements
+    }
+
+    private fun addModuleValidation(
+            currentModuleId: String,
+            program: JsProgram,
+            moduleName: String
+    ): JsStatement {
+        val moduleRef = makePlainModuleRef(moduleName, program)
+        val moduleExistsCond = JsAstUtils.typeOfIs(moduleRef, program.getStringLiteral("undefined"))
+        val moduleNotFoundMessage = program.getStringLiteral(
+                "Error loading module '" + currentModuleId + "'. Its dependency '" + moduleName + "' was not found. " +
+                "Please, check whether '" + moduleName + "' is loaded prior to '" + currentModuleId + "'.")
+        val moduleNotFoundThrow = JsThrow(JsNew(JsNameRef("Error"), listOf<JsExpression>(moduleNotFoundMessage)))
+        return JsIf(moduleExistsCond, JsBlock(moduleNotFoundThrow))
     }
 
     private fun makePlainInvocation(
