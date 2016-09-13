@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -67,7 +68,7 @@ class Converter private constructor(
 
     companion object {
         fun create(elementToConvert: PsiElement, settings: ConverterSettings, services: JavaToKotlinConverterServices,
-                          inConversionScope: (PsiElement) -> Boolean, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
+                   inConversionScope: (PsiElement) -> Boolean, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
             return Converter(elementToConvert, settings, inConversionScope,
                              services, CommonState(usageProcessingsCollector), PersonalState(null))
         }
@@ -141,7 +142,7 @@ class Converter private constructor(
         commonState.postUnfoldActions.forEach { it() }
     }
 
-    fun<TResult : Element> deferredElement(generator: (CodeConverter) -> TResult): DeferredElement<TResult> {
+    fun <TResult : Element> deferredElement(generator: (CodeConverter) -> TResult): DeferredElement<TResult> {
         val element = DeferredElement(generator, personalState)
         commonState.deferredElements.add(element)
         return element
@@ -309,7 +310,7 @@ class Converter private constructor(
         val setMethod = propertyInfo.setMethod
 
         //TODO: annotations from getter/setter?
-        val annotations = field?.let { convertAnnotations(it) } ?: Annotations.Empty
+        val annotations = field?.let { convertAnnotations(it) + specialAnnotationPropertyCases(it) } ?: Annotations.Empty
 
         val modifiers = propertyInfo.modifiers
 
@@ -422,6 +423,24 @@ class Converter private constructor(
                     .map { PrototypeInfo(it, if (it == placementElement) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES) }
             return property.assignPrototypes(*prototypes.toTypedArray())
         }
+    }
+
+
+    private fun specialAnnotationPropertyCases(field: PsiField): Annotations {
+        val javaSerializableInterface = JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_IO_SERIALIZABLE, field.resolveScope)
+        val output = mutableListOf<Annotation>()
+        if (javaSerializableInterface != null &&
+            field.name == "serialVersionUID" &&
+            field.hasModifierProperty(PsiModifier.FINAL) &&
+            field.hasModifierProperty(PsiModifier.STATIC) &&
+            field.containingClass?.isInheritor(javaSerializableInterface, false) ?: false
+        ) {
+            output.add(Annotation(Identifier.withNoPrototype("JvmStatic"),
+                                  listOf(),
+                                  newLineAfter = false).assignNoPrototype())
+        }
+
+        return Annotations(output)
     }
 
     private fun combinedNullability(vararg psiElements: PsiElement?): Nullability {
@@ -537,7 +556,7 @@ class Converter private constructor(
 
             if (settings.openByDefault) {
                 val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
-                        containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum)
+                                         containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum)
                 if (!isEffectivelyFinal && !modifiers.contains(Modifier.ABSTRACT) && !modifiers.isPrivate) {
                     modifiers = modifiers.with(Modifier.OPEN)
                 }
@@ -611,9 +630,9 @@ class Converter private constructor(
         if (!isInOpenClass) return false
         if (modifiers.contains(Modifier.OVERRIDE) || modifiers.contains(Modifier.ABSTRACT)) return false
         if (settings.openByDefault) {
-           return !method.hasModifierProperty(PsiModifier.FINAL)
-                  && !method.hasModifierProperty(PsiModifier.PRIVATE)
-                  && !method.hasModifierProperty(PsiModifier.STATIC)
+            return !method.hasModifierProperty(PsiModifier.FINAL)
+                   && !method.hasModifierProperty(PsiModifier.PRIVATE)
+                   && !method.hasModifierProperty(PsiModifier.STATIC)
         }
         else {
             return referenceSearcher.hasOverrides(method)
@@ -657,8 +676,8 @@ class Converter private constructor(
     private fun constructNestedClassReferenceIdentifier(psiClass: PsiClass, context: PsiElement): Identifier? {
         val outerClass = psiClass.containingClass
         if (outerClass != null
-                && !PsiTreeUtil.isAncestor(outerClass, context, true)
-                && !psiClass.isImported(context.containingFile as PsiJavaFile)) {
+            && !PsiTreeUtil.isAncestor(outerClass, context, true)
+            && !psiClass.isImported(context.containingFile as PsiJavaFile)) {
             val qualifier = constructNestedClassReferenceIdentifier(outerClass, context)?.name ?: outerClass.name!!
             return Identifier.withNoPrototype(Identifier.toKotlin(qualifier) + "." + Identifier.toKotlin(psiClass.name!!))
         }
