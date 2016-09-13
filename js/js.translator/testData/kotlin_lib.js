@@ -781,12 +781,7 @@
             boundComparator = comparator.compare.bind(comparator);
         }
 
-        if (mutableList instanceof Array) {
-            mutableList.sort(boundComparator);
-        }
-
         if (mutableList.size > 1) {
-            //TODO: should be deleted when List will be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
             var array = Kotlin.copyToArray(mutableList);
 
             array.sort(boundComparator);
