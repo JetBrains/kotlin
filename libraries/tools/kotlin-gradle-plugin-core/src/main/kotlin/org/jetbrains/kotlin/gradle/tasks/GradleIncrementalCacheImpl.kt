@@ -21,22 +21,28 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.CompilationResult
 import org.jetbrains.kotlin.incremental.IncrementalCacheImpl
 import org.jetbrains.kotlin.incremental.dumpCollection
+import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
+import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
+import org.jetbrains.kotlin.incremental.snapshots.SimpleFileSnapshotProviderImpl
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, target: TargetId) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
-
+internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, target: TargetId) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
     companion object {
         private val SOURCES_TO_CLASSFILES = "sources-to-classfiles"
+        private val FILE_SNAPSHOT = "file-snapshot"
     }
 
-    private val loggerInstance = Logging.getLogger(this.javaClass)
-    fun getLogger() = loggerInstance
+    private val log = Logging.getLogger(this.javaClass)
 
     private val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
+    private val fileSnapshotMap = registerMap(FileSnapshotMap(FILE_SNAPSHOT.storageFile))
+
+    fun compareAndUpdateFileSnapshots(files: Iterable<File>): FileCollectionDiff =
+            fileSnapshotMap.compareAndUpdate(files, SimpleFileSnapshotProviderImpl())
 
     fun removeClassfilesBySources(sources: Iterable<File>): Unit =
             sources.forEach { sourceToClassfilesMap.remove(it) }
@@ -60,11 +66,10 @@ class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, t
             // TODO: do it in the code that uses cache, since cache should not generally delete anything outside of it!
             // but for a moment it is an easiest solution to implement
             get(file).forEach {
-                getLogger().debug("[KOTLIN] Deleting $it on clearing cache for $file")
+                log.kotlinDebug { "Deleting $it on clearing cache for $file" }
                 it.delete()
             }
             storage.remove(file.absolutePath)
         }
     }
 }
-
