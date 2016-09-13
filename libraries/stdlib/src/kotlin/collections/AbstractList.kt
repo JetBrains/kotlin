@@ -65,18 +65,12 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
     private open inner class IteratorImpl : Iterator<E> {
         /** the index of the item that will be returned on the next call to [next]`()` */
         protected var index = 0
-        /** the index of the item that was returned on the previous call to [next]`()`
-         * or [ListIterator.previous]`()` (for `ListIterator`),
-         * -1 if no such item exists
-         */
-        protected var last = -1
 
         override fun hasNext(): Boolean = index < size
 
         override fun next(): E {
             if (!hasNext()) throw NoSuchElementException()
-            last = index++
-            return get(last)
+            return get(index++)
         }
     }
 
@@ -96,9 +90,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
 
         override fun previous(): E {
             if (!hasPrevious()) throw NoSuchElementException()
-
-            last = --index
-            return get(last)
+            return get(--index)
         }
 
         override fun previousIndex(): Int = index - 1
