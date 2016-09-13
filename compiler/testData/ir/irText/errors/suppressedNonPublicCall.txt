@@ -1,0 +1,12 @@
+FILE /suppressedNonPublicCall.kt
+  CLASS CLASS C
+    CONSTRUCTOR public constructor C()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    FUN internal final fun bar(): kotlin.Unit
+      BLOCK_BODY
+  FUN public inline fun C.foo(): kotlin.Unit
+    BLOCK_BODY
+      CALL 'bar(): Unit' type=kotlin.Unit operator=null
+        $this: $RECEIVER of 'foo() on C: Unit' type=C

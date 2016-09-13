@@ -253,6 +253,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("suppressedNonPublicCall.kt")
+        public void testSuppressedNonPublicCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/errors/suppressedNonPublicCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unresolvedReference.kt")
         public void testUnresolvedReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/errors/unresolvedReference.kt");
