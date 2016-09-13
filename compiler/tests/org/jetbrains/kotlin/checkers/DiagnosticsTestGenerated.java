@@ -20262,6 +20262,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("starProjection.kt")
+            public void testStarProjection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/starProjection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("starProjectionInTypeAliasArgument.kt")
             public void testStarProjectionInTypeAliasArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/starProjectionInTypeAliasArgument.kt");

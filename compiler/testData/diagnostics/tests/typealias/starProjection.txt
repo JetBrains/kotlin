@@ -1,0 +1,10 @@
+package
+
+public fun check(/*0*/ x: B /* = kotlin.collections.Map<*, *> */): B /* = kotlin.collections.Map<*, *> */
+public fun test1(/*0*/ x: kotlin.collections.Map<kotlin.Int, kotlin.Int>): B /* = kotlin.collections.Map<*, *> */
+public fun test2(/*0*/ x: kotlin.collections.Map<kotlin.String, kotlin.Int>): B /* = kotlin.collections.Map<*, *> */
+public fun test3(/*0*/ x: kotlin.collections.Map<kotlin.Int, kotlin.String>): kotlin.Int
+public fun test4(/*0*/ x: kotlin.collections.Map<kotlin.Int, kotlin.String>): kotlin.Any?
+public fun test5(/*0*/ x: kotlin.collections.Map<kotlin.Int, kotlin.String>): kotlin.Any?
+public typealias A</*0*/ T>  = kotlin.collections.Map<T, T>
+public typealias B = A<*>

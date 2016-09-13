@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
@@ -36,7 +37,7 @@ class StarProjectionImpl(
 }
 
 fun TypeParameterDescriptor.starProjectionType(): KotlinType {
-    val classDescriptor = this.containingDeclaration as ClassDescriptor
+    val classDescriptor = this.containingDeclaration as ClassifierDescriptorWithTypeParameters
     val typeParameters = classDescriptor.typeConstructor.parameters.map { it.typeConstructor }
     return TypeSubstitutor.create(
             object : TypeConstructorSubstitution() {
