@@ -63,10 +63,7 @@ class HasPlatformTypeInspection(
         return null
     }
 
-    override fun inspectionRange(element: KtCallableDeclaration) = element.nameIdentifier?.let {
-        val start = it.getStartOffsetIn(element)
-        TextRange(start, start + it.endOffset - it.startOffset)
-    }
+    override fun inspectionTarget(element: KtCallableDeclaration) = element.nameIdentifier
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)

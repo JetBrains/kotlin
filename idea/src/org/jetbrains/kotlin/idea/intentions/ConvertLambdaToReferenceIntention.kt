@@ -44,10 +44,7 @@ class ConvertLambdaToReferenceInspection() : IntentionBasedInspection<KtLambdaEx
         ConvertLambdaToReferenceIntention::class,
         { it -> ConvertLambdaToReferenceIntention.shouldSuggestToConvert(it) }
 ) {
-    override fun inspectionRange(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()?.let {
-        val start = it.getStartOffsetIn(element)
-        TextRange(start, start + it.endOffset - it.startOffset)
-    }
+    override fun inspectionTarget(element: KtLambdaExpression) = element.bodyExpression?.statements?.singleOrNull()
 }
 
 class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntention<KtLambdaExpression>(

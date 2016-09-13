@@ -29,6 +29,9 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import kotlin.reflect.KClass
 
 abstract class IntentionBasedInspection<TElement : PsiElement>(
@@ -63,7 +66,12 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 
     open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null
 
-    open fun inspectionRange(element: TElement): TextRange? = null
+    open fun inspectionTarget(element: TElement): PsiElement? = null
+
+    private fun PsiElement.toRange(baseElement: PsiElement): TextRange {
+        val start = getStartOffsetIn(baseElement)
+        return TextRange(start, start + endOffset - startOffset)
+    }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
 
@@ -99,7 +107,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                     }
                 }
 
-                val range = inspectionRange(targetElement) ?: problemRange
+                val range = inspectionTarget(targetElement)?.toRange(element) ?: problemRange
                 if (range != null) {
                     val allFixes = fixes ?: SmartList<LocalQuickFix>()
                     additionalFixes(targetElement)?.let { allFixes.addAll(it) }
