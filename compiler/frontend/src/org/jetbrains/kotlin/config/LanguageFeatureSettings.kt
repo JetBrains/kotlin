@@ -36,13 +36,9 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     }
 }
 
-enum class LanguageVersion(val versionString: String): LanguageFeatureSettings {
+enum class LanguageVersion(val versionString: String) {
     KOTLIN_1_0("1.0"),
     KOTLIN_1_1("1.1");
-
-    override fun supportsFeature(feature: LanguageFeature): Boolean {
-        return this.ordinal >= feature.sinceVersion.ordinal
-    }
 
     companion object {
         @JvmStatic
@@ -55,4 +51,15 @@ enum class LanguageVersion(val versionString: String): LanguageFeatureSettings {
 
 interface LanguageFeatureSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
+}
+
+class LanguageVersionSettingsImpl(private val languageVersion: LanguageVersion) : LanguageFeatureSettings {
+    override fun supportsFeature(feature: LanguageFeature): Boolean {
+        return languageVersion.ordinal >= feature.sinceVersion.ordinal
+    }
+
+    companion object {
+        @JvmField
+        val DEFAULT = LanguageVersionSettingsImpl(LanguageVersion.LATEST)
+    }
 }

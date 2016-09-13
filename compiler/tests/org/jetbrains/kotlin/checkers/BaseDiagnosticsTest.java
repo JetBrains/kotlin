@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageFeatureSettings;
-import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
@@ -194,7 +194,7 @@ public abstract class BaseDiagnosticsTest
                 if (enabled != null) {
                     return enabled;
                 }
-                return LanguageVersion.LATEST.supportsFeature(feature);
+                return LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature);
             }
         };
     }

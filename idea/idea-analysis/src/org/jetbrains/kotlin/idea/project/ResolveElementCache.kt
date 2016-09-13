@@ -23,7 +23,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -590,7 +590,7 @@ class ResolveElementCache(
                 trace,
                 targetPlatform,
                 statementFilter,
-                LanguageVersion.LATEST // TODO: see KT-12410
+                LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
         ).get<BodyResolver>()
     }
 

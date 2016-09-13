@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -102,7 +102,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
                 packagePartProvider,
-                configuration.get(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, LanguageVersion.LATEST)
+                configuration.get(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

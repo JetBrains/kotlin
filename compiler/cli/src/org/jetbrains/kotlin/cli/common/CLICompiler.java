@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -250,9 +247,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
 
         if (arguments.languageVersion != null) {
-            LanguageVersion languageFeatureSettings = LanguageVersion.fromVersionString(arguments.languageVersion);
-            if (languageFeatureSettings != null) {
-                configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, languageFeatureSettings);
+            LanguageVersion languageVersion = LanguageVersion.fromVersionString(arguments.languageVersion);
+            if (languageVersion != null) {
+                configuration.put(CommonConfigurationKeys.LANGUAGE_FEATURE_SETTINGS, new LanguageVersionSettingsImpl(languageVersion));
             }
             else {
                 List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), new Function1<LanguageVersion, String>() {

@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -62,7 +62,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 JvmPlatform,
                 targetEnvironment,
-                LanguageVersion.LATEST
+                LanguageVersionSettingsImpl.DEFAULT
         )
 
         val resolveSession = container.get<ResolveSession>()
