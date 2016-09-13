@@ -217,4 +217,29 @@ class Kapt2IT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
         }
     }
+
+    @Test
+    fun testRemoveAnnotationIC() {
+        val project = Project("simple", GRADLE_2_14_VERSION, directoryPrefix = "kapt2")
+        val options = defaultBuildOptions().copy(incremental = true)
+        project.setupWorkingDir()
+        val internalDummyKt = project.projectDir.getFileByName("InternalDummy.kt")
+
+        // add annotation
+        val exampleAnn = "@example.ExampleAnnotation "
+        internalDummyKt.modify { it.addBeforeSubstring(exampleAnn, "internal class InternalDummy")}
+
+        project.build("classes", options = options) {
+            assertSuccessful()
+        }
+
+        // remove annotation
+        internalDummyKt.modify { it.replace(exampleAnn, "")}
+
+        project.build("classes", options = options) {
+            assertSuccessful()
+            val allMainKotlinSrc = File(project.projectDir, "src/main").allKotlinFiles()
+            assertCompiledKotlinSources(project.relativize(allMainKotlinSrc))
+        }
+    }
 }

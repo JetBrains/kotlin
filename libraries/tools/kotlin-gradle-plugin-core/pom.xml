@@ -62,6 +62,7 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <resources>
             <resource>
@@ -88,6 +89,16 @@
                         <goals> <goal>test-compile</goal> </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <excludes>
+                        <exclude>src/test/resources/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
