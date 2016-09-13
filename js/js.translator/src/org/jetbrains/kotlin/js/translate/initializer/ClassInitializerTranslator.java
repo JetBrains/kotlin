@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
+import com.google.dart.compiler.backend.js.JsReservedIdentifiers;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -94,6 +95,11 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         }
 
         if (functionName != null) {
+            if (JsReservedIdentifiers.reservedGlobalSymbols.contains(functionName) ||
+                JsFunctionScope.Companion.getRESERVED_WORDS().contains(functionName)
+            ) {
+                functionName += "$";
+            }
             ctorFunction.setName(ctorFunction.getScope().declareName(functionName));
         }
 
