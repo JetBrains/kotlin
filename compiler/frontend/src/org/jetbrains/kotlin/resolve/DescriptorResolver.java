@@ -70,14 +70,14 @@ import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFro
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
 
-    @NotNull private final TypeResolver typeResolver;
-    @NotNull private final AnnotationResolver annotationResolver;
-    @NotNull private final StorageManager storageManager;
-    @NotNull private final KotlinBuiltIns builtIns;
-    @NotNull private final SupertypeLoopChecker supertypeLoopsResolver;
-    @NotNull private final VariableTypeResolver variableTypeResolver;
-    @NotNull private final ExpressionTypingServices expressionTypingServices;
-    @NotNull private final FunctionsTypingVisitor functionsTypingVisitor;
+    private final TypeResolver typeResolver;
+    private final AnnotationResolver annotationResolver;
+    private final StorageManager storageManager;
+    private final KotlinBuiltIns builtIns;
+    private final SupertypeLoopChecker supertypeLoopsResolver;
+    private final VariableTypeResolver variableTypeResolver;
+    private final ExpressionTypingServices expressionTypingServices;
+    private final FunctionsTypingVisitor functionsTypingVisitor;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,

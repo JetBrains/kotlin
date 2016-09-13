@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -37,12 +37,12 @@ interface CallChecker {
 class CallCheckerContext(
         val trace: BindingTrace,
         val scope: LexicalScope,
-        val languageFeatureSettings: LanguageFeatureSettings,
+        val languageVersionSettings: LanguageVersionSettings,
         val dataFlowInfo: DataFlowInfo,
         val isAnnotationContext: Boolean
 ) {
-    constructor(c: ResolutionContext<*>, languageFeatureSettings: LanguageFeatureSettings) : this(
-            c.trace, c.scope, languageFeatureSettings, c.dataFlowInfo, c.isAnnotationContext
+    constructor(c: ResolutionContext<*>, languageVersionSettings: LanguageVersionSettings) : this(
+            c.trace, c.scope, languageVersionSettings, c.dataFlowInfo, c.isAnnotationContext
     )
 }
 

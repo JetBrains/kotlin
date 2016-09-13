@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
 import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
@@ -155,7 +155,7 @@ public abstract class BaseDiagnosticsTest
     }
 
     @Nullable
-    private static LanguageFeatureSettings parseLanguageFeatureSettingsDirective(Map<String, String> directiveMap) {
+    private static LanguageVersionSettings parseLanguageDirective(Map<String, String> directiveMap) {
         String directives = directiveMap.get(LANGUAGE_DIRECTIVE);
         if (directives == null) return null;
 
@@ -187,7 +187,7 @@ public abstract class BaseDiagnosticsTest
         }
         while (matcher.find());
 
-        return new LanguageFeatureSettings() {
+        return new LanguageVersionSettings() {
             @Override
             public boolean supportsFeature(@NotNull LanguageFeature feature) {
                 Boolean enabled = values.get(feature);
@@ -296,7 +296,7 @@ public abstract class BaseDiagnosticsTest
         private final String clearText;
         private final KtFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
-        public final LanguageFeatureSettings customLanguageFeatureSettings;
+        public final LanguageVersionSettings customLanguageVersionSettings;
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
@@ -311,7 +311,7 @@ public abstract class BaseDiagnosticsTest
         ) {
             this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
-            this.customLanguageFeatureSettings = parseLanguageFeatureSettingsDirective(directives);
+            this.customLanguageVersionSettings = parseLanguageDirective(directives);
             this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);

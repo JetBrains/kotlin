@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.js.di
 
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.createContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -36,7 +36,7 @@ fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): LazyTopDownAnalyzerForTopLevel {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs") {
         configureModule(moduleContext, JsPlatform, bindingTrace)
@@ -47,7 +47,7 @@ fun createTopDownAnalyzerForJs(
         CompilerEnvironment.configure(this)
 
         useInstance(LookupTracker.DO_NOTHING)
-        useInstance(languageFeatureSettings)
+        useInstance(languageVersionSettings)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzerForTopLevel>()
     }

@@ -596,7 +596,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageFeatureSettings);
+        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
         for (CallChecker checker : components.callCheckers) {
             checker.check(resolvedCall, expression, callCheckerContext);
         }
@@ -901,7 +901,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
                     CallCheckerContext callCheckerContext = new CallCheckerContext(
-                            trace, context.scope, components.languageFeatureSettings, context.dataFlowInfo, context.isAnnotationContext
+                            trace, context.scope, components.languageVersionSettings, context.dataFlowInfo, context.isAnnotationContext
                     );
                     for (CallChecker checker : components.callCheckers) {
                         checker.check(resolvedCall, expression, callCheckerContext);
@@ -968,7 +968,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
         resolvedCall.markCallAsCompleted();
 
-        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageFeatureSettings);
+        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
         for (CallChecker checker : components.callCheckers) {
             checker.check(resolvedCall, expression, callCheckerContext);
         }

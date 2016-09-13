@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.frontend.java.di
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
@@ -46,7 +46,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
         project: Project,
         lookupTracker: LookupTracker,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
@@ -72,7 +72,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<JavaLazyAnalyzerPostConstruct>()
     useInstance(InternalFlexibleTypeTransformer)
 
-    useInstance(languageFeatureSettings)
+    useInstance(languageVersionSettings)
 }
 
 fun createContainerForLazyResolveWithJava(
@@ -83,14 +83,14 @@ fun createContainerForLazyResolveWithJava(
         moduleClassResolver: ModuleClassResolver,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         packagePartProvider: PackagePartProvider,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): ComponentProvider = createContainer("LazyResolveWithJava") {
     //TODO: idea specific code
     useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
 
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, languageFeatureSettings)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, languageVersionSettings)
 
     useInstance(moduleClassResolver)
 
@@ -111,12 +111,12 @@ fun createContainerForTopDownAnalyzerForJvm(
         moduleContentScope: GlobalSearchScope,
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageVersionSettings: LanguageVersionSettings
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
     useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageFeatureSettings)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageVersionSettings)
 
     useInstance(declarationProviderFactory)
 

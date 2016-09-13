@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.checkers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.config.LanguageFeatureSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
@@ -66,10 +66,10 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
             @NotNull ModuleContext moduleContext,
             @NotNull List<KtFile> ktFiles,
             @NotNull BindingTrace moduleTrace,
-            @Nullable LanguageFeatureSettings languageFeatureSettings
+            @Nullable LanguageVersionSettings languageVersionSettings
     ) {
         // TODO: support LANGUAGE directive in JS diagnostic tests
-        assert languageFeatureSettings == null
+        assert languageVersionSettings == null
                 : BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests";
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config);
     }
