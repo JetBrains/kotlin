@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl.di
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -44,7 +44,7 @@ fun createContainerForReplWithJava(
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
     useInstance(packagePartProvider)
     configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, LanguageVersion.LATEST)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, LanguageVersionSettingsImpl.DEFAULT)
 
     useInstance(declarationProviderFactory)
 

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.analyze;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
@@ -76,7 +76,7 @@ public final class TopDownAnalyzerFacadeForJS {
         LazyTopDownAnalyzerForTopLevel analyzerForJs = InjectionKt.createTopDownAnalyzerForJs(
                 moduleContext, trace,
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles),
-                LanguageVersion.LATEST
+                LanguageVersionSettingsImpl.DEFAULT
         );
         analyzerForJs.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, Collections.<PackageFragmentProvider>emptyList());
         return JsAnalysisResult.success(trace, moduleContext.getModule());
