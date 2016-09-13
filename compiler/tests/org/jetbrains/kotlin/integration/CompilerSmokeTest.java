@@ -47,6 +47,14 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         runCompiler("hello.compile", "hello.kt", "-d", jar);
     }
 
+    public void testImplicitArgumentsCompatibilityFlag() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "smoke.jar";
+
+        runCompiler("fail.compile", new String[]{"-DIMPLICIT_ARGUMENTS_ONLY_FROM_CONTAINING_CLASSES=1"}, "hello.kt", "-d", jar);
+        runCompiler("success.compile", new String[]{"-DIMPLICIT_ARGUMENTS_ONLY_FROM_CONTAINING_CLASSES=0"}, "hello.kt", "-d", jar);
+        runCompiler("success.compile", "hello.kt", "-d", jar);
+    }
+
     public void testSyntaxErrors() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "smoke.jar";
 

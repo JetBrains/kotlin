@@ -32,8 +32,13 @@ public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
     }
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
+        return runCompiler(logName, ArrayUtil.EMPTY_STRING_ARRAY, arguments);
+    }
+
+    protected int runCompiler(String logName, String[] jvmArgs, String... arguments) throws Exception {
         Collection<String> javaArgs = new ArrayList<String>();
 
+        Collections.addAll(javaArgs, jvmArgs);
         javaArgs.add("-cp");
         javaArgs.add(StringsKt.join(Arrays.asList(
                 getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar",

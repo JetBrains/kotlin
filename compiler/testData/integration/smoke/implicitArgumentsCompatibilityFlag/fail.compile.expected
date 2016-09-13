@@ -1,0 +1,7 @@
+
+ERR:
+hello.kt:10:16: error: type arguments should be specified for an outer class 'Outer'. Use full class name to specify them
+    fun foo(): Inner<Char> = null!!
+               ^
+
+Return code: 1
