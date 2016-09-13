@@ -1,0 +1,5 @@
+// "Make 'foo' not open" "true"
+
+interface My {
+    fun foo()
+}

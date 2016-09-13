@@ -6114,6 +6114,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantOpenInInterface.kt")
+        public void testRedundantOpenInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/redundantOpenInInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeAbstractModifier.kt")
         public void testRemoveAbstractModifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/removeAbstractModifier.kt");
