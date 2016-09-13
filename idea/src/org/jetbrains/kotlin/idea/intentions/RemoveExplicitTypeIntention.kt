@@ -32,10 +32,7 @@ class RemoveSetterParameterTypeInspection()
 ) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
-    override fun inspectionRange(element: KtCallableDeclaration) = (element as? KtParameter)?.typeReference?.let {
-        val start = it.getStartOffsetIn(element)
-        TextRange(start, start + it.endOffset - it.startOffset)
-    }
+    override fun inspectionTarget(element: KtCallableDeclaration) = (element as? KtParameter)?.typeReference
 }
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
