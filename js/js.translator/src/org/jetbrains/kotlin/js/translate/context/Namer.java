@@ -114,16 +114,6 @@ public final class Namer {
 
     public static final String LOCAL_MODULE_PREFIX = "$module$";
 
-    public static boolean isUndefined(@NotNull JsExpression expr) {
-        if (expr instanceof JsPrefixOperation) {
-            JsUnaryOperator op = ((JsPrefixOperation) expr).getOperator();
-
-            return op == JsUnaryOperator.VOID;
-        }
-
-        return false;
-    }
-
     @NotNull
     public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
         String moduleName = getModuleName(functionDescriptor);

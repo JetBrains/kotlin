@@ -158,7 +158,7 @@ abstract class BasicBoxTest(
         return sb.toString()
     }
 
-    private fun getOutputDir(file: File): File {
+    protected fun getOutputDir(file: File): File {
         val stopFile = File(pathToTestDir)
         return generateSequence(file.parentFile) { it.parentFile }
                 .takeWhile { it != stopFile }

@@ -22,7 +22,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.hasDefaultValue
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import org.jetbrains.kotlin.js.inline.util.zipWithDefault
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.Namer.isUndefined
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement
 
 /**
@@ -72,11 +72,11 @@ private fun getNameFromInitializer(isInitializedExpr: JsBinaryOperation): JsName
     val arg2 = isInitializedExpr.arg2
     val op = isInitializedExpr.operator
 
-    if (arg1 == null || arg2 == null || op == null) {
+    if (arg1 == null || arg2 == null) {
         return null
     }
 
-    if (op == JsBinaryOperator.REF_EQ && isUndefined(arg2)) {
+    if (op == JsBinaryOperator.REF_EQ && JsAstUtils.isUndefinedExpression(arg2)) {
         return (arg1 as? JsNameRef)?.name
     }
 
@@ -115,7 +115,7 @@ private fun getDefaultParamsNames(
     val argsParams = args.zipWithDefault(params, Namer.getUndefinedExpression())
     val relevantParams = argsParams.asSequence()
                                    .filter { it.second.hasDefaultValue }
-                                   .filter { initialized == !isUndefined(it.first) }
+                                   .filter { initialized == !JsAstUtils.isUndefinedExpression(it.first) }
 
     val names = relevantParams.map { it.second.name }
     return names.toIdentitySet()
