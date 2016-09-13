@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import java.lang.IllegalStateException
 
 object KotlinTypeFactory {
     private fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {
@@ -48,6 +50,14 @@ object KotlinTypeFactory {
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
     ): SimpleType = SimpleTypeImpl(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
+
+    @JvmStatic
+    fun functionType(
+            annotations: Annotations,
+            descriptor: ClassDescriptor,
+            arguments: List<TypeProjection>,
+            parameterNames: List<Name>
+    ): FunctionType = FunctionType(simpleNotNullType(annotations, descriptor, arguments), parameterNames)
 
     @JvmStatic
     fun simpleType(

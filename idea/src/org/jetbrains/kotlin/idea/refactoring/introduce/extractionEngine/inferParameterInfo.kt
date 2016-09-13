@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.lang.AssertionError
 import java.util.*
 
 internal class ParametersInfo {
@@ -303,6 +304,7 @@ private fun suggestParameterType(
                            Annotations.EMPTY,
                            originalDescriptor.extensionReceiverParameter?.type,
                            originalDescriptor.valueParameters.map { it.type },
+                           originalDescriptor.valueParameters.map { it.name },
                            originalDescriptor.returnType ?: builtIns.defaultReturnType
                    )
                }

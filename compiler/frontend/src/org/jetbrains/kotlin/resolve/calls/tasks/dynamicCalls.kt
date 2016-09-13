@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
@@ -175,8 +176,9 @@ class DynamicCallableDescriptors(builtIns: KotlinBuiltIns) {
 
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
+            val parameterNames = funLiteral.valueParameters.map { it.nameAsName ?: SpecialNames.NO_NAME_PROVIDED }
 
-            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, parameterNames, dynamicType)
         }
 
         for (arg in call.valueArguments) {

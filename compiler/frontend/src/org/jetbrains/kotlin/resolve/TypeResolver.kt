@@ -213,7 +213,10 @@ class TypeResolver(
                                  else moduleDescriptor.builtIns.unitType
 
                 result = type(createFunctionType(
-                        moduleDescriptor.builtIns, annotations, receiverType, parameterDescriptors.map { it.type }, returnType
+                        moduleDescriptor.builtIns, annotations, receiverType,
+                        parameterDescriptors.map { it.type },
+                        parameterDescriptors.map { it.name },
+                        returnType
                 ))
             }
 

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
@@ -270,7 +272,7 @@ public class ArgumentTypeResolver {
         }
 
         return FunctionTypeResolveUtilsKt.createFunctionType(
-                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), TypeUtils.DONT_CARE
+                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), Collections.<Name>emptyList(), TypeUtils.DONT_CARE
         );
     }
 
@@ -301,15 +303,21 @@ public class ArgumentTypeResolver {
                    ? functionPlaceholders
                            .createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), /* hasDeclaredArguments = */ false)
                    : FunctionTypeResolveUtilsKt.createFunctionType(
-                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), DONT_CARE
+                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), Collections.<Name>emptyList(), DONT_CARE
                    );
         }
         List<KtParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
         List<KotlinType> parameterTypes = Lists.newArrayList();
+        List<Name> parameterNames = Lists.newArrayList();
         for (KtParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
+            Name name = parameter.getNameAsName();
+            if (name == null) {
+                name = SpecialNames.NO_NAME_PROVIDED;
+            }
+            parameterNames.add(name);
         }
         KotlinType returnType = resolveTypeRefWithDefault(function.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
@@ -318,7 +326,7 @@ public class ArgumentTypeResolver {
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
                : FunctionTypeResolveUtilsKt.createFunctionType(
-                       builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, returnType
+                       builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, parameterNames, returnType
                );
     }
 

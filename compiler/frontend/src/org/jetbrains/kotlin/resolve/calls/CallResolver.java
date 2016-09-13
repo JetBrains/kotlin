@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
@@ -290,11 +291,13 @@ public class CallResolver {
         if (calleeExpression instanceof KtLambdaExpression) {
             int parameterNumber = ((KtLambdaExpression) calleeExpression).getValueParameters().size();
             List<KotlinType> parameterTypes = new ArrayList<KotlinType>(parameterNumber);
+            List<Name> parameterNames = new ArrayList<Name>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
+                parameterNames.add(SpecialNames.NO_NAME_PROVIDED);
             }
             expectedType = FunctionTypeResolveUtilsKt.createFunctionType(
-                    builtIns, Annotations.Companion.getEMPTY(), null, parameterTypes, context.expectedType
+                    builtIns, Annotations.Companion.getEMPTY(), null, parameterTypes, parameterNames, context.expectedType
             );
         }
         KotlinType calleeType = expressionTypingServices.safeGetType(

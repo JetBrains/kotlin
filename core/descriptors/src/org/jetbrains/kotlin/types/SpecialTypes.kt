@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -42,12 +43,30 @@ class AbbreviatedType(override val delegate: SimpleType, val abbreviation: Simpl
     override val isError: Boolean get() = false
 }
 
-fun KotlinType.getAbbreviatedType(): AbbreviatedType? = (unwrap() as? AbbreviatedType)
+fun KotlinType.getAbbreviatedType(): AbbreviatedType? = unwrap() as? AbbreviatedType
 
 fun SimpleType.withAbbreviation(abbreviatedType: SimpleType): SimpleType {
     if (isError) return this
     return AbbreviatedType(this, abbreviatedType)
 }
+
+class FunctionType(
+        override val delegate: SimpleType,
+        /**
+         * SpecialNames.NO_NAME_PROVIDED if no parameter name specified
+         */
+        val parameterNames: List<Name>
+) : DelegatingSimpleType() {
+    override fun replaceAnnotations(newAnnotations: Annotations)
+            = FunctionType(delegate.replaceAnnotations(newAnnotations), parameterNames)
+
+    override fun makeNullableAsSpecified(newNullability: Boolean)
+            = FunctionType(delegate.makeNullableAsSpecified(newNullability), parameterNames)
+
+    override val isError: Boolean get() = false
+}
+
+fun KotlinType.getFunctionTypeParameterNames(): List<Name>? = (unwrap() as? FunctionType)?.parameterNames
 
 class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinType): WrappedType() {
     private val lazyValue = storageManager.createLazyValue(computation)
