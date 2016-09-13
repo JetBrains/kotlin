@@ -24,24 +24,33 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns, generateFiles(ktFiles))
+            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns,
+                                 generateFiles(ktFiles))
 
     fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
         val irDeclarationGenerator = DeclarationGenerator(context)
 
         return ktFiles.map { ktFile ->
-            val irFile = createEmptyIrFile(ktFile)
-
-            for (ktAnnotationEntry in ktFile.annotationEntries) {
-                irFile.addAnnotation(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
-            }
-
-            for (ktDeclaration in ktFile.declarations) {
-                irFile.addDeclaration(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
-            }
-
-            irFile
+            generateSingleFile(irDeclarationGenerator, ktFile)
         }
+    }
+
+    fun generateSingleFileFragment(ktFile: KtFile) =
+            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns,
+                                 listOf(generateSingleFile(DeclarationGenerator(context), ktFile)))
+
+    private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile): IrFileImpl {
+        val irFile = createEmptyIrFile(ktFile)
+
+        for (ktAnnotationEntry in ktFile.annotationEntries) {
+            irFile.addAnnotation(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
+        }
+
+        for (ktDeclaration in ktFile.declarations) {
+            irFile.addDeclaration(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
+        }
+
+        return irFile
     }
 
     fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {

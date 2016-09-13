@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -28,11 +30,18 @@ class Psi2IrTranslator(val configuration: Psi2IrConfiguration) {
     fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModuleFragment {
         val context = GeneratorContext(configuration, moduleDescriptor, bindingContext)
         val irModule = ModuleGenerator(context).generateModuleFragment(ktFiles)
-        postprocess(irModule)
+        postprocess(irModule.descriptor.builtIns, irModule)
         return irModule
     }
 
-    private fun postprocess(irModuleFragment: IrModuleFragment) {
-        insertImplicitCasts(irModuleFragment.descriptor.builtIns, irModuleFragment)
+    fun generateSingleFileFragment(moduleDescriptor: ModuleDescriptor, ktFile: KtFile, bindingContext: BindingContext): IrModuleFragment {
+        val context = GeneratorContext(configuration, moduleDescriptor, bindingContext)
+        val irFileFragment = ModuleGenerator(context).generateSingleFileFragment(ktFile)
+        postprocess(moduleDescriptor.builtIns, irFileFragment)
+        return irFileFragment
+    }
+
+    private fun postprocess(builtIns: KotlinBuiltIns, irElement: IrElement) {
+        insertImplicitCasts(builtIns, irElement)
     }
 }
