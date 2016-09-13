@@ -431,7 +431,7 @@ class Converter private constructor(
             field.hasModifierProperty(PsiModifier.STATIC) &&
             field.containingClass?.isInheritor(javaSerializableInterface, false) ?: false
         ) {
-            output.add(Annotation(Identifier.withNoPrototype("JvmStatic"),
+            output.add(Annotation(Identifier("JvmStatic").assignNoPrototype(),
                                   listOf(),
                                   newLineAfter = false).assignNoPrototype())
         }
