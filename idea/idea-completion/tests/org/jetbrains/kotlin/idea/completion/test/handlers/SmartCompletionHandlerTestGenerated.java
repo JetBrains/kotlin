@@ -906,5 +906,17 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/InsertImport.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("ParameterNamesSpecified.kt")
+        public void testParameterNamesSpecified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/ParameterNamesSpecified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ParameterNamesSpecified_NullableType.kt")
+        public void testParameterNamesSpecified_NullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/lambda/ParameterNamesSpecified_NullableType.kt");
+            doTest(fileName);
+        }
     }
 }

@@ -33,12 +33,17 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.getFunctionTypeParameterNames
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -53,11 +58,11 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
     context.setLaterRunnable {
         context.project.executeWriteCommand(commandName, groupId = commandGroupId) {
             try {
-                if (rangeMarker.isValid()) {
-                    context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-                    context.getEditor().getCaretModel().moveToOffset(rangeMarker.getStartOffset())
-                    val template = buildTemplate(lambdaType, explicitParameterTypes, context.getProject())
-                    TemplateManager.getInstance(context.getProject()).startTemplate(context.getEditor(), template)
+                if (rangeMarker.isValid) {
+                    context.document.deleteString(rangeMarker.startOffset, rangeMarker.endOffset)
+                    context.editor.caretModel.moveToOffset(rangeMarker.startOffset)
+                    val template = buildTemplate(lambdaType, explicitParameterTypes, context.project)
+                    TemplateManager.getInstance(context.project).startTemplate(context.editor, template)
                 }
             }
             finally {
@@ -69,8 +74,12 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
 fun lambdaPresentation(lambdaType: KotlinType?): String {
     if (lambdaType == null) return "{...}"
-    val parameterTypes = functionParameterTypes(lambdaType)
-    val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
+    val (parameterTypes, parameterNames) = functionParameterTypesAndNames(lambdaType)
+    val parametersPresentation = parameterNames
+            .mapIndexed { index, name ->
+                name.check { !it.isSpecial } ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterTypes[index])
+            }
+            .joinToString(", ")
     return "{ $parametersPresentation -> ... }"
 }
 
@@ -95,7 +104,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
-    val parameterTypes = functionParameterTypes(lambdaType)
+    val (parameterTypes, parameterNames) = functionParameterTypesAndNames(lambdaType)
 
     val manager = TemplateManager.getInstance(project)
 
@@ -109,7 +118,25 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
             template.addTextSegment(", ")
         }
         //TODO: check for names in scope
-        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p").toTypedArray()), true)
+        val parameterName = parameterNames[i].check { !it.isSpecial }?.render()
+        val nameExpression =  if (parameterName != null) {
+            object : Expression() {
+                override fun calculateResult(context: ExpressionContext?) = TextResult(parameterName)
+                override fun calculateQuickResult(context: ExpressionContext?): Result? = TextResult(parameterName)
+                override fun calculateLookupItems(context: ExpressionContext?) = emptyArray<LookupElement>()
+            }
+        }
+        else {
+            val nameSuggestions = KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p").toTypedArray()
+            object : Expression() {
+                override fun calculateResult(context: ExpressionContext?) = TextResult(nameSuggestions[0])
+                override fun calculateQuickResult(context: ExpressionContext?): Result? = null
+                override fun calculateLookupItems(context: ExpressionContext?)
+                        = nameSuggestions.map { LookupElementBuilder.create(it) }.toTypedArray()
+            }
+        }
+        template.addVariable(nameExpression, true)
+
         if (explicitParameterTypes) {
             template.addTextSegment(": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameterType))
         }
@@ -121,14 +148,9 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
     return template
 }
 
-private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expression() {
-    override fun calculateResult(context: ExpressionContext?) = TextResult(nameSuggestions[0])
-
-    override fun calculateQuickResult(context: ExpressionContext?): Result? = null
-
-    override fun calculateLookupItems(context: ExpressionContext?)
-            = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
+private fun functionParameterTypesAndNames(functionType: KotlinType): Pair<List<KotlinType>, List<Name>> {
+    val types = getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)
+    val names = functionType.getFunctionTypeParameterNames() ?: types.map { SpecialNames.NO_NAME_PROVIDED }
+    assert(names.size == types.size)
+    return types to names
 }
-
-fun functionParameterTypes(functionType: KotlinType): List<KotlinType> =
-        getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)
