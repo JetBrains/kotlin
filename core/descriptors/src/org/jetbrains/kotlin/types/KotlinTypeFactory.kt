@@ -56,8 +56,16 @@ object KotlinTypeFactory {
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>,
-            parameterNames: List<Name>
-    ): FunctionType = FunctionType(simpleNotNullType(annotations, descriptor, arguments), parameterNames)
+            parameterNames: List<Name>?
+    ): SimpleType {
+        val simpleType = simpleNotNullType(annotations, descriptor, arguments)
+        if (parameterNames == null || parameterNames.all { it.isSpecial }) {
+            return simpleType
+        }
+        else {
+            return FunctionType(simpleType, parameterNames)
+        }
+    }
 
     @JvmStatic
     fun simpleType(

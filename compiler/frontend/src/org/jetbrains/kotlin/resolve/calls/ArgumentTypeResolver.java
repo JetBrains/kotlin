@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls;
 
-import com.google.common.collect.Lists;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +51,7 @@ import org.jetbrains.kotlin.types.expressions.*;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -272,7 +272,7 @@ public class ArgumentTypeResolver {
         }
 
         return FunctionTypeResolveUtilsKt.createFunctionType(
-                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), Collections.<Name>emptyList(), TypeUtils.DONT_CARE
+                builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), null, TypeUtils.DONT_CARE
         );
     }
 
@@ -303,14 +303,14 @@ public class ArgumentTypeResolver {
                    ? functionPlaceholders
                            .createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), /* hasDeclaredArguments = */ false)
                    : FunctionTypeResolveUtilsKt.createFunctionType(
-                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), Collections.<Name>emptyList(), DONT_CARE
+                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), null, DONT_CARE
                    );
         }
         List<KtParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
-        List<KotlinType> parameterTypes = Lists.newArrayList();
-        List<Name> parameterNames = Lists.newArrayList();
+        List<KotlinType> parameterTypes = new ArrayList<KotlinType>(valueParameters.size());
+        List<Name> parameterNames = new ArrayList<Name>(valueParameters.size());
         for (KtParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
             Name name = parameter.getNameAsName();

@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeProjection
 
 fun createValueParametersForInvokeInFunctionType(
         functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
@@ -51,9 +54,9 @@ fun createFunctionType(
         annotations: Annotations,
         receiverType: KotlinType?,
         parameterTypes: List<KotlinType>,
-        parameterNames: List<Name>,
+        parameterNames: List<Name>?,
         returnType: KotlinType
-): FunctionType {
+): SimpleType {
     val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
     val size = parameterTypes.size
     val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)
