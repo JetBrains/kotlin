@@ -31,3 +31,13 @@ public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Compara
 public class Date() {
     public fun getTime(): Int = noImpl
 }
+
+// TODO: Deprecate with replacement
+public typealias RandomAccess = kotlin.collections.RandomAccess
+public typealias AbstractCollection<E> = kotlin.collections.AbstractCollection<E>
+public typealias AbstractList<E> = kotlin.collections.AbstractList<E>
+public typealias ArrayList<E> = kotlin.collections.ArrayList<E>
+public typealias HashSet<E> = kotlin.collections.HashSet<E>
+public typealias LinkedHashSet<E> = kotlin.collections.LinkedHashSet<E>
+public typealias HashMap<K, V> = kotlin.collections.HashMap<K, V>
+public typealias LinkedHashMap<K, V> = kotlin.collections.LinkedHashMap<K, V>
