@@ -1,6 +1,6 @@
 // "Add function to supertype..." "true"
 interface A {
-    open fun foo()
+    fun foo()
 }
 interface B {}
 class C: A, B {

@@ -1,6 +1,6 @@
-// "Add 'open fun f()' to 'A'" "true"
+// "Add 'abstract fun f()' to 'A'" "true"
 interface A {
-    open fun f()
+    fun f()
 }
 
 class B : A {
