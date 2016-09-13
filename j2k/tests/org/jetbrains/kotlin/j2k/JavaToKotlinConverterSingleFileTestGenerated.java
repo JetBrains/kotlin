@@ -120,6 +120,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/primaryConstructorAnnotation.java");
             doTest(fileName);
         }
+
+        @TestMetadata("serialVersionUID.java")
+        public void testSerialVersionUID() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/serialVersionUID.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/anonymousBlock")
