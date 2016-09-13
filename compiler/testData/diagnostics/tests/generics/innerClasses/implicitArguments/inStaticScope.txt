@@ -1,9 +1,6 @@
 package
 
-public fun bar(/*0*/ x: [ERROR : Inner]): kotlin.Unit
-
-public final class E {
-    public constructor E()
+public interface Inv</*0*/ X> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -12,7 +9,6 @@ public final class E {
 public final class Outer</*0*/ E> {
     public constructor Outer</*0*/ E>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
@@ -23,9 +19,15 @@ public final class Outer</*0*/ E> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final class Nested {
+    public final class Nested : Inv<[ERROR : Inner]> {
         public constructor Nested()
-        public final fun bar(/*0*/ x: [ERROR : Inner]): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public object Obj : Inv<[ERROR : Inner]> {
+        private constructor Obj()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

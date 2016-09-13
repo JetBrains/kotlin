@@ -10,11 +10,9 @@ open class Base<T> {
 }
 
 class Derived : Base<Int>() {
-    // TODO KT-11123
-
-    val x1: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InnerCell<!> = InnerCell(42)
+    val x1: InnerCell = InnerCell(42)
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
-    val test1: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>CT<!> = Cell(42)
+    val test1: CT = Cell(42)
     val test2: Base<Int>.CT = Cell(42)
 }

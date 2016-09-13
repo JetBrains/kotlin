@@ -9,6 +9,10 @@ class Outer<E> {
         class E
         val x: Inner = Inner()
     }
+
+    class Nested {
+        fun bar(x: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>) {}
+    }
 }
 
 class E

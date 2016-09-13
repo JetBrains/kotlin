@@ -1,43 +1,38 @@
 package
 
-public open class Base</*0*/ T> {
-    public constructor Base</*0*/ T>()
+public final class A {
+    public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ x: [ERROR : Inner]<kotlin.Int>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class InnerCell /*captured type parameters: /*0*/ T*/ : ICell<T> {
-        public constructor InnerCell(/*0*/ x: T)
-        public open override /*1*/ val x: T
+    public companion object Companion : Outer<kotlin.String> {
+        private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-    public typealias CT /*captured type parameters: /*0*/ T*/ = Cell<T>
 }
 
-public final class Cell</*0*/ T> : ICell<T> {
-    public constructor Cell</*0*/ T>(/*0*/ x: T)
-    public open override /*1*/ val x: T
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public final class Derived : Base<kotlin.Int> {
+public final class Derived : Outer<kotlin.String> {
     public constructor Derived()
-    public final val test1: Base<kotlin.Int>.CT /* = Cell<kotlin.Int> */
-    public final val test2: Base<kotlin.Int>.CT /* = Cell<kotlin.Int> */
-    public final val x1: Base<kotlin.Int>.InnerCell
-    public final val x2: Base<kotlin.Int>.InnerCell
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ x: Outer<kotlin.String>.Inner<kotlin.Int>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface ICell</*0*/ T> {
-    public abstract val x: T
+public open class Outer</*0*/ E> {
+    public constructor Outer</*0*/ E>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner</*0*/ F> /*captured type parameters: /*1*/ E*/ {
+        public constructor Inner</*0*/ F>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }
