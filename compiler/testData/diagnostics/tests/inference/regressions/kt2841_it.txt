@@ -2,7 +2,7 @@ package
 
 package a {
     public fun test(): kotlin.Unit
-    public inline fun </*0*/ T : a.Closeable, /*1*/ R> T.use(/*0*/ block: (T) -> R): R
+    public inline fun </*0*/ T : a.Closeable, /*1*/ R> T.use(/*0*/ block: (t: T) -> R): R
 
     public final class C : a.Closeable {
         public constructor C()

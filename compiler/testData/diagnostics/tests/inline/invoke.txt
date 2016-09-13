@@ -1,5 +1,5 @@
 package
 
-public inline fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWithInvokeNonInline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvoke(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvokeNonInline(/*0*/ noinline s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit

@@ -1,15 +1,15 @@
 public final fun foo(/*0*/ p0: () -> dynamic): dynamic
 public final fun foo(/*0*/ p0: () -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic, y: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic, y: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic, y: dynamic) -> dynamic): dynamic
 public final fun foo(/*0*/ p0: () -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic
 public final fun foo(/*0*/ p0: dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
-public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic, y: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic, y: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic
+public final fun foo(/*0*/ p0: (x: dynamic) -> dynamic): dynamic

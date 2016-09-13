@@ -66,7 +66,7 @@ class FunctionType(
     override val isError: Boolean get() = false
 }
 
-fun KotlinType.getFunctionTypeParameterNames(): List<Name>? = (unwrap() as? FunctionType)?.parameterNames
+fun KotlinType.getParameterNamesFromFunctionType(): List<Name>? = (unwrap() as? FunctionType)?.parameterNames
 
 class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinType): WrappedType() {
     private val lazyValue = storageManager.createLazyValue(computation)

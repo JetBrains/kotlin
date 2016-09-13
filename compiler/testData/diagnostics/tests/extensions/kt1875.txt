@@ -6,7 +6,7 @@ package kt1875 {
     public fun test1(/*0*/ t: kt1875.T?): kotlin.Unit
 
     public interface T {
-        public abstract val f: ((kotlin.Int) -> kotlin.Unit)?
+        public abstract val f: ((i: kotlin.Int) -> kotlin.Unit)?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

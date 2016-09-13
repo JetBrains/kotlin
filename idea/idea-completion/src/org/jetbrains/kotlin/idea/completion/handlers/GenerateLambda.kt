@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFuncti
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.getFunctionTypeParameterNames
+import org.jetbrains.kotlin.types.getParameterNamesFromFunctionType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType) {
@@ -150,7 +150,7 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
 
 private fun functionParameterTypesAndNames(functionType: KotlinType): Pair<List<KotlinType>, List<Name>> {
     val types = getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)
-    val names = functionType.getFunctionTypeParameterNames() ?: types.map { SpecialNames.NO_NAME_PROVIDED }
+    val names = functionType.getParameterNamesFromFunctionType() ?: types.map { SpecialNames.NO_NAME_PROVIDED }
     assert(names.size == types.size)
     return types to names
 }

@@ -1,7 +1,7 @@
 package
 
-public val bar: (kotlin.Int) -> kotlin.Unit
-public val bas: (kotlin.IntArray) -> kotlin.Unit
-public fun gar(): (kotlin.Int) -> kotlin.Unit
-public fun gas(): (kotlin.IntArray) -> kotlin.Unit
+public val bar: (p: kotlin.Int) -> kotlin.Unit
+public val bas: (p: kotlin.IntArray) -> kotlin.Unit
+public fun gar(): (p: kotlin.Int) -> kotlin.Unit
+public fun gas(): (p: kotlin.IntArray) -> kotlin.Unit
 public fun outer(/*0*/ b: kotlin.Any?): kotlin.Unit

@@ -1,16 +1,16 @@
 package
 
-public val inVal: (kotlin.Int) -> kotlin.Unit
-public val onType: @TypeAnn() A.(@TypeAnn() A, A) -> @TypeAnn() A?
+public val inVal: (x: kotlin.Int) -> kotlin.Unit
+public val onType: @TypeAnn() A.(a: @TypeAnn() A, A) -> @TypeAnn() A?
 public fun f(/*0*/ @Ann() x: kotlin.Int): kotlin.Unit
-public fun inParam(/*0*/ fn: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public fun inParamNested(/*0*/ fn1: ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit): kotlin.Unit
-public fun inReturn(): (kotlin.Int) -> kotlin.Unit
+public fun inParam(/*0*/ fn: (x: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun inParamNested(/*0*/ fn1: (fn2: (n: kotlin.Int) -> kotlin.Unit) -> kotlin.Unit): kotlin.Unit
+public fun inReturn(): (x: kotlin.Int) -> kotlin.Unit
 public fun @TypeAnn() A.extFun(/*0*/ @Ann() a: @TypeAnn() A): @TypeAnn() A?
 
 public final class A : (kotlin.Int) -> kotlin.Unit {
     public constructor A()
-    public final val prop: (kotlin.Int) -> kotlin.Unit
+    public final val prop: (x: kotlin.Int) -> kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ fun invoke(/*0*/ p1: kotlin.Int): kotlin.Unit

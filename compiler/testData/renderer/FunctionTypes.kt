@@ -1,8 +1,8 @@
-var v1: () -> Unit
-var v2: (Int) -> Int
-var v3: (Int, String) -> String
-var v4: Function1<Int, String>
-var v4: (() -> Int, (String) -> Unit) -> String
+var v0: () -> Unit
+var v1: (Int) -> Int
+var v2: (number: Int, String) -> String
+var v3: Function1<Int, String>
+var v4: (() -> Int, (s: String) -> Unit) -> String
 var v5: Int.() -> Int
 var v6 : Int.(String, Int) -> Unit
 var v7 : @ExtensionFunctionType Function2<Int, String, Boolean>
@@ -22,11 +22,11 @@ var v11: GEF<Any, Any>
 var v12: (() -> Unit).() -> Unit
 var v13: (() -> Unit)?.() -> Unit
 
-//public var v1: () -> kotlin.Unit defined in root package
-//public var v2: (kotlin.Int) -> kotlin.Int defined in root package
-//public var v3: (kotlin.Int, kotlin.String) -> kotlin.String defined in root package
-//public var v4: (kotlin.Int) -> kotlin.String defined in root package
-//public var v4: (() -> kotlin.Int, (kotlin.String) -> kotlin.Unit) -> kotlin.String defined in root package
+//public var v0: () -> kotlin.Unit defined in root package
+//public var v1: (kotlin.Int) -> kotlin.Int defined in root package
+//public var v2: (number: kotlin.Int, kotlin.String) -> kotlin.String defined in root package
+//public var v3: (kotlin.Int) -> kotlin.String defined in root package
+//public var v4: (() -> kotlin.Int, (s: kotlin.String) -> kotlin.Unit) -> kotlin.String defined in root package
 //public var v5: kotlin.Int.() -> kotlin.Int defined in root package
 //public var v6: kotlin.Int.(kotlin.String, kotlin.Int) -> kotlin.Unit defined in root package
 //public var v7: kotlin.Int.(kotlin.String) -> kotlin.Boolean defined in root package

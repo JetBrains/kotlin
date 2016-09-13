@@ -1,6 +1,6 @@
 package
 
-public inline fun inlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFun(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public inline fun </*0*/ T> inlineFun(/*0*/ s: T): kotlin.Unit
 public operator inline fun </*0*/ T, /*1*/ V> ((T) -> V).inc(): (T) -> V
 public inline fun </*0*/ T> (() -> T).inlineExt(): kotlin.Unit

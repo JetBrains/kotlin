@@ -1,5 +1,5 @@
 package
 
 package g {
-    public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (T) -> U): kotlin.Unit
+    public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (p: T) -> U): kotlin.Unit
 }

@@ -10,9 +10,9 @@ public val `[;]`: kotlin.Int = 10
 public val `[]`: kotlin.Int = 9
 public val `\`: kotlin.Int = 7
 public val `]`: kotlin.Int = 3
-public val ff: (kotlin.Int) -> kotlin.Unit
-public val fg: ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
-public val fh: (kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
+public val ff: (`x:X`: kotlin.Int) -> kotlin.Unit
+public val fg: ((`x:X`: kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
+public val fh: (kotlin.Int) -> ((`x:X`: kotlin.Int) -> kotlin.Unit) -> kotlin.Unit
 public val `val:X`: kotlin.Int = 10
 public val `val;X`: kotlin.Int = 10
 public val `val<X`: kotlin.Int = 10

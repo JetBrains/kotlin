@@ -2,7 +2,7 @@ package
 
 public operator fun </*0*/ G> kotlin.collections.MutableMap<in kotlin.String, in G>.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): G
 public operator fun </*0*/ S> kotlin.collections.MutableMap<in kotlin.String, in S>.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: S): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> kotlin.collections.MutableMap<K, V>.withDefault1(/*0*/ default: (K) -> V): kotlin.collections.MutableMap<K, V>
+public fun </*0*/ K, /*1*/ V> kotlin.collections.MutableMap<K, V>.withDefault1(/*0*/ default: (key: K) -> V): kotlin.collections.MutableMap<K, V>
 
 public final class A {
     public constructor A(/*0*/ map: kotlin.collections.MutableMap<kotlin.String, kotlin.CharSequence>)

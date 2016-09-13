@@ -4,7 +4,7 @@ public interface Iterator</*0*/ out T> {
     public abstract val hasNext: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open fun </*0*/ R> map(/*0*/ transform: (T) -> R): Iterator<R>
+    public open fun </*0*/ R> map(/*0*/ transform: (element: T) -> R): Iterator<R>
     public abstract fun next(): T
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

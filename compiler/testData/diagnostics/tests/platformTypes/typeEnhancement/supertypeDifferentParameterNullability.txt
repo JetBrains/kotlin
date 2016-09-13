@@ -1,7 +1,7 @@
 package
 
-public /*synthesized*/ fun A(/*0*/ function: (kotlin.String?) -> kotlin.Unit): A
-public /*synthesized*/ fun B(/*0*/ function: (kotlin.String) -> kotlin.Unit): B
+public /*synthesized*/ fun A(/*0*/ function: (x: kotlin.String?) -> kotlin.Unit): A
+public /*synthesized*/ fun B(/*0*/ function: (x: kotlin.String) -> kotlin.Unit): B
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

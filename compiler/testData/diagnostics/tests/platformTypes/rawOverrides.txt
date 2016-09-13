@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun B(/*0*/ function: (kotlin.Any!, kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!) -> kotlin.String!): B
+public /*synthesized*/ fun B(/*0*/ function: (x: kotlin.Any!, y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!) -> kotlin.String!): B
 
 public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

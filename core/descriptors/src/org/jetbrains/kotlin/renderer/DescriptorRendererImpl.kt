@@ -309,7 +309,23 @@ internal class DescriptorRendererImpl(
         }
 
         append("(")
-        appendTypeProjections(getValueParameterTypesFromFunctionType(type))
+        val parameterTypes = getValueParameterTypesFromFunctionType(type)
+        val parameterNames = type.getParameterNamesFromFunctionType() ?: parameterTypes.map { SpecialNames.NO_NAME_PROVIDED }
+        assert(parameterNames.size == parameterTypes.size)
+
+        for (index in parameterTypes.indices) {
+            val typeProjection = parameterTypes[index]
+            val name = parameterNames[index]
+
+            if (index > 0) append(", ")
+
+            if (!name.isSpecial) {
+                append(renderName(name))
+                append(": ")
+            }
+            append(renderTypeProjection(typeProjection))
+        }
+
         append(") ").append(arrow()).append(" ")
         renderNormalizedType(getReturnTypeFromFunctionType(type))
 

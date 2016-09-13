@@ -1,10 +1,10 @@
 package
 
-public inline fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWithInvokeClosure(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWithInvokeClosureNoinline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit, /*1*/ noinline ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWithInvokeNonInline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit, /*1*/ noinline ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun subInline(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public fun subNoInline(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExtWithClosure(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvoke(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvokeClosure(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvokeClosureNoinline(/*0*/ noinline s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ noinline ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvokeNonInline(/*0*/ noinline s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ noinline ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun subInline(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun subNoInline(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExtWithClosure(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit

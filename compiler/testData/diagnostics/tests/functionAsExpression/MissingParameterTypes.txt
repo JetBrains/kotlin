@@ -1,6 +1,6 @@
 package
 
-public val a: (???) -> ???
+public val a: (x: ???) -> ???
 public val b: (kotlin.Int) -> kotlin.Int
 public val c: (kotlin.Int, kotlin.String) -> kotlin.Int
 public val d: (kotlin.Int, kotlin.String) -> kotlin.Int

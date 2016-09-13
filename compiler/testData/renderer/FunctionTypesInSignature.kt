@@ -18,7 +18,7 @@ fun Function0<(() -> Unit) -> (() -> Unit)>.f5() {
 fun Function0<(() -> Unit) -> (() -> Unit)>?.f6() {
 }
 
-fun ((Int) -> Unit)?.f7() {
+fun ((p: Int) -> Unit)?.f7() {
 }
 
 fun <T> (T.(Int) -> Unit).f8() {
@@ -36,7 +36,7 @@ val Function0<(() -> Unit) -> (() -> Unit)>.p: Unit = Unit
 //value-parameter f: (() -> kotlin.Unit, () -> kotlin.Unit) -> kotlin.Unit defined in test.f4
 //public fun (() -> (() -> kotlin.Unit) -> () -> kotlin.Unit).f5(): kotlin.Unit defined in test
 //public fun (() -> (() -> kotlin.Unit) -> () -> kotlin.Unit)?.f6(): kotlin.Unit defined in test
-//public fun ((kotlin.Int) -> kotlin.Unit)?.f7(): kotlin.Unit defined in test
+//public fun ((p: kotlin.Int) -> kotlin.Unit)?.f7(): kotlin.Unit defined in test
 //public fun <T> (T.(kotlin.Int) -> kotlin.Unit).f8(): kotlin.Unit defined in test
 //<T> defined in test.f8
 //public val (() -> (() -> kotlin.Unit) -> () -> kotlin.Unit).p: kotlin.Unit defined in test

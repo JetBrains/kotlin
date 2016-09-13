@@ -3,5 +3,5 @@ package
 package kt1219 {
     public fun foo(): kotlin.Unit
     public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fold(/*0*/ a: R, /*1*/ op: (T, R) -> R): R
-    public fun </*0*/ T> kotlin.collections.Iterable<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+    public fun </*0*/ T> kotlin.collections.Iterable<T>.foreach(/*0*/ operation: (element: T) -> kotlin.Unit): kotlin.Unit
 }

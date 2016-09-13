@@ -1,6 +1,6 @@
 package
 
-public inline fun inlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ noinline b: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun subInline(/*0*/ vararg s: (kotlin.Int) -> kotlin.Unit /*kotlin.Array<out (kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit
-public fun subNoInline(/*0*/ vararg s: (kotlin.Int) -> kotlin.Unit /*kotlin.Array<out (kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit
-public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ noinline b: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFun(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ noinline b: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun subInline(/*0*/ vararg s: (p: kotlin.Int) -> kotlin.Unit /*kotlin.Array<out (p: kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit
+public fun subNoInline(/*0*/ vararg s: (p: kotlin.Int) -> kotlin.Unit /*kotlin.Array<out (p: kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit
+public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit, /*1*/ noinline b: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit

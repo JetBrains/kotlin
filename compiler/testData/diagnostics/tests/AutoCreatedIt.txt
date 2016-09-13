@@ -4,7 +4,7 @@ public fun bar(/*0*/ f: (kotlin.Int, kotlin.Int) -> kotlin.Int): kotlin.Unit
 public fun bar1(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Unit
 public fun bar2(/*0*/ f: () -> kotlin.Int): kotlin.Unit
 public fun text(): kotlin.Unit
-public infix fun kotlin.String.on(/*0*/ predicate: (URI) -> kotlin.Boolean): URI
+public infix fun kotlin.String.on(/*0*/ predicate: (s: URI) -> kotlin.Boolean): URI
 public infix fun kotlin.String.to(/*0*/ dest: kotlin.String): kotlin.Unit
 
 public final class URI {

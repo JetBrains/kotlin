@@ -1,7 +1,7 @@
 package
 
-public /*synthesized*/ fun J(/*0*/ function: (kotlin.String?) -> kotlin.String): J
-public /*synthesized*/ fun J2(/*0*/ function: (kotlin.String?) -> kotlin.String): J2
+public /*synthesized*/ fun J(/*0*/ function: (x: kotlin.String?) -> kotlin.String): J
+public /*synthesized*/ fun J2(/*0*/ function: (x: kotlin.String?) -> kotlin.String): J2
 public fun main(): kotlin.Unit
 
 public interface J {

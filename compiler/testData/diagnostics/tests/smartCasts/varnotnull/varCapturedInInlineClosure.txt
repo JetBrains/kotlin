@@ -1,4 +1,4 @@
 package
 
 public fun max(/*0*/ a: kotlin.IntArray): kotlin.Int?
-public fun kotlin.IntArray.forEachIndexed(/*0*/ op: (kotlin.Int, kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun kotlin.IntArray.forEachIndexed(/*0*/ op: (i: kotlin.Int, value: kotlin.Int) -> kotlin.Unit): kotlin.Unit

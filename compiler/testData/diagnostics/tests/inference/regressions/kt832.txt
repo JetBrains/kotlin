@@ -1,6 +1,6 @@
 package
 
 package a {
-    public fun </*0*/ T> fooT2(): (T) -> T
+    public fun </*0*/ T> fooT2(): (t: T) -> T
     public fun test(): kotlin.Unit
 }

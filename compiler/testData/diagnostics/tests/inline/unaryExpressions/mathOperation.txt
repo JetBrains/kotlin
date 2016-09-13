@@ -1,6 +1,6 @@
 package
 
-public inline fun </*0*/ T, /*1*/ V> inlineFunWithInvoke(/*0*/ s: (T) -> V, /*1*/ ext: T.(T) -> V): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ V> inlineFunWithInvoke(/*0*/ s: (p: T) -> V, /*1*/ ext: T.(p: T) -> V): kotlin.Unit
 public operator fun </*0*/ T, /*1*/ V> ((T) -> V).dec(): (T) -> V
 public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).dec(): T.(T) -> V
 public operator inline fun </*0*/ T, /*1*/ V> ((T) -> V).inc(): (T) -> V

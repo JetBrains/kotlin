@@ -7,8 +7,8 @@ fun foo() {
     }
 }
 ---------------------
-1                                    <v0>: Int                             NEW: r(1) -> <v0>
-{ x: Int -> val y = x + a use(a) }   <v1>: {<: (Int) -> Array<out Any?>}   NEW: r({ x: Int -> val y = x + a use(a) }) -> <v1>
+1                                    <v0>: Int                                NEW: r(1) -> <v0>
+{ x: Int -> val y = x + a use(a) }   <v1>: {<: (x: Int) -> Array<out Any?>}   NEW: r({ x: Int -> val y = x + a use(a) }) -> <v1>
 =====================
 == anonymous_0 ==
 { x: Int ->

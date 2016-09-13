@@ -1,8 +1,8 @@
 package
 
-public inline fun inlineFunNoInline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWrongExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunNoInline(/*0*/ noinline s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWrongExtension(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun testExtension(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit
 public infix inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt2(/*0*/ p: kotlin.Int): kotlin.Unit
 public infix fun ((kotlin.Int) -> kotlin.Unit).noInlineExt(/*0*/ p: kotlin.Int): kotlin.Unit

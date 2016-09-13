@@ -1,8 +1,8 @@
 package
 
-public inline fun inlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
-public inline fun inlineFun2(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
-public inline fun inlineFunWithExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Int.(kotlin.Int) -> kotlin.Unit
-public inline fun inlineFunWithExt2(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Int.(kotlin.Int) -> kotlin.Unit
+public inline fun inlineFun(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): (p: kotlin.Int) -> kotlin.Unit
+public inline fun inlineFun2(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): (p: kotlin.Int) -> kotlin.Unit
+public inline fun inlineFunWithExt(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Int.(p: kotlin.Int) -> kotlin.Unit
+public inline fun inlineFunWithExt2(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Int.(p: kotlin.Int) -> kotlin.Unit
 public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): (kotlin.Int) -> kotlin.Unit
 public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt2(): (kotlin.Int) -> kotlin.Unit

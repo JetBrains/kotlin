@@ -1,10 +1,10 @@
 package
 
-public/*package*/ /*synthesized*/ fun JSuper1(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JSuper1
-public/*package*/ /*synthesized*/ fun JSuper2(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JSuper2
-public/*package*/ /*synthesized*/ fun Sub1(/*0*/ function: (kotlin.Int) -> kotlin.Unit): Sub1
-public/*package*/ /*synthesized*/ fun Sub2(/*0*/ function: (kotlin.Int) -> kotlin.Unit): Sub2
-public/*package*/ /*synthesized*/ fun Sub3(/*0*/ function: (kotlin.Int) -> kotlin.Unit): Sub3
+public/*package*/ /*synthesized*/ fun JSuper1(/*0*/ function: (jsuper1Name: kotlin.Int) -> kotlin.Unit): JSuper1
+public/*package*/ /*synthesized*/ fun JSuper2(/*0*/ function: (jsuper2Name: kotlin.Int) -> kotlin.Unit): JSuper2
+public/*package*/ /*synthesized*/ fun Sub1(/*0*/ function: (ksuperName: kotlin.Int) -> kotlin.Unit): Sub1
+public/*package*/ /*synthesized*/ fun Sub2(/*0*/ function: (ksuperName: kotlin.Int) -> kotlin.Unit): Sub2
+public/*package*/ /*synthesized*/ fun Sub3(/*0*/ function: (ksuperName: kotlin.Int) -> kotlin.Unit): Sub3
 
 public/*package*/ interface JSuper1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
