@@ -427,7 +427,7 @@ class Converter private constructor(
 
 
     private fun specialAnnotationPropertyCases(field: PsiField): Annotations {
-        val javaSerializableInterface = PsiType.getTypeByName("java.io.Serializable", project, GlobalSearchScope.allScope(project)).resolve()
+        val javaSerializableInterface = JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_IO_SERIALIZABLE, field.resolveScope)
         val output = mutableListOf<Annotation>()
         if (javaSerializableInterface != null &&
             field.name == "serialVersionUID" &&
