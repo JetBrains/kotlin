@@ -245,6 +245,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAliasUsage.kt")
+    public void testTypeAliasUsage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/TypeAliasUsage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnusedImports.kt")
     public void testUnusedImports() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/UnusedImports.kt");

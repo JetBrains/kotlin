@@ -114,7 +114,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
     }
 
     private fun replaceWithIfThenThrowExpression(original: KtCallExpression): KtIfExpression {
-        val replacement = KtPsiFactory(original).createExpression("if (!true) { throw java.lang.AssertionError(\"\") }") as KtIfExpression
+        val replacement = KtPsiFactory(original).createExpression("if (!true) { throw kotlin.AssertionError(\"\") }") as KtIfExpression
         val parent = original.parent
         return if (parent is KtDotQualifiedExpression)
             parent.replaced(replacement)
