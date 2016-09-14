@@ -1,3 +1,4 @@
 // WITH_RUNTIME
+import java.lang.UnsupportedOperationException
 
 fun foo()<selection>: Unit</selection> = throw UnsupportedOperationException()
