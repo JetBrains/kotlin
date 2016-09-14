@@ -55,22 +55,16 @@ class RegExpTest {
         val string = "R2D2 beats A5D5 "
         var re = RegExp("""(\w\d)(\w\d)""", "g")
         val m1 = re.exec(string)!!
-        assertEquals(arrayOf("R2D2", "R2", "D2"), m1.toArray())
+        assertEquals(listOf("R2D2", "R2", "D2"), m1.asArray().asList())
         assertEquals(0, m1.index)
         assertEquals(4, re.lastIndex)
 
         val m2 = re.exec(string)!!
-        assertEquals(arrayOf("A5D5", "A5", "D5"), m2.toArray())
+        assertEquals(listOf("A5D5", "A5", "D5"), m2.asArray().asList())
         assertEquals(string.indexOf(m2[0]!!), m2.index)
 
         val noMatch = re.exec(string)
         assertEquals(null, noMatch)
         assertEquals(0, re.lastIndex)
-    }
-
-    fun RegExpMatch.toArray(): Array<out String?> {
-        val array = arrayOfNulls<String>(length)
-        array.indices.forEach { array[it] = this[it] }
-        return array
     }
 }
