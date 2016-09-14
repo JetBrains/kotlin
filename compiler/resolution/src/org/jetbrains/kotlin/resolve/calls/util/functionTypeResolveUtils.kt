@@ -54,7 +54,7 @@ fun createFunctionType(
         parameterNames: List<Name>?,
         returnType: KotlinType
 ): SimpleType {
-    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
     val size = parameterTypes.size
     val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)
 
@@ -72,13 +72,7 @@ fun createFunctionType(
                 AnnotationsImpl(annotations + extensionFunctionAnnotation)
             }
 
-    val simpleType = KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
-    if (parameterNames == null || parameterNames.all { it.isSpecial }) {
-        return simpleType
-    }
-    else {
-        return FunctionType(simpleType, parameterNames)
-    }
+    return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
 }
 
 fun getValueParametersCountFromFunctionType(type: KotlinType): Int {

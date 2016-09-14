@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
@@ -47,6 +48,13 @@ class FunctionInvokeDescriptor private constructor(
 
     override fun hasSynthesizedParameterNames(): Boolean = hasSynthesizedParameterNames
 
+    override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
+        val substituted = super.doSubstitute(configuration) as FunctionInvokeDescriptor? ?: return null
+        if (substituted.valueParameters.none { it.type.extractParameterNameFromFunctionTypeArgument() != null }) return substituted
+        val parameterNames = substituted.valueParameters.map { it.type.extractParameterNameFromFunctionTypeArgument() }
+        return substituted.replaceParameterNames(parameterNames)
+    }
+
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
@@ -64,11 +72,11 @@ class FunctionInvokeDescriptor private constructor(
 
     override fun isTailrec(): Boolean = false
 
-    fun replaceParameterNames(parameterNames: List<Name>): FunctionInvokeDescriptor {
+    private fun replaceParameterNames(parameterNames: List<Name?>): FunctionInvokeDescriptor {
         val indexShift = valueParameters.size - parameterNames.size
         assert(indexShift == 0 || indexShift == 1) // indexShift == 1 for extension function type
 
-        val hasSynthesizedParameterNames = parameterNames.any { it.isSpecial }
+        val hasSynthesizedParameterNames = parameterNames.any { it == null }
         val newDescriptor = FunctionInvokeDescriptor(containingDeclaration, this, kind, hasSynthesizedParameterNames)
         val newValueParameters = valueParameters.map {
             var newName = it.name
@@ -76,7 +84,7 @@ class FunctionInvokeDescriptor private constructor(
             val nameIndex = parameterIndex - indexShift
             if (nameIndex >= 0) {
                 val parameterName = parameterNames[nameIndex]
-                if (!parameterName.isSpecial) {
+                if (parameterName != null) {
                     newName = parameterName
                 }
             }

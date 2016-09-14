@@ -72,6 +72,13 @@ public enum class DeprecationLevel {
 public annotation class ExtensionFunctionType
 
 /**
+ * Annotates type arguments of functional type and holds corresponding parameter name specified by the user in type declaration (if any).
+ */
+@Target(TYPE_PARAMETER)
+@MustBeDocumented
+public annotation class ParameterName(val name: String)
+
+/**
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */

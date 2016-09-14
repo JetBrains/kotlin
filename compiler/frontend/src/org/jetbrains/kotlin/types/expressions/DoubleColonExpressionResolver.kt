@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
@@ -534,8 +536,10 @@ class DoubleColonExpressionResolver(
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     val returnType = descriptor.returnType ?: return null
-                    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
-                    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
+                    val parametersTypes = descriptor.valueParameters.map { it.type }
+                    val parametersNames = descriptor.valueParameters.map { it.name }
+                    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType,
+                                                            parametersTypes, parametersNames, returnType, descriptor.builtIns)
                 }
                 is PropertyDescriptor -> {
                     val mutable = descriptor.isVar && run {

@@ -181,7 +181,7 @@ class CallCompleter(
                 if (call.isCallableReference()) {
                     // TODO: compute generic type argument for R in the kotlin.Function<R> supertype (KT-12963)
                     // TODO: also add constraints for parameter types (KT-12964)
-                    if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) getReturnTypeFromFunctionType(expectedType)
+                    if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) expectedType.getReturnTypeFromFunctionType()
                     else TypeUtils.NO_EXPECTED_TYPE
                 }
                 else expectedType

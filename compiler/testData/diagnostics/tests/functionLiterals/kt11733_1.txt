@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.CharSequence!> Predicate(/*0*/ function: (T) -> kotlin.Boolean): Predicate<T>
+public /*synthesized*/ fun </*0*/ T : kotlin.CharSequence!> Predicate(/*0*/ function: (t: @kotlin.ParameterName(name = "t") T) -> kotlin.Boolean): Predicate<T>
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 public fun process(/*0*/ x: Predicate<kotlin.String>): kotlin.Unit
 

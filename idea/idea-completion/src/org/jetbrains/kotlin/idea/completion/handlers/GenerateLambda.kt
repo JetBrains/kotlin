@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -33,8 +34,6 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
@@ -42,8 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFuncti
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.getParameterNamesFromFunctionType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -74,10 +71,10 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
 fun lambdaPresentation(lambdaType: KotlinType?): String {
     if (lambdaType == null) return "{...}"
-    val (parameterTypes, parameterNames) = functionParameterTypesAndNames(lambdaType)
-    val parametersPresentation = parameterNames
-            .mapIndexed { index, name ->
-                name.check { !it.isSpecial } ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterTypes[index])
+    val parameterTypes = functionParameterTypes(lambdaType)
+    val parametersPresentation = parameterTypes
+            .map {
+                it.extractParameterNameFromFunctionTypeArgument() ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it)
             }
             .joinToString(", ")
     return "{ $parametersPresentation -> ... }"
@@ -104,7 +101,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
-    val (parameterTypes, parameterNames) = functionParameterTypesAndNames(lambdaType)
+    val parameterTypes = functionParameterTypes(lambdaType)
 
     val manager = TemplateManager.getInstance(project)
 
@@ -118,7 +115,7 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
             template.addTextSegment(", ")
         }
         //TODO: check for names in scope
-        val parameterName = parameterNames[i].check { !it.isSpecial }?.render()
+        val parameterName = parameterType.extractParameterNameFromFunctionTypeArgument()?.render()
         val nameExpression =  if (parameterName != null) {
             object : Expression() {
                 override fun calculateResult(context: ExpressionContext?) = TextResult(parameterName)
@@ -148,9 +145,6 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
     return template
 }
 
-private fun functionParameterTypesAndNames(functionType: KotlinType): Pair<List<KotlinType>, List<Name>> {
-    val types = getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)
-    val names = functionType.getParameterNamesFromFunctionType() ?: types.map { SpecialNames.NO_NAME_PROVIDED }
-    assert(names.size == types.size) { "Number of names does not match number of types for $functionType"}
-    return types to names
+private fun functionParameterTypes(functionType: KotlinType): List<KotlinType> {
+    return functionType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType)
 }

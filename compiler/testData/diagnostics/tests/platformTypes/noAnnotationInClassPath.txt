@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (T?) -> kotlin.Boolean): A<T>
+public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (y: @kotlin.ParameterName(name = "y") T?) -> kotlin.Boolean): A<T>
 public fun test(): kotlin.Unit
 
 public interface A</*0*/ T : kotlin.Any!> {
@@ -17,6 +17,6 @@ public open class B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ fun bar(/*0*/ y: ((kotlin.String?) -> kotlin.Boolean)!): kotlin.Unit
+    public final /*synthesized*/ fun bar(/*0*/ y: ((y: @kotlin.ParameterName(name = "y") kotlin.String?) -> kotlin.Boolean)!): kotlin.Unit
     public open fun bar(/*0*/ y: A<kotlin.String!>!): kotlin.Unit
 }

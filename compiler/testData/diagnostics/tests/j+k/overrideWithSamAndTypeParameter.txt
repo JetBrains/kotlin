@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ K : kotlin.Any!> A(/*0*/ function: (K!, MyFunc!) -> K!): A<K>
+public /*synthesized*/ fun </*0*/ K : kotlin.Any!> A(/*0*/ function: (key: @kotlin.ParameterName(name = "key") K!, MyFunc!) -> K!): A<K>
 public /*synthesized*/ fun MyFunc(/*0*/ function: (x: kotlin.String!) -> kotlin.String!): MyFunc
 public fun main(): kotlin.Unit
 

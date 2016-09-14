@@ -69,7 +69,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                 // For lambda parameter with receiver, conversion is not allowed
                 if (lambdaParameterType.isExtensionFunctionType) return false
                 // Special Unit case (non-Unit returning lambda is accepted here, but non-Unit returning reference is not)
-                lambdaMustReturnUnit = getReturnTypeFromFunctionType(lambdaParameterType).isUnit()
+                lambdaMustReturnUnit = lambdaParameterType.getReturnTypeFromFunctionType().isUnit()
             }
         }
         val context = statement.analyze()

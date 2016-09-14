@@ -295,7 +295,7 @@ internal class DescriptorRendererImpl(
         val isNullable = type.isMarkedNullable
         if (isNullable) append("(")
 
-        val receiverType = getReceiverTypeFromFunctionType(type)
+        val receiverType = type.getReceiverTypeFromFunctionType()
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
             if (surroundReceiver) {
@@ -309,17 +309,13 @@ internal class DescriptorRendererImpl(
         }
 
         append("(")
-        val parameterTypes = getValueParameterTypesFromFunctionType(type)
-        val parameterNames = if (parameterNamesInFunctionalTypes) type.getParameterNamesFromFunctionType() else null
-        assert(parameterNames == null || parameterNames.size == parameterTypes.size) { "Number of names does not match number of types for $type"}
 
-        for (index in parameterTypes.indices) {
-            val typeProjection = parameterTypes[index]
-            val name = parameterNames?.get(index)
-
+        val parameterTypes = type.getValueParameterTypesFromFunctionType()
+        for ((index, typeProjection) in parameterTypes.withIndex()) {
             if (index > 0) append(", ")
 
-            if (name != null && !name.isSpecial) {
+            val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
+            if (name != null) {
                 append(renderName(name))
                 append(": ")
             }
@@ -327,7 +323,7 @@ internal class DescriptorRendererImpl(
         }
 
         append(") ").append(arrow()).append(" ")
-        renderNormalizedType(getReturnTypeFromFunctionType(type))
+        renderNormalizedType(type.getReturnTypeFromFunctionType())
 
         if (isNullable) append(")?")
     }

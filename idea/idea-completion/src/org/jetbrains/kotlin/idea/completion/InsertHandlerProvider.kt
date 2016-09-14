@@ -100,7 +100,7 @@ class InsertHandlerProvider(
 
             if (type.isFunctionType && getValueParametersCountFromFunctionType(type) <= 1) {
                 // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
-                addPotentiallyInferred(getReturnTypeFromFunctionType(type))
+                addPotentiallyInferred(type.getReturnTypeFromFunctionType())
                 return
             }
 

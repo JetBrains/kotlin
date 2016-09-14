@@ -571,6 +571,12 @@ public abstract class Number : kotlin.Any, java.io.Serializable {
     public abstract fun toShort(): kotlin.Short
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) @kotlin.annotation.MustBeDocumented() public final annotation class ParameterName : kotlin.Annotation {
+    /*primary*/ public constructor ParameterName(/*0*/ name: kotlin.String)
+    public final val name: kotlin.String
+        public final fun <get-name>(): kotlin.String
+}
+
 @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() public final annotation class ReplaceWith : kotlin.Annotation {
     /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val expression: kotlin.String

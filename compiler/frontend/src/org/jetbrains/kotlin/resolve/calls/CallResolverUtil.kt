@@ -174,7 +174,7 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
             argument.getArgumentExpression() is KtLambdaExpression &&
             parameterDescriptor.type.isExtensionFunctionType
     ) {
-        val receiverType = getReceiverTypeFromFunctionType(parameterDescriptor.type)!!
+        val receiverType = parameterDescriptor.type.getReceiverTypeFromFunctionType()!!
 
         val newExpectedLambdaReturnType =
                 receiverType.memberScope

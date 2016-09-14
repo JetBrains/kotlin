@@ -47,18 +47,18 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
                 .filter(KotlinType::isFunctionType)
                 .mapNotNull {
-                    val expectedReceiverType = getReceiverTypeFromFunctionType(it)
+                    val expectedReceiverType = it.getReceiverTypeFromFunctionType()
                     val receiverExpression = element.receiverExpression
                     val qualifierType = (context.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) as? DoubleColonLHS.Type)?.type
                     val receiverTypeInfo = qualifierType?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo.Empty
-                    val returnTypeInfo = TypeInfo(getReturnTypeFromFunctionType(it), Variance.OUT_VARIANCE)
+                    val returnTypeInfo = TypeInfo(it.getReturnTypeFromFunctionType(), Variance.OUT_VARIANCE)
                     val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull null }
                     val parameterInfos = SmartList<ParameterInfo>().apply {
                         if (receiverExpression == null && expectedReceiverType != null) {
                             add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
                         }
 
-                        getValueParameterTypesFromFunctionType(it)
+                        it.getValueParameterTypesFromFunctionType()
                                 .let {
                                     if (receiverExpression != null && expectedReceiverType == null && it.isNotEmpty())
                                         it.subList(1, it.size)

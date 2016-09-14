@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 val KotlinType.isFunctionTypeOrSubtype: Boolean
@@ -74,35 +77,65 @@ fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
     return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
 }
 
-fun getReceiverTypeFromFunctionType(type: KotlinType): KotlinType? {
-    assert(type.isFunctionType) { "Not a function type: $type" }
-    return if (type.isTypeAnnotatedWithExtensionFunctionType) type.arguments.first().type else null
+fun KotlinType.getReceiverTypeFromFunctionType(): KotlinType? {
+    assert(isFunctionType) { "Not a function type: ${this}" }
+    return if (isTypeAnnotatedWithExtensionFunctionType) arguments.first().type else null
 }
 
-fun getReturnTypeFromFunctionType(type: KotlinType): KotlinType {
-    assert(type.isFunctionType) { "Not a function type: $type" }
-    return type.arguments.last().type
+fun KotlinType.getReturnTypeFromFunctionType(): KotlinType {
+    assert(isFunctionType) { "Not a function type: ${this}" }
+    return arguments.last().type
 }
 
-fun getValueParameterTypesFromFunctionType(type: KotlinType): List<TypeProjection> {
-    assert(type.isFunctionType) { "Not a function type: $type" }
-    val arguments = type.arguments
-    val first = if (type.isExtensionFunctionType) 1 else 0
+fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
+    assert(isFunctionType) { "Not a function type: ${this}" }
+    val arguments = arguments
+    val first = if (isExtensionFunctionType) 1 else 0
     val last = arguments.size - 1
-    assert(first <= last) { "Not an exact function type: $type" }
+    assert(first <= last) { "Not an exact function type: ${this}" }
     return arguments.subList(first, last)
+}
+
+fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {
+    val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return null
+    val name = (annotation.allValueArguments.values.singleOrNull() as? StringValue)
+                       ?.value
+                       ?.check { Name.isValidIdentifier(it) }
+               ?: return null
+    return Name.identifier(name)
 }
 
 fun getFunctionTypeArgumentProjections(
         receiverType: KotlinType?,
         parameterTypes: List<KotlinType>,
-        returnType: KotlinType
+        parameterNames: List<Name>?,
+        returnType: KotlinType,
+        builtIns: KotlinBuiltIns
 ): List<TypeProjection> {
     fun KotlinType.defaultProjection() = TypeProjectionImpl(Variance.INVARIANT, this)
 
     val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
     receiverType?.let { arguments.add(it.defaultProjection()) }
-    parameterTypes.mapTo(arguments, KotlinType::defaultProjection)
+    parameterTypes.mapIndexedTo(arguments) { index, type ->
+        val name = parameterNames?.get(index)?.check { !it.isSpecial }
+        val typeToUse = if (name != null) {
+            val annotationClass = builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.parameterName.shortName())
+            val nameValue = ConstantValueFactory(builtIns).createStringValue(name.asString())
+            val parameterNameAnnotation = AnnotationDescriptorImpl(
+                    annotationClass.defaultType,
+                    mapOf(annotationClass.unsubstitutedPrimaryConstructor!!.valueParameters.single() to nameValue),
+                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+            )
+            object : WrappedType() {
+                override val delegate = type
+                override val annotations = AnnotationsImpl(type.annotations + parameterNameAnnotation)
+            }
+        }
+        else {
+            type
+        }
+        typeToUse.defaultProjection()
+    }
     arguments.add(returnType.defaultProjection())
     return arguments
 }
