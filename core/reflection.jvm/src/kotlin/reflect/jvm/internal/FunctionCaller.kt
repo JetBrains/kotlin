@@ -23,7 +23,7 @@ import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
-internal abstract class FunctionCaller<out M : Member>(
+internal abstract class FunctionCaller<out M : Member?>(
         internal val member: M,
         internal val returnType: Type,
         internal val instanceClass: Class<*>?,
@@ -45,7 +45,7 @@ internal abstract class FunctionCaller<out M : Member>(
     }
 
     protected fun checkObjectInstance(obj: Any?) {
-        if (obj == null || !member.declaringClass.isInstance(obj)) {
+        if (obj == null || !member!!.declaringClass.isInstance(obj)) {
             throw IllegalArgumentException("An object member requires the object instance passed as the first argument.")
         }
     }

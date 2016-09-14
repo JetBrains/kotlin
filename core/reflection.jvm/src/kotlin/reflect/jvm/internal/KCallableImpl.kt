@@ -27,8 +27,10 @@ import kotlin.reflect.jvm.javaType
 internal abstract class KCallableImpl<out R> : KCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
+    // The instance which is used to perform a positional call, i.e. `call`
     abstract val caller: FunctionCaller<*>
 
+    // The instance which is used to perform a call "by name", i.e. `callBy`
     abstract val defaultCaller: FunctionCaller<*>?
 
     abstract val container: KDeclarationContainerImpl
@@ -94,7 +96,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
     override val isAbstract: Boolean
         get() = descriptor.modality == Modality.ABSTRACT
 
-    private val isAnnotationConstructor: Boolean
+    protected val isAnnotationConstructor: Boolean
         get() = name == "<init>" && container.jClass.isAnnotation
 
     @Suppress("UNCHECKED_CAST")
@@ -102,8 +104,12 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         return caller.call(args) as R
     }
 
-    // See ArgumentGenerator#generate
     override fun callBy(args: Map<KParameter, Any?>): R {
+        return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args)
+    }
+
+    // See ArgumentGenerator#generate
+    private fun callDefaultMethod(args: Map<KParameter, Any?>): R {
         val parameters = parameters
         val arguments = ArrayList<Any?>(parameters.size)
         var mask = 0
@@ -146,6 +152,25 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
         // DefaultConstructorMarker or MethodHandle
         arguments.add(null)
+
+        @Suppress("UNCHECKED_CAST")
+        return reflectionCall {
+            caller.call(arguments.toTypedArray()) as R
+        }
+    }
+
+    private fun callAnnotationConstructor(args: Map<KParameter, Any?>): R {
+        val arguments = parameters.map { parameter ->
+            when {
+                args.containsKey(parameter) -> {
+                    args[parameter] ?: throw IllegalArgumentException("Annotation argument value cannot be null ($parameter)")
+                }
+                parameter.isOptional -> null
+                else -> throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
+            }
+        }
+
+        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
 
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {

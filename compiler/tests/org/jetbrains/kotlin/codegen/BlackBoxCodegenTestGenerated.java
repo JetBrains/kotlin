@@ -12111,6 +12111,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotationClass.kt")
+            public void testAnnotationClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/constructors/annotationClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classesWithoutConstructors.kt")
             public void testClassesWithoutConstructors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/constructors/classesWithoutConstructors.kt");
@@ -12132,6 +12138,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("simpleGetConstructors.kt")
             public void testSimpleGetConstructors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/constructors/simpleGetConstructors.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateAnnotation extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInCreateAnnotation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("arrayOfKClasses.kt")
+            public void testArrayOfKClasses() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/arrayOfKClasses.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callByKotlin.kt")
+            public void testCallByKotlin() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callByKotlin.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callKotlin.kt")
+            public void testCallKotlin() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callKotlin.kt");
                 doTest(fileName);
             }
         }
@@ -12612,6 +12645,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public static class Types extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInTypes() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("annotationConstructorParameters.kt")
+                public void testAnnotationConstructorParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/annotationConstructorParameters.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("array.kt")
