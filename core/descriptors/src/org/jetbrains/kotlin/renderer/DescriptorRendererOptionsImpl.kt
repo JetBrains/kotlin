@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
+import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.PropertyReference1Impl
 import kotlin.properties.Delegates
@@ -103,4 +104,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var renderUnabbreviatedType: Boolean by property(true)
 
     override var includeAdditionalModifiers: Boolean by property(true)
+
+    override var parameterNamesInFunctionalTypes: Boolean by property(true)
 }

@@ -193,6 +193,7 @@ interface DescriptorRendererOptions {
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
+    var parameterNamesInFunctionalTypes: Boolean
 }
 
 object ExcludedTypeAnnotations {
