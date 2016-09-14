@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jansi">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../kotlin-ir/dependencies/jansi.jar" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../kotlin-ir/dependencies/jansi-sources.jar" />
+    </SOURCES>
+  </library>
+</component>
