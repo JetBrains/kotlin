@@ -18,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/js/js.inliner/js.inliner.iml" filepath="$PROJECT_DIR$/../kotlin-ir/js/js.inliner/js.inliner.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/js/js.parser/js.parser.iml" filepath="$PROJECT_DIR$/../kotlin-ir/js/js.parser/js.parser.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/js/js.serializer/js.serializer.iml" filepath="$PROJECT_DIR$/../kotlin-ir/js/js.serializer/js.serializer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/../kotlin-ir/js/js.translator/js.translator.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/../kotlin-ir/compiler/light-classes/light-classes.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/../kotlin-ir/compiler/plugin-api/plugin-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/../kotlin-ir/compiler/resolution/resolution.iml" filepath="$PROJECT_DIR$/../kotlin-ir/compiler/resolution/resolution.iml" />
