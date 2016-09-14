@@ -62,9 +62,10 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
     }
 
     private fun applyTo(declaration: KtDeclarationWithBody, deleteTypeHandler: ((KtCallableDeclaration) -> Unit)?) {
-        val value = calcValue(declaration)!!
+        val block = declaration.blockExpression() ?: return
+        val value = calcValue(block)!!
 
-        if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction) {
+        if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && block.statements.isNotEmpty()) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
                 declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
@@ -87,13 +88,24 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
         }
     }
 
-    private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
-        if (declaration is KtFunctionLiteral) return null
-        val body = declaration.bodyExpression
-        if (!declaration.hasBlockBody() || body !is KtBlockExpression) return null
+    private fun KtDeclarationWithBody.blockExpression() = when (this) {
+        is KtFunctionLiteral -> null
+        else -> {
+            val body = bodyExpression
+            if (!hasBlockBody() || body !is KtBlockExpression) null else body
+        }
+    }
 
-        val statement = body.statements.singleOrNull() ?: return null
-        when(statement) {
+    private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
+        val body = declaration.blockExpression() ?: return null
+        return calcValue(body)
+    }
+
+    private fun calcValue(body: KtBlockExpression): KtExpression? {
+        val bodyStatements = body.statements
+        if (bodyStatements.isEmpty()) return KtPsiFactory(body).createExpression("Unit")
+        val statement = bodyStatements.singleOrNull() ?: return null
+        when (statement) {
             is KtReturnExpression -> {
                 return statement.returnedExpression
             }
@@ -101,7 +113,7 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
             //TODO: IMO this is not good code, there should be a way to detect that JetExpression does not have value
             is KtDeclaration, is KtLoopExpression -> return null // is JetExpression but does not have value
 
-            else  -> {
+            else -> {
                 if (statement is KtBinaryExpression && statement.operationToken in KtTokens.ALL_ASSIGNMENTS) return null // assignment does not have value
 
                 val context = statement.analyze()
@@ -113,7 +125,7 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
                         return null
                     }
                     val resultingWhens = statement.resultingWhens()
-                    if (resultingWhens.any { it.elseExpression == null && context.get(BindingContext.EXHAUSTIVE_WHEN, it) != true}) {
+                    if (resultingWhens.any { it.elseExpression == null && context.get(BindingContext.EXHAUSTIVE_WHEN, it) != true }) {
                         return null
                     }
                 }

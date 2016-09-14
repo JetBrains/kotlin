@@ -4615,9 +4615,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("funWithCustomUnitClass.kt")
+        public void testFunWithCustomUnitClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/funWithCustomUnitClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("funWithThrow.kt")
         public void testFunWithThrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/funWithThrow.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("funWithUnit.kt")
+        public void testFunWithUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/funWithUnit.kt");
             doTest(fileName);
         }
 
@@ -4930,6 +4942,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("expressionWithReturns2.kt")
         public void testExpressionWithReturns2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/expressionWithReturns2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("funWithEmptyBody.kt")
+        public void testFunWithEmptyBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/funWithEmptyBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("funWithEmptyBody2.kt")
+        public void testFunWithEmptyBody2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/funWithEmptyBody2.kt");
             doTest(fileName);
         }
 
