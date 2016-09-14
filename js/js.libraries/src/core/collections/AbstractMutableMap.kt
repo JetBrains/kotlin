@@ -52,6 +52,7 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
     override val keys: MutableSet<K> get() {
         if (_keys == null) {
             _keys = object : AbstractMutableSet<K>() {
+                override fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on keys")
                 override fun clear() {
                     this@AbstractMutableMap.clear()
                 }
@@ -81,9 +82,7 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
         return _keys!!
     }
 
-    override fun put(key: K, value: V): V? {
-        throw UnsupportedOperationException("Put not supported on this map")
-    }
+    abstract override fun put(key: K, value: V): V?
 
     override fun putAll(from: Map<out K, V>) {
         for ((key, value) in from) {
@@ -95,6 +94,7 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
     override val values: MutableCollection<V> get() {
         if (_values == null) {
             _values = object : AbstractMutableCollection<V>() {
+                override fun add(element: V): Boolean = throw UnsupportedOperationException("Add is not supported on values")
                 override fun clear() = this@AbstractMutableMap.clear()
 
                 override operator fun contains(element: V): Boolean = containsValue(element)

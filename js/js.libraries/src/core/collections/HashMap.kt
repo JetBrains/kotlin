@@ -27,6 +27,7 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 
     private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
 
+        override fun add(element: MutableEntry<K, V>): Boolean = throw UnsupportedOperationException("Add is not supported on entries")
         override fun clear() {
             this@HashMap.clear()
         }

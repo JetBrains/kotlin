@@ -149,6 +149,42 @@ public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm
 	public final fun values ()Ljava/util/Collection;
 }
 
+public abstract class kotlin/collections/AbstractMutableCollection : java/util/AbstractCollection {
+	protected fun <init> ()V
+	public abstract fun add (Ljava/lang/Object;)Z
+	public abstract fun getSize ()I
+	public final fun size ()I
+}
+
+public abstract class kotlin/collections/AbstractMutableList : java/util/AbstractList {
+	protected fun <init> ()V
+	public abstract fun add (ILjava/lang/Object;)V
+	public abstract fun getSize ()I
+	public final fun remove (I)Ljava/lang/Object;
+	public abstract fun removeAt (I)Ljava/lang/Object;
+	public abstract fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun size ()I
+}
+
+public abstract class kotlin/collections/AbstractMutableMap : java/util/AbstractMap {
+	protected fun <init> ()V
+	public final fun entrySet ()Ljava/util/Set;
+	public abstract fun getEntries ()Ljava/util/Set;
+	public fun getKeys ()Ljava/util/Set;
+	public fun getSize ()I
+	public fun getValues ()Ljava/util/Collection;
+	public final fun keySet ()Ljava/util/Set;
+	public abstract fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun size ()I
+	public final fun values ()Ljava/util/Collection;
+}
+
+public abstract class kotlin/collections/AbstractMutableSet : java/util/AbstractSet {
+	protected fun <init> ()V
+	public abstract fun getSize ()I
+	public final fun size ()I
+}
+
 public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/collections/AbstractSet$Companion;
 	protected fun <init> ()V

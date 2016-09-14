@@ -24,9 +24,9 @@ package kotlin.collections
 public abstract class AbstractMutableList<E> protected constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     protected var modCount: Int = 0
 
-    override fun add(index: Int, element: E): Unit = throw UnsupportedOperationException("Add not supported on this list")
-    override fun removeAt(index: Int): E = throw UnsupportedOperationException("Remove not supported on this list")
-    override fun set(index: Int, element: E): E = throw UnsupportedOperationException("Set not supported on this list")
+    abstract override fun add(index: Int, element: E): Unit
+    abstract override fun removeAt(index: Int): E
+    abstract override fun set(index: Int, element: E): E
 
     override fun add(element: E): Boolean {
         add(size, element)

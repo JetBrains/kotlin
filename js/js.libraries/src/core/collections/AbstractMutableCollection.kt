@@ -19,7 +19,7 @@ package kotlin.collections
 
 public abstract class AbstractMutableCollection<E> protected constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
-    override fun add(element: E): Boolean = throw UnsupportedOperationException("Add not supported on this collection")
+    abstract override fun add(element: E): Boolean
 
     override fun remove(element: E): Boolean {
         val iterator = iterator()

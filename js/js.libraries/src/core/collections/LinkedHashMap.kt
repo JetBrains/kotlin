@@ -80,6 +80,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
             }
         }
 
+        override fun add(element: MutableEntry<K, V>): Boolean = throw UnsupportedOperationException("Add is not supported on entries")
         override fun clear() {
             this@LinkedHashMap.clear()
         }
