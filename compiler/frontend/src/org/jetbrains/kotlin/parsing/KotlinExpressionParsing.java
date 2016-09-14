@@ -1054,20 +1054,18 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advance(); // ARROW
             paramsFound = true;
         }
-        else {
-            if (at(IDENTIFIER) || at(COLON)) {
-                // Try to parse a simple name list followed by an ARROW
-                //   {a -> ...}
-                //   {a, b -> ...}
-                PsiBuilder.Marker rollbackMarker = mark();
-                IElementType nextToken = lookahead(1);
-                boolean preferParamsToExpressions = (nextToken == COMMA || nextToken == COLON);
-                parseFunctionLiteralShorthandParameterList();
+        else if (at(IDENTIFIER) || at(COLON)) {
+            // Try to parse a simple name list followed by an ARROW
+            //   {a -> ...}
+            //   {a, b -> ...}
+            PsiBuilder.Marker rollbackMarker = mark();
+            IElementType nextToken = lookahead(1);
+            boolean preferParamsToExpressions = (nextToken == COMMA || nextToken == COLON);
+            parseFunctionLiteralParameterList();
 
-                paramsFound = preferParamsToExpressions ?
-                              rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
-                              rollbackOrDropAt(rollbackMarker, ARROW);
-            }
+            paramsFound = preferParamsToExpressions ?
+                          rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+                          rollbackOrDropAt(rollbackMarker, ARROW);
         }
 
         if (!paramsFound && preferBlock) {
@@ -1148,14 +1146,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * (SimpleName (":" type)?){","}
      */
-    private void parseFunctionLiteralShorthandParameterList() {
+    private void parseFunctionLiteralParameterList() {
         PsiBuilder.Marker parameterList = mark();
 
         while (!eof()) {
             PsiBuilder.Marker parameter = mark();
-
-            //            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
-            //            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
 
             if (at(COLON)) {
                 error("Expecting parameter name");
