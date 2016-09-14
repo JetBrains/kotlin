@@ -202,7 +202,12 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                     }
                 }
 
-                addCallToSuperMethod(arguments, initializer);
+                if (superDescriptor.isPrimary()) {
+                    addCallToSuperMethod(arguments, initializer);
+                }
+                else {
+                    addCallToSuperSecondaryConstructor(arguments, superDescriptor);
+                }
             }
         }
     }
@@ -216,6 +221,14 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(initializer.getName())));
         call.getArguments().add(JsLiteral.THIS);
         call.getArguments().addAll(arguments);
+        initFunction.getBody().getStatements().add(call.makeStmt());
+    }
+
+    private void addCallToSuperSecondaryConstructor(@NotNull List<JsExpression> arguments, @NotNull ConstructorDescriptor descriptor) {
+        JsExpression reference = context.getQualifiedReference(descriptor);
+        JsInvocation call = new JsInvocation(reference);
+        call.getArguments().addAll(arguments);
+        call.getArguments().add(JsLiteral.THIS);
         initFunction.getBody().getStatements().add(call.makeStmt());
     }
 
