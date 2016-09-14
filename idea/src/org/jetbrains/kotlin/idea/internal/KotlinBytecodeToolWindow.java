@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.java.decompiler.IdeaLogger;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.backend.jvm.JvmBackendFacade;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
@@ -132,7 +133,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8);
             }
 
-            return getBytecodeForFile(ktFile, configuration);
+            return getBytecodeForFile(ktFile, configuration, ir.isSelected());
         }
 
         @Override
@@ -181,6 +182,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final JCheckBox enableAssertions;
     private final JButton decompile;
     private final JCheckBox jvm8Target;
+    private final JCheckBox ir;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -220,9 +222,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         enableOptimization = new JCheckBox("Optimization", true);
         enableAssertions = new JCheckBox("Assertions", true);
         jvm8Target = new JCheckBox("JVM 8 target", false);
+        ir = new JCheckBox("IR", true);
         optionPanel.add(enableInline);
         optionPanel.add(enableOptimization);
         optionPanel.add(enableAssertions);
+        optionPanel.add(ir);
         optionPanel.add(jvm8Target);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
@@ -237,10 +241,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     // public for tests
     @NotNull
-    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration) {
+    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration, boolean newIRGenerator) {
         GenerationState state;
         try {
-            state = compileSingleFile(ktFile, configuration);
+            state = compileSingleFile(ktFile, configuration, newIRGenerator);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -278,7 +282,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     }
 
     @NotNull
-    public static GenerationState compileSingleFile(@NotNull final KtFile ktFile, @NotNull CompilerConfiguration configuration) {
+    public static GenerationState compileSingleFile(
+            @NotNull final KtFile ktFile,
+            @NotNull CompilerConfiguration configuration,
+            boolean newIRGenerator
+    ) {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(ktFile);
 
         BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(ktFile)).getBindingContext();
@@ -316,7 +324,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
                 configuration, generateClassFilter
         );
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        if (newIRGenerator) {
+            JvmBackendFacade.INSTANCE.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        } else {
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        }
         return state;
     }
 
