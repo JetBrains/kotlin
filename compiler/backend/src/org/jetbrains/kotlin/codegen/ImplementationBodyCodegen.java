@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -91,8 +92,8 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
     private Type superClassAsmType;
-    @Nullable // null means java/lang/Object
-    private KotlinType superClassType;
+    @NotNull
+    private SuperClassInfo superClassInfo;
     private final Type classAsmType;
     private final boolean isLocal;
 
@@ -285,17 +286,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @NotNull
     private JvmClassSignature signature() {
+        return signature(descriptor, classAsmType, superClassInfo, typeMapper);
+    }
+
+    @NotNull
+    public static JvmClassSignature signature(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull Type classAsmType,
+            @NotNull SuperClassInfo superClassInfo,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
         typeMapper.writeFormalTypeParameters(descriptor.getDeclaredTypeParameters(), sw);
 
         sw.writeSuperclass();
-        if (superClassType == null) {
-            sw.writeClassBegin(superClassAsmType);
+        if (superClassInfo.getKotlinType() == null) {
+            sw.writeClassBegin(superClassInfo.getType());
             sw.writeClassEnd();
         }
         else {
-            typeMapper.mapSupertype(superClassType, sw);
+            typeMapper.mapSupertype(superClassInfo.getKotlinType(), sw);
         }
         sw.writeSuperclassEnd();
 
@@ -326,26 +337,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         superInterfaces.addAll(kotlinMarkerInterfaces);
 
-        return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
+        return new JvmClassSignature(classAsmType.getInternalName(), superClassInfo.getType().getInternalName(),
                                      new ArrayList<String>(superInterfaces), sw.makeJavaGenericSignature());
     }
 
-    protected void getSuperClass() {
-        superClassAsmType = OBJECT_TYPE;
-        superClassType = null;
-
-        if (descriptor.getKind() == ClassKind.INTERFACE) {
-            return;
-        }
-
-        for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
-            if (superClass != null && !isJvmInterface(superClass)) {
-                superClassAsmType = typeMapper.mapClass(superClass);
-                superClassType = supertype;
-                return;
-            }
-        }
+    private void getSuperClass() {
+        superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper);
+        superClassAsmType = superClassInfo.getType();
     }
 
     @Override
