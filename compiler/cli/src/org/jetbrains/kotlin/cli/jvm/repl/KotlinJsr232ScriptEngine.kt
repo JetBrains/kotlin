@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.Reader
@@ -72,20 +74,24 @@ class KotlinJsr232ScriptEngine(
 
     private val repl = object : GenericRepl(disposable, scriptDefinition, compilerConfiguration, messageCollector) {}
 
-    private var lineCount = 0L
+    private var lineCount = 0
+
+    private val history = arrayListOf<ReplCodeLine>()
 
     override fun eval(script: String, context: ScriptContext?): Any? {
         lineCount += 1
         // TODO bind to context
-        val evalResult = repl.eval(lineCount, script)
+        val codeLine = ReplCodeLine(lineCount, script)
+        val evalResult = repl.eval(codeLine, history)
         messageCollector.resetAndThrowOnErrors()
         val ret = when (evalResult) {
-            is GenericRepl.EvalResult.ValueResult -> evalResult.value
-            is GenericRepl.EvalResult.UnitResult -> null
-            is GenericRepl.EvalResult.Error -> throw ScriptException(evalResult.errorText)
-            is GenericRepl.EvalResult.Incomplete -> throw ScriptException("error: incomplete code")
-            else -> throw ScriptException("Unexpected result from eval call: $evalResult")
+            is ReplEvalResult.ValueResult -> evalResult.value
+            is ReplEvalResult.UnitResult -> null
+            is ReplEvalResult.Error -> throw ScriptException(evalResult.message)
+            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${evalResult.lineNo}")
         }
+        history.add(codeLine)
         // TODO update context
         return ret
     }

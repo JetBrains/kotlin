@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
-import com.google.common.base.Throwables
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -26,6 +25,7 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -41,100 +41,97 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import org.jetbrains.kotlin.script.ScriptParameter
-import java.net.URLClassLoader
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
+import java.io.File
 
 private val logger = Logger.getInstance(GenericRepl::class.java)
 
-open class GenericRepl(
+open class GenericReplChecker(
         disposable: Disposable,
         val scriptDefinition: KotlinScriptDefinition,
         val compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
-) {
-    private val environment = run {
+) : ReplChecker {
+    protected val environment = run {
         compilerConfiguration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, DelegatingScriptDefWithNoParams(scriptDefinition))
         compilerConfiguration.put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-    private val analyzerEngine = CliReplAnalyzerEngine(environment)
+    protected val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
 
     // "line" - is the unit of evaluation here, could in fact consists of several character lines
-    private class LineState(
-            val code: String,
+    protected class LineState(
+            val codeLine: ReplCodeLine,
             val psiFile: KtFile,
             val errorHolder: DiagnosticMessageHolder)
 
-    sealed class EvalResult {
-        class ValueResult(val value: Any?): EvalResult()
-
-        object UnitResult: EvalResult()
-        object Ready: EvalResult()
-        object Incomplete : EvalResult()
-
-        sealed class Error(val errorText: String): EvalResult() {
-            class Runtime(errorText: String): Error(errorText)
-            class CompileTime(errorText: String): Error(errorText)
-        }
-    }
-
-    private class DelegatingScriptDefWithNoParams(parent: KotlinScriptDefinition) : KotlinScriptDefinition by parent {
+    protected class DelegatingScriptDefWithNoParams(parent: KotlinScriptDefinition) : KotlinScriptDefinition by parent {
         override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
     }
 
-    private var lineState: LineState? = null
+    protected var lineState: LineState? = null
 
-    private var lastDependencies: KotlinScriptExternalDependencies? = null
-
-    val classpath = compilerConfiguration.jvmClasspathRoots.toMutableList()
-
-    private var classLoader: ReplClassLoader =
-            ReplClassLoader(URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader))
-    private val classLoaderLock = ReentrantReadWriteLock()
-
-    private val earlierLines = arrayListOf<EarlierLine>()
+    val classpath: MutableList<File> = compilerConfiguration.jvmClasspathRoots.toMutableList()
 
     fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
-    fun checkComplete(executionNumber: Long, code: String): EvalResult {
+    override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
         synchronized(this) {
             val virtualFile =
-                    LightVirtualFile("line$executionNumber${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, code).apply {
+                    LightVirtualFile("line${codeLine.no}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
                         charset = CharsetToolkit.UTF8_CHARSET
                     }
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
-                                  ?: error("Script file not analyzed at line $executionNumber: $code")
+                                  ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
 
             val errorHolder = createDiagnosticHolder()
 
             val syntaxErrorReport = AnalyzerWithCompilerReport.Companion.reportSyntaxErrors(psiFile, errorHolder)
 
             if (!syntaxErrorReport.isHasErrors) {
-                lineState = LineState(code, psiFile, errorHolder)
+                lineState = LineState(codeLine, psiFile, errorHolder)
             }
 
             return when {
-                syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> EvalResult.Incomplete
-                syntaxErrorReport.isHasErrors -> EvalResult.Error.CompileTime(errorHolder.renderedDiagnostics)
-                else -> EvalResult.Ready
+                syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete
+                syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
+                else -> ReplCheckResult.Ok
             }
         }
     }
+}
 
-    fun eval(executionNumber: Long, code: String): EvalResult {
+
+abstract class GenericReplCompiler(
+        disposable: Disposable,
+        scriptDefinition: KotlinScriptDefinition,
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector
+) : ReplCompiler, GenericReplChecker(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
+    private val analyzerEngine = CliReplAnalyzerEngine(environment)
+
+    private var lastDependencies: KotlinScriptExternalDependencies? = null
+
+    private val descriptorsHistory = arrayListOf<Pair<ReplCodeLine, ScriptDescriptor>>()
+
+    override fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult {
         synchronized(this) {
+
+            checkAndUpdateReplHistoryCollection(descriptorsHistory, history)?.let {
+                return@compile ReplCompileResult.HistoryMismatch(it)
+            }
+
             val (psiFile, errorHolder) = run {
-                if (lineState == null || lineState!!.code != code) {
-                    val res = checkComplete(executionNumber, code)
-                    if (res != EvalResult.Ready) return@eval res
+                if (lineState == null || lineState!!.codeLine != codeLine) {
+                    val res = check(codeLine, history)
+                    when (res) {
+                        ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete
+                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message)
+                        ReplCheckResult.Ok -> {} // continue
+                    }
                 }
                 Pair(lineState!!.psiFile, lineState!!.errorHolder)
             }
@@ -145,20 +142,17 @@ open class GenericRepl(
                 val newCp = environment.updateClasspath(it.classpath.map(::JvmClasspathRoot))
                 if (newCp != null && newCp.isNotEmpty()) {
                     logger.debug("new dependencies: $newCp")
-                    classLoaderLock.write {
-                        classpath.addAll(newCp)
-                        classLoader = ReplClassLoader(URLClassLoader(newCp.map { it.toURI().toURL() }.toTypedArray(), classLoader))
-                    }
+                    dependenciesAdded(newCp)
                 }
             }
             if (lastDependencies != newDependencies) {
                 lastDependencies = newDependencies
             }
 
-            val analysisResult = analyzerEngine.analyzeReplLine(psiFile, executionNumber.toInt())
+            val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine.no)
             AnalyzerWithCompilerReport.Companion.reportDiagnostics(analysisResult.diagnostics, errorHolder, false)
             val scriptDescriptor = when (analysisResult) {
-                is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return EvalResult.Error.CompileTime(errorHolder.renderedDiagnostics)
+                is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderedDiagnostics)
                 is CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
                 else -> error("Unexpected result ${analysisResult.javaClass}")
             }
@@ -172,7 +166,7 @@ open class GenericRepl(
                     compilerConfiguration
             )
             state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
-            state.replSpecific.earlierScriptsForReplInterpreter = earlierLines.map(EarlierLine::getScriptDescriptor)
+            state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.map { it.second }
             state.beforeCompile()
             KotlinCodegenFacade.generatePackage(
                     state,
@@ -180,68 +174,44 @@ open class GenericRepl(
                     setOf(psiFile.script!!.getContainingKtFile()),
                     org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
-            for (outputFile in state.factory.asList()) {
-                if (outputFile.relativePath.endsWith(".class")) {
-                    classLoaderLock.read {
-                        classLoader.addClass(JvmClassName.byInternalName(outputFile.relativePath.replaceFirst("\\.class$".toRegex(), "")),
-                                             outputFile.asByteArray())
-                    }
-                }
-            }
+            descriptorsHistory.add(codeLine to scriptDescriptor)
 
-            try {
-                val scriptClass = classLoaderLock.read { classLoader.loadClass("Line$executionNumber") }
-
-                val constructorParams = earlierLines.map(EarlierLine::getScriptClass).toTypedArray()
-                val constructorArgs = earlierLines.map(EarlierLine::getScriptInstance).toTypedArray()
-
-                val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
-                val scriptInstance =
-                        try {
-                            evalWithIO { scriptInstanceConstructor.newInstance(*constructorArgs) }
-                        }
-                        catch (e: Throwable) {
-                            // ignore everything in the stack trace until this constructor call
-                            return EvalResult.Error.Runtime(renderStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"))
-                        }
-
-                val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
-                val rv: Any? = rvField.get(scriptInstance)
-
-                earlierLines.add(EarlierLine(code, scriptDescriptor, scriptClass, scriptInstance))
-
-                return if (state.replSpecific.hasResult) EvalResult.ValueResult(rv) else EvalResult.UnitResult
-            }
-            catch (e: Throwable) {
-                throw e
-            }
+            return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }, state.replSpecific.hasResult)
         }
     }
 
-    // override to capture output
-    open fun<T> evalWithIO(body: () -> T): T = body()
-
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
+    }
+}
 
-        private fun renderStackTrace(cause: Throwable, startFromMethodName: String): String {
-            val newTrace = arrayListOf<StackTraceElement>()
-            var skip = true
-            for ((i, element) in cause.stackTrace.withIndex().reversed()) {
-                if ("${element.className}.${element.methodName}" == startFromMethodName) {
-                    skip = false
-                }
-                if (!skip) {
-                    newTrace.add(element)
+
+open class GenericRepl(
+        disposable: Disposable,
+        scriptDefinition: KotlinScriptDefinition,
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector
+) : ReplEvaluator, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
+
+    private val compiledEvaluator = GenericReplCompiledEvaluator(classpath)
+
+    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
+        synchronized(this) {
+
+            val (compiledClasses, hasResult) = compile(codeLine, history).let {
+                when (it) {
+                    ReplCompileResult.Incomplete -> return@eval ReplEvalResult.Incomplete
+                    is ReplCompileResult.HistoryMismatch -> return@eval ReplEvalResult.HistoryMismatch(it.lineNo)
+                    is ReplCompileResult.Error -> return@eval ReplEvalResult.Error.CompileTime(it.message)
+                    is ReplCompileResult.CompiledClasses -> it.classes to it.hasResult
                 }
             }
 
-            val resultingTrace = newTrace.reversed().dropLast(1)
-
-            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
-            (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
-
-            return Throwables.getStackTraceAsString(cause)
+            return compiledEvaluator.eval(codeLine, history, compiledClasses, hasResult)
         }
+    }
+
+    override fun dependenciesAdded(classpath: List<File>) {
+        compiledEvaluator.dependenciesAdded(classpath)
     }
 }
