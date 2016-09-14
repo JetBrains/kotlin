@@ -42,9 +42,9 @@ private final data class BinaryOperationKey</*0*/ A, /*1*/ B> {
     public final operator /*synthesized*/ fun component2(): CompileTimeType<out B>
     public final operator /*synthesized*/ fun component3(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ f: CompileTimeType<out A> = ..., /*1*/ g: CompileTimeType<out B> = ..., /*2*/ functionName: kotlin.String = ...): BinaryOperationKey<A, B>
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 private final class CompileTimeType</*0*/ T> {
@@ -61,7 +61,7 @@ private final data class UnaryOperationKey</*0*/ A> {
     public final operator /*synthesized*/ fun component1(): CompileTimeType<out A>
     public final operator /*synthesized*/ fun component2(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ f: CompileTimeType<out A> = ..., /*1*/ functionName: kotlin.String = ...): UnaryOperationKey<A>
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }

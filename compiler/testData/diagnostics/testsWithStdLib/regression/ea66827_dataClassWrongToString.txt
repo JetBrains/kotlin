@@ -5,8 +5,8 @@ public final data class A {
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): A
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public final fun toArray(): kotlin.IntArray
     public open override /*1*/ fun toString(): kotlin.collections.List<kotlin.Int>
 }
