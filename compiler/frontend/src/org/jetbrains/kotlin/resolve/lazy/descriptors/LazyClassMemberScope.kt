@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import com.google.common.collect.Lists
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -129,16 +129,21 @@ open class LazyClassMemberScope(
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
         val location = NoLookupLocation.FOR_ALREADY_TRACKED
 
-        val fromSupertypes = Lists.newArrayList<SimpleFunctionDescriptor>()
+        val fromSupertypes = arrayListOf<SimpleFunctionDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
             fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
-        generateDataClassMethods(result, name, location)
+        generateDataClassMethods(result, name, location, fromSupertypes)
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
     }
 
-    private fun generateDataClassMethods(result: MutableCollection<SimpleFunctionDescriptor>, name: Name, location: LookupLocation) {
+    private fun generateDataClassMethods(
+            result: MutableCollection<SimpleFunctionDescriptor>,
+            name: Name,
+            location: LookupLocation,
+            fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
         if (!thisDescriptor.isData) return
 
         val constructor = getPrimaryConstructor() ?: return
@@ -176,6 +181,27 @@ open class LazyClassMemberScope(
             }
 
             result.add(DataClassDescriptorResolver.createCopyFunctionDescriptor(constructor.valueParameters, thisDescriptor, trace))
+        }
+
+        fun shouldAddFunctionFromAny(checkParameters: (FunctionDescriptor) -> Boolean): Boolean {
+            // Add 'equals', 'hashCode', 'toString' iff there is no such declared member AND there is no such final member in supertypes
+            return result.none(checkParameters) &&
+                   fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
+        }
+
+        if (name == DataClassDescriptorResolver.EQUALS_METHOD_NAME && shouldAddFunctionFromAny { function ->
+            val parameters = function.valueParameters
+            parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.first().type)
+        }) {
+            result.add(DataClassDescriptorResolver.createEqualsFunctionDescriptor(thisDescriptor))
+        }
+
+        if (name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
+            result.add(DataClassDescriptorResolver.createHashCodeFunctionDescriptor(thisDescriptor))
+        }
+
+        if (name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
+            result.add(DataClassDescriptorResolver.createToStringFunctionDescriptor(thisDescriptor))
         }
     }
 

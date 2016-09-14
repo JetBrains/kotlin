@@ -4320,6 +4320,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("finalMembersInBaseClass.kt")
+            public void testFinalMembersInBaseClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/finalMembersInBaseClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implementMethodsFromInterface.kt")
+            public void testImplementMethodsFromInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/implementMethodsFromInterface.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implementTraitWhichHasComponent1.kt")
             public void testImplementTraitWhichHasComponent1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/implementTraitWhichHasComponent1.kt");

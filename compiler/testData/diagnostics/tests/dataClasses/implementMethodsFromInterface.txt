@@ -1,0 +1,48 @@
+package
+
+public interface Foo {
+    public abstract override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun toString(): kotlin.String
+}
+
+public final data class FooImpl : Foo {
+    public constructor FooImpl(/*0*/ num: kotlin.Int)
+    public final val num: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ num: kotlin.Int = ...): FooImpl
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class FooImplAll : Foo {
+    public constructor FooImplAll(/*0*/ num: kotlin.Int)
+    public final val num: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ num: kotlin.Int = ...): FooImplAll
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun toString(): kotlin.String
+}
+
+public final data class FooImplSome : Foo {
+    public constructor FooImplSome(/*0*/ num: kotlin.Int)
+    public final val num: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ num: kotlin.Int = ...): FooImplSome
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class WrongSignatures : Foo {
+    public constructor WrongSignatures(/*0*/ num: kotlin.Int)
+    public final val num: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ num: kotlin.Int = ...): WrongSignatures
+    public open fun equals(/*0*/ other: WrongSignatures): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
