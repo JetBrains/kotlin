@@ -39,8 +39,7 @@ import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -125,9 +124,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 options: KotlinReferencesSearchOptions,
                 searchScope: SearchScope
         ): OperatorReferenceSearcher<*>? {
-            if (isComponentLike(name)) {
+            if (DataClassDescriptorResolver.isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
-                val componentIndex = getComponentIndex(name.asString())
+                val componentIndex = DataClassDescriptorResolver.getComponentIndex(name.asString())
                 return DestructuringDeclarationReferenceSearcher(declaration, componentIndex, searchScope, consumer, optimizer)
             }
 

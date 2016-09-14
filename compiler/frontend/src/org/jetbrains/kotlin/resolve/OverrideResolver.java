@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -583,7 +582,7 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
         if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            if (DataClassUtilsKt.isComponentLike(declared.getName())) {
+            if (DataClassDescriptorResolver.INSTANCE.isComponentLike(declared.getName())) {
                 checkOverrideForComponentFunction(declared);
             }
             return;

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -148,7 +146,7 @@ open class LazyClassMemberScope(
         val primaryConstructorParameters = declarationProvider.getOwnerInfo().primaryConstructorParameters
         assert(constructor.valueParameters.size == primaryConstructorParameters.size) { "From descriptor: " + constructor.valueParameters.size + " but from PSI: " + primaryConstructorParameters.size }
 
-        if (isComponentLike(name)) {
+        if (DataClassDescriptorResolver.isComponentLike(name)) {
             var componentIndex = 0
 
             for (parameter in constructor.valueParameters) {
@@ -162,22 +160,22 @@ open class LazyClassMemberScope(
 
                 ++componentIndex
 
-                if (name == createComponentName(componentIndex)) {
-                    val functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(componentIndex, property, parameter, thisDescriptor, trace)
-                    result.add(functionDescriptor)
+                if (name == DataClassDescriptorResolver.createComponentName(componentIndex)) {
+                    result.add(DataClassDescriptorResolver.createComponentFunctionDescriptor(
+                            componentIndex, property, parameter, thisDescriptor, trace
+                    ))
                     break
                 }
             }
         }
 
-        if (name == DescriptorResolver.COPY_METHOD_NAME) {
+        if (name == DataClassDescriptorResolver.COPY_METHOD_NAME) {
             for (parameter in constructor.valueParameters) {
                 // force properties resolution to fill BindingContext.VALUE_PARAMETER_AS_PROPERTY slice
                 getContributedVariables(parameter.name, location)
             }
 
-            val copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(constructor.valueParameters, thisDescriptor, trace)
-            result.add(copyFunctionDescriptor)
+            result.add(DataClassDescriptorResolver.createCopyFunctionDescriptor(constructor.valueParameters, thisDescriptor, trace))
         }
     }
 
@@ -257,7 +255,7 @@ open class LazyClassMemberScope(
         // Generate componentN functions until there's no such function for some n
         var n = 1
         while (true) {
-            val componentName = createComponentName(n)
+            val componentName = DataClassDescriptorResolver.createComponentName(n)
             val functions = getContributedFunctions(componentName, location)
             if (functions.isEmpty()) break
 

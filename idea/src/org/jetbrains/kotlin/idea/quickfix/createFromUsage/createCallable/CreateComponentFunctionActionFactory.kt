@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Functi
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.types.Variance
 
 object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtDestructuringDeclaration>() {
@@ -38,9 +37,9 @@ object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFacto
         val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
 
         val name = diagnosticWithParameters.a
-        if (!isComponentLike(name)) return null
+        if (!DataClassDescriptorResolver.isComponentLike(name)) return null
 
-        val componentNumber = getComponentIndex(name.asString()) - 1
+        val componentNumber = DataClassDescriptorResolver.getComponentIndex(name.asString()) - 1
 
         val ownerType = element.initializer?.let { TypeInfo(it, Variance.IN_VARIANCE) }
                         ?: TypeInfo(diagnosticWithParameters.b, Variance.IN_VARIANCE)
