@@ -493,8 +493,7 @@ class TypeResolver(
 
             if (restArguments == null && typeArgumentsCanBeSpecifiedCount > result.size) {
                 c.trace.report(
-                        WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(
-                                qualifierParts.last().expression, typeArgumentsCanBeSpecifiedCount, classDescriptor))
+                        OUTER_CLASS_ARGUMENTS_REQUIRED.on(qualifierParts.first().expression, nextParameterOwner))
                 return null
             }
             else if (restArguments == null) {
