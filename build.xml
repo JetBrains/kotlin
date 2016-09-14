@@ -91,6 +91,11 @@
         <include name="core/util.runtime/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/backend-common/src"/>
+        <include name="compiler/backend-common/src"/>
+        <include name="compiler/ir/backend.common/src"/>
+        <include name="compiler/ir/backend.jvm/src"/>
+        <include name="compiler/ir/ir.psi2ir/src"/>
+        <include name="compiler/ir/ir.tree/src"/>
         <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
@@ -126,6 +131,10 @@
         <include name="frontend.java/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
+        <include name="backend.common/**"/>
+        <include name="backend.jvm/**"/>
+        <include name="ir.psi2ir/**"/>
+        <include name="ir.tree/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="conditional-preprocessor/**"/>
