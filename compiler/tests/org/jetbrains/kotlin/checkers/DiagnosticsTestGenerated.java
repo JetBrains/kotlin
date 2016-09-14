@@ -7934,6 +7934,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("outerArgumentsRequired.kt")
+                public void testOuterArgumentsRequired() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/outerArgumentsRequired.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("parameterShadowing.kt")
                 public void testParameterShadowing() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/parameterShadowing.kt");
