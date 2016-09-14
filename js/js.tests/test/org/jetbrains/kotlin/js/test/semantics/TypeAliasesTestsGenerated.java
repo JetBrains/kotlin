@@ -76,4 +76,16 @@ public class TypeAliasesTestsGenerated extends AbstractTypeAliasesTests {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasObject.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("typeAliasObjectCallable.kt")
+    public void testTypeAliasObjectCallable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasObjectCallable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeAliasSecondaryConstructor.kt")
+    public void testTypeAliasSecondaryConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasSecondaryConstructor.kt");
+        doTest(fileName);
+    }
 }
