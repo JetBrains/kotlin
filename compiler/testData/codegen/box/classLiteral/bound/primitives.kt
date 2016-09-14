@@ -8,8 +8,7 @@ fun box(): String {
     assertEquals('z'::class, Char::class)
     assertEquals(3.14::class, Double::class)
     assertEquals(2.72f::class, Float::class)
-    // TODO: KT-13110
-    // assertEquals(42::class, Int::class)
+    assertEquals(42::class, Int::class)
     assertEquals(42L::class, Long::class)
     assertEquals(42.toShort()::class, Short::class)
 

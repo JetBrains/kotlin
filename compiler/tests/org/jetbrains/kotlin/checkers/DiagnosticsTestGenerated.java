@@ -2961,6 +2961,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("integerValueType.kt")
+            public void testIntegerValueType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/integerValueType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonClassesOnLHS.kt")
             public void testNonClassesOnLHS() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/nonClassesOnLHS.kt");

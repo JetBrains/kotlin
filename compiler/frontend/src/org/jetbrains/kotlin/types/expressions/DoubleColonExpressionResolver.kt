@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -51,8 +48,6 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
@@ -92,7 +87,7 @@ class DoubleColonExpressionResolver(
             val result = resolveDoubleColonLHS(expression, c)
             val type = result?.type
             if (type != null && !type.isError) {
-                checkClassLiteral(c, expression, result!!)
+                checkClassLiteral(c, expression, result)
                 val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type)
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
                 return dataFlowAnalyzer.checkType(createTypeInfo(kClassType, dataFlowInfo), expression, c)
@@ -231,7 +226,10 @@ class DoubleColonExpressionResolver(
         if (!criterion(doubleColonExpression)) return null
 
         val traceAndCache = TemporaryTraceAndCache.create(context, "resolve '::' LHS", doubleColonExpression)
-        val c = context.replaceTraceAndCache(traceAndCache).replaceExpectedType(NO_EXPECTED_TYPE)
+        val c = context
+                .replaceTraceAndCache(traceAndCache)
+                .replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceContextDependency(ContextDependency.INDEPENDENT)
 
         val lhs = resolve(expression, c)
         return LHSResolutionResult(lhs, expression, traceAndCache)
