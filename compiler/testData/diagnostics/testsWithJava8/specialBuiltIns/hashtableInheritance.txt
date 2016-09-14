@@ -29,7 +29,7 @@ public final class C1 : java.util.Hashtable<kotlin.String, kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getEnumeration(/*0*/ p0: kotlin.Int): java.util.Enumeration<T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getIterator(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Iterator<T!>!
-    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int!): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.String!>!
@@ -40,8 +40,8 @@ public final class C1 : java.util.Hashtable<kotlin.String, kotlin.Int> {
     invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun reconstitutionPut(/*0*/ p0: kotlin.Array<(out) java.util.Hashtable.Entry<*, *>!>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Int!): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun rehash(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Unit
@@ -78,7 +78,7 @@ public final class C2 : java.util.Hashtable<kotlin.String, kotlin.Int> {
     public open override /*1*/ fun get(/*0*/ key: kotlin.String): kotlin.Int
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getEnumeration(/*0*/ p0: kotlin.Int): java.util.Enumeration<T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getIterator(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Iterator<T!>!
-    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int!): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.String!>!
@@ -89,8 +89,8 @@ public final class C2 : java.util.Hashtable<kotlin.String, kotlin.Int> {
     invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun reconstitutionPut(/*0*/ p0: kotlin.Array<(out) java.util.Hashtable.Entry<*, *>!>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Int!): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun rehash(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Unit
