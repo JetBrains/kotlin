@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
@@ -236,4 +240,55 @@ fun CallableDescriptor.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Seq
     }
 
     return doBuildOverriddenTreeAsSequence()
+}
+
+/**
+ * When `Inner` is used as type outside of `Outer` class all type arguments should be specified, e.g. `Outer<String, Int>.Inner<Double>`
+ * However, it's not necessary inside Outer's members, only the last one should be specified there.
+ * So this function return a list of arguments that should be used if relevant arguments weren't specified explicitly inside the [scopeOwner].
+ *
+ * Examples:
+ * for `Outer` class the map will contain: Outer -> (X, Y) (i.e. defaultType mapping)
+ * for `Derived` class the map will contain: Derived -> (E), Outer -> (E, String)
+ * for `A.B` class the map will contain: B -> (), Outer -> (Int, CharSequence), A -> ()
+ *
+ * open class Outer<X, Y> {
+ *  inner class Inner<Z>
+ * }
+ *
+ * class Derived<E> : Outer<E, String>()
+ *
+ * class A : Outer<String, Double>() {
+ *   inner class B : Outer<Int, CharSequence>()
+ * }
+ */
+fun findImplicitOuterClassArguments(scopeOwner: ClassDescriptor, outerClass: ClassDescriptor): List<TypeProjection>? {
+    for (current in scopeOwner.classesFromInnerToOuter()) {
+        for (supertype in current.getAllSuperClassesTypesIncludeItself()) {
+            val classDescriptor = supertype.constructor.declarationDescriptor as ClassDescriptor
+            if (classDescriptor == outerClass) return supertype.arguments
+        }
+    }
+
+    return null
+}
+
+private fun ClassDescriptor.classesFromInnerToOuter() = generateSequence(this) {
+    if (it.isInner)
+        it.containingDeclaration.original as? ClassDescriptor
+    else
+        null
+}
+
+private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinType> {
+    val result = arrayListOf<KotlinType>()
+    var current: KotlinType = defaultType
+
+    while (!current.isAnyOrNullableAny()) {
+        result.add(current)
+        val next = DescriptorUtils.getSuperClassType(current.constructor.declarationDescriptor as ClassDescriptor)
+        current = TypeSubstitutor.create(current).substitute(next, Variance.INVARIANT) ?: break
+    }
+
+    return result
 }

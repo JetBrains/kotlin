@@ -1,0 +1,12 @@
+package
+
+private fun </*0*/ E> foobar(): () -> foobar.<anonymous>.Derived<E>
+private fun noParameters(): () -> noParameters.<anonymous>.Derived2
+public fun test(): kotlin.Unit
+
+public final class A</*0*/ R1, /*1*/ R2, /*2*/ R3, /*3*/ R4> {
+    public constructor A</*0*/ R1, /*1*/ R2, /*2*/ R3, /*3*/ R4>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
