@@ -151,6 +151,6 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
 private fun functionParameterTypesAndNames(functionType: KotlinType): Pair<List<KotlinType>, List<Name>> {
     val types = getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)
     val names = functionType.getParameterNamesFromFunctionType() ?: types.map { SpecialNames.NO_NAME_PROVIDED }
-    assert(names.size == types.size)
+    assert(names.size == types.size) { "Number of names does not match number of types for $functionType"}
     return types to names
 }

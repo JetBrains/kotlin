@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.*
 
 fun createValueParametersForInvokeInFunctionType(
         functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
@@ -75,7 +72,13 @@ fun createFunctionType(
                 AnnotationsImpl(annotations + extensionFunctionAnnotation)
             }
 
-    return KotlinTypeFactory.functionType(typeAnnotations, classDescriptor, arguments, parameterNames)
+    val simpleType = KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
+    if (parameterNames == null || parameterNames.all { it.isSpecial }) {
+        return simpleType
+    }
+    else {
+        return FunctionType(simpleType, parameterNames)
+    }
 }
 
 fun getValueParametersCountFromFunctionType(type: KotlinType): Int {

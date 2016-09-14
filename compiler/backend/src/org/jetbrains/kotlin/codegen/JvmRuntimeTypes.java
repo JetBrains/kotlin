@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -109,12 +107,7 @@ public class JvmRuntimeTypes {
                 Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
                 ExpressionTypingUtils.getValueParametersTypes(parameters),
-                CollectionsKt.map(parameters, new Function1<ValueParameterDescriptor, Name>() {
-                    @Override
-                    public Name invoke(ValueParameterDescriptor descriptor) {
-                        return descriptor.getName();
-                    }
-                }),
+                null,
                 descriptor.getReturnType()
         );
 
@@ -143,12 +136,7 @@ public class JvmRuntimeTypes {
                 Annotations.Companion.getEMPTY(),
                 isBound ? null : receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(parameters),
-                CollectionsKt.map(parameters, new Function1<ValueParameterDescriptor, Name>() {
-                    @Override
-                    public Name invoke(ValueParameterDescriptor descriptor) {
-                        return descriptor.getName();
-                    }
-                }),
+                null,
                 descriptor.getReturnType()
         );
 

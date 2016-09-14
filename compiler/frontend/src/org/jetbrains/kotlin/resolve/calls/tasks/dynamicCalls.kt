@@ -176,9 +176,8 @@ class DynamicCallableDescriptors(builtIns: KotlinBuiltIns) {
 
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
-            val parameterNames = funLiteral.valueParameters.map { it.nameAsName ?: SpecialNames.NO_NAME_PROVIDED }
 
-            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, parameterNames, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, null, dynamicType)
         }
 
         for (arg in call.valueArguments) {

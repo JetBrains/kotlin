@@ -311,7 +311,7 @@ internal class DescriptorRendererImpl(
         append("(")
         val parameterTypes = getValueParameterTypesFromFunctionType(type)
         val parameterNames = type.getParameterNamesFromFunctionType() ?: parameterTypes.map { SpecialNames.NO_NAME_PROVIDED }
-        assert(parameterNames.size == parameterTypes.size)
+        assert(parameterNames.size == parameterTypes.size) { "Number of names does not match number of types for $type"}
 
         for (index in parameterTypes.indices) {
             val typeProjection = parameterTypes[index]

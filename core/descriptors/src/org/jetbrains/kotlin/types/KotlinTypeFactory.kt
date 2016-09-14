@@ -52,22 +52,6 @@ object KotlinTypeFactory {
     ): SimpleType = SimpleTypeImpl(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
 
     @JvmStatic
-    fun functionType(
-            annotations: Annotations,
-            descriptor: ClassDescriptor,
-            arguments: List<TypeProjection>,
-            parameterNames: List<Name>?
-    ): SimpleType {
-        val simpleType = simpleNotNullType(annotations, descriptor, arguments)
-        if (parameterNames == null || parameterNames.all { it.isSpecial }) {
-            return simpleType
-        }
-        else {
-            return FunctionType(simpleType, parameterNames)
-        }
-    }
-
-    @JvmStatic
     fun simpleType(
             baseType: SimpleType,
             annotations: Annotations = baseType.annotations,
