@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir
+package org.jetbrains.kotlin.backend.jvm
 
-class Psi2IrConfiguration(
-        val ignoreErrors: Boolean = false
-)
+import org.jetbrains.kotlin.backend.jvm.lower.FileClassLowering
+import org.jetbrains.kotlin.ir.declarations.IrFile
+
+class JvmLower(val context: JvmBackendContext) {
+    fun lower(irFile: IrFile): IrFile {
+        var newIrFile = irFile
+
+        newIrFile = FileClassLowering(context).lower(newIrFile)
+
+        return newIrFile
+    }
+}

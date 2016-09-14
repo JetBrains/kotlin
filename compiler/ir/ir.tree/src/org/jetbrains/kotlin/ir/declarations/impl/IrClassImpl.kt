@@ -73,10 +73,10 @@ class IrClassImpl(
 }
 
 class IrClassBuilderImpl(
-        override val startOffset: Int,
-        override val endOffset: Int,
+        override var startOffset: Int,
+        override var endOffset: Int,
         override var origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor,
+        override var descriptor: ClassDescriptor,
         override val declarations: MutableList<IrDeclaration>
 ) : IrClass.Builder {
     constructor(irClass: IrClass) : this(irClass.startOffset, irClass.endOffset, irClass.origin, irClass.descriptor,

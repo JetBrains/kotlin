@@ -520,7 +520,11 @@ public class DescriptorUtils {
 
     @Nullable
     public static String getJvmName(@NotNull Annotated annotated) {
-        AnnotationDescriptor jvmNameAnnotation = getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
+        return getJvmName(getJvmNameAnnotation(annotated));
+    }
+
+    @Nullable
+    public static String getJvmName(@Nullable AnnotationDescriptor jvmNameAnnotation) {
         if (jvmNameAnnotation == null) return null;
 
         Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();

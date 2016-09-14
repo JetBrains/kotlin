@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.name.FqName
 
 interface IrFile : IrElement, IrDeclarationContainer {
     val fileEntry: SourceManager.FileEntry
@@ -38,3 +40,6 @@ interface IrFile : IrElement, IrDeclarationContainer {
 }
 
 val IrFile.name: String get() = fileEntry.name
+
+fun IrFile.findAnnotationsByFqName(fqName: FqName) =
+        fileAnnotations.filter { checkAnnotationName(it, fqName) }

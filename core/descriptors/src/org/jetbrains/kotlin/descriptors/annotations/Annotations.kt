@@ -75,7 +75,7 @@ interface Annotations : Iterable<AnnotationDescriptor> {
     }
 }
 
-private fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
+fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
     val descriptor = annotation.type.constructor.declarationDescriptor
     return descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
 }

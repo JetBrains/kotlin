@@ -69,11 +69,13 @@ class PsiSourceManager : SourceManager {
 
     private val fileEntriesByPsiFile = HashMap<PsiFile, PsiFileEntry>()
     private val fileEntriesByIrFile = HashMap<IrFile, PsiFileEntry>()
+    private val psiFileByFileEntry = HashMap<PsiFileEntry, PsiFile>()
 
     fun createFileEntry(psiFile: PsiFile): PsiFileEntry {
         if (psiFile in fileEntriesByPsiFile) error("PsiFileEntry is already created for $psiFile")
         val newEntry = PsiFileEntry(psiFile)
         fileEntriesByPsiFile[psiFile] = newEntry
+        psiFileByFileEntry[newEntry] = psiFile
         return newEntry
     }
 
@@ -86,6 +88,9 @@ class PsiSourceManager : SourceManager {
 
     fun getFileEntry(psiFile: PsiFile): PsiFileEntry? =
             fileEntriesByPsiFile[psiFile]
+
+    fun getPsiFile(fileEntry: PsiFileEntry) =
+            psiFileByFileEntry[fileEntry]
 
     override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry =
             fileEntriesByIrFile[irFile]!!

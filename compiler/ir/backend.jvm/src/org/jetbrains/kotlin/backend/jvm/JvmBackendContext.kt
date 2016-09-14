@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir
+package org.jetbrains.kotlin.backend.jvm
 
-class Psi2IrConfiguration(
-        val ignoreErrors: Boolean = false
-)
+import org.jetbrains.kotlin.backend.jvm.lower.JvmFileClassProvider
+import org.jetbrains.kotlin.codegen.state.GenerationState
+
+class JvmBackendContext(
+        val state: GenerationState,
+        val jvmFileClassProvider: JvmFileClassProvider
+        )

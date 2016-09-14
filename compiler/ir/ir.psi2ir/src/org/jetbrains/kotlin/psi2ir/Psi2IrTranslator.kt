@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -25,23 +24,36 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.SmartList
 
-class Psi2IrTranslator(val configuration: Psi2IrConfiguration) {
-    fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: List<KtFile>, bindingContext: BindingContext): IrModuleFragment {
-        val context = GeneratorContext(configuration, moduleDescriptor, bindingContext)
+class Psi2IrTranslator(val configuration: Psi2IrConfiguration = Psi2IrConfiguration()) {
+    interface PostprocessingStep {
+        fun postprocess(context: GeneratorContext, irElement: IrElement)
+    }
+
+    private val postprocessingSteps = SmartList<PostprocessingStep>()
+
+    fun add(step: PostprocessingStep) {
+        postprocessingSteps.add(step)
+    }
+
+    fun generateModule(moduleDescriptor: ModuleDescriptor, ktFiles: Collection<KtFile>, bindingContext: BindingContext): IrModuleFragment {
+        val context = createGeneratorContext(moduleDescriptor, bindingContext)
+        return generateModuleFragment(context, ktFiles)
+    }
+
+    fun createGeneratorContext(moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) =
+            GeneratorContext(configuration, moduleDescriptor, bindingContext)
+
+    fun generateModuleFragment(context: GeneratorContext, ktFiles: Collection<KtFile>): IrModuleFragment {
         val irModule = ModuleGenerator(context).generateModuleFragment(ktFiles)
-        postprocess(irModule.descriptor.builtIns, irModule)
+        postprocess(context, irModule)
         return irModule
     }
 
-    fun generateSingleFileFragment(moduleDescriptor: ModuleDescriptor, ktFile: KtFile, bindingContext: BindingContext): IrModuleFragment {
-        val context = GeneratorContext(configuration, moduleDescriptor, bindingContext)
-        val irFileFragment = ModuleGenerator(context).generateSingleFileFragment(ktFile)
-        postprocess(moduleDescriptor.builtIns, irFileFragment)
-        return irFileFragment
-    }
+    private fun postprocess(context: GeneratorContext, irElement: IrElement) {
+        insertImplicitCasts(context.builtIns, irElement)
 
-    private fun postprocess(builtIns: KotlinBuiltIns, irElement: IrElement) {
-        insertImplicitCasts(builtIns, irElement)
+        postprocessingSteps.forEach { it.postprocess(context, irElement) }
     }
 }

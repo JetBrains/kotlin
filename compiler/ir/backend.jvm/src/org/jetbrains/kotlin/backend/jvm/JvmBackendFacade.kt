@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.lower.JvmFileClassProvider
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 object JvmBackendFacade {
     fun compileCorrectFiles(state: GenerationState, errorHandler: CompilationErrorHandler) {
@@ -30,6 +33,33 @@ object JvmBackendFacade {
     }
 
     fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, errorHandler: CompilationErrorHandler) {
-        // TODO
+        // TODO multifile classes support
+
+        val psi2ir = Psi2IrTranslator()
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
+        val jvmBackendContext = createJvmBackendContext(psi2ir, state)
+
+        val jvmBackend = JvmBackend(jvmBackendContext)
+
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
+
+        for (ktFile in irModuleFragment.files) {
+            try {
+                jvmBackend.generateFile(ktFile)
+                state.afterIndependentPart()
+            }
+            catch (e: Throwable) {
+                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+            }
+        }
+    }
+
+    private fun createJvmBackendContext(psi2ir: Psi2IrTranslator, state: GenerationState): JvmBackendContext {
+        val jvmFileClassProvider = JvmFileClassProvider()
+        psi2ir.add(jvmFileClassProvider)
+
+        val jvmBackendContext = JvmBackendContext(state, jvmFileClassProvider)
+
+        return jvmBackendContext
     }
 }

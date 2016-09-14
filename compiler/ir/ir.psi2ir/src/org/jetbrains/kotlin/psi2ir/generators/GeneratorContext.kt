@@ -30,7 +30,6 @@ class GeneratorContext(
         val bindingContext: BindingContext
 ) {
     val sourceManager = PsiSourceManager()
-    val syntheticDescriptorsFactory = SyntheticDescriptorsFactory()
 
     val reflectionTypes = ReflectionTypes(moduleDescriptor)
     val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
