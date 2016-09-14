@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 interface IrWhen : IrExpression {
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
     val branchesCount: Int
     fun getNthCondition(n: Int): IrExpression?
     fun getNthResult(n: Int): IrExpression?

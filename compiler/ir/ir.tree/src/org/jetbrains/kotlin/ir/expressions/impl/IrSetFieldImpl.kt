@@ -20,28 +20,25 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrFieldExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class IrSetFieldImpl(
-        startOffset: Int,
-        endOffset: Int,
+        startOffset: Int, endOffset: Int,
         descriptor: PropertyDescriptor,
-        operator: IrOperator? = null,
+        origin: IrStatementOrigin? = null,
         superQualifier: ClassDescriptor? = null
-) : IrFieldExpressionBase(startOffset, endOffset, descriptor, descriptor.type.builtIns.unitType, operator, superQualifier), IrSetField {
+) : IrFieldExpressionBase(startOffset, endOffset, descriptor, descriptor.type.builtIns.unitType, origin, superQualifier), IrSetField {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: PropertyDescriptor,
+            startOffset: Int, endOffset: Int, descriptor: PropertyDescriptor,
             receiver: IrExpression?,
             value: IrExpression,
-            operator: IrOperator? = null,
+            origin: IrStatementOrigin? = null,
             superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
+    ) : this(startOffset, endOffset, descriptor, origin, superQualifier) {
         this.receiver = receiver
         this.value = value
     }

@@ -2,13 +2,13 @@ FILE /samAdapter.kt
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       VAR val hello: java.lang.Runnable
-        CALL 'Runnable(() -> Unit): Runnable' type=java.lang.Runnable operator=null
-          function: BLOCK type=() -> kotlin.Unit operator=LAMBDA
+        CALL 'Runnable(() -> Unit): Runnable' type=java.lang.Runnable origin=null
+          function: BLOCK type=() -> kotlin.Unit origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                  CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+                  CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value='Hello, world!'
-            CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit operator=LAMBDA
-      CALL 'run(): Unit' type=kotlin.Unit operator=null
-        $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable operator=null
+            CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+      CALL 'run(): Unit' type=kotlin.Unit origin=null
+        $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable origin=null

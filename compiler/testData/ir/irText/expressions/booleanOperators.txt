@@ -2,26 +2,26 @@ FILE /booleanOperators.kt
   FUN public fun test1(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Boolean, Boolean): Boolean'
-        WHEN type=kotlin.Boolean operator=ANDAND
-          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean operator=null
-          then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean operator=null
+        WHEN type=kotlin.Boolean origin=ANDAND
+          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
+          then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
           else: CONST Boolean type=kotlin.Boolean value='false'
   FUN public fun test2(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Boolean, Boolean): Boolean'
-        WHEN type=kotlin.Boolean operator=OROR
-          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean operator=null
+        WHEN type=kotlin.Boolean origin=OROR
+          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           then: CONST Boolean type=kotlin.Boolean value='true'
-          else: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean operator=null
+          else: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
   FUN public fun test1x(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1x(Boolean, Boolean): Boolean'
-        CALL 'and(Boolean): Boolean' type=kotlin.Boolean operator=null
-          $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean operator=null
-          other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean operator=null
+        CALL 'and(Boolean): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
+          other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
   FUN public fun test2x(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2x(Boolean, Boolean): Boolean'
-        CALL 'or(Boolean): Boolean' type=kotlin.Boolean operator=null
-          $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean operator=null
-          other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean operator=null
+        CALL 'or(Boolean): Boolean' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
+          other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null

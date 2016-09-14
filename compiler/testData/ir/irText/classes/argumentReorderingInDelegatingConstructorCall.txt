@@ -7,52 +7,52 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
-            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'Base' type=Base
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
-            GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: THIS of 'Base' type=Base
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1(xx: kotlin.Int, yy: kotlin.Int)
       BLOCK_BODY
-        BLOCK type=Base operator=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=Base origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_y: kotlin.Int
-            GET_VAR 'value-parameter yy: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter yy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_x: kotlin.Int
-            GET_VAR 'value-parameter xx: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter xx: Int' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'constructor Base(Int, Int)'
-            x: GET_VAR 'tmp1_x: Int' type=kotlin.Int operator=null
-            y: GET_VAR 'tmp0_y: Int' type=kotlin.Int operator=null
+            x: GET_VAR 'tmp1_x: Int' type=kotlin.Int origin=null
+            y: GET_VAR 'tmp0_y: Int' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(xx: kotlin.Int, yy: kotlin.Int)
       BLOCK_BODY
-        BLOCK type=Base operator=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=Base origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_y: kotlin.Int
-            GET_VAR 'value-parameter yy: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter yy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_x: kotlin.Int
-            GET_VAR 'value-parameter xx: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter xx: Int' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'constructor Base(Int, Int)'
-            x: GET_VAR 'tmp1_x: Int' type=kotlin.Int operator=null
-            y: GET_VAR 'tmp0_y: Int' type=kotlin.Int operator=null
+            x: GET_VAR 'tmp1_x: Int' type=kotlin.Int origin=null
+            y: GET_VAR 'tmp0_y: Int' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     CONSTRUCTOR public constructor Test2(xxx: kotlin.Int, yyy: kotlin.Int, a: kotlin.Any)
       BLOCK_BODY
-        BLOCK type=Test2 operator=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=Test2 origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_yy: kotlin.Int
-            GET_VAR 'value-parameter yyy: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter yyy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_xx: kotlin.Int
-            GET_VAR 'value-parameter xxx: Int' type=kotlin.Int operator=null
+            GET_VAR 'value-parameter xxx: Int' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'constructor Test2(Int, Int)'
-            xx: GET_VAR 'tmp1_xx: Int' type=kotlin.Int operator=null
-            yy: GET_VAR 'tmp0_yy: Int' type=kotlin.Int operator=null
+            xx: GET_VAR 'tmp1_xx: Int' type=kotlin.Int origin=null
+            yy: GET_VAR 'tmp0_yy: Int' type=kotlin.Int origin=null

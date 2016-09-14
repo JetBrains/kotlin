@@ -17,56 +17,56 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
-fun getInfixOperator(ktOperator: IElementType): IrOperator? =
+fun getInfixOperator(ktOperator: IElementType): IrStatementOrigin? =
         when (ktOperator) {
-            KtTokens.EQ -> IrOperator.EQ
-            KtTokens.PLUSEQ -> IrOperator.PLUSEQ
-            KtTokens.MINUSEQ -> IrOperator.MINUSEQ
-            KtTokens.MULTEQ -> IrOperator.MULTEQ
-            KtTokens.DIVEQ -> IrOperator.DIVEQ
-            KtTokens.PERCEQ -> IrOperator.PERCEQ
-            KtTokens.PLUS -> IrOperator.PLUS
-            KtTokens.MINUS -> IrOperator.MINUS
-            KtTokens.MUL -> IrOperator.MUL
-            KtTokens.DIV -> IrOperator.DIV
-            KtTokens.PERC -> IrOperator.PERC
-            KtTokens.RANGE -> IrOperator.RANGE
-            KtTokens.LT -> IrOperator.LT
-            KtTokens.LTEQ -> IrOperator.LTEQ
-            KtTokens.GT -> IrOperator.GT
-            KtTokens.GTEQ -> IrOperator.GTEQ
-            KtTokens.EQEQ -> IrOperator.EQEQ
-            KtTokens.EXCLEQ -> IrOperator.EXCLEQ
-            KtTokens.EQEQEQ -> IrOperator.EQEQEQ
-            KtTokens.EXCLEQEQEQ -> IrOperator.EXCLEQEQ
-            KtTokens.IN_KEYWORD -> IrOperator.IN
-            KtTokens.NOT_IN -> IrOperator.NOT_IN
-            KtTokens.ANDAND -> IrOperator.ANDAND
-            KtTokens.OROR -> IrOperator.OROR
-            KtTokens.ELVIS -> IrOperator.ELVIS
+            KtTokens.EQ -> IrStatementOrigin.EQ
+            KtTokens.PLUSEQ -> IrStatementOrigin.PLUSEQ
+            KtTokens.MINUSEQ -> IrStatementOrigin.MINUSEQ
+            KtTokens.MULTEQ -> IrStatementOrigin.MULTEQ
+            KtTokens.DIVEQ -> IrStatementOrigin.DIVEQ
+            KtTokens.PERCEQ -> IrStatementOrigin.PERCEQ
+            KtTokens.PLUS -> IrStatementOrigin.PLUS
+            KtTokens.MINUS -> IrStatementOrigin.MINUS
+            KtTokens.MUL -> IrStatementOrigin.MUL
+            KtTokens.DIV -> IrStatementOrigin.DIV
+            KtTokens.PERC -> IrStatementOrigin.PERC
+            KtTokens.RANGE -> IrStatementOrigin.RANGE
+            KtTokens.LT -> IrStatementOrigin.LT
+            KtTokens.LTEQ -> IrStatementOrigin.LTEQ
+            KtTokens.GT -> IrStatementOrigin.GT
+            KtTokens.GTEQ -> IrStatementOrigin.GTEQ
+            KtTokens.EQEQ -> IrStatementOrigin.EQEQ
+            KtTokens.EXCLEQ -> IrStatementOrigin.EXCLEQ
+            KtTokens.EQEQEQ -> IrStatementOrigin.EQEQEQ
+            KtTokens.EXCLEQEQEQ -> IrStatementOrigin.EXCLEQEQ
+            KtTokens.IN_KEYWORD -> IrStatementOrigin.IN
+            KtTokens.NOT_IN -> IrStatementOrigin.NOT_IN
+            KtTokens.ANDAND -> IrStatementOrigin.ANDAND
+            KtTokens.OROR -> IrStatementOrigin.OROR
+            KtTokens.ELVIS -> IrStatementOrigin.ELVIS
             else -> null
         }
 
-fun getPrefixOperator(ktOperator: IElementType): IrOperator? =
+fun getPrefixOperator(ktOperator: IElementType): IrStatementOrigin? =
         when (ktOperator) {
-            KtTokens.PLUSPLUS -> IrOperator.PREFIX_INCR
-            KtTokens.MINUSMINUS -> IrOperator.PREFIX_DECR
-            KtTokens.EXCL -> IrOperator.EXCL
-            KtTokens.MINUS -> IrOperator.UMINUS
-            KtTokens.PLUS -> IrOperator.UPLUS
+            KtTokens.PLUSPLUS -> IrStatementOrigin.PREFIX_INCR
+            KtTokens.MINUSMINUS -> IrStatementOrigin.PREFIX_DECR
+            KtTokens.EXCL -> IrStatementOrigin.EXCL
+            KtTokens.MINUS -> IrStatementOrigin.UMINUS
+            KtTokens.PLUS -> IrStatementOrigin.UPLUS
             else -> null
         }
 
-fun getPostfixOperator(ktOperator: IElementType): IrOperator? =
+fun getPostfixOperator(ktOperator: IElementType): IrStatementOrigin? =
         when (ktOperator) {
-            KtTokens.PLUSPLUS -> IrOperator.POSTFIX_INCR
-            KtTokens.MINUSMINUS -> IrOperator.POSTFIX_DECR
-            KtTokens.EXCLEXCL -> IrOperator.EXCLEXCL
+            KtTokens.PLUSPLUS -> IrStatementOrigin.POSTFIX_INCR
+            KtTokens.MINUSMINUS -> IrStatementOrigin.POSTFIX_DECR
+            KtTokens.EXCLEXCL -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
 
@@ -80,29 +80,29 @@ fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
         }
 
 val AUGMENTED_ASSIGNMENTS =
-        setOf(IrOperator.PLUSEQ, IrOperator.MINUSEQ, IrOperator.MULTEQ, IrOperator.DIVEQ, IrOperator.PERCEQ)
+        setOf(IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ, IrStatementOrigin.MULTEQ, IrStatementOrigin.DIVEQ, IrStatementOrigin.PERCEQ)
 
 val OPERATORS_DESUGARED_TO_CALLS =
-        setOf(IrOperator.PLUS, IrOperator.MINUS, IrOperator.MUL, IrOperator.DIV, IrOperator.PERC, IrOperator.RANGE,
-              IrOperator.EXCL, IrOperator.UMINUS, IrOperator.UPLUS)
+        setOf(IrStatementOrigin.PLUS, IrStatementOrigin.MINUS, IrStatementOrigin.MUL, IrStatementOrigin.DIV, IrStatementOrigin.PERC, IrStatementOrigin.RANGE,
+              IrStatementOrigin.EXCL, IrStatementOrigin.UMINUS, IrStatementOrigin.UPLUS)
 
 val COMPARISON_OPERATORS =
-        setOf(IrOperator.LT, IrOperator.LTEQ, IrOperator.GT, IrOperator.GTEQ)
+        setOf(IrStatementOrigin.LT, IrStatementOrigin.LTEQ, IrStatementOrigin.GT, IrStatementOrigin.GTEQ)
 
 val EQUALITY_OPERATORS =
-        setOf(IrOperator.EQEQ, IrOperator.EXCLEQ)
+        setOf(IrStatementOrigin.EQEQ, IrStatementOrigin.EXCLEQ)
 
 val IDENTITY_OPERATORS =
-        setOf(IrOperator.EQEQEQ, IrOperator.EXCLEQEQ)
+        setOf(IrStatementOrigin.EQEQEQ, IrStatementOrigin.EXCLEQEQ)
 
 val IN_OPERATORS =
-        setOf(IrOperator.IN, IrOperator.NOT_IN)
+        setOf(IrStatementOrigin.IN, IrStatementOrigin.NOT_IN)
 
 val BINARY_BOOLEAN_OPERATORS =
-        setOf(IrOperator.ANDAND, IrOperator.OROR)
+        setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
 
 val INCREMENT_DECREMENT_OPERATORS =
-        setOf(IrOperator.PREFIX_INCR, IrOperator.PREFIX_DECR, IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR)
+        setOf(IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR, IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR)
 
 val POSTFIX_INCREMENT_DECREMENT_OPERATORS =
-        setOf(IrOperator.POSTFIX_INCR, IrOperator.POSTFIX_DECR)
+        setOf(IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR)

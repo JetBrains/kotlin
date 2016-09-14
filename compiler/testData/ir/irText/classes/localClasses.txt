@@ -8,5 +8,5 @@ FILE /localClasses.kt
             INSTANCE_INITIALIZER_CALL classDescriptor='LocalClass'
         FUN public final fun foo(): kotlin.Unit
           BLOCK_BODY
-      CALL 'foo(): Unit' type=kotlin.Unit operator=null
-        $this: CALL 'constructor LocalClass()' type=outer.LocalClass operator=null
+      CALL 'foo(): Unit' type=kotlin.Unit origin=null
+        $this: CALL 'constructor LocalClass()' type=outer.LocalClass origin=null

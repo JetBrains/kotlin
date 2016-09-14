@@ -21,15 +21,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrFieldExpressionBase(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: PropertyDescriptor,
-        type: KotlinType,
-        override val operator: IrOperator? = null,
+        startOffset: Int, endOffset: Int, descriptor: PropertyDescriptor, type: KotlinType,
+        override val origin: IrStatementOrigin? = null,
         override val superQualifier: ClassDescriptor? = null
 ) : IrDeclarationReferenceBase<PropertyDescriptor>(startOffset, endOffset, type, descriptor), IrFieldAccessExpression {
     override final var receiver: IrExpression? = null

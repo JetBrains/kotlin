@@ -94,10 +94,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SPREAD_ELEMENT"
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-            "BLOCK type=${expression.type.render()} operator=${expression.operator}"
+            "BLOCK type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
-            "COMPOSITE type=${expression.type.render()} operator=${expression.operator}"
+            "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
             "RETURN type=${expression.type.render()} from='${expression.returnTarget.ref()}'"
@@ -110,7 +110,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
             "CALL '${expression.descriptor.ref()}' ${expression.renderSuperQualifier()}" +
-            "type=${expression.type.render()} operator=${expression.operator}"
+            "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
             superQualifier?.let { "superQualifier=${it.name} " } ?: ""
@@ -129,16 +129,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classDescriptor.ref()}'"
 
     override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
-            "GET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
+            "GET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-            "SET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
+            "SET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-            "GET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
+            "GET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-            "SET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
+            "SET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
             "GET_OBJECT '${expression.descriptor.ref()}' type=${expression.type.render()}"
@@ -150,16 +150,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "STRING_CONCATENATION type=${expression.type.render()}"
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
-            "TYPE_OP operator=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+            "TYPE_OP origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
     override fun visitWhen(expression: IrWhen, data: Nothing?): String =
-            "WHEN type=${expression.type.render()} operator=${expression.operator}"
+            "WHEN type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
-            "WHILE label=${loop.label} operator=${loop.operator}"
+            "WHILE label=${loop.label} origin=${loop.origin}"
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
-            "DO_WHILE label=${loop.label} operator=${loop.operator}"
+            "DO_WHILE label=${loop.label} origin=${loop.origin}"
 
     override fun visitBreak(jump: IrBreak, data: Nothing?): String =
             "BREAK label=${jump.label} loop.label=${jump.loop.label} depth=${jump.getDepth()}"
@@ -171,7 +171,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "THROW type=${expression.type.render()}"
 
     override fun visitCallableReference(expression: IrCallableReference, data: Nothing?): String =
-            "CALLABLE_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()} operator=${expression.operator}"
+            "CALLABLE_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
             "CLASS_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()}"

@@ -32,12 +32,12 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression =
             generateConditionalLoop(ktWhile,
                                     IrWhileLoopImpl(ktWhile.startOffset, ktWhile.endOffset,
-                                                                                        context.builtIns.unitType, IrOperator.WHILE_LOOP))
+                                                    context.builtIns.unitType, IrStatementOrigin.WHILE_LOOP))
 
     fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression =
             generateConditionalLoop(ktDoWhile,
                                     IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
-                                                                                          context.builtIns.unitType, IrOperator.DO_WHILE_LOOP))
+                                                      context.builtIns.unitType, IrStatementOrigin.DO_WHILE_LOOP))
 
     private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
@@ -113,34 +113,34 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         val callGenerator = CallGenerator(statementGenerator)
 
-        val irForBlock = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP)
+        val irForBlock = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrStatementOrigin.FOR_LOOP)
 
         val iteratorCall = statementGenerator.pregenerateCall(iteratorResolvedCall)
-        val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrOperator.FOR_LOOP_ITERATOR)
+        val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrStatementOrigin.FOR_LOOP_ITERATOR)
         val irIterator = scope.createTemporaryVariable(irIteratorCall, "iterator")
         val iteratorValue = VariableLValue(irIterator)
         irForBlock.addStatement(irIterator)
 
-        val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP_INNER_WHILE)
+        val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrStatementOrigin.FOR_LOOP_INNER_WHILE)
         irInnerWhile.label = getLoopLabel(ktFor)
         statementGenerator.bodyGenerator.putLoop(ktFor, irInnerWhile)
         irForBlock.addStatement(irInnerWhile)
 
         val hasNextCall = statementGenerator.pregenerateCall(hasNextResolvedCall)
         hasNextCall.setExplicitReceiverValue(iteratorValue)
-        val irHasNextCall = callGenerator.generateCall(ktLoopRange, hasNextCall, IrOperator.FOR_LOOP_HAS_NEXT)
+        val irHasNextCall = callGenerator.generateCall(ktLoopRange, hasNextCall, IrStatementOrigin.FOR_LOOP_HAS_NEXT)
         irInnerWhile.condition = irHasNextCall
 
-        val irInnerBody = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrOperator.FOR_LOOP_INNER_WHILE)
+        val irInnerBody = IrBlockImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrStatementOrigin.FOR_LOOP_INNER_WHILE)
         irInnerWhile.body = irInnerBody
 
         val nextCall = statementGenerator.pregenerateCall(nextResolvedCall)
         nextCall.setExplicitReceiverValue(iteratorValue)
-        val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrOperator.FOR_LOOP_NEXT)
+        val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrStatementOrigin.FOR_LOOP_NEXT)
         val irLoopParameter = if (ktLoopParameter != null) {
             val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
             IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                loopParameterDescriptor, irNextCall)
+                           loopParameterDescriptor, irNextCall)
         }
         else {
             scope.createTemporaryVariable(irNextCall, "loop_parameter")

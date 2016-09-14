@@ -22,16 +22,14 @@ import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrGeneralCallBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
+        startOffset: Int, endOffset: Int, type: KotlinType,
         numArguments: Int,
-        override val operator: IrOperator? = null
+        override val origin: IrStatementOrigin? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type), IrGeneralCall {
     protected val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(numArguments)

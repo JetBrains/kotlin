@@ -22,29 +22,29 @@ FILE /multipleImplicitReceivers.kt
           CONST Int type=kotlin.Int value='42'
   FUN public fun test(fooImpl: IFoo, invokeImpl: IInvoke): kotlin.Unit
     BLOCK_BODY
-      CALL 'with(A, A.() -> Int): Int' type=kotlin.Int operator=null
+      CALL 'with(A, A.() -> Int): Int' type=kotlin.Int origin=null
         receiver: GET_OBJECT 'A' type=A
-        block: BLOCK type=A.() -> kotlin.Int operator=LAMBDA
+        block: BLOCK type=A.() -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(): kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
-                CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int operator=null
-                  receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo operator=null
-                  block: BLOCK type=IFoo.() -> kotlin.Int operator=LAMBDA
+                CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
+                  block: BLOCK type=IFoo.() -> kotlin.Int origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IFoo.<anonymous>(): kotlin.Int
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
-                          CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int operator=null
-                            receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke operator=null
-                            block: BLOCK type=IInvoke.() -> kotlin.Int operator=LAMBDA
+                          CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int origin=null
+                            receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null
+                            block: BLOCK type=IInvoke.() -> kotlin.Int origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IInvoke.<anonymous>(): kotlin.Int
                                 BLOCK_BODY
                                   RETURN type=kotlin.Nothing from='<anonymous>() on IInvoke: Int'
-                                    CALL 'invoke() on B: Int' type=kotlin.Int operator=INVOKE
+                                    CALL 'invoke() on B: Int' type=kotlin.Int origin=INVOKE
                                       $this: $RECEIVER of '<anonymous>() on IInvoke: Int' type=IInvoke
-                                      $receiver: CALL '<get-foo>() on A: B' type=B operator=GET_PROPERTY
+                                      $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY
                                         $this: $RECEIVER of '<anonymous>() on IFoo: Int' type=IFoo
                                         $receiver: $RECEIVER of '<anonymous>() on A: Int' type=A
-                              CALLABLE_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int operator=LAMBDA
-                    CALLABLE_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int operator=LAMBDA
-          CALLABLE_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int operator=LAMBDA
+                              CALLABLE_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
+                    CALLABLE_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
+          CALLABLE_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA

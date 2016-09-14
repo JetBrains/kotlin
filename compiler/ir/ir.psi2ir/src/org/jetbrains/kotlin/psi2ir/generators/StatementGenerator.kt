@@ -94,7 +94,7 @@ class StatementGenerator(
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         val irBlock = IrCompositeImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
-                                      context.builtIns.unitType, IrOperator.DESTRUCTURING_DECLARATION)
+                                      context.builtIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION)
         val ktInitializer = multiDeclaration.initializer!!
         val containerValue = scope.createTemporaryVariableInBlock(ktInitializer.genExpr(), irBlock, "container")
 
@@ -113,9 +113,9 @@ class StatementGenerator(
 
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
             val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
-                                                             IrOperator.COMPONENT_N.withIndex(index + 1))
+                                                             IrStatementOrigin.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                                     componentVariable, irComponentCall)
+                                                componentVariable, irComponentCall)
             irBlock.addStatement(irComponentVar)
         }
     }
@@ -232,7 +232,7 @@ class StatementGenerator(
         if (resolvedCall != null) {
             if (resolvedCall is VariableAsFunctionResolvedCall) {
                 val variableCall = pregenerateCall(resolvedCall.variableCall)
-                return CallGenerator(this).generateCall(expression, variableCall, IrOperator.VARIABLE_AS_FUNCTION)
+                return CallGenerator(this).generateCall(expression, variableCall, IrStatementOrigin.VARIABLE_AS_FUNCTION)
             }
 
             val descriptor = resolvedCall.resultingDescriptor
@@ -289,7 +289,7 @@ class StatementGenerator(
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             val functionCall = pregenerateCall(resolvedCall.functionCall)
-            return CallGenerator(this).generateCall(expression, functionCall, IrOperator.INVOKE)
+            return CallGenerator(this).generateCall(expression, functionCall, IrStatementOrigin.INVOKE)
         }
 
         return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
@@ -299,7 +299,7 @@ class StatementGenerator(
         val indexedGetCall = getOrFail(BindingContext.INDEXED_LVALUE_GET, expression)
 
         return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset,
-                                                pregenerateCall(indexedGetCall), IrOperator.GET_ARRAY_ELEMENT)
+                                                pregenerateCall(indexedGetCall), IrStatementOrigin.GET_ARRAY_ELEMENT)
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression, data: Nothing?): IrStatement =
@@ -379,7 +379,7 @@ class StatementGenerator(
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Nothing?): IrStatement =
             IrTypeAliasImpl(typeAlias.startOffset, typeAlias.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                 getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
+                            getOrFail(BindingContext.TYPE_ALIAS, typeAlias))
 
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Nothing?): IrStatement =
             ReflectionReferencesGenerator(this).generateClassLiteral(expression)

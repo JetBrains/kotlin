@@ -29,7 +29,7 @@ class SimplePropertyLValue(
         val scope: Scope,
         val startOffset: Int,
         val endOffset: Int,
-        val irOperator: IrOperator?,
+        val origin: IrStatementOrigin?,
         val descriptor: PropertyDescriptor,
         val callReceiver: CallReceiver,
         val superQualifier: ClassDescriptor?
@@ -42,10 +42,10 @@ class SimplePropertyLValue(
                     IrGetterCallImpl(startOffset, endOffset, getter,
                                      dispatchReceiverValue?.load(),
                                      extensionReceiverValue?.load(),
-                                     irOperator,
+                                     origin,
                                      superQualifier)
                 } ?: IrGetFieldImpl(startOffset, endOffset, descriptor,
-                                    dispatchReceiverValue?.load(), irOperator, superQualifier)
+                                    dispatchReceiverValue?.load(), origin, superQualifier)
             }
 
     override fun store(irExpression: IrExpression) =
@@ -55,10 +55,10 @@ class SimplePropertyLValue(
                                      dispatchReceiverValue?.load(),
                                      extensionReceiverValue?.load(),
                                      irExpression,
-                                     irOperator,
+                                     origin,
                                      superQualifier)
                 } ?: IrSetFieldImpl(startOffset, endOffset, descriptor,
-                                    dispatchReceiverValue?.load(), irExpression, irOperator, superQualifier)
+                                    dispatchReceiverValue?.load(), irExpression, origin, superQualifier)
             }
 
     override fun assign(withLValue: (LValue) -> IrExpression) =
@@ -74,12 +74,12 @@ class SimplePropertyLValue(
                 val extensionReceiverValue2 = extensionReceiverTmp?.let { VariableLValue(it) }
 
                 val irResultExpression = withLValue(
-                        SimplePropertyLValue(context, scope, startOffset, endOffset, irOperator, descriptor,
+                        SimplePropertyLValue(context, scope, startOffset, endOffset, origin, descriptor,
                                              SimpleCallReceiver(dispatchReceiverValue2, extensionReceiverValue2),
                                              superQualifier)
                 )
 
-                val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, irOperator)
+                val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, origin)
                 irBlock.addIfNotNull(dispatchReceiverTmp)
                 irBlock.addIfNotNull(extensionReceiverTmp)
                 irBlock.addStatement(irResultExpression)

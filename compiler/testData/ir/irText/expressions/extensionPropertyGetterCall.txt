@@ -7,5 +7,5 @@ FILE /extensionPropertyGetterCall.kt
   FUN public fun kotlin.String.test5(): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5() on String: String'
-        CALL '<get-okext>() on String: String' type=kotlin.String operator=GET_PROPERTY
+        CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY
           $receiver: $RECEIVER of 'test5() on String: String' type=kotlin.String

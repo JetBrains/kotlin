@@ -21,44 +21,44 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 
-fun primitiveOp1(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, irOperator: IrOperator,
+fun primitiveOp1(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, origin: IrStatementOrigin,
                  argument: IrExpression): IrExpression =
-        IrUnaryPrimitiveImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument)
+        IrUnaryPrimitiveImpl(startOffset, endOffset, origin, primitiveOpDescriptor, argument)
 
-fun primitiveOp2(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, irOperator: IrOperator,
+fun primitiveOp2(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, origin: IrStatementOrigin,
                  argument1: IrExpression, argument2: IrExpression): IrExpression =
-        IrBinaryPrimitiveImpl(startOffset, endOffset, irOperator, primitiveOpDescriptor, argument1, argument2)
+        IrBinaryPrimitiveImpl(startOffset, endOffset, origin, primitiveOpDescriptor, argument1, argument2)
 
 fun GeneratorContext.constNull(startOffset: Int, endOffset: Int): IrExpression =
         IrConstImpl.constNull(startOffset, endOffset, builtIns.nullableNothingType)
 
 fun GeneratorContext.equalsNull(startOffset: Int, endOffset: Int, argument: IrExpression): IrExpression =
-        primitiveOp2(startOffset, endOffset, irBuiltIns.eqeq, IrOperator.EQEQ,
+        primitiveOp2(startOffset, endOffset, irBuiltIns.eqeq, IrStatementOrigin.EQEQ,
                      argument, constNull(startOffset, endOffset))
 
 fun GeneratorContext.eqeqeq(startOffset: Int, endOffset: Int, argument1: IrExpression, argument2: IrExpression): IrExpression =
-        primitiveOp2(startOffset, endOffset, irBuiltIns.eqeqeq, IrOperator.EQEQEQ, argument1, argument2)
+        primitiveOp2(startOffset, endOffset, irBuiltIns.eqeqeq, IrStatementOrigin.EQEQEQ, argument1, argument2)
 
-fun GeneratorContext.throwNpe(startOffset: Int, endOffset: Int, operator: IrOperator): IrExpression =
-        IrNullaryPrimitiveImpl(startOffset, endOffset, operator, irBuiltIns.throwNpe)
+fun GeneratorContext.throwNpe(startOffset: Int, endOffset: Int, origin: IrStatementOrigin): IrExpression =
+        IrNullaryPrimitiveImpl(startOffset, endOffset, origin, irBuiltIns.throwNpe)
 
 // a || b == if (a) true else b
-fun GeneratorContext.oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
+fun GeneratorContext.oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.OROR): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                                                             a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type), b,
-                                                             operator)
+                         a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type), b,
+                         origin)
 
-fun GeneratorContext.oror(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.OROR): IrWhen =
-        oror(b.startOffset, b.endOffset, a, b, operator)
+fun GeneratorContext.oror(a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.OROR): IrWhen =
+        oror(b.startOffset, b.endOffset, a, b, origin)
 
 fun GeneratorContext.whenComma(a: IrExpression, b: IrExpression): IrWhen =
-        oror(a, b, IrOperator.WHEN_COMMA)
+        oror(a, b, IrStatementOrigin.WHEN_COMMA)
 
 // a && b == if (a) b else false
-fun GeneratorContext.andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =
+fun GeneratorContext.andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.ANDAND): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                                                             a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type),
-                                                             operator)
+                         a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type),
+                         origin)
 
-fun GeneratorContext.andand(a: IrExpression, b: IrExpression, operator: IrOperator = IrOperator.ANDAND): IrWhen =
-        andand(b.startOffset, b.endOffset, a, b, operator)
+fun GeneratorContext.andand(a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.ANDAND): IrWhen =
+        andand(b.startOffset, b.endOffset, a, b, origin)

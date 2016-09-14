@@ -19,28 +19,27 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetVariableImpl
-import org.jetbrains.kotlin.ir.expressions.IrOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class VariableLValue(
         val startOffset: Int,
         val endOffset: Int,
         val descriptor: VariableDescriptor,
-        val irOperator: IrOperator? = null
+        val origin: IrStatementOrigin? = null
 ) : LValue, AssignmentReceiver {
-    constructor(irVariable: IrVariable, irOperator: IrOperator? = null) : this(
-            irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, irOperator)
+    constructor(irVariable: IrVariable, origin: IrStatementOrigin? = null) : this(
+            irVariable.startOffset, irVariable.endOffset, irVariable.descriptor, origin)
 
     override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression =
-            IrGetVariableImpl(startOffset, endOffset, descriptor, irOperator)
+            IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrSetVariableImpl(startOffset, endOffset, descriptor, irExpression, irOperator)
+            IrSetVariableImpl(startOffset, endOffset, descriptor, irExpression, origin)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
             withLValue(this)

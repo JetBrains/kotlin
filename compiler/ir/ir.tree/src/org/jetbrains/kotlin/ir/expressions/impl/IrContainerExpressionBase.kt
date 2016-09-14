@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null):
+abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type: KotlinType, override val origin: IrStatementOrigin? = null):
         IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 

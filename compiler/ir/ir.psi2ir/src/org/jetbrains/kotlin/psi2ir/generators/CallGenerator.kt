@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorExtension(statementGenerator) {
-    fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, operator: IrOperator? = null): IrExpression {
+    fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression {
         val descriptor = call.descriptor
 
         return when (descriptor) {
@@ -37,20 +37,20 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is VariableDescriptor ->
                 call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                    generateGetVariable(startOffset, endOffset, descriptor, operator)
+                    generateGetVariable(startOffset, endOffset, descriptor, origin)
                 }
             is FunctionDescriptor ->
-                generateFunctionCall(descriptor, startOffset, endOffset, operator, call)
+                generateFunctionCall(descriptor, startOffset, endOffset, origin, call)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
         }
     }
 
-    fun generateGetVariable(startOffset: Int, endOffset: Int, descriptor: VariableDescriptor, operator: IrOperator? = null) =
+    fun generateGetVariable(startOffset: Int, endOffset: Int, descriptor: VariableDescriptor, origin: IrStatementOrigin? = null) =
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
-                IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, operator ?: IrOperator.GET_LOCAL_PROPERTY)
+                IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
             else
-                IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
+                IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val descriptor = call.descriptor
@@ -90,11 +90,11 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 IrGetterCallImpl(startOffset, endOffset, getter,
                                  dispatchReceiverValue?.load(),
                                  extensionReceiverValue?.load(),
-                                 IrOperator.GET_PROPERTY,
+                                 IrStatementOrigin.GET_PROPERTY,
                                  call.superQualifier)
             } ?: IrGetFieldImpl(startOffset, endOffset, descriptor,
                                 dispatchReceiverValue?.load(),
-                                IrOperator.GET_PROPERTY, call.superQualifier)
+                                IrStatementOrigin.GET_PROPERTY, call.superQualifier)
         }
     }
 
@@ -102,13 +102,13 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             descriptor: FunctionDescriptor,
             startOffset: Int,
             endOffset: Int,
-            operator: IrOperator?,
+            origin: IrStatementOrigin?,
             call: CallBuilder
     ): IrExpression {
         val returnType = descriptor.returnType!!
 
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, operator, call.superQualifier)
+            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, origin, call.superQualifier)
             irCall.dispatchReceiver = dispatchReceiverValue?.load()
             irCall.extensionReceiver = extensionReceiverValue?.load()
 
@@ -140,7 +140,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrOperator.ARGUMENTS_REORDERING_FOR_CALL)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
 
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
@@ -168,8 +168,8 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
     }
 }
 
-fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, operator: IrOperator? = null) =
-        generateCall(ktElement.startOffset, ktElement.endOffset, call, operator)
+fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
+        generateCall(ktElement.startOffset, ktElement.endOffset, call, origin)
 
-fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, operator: IrOperator? = null) =
-        generateCall(irExpression.startOffset, irExpression.endOffset, call, operator)
+fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
+        generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)

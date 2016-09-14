@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.lang.AssertionError
 import java.lang.UnsupportedOperationException
@@ -29,7 +29,7 @@ import java.lang.UnsupportedOperationException
 abstract class IrPrimitiveCallBase(
         startOffset: Int,
         endOffset: Int,
-        override val operator: IrOperator,
+        override val origin: IrStatementOrigin,
         override val descriptor: CallableDescriptor
 ) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override val superQualifier: ClassDescriptor? get() = null
@@ -56,12 +56,8 @@ abstract class IrPrimitiveCallBase(
     }
 }
 
-class IrNullaryPrimitiveImpl constructor(
-        startOffset: Int,
-        endOffset: Int,
-        operator: IrOperator,
-        descriptor: CallableDescriptor
-) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
+class IrNullaryPrimitiveImpl constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
     override fun getChild(slot: Int): IrElement? = null
 
     override fun replaceChild(slot: Int, newChild: IrElement) {
@@ -73,19 +69,11 @@ class IrNullaryPrimitiveImpl constructor(
     }
 }
 
-class IrUnaryPrimitiveImpl private constructor(
-        startOffset: Int,
-        endOffset: Int,
-        operator: IrOperator,
-        descriptor: CallableDescriptor
-) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            operator: IrOperator,
-            descriptor: CallableDescriptor,
-            argument: IrExpression
-    ) : this(startOffset, endOffset, operator, descriptor) {
+class IrUnaryPrimitiveImpl private constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
+    constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor,
+                argument: IrExpression
+    ) : this(startOffset, endOffset, origin, descriptor) {
         this.argument = argument
     }
 
@@ -116,20 +104,12 @@ class IrUnaryPrimitiveImpl private constructor(
     }
 }
 
-class IrBinaryPrimitiveImpl(
-        startOffset: Int,
-        endOffset: Int,
-        operator: IrOperator,
-        descriptor: CallableDescriptor
-) : IrPrimitiveCallBase(startOffset, endOffset, operator, descriptor) {
+class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            operator: IrOperator,
-            descriptor: CallableDescriptor,
-            argument0: IrExpression,
-            argument1: IrExpression
-    ) : this(startOffset, endOffset, operator, descriptor) {
+            startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor,
+            argument0: IrExpression, argument1: IrExpression
+    ) : this(startOffset, endOffset, origin, descriptor) {
         this.argument0 = argument0
         this.argument1 = argument1
     }

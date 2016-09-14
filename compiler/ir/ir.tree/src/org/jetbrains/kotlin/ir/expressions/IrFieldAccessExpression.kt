@@ -23,7 +23,7 @@ interface IrFieldAccessExpression : IrDeclarationReference {
     override val descriptor: PropertyDescriptor
     val superQualifier: ClassDescriptor?
     var receiver: IrExpression?
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
 }
 
 interface IrGetField : IrFieldAccessExpression

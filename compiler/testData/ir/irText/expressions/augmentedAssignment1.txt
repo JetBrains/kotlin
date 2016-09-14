@@ -6,59 +6,59 @@ FILE /augmentedAssignment1.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
-          GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
+          GET_BACKING_FIELD 'p: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-p>(<set-?>: kotlin.Int): kotlin.Unit
       BLOCK_BODY
-        SET_BACKING_FIELD 'p: Int' type=kotlin.Unit operator=null
-          value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
+        SET_BACKING_FIELD 'p: Int' type=kotlin.Unit origin=null
+          value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.Int
         CONST Int type=kotlin.Int value='0'
-      SET_VAR 'x: Int' type=kotlin.Unit operator=PLUSEQ
-        CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ
-          $this: GET_VAR 'x: Int' type=kotlin.Int operator=PLUSEQ
+      SET_VAR 'x: Int' type=kotlin.Unit origin=PLUSEQ
+        CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+          $this: GET_VAR 'x: Int' type=kotlin.Int origin=PLUSEQ
           other: CONST Int type=kotlin.Int value='1'
-      SET_VAR 'x: Int' type=kotlin.Unit operator=MINUSEQ
-        CALL 'minus(Int): Int' type=kotlin.Int operator=MINUSEQ
-          $this: GET_VAR 'x: Int' type=kotlin.Int operator=MINUSEQ
+      SET_VAR 'x: Int' type=kotlin.Unit origin=MINUSEQ
+        CALL 'minus(Int): Int' type=kotlin.Int origin=MINUSEQ
+          $this: GET_VAR 'x: Int' type=kotlin.Int origin=MINUSEQ
           other: CONST Int type=kotlin.Int value='2'
-      SET_VAR 'x: Int' type=kotlin.Unit operator=MULTEQ
-        CALL 'times(Int): Int' type=kotlin.Int operator=MULTEQ
-          $this: GET_VAR 'x: Int' type=kotlin.Int operator=MULTEQ
+      SET_VAR 'x: Int' type=kotlin.Unit origin=MULTEQ
+        CALL 'times(Int): Int' type=kotlin.Int origin=MULTEQ
+          $this: GET_VAR 'x: Int' type=kotlin.Int origin=MULTEQ
           other: CONST Int type=kotlin.Int value='3'
-      SET_VAR 'x: Int' type=kotlin.Unit operator=DIVEQ
-        CALL 'div(Int): Int' type=kotlin.Int operator=DIVEQ
-          $this: GET_VAR 'x: Int' type=kotlin.Int operator=DIVEQ
+      SET_VAR 'x: Int' type=kotlin.Unit origin=DIVEQ
+        CALL 'div(Int): Int' type=kotlin.Int origin=DIVEQ
+          $this: GET_VAR 'x: Int' type=kotlin.Int origin=DIVEQ
           other: CONST Int type=kotlin.Int value='4'
-      SET_VAR 'x: Int' type=kotlin.Unit operator=PERCEQ
-        CALL 'mod(Int): Int' type=kotlin.Int operator=PERCEQ
-          $this: GET_VAR 'x: Int' type=kotlin.Int operator=PERCEQ
+      SET_VAR 'x: Int' type=kotlin.Unit origin=PERCEQ
+        CALL 'mod(Int): Int' type=kotlin.Int origin=PERCEQ
+          $this: GET_VAR 'x: Int' type=kotlin.Int origin=PERCEQ
           other: CONST Int type=kotlin.Int value='5'
   FUN public fun testProperty(): kotlin.Unit
     BLOCK_BODY
-      BLOCK type=kotlin.Unit operator=PLUSEQ
-        CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=PLUSEQ
-          <set-?>: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUSEQ
-            $this: CALL '<get-p>(): Int' type=kotlin.Int operator=PLUSEQ
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PLUSEQ
+          <set-?>: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PLUSEQ
             other: CONST Int type=kotlin.Int value='1'
-      BLOCK type=kotlin.Unit operator=MINUSEQ
-        CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=MINUSEQ
-          <set-?>: CALL 'minus(Int): Int' type=kotlin.Int operator=MINUSEQ
-            $this: CALL '<get-p>(): Int' type=kotlin.Int operator=MINUSEQ
+      BLOCK type=kotlin.Unit origin=MINUSEQ
+        CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=MINUSEQ
+          <set-?>: CALL 'minus(Int): Int' type=kotlin.Int origin=MINUSEQ
+            $this: CALL '<get-p>(): Int' type=kotlin.Int origin=MINUSEQ
             other: CONST Int type=kotlin.Int value='2'
-      BLOCK type=kotlin.Unit operator=MULTEQ
-        CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=MULTEQ
-          <set-?>: CALL 'times(Int): Int' type=kotlin.Int operator=MULTEQ
-            $this: CALL '<get-p>(): Int' type=kotlin.Int operator=MULTEQ
+      BLOCK type=kotlin.Unit origin=MULTEQ
+        CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=MULTEQ
+          <set-?>: CALL 'times(Int): Int' type=kotlin.Int origin=MULTEQ
+            $this: CALL '<get-p>(): Int' type=kotlin.Int origin=MULTEQ
             other: CONST Int type=kotlin.Int value='3'
-      BLOCK type=kotlin.Unit operator=DIVEQ
-        CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=DIVEQ
-          <set-?>: CALL 'div(Int): Int' type=kotlin.Int operator=DIVEQ
-            $this: CALL '<get-p>(): Int' type=kotlin.Int operator=DIVEQ
+      BLOCK type=kotlin.Unit origin=DIVEQ
+        CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=DIVEQ
+          <set-?>: CALL 'div(Int): Int' type=kotlin.Int origin=DIVEQ
+            $this: CALL '<get-p>(): Int' type=kotlin.Int origin=DIVEQ
             other: CONST Int type=kotlin.Int value='4'
-      BLOCK type=kotlin.Unit operator=PERCEQ
-        CALL '<set-p>(Int): Unit' type=kotlin.Unit operator=PERCEQ
-          <set-?>: CALL 'mod(Int): Int' type=kotlin.Int operator=PERCEQ
-            $this: CALL '<get-p>(): Int' type=kotlin.Int operator=PERCEQ
+      BLOCK type=kotlin.Unit origin=PERCEQ
+        CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PERCEQ
+          <set-?>: CALL 'mod(Int): Int' type=kotlin.Int origin=PERCEQ
+            $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PERCEQ
             other: CONST Int type=kotlin.Int value='5'

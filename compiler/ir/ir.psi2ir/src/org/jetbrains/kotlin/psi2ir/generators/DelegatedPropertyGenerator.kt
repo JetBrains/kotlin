@@ -89,7 +89,7 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
 
     private fun createCallableReference(ktElement: KtElement, type: KotlinType, referencedDescriptor: CallableDescriptor): IrCallableReference =
             IrCallableReferenceImpl(ktElement.startOffset, ktElement.endOffset, type,
-                                    referencedDescriptor, IrOperator.PROPERTY_REFERENCE_FOR_DELEGATE)
+                                    referencedDescriptor, IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE)
 
     fun generateLocalDelegatedProperty(
             ktProperty: KtProperty,

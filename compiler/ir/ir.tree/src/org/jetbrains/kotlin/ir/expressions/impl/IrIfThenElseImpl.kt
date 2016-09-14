@@ -18,26 +18,22 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrIfThenElseImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val operator: IrOperator? = null
+        startOffset: Int, endOffset: Int, type: KotlinType,
+        override val origin: IrStatementOrigin? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrWhen {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
+            startOffset: Int, endOffset: Int, type: KotlinType,
             condition: IrExpression,
             thenBranch: IrExpression,
             elseBranch: IrExpression? = null,
-            operator: IrOperator? = null
-    ) : this(startOffset, endOffset, type, operator) {
+            origin: IrStatementOrigin? = null
+    ) : this(startOffset, endOffset, type, origin) {
         this.condition = condition
         this.thenBranch = thenBranch
         this.elseBranch = elseBranch

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 interface IrContainerExpression : IrExpression, IrStatementContainer {
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
     val isTransparentScope: Boolean
 }
 

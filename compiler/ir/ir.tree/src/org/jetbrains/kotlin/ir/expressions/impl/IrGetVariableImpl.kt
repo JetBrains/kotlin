@@ -18,19 +18,17 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetVariable
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalDeclarationReferenceBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetVariableImpl(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: VariableDescriptor,
-        override val operator: IrOperator? = null
+        startOffset: Int, endOffset: Int, descriptor: VariableDescriptor,
+        override val origin: IrStatementOrigin? = null
 ) : IrTerminalDeclarationReferenceBase<VariableDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetVariable {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitGetVariable(this, data)
 
     override fun copy(): IrGetVariable =
-            IrGetVariableImpl(startOffset, endOffset, descriptor, operator)
+            IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
 }

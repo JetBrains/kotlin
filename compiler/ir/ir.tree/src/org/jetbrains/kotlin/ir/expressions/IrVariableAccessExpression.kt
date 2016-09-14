@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 interface IrVariableAccessExpression : IrDeclarationReference {
     override val descriptor: VariableDescriptor
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
 }
 
 interface IrGetVariable : IrVariableAccessExpression, IrExpressionWithCopy {

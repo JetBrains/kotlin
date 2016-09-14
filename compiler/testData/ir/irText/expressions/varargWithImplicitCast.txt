@@ -1,26 +1,26 @@
 FILE /varargWithImplicitCast.kt
   FUN public fun testScalar(a: kotlin.Any): kotlin.IntArray
     BLOCK_BODY
-      WHEN type=kotlin.Unit operator=IF
-        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.Int
-          GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+      WHEN type=kotlin.Unit origin=IF
+        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.Int
+          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
         then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
-          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
+          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
-        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
+        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
-            TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Int
-              GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+            TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN public fun testSpread(a: kotlin.Any): kotlin.IntArray
     BLOCK_BODY
-      WHEN type=kotlin.Unit operator=IF
-        if: TYPE_OP operator=NOT_INSTANCEOF typeOperand=kotlin.IntArray
-          GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+      WHEN type=kotlin.Unit origin=IF
+        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
+          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
         then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
-          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
+          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
-        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray operator=null
+        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
             SPREAD_ELEMENT
-              TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.IntArray
-                GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+              TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.IntArray
+                GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null

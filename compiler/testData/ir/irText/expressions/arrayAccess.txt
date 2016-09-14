@@ -6,7 +6,7 @@ FILE /arrayAccess.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
-          GET_BACKING_FIELD 'p: Int' type=kotlin.Int operator=null
+          GET_BACKING_FIELD 'p: Int' type=kotlin.Int origin=null
   FUN public fun foo(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Int'
@@ -14,14 +14,14 @@ FILE /arrayAccess.kt
   FUN public fun test(a: kotlin.IntArray): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(IntArray): Int'
-        CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
-          $this: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
-            $this: CALL 'get(Int): Int' type=kotlin.Int operator=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray operator=null
+        CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
+          $this: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
+            $this: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value='0'
-            other: CALL 'get(Int): Int' type=kotlin.Int operator=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray operator=null
-              index: CALL '<get-p>(): Int' type=kotlin.Int operator=GET_PROPERTY
-          other: CALL 'get(Int): Int' type=kotlin.Int operator=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray operator=null
-            index: CALL 'foo(): Int' type=kotlin.Int operator=null
+            other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
+              index: CALL '<get-p>(): Int' type=kotlin.Int origin=GET_PROPERTY
+          other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
+            index: CALL 'foo(): Int' type=kotlin.Int origin=null

@@ -83,11 +83,9 @@ open class IrBlockBodyBuilder(
 }
 
 class IrBlockBuilder(
-        context: GeneratorContext,
-        scope: Scope,
-        startOffset: Int,
-        endOffset: Int,
-        val operator: IrOperator? = null,
+        context: GeneratorContext, scope: Scope,
+        startOffset: Int, endOffset: Int,
+        val origin: IrStatementOrigin? = null,
         var resultType: KotlinType? = null
 ) : IrStatementsBuilder<IrBlock>(context, scope, startOffset, endOffset) {
     private val statements = ArrayList<IrStatement>()
@@ -105,7 +103,7 @@ class IrBlockBuilder(
         val resultType = this.resultType ?:
                          (statements.lastOrNull() as? IrExpression)?.type ?:
                          context.builtIns.unitType
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, operator)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
         irBlock.addAll(statements)
         return irBlock
     }
@@ -123,13 +121,13 @@ fun <T : IrBuilder> T.at(psiElement: PsiElement): T {
     return this
 }
 
-inline fun GeneratorWithScope.irBlock(ktElement: KtElement? = null, operator: IrOperator? = null, resultType: KotlinType? = null,
+inline fun GeneratorWithScope.irBlock(ktElement: KtElement? = null, origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
                                       body: IrBlockBuilder.() -> Unit
 ): IrExpression =
         IrBlockBuilder(context, scope,
                        ktElement?.startOffset ?: UNDEFINED_OFFSET,
                        ktElement?.endOffset ?: UNDEFINED_OFFSET,
-                       operator, resultType
+                       origin, resultType
         ).block(body)
 
 inline fun GeneratorWithScope.irBlockBody(ktElement: KtElement? = null, body: IrBlockBodyBuilder.() -> Unit) : IrBlockBody =

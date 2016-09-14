@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -34,14 +34,14 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         val ktFun = ktLambda.functionLiteral
         val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda)
         val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
-        val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrOperator.LAMBDA)
+        val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrStatementOrigin.LAMBDA)
 
         val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, lambdaDescriptor)
         irFun.body = BodyGenerator(lambdaDescriptor, statementGenerator.context).generateLambdaBody(ktFun)
         irBlock.addStatement(irFun)
 
         irBlock.addStatement(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                                                     lambdaDescriptor, IrOperator.LAMBDA))
+                                                     lambdaDescriptor, IrStatementOrigin.LAMBDA))
 
         return irBlock
     }
@@ -53,13 +53,13 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
             else {
                 // anonymous function expression
                 val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun)
-                val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrOperator.ANONYMOUS_FUNCTION)
+                val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
 
                 val irFun = generateFunctionDeclaration(ktFun)
                 irBlock.addStatement(irFun)
 
                 irBlock.addStatement(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
-                                                             irFun.descriptor, IrOperator.ANONYMOUS_FUNCTION))
+                                                             irFun.descriptor, IrStatementOrigin.ANONYMOUS_FUNCTION))
 
                 irBlock
             }

@@ -66,11 +66,11 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
             IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                 getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
+                            getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
 
     fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration {
         val irAnonymousInitializer = IrAnonymousInitializerImpl(ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset,
-                                                                                                     IrDeclarationOrigin.DEFINED, classDescriptor)
+                                                                IrDeclarationOrigin.DEFINED, classDescriptor)
         irAnonymousInitializer.body = BodyGenerator(classDescriptor, context).generateAnonymousInitializerBody(ktAnonymousInitializer)
         return irAnonymousInitializer
     }

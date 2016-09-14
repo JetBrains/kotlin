@@ -21,24 +21,19 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetFieldImpl(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: PropertyDescriptor,
-        operator: IrOperator? = null,
+        startOffset: Int, endOffset: Int, descriptor: PropertyDescriptor,
+        origin: IrStatementOrigin? = null,
         superQualifier: ClassDescriptor? = null
-) : IrFieldExpressionBase(startOffset, endOffset, descriptor, descriptor.type, operator, superQualifier), IrGetField {
+) : IrFieldExpressionBase(startOffset, endOffset, descriptor, descriptor.type, origin, superQualifier), IrGetField {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: PropertyDescriptor,
-            receiver: IrExpression?,
-            operator: IrOperator? = null,
+            startOffset: Int, endOffset: Int, descriptor: PropertyDescriptor, receiver: IrExpression?,
+            origin: IrStatementOrigin? = null,
             superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
+    ) : this(startOffset, endOffset, descriptor, origin, superQualifier) {
         this.receiver = receiver
     }
 

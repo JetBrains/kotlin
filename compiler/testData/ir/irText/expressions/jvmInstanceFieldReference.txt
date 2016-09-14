@@ -6,16 +6,16 @@ FILE /Derived.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
     ANONYMOUS_INITIALIZER Derived
       BLOCK_BODY
-        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=EQ
+        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit origin=EQ
           receiver: THIS of 'Derived' type=Derived
           value: CONST Int type=kotlin.Int value='0'
     FUN public final fun getValue(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='getValue(): Int'
-          GET_BACKING_FIELD 'value: Int' type=kotlin.Int operator=GET_PROPERTY
+          GET_BACKING_FIELD 'value: Int' type=kotlin.Int origin=GET_PROPERTY
             receiver: THIS of 'Derived' type=Derived
     FUN public final fun setValue(value: kotlin.Int): kotlin.Unit
       BLOCK_BODY
-        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit operator=EQ
+        SET_BACKING_FIELD 'value: Int' type=kotlin.Unit origin=EQ
           receiver: THIS of 'Derived' type=Derived
-          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
+          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null

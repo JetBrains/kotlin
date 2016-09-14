@@ -2,26 +2,26 @@ FILE /stringPlus.kt
   FUN public fun test1(a: kotlin.String, b: kotlin.Any): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String, Any): String'
-        CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-          $this: GET_VAR 'value-parameter a: String' type=kotlin.String operator=null
-          other: GET_VAR 'value-parameter b: Any' type=kotlin.Any operator=null
+        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+          $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
+          other: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
   FUN public fun test2(a: kotlin.String, b: kotlin.Int): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String, Int): String'
-        CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-          $this: CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-            $this: GET_VAR 'value-parameter a: String' type=kotlin.String operator=null
+        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+          $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+            $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: CONST String type=kotlin.String value='+'
-          other: GET_VAR 'value-parameter b: Int' type=kotlin.Int operator=null
+          other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun test3(a: kotlin.String, b: kotlin.Int): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(String, Int): String'
-        CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-          $this: CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-            $this: CALL 'plus(Any?): String' type=kotlin.String operator=PLUS
-              $this: GET_VAR 'value-parameter a: String' type=kotlin.String operator=null
+        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+          $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+            $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+              $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
               other: CONST String type=kotlin.String value='+'
-            other: CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
-              $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int operator=null
+            other: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
+              $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value='1'
-          other: GET_VAR 'value-parameter a: String' type=kotlin.String operator=null
+          other: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null

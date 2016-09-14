@@ -2,15 +2,15 @@ FILE /ifElseIf.kt
   FUN public fun test(i: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(Int): Int'
-        WHEN type=kotlin.Int operator=WHEN
-          if: CALL 'GT0(Int): Boolean' type=kotlin.Boolean operator=GT
-            arg0: CALL 'compareTo(Int): Int' type=kotlin.Int operator=GT
-              $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int operator=null
+        WHEN type=kotlin.Int origin=WHEN
+          if: CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
+            arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
+              $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value='0'
           then: CONST Int type=kotlin.Int value='1'
-          if: CALL 'LT0(Int): Boolean' type=kotlin.Boolean operator=LT
-            arg0: CALL 'compareTo(Int): Int' type=kotlin.Int operator=LT
-              $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int operator=null
+          if: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
+            arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
+              $this: GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value='0'
           then: CONST Int type=kotlin.Int value='-1'
           else: CONST Int type=kotlin.Int value='0'

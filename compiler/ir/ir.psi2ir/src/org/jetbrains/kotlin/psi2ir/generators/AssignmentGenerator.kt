@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -38,22 +38,22 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     fun generateAssignment(expression: KtBinaryExpression): IrExpression {
         val ktLeft = expression.left!!
         val irRhs = statementGenerator.generateExpression(expression.right!!)
-        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrOperator.EQ)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
         return irAssignmentReceiver.assign(irRhs)
     }
 
-    fun generateAugmentedAssignment(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    fun generateAugmentedAssignment(expression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
         val opResolvedCall = getResolvedCall(expression)!!
         val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
         val ktLeft = expression.left!!
         val ktRight = expression.right!!
-        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, irOperator)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
             val opCall = statementGenerator.pregenerateCall(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
             opCall.irValueArgumentsByIndex[0] = statementGenerator.generateExpression(ktRight)
-            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
+            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
 
             if (isSimpleAssignment) {
                 // Set( Op( Get(), RHS ) )
@@ -66,16 +66,16 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
     }
 
-    fun generatePrefixIncrementDecrement(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
+    fun generatePrefixIncrementDecrement(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val opResolvedCall = getResolvedCall(expression)!!
         val ktBaseExpression = expression.baseExpression!!
-        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(expression, irOperator, irLValue.type) {
+            irBlock(expression, origin, irLValue.type) {
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
-                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
+                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
                 val temporary = defineTemporary(irOpCall)
                 +irLValue.store(irGet(temporary))
                 +irGet(temporary)
@@ -83,26 +83,26 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
     }
 
-    fun generatePostfixIncrementDecrement(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
+    fun generatePostfixIncrementDecrement(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
         val opResolvedCall = getResolvedCall(expression)!!
         val ktBaseExpression = expression.baseExpression!!
-        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, irOperator)
+        val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(expression, irOperator, irLValue.type) {
+            irBlock(expression, origin, irLValue.type) {
                 val temporary = defineTemporary(irLValue.load())
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(VariableLValue(startOffset, endOffset, temporary))
-                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, irOperator)
+                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
                 +irLValue.store(irOpCall)
                 +irGet(temporary)
             }
         }
     }
 
-    fun generateAssignmentReceiver(ktLeft: KtExpression, operator: IrOperator): AssignmentReceiver {
+    fun generateAssignmentReceiver(ktLeft: KtExpression, origin: IrStatementOrigin): AssignmentReceiver {
         if (ktLeft is KtArrayAccessExpression) {
-            return generateArrayAccessAssignmentReceiver(ktLeft, operator)
+            return generateArrayAccessAssignmentReceiver(ktLeft, origin)
         }
 
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
@@ -114,18 +114,18 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     statementGenerator.generateReceiver(ktLeft, it)
                 }
                 BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor,
-                                   receiverValue, operator)
+                                   receiverValue, origin)
 
             }
             is LocalVariableDescriptor ->
                 if (descriptor.isDelegated)
-                    DelegatedLocalPropertyLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
+                    DelegatedLocalPropertyLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, origin)
                 else
-                    VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
+                    VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, origin)
             is PropertyDescriptor ->
-                generateAssignmentReceiverForProperty(descriptor, operator, ktLeft, resolvedCall)
+                generateAssignmentReceiverForProperty(descriptor, origin, ktLeft, resolvedCall)
             is VariableDescriptor ->
-                VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, operator)
+                VariableLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, origin)
             else ->
                 OnceExpressionValue(statementGenerator.generateExpression(ktLeft))
         }
@@ -133,7 +133,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
     private fun generateAssignmentReceiverForProperty(
             descriptor: PropertyDescriptor,
-            irOperator: IrOperator,
+            origin: IrStatementOrigin,
             ktLeft: KtExpression,
             resolvedCall: ResolvedCall<*>
     ): AssignmentReceiver {
@@ -149,7 +149,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         val superQualifier = getSuperQualifier(resolvedCall)
 
-        return SimplePropertyLValue(context, scope, ktLeft.startOffset, ktLeft.endOffset, irOperator, descriptor,
+        return SimplePropertyLValue(context, scope, ktLeft.startOffset, ktLeft.endOffset, origin, descriptor,
                                     propertyReceiver, superQualifier)
     }
 
@@ -167,7 +167,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
     }
 
-    private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, irOperator: IrOperator): ArrayAccessAssignmentReceiver {
+    private fun generateArrayAccessAssignmentReceiver(ktLeft: KtArrayAccessExpression, origin: IrStatementOrigin): ArrayAccessAssignmentReceiver {
         val irArray = statementGenerator.generateExpression(ktLeft.arrayExpression!!)
         val irIndexExpressions = ktLeft.indexExpressions.map { statementGenerator.generateExpression(it) }
 
@@ -179,7 +179,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         return ArrayAccessAssignmentReceiver(irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
                                              CallGenerator(statementGenerator),
-                                             ktLeft.startOffset, ktLeft.endOffset, irOperator)
+                                             ktLeft.startOffset, ktLeft.endOffset, origin)
     }
 
 }

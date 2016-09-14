@@ -2,33 +2,33 @@ FILE /bangbang.kt
   FUN public fun test1(a: kotlin.Any?): kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any?): Any'
-        BLOCK type=kotlin.Any operator=EXCLEXCL
+        BLOCK type=kotlin.Any origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE val tmp0_notnull: kotlin.Any?
-            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
-          WHEN type=kotlin.Any operator=null
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? operator=null
+            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
+          WHEN type=kotlin.Any origin=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing operator=EXCLEXCL
-            else: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? operator=null
+            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+            else: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
   FUN public fun test2(a: kotlin.Any?): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any?): Int'
-        BLOCK type=kotlin.Int operator=EXCLEXCL
+        BLOCK type=kotlin.Int origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE val tmp1_notnull: kotlin.Int?
-            BLOCK type=kotlin.Int? operator=SAFE_CALL
+            BLOCK type=kotlin.Int? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Any?
-                GET_VAR 'value-parameter a: Any?' type=kotlin.Any? operator=null
-              WHEN type=kotlin.Int? operator=SAFE_CALL
-                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
-                  arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? operator=null
+                GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
+              WHEN type=kotlin.Int? origin=SAFE_CALL
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value='null'
                 then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL 'hashCode(): Int' type=kotlin.Int operator=null
-                  $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? operator=null
-          WHEN type=kotlin.Int operator=null
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean operator=EQEQ
-              arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? operator=null
+                else: CALL 'hashCode(): Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+          WHEN type=kotlin.Int origin=null
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing operator=EXCLEXCL
-            else: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? operator=null
+            then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+            else: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null

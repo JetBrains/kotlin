@@ -16,31 +16,13 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
-import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrWhileLoopImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        operator: IrOperator?
-) : IrLoopBase(startOffset, endOffset, type, operator), IrWhileLoop {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            operator: IrOperator?,
-            condition: IrExpression,
-            body: IrExpression
-    ) : this(startOffset, endOffset, type, operator) {
-        this.condition = condition
-        this.body = body
-    }
-
+class IrWhileLoopImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?) :
+        IrLoopBase(startOffset, endOffset, type, origin), IrWhileLoop {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitWhileLoop(this, data)
     }

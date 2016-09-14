@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
 interface IrGeneralCall : IrMemberAccessExpression {
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
     override val descriptor: CallableDescriptor
 
     fun getArgument(index: Int): IrExpression?

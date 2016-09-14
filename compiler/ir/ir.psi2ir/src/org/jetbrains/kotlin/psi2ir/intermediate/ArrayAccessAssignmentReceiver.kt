@@ -31,16 +31,16 @@ class ArrayAccessAssignmentReceiver(
         val callGenerator: CallGenerator,
         val startOffset: Int,
         val endOffset: Int,
-        val operator: IrOperator
+        val origin: IrStatementOrigin
 ) : AssignmentReceiver {
     private val type: KotlinType = indexedGetCall?.let { it.descriptor.returnType!! } ?:
                                    indexedSetCall?.let { it.descriptor.valueParameters.last().type } ?:
                                    throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
-        val hasResult = operator.isAssignmentOperatorWithResult()
+        val hasResult = origin.isAssignmentOperatorWithResult()
         val resultType = if (hasResult) type else callGenerator.context.builtIns.unitType
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, operator)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
 
         val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(irArray, irBlock, "array")
 
@@ -50,7 +50,7 @@ class ArrayAccessAssignmentReceiver(
 
         indexedGetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
         indexedSetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
-        val irLValue = LValueWithGetterAndSetterCalls(callGenerator, indexedGetCall, indexedSetCall, type, startOffset, endOffset, operator)
+        val irLValue = LValueWithGetterAndSetterCalls(callGenerator, indexedGetCall, indexedSetCall, type, startOffset, endOffset, origin)
         irBlock.inlineStatement(withLValue(irLValue))
 
         return irBlock
@@ -63,7 +63,7 @@ class ArrayAccessAssignmentReceiver(
             indexedSetCall.irValueArgumentsByIndex[i] = irIndex
         }
         indexedSetCall.lastArgument = value
-        return callGenerator.generateCall(startOffset, endOffset, indexedSetCall, IrOperator.EQ)
+        return callGenerator.generateCall(startOffset, endOffset, indexedSetCall, IrStatementOrigin.EQ)
     }
 
     private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {

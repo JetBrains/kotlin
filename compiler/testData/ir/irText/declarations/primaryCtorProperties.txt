@@ -7,23 +7,23 @@ FILE /primaryCtorProperties.kt
     PROPERTY public final val test1: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val test1: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter test1: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter test1: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test1>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
-            GET_BACKING_FIELD 'test1: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
     PROPERTY public final var test2: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var test2: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter test2: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter test2: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test2>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
-            GET_BACKING_FIELD 'test2: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'test2: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-test2>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD 'test2: Int' type=kotlin.Unit operator=null
+          SET_BACKING_FIELD 'test2: Int' type=kotlin.Unit origin=null
             receiver: THIS of 'C' type=C
-            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null

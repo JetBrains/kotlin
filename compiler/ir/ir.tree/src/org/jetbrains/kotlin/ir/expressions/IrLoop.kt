@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 interface IrLoop : IrExpression {
-    val operator: IrOperator?
+    val origin: IrStatementOrigin?
     var body: IrExpression?
     var condition: IrExpression
     val label: String?

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.psi2ir.generators.constNull
 import org.jetbrains.kotlin.psi2ir.generators.equalsNull
@@ -51,15 +51,15 @@ class SafeCallReceiver(
         val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
         val resultType = irResult.type.makeNullable()
 
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrOperator.SAFE_CALL)
+        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL)
 
         irBlock.addStatement(irTmp)
 
         val irIfThenElse = IrIfThenElseImpl(startOffset, endOffset, resultType,
-                                                                                generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-                                                                                generator.context.constNull(startOffset, endOffset),
-                                                                                irResult,
-                                                                                IrOperator.SAFE_CALL)
+                                            generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
+                                            generator.context.constNull(startOffset, endOffset),
+                                            irResult,
+                                            IrStatementOrigin.SAFE_CALL)
         irBlock.addStatement(irIfThenElse)
 
         return irBlock

@@ -55,7 +55,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return when (irOperator) {
             null -> throw AssertionError("Unexpected postfix operator: $ktOperator")
             in INCREMENT_DECREMENT_OPERATORS -> AssignmentGenerator(statementGenerator).generatePostfixIncrementDecrement(expression, irOperator)
-            IrOperator.EXCLEXCL -> generateExclExclOperator(expression, irOperator)
+            IrStatementOrigin.EXCLEXCL -> generateExclExclOperator(expression, irOperator)
             else -> createDummyExpression(expression, ktOperator.toString())
         }
     }
@@ -97,9 +97,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return when (irOperator) {
             null -> throw AssertionError("Unexpected infix operator: $ktOperator")
-            IrOperator.EQ -> AssignmentGenerator(statementGenerator).generateAssignment(expression)
+            IrStatementOrigin.EQ -> AssignmentGenerator(statementGenerator).generateAssignment(expression)
             in AUGMENTED_ASSIGNMENTS -> AssignmentGenerator(statementGenerator).generateAugmentedAssignment(expression, irOperator)
-            IrOperator.ELVIS -> generateElvis(expression)
+            IrStatementOrigin.ELVIS -> generateElvis(expression)
             in OPERATORS_DESUGARED_TO_CALLS -> generateBinaryOperatorAsCall(expression, irOperator)
             in COMPARISON_OPERATORS -> generateComparisonOperator(expression, irOperator)
             in EQUALITY_OPERATORS -> generateEqualityOperator(expression, irOperator)
@@ -116,35 +116,35 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
-        return irBlock(expression, IrOperator.ELVIS, resultType) {
+        return irBlock(expression, IrStatementOrigin.ELVIS, resultType) {
             val temporary = defineTemporary(irArgument0, "elvis_lhs")
             +irIfNull(resultType, irGet(temporary), irArgument1, irGet(temporary))
         }
     }
 
-    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateBinaryBooleanOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
         return when (irOperator) {
-            IrOperator.OROR ->
+            IrStatementOrigin.OROR ->
                 context.oror(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
-            IrOperator.ANDAND ->
+            IrStatementOrigin.ANDAND ->
                 context.andand(expression.startOffset, expression.endOffset, irArgument0, irArgument1)
             else ->
                 throw AssertionError("Unexpected binary boolean operator $irOperator")
         }
     }
 
-    private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateInOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
         val containsCall = getResolvedCall(expression)!!
 
         val irContainsCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(containsCall), irOperator)
 
         return when (irOperator) {
-            IrOperator.IN ->
+            IrStatementOrigin.IN ->
                 irContainsCall
-            IrOperator.NOT_IN ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.NOT_IN, context.irBuiltIns.booleanNot,
+            IrStatementOrigin.NOT_IN ->
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.NOT_IN, context.irBuiltIns.booleanNot,
                                      irContainsCall)
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
@@ -152,7 +152,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     }
 
-    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateIdentityOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
@@ -161,10 +161,10 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                                                      irArgument0, irArgument1)
 
         return when (irOperator) {
-            IrOperator.EQEQEQ ->
+            IrStatementOrigin.EQEQEQ ->
                 irIdentityEquals
-            IrOperator.EXCLEQEQ ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.EXCLEQEQ, context.irBuiltIns.booleanNot,
+            IrStatementOrigin.EXCLEQEQ ->
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQEQ, context.irBuiltIns.booleanNot,
                                      irIdentityEquals)
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
@@ -172,7 +172,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     }
 
-    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateEqualityOperator(expression: KtBinaryExpression, irOperator: IrStatementOrigin): IrExpression {
         val irArgument0 = statementGenerator.generateExpression(expression.left!!)
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
@@ -180,10 +180,10 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                                              irOperator, context.irBuiltIns.eqeq, irArgument0, irArgument1)
 
         return when (irOperator) {
-            IrOperator.EQEQ ->
+            IrStatementOrigin.EQEQ ->
                 irEquals
-            IrOperator.EXCLEQ ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrOperator.EXCLEQ,
+            IrStatementOrigin.EXCLEQ ->
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQ,
                                      context.irBuiltIns.booleanNot, irEquals)
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
@@ -191,41 +191,41 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
     }
 
-    private fun generateComparisonOperator(expression: KtBinaryExpression, irOperator: IrOperator): IrExpression {
+    private fun generateComparisonOperator(expression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
         val compareToCall = getResolvedCall(expression)!!
 
-        val irCompareToCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), irOperator)
+        val irCompareToCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), origin)
 
-        val compareToZeroDescriptor = when (irOperator) {
-            IrOperator.LT -> context.irBuiltIns.lt0
-            IrOperator.LTEQ -> context.irBuiltIns.lteq0
-            IrOperator.GT -> context.irBuiltIns.gt0
-            IrOperator.GTEQ -> context.irBuiltIns.gteq0
-            else -> throw AssertionError("Unexpected comparison operator: $irOperator")
+        val compareToZeroDescriptor = when (origin) {
+            IrStatementOrigin.LT -> context.irBuiltIns.lt0
+            IrStatementOrigin.LTEQ -> context.irBuiltIns.lteq0
+            IrStatementOrigin.GT -> context.irBuiltIns.gt0
+            IrStatementOrigin.GTEQ -> context.irBuiltIns.gteq0
+            else -> throw AssertionError("Unexpected comparison operator: $origin")
         }
 
-        return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, irOperator, compareToZeroDescriptor, irCompareToCall)
+        return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, origin, compareToZeroDescriptor, irCompareToCall)
     }
 
-    private fun generateExclExclOperator(expression: KtPostfixExpression, irOperator: IrOperator): IrExpression {
+    private fun generateExclExclOperator(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
         val ktArgument = expression.baseExpression!!
         val irArgument = statementGenerator.generateExpression(ktArgument)
         val ktOperator = expression.operationReference
 
         val resultType = irArgument.type.makeNotNullable()
 
-        return irBlock(ktOperator, irOperator, resultType) {
+        return irBlock(ktOperator, origin, resultType) {
             val temporary = defineTemporary(irArgument, "notnull")
-            +irIfNull(resultType, irGet(temporary), irThrowNpe(irOperator), irGet(temporary))
+            +irIfNull(resultType, irGet(temporary), irThrowNpe(origin), irGet(temporary))
         }
     }
 
-    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, irOperator: IrOperator?): IrExpression {
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression {
         val operatorCall = getResolvedCall(expression)!!
-        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), irOperator)
+        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(operatorCall), origin)
     }
 
-    private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, irOperator: IrOperator): IrExpression {
+    private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!
 
         if (expression.baseExpression is KtConstantExpression) {
@@ -237,6 +237,6 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             }
         }
 
-        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), irOperator)
+        return CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(resolvedCall), origin)
     }
 }

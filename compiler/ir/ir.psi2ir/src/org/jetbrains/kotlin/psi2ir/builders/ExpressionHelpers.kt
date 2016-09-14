@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.types.KotlinType
 
 inline fun IrBuilderWithScope.irLet(
         value: IrExpression,
-        operator: IrOperator? = null,
+        origin: IrStatementOrigin? = null,
         nameHint: String? = null,
         body: (VariableDescriptor) -> IrExpression
 ): IrExpression {
     val irTemporary = scope.createTemporaryVariable(value, nameHint)
     val irResult = body(irTemporary.descriptor)
-    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, operator)
+    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
     irBlock.addStatement(irTemporary)
     irBlock.addStatement(irResult)
     return irBlock
@@ -63,8 +63,8 @@ fun IrBuilderWithScope.irIfThenElse(type: KotlinType, condition: IrExpression, t
 fun IrBuilderWithScope.irIfNull(type: KotlinType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
         irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
 
-fun IrBuilderWithScope.irThrowNpe(operator: IrOperator) =
-        IrNullaryPrimitiveImpl(startOffset, endOffset, operator, context.irBuiltIns.throwNpe)
+fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin) =
+        IrNullaryPrimitiveImpl(startOffset, endOffset, origin, context.irBuiltIns.throwNpe)
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
         IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, irReturnTrue())
@@ -81,7 +81,7 @@ fun IrBuilderWithScope.irGet(variable: VariableDescriptor) =
         IrGetVariableImpl(startOffset, endOffset, variable)
 
 fun IrBuilderWithScope.irSetVar(variable: VariableDescriptor, value: IrExpression) =
-        IrSetVariableImpl(startOffset, endOffset, variable, value, IrOperator.EQ)
+        IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)
 
 fun IrBuilderWithScope.irOther() =
         irGet(scope.functionOwner().valueParameters.single())
@@ -93,16 +93,16 @@ fun IrBuilderWithScope.irNull() =
         IrConstImpl.constNull(startOffset, endOffset, context.builtIns.nullableNothingType)
 
 fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
-        primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeq, IrOperator.EQEQ,
+        primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeq, IrStatementOrigin.EQEQ,
                      argument, irNull())
 
 fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
-        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNot, IrOperator.EXCLEQ,
-                     primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeq, IrOperator.EXCLEQ,
+        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNot, IrStatementOrigin.EXCLEQ,
+                     primitiveOp2(startOffset, endOffset, context.irBuiltIns.eqeq, IrStatementOrigin.EXCLEQ,
                                   arg1, arg2))
 
 fun IrBuilderWithScope.irGet(receiver: IrExpression, property: PropertyDescriptor): IrExpression =
-        IrGetterCallImpl(startOffset, endOffset, property.getter!!, receiver, null, IrOperator.GET_PROPERTY)
+        IrGetterCallImpl(startOffset, endOffset, property.getter!!, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
 fun IrBuilderWithScope.irCall(callee: CallableDescriptor) =
         IrCallImpl(startOffset, endOffset, callee.returnType!!, callee)

@@ -6,7 +6,7 @@ FILE /initBlock.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     ANONYMOUS_INITIALIZER Test1
       BLOCK_BODY
-        CALL 'println(): Unit' type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit origin=null
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int)
       BLOCK_BODY
@@ -15,19 +15,19 @@ FILE /initBlock.kt
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
-            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'Test2' type=Test2
     ANONYMOUS_INITIALIZER Test2
       BLOCK_BODY
-        CALL 'println(): Unit' type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit origin=null
   CLASS CLASS Test3
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
-        CALL 'println(): Unit' type=kotlin.Unit operator=null
+        CALL 'println(): Unit' type=kotlin.Unit origin=null
     CONSTRUCTOR public constructor Test3()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -35,7 +35,7 @@ FILE /initBlock.kt
   CLASS CLASS Test4
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
-        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='1'
     CONSTRUCTOR public constructor Test4()
       BLOCK_BODY
@@ -43,7 +43,7 @@ FILE /initBlock.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test4'
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
-        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
   CLASS CLASS Test5
     CONSTRUCTOR public constructor Test5()
@@ -52,7 +52,7 @@ FILE /initBlock.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test5'
     ANONYMOUS_INITIALIZER Test5
       BLOCK_BODY
-        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='1'
     CLASS CLASS TestInner
       CONSTRUCTOR public constructor TestInner()
@@ -61,5 +61,5 @@ FILE /initBlock.kt
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'
       ANONYMOUS_INITIALIZER TestInner
         BLOCK_BODY
-          CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+          CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='2'

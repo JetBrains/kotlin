@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -27,7 +27,7 @@ abstract class IrLoopBase(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val operator: IrOperator?
+        override val origin: IrStatementOrigin?
 ) : IrExpressionBase(startOffset, endOffset, type), IrLoop {
     override var label: String? = null
 

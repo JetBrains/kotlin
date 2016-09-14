@@ -22,16 +22,16 @@ FILE /qualifiedSuperCalls.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CBoth'
     FUN public open override fun foo(): kotlin.Unit
       BLOCK_BODY
-        CALL 'foo(): Unit' superQualifier=ILeft type=kotlin.Unit operator=null
+        CALL 'foo(): Unit' superQualifier=ILeft type=kotlin.Unit origin=null
           $this: THIS of 'CBoth' type=ILeft
-        CALL 'foo(): Unit' superQualifier=IRight type=kotlin.Unit operator=null
+        CALL 'foo(): Unit' superQualifier=IRight type=kotlin.Unit origin=null
           $this: THIS of 'CBoth' type=IRight
     PROPERTY public open override val bar: kotlin.Int
       FUN public open override fun <get-bar>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
-            CALL 'plus(Int): Int' type=kotlin.Int operator=PLUS
-              $this: CALL '<get-bar>(): Int' superQualifier=ILeft type=kotlin.Int operator=GET_PROPERTY
+            CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
+              $this: CALL '<get-bar>(): Int' superQualifier=ILeft type=kotlin.Int origin=GET_PROPERTY
                 $this: THIS of 'CBoth' type=ILeft
-              other: CALL '<get-bar>(): Int' superQualifier=IRight type=kotlin.Int operator=GET_PROPERTY
+              other: CALL '<get-bar>(): Int' superQualifier=IRight type=kotlin.Int origin=GET_PROPERTY
                 $this: THIS of 'CBoth' type=IRight

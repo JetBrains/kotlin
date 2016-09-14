@@ -2,13 +2,13 @@ FILE /throw.kt
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       THROW type=kotlin.Nothing
-        CALL 'constructor Throwable()' type=kotlin.Throwable operator=null
+        CALL 'constructor Throwable()' type=kotlin.Throwable origin=null
   FUN public fun testImplicitCast(a: kotlin.Any): kotlin.Unit
     BLOCK_BODY
-      WHEN type=kotlin.Unit operator=IF
-        if: TYPE_OP operator=INSTANCEOF typeOperand=kotlin.Throwable
-          GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
-        then: BLOCK type=kotlin.Nothing operator=null
+      WHEN type=kotlin.Unit origin=IF
+        if: TYPE_OP origin=INSTANCEOF typeOperand=kotlin.Throwable
+          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
+        then: BLOCK type=kotlin.Nothing origin=null
           THROW type=kotlin.Nothing
-            TYPE_OP operator=IMPLICIT_CAST typeOperand=kotlin.Throwable
-              GET_VAR 'value-parameter a: Any' type=kotlin.Any operator=null
+            TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
+              GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null

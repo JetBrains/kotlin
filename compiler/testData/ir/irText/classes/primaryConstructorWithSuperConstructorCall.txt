@@ -22,23 +22,23 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
-            GET_BACKING_FIELD 'x: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'TestWithDelegatingConstructor' type=TestWithDelegatingConstructor
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
-            GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: THIS of 'TestWithDelegatingConstructor' type=TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor TestWithDelegatingConstructor(Int, Int)'
-          x: GET_VAR 'value-parameter x: Int' type=kotlin.Int operator=null
+          x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           y: CONST Int type=kotlin.Int value='0'

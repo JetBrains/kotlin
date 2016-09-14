@@ -9,26 +9,26 @@ FILE /classMembers.kt
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter y: Int' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
-            GET_BACKING_FIELD 'y: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
     PROPERTY public final var z: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var z: kotlin.Int
         EXPRESSION_BODY
-          GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int operator=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Int'
-            GET_BACKING_FIELD 'z: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD 'z: Int' type=kotlin.Unit operator=null
+          SET_BACKING_FIELD 'z: Int' type=kotlin.Unit origin=null
             receiver: THIS of 'C' type=C
-            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int operator=null
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor C(Int, Int, Int = ...)'
@@ -42,7 +42,7 @@ FILE /classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-property>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-property>(): Int'
-            GET_BACKING_FIELD 'property: Int' type=kotlin.Int operator=null
+            GET_BACKING_FIELD 'property: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
     PROPERTY public final val propertyWithGet: kotlin.Int
       FUN public final fun <get-propertyWithGet>(): kotlin.Int
@@ -53,20 +53,20 @@ FILE /classMembers.kt
       FUN public final fun <get-propertyWithGetAndSet>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-propertyWithGetAndSet>(): Int'
-            CALL '<get-z>(): Int' type=kotlin.Int operator=GET_PROPERTY
+            CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: THIS of 'C' type=C
       FUN public final fun <set-propertyWithGetAndSet>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          CALL '<set-z>(Int): Unit' type=kotlin.Unit operator=EQ
+          CALL '<set-z>(Int): Unit' type=kotlin.Unit origin=EQ
             $this: THIS of 'C' type=C
-            <set-?>: GET_VAR 'value-parameter value: Int' type=kotlin.Int operator=null
+            <set-?>: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     FUN public final fun function(): kotlin.Unit
       BLOCK_BODY
-        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='1'
     FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
       BLOCK_BODY
-        CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+        CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
     CLASS CLASS NestedClass
       CONSTRUCTOR public constructor NestedClass()
@@ -75,18 +75,18 @@ FILE /classMembers.kt
           INSTANCE_INITIALIZER_CALL classDescriptor='NestedClass'
       FUN public final fun function(): kotlin.Unit
         BLOCK_BODY
-          CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+          CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='3'
       FUN public final fun kotlin.Int.memberExtensionFunction(): kotlin.Unit
         BLOCK_BODY
-          CALL 'println(Any?): Unit' type=kotlin.Unit operator=null
+          CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='4'
     CLASS INTERFACE NestedInterface
       FUN public abstract fun foo(): kotlin.Unit
       FUN public open fun bar(): kotlin.Unit
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='bar(): Unit'
-            CALL 'foo(): Unit' type=kotlin.Unit operator=null
+            CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: THIS of 'NestedInterface' type=C.NestedInterface
     CLASS OBJECT companion object of C
       CONSTRUCTOR private constructor Companion()

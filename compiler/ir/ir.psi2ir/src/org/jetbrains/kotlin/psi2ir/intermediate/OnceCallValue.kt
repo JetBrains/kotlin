@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
@@ -28,14 +28,14 @@ class OnceCallValue(
         val endOffset: Int,
         val statementGenerator: StatementGenerator,
         val call: CallBuilder,
-        val operator: IrOperator? = null
+        val origin: IrStatementOrigin? = null
 ): IntermediateValue {
     private var instantiated = false
 
     override fun load(): IrExpression {
         if (instantiated) throw AssertionError("Value for call ${call.descriptor} has already been instantiated")
         instantiated = true
-        return CallGenerator(statementGenerator).generateCall(startOffset, endOffset, call, operator)
+        return CallGenerator(statementGenerator).generateCall(startOffset, endOffset, call, origin)
     }
 
     override val type: KotlinType get() = call.descriptor.returnType!!

@@ -21,15 +21,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrPropertyAccessorCallBase(
-        startOffset: Int,
-        endOffset: Int,
+        startOffset: Int, endOffset: Int,
         override val descriptor: CallableDescriptor,
-        override val operator: IrOperator? = null,
+        override val origin: IrStatementOrigin? = null,
         override val superQualifier: ClassDescriptor? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -37,22 +36,16 @@ abstract class IrPropertyAccessorCallBase(
     }
 }
 
-class IrGetterCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: CallableDescriptor,
-        operator: IrOperator? = null,
-        superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: CallableDescriptor,
-            dispatchReceiver: IrExpression?,
-            extensionReceiver: IrExpression?,
-            operator: IrOperator? = null,
-            superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
+class IrGetterCallImpl(startOffset: Int, endOffset: Int, descriptor: CallableDescriptor,
+                       origin: IrStatementOrigin? = null,
+                       superQualifier: ClassDescriptor? = null
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, origin, superQualifier), IrCall {
+    constructor(startOffset: Int, endOffset: Int, descriptor: CallableDescriptor,
+                dispatchReceiver: IrExpression?,
+                extensionReceiver: IrExpression?,
+                origin: IrStatementOrigin? = null,
+                superQualifier: ClassDescriptor? = null
+    ) : this(startOffset, endOffset, descriptor, origin, superQualifier) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
     }
@@ -68,23 +61,17 @@ class IrGetterCallImpl(
     }
 }
 
-class IrSetterCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: CallableDescriptor,
-        operator: IrOperator? = null,
-        superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, operator, superQualifier), IrCall {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: CallableDescriptor,
-            dispatchReceiver: IrExpression?,
-            extensionReceiver: IrExpression?,
-            argument: IrExpression,
-            operator: IrOperator? = null,
-            superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, descriptor, operator, superQualifier) {
+class IrSetterCallImpl(startOffset: Int, endOffset: Int, descriptor: CallableDescriptor,
+                       origin: IrStatementOrigin? = null,
+                       superQualifier: ClassDescriptor? = null
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, origin, superQualifier), IrCall {
+    constructor(startOffset: Int, endOffset: Int, descriptor: CallableDescriptor,
+                dispatchReceiver: IrExpression?,
+                extensionReceiver: IrExpression?,
+                argument: IrExpression,
+                origin: IrStatementOrigin? = null,
+                superQualifier: ClassDescriptor? = null
+    ) : this(startOffset, endOffset, descriptor, origin, superQualifier) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
         putArgument(SETTER_ARGUMENT_INDEX, argument)

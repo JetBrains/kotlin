@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator? = null):
-        IrContainerExpressionBase(startOffset, endOffset, type, operator), IrBlock {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, operator: IrOperator?, statements: List<IrStatement>) :
-            this(startOffset, endOffset, type, operator) {
+class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin? = null):
+        IrContainerExpressionBase(startOffset, endOffset, type, origin), IrBlock {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+            this(startOffset, endOffset, type, origin) {
         addAll(statements)
     }
 

@@ -19,24 +19,16 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrDoWhileLoopImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type : KotlinType,
-        operator: IrOperator?
-) : IrLoopBase(startOffset, endOffset, type, operator), IrDoWhileLoop {
+class IrDoWhileLoopImpl(startOffset: Int, endOffset: Int, type : KotlinType, origin: IrStatementOrigin?) :
+        IrLoopBase(startOffset, endOffset, type, origin), IrDoWhileLoop {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            operator: IrOperator?,
-            body: IrExpression,
-            condition: IrExpression
-    ) : this(startOffset, endOffset, type, operator) {
+            startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
+            body: IrExpression, condition: IrExpression
+    ) : this(startOffset, endOffset, type, origin) {
         this.condition = condition
         this.body = body
     }

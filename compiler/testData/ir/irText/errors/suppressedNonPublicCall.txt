@@ -8,5 +8,5 @@ FILE /suppressedNonPublicCall.kt
       BLOCK_BODY
   FUN public inline fun C.foo(): kotlin.Unit
     BLOCK_BODY
-      CALL 'bar(): Unit' type=kotlin.Unit operator=null
+      CALL 'bar(): Unit' type=kotlin.Unit origin=null
         $this: $RECEIVER of 'foo() on C: Unit' type=C

@@ -5,11 +5,11 @@ FILE /localFunction.kt
         CONST Int type=kotlin.Int value='0'
       FUN local final fun local(): kotlin.Unit
         BLOCK_BODY
-          BLOCK type=kotlin.Int operator=POSTFIX_INCR
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
-              GET_VAR 'x: Int' type=kotlin.Int operator=POSTFIX_INCR
-            SET_VAR 'x: Int' type=kotlin.Unit operator=POSTFIX_INCR
-              CALL 'inc(): Int' type=kotlin.Int operator=POSTFIX_INCR
-                $this: GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
-            GET_VAR 'tmp0: Int' type=kotlin.Int operator=null
-      CALL 'local(): Unit' type=kotlin.Unit operator=null
+              GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
+            SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
+              CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+            GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+      CALL 'local(): Unit' type=kotlin.Unit origin=null

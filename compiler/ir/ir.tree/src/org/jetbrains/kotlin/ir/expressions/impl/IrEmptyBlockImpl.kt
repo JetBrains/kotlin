@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.throwNoSuchSlot
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrEmptyBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val operator: IrOperator? = null) :
+class IrEmptyBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, override val origin: IrStatementOrigin? = null) :
         IrExpressionBase(startOffset, endOffset, type), IrBlock {
     override val statements: List<IrStatement> get() = emptyList()
 

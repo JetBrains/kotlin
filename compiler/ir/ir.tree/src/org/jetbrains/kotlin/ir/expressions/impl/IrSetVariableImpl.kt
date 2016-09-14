@@ -19,25 +19,22 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class IrSetVariableImpl(
-        startOffset: Int,
-        endOffset: Int,
+        startOffset: Int, endOffset: Int,
         override val descriptor: VariableDescriptor,
-        override val operator: IrOperator?
+        override val origin: IrStatementOrigin?
 ) : IrExpressionBase(startOffset, endOffset, descriptor.builtIns.unitType), IrSetVariable {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            descriptor: VariableDescriptor,
+            startOffset: Int, endOffset: Int, descriptor: VariableDescriptor,
             value: IrExpression,
-            operator: IrOperator?
-    ) : this(startOffset, endOffset, descriptor, operator) {
+            origin: IrStatementOrigin?
+    ) : this(startOffset, endOffset, descriptor, origin) {
         this.value = value
     }
 

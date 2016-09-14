@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -29,7 +29,7 @@ class IrWhenImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val operator: IrOperator? = null
+        override val origin: IrStatementOrigin? = null
 ) : IrExpressionBase(startOffset, endOffset, type), IrWhen {
     private val branchParts = ArrayList<IrExpression>()
 

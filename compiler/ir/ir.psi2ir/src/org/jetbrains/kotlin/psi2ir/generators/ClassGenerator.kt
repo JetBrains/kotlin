@@ -197,7 +197,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
 
         val irPrimaryConstructor = IrConstructorImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED,
-                                                                                          primaryConstructorDescriptor)
+                                                     primaryConstructorDescriptor)
 
         val bodyGenerator = BodyGenerator(primaryConstructorDescriptor, context)
         ktClassOrObject.getPrimaryConstructor()?.valueParameterList?.let { ktValueParameterList ->

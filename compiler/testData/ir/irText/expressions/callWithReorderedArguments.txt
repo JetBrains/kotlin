@@ -19,22 +19,22 @@ FILE /callWithReorderedArguments.kt
         CONST Int type=kotlin.Int value='2'
   FUN public fun test(): kotlin.Unit
     BLOCK_BODY
-      CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
-        a: CALL 'noReorder1(): Int' type=kotlin.Int operator=null
-        b: CALL 'noReorder2(): Int' type=kotlin.Int operator=null
-      BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
+      CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
+        a: CALL 'noReorder1(): Int' type=kotlin.Int origin=null
+        b: CALL 'noReorder2(): Int' type=kotlin.Int origin=null
+      BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
         VAR IR_TEMPORARY_VARIABLE val tmp0_b: kotlin.Int
-          CALL 'reordered1(): Int' type=kotlin.Int operator=null
+          CALL 'reordered1(): Int' type=kotlin.Int origin=null
         VAR IR_TEMPORARY_VARIABLE val tmp1_a: kotlin.Int
-          CALL 'reordered2(): Int' type=kotlin.Int operator=null
-        CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
-          a: GET_VAR 'tmp1_a: Int' type=kotlin.Int operator=null
-          b: GET_VAR 'tmp0_b: Int' type=kotlin.Int operator=null
-      BLOCK type=kotlin.Unit operator=ARGUMENTS_REORDERING_FOR_CALL
+          CALL 'reordered2(): Int' type=kotlin.Int origin=null
+        CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
+          a: GET_VAR 'tmp1_a: Int' type=kotlin.Int origin=null
+          b: GET_VAR 'tmp0_b: Int' type=kotlin.Int origin=null
+      BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
         VAR IR_TEMPORARY_VARIABLE val tmp2_b: kotlin.Int
           CONST Int type=kotlin.Int value='1'
         VAR IR_TEMPORARY_VARIABLE val tmp3_a: kotlin.Int
-          CALL 'reordered2(): Int' type=kotlin.Int operator=null
-        CALL 'foo(Int, Int): Unit' type=kotlin.Unit operator=null
-          a: GET_VAR 'tmp3_a: Int' type=kotlin.Int operator=null
-          b: GET_VAR 'tmp2_b: Int' type=kotlin.Int operator=null
+          CALL 'reordered2(): Int' type=kotlin.Int origin=null
+        CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
+          a: GET_VAR 'tmp3_a: Int' type=kotlin.Int origin=null
+          b: GET_VAR 'tmp2_b: Int' type=kotlin.Int origin=null

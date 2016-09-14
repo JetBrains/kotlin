@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrOperator
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.psi2ir.intermediate.argumentsCount
@@ -31,7 +31,7 @@ class LValueWithGetterAndSetterCalls(
         override val type: KotlinType,
         val startOffset: Int,
         val endOffset: Int,
-        val operator: IrOperator? = null
+        val origin: IrStatementOrigin? = null
 ) : LValue {
     private val descriptor: CallableDescriptor =
             getterCall?.descriptor ?: setterCall?.descriptor ?:
@@ -44,7 +44,7 @@ class LValueWithGetterAndSetterCalls(
         if (getterCall == null) throw AssertionError("No getter call for $descriptor")
         if (getterInstantiated) throw AssertionError("Getter for $descriptor has already been instantiated")
         getterInstantiated = true
-        return callGenerator.generateCall(startOffset, endOffset, getterCall, operator)
+        return callGenerator.generateCall(startOffset, endOffset, getterCall, origin)
     }
 
     override fun store(irExpression: IrExpression): IrExpression {
@@ -52,7 +52,7 @@ class LValueWithGetterAndSetterCalls(
         if (setterInstantiated) throw AssertionError("Setter for $descriptor has already been instantiated")
         setterInstantiated = true
         setterCall.irValueArgumentsByIndex[setterCall.argumentsCount - 1] = irExpression
-        return callGenerator.generateCall(startOffset, endOffset, setterCall, operator)
+        return callGenerator.generateCall(startOffset, endOffset, setterCall, origin)
     }
 
 }
