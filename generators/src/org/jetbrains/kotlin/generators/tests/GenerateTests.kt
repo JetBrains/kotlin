@@ -438,7 +438,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractParameterInfoTest>() {
-            model("parameterInfo", recursive = true, excludeDirs = listOf("withLib/sharedLib"))
+            model("parameterInfo", recursive = true, excludeDirs = listOf("withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib"))
         }
 
         testClass<AbstractKotlinGotoTest>() {
