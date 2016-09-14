@@ -22,8 +22,11 @@ interface IrTryCatch : IrExpression {
     var tryResult: IrExpression
 
     val catchClausesCount: Int
+
     fun getNthCatchParameter(n: Int): VariableDescriptor?
     fun getNthCatchResult(n: Int): IrExpression?
+    fun putNthCatchParameter(n: Int, variableDescriptor: VariableDescriptor)
+    fun putNthCatchResult(n: Int, expression: IrExpression)
 
     var finallyExpression : IrExpression?
 }

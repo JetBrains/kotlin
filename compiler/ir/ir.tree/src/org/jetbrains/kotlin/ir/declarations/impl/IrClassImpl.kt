@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -41,34 +41,27 @@ class IrClassImpl(
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     fun addMember(member: IrDeclaration) {
-        member.setTreeLocation(this, declarations.size)
         declarations.add(member)
     }
 
     fun addAll(members: List<IrDeclaration>) {
-        val originalSize = declarations.size
         declarations.addAll(members)
-        members.forEachIndexed { i, irDeclaration -> irDeclaration.setTreeLocation(this, originalSize + i) }
     }
 
     override fun toBuilder(): IrDeclarationContainer.Builder =
             IrClassBuilderImpl(this)
-
-    override fun getChild(slot: Int): IrElement? =
-            declarations.getOrNull(slot)
-
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        declarations[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        declarations.forEachIndexed { i, irDeclaration ->
+            declarations[i] = irDeclaration.transform(transformer, data)
+        }
     }
 }
 

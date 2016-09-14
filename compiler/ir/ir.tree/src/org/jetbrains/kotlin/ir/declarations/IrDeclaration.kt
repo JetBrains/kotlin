@@ -18,11 +18,15 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrDeclaration : IrStatement {
     val descriptor: DeclarationDescriptor
     val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrDeclaration =
+            accept(transformer, data) as IrDeclaration
 }
 
 enum class IrDeclarationKind {

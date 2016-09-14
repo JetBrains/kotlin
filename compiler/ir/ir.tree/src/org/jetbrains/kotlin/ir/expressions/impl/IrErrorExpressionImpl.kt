@@ -31,10 +31,6 @@ class IrErrorExpressionImpl(
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitErrorExpression(this, data)
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // No children
-    }
-
     override fun copy(): IrErrorExpressionImpl =
             IrErrorExpressionImpl(startOffset, endOffset, type, description)
 }

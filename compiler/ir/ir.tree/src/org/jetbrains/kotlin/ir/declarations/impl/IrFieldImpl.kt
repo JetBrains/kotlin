@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 
@@ -36,25 +37,7 @@ class IrFieldImpl(
         this.initializer = initializer
     }
 
-    override var initializer: IrExpressionBody? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, INITIALIZER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                INITIALIZER_SLOT -> initializer
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            INITIALIZER_SLOT -> initializer = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
+    override var initializer: IrBody? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)
@@ -62,5 +45,9 @@ class IrFieldImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        initializer = initializer?.transform(transformer, data)
     }
 }

@@ -16,11 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
-import java.lang.AssertionError
-
 interface IrBreakContinue : IrExpression {
     var loop: IrLoop
     val label: String?
@@ -29,19 +24,3 @@ interface IrBreakContinue : IrExpression {
 interface IrBreak: IrBreakContinue
 
 interface IrContinue: IrBreakContinue
-
-fun IrBreakContinue.getDepth(): Int {
-    var depth = 0
-    var finger: IrElement = this
-    while (true) {
-        val parent = finger.parent ?: throw AssertionError("No parent loop in tree for ${this.render()}:\n${finger.dump()}")
-        if (parent is IrLoop) {
-            if (parent == loop) {
-                return depth
-            }
-            depth++
-        }
-        finger = parent
-    }
-}
-

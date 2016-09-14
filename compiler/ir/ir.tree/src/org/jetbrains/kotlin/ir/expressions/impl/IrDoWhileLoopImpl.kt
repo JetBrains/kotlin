@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -40,5 +40,10 @@ class IrDoWhileLoopImpl(startOffset: Int, endOffset: Int, type : KotlinType, ori
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         body?.accept(visitor, data)
         condition.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        body = body?.transform(transformer, data)
+        condition = condition.transform(transformer, data)
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 interface IrProperty : IrDeclaration {
@@ -36,5 +37,5 @@ interface IrField : IrDeclaration {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FIELD
 
-    var initializer: IrExpressionBody?
+    var initializer: IrBody?
 }

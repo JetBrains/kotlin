@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrVarargElement
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
@@ -33,19 +32,11 @@ class IrVarargImpl(
     override val elements: MutableList<IrVarargElement> = SmartList()
 
     fun addElement(varargElement: IrVarargElement) {
-        varargElement.setTreeLocation(this, elements.size)
         elements.add(varargElement)
     }
 
-    override fun getChild(slot: Int): IrElement? =
-            elements.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (slot < 0 || slot >= elements.size) throwNoSuchSlot(slot)
-
-        elements[slot].detach()
-        elements[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
+    override fun putElement(i: Int, element: IrVarargElement) {
+        elements[i] = element
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -54,5 +45,11 @@ class IrVarargImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         elements.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        elements.forEachIndexed { i, irVarargElement ->
+            elements[i] = irVarargElement.transform(transformer, data) as IrVarargElement
+        }
     }
 }

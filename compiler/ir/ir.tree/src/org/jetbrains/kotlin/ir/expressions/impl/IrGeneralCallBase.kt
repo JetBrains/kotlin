@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.assertCast
-import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
+import java.lang.AssertionError
 
 abstract class IrGeneralCallBase(
         startOffset: Int, endOffset: Int, type: KotlinType,
@@ -41,31 +39,22 @@ abstract class IrGeneralCallBase(
         if (index >= argumentsByParameterIndex.size) {
             throw AssertionError("$this: No such argument slot: $index")
         }
-        argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = valueArgument
-        valueArgument?.setTreeLocation(this, index)
     }
 
     override fun removeArgument(index: Int) {
-        argumentsByParameterIndex[index]?.detach()
         argumentsByParameterIndex[index] = null
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            if (0 <= slot)
-                argumentsByParameterIndex.getOrNull(slot)
-            else
-                super.getChild(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (0 <= slot)
-            putArgument(slot, newChild.assertCast())
-        else
-            super.replaceChild(slot, newChild)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         super.acceptChildren(visitor, data)
         argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        super.transformChildren(transformer, data)
+        argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+            argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+        }
     }
 }

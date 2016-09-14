@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.lang.AssertionError
+import java.lang.UnsupportedOperationException
 
 abstract class IrPropertyAccessorCallBase(
         startOffset: Int, endOffset: Int,
@@ -33,6 +33,10 @@ abstract class IrPropertyAccessorCallBase(
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCall(this, data)
+    }
+
+    companion object {
+        const val SETTER_ARGUMENT_INDEX = 0
     }
 }
 
@@ -83,28 +87,12 @@ class IrSetterCallImpl(startOffset: Int, endOffset: Int, descriptor: CallableDes
             if (index == SETTER_ARGUMENT_INDEX) argumentImpl!! else null
 
     override fun putArgument(index: Int, valueArgument: IrExpression?) {
-        if (index != SETTER_ARGUMENT_INDEX) return
-        argumentImpl?.detach()
+        if (index != SETTER_ARGUMENT_INDEX) throw AssertionError("Property setter call $descriptor has no argument $index")
         argumentImpl = valueArgument
-        valueArgument?.setTreeLocation(this, SETTER_ARGUMENT_INDEX)
     }
 
     override fun removeArgument(index: Int) {
-        if (index != SETTER_ARGUMENT_INDEX) return
-        argumentImpl?.detach()
+        if (index != SETTER_ARGUMENT_INDEX) throw AssertionError("Property setter call $descriptor has no argument $index")
         argumentImpl = null
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                SETTER_ARGUMENT_INDEX -> argumentImpl
-                else -> super.getChild(slot)
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            SETTER_ARGUMENT_INDEX -> putArgument(slot, newChild.assertCast())
-            else -> super.replaceChild(slot, newChild)
-        }
     }
 }

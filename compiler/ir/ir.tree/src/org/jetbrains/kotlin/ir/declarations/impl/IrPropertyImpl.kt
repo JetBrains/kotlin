@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrPropertyImpl(
@@ -47,42 +48,8 @@ class IrPropertyImpl(
     }
 
     override var backingField: IrField? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, BACKING_FIELD_SLOT)
-        }
-
     override var getter: IrFunction? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, PROPERTY_GETTER_SLOT)
-        }
-
     override var setter: IrFunction? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, PROPERTY_SETTER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                BACKING_FIELD_SLOT -> backingField
-                PROPERTY_GETTER_SLOT -> getter
-                PROPERTY_SETTER_SLOT -> setter
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            BACKING_FIELD_SLOT -> backingField = newChild.assertCast()
-            PROPERTY_GETTER_SLOT -> getter = newChild.assertCast()
-            PROPERTY_SETTER_SLOT -> setter = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitProperty(this, data)
@@ -92,5 +59,11 @@ class IrPropertyImpl(
         backingField?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        backingField = backingField?.transform(transformer, data) as? IrField
+        getter = getter?.transform(transformer, data) as? IrFunction
+        setter = setter?.transform(transformer, data) as? IrFunction
     }
 }

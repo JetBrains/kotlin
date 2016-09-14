@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -26,27 +28,25 @@ abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type:
         IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
-    fun addStatement(statement: IrStatement) {
-        statement.setTreeLocation(this, statements.size)
+    override fun addStatement(statement: IrStatement) {
         statements.add(statement)
     }
 
-    fun addAll(newStatements: List<IrStatement>) {
-        val originalSize = this.statements.size
-        this.statements.addAll(newStatements)
-        newStatements.forEachIndexed { i, irStatement ->
-            irStatement.setTreeLocation(this, originalSize + i)
-        }
+    override fun addAll(statements: Collection<IrStatement>) {
+        this.statements.addAll(statements)
     }
 
-    override fun getChild(slot: Int): IrElement? =
-            statements.getOrNull(slot)
+    override fun putStatement(index: Int, statement: IrStatement) {
+        statements[index] = statement
+    }
 
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (slot < 0 || slot >= statements.size) throwNoSuchSlot(slot)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+    }
 
-        statements[slot].detach()
-        statements[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.forEachIndexed { i, irStatement ->
+            statements[i] = irStatement.transform(transformer, data)
+        }
     }
 }

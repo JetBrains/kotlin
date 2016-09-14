@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -35,22 +35,11 @@ class IrModuleFragmentImpl(
     override val files: MutableList<IrFile> = ArrayList()
 
     fun addFile(file: IrFile) {
-        file.setTreeLocation(this, files.size)
         files.add(file)
     }
 
     fun addAll(newFiles: List<IrFile>) {
-        val originalSize = files.size
         files.addAll(newFiles)
-        newFiles.forEachIndexed { i, irFile ->  irFile.setTreeLocation(this, originalSize + i) }
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            files.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        files.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        files[slot] = newChild.assertCast()
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -58,5 +47,11 @@ class IrModuleFragmentImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        files.forEachIndexed { i, irFile ->
+            files[i] = irFile.transform(transformer, data)
+        }
     }
 }

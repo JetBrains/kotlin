@@ -17,16 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrVarargElement : IrElement
 
 interface IrVararg : IrExpression {
     val varargElementType : KotlinType
+
     val elements: List<IrVarargElement>
+
+    fun putElement(i: Int, element: IrVarargElement)
 }
 
 interface IrSpreadElement : IrVarargElement {
     var expression: IrExpression
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
+            accept(transformer, data) as IrSpreadElement
 }
 

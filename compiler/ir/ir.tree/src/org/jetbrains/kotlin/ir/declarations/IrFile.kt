@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 
 interface IrFile : IrElement, IrDeclarationContainer {
@@ -37,6 +38,9 @@ interface IrFile : IrElement, IrDeclarationContainer {
 
         override fun build(): IrFile
     }
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
+            accept(transformer, data) as IrFile
 }
 
 val IrFile.name: String get() = fileEntry.name

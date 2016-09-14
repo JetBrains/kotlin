@@ -18,23 +18,20 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.MODULE_SLOT
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import java.lang.AssertionError
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import java.lang.UnsupportedOperationException
 
 interface IrModuleFragment : IrElement {
-    override val startOffset: Int get() = UNDEFINED_OFFSET
-    override val endOffset: Int get() = UNDEFINED_OFFSET
-
-    override val parent: IrElement? get() = null
-    override val slot: Int get() = MODULE_SLOT
-    override fun setTreeLocation(newParent: IrElement?, newSlot: Int) {
-        throw AssertionError("IrModule can't have a parent element")
-    }
-
     val descriptor: ModuleDescriptor
     val irBuiltins: IrBuiltIns
     val files: List<IrFile>
+
+    override val startOffset: Int get() = UNDEFINED_OFFSET
+    override val endOffset: Int get() = UNDEFINED_OFFSET
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
+            accept(transformer, data) as IrModuleFragment
 }
 

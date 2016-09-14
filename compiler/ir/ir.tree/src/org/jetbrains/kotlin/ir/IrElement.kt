@@ -16,57 +16,28 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.lang.AssertionError
 
 interface IrElement {
     val startOffset: Int
     val endOffset: Int
 
-    val parent: IrElement?
-    val slot: Int
-    fun setTreeLocation(newParent: IrElement?, newSlot: Int)
-    fun getChild(slot: Int): IrElement?
-    fun replaceChild(slot: Int, newChild: IrElement)
-
     fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
+
     fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D): Unit
+
+    fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
+            accept(transformer, data)
+
+    fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D): Unit
 }
 
-interface IrStatement : IrElement
-
-abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement {
-    override var parent: IrElement? = null
-    override var slot: Int = DETACHED_SLOT
-
-    override fun setTreeLocation(newParent: IrElement?, newSlot: Int) {
-        parent = newParent
-        slot = newSlot
-    }
+interface IrStatement : IrElement {
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrStatement =
+            super.transform(transformer, data) as IrStatement
 }
-
-fun <T : IrElement?> T.detach(): T {
-    this?.setTreeLocation(null, DETACHED_SLOT)
-    return this
-}
-
-fun IrElement.replaceWith(otherElement: IrElement) {
-    if (otherElement == this) return
-    val parent = this.parent ?: throw AssertionError("Can't replace a non-root element $this")
-    parent.replaceChild(slot, otherElement.detach())
-}
-
-inline fun <T : IrElement> T.replaceWith(transformation: (T) -> IrElement) {
-    val originalParent = this.parent ?: throw AssertionError("Can't replace a non-root element $this")
-    val originalSlot = this.slot
-    val transformed = transformation(this)
-    if (transformed != this) {
-        originalParent.replaceChild(originalSlot, transformed)
-    }
-}
-
-fun IrElement.throwNoSuchSlot(slot: Int): Nothing =
-        throw AssertionError("${this.render()}: no such slot $slot")
 
 inline fun <reified T : IrElement> IrElement.assertCast(): T =
         if (this is T) this else throw AssertionError("Expected ${T::class.simpleName}: $this")

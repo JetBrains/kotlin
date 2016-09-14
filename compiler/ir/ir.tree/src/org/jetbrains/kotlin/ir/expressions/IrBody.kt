@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrBody : IrElement
+interface IrBody : IrElement {
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
+            accept(transformer, data) as IrBody
+}
 
 interface IrExpressionBody : IrBody {
     var expression: IrExpression
@@ -27,6 +31,10 @@ interface IrExpressionBody : IrBody {
 
 interface IrStatementContainer {
     val statements: List<IrStatement>
+
+    fun addStatement(statement: IrStatement)
+    fun addAll(statements: Collection<IrStatement>)
+    fun putStatement(index: Int, statement: IrStatement)
 }
 
 interface IrBlockBody : IrBody, IrStatementContainer

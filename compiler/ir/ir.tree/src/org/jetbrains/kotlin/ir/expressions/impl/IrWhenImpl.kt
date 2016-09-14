@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -34,38 +33,11 @@ class IrWhenImpl(
     private val branchParts = ArrayList<IrExpression>()
 
     fun addBranch(condition: IrExpression, result: IrExpression) {
-        condition.setTreeLocation(this, branchParts.size)
         branchParts.add(condition)
-        result.setTreeLocation(this, branchParts.size)
         branchParts.add(result)
     }
 
     override var elseBranch: IrExpression? = null
-        set(value) {
-            value?.detach()
-            field = value
-            value?.setTreeLocation(this, IF_ELSE_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? {
-        return when (slot) {
-            IF_ELSE_SLOT -> elseBranch
-            else -> branchParts.getOrNull(slot)
-        }
-    }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            IF_ELSE_SLOT -> elseBranch = newChild.assertCast()
-            in branchParts.indices -> {
-                branchParts[slot].detach()
-                branchParts[slot] = newChild.assertCast()
-                newChild.setTreeLocation(this, slot)
-            }
-            else ->
-                throwNoSuchSlot(slot)
-        }
-    }
 
     override val branchesCount: Int get() = branchParts.size / 2
 
@@ -75,11 +47,26 @@ class IrWhenImpl(
     override fun getNthResult(n: Int): IrExpression? =
             branchParts.getOrNull(n * 2 + 1)
 
+    override fun putNthCondition(n: Int, expression: IrExpression) {
+        branchParts[n * 2] = expression
+    }
+
+    override fun putNthResult(n: Int, expression: IrExpression) {
+        branchParts[n * 2 + 1] = expression
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitWhen(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         branchParts.forEach { it.accept(visitor, data) }
         elseBranch?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        branchParts.forEachIndexed { i, irExpression ->
+            branchParts[i] = irExpression.transform(transformer, data)
+        }
+        elseBranch = elseBranch?.transform(transformer, data)
     }
 }

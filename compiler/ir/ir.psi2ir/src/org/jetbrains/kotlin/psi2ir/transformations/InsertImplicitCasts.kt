@@ -19,13 +19,9 @@ package org.jetbrains.kotlin.psi2ir.transformations
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.replaceWith
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -34,109 +30,141 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
 
 fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
-    element.acceptVoid(InsertImplicitCasts(builtIns))
+    element.transformChildren(InsertImplicitCasts(builtIns), null)
 }
 
-class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<Nothing?> {
+    override fun visitElement(element: IrElement, data: Nothing?): IrElement {
+        element.transformChildren(this, data)
+        return element
     }
 
-    override fun visitGeneralCall(expression: IrGeneralCall) {
-        expression.acceptChildrenVoid(this)
+    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
         with(expression) {
-            dispatchReceiver?.replaceWithCast(descriptor.dispatchReceiverParameter?.type)
-            extensionReceiver?.replaceWithCast(descriptor.extensionReceiverParameter?.type)
+            dispatchReceiver = dispatchReceiver?.wrapWithImplicitCast(descriptor.dispatchReceiverParameter?.type)
+            extensionReceiver = extensionReceiver?.wrapWithImplicitCast(descriptor.extensionReceiverParameter?.type)
             for (index in descriptor.valueParameters.indices) {
+                val argument = getArgument(index) ?: continue
                 val parameterType = descriptor.valueParameters[index].type
-                getArgument(index)?.replaceWithCast(parameterType)
+                putArgument(index, argument.wrapWithImplicitCast(parameterType))
             }
         }
+
+        return expression
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        expression.acceptChildrenVoid(this)
+    override fun visitBlock(expression: IrBlock, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
+
         val type = expression.type
-        if (KotlinBuiltIns.isUnit(type)) return
-        if (expression.statements.isEmpty()) return
+        if (expression.statements.isEmpty() || KotlinBuiltIns.isUnit(type) || KotlinBuiltIns.isNothing(type)) {
+            return expression
+        }
 
         val lastStatement = expression.statements.last()
         if (lastStatement is IrExpression) {
-            lastStatement.replaceWithCast(type)
+            expression.putStatement(expression.statements.lastIndex, lastStatement.wrapWithImplicitCast(type))
         }
+
+        return expression
     }
 
-    override fun visitReturn(expression: IrReturn) {
-        expression.acceptChildrenVoid(this)
+    override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        expression.value?.replaceWithCast(expression.returnTarget.returnType)
+        expression.value = expression.value?.wrapWithImplicitCast(expression.returnTarget.returnType)
+
+        return expression
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
-        expression.acceptChildrenVoid(this)
+    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        expression.value.replaceWithCast(expression.descriptor.type)
+        expression.value = expression.value.wrapWithImplicitCast(expression.descriptor.type)
+
+        return expression
     }
 
-    override fun visitSetField(expression: IrSetField) {
-        expression.acceptChildrenVoid(this)
+    override fun visitSetField(expression: IrSetField, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        expression.value.replaceWithCast(expression.descriptor.type)
+        expression.value = expression.value.wrapWithImplicitCast(expression.descriptor.type)
+
+        return expression
     }
 
-    override fun visitVariable(declaration: IrVariable) {
-        declaration.acceptChildrenVoid(this)
+    override fun visitVariable(declaration: IrVariable, data: Nothing?): IrVariable {
+        declaration.transformChildren(this, data)
 
-        declaration.initializer?.replaceWithCast(declaration.descriptor.type)
+        declaration.initializer = declaration.initializer?.wrapWithImplicitCast(declaration.descriptor.type)
+
+        return declaration
     }
 
-    override fun visitWhen(expression: IrWhen) {
-        expression.acceptChildrenVoid(this)
+    override fun visitWhen(expression: IrWhen, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        for (branchIndex in expression.branchIndices) {
-            expression.getNthCondition(branchIndex)!!.replaceWithCast(builtIns.booleanType)
-            expression.getNthResult(branchIndex)!!.replaceWithCast(expression.type)
+        val resultType = expression.type
+
+        for (i in expression.branchIndices) {
+            val nthCondition = expression.getNthCondition(i)!!
+            val nthResult = expression.getNthResult(i)!!
+
+            expression.putNthCondition(i, nthCondition.wrapWithImplicitCast(builtIns.booleanType))
+            expression.putNthResult(i, nthResult.wrapWithImplicitCast(resultType))
         }
-        expression.elseBranch?.replaceWithCast(expression.type)
+
+        expression.elseBranch = expression.elseBranch?.wrapWithImplicitCast(resultType)
+
+        return expression
     }
 
-    override fun visitLoop(loop: IrLoop) {
-        loop.acceptChildrenVoid(this)
+    override fun visitLoop(loop: IrLoop, data: Nothing?): IrExpression {
+        loop.transformChildren(this, data)
 
-        loop.condition.replaceWithCast(builtIns.booleanType)
+        loop.condition = loop.condition.wrapWithImplicitCast(builtIns.booleanType)
+
+        return loop
     }
 
-    override fun visitThrow(expression: IrThrow) {
-        expression.acceptChildrenVoid(this)
+    override fun visitThrow(expression: IrThrow, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        expression.value.replaceWithCast(builtIns.throwable.defaultType)
+        expression.value = expression.value.wrapWithImplicitCast(builtIns.throwable.defaultType)
+
+        return expression
     }
 
-    override fun visitTryCatch(tryCatch: IrTryCatch) {
-        tryCatch.acceptChildrenVoid(this)
+    override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): IrExpression {
+        tryCatch.transformChildren(this, data)
 
         val resultType = tryCatch.type
 
-        tryCatch.tryResult.replaceWithCast(resultType)
-        for (catchClauseIndex in tryCatch.catchClauseIndices) {
-            tryCatch.getNthCatchResult(catchClauseIndex)!!.replaceWithCast(resultType)
+        tryCatch.tryResult = tryCatch.tryResult.wrapWithImplicitCast(resultType)
+
+        for (i in tryCatch.catchClauseIndices) {
+            val nthCatchResult = tryCatch.getNthCatchResult(i)!!
+            tryCatch.putNthCatchResult(i, nthCatchResult.wrapWithImplicitCast(resultType))
         }
+
+        return tryCatch
     }
 
-    override fun visitVararg(expression: IrVararg) {
-        expression.acceptChildrenVoid(this)
+    override fun visitVararg(expression: IrVararg, data: Nothing?): IrExpression {
+        expression.transformChildren(this, data)
 
-        for (element in expression.elements) {
+        expression.elements.forEachIndexed { i, element ->
             when (element) {
-                is IrSpreadElement -> element.expression.replaceWithCast(expression.type)
-                is IrExpression -> element.replaceWithCast(expression.varargElementType)
+                is IrSpreadElement ->
+                    element.expression = element.expression.wrapWithImplicitCast(expression.type)
+                is IrExpression ->
+                    expression.putElement(i, element.wrapWithImplicitCast(expression.varargElementType))
             }
         }
-    }
 
-    private fun IrExpression.replaceWithCast(expectedType: KotlinType?) {
-        replaceWith { it.wrapWithImplicitCast(expectedType) }
+        return expression
     }
 
     private fun IrExpression.wrapWithImplicitCast(expectedType: KotlinType?): IrExpression {
@@ -147,16 +175,16 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementVisitorVoid {
         val valueType = this.type
 
         if (valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull()) {
-            val nonNullValueType = valueType.upperIfFlexible().makeNotNullable();
+            val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
             return IrTypeOperatorCallImpl(
                     this.startOffset, this.endOffset, nonNullValueType,
-                    IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this.detach()
+                    IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
             ).wrapWithImplicitCast(expectedType)
         }
 
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType)) {
             return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
-                                                                              IrTypeOperator.IMPLICIT_CAST, expectedType, this.detach())
+                                          IrTypeOperator.IMPLICIT_CAST, expectedType, this)
         }
 
         return this

@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.expressions
+package org.jetbrains.kotlin.ir
 
-interface IrWhen : IrExpression {
-    val origin: IrStatementOrigin?
-
-    val branchesCount: Int
-
-    fun getNthCondition(n: Int): IrExpression?
-    fun getNthResult(n: Int): IrExpression?
-
-    fun putNthCondition(n: Int, expression: IrExpression)
-    fun putNthResult(n: Int, expression: IrExpression)
-
-    var elseBranch: IrExpression?
-}
-
-val IrWhen.branchIndices: IntRange get() = 0 ..branchesCount - 1
-
+abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement

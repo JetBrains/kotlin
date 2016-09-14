@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSyntheticBodyImpl(startOffset: Int, endOffset: Int, override val kind: IrSyntheticBodyKind) : IrElementBase(startOffset, endOffset), IrSyntheticBody {
@@ -32,9 +31,7 @@ class IrSyntheticBodyImpl(startOffset: Int, endOffset: Int, override val kind: I
         // no children
     }
 
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        throwNoSuchSlot(slot)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        // no children
     }
 }

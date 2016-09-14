@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -42,27 +43,7 @@ class IrTypeOperatorCallImpl(
         this.argument = argument
     }
 
-    private var argumentImpl: IrExpression? = null
-    override var argument: IrExpression
-        get() = argumentImpl!!
-        set(value) {
-            argumentImpl?.detach()
-            argumentImpl = value
-            value.setTreeLocation(this, ARGUMENT0_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                ARGUMENT0_SLOT -> argument
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            ARGUMENT0_SLOT -> argument = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
+    override lateinit var argument: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitTypeOperator(this, data)
@@ -71,5 +52,7 @@ class IrTypeOperatorCallImpl(
         argument.accept(visitor, data)
     }
 
-
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        argument = argument.transform(transformer, data)
+    }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
@@ -50,25 +51,11 @@ class IrFileImpl(
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     fun addDeclaration(declaration: IrDeclaration) {
-        declaration.setTreeLocation(this, declarations.size)
         declarations.add(declaration)
     }
 
     fun addAll(newDeclarations: List<IrDeclaration>) {
-        val originalSize = declarations.size
         declarations.addAll(newDeclarations)
-        newDeclarations.forEachIndexed { i, irDeclaration ->
-            irDeclaration.setTreeLocation(this, originalSize + i)
-        }
-    }
-
-    override fun getChild(slot: Int): IrElement? =
-            declarations.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        declarations.getOrNull(slot)?.detach() ?: throwNoSuchSlot(slot)
-        declarations[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
     }
 
     override fun toBuilder(): IrFile.Builder =
@@ -81,7 +68,11 @@ class IrFileImpl(
         declarations.forEach { it.accept(visitor, data) }
     }
 
-
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        declarations.forEachIndexed { i, irDeclaration ->
+            declarations[i] = irDeclaration.transform(transformer, data)
+        }
+    }
 }
 
 class IrFileBuilderImpl(

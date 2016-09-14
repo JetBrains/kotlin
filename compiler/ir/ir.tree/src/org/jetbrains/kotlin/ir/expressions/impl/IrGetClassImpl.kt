@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -28,27 +27,7 @@ class IrGetClassImpl(startOffset: Int, endOffset: Int, type: KotlinType) : IrExp
         this.argument = argument
     }
 
-    private var argumentImpl: IrExpression? = null
-    override var argument: IrExpression
-        get() = argumentImpl!!
-        set(value) {
-            argumentImpl?.detach()
-            argumentImpl = value
-            value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                CHILD_EXPRESSION_SLOT -> argument
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            CHILD_EXPRESSION_SLOT -> argument = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
+    override lateinit var argument: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetClass(this, data)
@@ -58,4 +37,7 @@ class IrGetClassImpl(startOffset: Int, endOffset: Int, type: KotlinType) : IrExp
         argument.accept(visitor, data)
     }
 
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        argument = argument.transform(transformer, data)
+    }
 }

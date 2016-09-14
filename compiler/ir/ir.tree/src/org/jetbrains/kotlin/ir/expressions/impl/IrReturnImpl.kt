@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -41,24 +40,6 @@ class IrReturnImpl(
     }
 
     override var value: IrExpression? = null
-        set(newValue) {
-            field?.detach()
-            field = newValue
-            newValue?.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                CHILD_EXPRESSION_SLOT -> value
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            CHILD_EXPRESSION_SLOT -> value = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturn(this, data)
@@ -67,5 +48,7 @@ class IrReturnImpl(
         value?.accept(visitor, data)
     }
 
-
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        value = value?.transform(transformer, data)
+    }
 }

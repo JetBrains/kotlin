@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.detach
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -36,6 +36,12 @@ class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: Ir
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.forEachIndexed { i, irStatement ->
+            statements[i] = irStatement.transform(transformer, data)
+        }
+    }
 }
 
 fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
@@ -44,7 +50,6 @@ fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
 
 fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     if (statement is IrBlock) {
-        statement.statements.forEach { it.detach() }
         addAll(statement.statements)
     }
     else {

@@ -28,24 +28,6 @@ abstract class IrGeneralFunctionBase(
         origin: IrDeclarationOrigin
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     final override var body: IrBody? = null
-        set(newValue) {
-            field?.detach()
-            field = newValue
-            newValue?.setTreeLocation(this, FUNCTION_BODY_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                FUNCTION_BODY_SLOT -> body
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            FUNCTION_BODY_SLOT -> body = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         body?.accept(visitor, data)

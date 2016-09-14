@@ -31,34 +31,7 @@ abstract class IrLoopBase(
 ) : IrExpressionBase(startOffset, endOffset, type), IrLoop {
     override var label: String? = null
 
-    private var conditionImpl: IrExpression? = null
-    override var condition: IrExpression
-        get() = conditionImpl!!
-        set(value) {
-            conditionImpl?.detach()
-            conditionImpl = value
-            value.setTreeLocation(this, LOOP_CONDITION_SLOT)
-        }
+    override lateinit var condition: IrExpression
 
     override var body: IrExpression? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, LOOP_BODY_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                LOOP_BODY_SLOT -> body
-                LOOP_CONDITION_SLOT -> condition
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            LOOP_BODY_SLOT -> body = newChild.assertCast()
-            LOOP_CONDITION_SLOT -> condition = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 }

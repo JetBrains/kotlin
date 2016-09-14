@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetFieldImpl(
@@ -37,18 +38,15 @@ class IrGetFieldImpl(
         this.receiver = receiver
     }
 
-    override fun getChild(slot: Int): IrElement? =
-            super.getChild(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        super.replaceChild(slot, newChild)
-    }
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetField(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         receiver?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        receiver = receiver?.transform(transformer, data)
     }
 }

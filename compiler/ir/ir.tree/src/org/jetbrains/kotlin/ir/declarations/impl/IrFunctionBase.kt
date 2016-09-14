@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.detach
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -29,19 +29,24 @@ abstract class IrFunctionBase(
         endOffset: Int,
         origin: IrDeclarationOrigin
 ) : IrGeneralFunctionBase(startOffset, endOffset, origin), IrFunction {
-    private val defaults = LinkedHashMap<ValueParameterDescriptor, IrExpressionBody>()
+    private val defaults = LinkedHashMap<ValueParameterDescriptor, IrBody>()
 
-    override fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
+    override fun getDefault(parameter: ValueParameterDescriptor): IrBody? =
             defaults[parameter]
 
-    override fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-        defaults[parameter]?.detach()
+    override fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrBody) {
         defaults[parameter] = expressionBody
-        expressionBody.setTreeLocation(this, parameter.index)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaults.values.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        for ((valueParameter, defaultValue) in defaults) {
+            putDefault(valueParameter, defaultValue.transform(transformer, data))
+        }
+        body = body?.transform(transformer, data)
     }
 }

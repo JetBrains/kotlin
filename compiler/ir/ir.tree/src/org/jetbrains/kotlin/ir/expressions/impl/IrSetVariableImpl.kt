@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
@@ -38,27 +39,7 @@ class IrSetVariableImpl(
         this.value = value
     }
 
-    private var valueImpl: IrExpression? = null
-    override var value: IrExpression
-        get() = valueImpl!!
-        set(value) {
-            valueImpl?.detach()
-            valueImpl = value
-            value.setTreeLocation(this, ARGUMENT0_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                ARGUMENT0_SLOT -> value
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            ARGUMENT0_SLOT -> value = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
+    override lateinit var value: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSetVariable(this, data)
@@ -66,5 +47,9 @@ class IrSetVariableImpl(
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         value.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        value = value.transform(transformer, data)
     }
 }

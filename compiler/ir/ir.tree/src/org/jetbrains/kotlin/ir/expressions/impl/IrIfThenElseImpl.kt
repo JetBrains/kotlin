@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -47,49 +47,21 @@ class IrIfThenElseImpl(
     override fun getNthResult(n: Int): IrExpression? =
             if (n == 0) thenBranch else null
 
-    private var conditionImpl: IrExpression? = null
-    var condition: IrExpression
-        get() = conditionImpl!!
-        set(value) {
-            value.detach()
-            conditionImpl = value
-            value.setTreeLocation(this, IF_CONDITION_SLOT)
-        }
+    override fun putNthCondition(n: Int, expression: IrExpression) {
+        if (n == 0) condition = expression
+        else throw AssertionError("No such branch $n")
+    }
 
-    private var thenBranchImpl: IrExpression? = null
-    var thenBranch: IrExpression
-        get() = thenBranchImpl!!
-        set(value) {
-            value.detach()
-            thenBranchImpl = value
-            value.setTreeLocation(this, IF_THEN_SLOT)
-        }
+    override fun putNthResult(n: Int, expression: IrExpression) {
+        if (n == 0) thenBranch = expression
+        else throw AssertionError("No such branch $n")
+    }
+
+    lateinit var condition: IrExpression
+
+    lateinit var thenBranch: IrExpression
 
     override var elseBranch: IrExpression? = null
-        set(value) {
-            value?.detach()
-            field = value
-            value?.setTreeLocation(this, IF_ELSE_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                IF_CONDITION_SLOT -> condition
-                IF_THEN_SLOT -> thenBranch
-                IF_ELSE_SLOT -> elseBranch
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            IF_CONDITION_SLOT ->
-                condition = newChild.assertCast()
-            IF_THEN_SLOT ->
-                thenBranch = newChild.assertCast()
-            IF_ELSE_SLOT ->
-                elseBranch = newChild.assertCast()
-        }
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitWhen(this, data)
@@ -98,5 +70,11 @@ class IrIfThenElseImpl(
         condition.accept(visitor, data)
         thenBranch.accept(visitor, data)
         elseBranch?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        condition = condition.transform(transformer, data)
+        thenBranch = thenBranch.transform(transformer, data)
+        elseBranch = elseBranch?.transform(transformer, data)
     }
 }

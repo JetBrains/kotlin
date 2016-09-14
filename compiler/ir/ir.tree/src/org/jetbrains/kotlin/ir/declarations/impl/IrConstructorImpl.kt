@@ -19,21 +19,13 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrConstructorImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val descriptor: ConstructorDescriptor
-) : IrFunctionBase(startOffset, endOffset, origin), IrConstructor {
+class IrConstructorImpl(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, override val descriptor: ConstructorDescriptor) :
+        IrFunctionBase(startOffset, endOffset, origin), IrConstructor {
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: ConstructorDescriptor,
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ConstructorDescriptor,
             body: IrBody
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body

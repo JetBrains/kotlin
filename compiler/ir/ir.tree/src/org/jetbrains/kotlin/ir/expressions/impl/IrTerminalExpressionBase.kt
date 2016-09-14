@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -27,13 +25,11 @@ abstract class IrTerminalExpressionBase(
         endOffset: Int,
         type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type) {
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        throwNoSuchSlot(slot)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children
     }
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // No children
     }
 }

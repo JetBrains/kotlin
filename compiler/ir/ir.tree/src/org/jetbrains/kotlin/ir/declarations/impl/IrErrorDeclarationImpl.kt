@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationKind
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrErrorDeclarationImpl(
@@ -39,7 +38,7 @@ class IrErrorDeclarationImpl(
         // no children
     }
 
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) = throwNoSuchSlot(slot)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        // no children
+    }
 }

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.lang.AssertionError
 import java.lang.UnsupportedOperationException
 
 abstract class IrPrimitiveCallBase(
@@ -35,17 +35,17 @@ abstract class IrPrimitiveCallBase(
     override val superQualifier: ClassDescriptor? get() = null
     override var dispatchReceiver: IrExpression?
         get() = null
-        set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")
+        set(value) {
+            if (value != null)
+                throw UnsupportedOperationException("Operator call expression can't have a receiver")
+        }
 
     override var extensionReceiver: IrExpression?
         get() = null
-        set(value) = throw UnsupportedOperationException("Operator call expression can't have a receiver")
-
-    override fun getArgument(index: Int): IrExpression? = getChild(index)?.assertCast()
-
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
-        replaceChild(index, valueArgument ?: throw AssertionError("Operator call expression can't have a default argument"))
-    }
+        set(value) {
+            if (value != null)
+                throw UnsupportedOperationException("Operator call expression can't have a receiver")
+        }
 
     override fun removeArgument(index: Int) {
         throw AssertionError("Operator call expression can't have a default argument")
@@ -54,17 +54,26 @@ abstract class IrPrimitiveCallBase(
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCall(this, data)
     }
+
+    companion object {
+        const val ARGUMENT0 = 0
+        const val ARGUMENT1 = 1
+    }
 }
 
 class IrNullaryPrimitiveImpl constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
         IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
-    override fun getChild(slot: Int): IrElement? = null
+    override fun getArgument(index: Int): IrExpression? = null
 
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        throwNoSuchSlot(slot)
+    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+        throw UnsupportedOperationException("Nullary operator $descriptor doesn't have arguments")
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // no children
     }
 }
@@ -77,30 +86,28 @@ class IrUnaryPrimitiveImpl private constructor(startOffset: Int, endOffset: Int,
         this.argument = argument
     }
 
-    private var argumentImpl: IrExpression? = null
-    var argument: IrExpression
-        get() = argumentImpl!!
-        set(value) {
-            argumentImpl?.detach()
-            argumentImpl = value
-            value.setTreeLocation(this, ARGUMENT0_SLOT)
+    lateinit var argument: IrExpression
+
+    override fun getArgument(index: Int): IrExpression? {
+        return when (index) {
+            ARGUMENT0 -> argument
+            else -> null
         }
+    }
 
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                ARGUMENT0_SLOT -> argument
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            ARGUMENT0_SLOT -> argument = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
+    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+        when (index) {
+            ARGUMENT0 -> argument = valueArgument ?: throw AssertionError("Primitive call $descriptor argument is null")
+            else -> throw AssertionError("Primitive call $descriptor: no such argument index $index")
         }
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        argument = argument.transform(transformer, data)
     }
 }
 
@@ -114,41 +121,33 @@ class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatemen
         this.argument1 = argument1
     }
 
-    private var argument0Impl: IrExpression? = null
-    var argument0: IrExpression
-        get() = argument0Impl!!
-        set(value) {
-            argument0Impl?.detach()
-            argument0Impl = value
-            value.setTreeLocation(this, ARGUMENT0_SLOT)
+    lateinit var argument0: IrExpression
+    lateinit var argument1: IrExpression
+
+    override fun getArgument(index: Int): IrExpression? {
+        return when (index) {
+            ARGUMENT0 -> argument0
+            ARGUMENT1 -> argument1
+            else -> null
         }
+    }
 
-    private var argument1Impl: IrExpression? = null
-    var argument1: IrExpression
-        get() = argument1Impl!!
-        set(value) {
-            argument1Impl?.detach()
-            argument1Impl = value
-            value.setTreeLocation(this, ARGUMENT1_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                ARGUMENT0_SLOT -> argument0
-                ARGUMENT1_SLOT -> argument1
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            ARGUMENT0_SLOT -> argument0 = newChild.assertCast()
-            ARGUMENT1_SLOT -> argument1 = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
+    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+        val argument = valueArgument ?: throw AssertionError("Primitive call $descriptor argument is null")
+        when (index) {
+            ARGUMENT0 -> argument0 = argument
+            ARGUMENT1 -> argument1 = argument
+            else -> throw AssertionError("Primitive call $descriptor: no such argument index $index")
         }
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument0.accept(visitor, data)
         argument1.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        argument0 = argument0.transform(transformer, data)
+        argument1 = argument1.transform(transformer, data)
     }
 }

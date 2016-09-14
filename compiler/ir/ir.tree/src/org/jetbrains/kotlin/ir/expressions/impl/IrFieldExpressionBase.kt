@@ -30,22 +30,4 @@ abstract class IrFieldExpressionBase(
         override val superQualifier: ClassDescriptor? = null
 ) : IrDeclarationReferenceBase<PropertyDescriptor>(startOffset, endOffset, type, descriptor), IrFieldAccessExpression {
     override final var receiver: IrExpression? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, BACKING_FIELD_RECEIVER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                BACKING_FIELD_RECEIVER_SLOT -> receiver
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            BACKING_FIELD_RECEIVER_SLOT -> receiver = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 }

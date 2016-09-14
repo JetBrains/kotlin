@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.impl.IrDeclarationReferenceBase
-import org.jetbrains.kotlin.ir.throwNoSuchSlot
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -29,13 +27,11 @@ abstract class IrTerminalDeclarationReferenceBase<out D : DeclarationDescriptor>
         type: KotlinType,
         descriptor: D
 ) : IrDeclarationReferenceBase<D>(startOffset, endOffset, type, descriptor) {
-    override fun getChild(slot: Int): IrElement? = null
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        throwNoSuchSlot(slot)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children
     }
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // No children
     }
 }

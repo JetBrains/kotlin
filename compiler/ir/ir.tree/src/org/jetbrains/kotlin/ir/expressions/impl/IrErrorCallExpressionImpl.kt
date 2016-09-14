@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
@@ -30,16 +30,9 @@ class IrErrorCallExpressionImpl(
         override val description: String
 ) : IrExpressionBase(startOffset, endOffset, type), IrErrorCallExpression {
     override var explicitReceiver: IrExpression? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, DISPATCH_RECEIVER_SLOT)
-        }
-
     override val arguments: MutableList<IrExpression> = SmartList()
 
     fun addArgument(argument: IrExpression) {
-        argument.setTreeLocation(this, arguments.size)
         arguments.add(argument)
     }
 
@@ -52,14 +45,10 @@ class IrErrorCallExpressionImpl(
         arguments.forEach { it.accept(visitor, data) }
     }
 
-    override fun getChild(slot: Int): IrElement? =
-            arguments.getOrNull(slot)
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        if (slot < 0 || slot >= arguments.size) throwNoSuchSlot(slot)
-
-        arguments[slot].detach()
-        arguments[slot] = newChild.assertCast()
-        newChild.setTreeLocation(this, slot)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        explicitReceiver = explicitReceiver?.transform(transformer, data)
+        arguments.forEachIndexed { i, irExpression ->
+            arguments[i] = irExpression.transform(transformer, data)
+        }
     }
 }

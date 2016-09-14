@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrLocalDelegatedPropertyImpl(
@@ -38,47 +40,9 @@ class IrLocalDelegatedPropertyImpl(
         this.delegate = delegate
     }
 
-    private var delegateImpl: IrVariable? = null
-    override var delegate: IrVariable
-        get() = delegateImpl!!
-        set(value) {
-            delegateImpl?.detach()
-            delegateImpl = value
-            value.setTreeLocation(this, LOCAL_DELEGATE_SLOT)
-        }
-
-    private var getterImpl: IrFunction? = null
-    override var getter: IrFunction
-        get() = getterImpl!!
-        set(value) {
-            getterImpl?.detach()
-            getterImpl = value
-            value.setTreeLocation(this, PROPERTY_GETTER_SLOT)
-        }
-
+    override lateinit var delegate: IrVariable
+    override lateinit var getter: IrFunction
     override var setter: IrFunction? = null
-        set(value) {
-            field?.detach()
-            field = value
-            value?.setTreeLocation(this, PROPERTY_SETTER_SLOT)
-        }
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                LOCAL_DELEGATE_SLOT -> delegate
-                PROPERTY_GETTER_SLOT -> getter
-                PROPERTY_SETTER_SLOT -> setter
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            LOCAL_DELEGATE_SLOT -> delegate = newChild.assertCast()
-            PROPERTY_GETTER_SLOT -> getter = newChild.assertCast()
-            PROPERTY_SETTER_SLOT -> setter = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitLocalDelegatedProperty(this, data)
@@ -87,5 +51,11 @@ class IrLocalDelegatedPropertyImpl(
         delegate.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        delegate = delegate.transform(transformer, data) as IrVariable
+        getter = getter.transform(transformer, data) as IrFunction
+        setter = setter?.transform(transformer, data) as? IrFunction
     }
 }

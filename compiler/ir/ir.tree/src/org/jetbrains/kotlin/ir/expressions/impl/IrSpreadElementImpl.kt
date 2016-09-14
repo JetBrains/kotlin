@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSpreadElementImpl(
@@ -29,28 +30,7 @@ class IrSpreadElementImpl(
         this.expression = expression
     }
 
-    private var expressionImpl: IrExpression? = null
-    override var expression: IrExpression
-        get() = expressionImpl!!
-        set(value) {
-            expressionImpl?.detach()
-            expressionImpl = value
-            value.setTreeLocation(this, CHILD_EXPRESSION_SLOT)
-        }
-
-
-    override fun getChild(slot: Int): IrElement? =
-            when (slot) {
-                CHILD_EXPRESSION_SLOT -> expression
-                else -> null
-            }
-
-    override fun replaceChild(slot: Int, newChild: IrElement) {
-        when (slot) {
-            CHILD_EXPRESSION_SLOT -> expression = newChild.assertCast()
-            else -> throwNoSuchSlot(slot)
-        }
-    }
+    override lateinit var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSpreadElement(this, data)
@@ -60,5 +40,7 @@ class IrSpreadElementImpl(
         expression.accept(visitor, data)
     }
 
-
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        expression = expression.transform(transformer, data)
+    }
 }

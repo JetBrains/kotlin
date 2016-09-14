@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
 
 interface IrAnonymousInitializer : IrDeclaration {
     override val descriptor: ClassDescriptor // TODO special descriptor for anonymous initializer blocks
@@ -25,6 +25,6 @@ interface IrAnonymousInitializer : IrDeclaration {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.ANONYMOUS_INITIALIZER
 
-    var body: IrBlockBody
+    var body: IrBody
 }
 
