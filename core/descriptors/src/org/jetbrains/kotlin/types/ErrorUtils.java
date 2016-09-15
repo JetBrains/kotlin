@@ -118,7 +118,7 @@ public class ErrorUtils {
             }
 
             @Override
-            public boolean isFriend(@NotNull ModuleDescriptor other) {
+            public boolean shouldSeeInternalsOf(@NotNull ModuleDescriptor targetModule) {
                 return false;
             }
 
