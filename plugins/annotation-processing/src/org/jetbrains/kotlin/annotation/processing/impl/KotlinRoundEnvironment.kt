@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.annotation.processing.RoundAnnotations
 import org.jetbrains.kotlin.java.model.toJeElement
 import javax.annotation.processing.RoundEnvironment
@@ -23,10 +24,14 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 
 internal class KotlinRoundEnvironment(
-        val roundAnnotations: RoundAnnotations,
+        roundAnnotations: RoundAnnotations,
         private val isProcessingOver: Boolean,
         internal val roundNumber: Int
-) : RoundEnvironment {
+) : RoundEnvironment, Disposable {
+    val roundAnnotations = roundAnnotations.toDisposable()
+    
+    override fun dispose() = dispose(roundAnnotations)
+    
     private var isError = false
     
     override fun getRootElements() = emptySet<Element>()
@@ -34,7 +39,7 @@ internal class KotlinRoundEnvironment(
     override fun processingOver() = isProcessingOver
 
     private fun getElementsAnnotatedWith(fqName: String): Set<Element> {
-        val declarations = roundAnnotations.annotationsMap[fqName] ?: return emptySet()
+        val declarations = roundAnnotations().annotationsMap[fqName] ?: return emptySet()
         return hashSetOf<Element>().apply {
             for (declaration in declarations) {
                 declaration.toJeElement()?.let { add(it) }
