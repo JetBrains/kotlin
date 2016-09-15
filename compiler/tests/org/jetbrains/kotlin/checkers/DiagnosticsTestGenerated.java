@@ -5106,6 +5106,87 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DestructuringDeclarations extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInDestructuringDeclarations() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("destructuringDeclarationAssignedUnresolved.kt")
+                public void testDestructuringDeclarationAssignedUnresolved() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/destructuringDeclarationAssignedUnresolved.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("destructuringDeclarationMissingInitializer.kt")
+                public void testDestructuringDeclarationMissingInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/destructuringDeclarationMissingInitializer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("DoubleDeclForLoop.kt")
+                public void testDoubleDeclForLoop() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/DoubleDeclForLoop.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("FolLoopTypeComponentTypeMismatch.kt")
+                public void testFolLoopTypeComponentTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/FolLoopTypeComponentTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ForLoopComponentFunctionAmbiguity.kt")
+                public void testForLoopComponentFunctionAmbiguity() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopComponentFunctionAmbiguity.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ForLoopComponentFunctionMissing.kt")
+                public void testForLoopComponentFunctionMissing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopComponentFunctionMissing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ForLoopMissingLoopParameter.kt")
+                public void testForLoopMissingLoopParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopMissingLoopParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ForLoopWithExtensions.kt")
+                public void testForLoopWithExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForLoopWithExtensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ForWithExplicitTypes.kt")
+                public void testForWithExplicitTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/ForWithExplicitTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt2829.kt")
+                public void testKt2829() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/kt2829.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("RedeclarationInForLoop.kt")
+                public void testRedeclarationInForLoop() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/RedeclarationInForLoop.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SingleDeclForLoop.kt")
+                public void testSingleDeclForLoop() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations/SingleDeclForLoop.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks/finiteBoundRestriction")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -5129,87 +5210,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("JavaSuperType.kt")
                 public void testJavaSuperType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/finiteBoundRestriction/JavaSuperType.kt");
-                    doTest(fileName);
-                }
-            }
-
-            @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class MultiDeclarations extends AbstractDiagnosticsTest {
-                public void testAllFilesPresentInMultiDeclarations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("DoubleDeclForLoop.kt")
-                public void testDoubleDeclForLoop() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/DoubleDeclForLoop.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("FolLoopTypeComponentTypeMismatch.kt")
-                public void testFolLoopTypeComponentTypeMismatch() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/FolLoopTypeComponentTypeMismatch.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ForLoopComponentFunctionAmbiguity.kt")
-                public void testForLoopComponentFunctionAmbiguity() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopComponentFunctionAmbiguity.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ForLoopComponentFunctionMissing.kt")
-                public void testForLoopComponentFunctionMissing() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopComponentFunctionMissing.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ForLoopMissingLoopParameter.kt")
-                public void testForLoopMissingLoopParameter() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopMissingLoopParameter.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ForLoopWithExtensions.kt")
-                public void testForLoopWithExtensions() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopWithExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ForWithExplicitTypes.kt")
-                public void testForWithExplicitTypes() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForWithExplicitTypes.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("kt2829.kt")
-                public void testKt2829() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/kt2829.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("multiDeclarationAssignedUnresolved.kt")
-                public void testMultiDeclarationAssignedUnresolved() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/multiDeclarationAssignedUnresolved.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("multiDeclarationMissingInitializer.kt")
-                public void testMultiDeclarationMissingInitializer() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/multiDeclarationMissingInitializer.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("RedeclarationInForLoop.kt")
-                public void testRedeclarationInForLoop() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/RedeclarationInForLoop.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("SingleDeclForLoop.kt")
-                public void testSingleDeclForLoop() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/SingleDeclForLoop.kt");
                     doTest(fileName);
                 }
             }
