@@ -12156,15 +12156,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callByJava.kt")
+            public void testCallByJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callByJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("callByKotlin.kt")
             public void testCallByKotlin() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callByKotlin.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("callJava.kt")
+            public void testCallJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("callKotlin.kt")
             public void testCallKotlin() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/callKotlin.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("createJdkAnnotationInstance.kt")
+            public void testCreateJdkAnnotationInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/createJdkAnnotationInstance.kt");
                 doTest(fileName);
             }
         }

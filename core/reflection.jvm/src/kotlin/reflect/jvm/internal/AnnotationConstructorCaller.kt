@@ -26,16 +26,30 @@ internal class AnnotationConstructorCaller(
         private val jClass: Class<*>,
         private val parameterNames: List<String>,
         private val callMode: CallMode,
+        origin: Origin,
         methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
 ) : FunctionCaller<Nothing?>(
         null, jClass, null, methods.map { it.genericReturnType }.toTypedArray()
 ) {
     enum class CallMode { CALL_BY_NAME, POSITIONAL_CALL }
 
+    enum class Origin { JAVA, KOTLIN }
+
     // Transform primitive int to java.lang.Integer because actual arguments passed here will be boxed and Class#isInstance should succeed
     private val erasedParameterTypes: List<Class<*>> = methods.map { method -> method.returnType.let { it.wrapperByPrimitive ?: it } }
 
     private val defaultValues: List<Any?> = methods.map { method -> method.defaultValue }
+
+    init {
+        // TODO: consider lifting this restriction once KT-8957 is implemented
+        if (callMode == CallMode.POSITIONAL_CALL && origin == Origin.JAVA && (parameterNames - "value").isNotEmpty()) {
+            throw UnsupportedOperationException(
+                    "Positional call of a Java annotation constructor is allowed only if there are no parameters " +
+                    "or one parameter named \"value\". This restriction exists because Java annotations (in contrast to Kotlin)" +
+                    "do not impose any order on their arguments. Use KCallable#callBy instead."
+            )
+        }
+    }
 
     override fun call(args: Array<*>): Any? {
         checkArguments(args)
