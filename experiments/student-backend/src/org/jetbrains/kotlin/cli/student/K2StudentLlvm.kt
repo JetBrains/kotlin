@@ -13,11 +13,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.utils.Printer
+import java.lang.System.out
 
 /**
  * Created by minamoto on 14/09/16.
@@ -28,6 +33,7 @@ class K2StudentLlvm : CLICompiler<K2StudentLlvmArguments>() {
 
     override fun doExecute(arguments: K2StudentLlvmArguments, configuration: CompilerConfiguration, rootDisposable: Disposable): ExitCode {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, /*arguments.moduleName ?: */ JvmAbi.DEFAULT_MODULE_NAME)
+        configuration.addKotlinSourceRoot(arguments.freeArgs.get(0))
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, emptyList())
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
@@ -55,7 +61,9 @@ class K2StudentLlvm : CLICompiler<K2StudentLlvmArguments>() {
         val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
         val module = translator.generateModule(analyzerWithCompilerReport.analysisResult.moduleDescriptor,
                 environment.getSourceFiles(),
-                BindingContext.EMPTY)
+                analyzerWithCompilerReport.analysisResult.bindingContext)
+
+        module.accept(DumpIrTreeVisitor(out), "")
         return ExitCode.OK
     }
 
