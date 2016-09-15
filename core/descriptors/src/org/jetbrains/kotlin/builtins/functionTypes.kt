@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -112,10 +115,10 @@ fun getFunctionTypeArgumentProjections(
         returnType: KotlinType,
         builtIns: KotlinBuiltIns
 ): List<TypeProjection> {
-    fun KotlinType.defaultProjection() = TypeProjectionImpl(Variance.INVARIANT, this)
-
     val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
-    receiverType?.let { arguments.add(it.defaultProjection()) }
+
+    arguments.addIfNotNull(receiverType?.asTypeProjection())
+
     parameterTypes.mapIndexedTo(arguments) { index, type ->
         val name = parameterNames?.get(index)?.check { !it.isSpecial }
         val typeToUse = if (name != null) {
@@ -126,16 +129,15 @@ fun getFunctionTypeArgumentProjections(
                     mapOf(annotationClass.unsubstitutedPrimaryConstructor!!.valueParameters.single() to nameValue),
                     org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
             )
-            object : WrappedType() {
-                override val delegate = type
-                override val annotations = AnnotationsImpl(type.annotations + parameterNameAnnotation)
-            }
+            type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
         }
         else {
             type
         }
-        typeToUse.defaultProjection()
+        typeToUse.asTypeProjection()
     }
-    arguments.add(returnType.defaultProjection())
+
+    arguments.add(returnType.asTypeProjection())
+
     return arguments
 }
