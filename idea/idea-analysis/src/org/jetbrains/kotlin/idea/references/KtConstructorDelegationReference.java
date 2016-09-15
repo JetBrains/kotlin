@@ -17,7 +17,11 @@
 package org.jetbrains.kotlin.idea.references;
 
 import com.intellij.openapi.util.TextRange;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class KtConstructorDelegationReference extends KtSimpleReference<KtConstructorDelegationReferenceExpression> {
     public KtConstructorDelegationReference(KtConstructorDelegationReferenceExpression expression) {
@@ -27,5 +31,11 @@ public class KtConstructorDelegationReference extends KtSimpleReference<KtConstr
     @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, getElement().getTextLength());
+    }
+
+    @NotNull
+    @Override
+    public Collection<String> getResolvesByNames() {
+        return Collections.emptyList();
     }
 }

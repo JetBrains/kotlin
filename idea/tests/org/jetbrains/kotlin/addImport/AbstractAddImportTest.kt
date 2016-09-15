@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractAddImportTest : AbstractImportsTest() {
-    override fun doTest(file: KtFile) {
+    override fun doTest(file: KtFile): String? {
         var descriptorName = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// IMPORT:")
                              ?: error("No IMPORT directive defined")
 
@@ -57,5 +57,7 @@ abstract class AbstractAddImportTest : AbstractImportsTest() {
                 }
             }
         }
+
+        return null
     }
 }

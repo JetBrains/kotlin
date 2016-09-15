@@ -74,6 +74,9 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         return renameByPropertyName(newName.identifier)
     }
 
+    override val resolvesByNames: Collection<String>
+        get() = listOf(element.getReferencedName())
+
     class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
     class Setter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
 }

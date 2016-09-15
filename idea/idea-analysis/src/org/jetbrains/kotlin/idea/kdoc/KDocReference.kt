@@ -53,4 +53,6 @@ class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
     }
 
     override fun getCanonicalText(): String = element.getNameText()
+
+    override val resolvesByNames: Collection<String> get() = listOf(element.getNameText())
 }
