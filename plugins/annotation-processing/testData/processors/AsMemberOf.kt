@@ -5,7 +5,9 @@ open class Base<T> {
     fun m(t: T): T = null!!
 }
 
-class Impl<T> : Base<T>()
+class Impl<T> : Base<T>() {
+    fun implM(t: T): T = null!!
+}
 
 annotation class Anno
 

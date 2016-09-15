@@ -263,8 +263,10 @@ class ProcessorTests : AbstractProcessorTest() {
         val fType = f.asType() as JeDeclaredType
 
         val base = env.findClass("Base")
+        val impl = env.findClass("Impl")
         val baseF = base.findField("f")
         val baseM = base.findMethod("m", "T")
+        val implM = impl.findMethod("implM", "T")
 
         fun check(element: Element, expectedTypeSignature: String) {
             assertEquals(expectedTypeSignature, env.typeUtils.asMemberOf(fType, element).toString())
@@ -275,6 +277,9 @@ class ProcessorTests : AbstractProcessorTest() {
 
         assertEquals("T", baseF.asType().toString())
         check(baseF, "java.lang.String")
+
+        assertEquals("(T)T", implM.asType().toString())
+        check(implM, "(java.lang.String)java.lang.String")
     }
     
     fun testDispose() {
