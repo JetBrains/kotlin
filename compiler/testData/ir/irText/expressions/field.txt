@@ -6,10 +6,10 @@ FILE /field.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testSimple>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
-          GET_BACKING_FIELD 'testSimple: Int' type=kotlin.Int origin=null
+          GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
     FUN public fun <set-testSimple>(value: kotlin.Int): kotlin.Unit
       BLOCK_BODY
-        SET_BACKING_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
+        SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
   PROPERTY public var testAugmented: kotlin.Int
     FIELD PROPERTY_BACKING_FIELD public var testAugmented: kotlin.Int
@@ -18,10 +18,10 @@ FILE /field.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testAugmented>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
-          GET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
+          GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
     FUN public fun <set-testAugmented>(value: kotlin.Int): kotlin.Unit
       BLOCK_BODY
-        SET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ
+        SET_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
-            $this: GET_BACKING_FIELD 'testAugmented: Int' type=kotlin.Int origin=PLUSEQ
+            $this: GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=PLUSEQ
             other: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null

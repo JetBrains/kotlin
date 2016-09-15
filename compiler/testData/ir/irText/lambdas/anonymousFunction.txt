@@ -10,4 +10,4 @@ FILE /anonymousFunction.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-anonymous>(): () -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'
-          GET_BACKING_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null
+          GET_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null

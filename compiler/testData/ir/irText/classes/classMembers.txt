@@ -13,7 +13,7 @@ FILE /classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
-            GET_BACKING_FIELD 'y: Int' type=kotlin.Int origin=null
+            GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
     PROPERTY public final var z: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var z: kotlin.Int
@@ -22,11 +22,11 @@ FILE /classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Int'
-            GET_BACKING_FIELD 'z: Int' type=kotlin.Int origin=null
+            GET_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD 'z: Int' type=kotlin.Unit origin=null
+          SET_FIELD 'z: Int' type=kotlin.Unit origin=null
             receiver: THIS of 'C' type=C
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CONSTRUCTOR public constructor C()
@@ -42,7 +42,7 @@ FILE /classMembers.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-property>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-property>(): Int'
-            GET_BACKING_FIELD 'property: Int' type=kotlin.Int origin=null
+            GET_FIELD 'property: Int' type=kotlin.Int origin=null
               receiver: THIS of 'C' type=C
     PROPERTY public final val propertyWithGet: kotlin.Int
       FUN public final fun <get-propertyWithGet>(): kotlin.Int

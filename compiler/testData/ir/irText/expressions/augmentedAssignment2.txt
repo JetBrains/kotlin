@@ -21,7 +21,7 @@ FILE /augmentedAssignment2.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-p>(): A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): A'
-          GET_BACKING_FIELD 'p: A' type=A origin=null
+          GET_FIELD 'p: A' type=A origin=null
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR val a: A

@@ -16,7 +16,7 @@ FILE /sealedClasses.kt
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-number>(): kotlin.Double
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
-              GET_BACKING_FIELD 'number: Double' type=kotlin.Double origin=null
+              GET_FIELD 'number: Double' type=kotlin.Double origin=null
                 receiver: THIS of 'Const' type=Expr.Const
     CLASS CLASS Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
@@ -30,7 +30,7 @@ FILE /sealedClasses.kt
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e1>(): Expr
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e1>(): Expr'
-              GET_BACKING_FIELD 'e1: Expr' type=Expr origin=null
+              GET_FIELD 'e1: Expr' type=Expr origin=null
                 receiver: THIS of 'Sum' type=Expr.Sum
       PROPERTY public final val e2: Expr
         FIELD PROPERTY_BACKING_FIELD public final val e2: Expr
@@ -39,7 +39,7 @@ FILE /sealedClasses.kt
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-e2>(): Expr
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
-              GET_BACKING_FIELD 'e2: Expr' type=Expr origin=null
+              GET_FIELD 'e2: Expr' type=Expr origin=null
                 receiver: THIS of 'Sum' type=Expr.Sum
     CLASS OBJECT NotANumber
       CONSTRUCTOR private constructor NotANumber()

@@ -6,7 +6,7 @@ FILE /references.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok>(): String'
-          GET_BACKING_FIELD 'ok: String' type=kotlin.String origin=null
+          GET_FIELD 'ok: String' type=kotlin.String origin=null
   PROPERTY public val ok2: kotlin.String = "OK"
     FIELD PROPERTY_BACKING_FIELD public val ok2: kotlin.String = "OK"
       EXPRESSION_BODY
@@ -14,7 +14,7 @@ FILE /references.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-ok2>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok2>(): String'
-          GET_BACKING_FIELD 'ok2: String' type=kotlin.String origin=null
+          GET_FIELD 'ok2: String' type=kotlin.String origin=null
   PROPERTY public val ok3: kotlin.String
     FUN public fun <get-ok3>(): kotlin.String
       BLOCK_BODY

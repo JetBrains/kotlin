@@ -11,7 +11,7 @@ FILE /justLambda.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): () -> kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): () -> Int'
-          GET_BACKING_FIELD 'test1: () -> Int' type=() -> kotlin.Int origin=null
+          GET_FIELD 'test1: () -> Int' type=() -> kotlin.Int origin=null
   PROPERTY public val test2: () -> kotlin.Unit
     FIELD PROPERTY_BACKING_FIELD public val test2: () -> kotlin.Unit
       EXPRESSION_BODY
@@ -23,4 +23,4 @@ FILE /justLambda.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): () -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): () -> Unit'
-          GET_BACKING_FIELD 'test2: () -> Unit' type=() -> kotlin.Unit origin=null
+          GET_FIELD 'test2: () -> Unit' type=() -> kotlin.Unit origin=null

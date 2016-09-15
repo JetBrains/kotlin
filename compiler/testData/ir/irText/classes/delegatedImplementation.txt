@@ -37,7 +37,7 @@ FILE /delegatedImplementation.kt
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-x>(): kotlin.String
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-x>(): String'
-                    GET_BACKING_FIELD 'x: String' type=kotlin.String origin=null
+                    GET_FIELD 'x: String' type=kotlin.String origin=null
                       receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
             PROPERTY public open override var y: kotlin.Int
               FIELD PROPERTY_BACKING_FIELD public open override var y: kotlin.Int
@@ -46,11 +46,11 @@ FILE /delegatedImplementation.kt
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-y>(): kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-y>(): Int'
-                    GET_BACKING_FIELD 'y: Int' type=kotlin.Int origin=null
+                    GET_FIELD 'y: Int' type=kotlin.Int origin=null
                       receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
                 BLOCK_BODY
-                  SET_BACKING_FIELD 'y: Int' type=kotlin.Unit origin=null
+                  SET_FIELD 'y: Int' type=kotlin.Unit origin=null
                     receiver: THIS of '<no name provided>' type=otherImpl.<no name provided>
                     value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
             PROPERTY public open override val kotlin.Byte.z1: kotlin.Int

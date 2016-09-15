@@ -11,11 +11,11 @@ FILE /safeCalls.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
-            GET_BACKING_FIELD 'value: Int' type=kotlin.Int origin=null
+            GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: THIS of 'Ref' type=Ref
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD 'value: Int' type=kotlin.Unit origin=null
+          SET_FIELD 'value: Int' type=kotlin.Unit origin=null
             receiver: THIS of 'Ref' type=Ref
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS INTERFACE IHost

@@ -23,7 +23,7 @@ FILE /arrayAugmentedAssignment1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.IntArray
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
-            GET_BACKING_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
+            GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
               receiver: THIS of 'C' type=C
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY

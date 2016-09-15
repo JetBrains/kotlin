@@ -11,11 +11,11 @@ FILE /assignments.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
-            GET_BACKING_FIELD 'x: Int' type=kotlin.Int origin=null
+            GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'Ref' type=Ref
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
-          SET_BACKING_FIELD 'x: Int' type=kotlin.Unit origin=null
+          SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: THIS of 'Ref' type=Ref
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun test1(): kotlin.Unit

@@ -10,7 +10,7 @@ FILE /smoke.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testSimpleVal>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testSimpleVal>(): Int'
-          GET_BACKING_FIELD 'testSimpleVal: Int' type=kotlin.Int origin=null
+          GET_FIELD 'testSimpleVal: Int' type=kotlin.Int origin=null
   PROPERTY public val testValWithGetter: kotlin.Int
     FUN public fun <get-testValWithGetter>(): kotlin.Int
       BLOCK_BODY
@@ -23,10 +23,10 @@ FILE /smoke.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-testSimpleVar>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testSimpleVar>(): Int'
-          GET_BACKING_FIELD 'testSimpleVar: Int' type=kotlin.Int origin=null
+          GET_FIELD 'testSimpleVar: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-testSimpleVar>(<set-?>: kotlin.Int): kotlin.Unit
       BLOCK_BODY
-        SET_BACKING_FIELD 'testSimpleVar: Int' type=kotlin.Unit origin=null
+        SET_FIELD 'testSimpleVar: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   PROPERTY public var testVarWithAccessors: kotlin.Int
     FUN public fun <get-testVarWithAccessors>(): kotlin.Int

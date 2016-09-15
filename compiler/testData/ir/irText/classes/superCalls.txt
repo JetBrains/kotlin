@@ -13,7 +13,7 @@ FILE /superCalls.kt
       FUN DEFAULT_PROPERTY_ACCESSOR public open fun <get-bar>(): kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): String'
-            GET_BACKING_FIELD 'bar: String' type=kotlin.String origin=null
+            GET_FIELD 'bar: String' type=kotlin.String origin=null
               receiver: THIS of 'Base' type=Base
   CLASS CLASS Derived
     CONSTRUCTOR public constructor Derived()

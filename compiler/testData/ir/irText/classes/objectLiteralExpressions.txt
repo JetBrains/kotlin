@@ -14,7 +14,7 @@ FILE /objectLiteralExpressions.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Any'
-          GET_BACKING_FIELD 'test1: Any' type=kotlin.Any origin=null
+          GET_FIELD 'test1: Any' type=kotlin.Any origin=null
   PROPERTY public val test2: IFoo
     FIELD PROPERTY_BACKING_FIELD public val test2: IFoo
       EXPRESSION_BODY
@@ -32,7 +32,7 @@ FILE /objectLiteralExpressions.kt
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): IFoo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): IFoo'
-          GET_BACKING_FIELD 'test2: IFoo' type=IFoo origin=null
+          GET_FIELD 'test2: IFoo' type=IFoo origin=null
   CLASS CLASS Outer
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY

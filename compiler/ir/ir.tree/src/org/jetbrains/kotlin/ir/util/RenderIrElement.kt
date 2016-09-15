@@ -135,16 +135,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-            "GET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+            "GET_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-            "SET_BACKING_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+            "SET_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
             "GET_OBJECT '${expression.descriptor.ref()}' type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-            "GET_ENUM_VALUE '${expression.descriptor.ref()}' type=${expression.type.render()}"
+            "GET_ENUM '${expression.descriptor.ref()}' type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
             "STRING_CONCATENATION type=${expression.type.render()}"
