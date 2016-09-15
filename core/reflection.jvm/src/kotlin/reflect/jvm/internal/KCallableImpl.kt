@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.*
@@ -53,6 +54,13 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
             result.add(KParameterImpl(this, index++, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
         }
 
+        // Constructor parameters of Java annotations are not ordered in any way, we order them by name here to be more stable.
+        // Note that positional call (via "call") is not allowed unless there's a single non-"value" parameter,
+        // so the order of parameters of Java annotation constructors here can be arbitrary
+        if (isAnnotationConstructor && descriptor is JavaCallableMemberDescriptor) {
+            result.sortBy { it.name }
+        }
+
         result.trimToSize()
         result
     }
@@ -85,6 +93,9 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
     override val isAbstract: Boolean
         get() = descriptor.modality == Modality.ABSTRACT
+
+    private val isAnnotationConstructor: Boolean
+        get() = name == "<init>" && container.jClass.isAnnotation
 
     @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {

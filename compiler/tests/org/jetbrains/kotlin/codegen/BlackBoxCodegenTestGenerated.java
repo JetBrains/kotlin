@@ -13005,6 +13005,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaAnnotationConstructor.kt")
+            public void testJavaAnnotationConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/javaAnnotationConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaParametersHaveNoNames.kt")
             public void testJavaParametersHaveNoNames() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/javaParametersHaveNoNames.kt");
