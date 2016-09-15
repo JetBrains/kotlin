@@ -393,7 +393,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
         val handler: FindUsagesHandler = (if (targetElement is PsiMember) {
             JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
         }
-        else if (targetElement is KtDeclaration) {
+        else if (targetElement is KtDeclaration && targetElement !is KtTypeAlias) {
             KotlinFindUsagesHandlerFactory(project).createFindUsagesHandlerNoQuestions(targetElement)
         }
         else {
