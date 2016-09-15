@@ -270,7 +270,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state, parentCodegen, false).generate();
     }
 
-    private static void badDescriptor(ClassDescriptor descriptor, ClassBuilderMode mode) {
+    public static void badDescriptor(ClassDescriptor descriptor, ClassBuilderMode mode) {
         if (mode.generateBodies) {
             throw new IllegalStateException("Generating bad descriptor in ClassBuilderMode = " + mode + ": " + descriptor);
         }
