@@ -28,7 +28,7 @@ public interface ScriptDescriptor extends ClassDescriptor {
 
     @NotNull
     @Override
-    ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
+    ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
     List<Pair<Name, KotlinType>> getScriptParametersToPassToSuperclass();
 }

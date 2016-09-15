@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -239,7 +239,7 @@ class FunctionDescriptorResolver(
             classDescriptor: ClassDescriptor,
             classElement: KtClassOrObject,
             trace: BindingTrace
-    ): ConstructorDescriptorImpl? {
+    ): ClassConstructorDescriptorImpl? {
         if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
         return createConstructorDescriptor(
                 scope,
@@ -257,7 +257,7 @@ class FunctionDescriptorResolver(
             classDescriptor: ClassDescriptor,
             constructor: KtSecondaryConstructor,
             trace: BindingTrace
-    ): ConstructorDescriptorImpl {
+    ): ClassConstructorDescriptorImpl {
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,
@@ -277,8 +277,8 @@ class FunctionDescriptorResolver(
             declarationToTrace: KtDeclaration,
             valueParameters: List<KtParameter>,
             trace: BindingTrace
-    ): ConstructorDescriptorImpl {
-        val constructorDescriptor = ConstructorDescriptorImpl.create(
+    ): ClassConstructorDescriptorImpl {
+        val constructorDescriptor = ClassConstructorDescriptorImpl.create(
                 classDescriptor,
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
                 isPrimary,

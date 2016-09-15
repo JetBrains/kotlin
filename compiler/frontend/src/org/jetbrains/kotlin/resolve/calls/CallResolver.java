@@ -280,7 +280,7 @@ public class CallResolver {
             DeclarationDescriptor container = context.scope.getOwnerDescriptor();
             assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
             return (OverloadResolutionResults) resolveConstructorDelegationCall(context, delegationCall, (KtConstructorDelegationReferenceExpression) calleeExpression,
-                                                    (ConstructorDescriptor) container);
+                                                    (ClassConstructorDescriptor) container);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -308,7 +308,7 @@ public class CallResolver {
         return resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
     }
 
-    private OverloadResolutionResults<ConstructorDescriptor> resolveCallForConstructor(
+    private OverloadResolutionResults<ClassConstructorDescriptor> resolveCallForConstructor(
             @NotNull BasicCallResolutionContext context,
             @NotNull KtConstructorCalleeExpression expression
     ) {
@@ -335,25 +335,25 @@ public class CallResolver {
 
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
 
-        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        Collection<ClassConstructorDescriptor> constructors = classDescriptor.getConstructors();
         if (constructors.isEmpty()) {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilKt.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
 
-        Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
+        Pair<Collection<ResolutionCandidate<ClassConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
                 prepareCandidatesAndContextForConstructorCall(constructedType, context);
 
-        Collection<ResolutionCandidate<ConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
+        Collection<ResolutionCandidate<ClassConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
         context = candidatesAndContext.getSecond();
 
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates);
     }
 
     @Nullable
-    public OverloadResolutionResults<ConstructorDescriptor> resolveConstructorDelegationCall(
+    public OverloadResolutionResults<ClassConstructorDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull LexicalScope scope, @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ClassConstructorDescriptor constructorDescriptor,
             @NotNull KtConstructorDelegationCall call
     ) {
         // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
@@ -368,7 +368,7 @@ public class CallResolver {
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 
-        if (constructorDescriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.isImplicit()) {
+        if (constructorDescriptor.getConstructedClass().getKind() == ClassKind.ENUM_CLASS && call.isImplicit()) {
             return null;
         }
 
@@ -381,11 +381,11 @@ public class CallResolver {
     }
 
     @NotNull
-    private OverloadResolutionResults<ConstructorDescriptor> resolveConstructorDelegationCall(
+    private OverloadResolutionResults<ClassConstructorDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull KtConstructorDelegationCall call,
             @NotNull KtConstructorDelegationReferenceExpression calleeExpression,
-            @NotNull ConstructorDescriptor calleeConstructor
+            @NotNull ClassConstructorDescriptor calleeConstructor
     ) {
         context.trace.record(BindingContext.LEXICAL_SCOPE, call, context.scope);
 
@@ -399,7 +399,7 @@ public class CallResolver {
 
         ClassDescriptor delegateClassDescriptor = isThisCall ? currentClassDescriptor :
                                                   DescriptorUtilsKt.getSuperClassOrAny(currentClassDescriptor);
-        Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
+        Collection<ClassConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
 
         if (!isThisCall && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
             if (DescriptorUtils.canHaveDeclaredConstructors(currentClassDescriptor)) {
@@ -421,9 +421,9 @@ public class CallResolver {
                                   calleeConstructor.getContainingDeclaration().getDefaultType() :
                                   DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
-        Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
+        Pair<Collection<ResolutionCandidate<ClassConstructorDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
                 prepareCandidatesAndContextForConstructorCall(superType, context);
-        Collection<ResolutionCandidate<ConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
+        Collection<ResolutionCandidate<ClassConstructorDescriptor>> candidates = candidatesAndContext.getFirst();
         context = candidatesAndContext.getSecond();
 
         TracingStrategy tracing = call.isImplicit() ?
@@ -442,13 +442,13 @@ public class CallResolver {
     }
 
     @NotNull
-    private static Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext> prepareCandidatesAndContextForConstructorCall(
+    private static Pair<Collection<ResolutionCandidate<ClassConstructorDescriptor>>, BasicCallResolutionContext> prepareCandidatesAndContextForConstructorCall(
             @NotNull KotlinType superType,
             @NotNull BasicCallResolutionContext context
     ) {
         if (!(superType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-            return new Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext>(
-                    Collections.<ResolutionCandidate<ConstructorDescriptor>>emptyList(), context);
+            return new Pair<Collection<ResolutionCandidate<ClassConstructorDescriptor>>, BasicCallResolutionContext>(
+                    Collections.<ResolutionCandidate<ClassConstructorDescriptor>>emptyList(), context);
         }
 
         ClassDescriptor superClass = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
@@ -463,10 +463,10 @@ public class CallResolver {
             context = context.replaceExpectedType(superType);
         }
 
-        Collection<ResolutionCandidate<ConstructorDescriptor>> candidates =
+        Collection<ResolutionCandidate<ClassConstructorDescriptor>> candidates =
                 CallResolverUtilKt.createResolutionCandidatesForConstructors(context.scope, context.call, superClass, knownTypeParametersSubstitutor);
 
-        return new Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext>(candidates, context);
+        return new Pair<Collection<ResolutionCandidate<ClassConstructorDescriptor>>, BasicCallResolutionContext>(candidates, context);
     }
 
     private static boolean anyConstructorHasDeclaredTypeParameters(@Nullable ClassifierDescriptor classDescriptor) {

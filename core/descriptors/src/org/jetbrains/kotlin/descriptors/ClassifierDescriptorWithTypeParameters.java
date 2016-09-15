@@ -21,7 +21,7 @@ import org.jetbrains.annotations.ReadOnly;
 
 import java.util.List;
 
-public interface ClassifierDescriptorWithTypeParameters extends ClassifierDescriptor {
+public interface ClassifierDescriptorWithTypeParameters extends ClassifierDescriptor, DeclarationDescriptorWithVisibility {
     /**
      * @return <code>true</code> if this class contains a reference to its outer class (as opposed to static nested class)
      */

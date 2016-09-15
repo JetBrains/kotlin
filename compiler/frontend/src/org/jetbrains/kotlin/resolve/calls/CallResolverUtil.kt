@@ -202,7 +202,7 @@ fun createResolutionCandidatesForConstructors(
         call: Call,
         classWithConstructors: ClassDescriptor,
         knownSubstitutor: TypeSubstitutor? = null
-): Collection<ResolutionCandidate<ConstructorDescriptor>> {
+): Collection<ResolutionCandidate<ClassConstructorDescriptor>> {
     val constructors = classWithConstructors.constructors
 
     if (constructors.isEmpty()) return emptyList()

@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -91,7 +92,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
 
 private fun KtAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
     val resolvedCall = getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
-    val klass = (resolvedCall.resultingDescriptor as? ConstructorDescriptor)?.containingDeclaration ?: return null
+    val klass = (resolvedCall.resultingDescriptor as? ClassConstructorDescriptor)?.containingDeclaration ?: return null
     if (klass.kind != ClassKind.ANNOTATION_CLASS || klass.importableFqName != PROPERTY_KEY) return null
     return resolvedCall
 }

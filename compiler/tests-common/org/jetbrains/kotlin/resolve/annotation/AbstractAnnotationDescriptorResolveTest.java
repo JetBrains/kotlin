@@ -317,7 +317,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @NotNull
     private static ConstructorDescriptor getConstructorDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        Collection<ClassConstructorDescriptor> constructors = classDescriptor.getConstructors();
         assert constructors.size() == 1;
         return constructors.iterator().next();
     }

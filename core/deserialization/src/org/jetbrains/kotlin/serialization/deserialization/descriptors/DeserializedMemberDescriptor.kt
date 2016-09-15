@@ -103,7 +103,7 @@ class DeserializedPropertyDescriptor(
     }
 }
 
-class DeserializedConstructorDescriptor(
+class DeserializedClassConstructorDescriptor(
         containingDeclaration: ClassDescriptor,
         original: ConstructorDescriptor?,
         annotations: Annotations,
@@ -115,7 +115,7 @@ class DeserializedConstructorDescriptor(
         override val containerSource: SourceElement?,
         source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
-        ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
+        ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -124,8 +124,8 @@ class DeserializedConstructorDescriptor(
             newName: Name?,
             annotations: Annotations,
             source: SourceElement
-    ): DeserializedConstructorDescriptor {
-        return DeserializedConstructorDescriptor(
+    ): DeserializedClassConstructorDescriptor {
+        return DeserializedClassConstructorDescriptor(
                 newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
                 proto, nameResolver, typeTable, containerSource, source
         )

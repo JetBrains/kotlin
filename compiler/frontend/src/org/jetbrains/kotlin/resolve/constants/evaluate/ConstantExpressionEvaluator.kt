@@ -625,7 +625,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         // Ann()
         if (resultingDescriptor is ConstructorDescriptor) {
-            val classDescriptor: ClassDescriptor = resultingDescriptor.containingDeclaration
+            val classDescriptor: ClassDescriptor = resultingDescriptor.constructedClass
             if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
                 val descriptor = AnnotationDescriptorImpl(
                         classDescriptor.defaultType,

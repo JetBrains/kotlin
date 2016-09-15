@@ -537,12 +537,12 @@ public class TranslationContext {
         return result;
     }
 
-    public boolean shouldBeDeferred(@NotNull ConstructorDescriptor constructor) {
+    public boolean shouldBeDeferred(@NotNull ClassConstructorDescriptor constructor) {
         ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
         return staticContext.getDeferredCallSites().containsKey(classDescriptor);
     }
 
-    public void deferConstructorCall(@NotNull ConstructorDescriptor constructor, @NotNull List<JsExpression> invocationArgs) {
+    public void deferConstructorCall(@NotNull ClassConstructorDescriptor constructor, @NotNull List<JsExpression> invocationArgs) {
         ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
         List<DeferredCallSite> callSites = staticContext.getDeferredCallSites().get(classDescriptor);
         if (callSites == null) throw new IllegalStateException("This method should be call only when `shouldBeDeferred` method " +

@@ -160,7 +160,7 @@ public class InlineUtil {
     public static boolean isArrayConstructorWithLambda(@NotNull CallableDescriptor descriptor) {
         return descriptor.getValueParameters().size() == 2 &&
                descriptor instanceof ConstructorDescriptor &&
-               KotlinBuiltIns.isArrayOrPrimitiveArray(((ConstructorDescriptor) descriptor).getContainingDeclaration());
+               KotlinBuiltIns.isArrayOrPrimitiveArray(((ConstructorDescriptor) descriptor).getConstructedClass());
     }
 
     @Nullable

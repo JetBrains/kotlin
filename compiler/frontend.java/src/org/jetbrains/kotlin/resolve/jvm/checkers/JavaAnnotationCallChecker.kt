@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 class JavaAnnotationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val resultingDescriptor = resolvedCall.resultingDescriptor.original
-        if (resultingDescriptor !is JavaConstructorDescriptor ||
+        if (resultingDescriptor !is JavaClassConstructorDescriptor ||
             resultingDescriptor.containingDeclaration.kind != ClassKind.ANNOTATION_CLASS) return
 
         reportErrorsOnPositionedArguments(resolvedCall, context)

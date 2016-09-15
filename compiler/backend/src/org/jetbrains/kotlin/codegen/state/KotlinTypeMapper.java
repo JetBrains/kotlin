@@ -929,9 +929,9 @@ public class KotlinTypeMapper {
                                  ? new JvmSignatureWriter()
                                  : new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
-        if (f instanceof ConstructorDescriptor) {
+        if (f instanceof ClassConstructorDescriptor) {
             sw.writeParametersStart();
-            writeAdditionalConstructorParameters((ConstructorDescriptor) f, sw);
+            writeAdditionalConstructorParameters((ClassConstructorDescriptor) f, sw);
 
             for (ValueParameterDescriptor parameter : valueParameters) {
                 writeParameter(sw, parameter.getType(), f);
@@ -1211,7 +1211,7 @@ public class KotlinTypeMapper {
         sw.writeParameterTypeEnd();
     }
 
-    private void writeAdditionalConstructorParameters(@NotNull ConstructorDescriptor descriptor, @NotNull JvmSignatureWriter sw) {
+    private void writeAdditionalConstructorParameters(@NotNull ClassConstructorDescriptor descriptor, @NotNull JvmSignatureWriter sw) {
         MutableClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
         ClassDescriptor captureThis = getDispatchReceiverParameterForConstructorCall(descriptor, closure);
@@ -1260,7 +1260,7 @@ public class KotlinTypeMapper {
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
         if (classBuilderMode.generateBodies) {
-            ResolvedCall<ConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
+            ResolvedCall<ClassConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
             if (superCall == null) return;
             writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);
         }
@@ -1268,8 +1268,8 @@ public class KotlinTypeMapper {
 
     private void writeSuperConstructorCallParameters(
             @NotNull JvmSignatureWriter sw,
-            @NotNull ConstructorDescriptor descriptor,
-            @NotNull ResolvedCall<ConstructorDescriptor> superCall,
+            @NotNull ClassConstructorDescriptor descriptor,
+            @NotNull ResolvedCall<ClassConstructorDescriptor> superCall,
             boolean hasOuter
     ) {
         ConstructorDescriptor superDescriptor = SamCodegenUtil.resolveSamAdapter(superCall.getResultingDescriptor());
@@ -1308,10 +1308,10 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private ResolvedCall<ConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ConstructorDescriptor descriptor) {
+    private ResolvedCall<ClassConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ClassConstructorDescriptor descriptor) {
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         while (true) {
-            ResolvedCall<ConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
+            ResolvedCall<ClassConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
             if (next == null) return null;
             descriptor = next.getResultingDescriptor();
             if (descriptor.getContainingDeclaration() != classDescriptor) return next;

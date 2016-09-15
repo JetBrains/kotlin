@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.copyValueParameters
@@ -79,7 +79,7 @@ class LazyJavaClassMemberScope(
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.constructors
-        val result = ArrayList<JavaConstructorDescriptor>(constructors.size)
+        val result = ArrayList<JavaClassConstructorDescriptor>(constructors.size)
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)
@@ -505,10 +505,10 @@ class LazyJavaClassMemberScope(
                && !doesOverride(builtinWithErasedParameters)
     }
 
-    private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
+    private fun resolveConstructor(constructor: JavaConstructor): JavaClassConstructorDescriptor {
         val classDescriptor = ownerDescriptor
 
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+        val constructorDescriptor = JavaClassConstructorDescriptor.createJavaConstructor(
                 classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
         )
 
@@ -530,13 +530,13 @@ class LazyJavaClassMemberScope(
         return constructorDescriptor
     }
 
-    private fun createDefaultConstructor(): ConstructorDescriptor? {
+    private fun createDefaultConstructor(): ClassConstructorDescriptor? {
         val isAnnotation: Boolean = jClass.isAnnotationType
         if (jClass.isInterface && !isAnnotation)
             return null
 
         val classDescriptor = ownerDescriptor
-        val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
+        val constructorDescriptor = JavaClassConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
         )
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
@@ -558,7 +558,7 @@ class LazyJavaClassMemberScope(
         return visibility
     }
 
-    private fun createAnnotationConstructorParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
+    private fun createAnnotationConstructorParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
         val methods = jClass.methods
         val result = ArrayList<ValueParameterDescriptor>(methods.size)
 

@@ -34,7 +34,10 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
 
     @NotNull
     @Override
-    ClassDescriptor getContainingDeclaration();
+    ClassifierDescriptorWithTypeParameters getContainingDeclaration();
+
+    @NotNull
+    ClassDescriptor getConstructedClass();
 
     @NotNull
     @Override

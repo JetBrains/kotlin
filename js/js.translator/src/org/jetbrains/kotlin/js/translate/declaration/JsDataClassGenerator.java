@@ -92,7 +92,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         }
 
         ClassDescriptor classDescriptor = (ClassDescriptor) function.getContainingDeclaration();
-        ConstructorDescriptor constructor = classDescriptor.getConstructors().iterator().next();
+        ClassConstructorDescriptor constructor = classDescriptor.getConstructors().iterator().next();
 
         JsExpression constructorRef = context.getQualifiedReference(constructor);
 

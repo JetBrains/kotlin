@@ -106,8 +106,8 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
 
         override fun getUnsubstitutedMemberScope() = MemberScope.Empty
         override fun getStaticScope() = MemberScope.Empty
-        override fun getConstructors(): Collection<ConstructorDescriptor> = emptySet()
-        override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
+        override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptySet()
+        override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
         override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
 
         override fun toString() = "class $name (not found)"

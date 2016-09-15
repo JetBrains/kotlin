@@ -93,7 +93,7 @@ class FunctionClassDescriptor(
     override fun getUnsubstitutedMemberScope() = memberScope
 
     override fun getCompanionObjectDescriptor() = null
-    override fun getConstructors() = emptyList<ConstructorDescriptor>()
+    override fun getConstructors() = emptyList<ClassConstructorDescriptor>()
     override fun getKind() = ClassKind.INTERFACE
     override fun getModality() = Modality.ABSTRACT
     override fun getUnsubstitutedPrimaryConstructor() = null

@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
@@ -46,7 +47,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 // to prevent some exotic situations
                 if (!assignedDescriptor.annotations.isEmpty() || !assigned.getAnnotationEntries().isEmpty()) return
 
-                val containingConstructor = assignedDescriptor.containingDeclaration as? ConstructorDescriptor ?: return
+                val containingConstructor = assignedDescriptor.containingDeclaration as? ClassConstructorDescriptor ?: return
                 if (containingConstructor.containingDeclaration.isData) return
 
                 val propertyTypeReference = property.typeReference

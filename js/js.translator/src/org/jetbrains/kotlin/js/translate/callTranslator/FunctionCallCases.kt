@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.PredefinedAnnotation
@@ -225,7 +226,7 @@ object ConstructorCallCase : FunctionCallCase() {
 
         val invocationArguments = mutableListOf<JsExpression>()
 
-        val constructorDescriptor = callableDescriptor as ConstructorDescriptor
+        val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor
         if (context.shouldBeDeferred(constructorDescriptor)) {
             context.deferConstructorCall(constructorDescriptor, invocationArguments)
         }

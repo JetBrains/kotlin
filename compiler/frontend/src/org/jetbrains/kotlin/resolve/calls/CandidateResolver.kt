@@ -240,7 +240,7 @@ class CandidateResolver(
         val dispatchReceiver = candidateCall.dispatchReceiver
         if (dispatchReceiver != null) {
             var nestedClass: ClassDescriptor? = null
-            if (candidateDescriptor is ConstructorDescriptor
+            if (candidateDescriptor is ClassConstructorDescriptor
                 && DescriptorUtils.isStaticNestedClass(candidateDescriptor.containingDeclaration)
             ) {
                 nestedClass = candidateDescriptor.containingDeclaration
@@ -285,7 +285,7 @@ class CandidateResolver(
         if (expression is KtSimpleNameExpression) {
             // 'B' in 'class A: B()' is JetConstructorCalleeExpression
             if (descriptor is ConstructorDescriptor) {
-                val modality = descriptor.containingDeclaration.modality
+                val modality = descriptor.constructedClass.modality
                 if (modality == Modality.ABSTRACT) {
                     tracing.instantiationOfAbstractClass(trace)
                 }

@@ -38,8 +38,8 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
 
     private MemberScope unsubstitutedMemberScope;
-    private Set<ConstructorDescriptor> constructors;
-    private ConstructorDescriptor primaryConstructor;
+    private Set<ClassConstructorDescriptor> constructors;
+    private ClassConstructorDescriptor primaryConstructor;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -60,8 +60,8 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     public final void initialize(
             @NotNull MemberScope unsubstitutedMemberScope,
-            @NotNull Set<ConstructorDescriptor> constructors,
-            @Nullable ConstructorDescriptor primaryConstructor
+            @NotNull Set<ClassConstructorDescriptor> constructors,
+            @Nullable ClassConstructorDescriptor primaryConstructor
     ) {
         this.unsubstitutedMemberScope = unsubstitutedMemberScope;
         this.constructors = constructors;
@@ -82,7 +82,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public Collection<ConstructorDescriptor> getConstructors() {
+    public Collection<ClassConstructorDescriptor> getConstructors() {
         return constructors;
     }
 
@@ -116,7 +116,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+    public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return primaryConstructor;
     }
 

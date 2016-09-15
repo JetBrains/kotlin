@@ -217,7 +217,7 @@ class DeclarationsChecker(
         TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
-    private fun checkConstructorDeclaration(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
+    private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtDeclaration) {
         declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
@@ -225,7 +225,7 @@ class DeclarationsChecker(
         checkConstructorVisibility(constructorDescriptor, declaration)
     }
 
-    private fun checkConstructorVisibility(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
+    private fun checkConstructorVisibility(constructorDescriptor: ClassConstructorDescriptor, declaration: KtDeclaration) {
         val visibilityModifier = declaration.visibilityModifier()
         if (visibilityModifier != null && visibilityModifier.node?.elementType != KtTokens.PRIVATE_KEYWORD) {
             val classDescriptor = constructorDescriptor.containingDeclaration

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -57,7 +57,7 @@ public class ManglingUtils {
             suggestedName = getMangledName((CallableMemberDescriptor) descriptor);
         }
 
-        ClassDescriptor localClass = null;
+        ClassifierDescriptorWithTypeParameters localClass = null;
         if (descriptor instanceof ConstructorDescriptor) {
             ConstructorDescriptor constructor = (ConstructorDescriptor) descriptor;
             localClass = constructor.getContainingDeclaration();
@@ -210,11 +210,12 @@ public class ManglingUtils {
                 public Iterable<? extends CallableDescriptor> invoke(DeclarationDescriptor declarationDescriptor) {
                     if (declarationDescriptor instanceof ClassDescriptor && finalNameToCompare.equals(declarationDescriptor.getName().asString())) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+                        Collection<ClassConstructorDescriptor> constructors = classDescriptor.getConstructors();
 
                         if (!DescriptorUtilsKt.hasPrimaryConstructor(classDescriptor)) {
-                            ConstructorDescriptorImpl fakePrimaryConstructor =
-                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
+                            ClassConstructorDescriptorImpl fakePrimaryConstructor =
+                                    ClassConstructorDescriptorImpl
+                                            .create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
                             return CollectionsKt.plus(constructors, fakePrimaryConstructor);
                         }
 

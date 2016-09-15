@@ -20,10 +20,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -106,7 +103,7 @@ public final class DescriptorResolverUtils {
 
     @Nullable
     public static ValueParameterDescriptor getAnnotationParameterByName(@NotNull Name name, @NotNull ClassDescriptor annotationClass) {
-        Collection<ConstructorDescriptor> constructors = annotationClass.getConstructors();
+        Collection<ClassConstructorDescriptor> constructors = annotationClass.getConstructors();
         if (constructors.size() != 1) return null;
 
         for (ValueParameterDescriptor parameter : constructors.iterator().next().getValueParameters()) {

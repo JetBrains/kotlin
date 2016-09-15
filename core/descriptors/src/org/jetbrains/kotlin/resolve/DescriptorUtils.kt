@@ -41,7 +41,7 @@ fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companion
 
 fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
     return when {
-        this is TypeAliasConstructorDescriptor -> typeAliasDescriptor
+        this is TypeAliasConstructorDescriptor -> containingDeclaration
         this is ConstructorDescriptor -> containingDeclaration
         this is PropertyAccessorDescriptor -> correspondingProperty
         else -> this
@@ -137,7 +137,7 @@ fun ClassDescriptor.getSuperInterfaces(): List<ClassDescriptor> =
                     else null
                 }
 
-val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
+val ClassDescriptor.secondaryConstructors: List<ClassConstructorDescriptor>
     get() = constructors.filterNot { it.isPrimary }
 
 val DeclarationDescriptor.builtIns: KotlinBuiltIns

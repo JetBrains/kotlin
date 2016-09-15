@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.uast
 
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -49,7 +50,7 @@ class KotlinUAnnotation(
     private fun resolveToDescriptor(): ClassDescriptor? {
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = psi.calleeExpression?.getResolvedCall(bindingContext) ?: return null
-        return (resolvedCall.resultingDescriptor as? ConstructorDescriptor)?.containingDeclaration
+        return (resolvedCall.resultingDescriptor as? ClassConstructorDescriptor)?.containingDeclaration
     }
 
     override fun resolve(context: UastContext): UClass? {

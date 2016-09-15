@@ -222,7 +222,7 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static ResolvedCall<ConstructorDescriptor> getDelegationConstructorCall(
+    public static ResolvedCall<ClassConstructorDescriptor> getDelegationConstructorCall(
             @NotNull BindingContext bindingContext,
             @NotNull ConstructorDescriptor constructorDescriptor
     ) {

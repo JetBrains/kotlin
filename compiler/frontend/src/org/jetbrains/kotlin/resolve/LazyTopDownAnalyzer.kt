@@ -147,7 +147,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
-                    c.secondaryConstructors.put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ConstructorDescriptor)
+                    c.secondaryConstructors.put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ClassConstructorDescriptor)
                 }
 
                 override fun visitEnumEntry(enumEntry: KtEnumEntry) {

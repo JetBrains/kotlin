@@ -155,7 +155,8 @@ class ClassTranslator private constructor(
 
     private fun generateSecondaryConstructor(classContext: TranslationContext, constructor: KtSecondaryConstructor) {
         // Prepare
-        val constructorDescriptor = BindingUtils.getDescriptorForElement(classContext.bindingContext(), constructor) as ConstructorDescriptor
+        val constructorDescriptor = BindingUtils.getDescriptorForElement(classContext.bindingContext(), constructor)
+                as ClassConstructorDescriptor
         val classDescriptor = constructorDescriptor.containingDeclaration
 
         val constructorScope = classContext.getScopeForDescriptor(constructorDescriptor)
@@ -201,7 +202,7 @@ class ClassTranslator private constructor(
 
         // Generate super/this call to insert to beginning of the function
         val resolvedCall = BindingContextUtils.getDelegationConstructorCall(context.bindingContext(), constructorDescriptor)
-        val delegationClassDescriptor = resolvedCall?.resultingDescriptor?.containingDeclaration
+        val delegationClassDescriptor = (resolvedCall?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
 
         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
             superCallGenerators += {

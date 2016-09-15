@@ -122,14 +122,14 @@ public class BodyResolver {
     }
 
     private void resolveSecondaryConstructors(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+        for (Map.Entry<KtSecondaryConstructor, ClassConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             LexicalScope declaringScope = c.getDeclaringScope(entry.getKey());
             assert declaringScope != null : "Declaring scope should be registered before body resolve";
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
         if (c.getSecondaryConstructors().isEmpty()) return;
         Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
-        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+        for (Map.Entry<KtSecondaryConstructor, ClassConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
         }
     }
@@ -138,7 +138,7 @@ public class BodyResolver {
             @NotNull final DataFlowInfo outerDataFlowInfo,
             @NotNull final BindingTrace trace,
             @NotNull final KtSecondaryConstructor constructor,
-            @NotNull final ConstructorDescriptor descriptor,
+            @NotNull final ClassConstructorDescriptor descriptor,
             @NotNull LexicalScope declaringScope
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
@@ -167,7 +167,7 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull KtSecondaryConstructor constructor,
-            @NotNull ConstructorDescriptor descriptor
+            @NotNull ClassConstructorDescriptor descriptor
     ) {
         OverloadResolutionResults<?> results = callResolver.resolveConstructorDelegationCall(
                 trace, scope, outerDataFlowInfo,
@@ -231,7 +231,7 @@ public class BodyResolver {
 
     @Nullable
     private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
-        ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
+        ResolvedCall<ClassConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
         return call == null || !call.getStatus().isSuccess() ? null : call.getResultingDescriptor().getOriginal();
     }
 
@@ -430,7 +430,7 @@ public class BodyResolver {
             @NotNull ResolvedCall<?> call
     ) {
         //noinspection unchecked
-        trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
+        trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ClassConstructorDescriptor>) call);
     }
 
     private void checkSupertypeList(

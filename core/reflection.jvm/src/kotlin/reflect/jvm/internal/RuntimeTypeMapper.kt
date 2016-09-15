@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -188,7 +188,7 @@ internal object RuntimeTypeMapper {
 
                 return JvmFunctionSignature.JavaMethod(method)
             }
-            is JavaConstructorDescriptor -> {
+            is JavaClassConstructorDescriptor -> {
                 val constructor = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaConstructor)?.member ?:
                                   throw KotlinReflectionInternalError("Incorrect resolution sequence for Java constructor $function")
 

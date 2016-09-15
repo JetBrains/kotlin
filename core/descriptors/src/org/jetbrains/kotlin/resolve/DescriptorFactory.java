@@ -32,8 +32,8 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getDefaultConstructor
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DescriptorFactory {
-    private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
-        public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
+    private static class DefaultClassConstructorDescriptor extends ClassConstructorDescriptorImpl {
+        public DefaultClassConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
             super(containingClass, null, Annotations.Companion.getEMPTY(), true, Kind.DECLARATION, source);
             initialize(Collections.<ValueParameterDescriptor>emptyList(),
                        getDefaultConstructorVisibility(containingClass));
@@ -116,11 +116,11 @@ public class DescriptorFactory {
     }
 
     @NotNull
-    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(
+    public static ClassConstructorDescriptorImpl createPrimaryConstructorForObject(
             @NotNull ClassDescriptor containingClass,
             @NotNull SourceElement source
     ) {
-        return new DefaultConstructorDescriptor(containingClass, source);
+        return new DefaultClassConstructorDescriptor(containingClass, source);
     }
 
     @NotNull

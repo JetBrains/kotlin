@@ -376,12 +376,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
-    public Collection<ConstructorDescriptor> getConstructors() {
+    public Collection<ClassConstructorDescriptor> getConstructors() {
         return unsubstitutedMemberScope.getConstructors();
     }
 
     @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+    public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return unsubstitutedMemberScope.getPrimaryConstructor();
     }
 

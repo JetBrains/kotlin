@@ -205,8 +205,8 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SamAdapterDescriptor<JavaConstructorDescriptor> createSamAdapterConstructor(@NotNull final JavaConstructorDescriptor original) {
-        final SamAdapterConstructorDescriptor result = new SamAdapterConstructorDescriptor(original);
+    public static SamAdapterDescriptor<JavaClassConstructorDescriptor> createSamAdapterConstructor(@NotNull final JavaClassConstructorDescriptor original) {
+        final SamAdapterClassConstructorDescriptor result = new SamAdapterClassConstructorDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
             @Override
             public void initialize(
@@ -277,7 +277,7 @@ public class SingleAbstractMethodUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
-        if (newOwner instanceof SamAdapterConstructorDescriptor) {
+        if (newOwner instanceof SamAdapterClassConstructorDescriptor) {
             return new TypeParameters(originalParameters, TypeSubstitutor.EMPTY);
         }
 

@@ -52,7 +52,7 @@ public class Visibilities {
             }
 
             if (what instanceof ConstructorDescriptor) {
-                ClassDescriptor classDescriptor = ((ConstructorDescriptor) what).getContainingDeclaration();
+                ClassifierDescriptorWithTypeParameters classDescriptor = ((ConstructorDescriptor) what).getContainingDeclaration();
                 if (DescriptorUtils.isSealedClass(classDescriptor)
                     && DescriptorUtils.isTopLevelDeclaration(classDescriptor)
                     && from instanceof ConstructorDescriptor

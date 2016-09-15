@@ -21,14 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
-/* package */ class SamAdapterConstructorDescriptor extends JavaConstructorDescriptor
-        implements SamAdapterDescriptor<JavaConstructorDescriptor> {
-    private final JavaConstructorDescriptor declaration;
+/* package */ class SamAdapterClassConstructorDescriptor extends JavaClassConstructorDescriptor
+        implements SamAdapterDescriptor<JavaClassConstructorDescriptor> {
+    private final JavaClassConstructorDescriptor declaration;
 
-    public SamAdapterConstructorDescriptor(@NotNull JavaConstructorDescriptor declaration) {
+    public SamAdapterClassConstructorDescriptor(@NotNull JavaClassConstructorDescriptor declaration) {
         super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(),
               declaration.isPrimary(), Kind.SYNTHESIZED, declaration.getSource());
         this.declaration = declaration;
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
         setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
     }
 
-    private SamAdapterConstructorDescriptor(
+    private SamAdapterClassConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
-            @Nullable JavaConstructorDescriptor original,
+            @Nullable JavaClassConstructorDescriptor original,
             @NotNull Annotations annotations,
             boolean isPrimary,
             @NotNull Kind kind,
             @NotNull SourceElement source,
-            @NotNull JavaConstructorDescriptor declaration
+            @NotNull JavaClassConstructorDescriptor declaration
     ) {
         super(containingDeclaration, original, annotations, isPrimary, kind, source);
         this.declaration = declaration;
@@ -51,19 +51,19 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
     @NotNull
     @Override
-    protected JavaConstructorDescriptor createDescriptor(
+    protected JavaClassConstructorDescriptor createDescriptor(
             @NotNull ClassDescriptor newOwner,
-            @Nullable JavaConstructorDescriptor original,
+            @Nullable JavaClassConstructorDescriptor original,
             @NotNull Kind kind,
             @NotNull SourceElement sourceElement,
             @NotNull Annotations annotations
     ) {
-        return new SamAdapterConstructorDescriptor(newOwner, original, annotations, isPrimary, kind, sourceElement, declaration);
+        return new SamAdapterClassConstructorDescriptor(newOwner, original, annotations, isPrimary, kind, sourceElement, declaration);
     }
 
     @NotNull
     @Override
-    public JavaConstructorDescriptor getBaseDescriptorForSynthetic() {
+    public JavaClassConstructorDescriptor getBaseDescriptorForSynthetic() {
         return declaration;
     }
 }

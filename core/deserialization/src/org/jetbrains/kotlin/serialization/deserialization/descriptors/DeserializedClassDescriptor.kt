@@ -101,7 +101,7 @@ class DeserializedClassDescriptor(
 
     override fun isCompanionObject(): Boolean = Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.COMPANION_OBJECT
 
-    private fun computePrimaryConstructor(): ConstructorDescriptor? {
+    private fun computePrimaryConstructor(): ClassConstructorDescriptor? {
         if (kind.isSingleton) {
             return DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE).apply {
                 returnType = getDefaultType()
@@ -113,13 +113,13 @@ class DeserializedClassDescriptor(
         }
     }
 
-    override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
+    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = primaryConstructor()
 
-    private fun computeConstructors(): Collection<ConstructorDescriptor> =
+    private fun computeConstructors(): Collection<ClassConstructorDescriptor> =
             computeSecondaryConstructors() + unsubstitutedPrimaryConstructor.singletonOrEmptyList() +
             c.components.additionalClassPartsProvider.getConstructors(this)
 
-    private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
+    private fun computeSecondaryConstructors(): List<ClassConstructorDescriptor> =
             classProto.constructorList.filter { Flags.IS_SECONDARY.get(it.flags) }.map {
                 c.memberDeserializer.loadConstructor(it, false)
             }

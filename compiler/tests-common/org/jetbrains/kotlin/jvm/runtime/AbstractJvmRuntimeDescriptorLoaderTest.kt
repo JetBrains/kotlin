@@ -115,7 +115,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     }
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =
-            this is ConstructorDescriptor &&
+            this is ClassConstructorDescriptor &&
             containingDeclaration is JavaClassDescriptor &&
             containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
 

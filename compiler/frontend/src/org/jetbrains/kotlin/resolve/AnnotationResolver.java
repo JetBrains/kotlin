@@ -169,7 +169,7 @@ public class AnnotationResolver {
         if (!ErrorUtils.isError(descriptor)) {
             if (descriptor instanceof ConstructorDescriptor) {
                 ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
-                ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+                ClassDescriptor classDescriptor = constructor.getConstructedClass();
                 if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
                     trace.report(NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor));
                 }

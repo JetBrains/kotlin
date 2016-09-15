@@ -23,15 +23,17 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 class AccessorForConstructorDescriptor(
-        private val calleeDescriptor: ConstructorDescriptor,
+        private val calleeDescriptor: ClassConstructorDescriptor,
         containingDeclaration: DeclarationDescriptor,
         private val superCallTarget: ClassDescriptor?
 ) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>")),
-        ConstructorDescriptor,
+        ClassConstructorDescriptor,
         AccessorForCallableDescriptor<ConstructorDescriptor> {
     override fun getCalleeDescriptor(): ConstructorDescriptor = calleeDescriptor
 
     override fun getContainingDeclaration(): ClassDescriptor = calleeDescriptor.containingDeclaration
+
+    override fun getConstructedClass(): ClassDescriptor = calleeDescriptor.constructedClass
 
     override fun isPrimary(): Boolean = false
 
@@ -39,12 +41,16 @@ class AccessorForConstructorDescriptor(
 
     override fun getSuperCallTarget(): ClassDescriptor? = superCallTarget
 
-    override fun substitute(substitutor: TypeSubstitutor) = super.substitute(substitutor) as ConstructorDescriptor
+    override fun substitute(substitutor: TypeSubstitutor) = super.substitute(substitutor) as ClassConstructorDescriptor
 
     override fun copy(
-            newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?, kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: Visibility,
+            kind: CallableMemberDescriptor.Kind,
+            copyOverrides: Boolean
     ): AccessorForConstructorDescriptor {
-        throw UnsupportedOperationException("Trying to copy synthetic accessor $this")
+        throw UnsupportedOperationException()
     }
 
     override fun getOriginal(): AccessorForConstructorDescriptor = this

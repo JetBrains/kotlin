@@ -3,5 +3,5 @@
 typealias Exn = java.lang.Exception
 
 fun test() {
-    throw <!FUNCTION_CALL_EXPECTED!>Exn<!>
+    throw <!NO_COMPANION_OBJECT!>Exn<!>
 }

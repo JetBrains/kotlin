@@ -46,7 +46,7 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
 
     @NotNull
     @ReadOnly
-    Collection<ConstructorDescriptor> getConstructors();
+    Collection<ClassConstructorDescriptor> getConstructors();
 
     @Override
     @NotNull
@@ -88,7 +88,7 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 
     @Nullable
-    ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
+    ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
     /**
      * It may differ from 'typeConstructor.parameters' in current class is inner, 'typeConstructor.parameters' contains

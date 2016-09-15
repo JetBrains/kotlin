@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -47,7 +48,7 @@ object ConstructorHeaderCallChecker : CallChecker {
 
         if (context.scope.parentsWithSelf.any { scope ->
             scope is LexicalScope && scope.kind == LexicalScopeKind.CONSTRUCTOR_HEADER &&
-            (scope.ownerDescriptor as ConstructorDescriptor).containingDeclaration in classes
+            (scope.ownerDescriptor as ClassConstructorDescriptor).containingDeclaration in classes
         }) {
             context.trace.report(Errors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(reportOn, resolvedCall.resultingDescriptor))
         }

@@ -197,9 +197,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return (c.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
     }
 
-    fun loadConstructor(proto: ProtoBuf.Constructor, isPrimary: Boolean): ConstructorDescriptor {
+    fun loadConstructor(proto: ProtoBuf.Constructor, isPrimary: Boolean): ClassConstructorDescriptor {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
-        val descriptor = DeserializedConstructorDescriptor(
+        val descriptor = DeserializedClassConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
                 isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.containerSource
         )

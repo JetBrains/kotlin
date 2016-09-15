@@ -1643,7 +1643,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                 assert primaryConstructor != null : "There should be primary constructor for object literal";
-                ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
+                ResolvedCall<ClassConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
                 if (superCall != null) {
                     // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
                     ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
@@ -1672,7 +1672,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     argumentGenerator.generate(valueArguments, valueArguments);
                 }
 
-                Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+                Collection<ClassConstructorDescriptor> constructors = classDescriptor.getConstructors();
                 assert constructors.size() == 1 : "Unexpected number of constructors for class: " + classDescriptor + " " + constructors;
                 ConstructorDescriptor constructorDescriptor = CollectionsKt.single(constructors);
 
@@ -3984,11 +3984,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public ConstructorDescriptor getConstructorDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
+    public ClassConstructorDescriptor getConstructorDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor accessibleDescriptor = accessibleFunctionDescriptor(resolvedCall);
         assert accessibleDescriptor instanceof ConstructorDescriptor :
                 "getConstructorDescriptor must be called only for constructors: " + accessibleDescriptor;
-        return (ConstructorDescriptor) accessibleDescriptor;
+        return (ClassConstructorDescriptor) accessibleDescriptor;
     }
 
     @NotNull
@@ -3999,7 +3999,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.anew(objectType);
                 v.dup();
 
-                ConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
+                ClassConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
 
                 ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
                 ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();

@@ -396,12 +396,12 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public static ConstructorDescriptorImpl createAndRecordPrimaryConstructorForObject(
+    public static ClassConstructorDescriptorImpl createAndRecordPrimaryConstructorForObject(
             @Nullable KtClassOrObject object,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
-        ConstructorDescriptorImpl constructorDescriptor =
+        ClassConstructorDescriptorImpl constructorDescriptor =
                 DescriptorFactory.createPrimaryConstructorForObject(classDescriptor, KotlinSourceElementKt.toSourceElement(object));
         if (object != null) {
             KtPrimaryConstructor primaryConstructor = object.getPrimaryConstructor();

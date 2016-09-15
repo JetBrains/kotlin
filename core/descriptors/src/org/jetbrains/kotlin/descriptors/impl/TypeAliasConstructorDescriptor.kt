@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
-interface TypeAliasConstructorDescriptor : FunctionDescriptor {
-    val underlyingConstructorDescriptor: ConstructorDescriptor
+interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
+    val underlyingConstructorDescriptor: ClassConstructorDescriptor
 
     override fun getContainingDeclaration(): TypeAliasDescriptor
 
@@ -46,7 +46,7 @@ interface TypeAliasConstructorDescriptor : FunctionDescriptor {
 
 class TypeAliasConstructorDescriptorImpl private constructor(
         val typeAliasDescriptor: TypeAliasDescriptor,
-        override val underlyingConstructorDescriptor: ConstructorDescriptor,
+        override val underlyingConstructorDescriptor: ClassConstructorDescriptor,
         original: TypeAliasConstructorDescriptor?,
         annotations: Annotations,
         kind: Kind,
@@ -54,8 +54,14 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 ) : TypeAliasConstructorDescriptor,
         FunctionDescriptorImpl(typeAliasDescriptor, original, annotations, Name.special("<init>"), kind, source)
 {
+    override fun isPrimary(): Boolean =
+            underlyingConstructorDescriptor.isPrimary
+
     override fun getContainingDeclaration(): TypeAliasDescriptor =
             typeAliasDescriptor
+
+    override fun getConstructedClass(): ClassDescriptor =
+            underlyingConstructorDescriptor.constructedClass
 
     override fun getReturnType(): KotlinType =
             super.getReturnType()!!
@@ -103,7 +109,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
     companion object {
         fun create(
                 typeAliasDescriptor: TypeAliasDescriptor,
-                constructor: ConstructorDescriptor,
+                constructor: ClassConstructorDescriptor,
                 substitutor: TypeSubstitutor
         ): TypeAliasConstructorDescriptor? {
             val typeAliasConstructor =
@@ -117,9 +123,10 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
                              ?: return null
 
+            val containingDeclaration = constructor.containingDeclaration as ClassDescriptor
             val dispatchReceiverParameter =
-                    if (constructor.containingDeclaration.isInner)
-                        constructor.containingDeclaration.thisAsReceiverParameter
+                    if (containingDeclaration.isInner)
+                        containingDeclaration.thisAsReceiverParameter
                     else
                         null
 

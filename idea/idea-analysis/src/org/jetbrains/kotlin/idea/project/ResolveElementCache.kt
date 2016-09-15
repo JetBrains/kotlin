@@ -521,7 +521,7 @@ class ResolveElementCache(
         val trace = createDelegatingTrace(constructor)
 
         val scope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(constructor)
-        val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
+        val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ClassConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
@@ -610,7 +610,7 @@ class ResolveElementCache(
 
         override fun getAnonymousInitializers(): MutableMap<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
-        override fun getSecondaryConstructors(): MutableMap<KtSecondaryConstructor, ConstructorDescriptor> = hashMapOf()
+        override fun getSecondaryConstructors(): MutableMap<KtSecondaryConstructor, ClassConstructorDescriptor> = hashMapOf()
 
         override fun getProperties(): MutableMap<KtProperty, PropertyDescriptor> = hashMapOf()
 

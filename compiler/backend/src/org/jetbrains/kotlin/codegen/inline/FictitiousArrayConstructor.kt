@@ -27,7 +27,7 @@ internal class FictitiousArrayConstructor(arrayClass: ClassDescriptor) : SimpleF
     companion object Factory {
         @JvmStatic
         fun create(arrayConstructor: ConstructorDescriptor): FictitiousArrayConstructor {
-            val arrayClass = arrayConstructor.containingDeclaration
+            val arrayClass = arrayConstructor.constructedClass
             return FictitiousArrayConstructor(arrayClass).apply {
                 this.initialize(null, null, arrayConstructor.typeParameters, arrayConstructor.valueParameters, arrayClass.defaultType,
                                 Modality.FINAL, Visibilities.PUBLIC)

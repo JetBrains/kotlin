@@ -143,11 +143,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public Collection<ConstructorDescriptor> getConstructors() {
-        Collection<ConstructorDescriptor> originalConstructors = original.getConstructors();
-        Collection<ConstructorDescriptor> result = new ArrayList<ConstructorDescriptor>(originalConstructors.size());
-        for (ConstructorDescriptor constructor : originalConstructors) {
-            ConstructorDescriptor copy =
+    public Collection<ClassConstructorDescriptor> getConstructors() {
+        Collection<ClassConstructorDescriptor> originalConstructors = original.getConstructors();
+        Collection<ClassConstructorDescriptor> result = new ArrayList<ClassConstructorDescriptor>(originalConstructors.size());
+        for (ClassConstructorDescriptor constructor : originalConstructors) {
+            ClassConstructorDescriptor copy =
                     constructor.copy(this, constructor.getModality(), constructor.getVisibility(), constructor.getKind(), false);
             result.add(copy.substitute(getSubstitutor()));
         }
@@ -241,7 +241,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @Nullable
     @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+    public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return original.getUnsubstitutedPrimaryConstructor();
     }
 

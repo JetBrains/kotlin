@@ -20,19 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
-public class JavaConstructorDescriptor extends ConstructorDescriptorImpl implements JavaCallableMemberDescriptor {
+public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorImpl implements JavaCallableMemberDescriptor {
     private Boolean hasStableParameterNames = null;
     private Boolean hasSynthesizedParameterNames = null;
 
-    protected JavaConstructorDescriptor(
+    protected JavaClassConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
-            @Nullable JavaConstructorDescriptor original,
+            @Nullable JavaClassConstructorDescriptor original,
             @NotNull Annotations annotations,
             boolean isPrimary,
             @NotNull Kind kind,
@@ -42,13 +42,13 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
     }
 
     @NotNull
-    public static JavaConstructorDescriptor createJavaConstructor(
+    public static JavaClassConstructorDescriptor createJavaConstructor(
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean isPrimary,
             @NotNull SourceElement source
     ) {
-        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
+        return new JavaClassConstructorDescriptor(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
 
     @NotNull
     @Override
-    protected JavaConstructorDescriptor createSubstitutedCopy(
+    protected JavaClassConstructorDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
@@ -92,22 +92,22 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
 
         assert newName == null : "Attempt to rename constructor: " + this;
 
-        JavaConstructorDescriptor result =
-                createDescriptor((ClassDescriptor) newOwner, (JavaConstructorDescriptor) original, kind, source, annotations);
+        JavaClassConstructorDescriptor result =
+                createDescriptor((ClassDescriptor) newOwner, (JavaClassConstructorDescriptor) original, kind, source, annotations);
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
     }
 
     @NotNull
-    protected JavaConstructorDescriptor createDescriptor(
+    protected JavaClassConstructorDescriptor createDescriptor(
             @NotNull ClassDescriptor newOwner,
-            @Nullable JavaConstructorDescriptor original,
+            @Nullable JavaClassConstructorDescriptor original,
             @NotNull Kind kind,
             @NotNull SourceElement sourceElement,
             @NotNull Annotations annotations
     ) {
-        return new JavaConstructorDescriptor(
+        return new JavaClassConstructorDescriptor(
                 newOwner, original, annotations, isPrimary, kind,
                 sourceElement
         );
@@ -115,12 +115,12 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
 
     @Override
     @NotNull
-    public JavaConstructorDescriptor enhance(
+    public JavaClassConstructorDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
             @NotNull List<KotlinType> enhancedValueParametersTypes,
             @NotNull KotlinType enhancedReturnType
     ) {
-        JavaConstructorDescriptor enhanced = createSubstitutedCopy(
+        JavaClassConstructorDescriptor enhanced = createSubstitutedCopy(
                 getContainingDeclaration(), /* original = */ null, getKind(), null, getAnnotations(), getSource());
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(

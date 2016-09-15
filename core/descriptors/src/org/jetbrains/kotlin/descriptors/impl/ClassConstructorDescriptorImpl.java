@@ -27,13 +27,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements ConstructorDescriptor {
+public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl implements ClassConstructorDescriptor {
 
     protected final boolean isPrimary;
 
     private static final Name NAME = Name.special("<init>");
 
-    protected ConstructorDescriptorImpl(
+    protected ClassConstructorDescriptorImpl(
             @NotNull ClassDescriptor containingDeclaration,
             @Nullable ConstructorDescriptor original,
             @NotNull Annotations annotations,
@@ -46,16 +46,16 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @NotNull
-    public static ConstructorDescriptorImpl create(
+    public static ClassConstructorDescriptorImpl create(
             @NotNull ClassDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean isPrimary,
             @NotNull SourceElement source
     ) {
-        return new ConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
+        return new ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
-    public ConstructorDescriptorImpl initialize(
+    public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility,
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
@@ -68,7 +68,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return this;
     }
 
-    public ConstructorDescriptorImpl initialize(
+    public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility
     ) {
@@ -96,14 +96,20 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public ConstructorDescriptor getOriginal() {
-        return (ConstructorDescriptor) super.getOriginal();
+    public ClassDescriptor getConstructedClass() {
+        return getContainingDeclaration();
     }
 
     @NotNull
     @Override
-    public ConstructorDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
-        return (ConstructorDescriptor) super.substitute(originalSubstitutor);
+    public ClassConstructorDescriptor getOriginal() {
+        return (ClassConstructorDescriptor) super.getOriginal();
+    }
+
+    @NotNull
+    @Override
+    public ClassConstructorDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
+        return (ClassConstructorDescriptor) super.substitute(originalSubstitutor);
     }
 
     @Override
@@ -129,7 +135,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    protected ConstructorDescriptorImpl createSubstitutedCopy(
+    protected ClassConstructorDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
@@ -144,7 +150,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                                             "kind: " + kind);
         }
         assert newName == null : "Attempt to rename constructor: " + this;
-        return new ConstructorDescriptorImpl(
+        return new ClassConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
                 annotations,
@@ -156,13 +162,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public ConstructorDescriptor copy(
+    public ClassConstructorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
             Visibility visibility,
             Kind kind,
             boolean copyOverrides
     ) {
-        return (ConstructorDescriptor) super.copy(newOwner, modality, visibility, kind, copyOverrides);
+        return (ClassConstructorDescriptor) super.copy(newOwner, modality, visibility, kind, copyOverrides);
     }
 }

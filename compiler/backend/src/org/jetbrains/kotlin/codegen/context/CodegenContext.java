@@ -449,8 +449,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                     (FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix
             );
         }
-        else if (descriptor instanceof ConstructorDescriptor) {
-            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor, superCallTarget);
+        else if (descriptor instanceof ClassConstructorDescriptor) {
+            accessor = new AccessorForConstructorDescriptor((ClassConstructorDescriptor) descriptor, contextDescriptor, superCallTarget);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -584,8 +584,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
         }
 
-        if (descriptorContext == null && descriptor instanceof ConstructorDescriptor) {
-            ClassDescriptor classDescriptor = ((ConstructorDescriptor) descriptor).getContainingDeclaration();
+        if (descriptorContext == null && descriptor instanceof ClassConstructorDescriptor) {
+            ClassDescriptor classDescriptor = ((ClassConstructorDescriptor) descriptor).getContainingDeclaration();
             if (DescriptorUtils.isSealedClass(classDescriptor)) {
                 CodegenContext parentContextForClass = findParentContextWithDescriptor(classDescriptor.getContainingDeclaration());
                 if (parentContextForClass != null) {

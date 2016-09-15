@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
@@ -38,7 +38,7 @@ object SamConversionResolverImpl : SamConversionResolver {
     override fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D? {
         return when {
             !SingleAbstractMethodUtils.isSamAdapterNecessary(original) -> null
-            original is JavaConstructorDescriptor -> SingleAbstractMethodUtils.createSamAdapterConstructor(original) as D
+            original is JavaClassConstructorDescriptor -> SingleAbstractMethodUtils.createSamAdapterConstructor(original) as D
             original is JavaMethodDescriptor -> SingleAbstractMethodUtils.createSamAdapterFunction(original) as D
             else -> null
         }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -88,7 +88,7 @@ open class LazyClassMemberScope(
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
     }
 
-    private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
+    private val primaryConstructor: NullableLazyValue<ClassConstructorDescriptor>
             = c.storageManager.createNullableLazyValue { resolvePrimaryConstructor() }
 
     override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope {
@@ -292,18 +292,18 @@ open class LazyClassMemberScope(
         result.addAll(getContributedFunctions(Name.identifier("copy"), location))
     }
 
-    private val secondaryConstructors: NotNullLazyValue<Collection<ConstructorDescriptor>>
+    private val secondaryConstructors: NotNullLazyValue<Collection<ClassConstructorDescriptor>>
             = c.storageManager.createLazyValue { resolveSecondaryConstructors() }
 
-    fun getConstructors(): Collection<ConstructorDescriptor> {
+    fun getConstructors(): Collection<ClassConstructorDescriptor> {
         val result = secondaryConstructors()
         val primaryConstructor = getPrimaryConstructor()
         return if (primaryConstructor == null) result else result + primaryConstructor
     }
 
-    fun getPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
+    fun getPrimaryConstructor(): ClassConstructorDescriptor? = primaryConstructor()
 
-    protected open fun resolvePrimaryConstructor(): ConstructorDescriptor? {
+    protected open fun resolvePrimaryConstructor(): ClassConstructorDescriptor? {
         val ownerInfo = declarationProvider.getOwnerInfo()
         val classOrObject = ownerInfo.correspondingClassOrObject ?: return null
 
@@ -324,7 +324,7 @@ open class LazyClassMemberScope(
         }
     }
 
-    private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
+    private fun resolveSecondaryConstructors(): Collection<ClassConstructorDescriptor> {
         val classOrObject = declarationProvider.getOwnerInfo().correspondingClassOrObject ?: return emptyList()
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
@@ -336,7 +336,7 @@ open class LazyClassMemberScope(
         }
     }
 
-    protected fun setDeferredReturnType(descriptor: ConstructorDescriptorImpl) {
+    protected fun setDeferredReturnType(descriptor: ClassConstructorDescriptorImpl) {
         descriptor.returnType = DeferredType.create(c.storageManager, trace, { thisDescriptor.getDefaultType() })
     }
 

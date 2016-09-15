@@ -231,7 +231,7 @@ open class JvmBuiltInsSettings(
         return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
 
-    override fun getConstructors(classDescriptor: DeserializedClassDescriptor): Collection<ConstructorDescriptor> {
+    override fun getConstructors(classDescriptor: DeserializedClassDescriptor): Collection<ClassConstructorDescriptor> {
         if (classDescriptor.kind != ClassKind.CLASS) return emptyList()
 
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
@@ -264,7 +264,7 @@ open class JvmBuiltInsSettings(
                     setAdditionalAnnotations(notConsideredDeprecation)
                 }
 
-            }.build() as ConstructorDescriptor
+            }.build() as ClassConstructorDescriptor
         }
     }
 

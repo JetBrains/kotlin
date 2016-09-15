@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
@@ -304,7 +304,8 @@ public class ErrorUtils {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
                   Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
 
-            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
+            ClassConstructorDescriptorImpl
+                    errorConstructor = ClassConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<ValueParameterDescriptor>emptyList(),
                                         Visibilities.INTERNAL);
             MemberScope memberScope = createErrorScope(getName().asString());
@@ -315,7 +316,7 @@ public class ErrorUtils {
                     )
             );
 
-            initialize(memberScope, Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);
+            initialize(memberScope, Collections.<ClassConstructorDescriptor>singleton(errorConstructor), errorConstructor);
         }
 
         @NotNull

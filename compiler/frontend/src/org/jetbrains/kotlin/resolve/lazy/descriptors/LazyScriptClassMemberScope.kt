@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -37,8 +37,8 @@ class LazyScriptClassMemberScope(
         trace: BindingTrace)
 : LazyClassMemberScope(resolveSession, declarationProvider, scriptDescriptor, trace) {
 
-    override fun resolvePrimaryConstructor(): ConstructorDescriptor? {
-        val constructor = ConstructorDescriptorImpl.create(
+    override fun resolvePrimaryConstructor(): ClassConstructorDescriptor? {
+        val constructor = ClassConstructorDescriptorImpl.create(
                 scriptDescriptor,
                 Annotations.EMPTY,
                 true,
@@ -52,7 +52,7 @@ class LazyScriptClassMemberScope(
         return constructor
     }
 
-    private fun createScriptParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
+    private fun createScriptParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
         return scriptDescriptor.scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, scriptParameter ->
             ValueParameterDescriptorImpl(
                     constructor, null, index, Annotations.EMPTY, scriptParameter.name, scriptParameter.type,
