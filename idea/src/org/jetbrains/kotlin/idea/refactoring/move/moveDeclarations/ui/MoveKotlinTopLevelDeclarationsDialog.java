@@ -456,7 +456,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper)destinationFolderCB.getComboBox().getSelectedItem();
-        PsiDirectory selectedPsiDirectory = selectedItem.getDirectory();
+        PsiDirectory selectedPsiDirectory = selectedItem != null ? selectedItem.getDirectory() : null;
         if (selectedPsiDirectory == null) return Pair.create(null, new MultipleRootsMoveDestination(targetPackage));
 
         VirtualFile targetDirectory = selectedPsiDirectory.getVirtualFile();
