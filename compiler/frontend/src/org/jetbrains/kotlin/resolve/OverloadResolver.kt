@@ -41,8 +41,8 @@ class OverloadResolver(
         checkOverloadsInPackages(c)
     }
 
-    private fun findConstructorsInNestedClassesAndTypeAliases(c: BodiesResolveContext): MultiMap<ClassDescriptor, ConstructorDescriptor> {
-        val constructorsByOuterClass = MultiMap.create<ClassDescriptor, ConstructorDescriptor>()
+    private fun findConstructorsInNestedClassesAndTypeAliases(c: BodiesResolveContext): MultiMap<ClassDescriptor, FunctionDescriptor> {
+        val constructorsByOuterClass = MultiMap.create<ClassDescriptor, FunctionDescriptor>()
 
         for (klass in c.declaredClasses.values) {
             if (klass.kind.isSingleton || klass.name.isSpecial) {
@@ -83,7 +83,7 @@ class OverloadResolver(
 
     private fun checkOverloadsInClass(
             classDescriptor: ClassDescriptorWithResolutionScopes,
-            nestedClassConstructors: Collection<ConstructorDescriptor>
+            nestedClassConstructors: Collection<FunctionDescriptor>
     ) {
         val functionsByName = MultiMap.create<Name, CallableMemberDescriptor>()
 
@@ -92,12 +92,7 @@ class OverloadResolver(
         }
 
         for (nestedConstructor in nestedClassConstructors) {
-            val name =
-                    if (nestedConstructor is TypeAliasConstructorDescriptor)
-                        nestedConstructor.typeAliasDescriptor.name
-                    else
-                        nestedConstructor.containingDeclaration.name
-
+            val name = nestedConstructor.containingDeclaration.name
             functionsByName.putValue(name, nestedConstructor)
         }
 

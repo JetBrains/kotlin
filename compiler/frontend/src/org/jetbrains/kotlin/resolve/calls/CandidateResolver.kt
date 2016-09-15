@@ -630,7 +630,7 @@ class CandidateResolver(
         val substitutedType = typeAliasParametersSubstitutor.substitute(typeAliasConstructorDescriptor.returnType, Variance.INVARIANT)!!
         val boundsSubstitutor = TypeSubstitutor.create(substitutedType)
 
-        val typeAliasDescriptor = typeAliasConstructorDescriptor.typeAliasDescriptor
+        val typeAliasDescriptor = typeAliasConstructorDescriptor.containingDeclaration
 
         val unsubstitutedType = typeAliasDescriptor.expandedType
         if (unsubstitutedType.isError) return

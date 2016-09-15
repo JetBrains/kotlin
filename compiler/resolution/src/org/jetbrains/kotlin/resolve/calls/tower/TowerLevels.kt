@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -297,7 +298,7 @@ private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDe
 private val ClassDescriptor.canHaveCallableConstructors: Boolean
     get() = !ErrorUtils.isError(this) && !kind.isSingleton
 
-fun ClassifierDescriptor.getTypeAliasConstructors(): Collection<ConstructorDescriptor> {
+fun ClassifierDescriptor.getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
     if (this !is TypeAliasDescriptor) return emptyList()
 
     val classDescriptor = this.classDescriptor ?: return emptyList()

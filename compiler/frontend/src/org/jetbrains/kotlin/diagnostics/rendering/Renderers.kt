@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenMissingCase
 import org.jetbrains.kotlin.cfg.hasUnknown
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.psi.KtClass
@@ -85,7 +86,9 @@ object Renderers {
         val declarationKindWithSpace = when (it) {
             is PackageFragmentDescriptor -> "package "
             is ClassDescriptor -> "${it.renderKind()} "
+            is TypeAliasDescriptor -> "typealias "
             is ConstructorDescriptor -> "constructor "
+            is TypeAliasConstructorDescriptor -> "typealias constructor "
             is PropertyGetterDescriptor -> "property getter "
             is PropertySetterDescriptor -> "property setter "
             is FunctionDescriptor -> "function "

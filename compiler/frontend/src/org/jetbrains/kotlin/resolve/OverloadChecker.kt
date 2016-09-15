@@ -90,8 +90,7 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
                         DeclarationCategory.EXTENSION_PROPERTY
                     else
                         DeclarationCategory.TYPE_OR_VALUE
-                is ConstructorDescriptor,
-                is SimpleFunctionDescriptor ->
+                is FunctionDescriptor ->
                     DeclarationCategory.FUNCTION
                 is ClassifierDescriptor ->
                     DeclarationCategory.TYPE_OR_VALUE
