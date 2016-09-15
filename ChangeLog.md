@@ -106,6 +106,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Re-highlight only single function after local modifications
 - [`KT-13474`](https://youtrack.jetbrains.com/issue/KT-13474) Fix performance of typing super call lambda
 - Show "Variables and values captured in a closure" highlighting only for usages
+- [`KT-13838`](https://youtrack.jetbrains.com/issue/KT-13838) Add file name to the presentation of private top-level declaration (Go to symbol, etc.)
 
 #### Intention actions, inspections and quickfixes
 
