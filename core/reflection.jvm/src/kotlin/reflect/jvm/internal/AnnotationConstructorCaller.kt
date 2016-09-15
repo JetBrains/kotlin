@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.load.java.structure.reflect.wrapperByPrimitive
 import java.lang.reflect.Proxy
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KotlinReflectionInternalError
 import java.lang.reflect.Method as ReflectMethod
@@ -27,7 +28,7 @@ internal class AnnotationConstructorCaller(
         private val parameterNames: List<String>,
         private val callMode: CallMode,
         origin: Origin,
-        methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
+        private val methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
 ) : FunctionCaller<Nothing?>(
         null, jClass, null, methods.map { it.genericReturnType }.toTypedArray()
 ) {
@@ -61,7 +62,7 @@ internal class AnnotationConstructorCaller(
             value ?: throwIllegalArgumentType(index, parameterNames[index], erasedParameterTypes[index])
         }
 
-        return createAnnotationInstance(jClass, parameterNames.zip(values).toMap())
+        return createAnnotationInstance(jClass, methods, parameterNames.zip(values).toMap())
     }
 }
 
@@ -101,9 +102,79 @@ private fun throwIllegalArgumentType(index: Int, name: String, expectedJvmType: 
     throw IllegalArgumentException("Argument #$index $name is not of the required type $typeString")
 }
 
-private fun createAnnotationInstance(annotationClass: Class<*>, values: Map<String, Any>): Any {
+private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<ReflectMethod>, values: Map<String, Any>): Any {
+    fun equals(other: Any?): Boolean =
+            (other as? Annotation)?.annotationClass?.java == annotationClass &&
+            methods.all { method ->
+                val ours = values[method.name]
+                val theirs = method(other)
+                when (ours) {
+                    is BooleanArray -> Arrays.equals(ours, theirs as BooleanArray)
+                    is CharArray -> Arrays.equals(ours, theirs as CharArray)
+                    is ByteArray -> Arrays.equals(ours, theirs as ByteArray)
+                    is ShortArray -> Arrays.equals(ours, theirs as ShortArray)
+                    is IntArray -> Arrays.equals(ours, theirs as IntArray)
+                    is FloatArray -> Arrays.equals(ours, theirs as FloatArray)
+                    is LongArray -> Arrays.equals(ours, theirs as LongArray)
+                    is DoubleArray -> Arrays.equals(ours, theirs as DoubleArray)
+                    is Array<*> -> Arrays.equals(ours, theirs as Array<*>)
+                    else -> ours == theirs
+                }
+            }
+
+    val hashCode by lazy {
+        values.entries.sumBy { entry ->
+            val (key, value) = entry
+            val valueHash = when (value) {
+                is BooleanArray -> Arrays.hashCode(value)
+                is CharArray -> Arrays.hashCode(value)
+                is ByteArray -> Arrays.hashCode(value)
+                is ShortArray -> Arrays.hashCode(value)
+                is IntArray -> Arrays.hashCode(value)
+                is FloatArray -> Arrays.hashCode(value)
+                is LongArray -> Arrays.hashCode(value)
+                is DoubleArray -> Arrays.hashCode(value)
+                is Array<*> -> Arrays.hashCode(value)
+                else -> value.hashCode()
+            }
+            127 * key.hashCode() xor valueHash
+        }
+    }
+
+    val toString by lazy {
+        buildString {
+            append('@')
+            append(annotationClass.canonicalName)
+            values.entries.joinTo(this, separator = ", ", prefix = "(", postfix = ")") { entry ->
+                val (key, value) = entry
+                val valueString = when (value) {
+                    is BooleanArray -> Arrays.toString(value)
+                    is CharArray -> Arrays.toString(value)
+                    is ByteArray -> Arrays.toString(value)
+                    is ShortArray -> Arrays.toString(value)
+                    is IntArray -> Arrays.toString(value)
+                    is FloatArray -> Arrays.toString(value)
+                    is LongArray -> Arrays.toString(value)
+                    is DoubleArray -> Arrays.toString(value)
+                    is Array<*> -> Arrays.toString(value)
+                    else -> value.toString()
+                }
+                "$key=$valueString"
+            }
+        }
+    }
+
     return Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { proxy, method, args ->
-        // TODO: support equals, hashCode, toString, annotationType
-        values[method.name] ?: throw KotlinReflectionInternalError("Method is not supported: $method (args: ${args.orEmpty().toList()})")
+        val name = method.name
+        when (name) {
+            "annotationType" -> annotationClass
+            "toString" -> toString
+            "hashCode" -> hashCode
+            else -> when {
+                name == "equals" && args?.size == 1 -> equals(args.single())
+                values.containsKey(name) -> values[name]
+                else -> throw KotlinReflectionInternalError("Method is not supported: $method (args: ${args.orEmpty().toList()})")
+            }
+        }
     }
 }

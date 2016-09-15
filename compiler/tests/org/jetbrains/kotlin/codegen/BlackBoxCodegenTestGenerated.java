@@ -12150,6 +12150,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotationType.kt")
+            public void testAnnotationType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/annotationType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("arrayOfKClasses.kt")
             public void testArrayOfKClasses() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/arrayOfKClasses.kt");
@@ -12183,6 +12189,36 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("createJdkAnnotationInstance.kt")
             public void testCreateJdkAnnotationInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/createJdkAnnotationInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumKClassAnnotation.kt")
+            public void testEnumKClassAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/enumKClassAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equalsHashCodeToString.kt")
+            public void testEqualsHashCodeToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/equalsHashCodeToString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("floatingPointParameters.kt")
+            public void testFloatingPointParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/floatingPointParameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("parameterNamedEquals.kt")
+            public void testParameterNamedEquals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/parameterNamedEquals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitivesAndArrays.kt")
+            public void testPrimitivesAndArrays() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/createAnnotation/primitivesAndArrays.kt");
                 doTest(fileName);
             }
         }
