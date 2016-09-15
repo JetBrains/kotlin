@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.SuperCallReceiverValue;
@@ -314,6 +315,12 @@ public class Visibilities {
                 return parent;
             }
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
+        }
+
+        if (what instanceof TypeAliasConstructorDescriptor) {
+            DeclarationDescriptorWithVisibility invisibleUnderlying =
+                    findInvisibleMember(receiver, ((TypeAliasConstructorDescriptor) what).getUnderlyingConstructorDescriptor(), from);
+            if (invisibleUnderlying != null) return invisibleUnderlying;
         }
 
         return null;

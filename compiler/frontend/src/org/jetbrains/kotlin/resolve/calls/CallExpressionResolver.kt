@@ -210,14 +210,14 @@ class CallExpressionResolver(
                 return noTypeInfo(context)
             }
             if (functionDescriptor is ConstructorDescriptor) {
-                val containingDescriptor = functionDescriptor.containingDeclaration
-                if (DescriptorUtils.isAnnotationClass(containingDescriptor) && !canInstantiateAnnotationClass(callExpression, context.trace)) {
+                val constructedClass = functionDescriptor.constructedClass
+                if (DescriptorUtils.isAnnotationClass(constructedClass) && !canInstantiateAnnotationClass(callExpression, context.trace)) {
                     context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
-                if (DescriptorUtils.isEnumClass(containingDescriptor)) {
+                if (DescriptorUtils.isEnumClass(constructedClass)) {
                     context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
-                if (DescriptorUtils.isSealedClass(containingDescriptor)) {
+                if (DescriptorUtils.isSealedClass(constructedClass)) {
                     context.trace.report(SEALED_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
             }

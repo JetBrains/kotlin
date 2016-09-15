@@ -264,7 +264,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(name: Name, l
     val classifier = getContributedClassifier(name, location)
     return getContributedFunctions(name, location) +
            (getClassWithConstructors(classifier)?.constructors?.filter { it.dispatchReceiverParameter == null } ?: emptyList()) +
-           (classifier?.getTypeAliasConstructors() ?: emptyList())
+           (classifier?.getTypeAliasConstructors()?.filter { it.dispatchReceiverParameter == null } ?: emptyList())
 }
 
 private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {

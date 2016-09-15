@@ -1,0 +1,78 @@
+package
+
+public val test1: AbstractClass
+public val test1a: AbstractClass
+public val test2: AnnotationClass
+public val test2a: AnnotationClass
+public val test3: EnumClass
+public val test3a: EnumClass
+public val test4: SealedClass
+public val test4a: SealedClass
+public val test5: [ERROR : Type for Test5()]
+public val test5a: [ERROR : Type for Outer.Inner()]
+public val test5b: [ERROR : Type for Outer.TestInner()]
+public val test5c: [ERROR : Type for Outer().TestInner()]
+public val test5d: Outer.Inner
+public val test5e: [ERROR : Type for Outer().Test5()]
+
+public abstract class AbstractClass {
+    public constructor AbstractClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnotationClass : kotlin.Annotation {
+    public constructor AnnotationClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class EnumClass : kotlin.Enum<EnumClass> {
+    enum entry VALUE1
+
+    enum entry VALUE2
+
+    private constructor EnumClass()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumClass): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumClass!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumClass
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumClass>
+}
+
+public final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias TestInner = Outer.Inner
+}
+
+public sealed class SealedClass {
+    private constructor SealedClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Test1 = AbstractClass
+public typealias Test2 = AnnotationClass
+public typealias Test3 = EnumClass
+public typealias Test4 = SealedClass
+public typealias Test5 = Outer.Inner
