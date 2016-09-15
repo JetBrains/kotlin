@@ -35,6 +35,8 @@ import org.junit.Test
 import java.io.File
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
+import java.net.URISyntaxException
+import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
@@ -258,6 +260,15 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
                     ?.mapNotNull { it.toFile() }
                     ?.filter { it.path.contains("out") && it.path.contains("test") }
             ?: emptyList()
+
+    private fun URL.toFile() =
+            try {
+                File(toURI().schemeSpecificPart)
+            }
+            catch (e: URISyntaxException) {
+                if (protocol != "file") null
+                else File(file)
+            }
 }
 
 @ScriptTemplateDefinition(
