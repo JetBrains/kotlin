@@ -412,7 +412,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
                 components.annotationResolver.resolveAnnotationsWithArguments(loopScope, multiParameter.getModifierList(), context.trace);
-                components.destructuringDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
+                components.destructuringDeclarationResolver.defineLocalVariablesFromDestructuringDeclaration(
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
                 components.modifiersChecker.withTrace(context.trace).checkModifiersForDestructuringDeclaration(multiParameter);

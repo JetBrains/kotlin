@@ -1,0 +1,33 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun foo(/*0*/ block: (A) -> kotlin.Unit): kotlin.Unit
+public fun foobar(/*0*/ block: D.(A) -> kotlin.Unit): kotlin.Unit
+public fun foobaz(/*0*/ block: D.(B) -> kotlin.Unit): kotlin.Unit
+public operator fun A.component1(): kotlin.Int
+public operator fun A.component2(): kotlin.String
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class D {
+    public constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun A.component1(): kotlin.Double
+    public final operator fun B.component1(): kotlin.Double
+    public final operator fun A.component2(): kotlin.Char
+    public final operator fun B.component2(): kotlin.Char
+}

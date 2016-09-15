@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-class ValueParameterDescriptorImpl(
+open class ValueParameterDescriptorImpl(
         containingDeclaration: CallableDescriptor,
         original: ValueParameterDescriptor?,
         override val index: Int,
@@ -36,6 +36,50 @@ class ValueParameterDescriptorImpl(
         override val varargElementType: KotlinType?,
         source: SourceElement
 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, outType, source), ValueParameterDescriptor {
+
+    companion object {
+        @JvmStatic
+        fun getDestructuringVariablesOrNull(valueParameterDescriptor: ValueParameterDescriptor) =
+                (valueParameterDescriptor as? ValueParameterDescriptorImpl.WithDestructuringDeclaration)?.destructuringVariables
+
+        @JvmStatic
+        fun createWithDestructuringDeclarations(containingDeclaration: CallableDescriptor,
+                                                original: ValueParameterDescriptor?,
+                                                index: Int,
+                                                annotations: Annotations,
+                                                name: Name,
+                                                outType: KotlinType,
+                                                declaresDefaultValue: Boolean,
+                                                isCrossinline: Boolean,
+                                                isNoinline: Boolean, isCoroutine: Boolean, varargElementType: KotlinType?,
+                                                source: SourceElement,
+                                                destructuringVariables: List<VariableDescriptor>?
+        ): ValueParameterDescriptorImpl =
+                if (destructuringVariables == null)
+                    ValueParameterDescriptorImpl(containingDeclaration, original, index, annotations, name, outType,
+                                                 declaresDefaultValue, isCrossinline, isNoinline, isCoroutine, varargElementType, source)
+                else
+                    WithDestructuringDeclaration(containingDeclaration, original, index, annotations, name, outType,
+                                                 declaresDefaultValue, isCrossinline, isNoinline, isCoroutine, varargElementType, source,
+                                                 destructuringVariables)
+    }
+
+    class WithDestructuringDeclaration internal constructor(
+            containingDeclaration: CallableDescriptor,
+            original: ValueParameterDescriptor?,
+            index: Int,
+            annotations: Annotations, name: Name,
+            outType: KotlinType,
+            declaresDefaultValue: Boolean,
+            isCrossinline: Boolean,
+            isNoinline: Boolean, isCoroutine: Boolean, varargElementType: KotlinType?,
+            source: SourceElement,
+            val destructuringVariables: List<VariableDescriptor>
+    ) : ValueParameterDescriptorImpl(
+            containingDeclaration, original, index, annotations, name, outType, declaresDefaultValue,
+            isCrossinline, isNoinline, isCoroutine,
+            varargElementType, source)
+
     private val original: ValueParameterDescriptor = original ?: this
 
     override fun getContainingDeclaration() = super.getContainingDeclaration() as CallableDescriptor

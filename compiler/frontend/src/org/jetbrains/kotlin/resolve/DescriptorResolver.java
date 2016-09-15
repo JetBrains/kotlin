@@ -49,14 +49,13 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyTypeAliasDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.FunctionsTypingVisitor;
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
+import org.jetbrains.kotlin.types.expressions.*;
 
 import java.util.*;
 
@@ -79,6 +78,7 @@ public class DescriptorResolver {
     private final OverloadChecker overloadChecker;
     private final LanguageVersionSettings languageVersionSettings;
     private final FunctionsTypingVisitor functionsTypingVisitor;
+    private final DestructuringDeclarationResolver destructuringDeclarationResolver;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -90,7 +90,8 @@ public class DescriptorResolver {
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull OverloadChecker overloadChecker,
             @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull FunctionsTypingVisitor functionsTypingVisitor
+            @NotNull FunctionsTypingVisitor functionsTypingVisitor,
+            @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -102,6 +103,7 @@ public class DescriptorResolver {
         this.overloadChecker = overloadChecker;
         this.languageVersionSettings = languageVersionSettings;
         this.functionsTypingVisitor = functionsTypingVisitor;
+        this.destructuringDeclarationResolver = destructuringDeclarationResolver;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -285,19 +287,35 @@ public class DescriptorResolver {
             }
         }
 
-        ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
+        KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
+
+        List<VariableDescriptor> destructuringVariables;
+        if (destructuringDeclaration != null) {
+            destructuringVariables = destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
+                    scope, destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
+                    ExpressionTypingContext.newContext(trace, scope, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
+            );
+        }
+        else {
+            destructuringVariables = null;
+        }
+
+        ValueParameterDescriptorImpl valueParameterDescriptor = ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                 owner,
                 null,
                 index,
                 valueParameterAnnotations,
-                KtPsiUtil.safeName(valueParameter.getName()),
+                destructuringVariables == null
+                ? KtPsiUtil.safeName(valueParameter.getName())
+                : Name.special("<name for destructuring parameter " + index + ">"),
                 variableType,
                 valueParameter.hasDefaultValue(),
                 valueParameter.hasModifier(CROSSINLINE_KEYWORD),
                 valueParameter.hasModifier(NOINLINE_KEYWORD),
                 valueParameter.hasModifier(COROUTINE_KEYWORD),
                 varargElementType,
-                KotlinSourceElementKt.toSourceElement(valueParameter)
+                KotlinSourceElementKt.toSourceElement(valueParameter),
+                destructuringVariables
         );
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);

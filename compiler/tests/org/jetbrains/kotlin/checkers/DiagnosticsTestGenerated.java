@@ -7470,6 +7470,57 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DestructuringInLambdas extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInDestructuringInLambdas() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("complexInference.kt")
+                public void testComplexInference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/complexInference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionComponents.kt")
+                public void testExtensionComponents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/extensionComponents.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inferredFunctionalType.kt")
+                public void testInferredFunctionalType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/inferredFunctionalType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noExpectedType.kt")
+                public void testNoExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/noExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("redeclaration.kt")
+                public void testRedeclaration() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/redeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("shadowing.kt")
+                public void testShadowing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/shadowing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/simple.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals/return")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

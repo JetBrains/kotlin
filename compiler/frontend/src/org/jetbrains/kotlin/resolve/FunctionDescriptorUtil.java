@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -89,7 +90,17 @@ public class FunctionDescriptorUtil {
                                                 handler.addClassifierDescriptor(typeParameter);
                                             }
                                             for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-                                                handler.addVariableDescriptor(valueParameterDescriptor);
+                                                if (valueParameterDescriptor instanceof ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
+                                                    List<VariableDescriptor> entries =
+                                                            ((ValueParameterDescriptorImpl.WithDestructuringDeclaration) valueParameterDescriptor)
+                                                                    .getDestructuringVariables();
+                                                    for (VariableDescriptor entry : entries) {
+                                                        handler.addVariableDescriptor(entry);
+                                                    }
+                                                }
+                                                else {
+                                                    handler.addVariableDescriptor(valueParameterDescriptor);
+                                                }
                                             }
                                             return Unit.INSTANCE;
                                         }
