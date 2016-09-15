@@ -1,0 +1,309 @@
+JetFile: destructuringInLambdas.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a1')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a2')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a3')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('z')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a4')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('z')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a5')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('q')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('z')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a6')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('z')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('w')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a7')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('y')
+                      PsiElement(RPAR)(')')
+                    PsiElement(COLON)(':')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Type')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('z')
+                        PsiElement(COLON)(':')
+                        PsiWhiteSpace(' ')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Type')
+                      PsiElement(RPAR)(')')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER
+                    DESTRUCTURING_DECLARATION
+                      PsiElement(LPAR)('(')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('w')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DESTRUCTURING_DECLARATION_ENTRY
+                        PsiElement(IDENTIFIER)('u')
+                        PsiElement(COLON)(':')
+                        PsiWhiteSpace(' ')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(COLON)(':')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo7')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

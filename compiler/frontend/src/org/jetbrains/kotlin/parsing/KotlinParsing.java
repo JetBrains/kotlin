@@ -1325,7 +1325,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * (SimpleName (":" type)){","}
+     * (SimpleName (":" type){","})
      */
     public void parseMultiDeclarationName(TokenSet follow) {
         // Parsing multi-name, e.g.

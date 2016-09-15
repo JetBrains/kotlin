@@ -254,7 +254,12 @@ jump
 // one can use "it" as a parameter name
 functionLiteral
   : "{" statements "}"
-  : "{" (modifiers SimpleName (":" type)?){","} "->" statements "}"
+  : "{" lambdaParameter{","} "->" statements "}"
+  ;
+
+lambdaParameter
+  : variableDeclarationEntry
+  : multipleVariableDeclarations (":" type)?
   ;
 
 statements
