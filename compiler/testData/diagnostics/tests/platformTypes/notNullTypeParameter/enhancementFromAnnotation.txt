@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (x: @kotlin.ParameterName(name = "x") T) -> kotlin.Unit): A<T>
+public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (x: T) -> kotlin.Unit): A<T>
 public fun test(): kotlin.Unit
 
 public interface A</*0*/ T : kotlin.Any!> {

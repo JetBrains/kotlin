@@ -9,4 +9,4 @@ fun foo(n: Int): Int {
     return i(::bar, n)
 }
 
-private fun i(bar: (Int) -> Int, n: Int) = bar(n + 1)
+private fun i(bar: (m: Int) -> Int, n: Int) = bar(n + 1)

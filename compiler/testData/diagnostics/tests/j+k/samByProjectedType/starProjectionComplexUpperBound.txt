@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ E : kotlin.collections.(Mutable)Map<kotlin.String!, kotlin.Int!>!, /*1*/ F : kotlin.CharSequence!> Function(/*0*/ function: (e: @kotlin.ParameterName(name = "e") E!) -> F!): Function<E, F>
+public /*synthesized*/ fun </*0*/ E : kotlin.collections.(Mutable)Map<kotlin.String!, kotlin.Int!>!, /*1*/ F : kotlin.CharSequence!> Function(/*0*/ function: (e: E!) -> F!): Function<E, F>
 public fun main(): kotlin.Unit
 
 public open class A {
@@ -11,7 +11,7 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ fun bar(/*0*/ l: ((e: (@kotlin.ParameterName(name = "e") kotlin.collections.MutableMap<kotlin.String!, kotlin.Int!>..@kotlin.ParameterName(name = "e") kotlin.collections.Map<kotlin.String!, kotlin.Int!>?)) -> kotlin.CharSequence!)!): kotlin.Unit
+    public final /*synthesized*/ fun bar(/*0*/ l: ((e: kotlin.collections.(Mutable)Map<kotlin.String!, kotlin.Int!>!) -> kotlin.CharSequence!)!): kotlin.Unit
     public open fun bar(/*0*/ l: Function<*, *>!): kotlin.Unit
 }
 

@@ -12,4 +12,4 @@ fun foo(n: Int): Int {
     return i(Int::bar1, Int::bar2, n)
 }
 
-private fun i(bar1: Int.(Int) -> Int, bar2: Int.(Int) -> Int, n: Int) = n.bar1(n + 1).bar2(n + 2)
+private fun i(bar1: Int.(m: Int) -> Int, bar2: Int.(m: Int) -> Int, n: Int) = n.bar1(n + 1).bar2(n + 2)

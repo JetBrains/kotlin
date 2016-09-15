@@ -15,4 +15,4 @@ fun foo(n: Int): Int {
     return bar()
 }
 
-private fun i(baz: (Int) -> Int, n: Int) = baz(n + 1)
+private fun i(baz: (m: Int) -> Int, n: Int) = baz(n + 1)

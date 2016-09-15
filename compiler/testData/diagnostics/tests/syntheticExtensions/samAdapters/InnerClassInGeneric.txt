@@ -17,5 +17,5 @@ public open class JavaClass</*0*/ T : kotlin.Any!> {
     }
 
     // Static members
-    public final /*synthesized*/ fun </*0*/ X : kotlin.Any!> Inner(/*0*/ function: (t: T!, x: @kotlin.ParameterName(name = "x") X!, java.lang.Runnable!) -> T!): JavaClass.Inner<X>
+    public final /*synthesized*/ fun </*0*/ X : kotlin.Any!> Inner(/*0*/ function: (t: T!, x: X!, runnable: java.lang.Runnable!) -> T!): JavaClass.Inner<X>
 }

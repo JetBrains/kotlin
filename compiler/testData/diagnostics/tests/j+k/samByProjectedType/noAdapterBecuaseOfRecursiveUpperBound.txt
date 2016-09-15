@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ E : kotlin.CharSequence!, /*1*/ F : kotlin.collections.(Mutable)Map<kotlin.String!, E!>!> Function(/*0*/ function: (f: @kotlin.ParameterName(name = "f") F!) -> E!): Function<E, F>
+public /*synthesized*/ fun </*0*/ E : kotlin.CharSequence!, /*1*/ F : kotlin.collections.(Mutable)Map<kotlin.String!, E!>!> Function(/*0*/ function: (f: F!) -> E!): Function<E, F>
 public fun main(): kotlin.Unit
 
 public open class A {

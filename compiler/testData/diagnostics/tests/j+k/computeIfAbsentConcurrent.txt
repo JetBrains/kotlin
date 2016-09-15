@@ -1,7 +1,7 @@
 package
 
-public /*synthesized*/ fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> ConcMap(/*0*/ function: (key: @kotlin.ParameterName(name = "key") K!, MyFunc<in K!, out V!>!) -> V!): ConcMap<K, V>
-public /*synthesized*/ fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> MyFunc(/*0*/ function: (String: @kotlin.ParameterName(name = "String") K!) -> V!): MyFunc<K, V>
+public /*synthesized*/ fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> ConcMap(/*0*/ function: (key: K!, mappingFunction: MyFunc<in K!, out V!>!) -> V!): ConcMap<K, V>
+public /*synthesized*/ fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> MyFunc(/*0*/ function: (String: K!) -> V!): MyFunc<K, V>
 public fun concurrentMap(): kotlin.Unit
 
 public open class ConcHashMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : ConcMap<K!, V!> {
