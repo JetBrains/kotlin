@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-class JvmClassGenerator private constructor(val irClass: IrClass, context: JvmBackendContext) {
+class JvmClassCodegen private constructor(val irClass: IrClass, context: JvmBackendContext) {
 
     val state = context.state
 
@@ -84,7 +84,7 @@ class JvmClassGenerator private constructor(val irClass: IrClass, context: JvmBa
                 badDescriptor(descriptor, state.classBuilderMode)
             }
 
-            JvmClassGenerator(irClass, context).generate()
+            JvmClassCodegen(irClass, context).generate()
         }
     }
 

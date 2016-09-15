@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 
 class JvmCodegen(val context: JvmBackendContext) {
     fun generateClass(irClass: IrClass) {
-        JvmClassGenerator.generate(irClass, context)
+        JvmClassCodegen.generate(irClass, context)
     }
 }
