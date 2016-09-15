@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.Collections
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMultiReference<KtPropertyDelegate>(element) {
 
@@ -34,17 +34,17 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val property = expression.getStrictParentOfType<KtProperty>()
-        if (property == null) {
-            return Collections.emptyList()
-        }
-        val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
-        if (descriptor !is PropertyDescriptor) {
-            return Collections.emptyList()
-        }
+        val property = expression.getStrictParentOfType<KtProperty>() ?: return emptyList()
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor ?: return emptyList()
         return (descriptor.accessors.mapNotNull {
             accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
         } + listOfNotNull(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.candidateDescriptor))
+    }
+
+    override val resolvesByNames: Collection<String> get() = NAMES
+
+    companion object {
+        private val NAMES = listOf(OperatorNameConventions.GET_VALUE.identifier, OperatorNameConventions.SET_VALUE.identifier)
     }
 }

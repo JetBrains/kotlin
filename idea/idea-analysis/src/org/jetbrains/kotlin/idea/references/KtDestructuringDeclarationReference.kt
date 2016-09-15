@@ -22,6 +22,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -42,4 +43,10 @@ class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEnt
         if (canRename()) return expression
         throw IncorrectOperationException()
     }
+
+    override val resolvesByNames: Collection<String>
+        get() {
+            val componentIndex = (element.parent as KtDestructuringDeclaration).entries.indexOf(element) + 1
+            return listOf("component$componentIndex")
+        }
 }

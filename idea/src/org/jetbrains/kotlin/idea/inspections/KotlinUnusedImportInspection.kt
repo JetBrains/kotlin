@@ -41,9 +41,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.DocumentUtil
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
+import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -59,7 +59,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         if (!file.manager.isInProject(file)) return null
         if (file.importDirectives.isEmpty()) return null
 
-        val descriptorsToImport = KotlinImportOptimizer.collectDescriptorsToImport(file)
+        val data = KotlinImportOptimizer.collectDescriptorsToImport(file)
 
         val directives = file.importDirectives
         val explicitlyImportedFqNames = directives
@@ -71,7 +71,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
         val fqNames = HashSet<FqName>()
         val parentFqNames = HashSet<FqName>()
-        for (descriptor in descriptorsToImport) {
+        for (descriptor in data.descriptorsToImport) {
             val fqName = descriptor.importableFqName!!
             fqNames.add(fqName)
 
@@ -119,15 +119,15 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         }
 
         if (isOnTheFly) {
-            scheduleOptimizeImportsOnTheFly(file, descriptorsToImport)
+            scheduleOptimizeImportsOnTheFly(file, data)
         }
 
         return problems.toTypedArray()
     }
 
-    private fun scheduleOptimizeImportsOnTheFly(file: KtFile, descriptorsToImport: Set<DeclarationDescriptor>) {
+    private fun scheduleOptimizeImportsOnTheFly(file: KtFile, data: OptimizedImportsBuilder.InputData) {
         if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) return
-        val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
+        val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, data) ?: return // return if already optimized
 
         // unwrap progress indicator
         val progress = generateSequence(ProgressManager.getInstance().progressIndicator) {

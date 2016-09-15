@@ -34,6 +34,8 @@ interface KtReference : PsiPolyVariantReference {
     fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
 
     override fun getElement(): KtElement
+
+    val resolvesByNames: Collection<String>
 }
 
 abstract class AbstractKtReference<T : KtElement>(element: T)

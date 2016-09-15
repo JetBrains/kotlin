@@ -1,0 +1,9 @@
+Additional checking of reference Getter: A
+Additional checking of reference Getter: A
+Additional checking of reference KtSimpleNameReference: A
+Changed resolve of KtSimpleNameReference: A
+Additional checking of reference KtSimpleNameReference: A
+Changed resolve of KtSimpleNameReference: A
+Additional checking of reference KtInvokeFunctionReference: A("")
+Additional checking of reference KtInvokeFunctionReference: A(1)
+Trying to build import list again with locked imports: p2.A, p1.*

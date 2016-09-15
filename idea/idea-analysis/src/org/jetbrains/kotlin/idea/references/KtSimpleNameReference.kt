@@ -205,4 +205,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     }
 
     override fun getCanonicalText(): String = expression.text
+
+    override val resolvesByNames: Collection<String>
+        get() = listOf(element.getReferencedName())
 }

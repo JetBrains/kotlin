@@ -20,6 +20,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExpression>(element) {
 
@@ -35,11 +36,20 @@ class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExp
         return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.candidateDescriptor }
     }
 
+    override val resolvesByNames: Collection<String>
+        get() = NAMES
+
     companion object {
         private val LOOP_RANGE_KEYS = arrayOf(
                 BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL,
                 BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL,
                 BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL
+        )
+
+        private val NAMES = listOf(
+                OperatorNameConventions.ITERATOR.identifier,
+                OperatorNameConventions.NEXT.identifier,
+                OperatorNameConventions.HAS_NEXT.identifier
         )
     }
 }
