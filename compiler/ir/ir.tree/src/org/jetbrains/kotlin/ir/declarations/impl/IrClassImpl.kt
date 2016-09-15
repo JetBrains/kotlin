@@ -48,9 +48,6 @@ class IrClassImpl(
         declarations.addAll(members)
     }
 
-    override fun toBuilder(): IrDeclarationContainer.Builder =
-            IrClassBuilderImpl(this)
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitClass(this, data)
 
@@ -63,18 +60,4 @@ class IrClassImpl(
             declarations[i] = irDeclaration.transform(transformer, data)
         }
     }
-}
-
-class IrClassBuilderImpl(
-        override var startOffset: Int,
-        override var endOffset: Int,
-        override var origin: IrDeclarationOrigin,
-        override var descriptor: ClassDescriptor,
-        override val declarations: MutableList<IrDeclaration>
-) : IrClass.Builder {
-    constructor(irClass: IrClass) : this(irClass.startOffset, irClass.endOffset, irClass.origin, irClass.descriptor,
-                                         irClass.declarations.toMutableList())
-
-    override fun build(): IrClass =
-            IrClassImpl(startOffset, endOffset, origin, descriptor, declarations)
 }

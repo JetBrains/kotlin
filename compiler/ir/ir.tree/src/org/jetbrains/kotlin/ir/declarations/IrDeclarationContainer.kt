@@ -17,13 +17,5 @@
 package org.jetbrains.kotlin.ir.declarations
 
 interface IrDeclarationContainer {
-    val declarations: List<IrDeclaration>
-
-    fun toBuilder(): Builder
-
-    interface Builder {
-        val declarations: MutableList<IrDeclaration>
-
-        fun build(): IrDeclarationContainer
-    }
+    val declarations: MutableList<IrDeclaration>
 }

@@ -26,18 +26,8 @@ import org.jetbrains.kotlin.name.FqName
 
 interface IrFile : IrElement, IrDeclarationContainer {
     val fileEntry: SourceManager.FileEntry
-    val fileAnnotations: List<AnnotationDescriptor>
+    val fileAnnotations: MutableList<AnnotationDescriptor>
     val packageFragmentDescriptor: PackageFragmentDescriptor
-
-    override fun toBuilder(): Builder
-
-    interface Builder : IrDeclarationContainer.Builder {
-        val fileEntry: SourceManager.FileEntry
-        val fileAnnotations: MutableList<AnnotationDescriptor>
-        val packageFragmentDescriptor: PackageFragmentDescriptor
-
-        override fun build(): IrFile
-    }
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
             accept(transformer, data) as IrFile

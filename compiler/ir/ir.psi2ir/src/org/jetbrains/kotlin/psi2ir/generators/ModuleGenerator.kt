@@ -43,11 +43,11 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val irFile = createEmptyIrFile(ktFile)
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
-            irFile.addAnnotation(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
+            irFile.fileAnnotations.add(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
         }
 
         for (ktDeclaration in ktFile.declarations) {
-            irFile.addDeclaration(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
+            irFile.declarations.add(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
         }
 
         return irFile

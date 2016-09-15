@@ -34,32 +34,13 @@ class IrFileImpl(
             fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor,
             fileAnnotations: List<AnnotationDescriptor>, declarations: List<IrDeclaration>
     ) : this(fileEntry, packageFragmentDescriptor) {
-        addAllAnnotations(fileAnnotations)
-        addAll(declarations)
+        this.fileAnnotations.addAll(fileAnnotations)
+        this.declarations.addAll(declarations)
     }
 
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
 
-    fun addAnnotation(annotation: AnnotationDescriptor) {
-        fileAnnotations.add(annotation)
-    }
-
-    fun addAllAnnotations(annotations: List<AnnotationDescriptor>) {
-        fileAnnotations.addAll(annotations)
-    }
-
     override val declarations: MutableList<IrDeclaration> = ArrayList()
-
-    fun addDeclaration(declaration: IrDeclaration) {
-        declarations.add(declaration)
-    }
-
-    fun addAll(newDeclarations: List<IrDeclaration>) {
-        declarations.addAll(newDeclarations)
-    }
-
-    override fun toBuilder(): IrFile.Builder =
-            IrFileBuilderImpl(this)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFile(this, data)
@@ -73,19 +54,4 @@ class IrFileImpl(
             declarations[i] = irDeclaration.transform(transformer, data)
         }
     }
-}
-
-class IrFileBuilderImpl(
-        override val fileEntry: SourceManager.FileEntry,
-        override val packageFragmentDescriptor: PackageFragmentDescriptor,
-        override val fileAnnotations: MutableList<AnnotationDescriptor>,
-        override val declarations: MutableList<IrDeclaration>
-) : IrFile.Builder {
-    constructor(irFile: IrFile) : this(irFile.fileEntry,
-                                       irFile.packageFragmentDescriptor,
-                                       irFile.fileAnnotations.toMutableList(),
-                                       irFile.declarations.toMutableList())
-
-    override fun build(): IrFile =
-            IrFileImpl(fileEntry, packageFragmentDescriptor, fileAnnotations, declarations)
 }

@@ -26,9 +26,9 @@ class JvmBackend(context: JvmBackendContext) {
     private val codegen = JvmCodegen(context)
 
     fun generateFile(irFile: IrFile) {
-        val loweredFile = lower.lower(irFile)
+        lower.lower(irFile)
 
-        for (loweredClass in loweredFile.declarations) {
+        for (loweredClass in irFile.declarations) {
             if (loweredClass !is IrClass) {
                 throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
             }

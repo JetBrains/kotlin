@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import java.util.*
 
 class FileClassLowering(val context: JvmBackendContext) {
-    fun lower(irFile: IrFile): IrFile {
+    fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()
         val fileClassMembers = ArrayList<IrDeclaration>()
 
@@ -36,16 +36,15 @@ class FileClassLowering(val context: JvmBackendContext) {
                 fileClassMembers.add(it)
         }
 
-        if (fileClassMembers.isEmpty()) return irFile
+        if (fileClassMembers.isEmpty()) return
 
         val fileClassDescriptor = context.jvmFileClassProvider.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
 
         val irFileClass = IrClassImpl(0, irFile.fileEntry.maxOffset, IrDeclarationOrigin.DEFINED, fileClassDescriptor, fileClassMembers)
         classes.add(irFileClass)
 
-        val newIrFile = irFile.toBuilder().apply { declarations.clear(); declarations.addAll(classes) }.build()
-
-        return newIrFile
+        irFile.declarations.clear()
+        irFile.declarations.addAll(classes)
     }
 }
 

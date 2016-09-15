@@ -23,15 +23,6 @@ interface IrClass : IrDeclaration, IrDeclarationContainer {
         get() = IrDeclarationKind.CLASS
 
     override val descriptor: ClassDescriptor
-
-    interface Builder : IrDeclarationContainer.Builder {
-        val startOffset: Int
-        val endOffset: Int
-        var origin: IrDeclarationOrigin
-        val descriptor: ClassDescriptor
-
-        override fun build(): IrClass
-    }
 }
 
 fun IrClass.getInstanceInitializerMembers() =

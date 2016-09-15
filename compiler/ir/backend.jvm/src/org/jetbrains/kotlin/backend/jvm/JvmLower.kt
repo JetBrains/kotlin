@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.FileClassLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 class JvmLower(val context: JvmBackendContext) {
-    fun lower(irFile: IrFile): IrFile {
-        var newIrFile = irFile
-
-        newIrFile = FileClassLowering(context).lower(newIrFile)
-
-        return newIrFile
+    fun lower(irFile: IrFile) {
+        FileClassLowering(context).lower(irFile)
     }
 }
