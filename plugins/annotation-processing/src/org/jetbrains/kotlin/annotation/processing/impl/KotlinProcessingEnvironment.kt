@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiManager
@@ -26,32 +27,51 @@ import java.util.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 
 class KotlinProcessingEnvironment(
-        private val elements: Elements,
-        private val types: Types,
-        private val messager: KotlinMessager,
+        elements: KotlinElements,
+        types: KotlinTypes,
+        messager: KotlinMessager,
         options: Map<String, String>,
-        private val filer: KotlinFiler,
+        filer: KotlinFiler,
         
-        internal val processors: List<Processor>,
+        processors: List<Processor>,
         
-        internal val project: Project,
-        internal val psiManager: PsiManager,
-        internal val javaPsiFacade: JavaPsiFacade,
-        internal val projectScope: GlobalSearchScope,
-        internal val bindingContext: BindingContext,
-        internal val appendJavaSourceRootsHandler: (List<File>) -> Unit
-) : ProcessingEnvironment {
-    private val options = Collections.unmodifiableMap(options) 
+        project: Project,
+        psiManager: PsiManager,
+        javaPsiFacade: JavaPsiFacade,
+        projectScope: GlobalSearchScope,
+        bindingContext: BindingContext,
+        appendJavaSourceRootsHandler: (List<File>) -> Unit
+) : ProcessingEnvironment, Disposable {
+    private val elements = elements.toDisposable()
+    private val types = types.toDisposable()
+    private val messager = messager.toDisposable()
+    private val filer = filer.toDisposable()
+    internal val processors = processors.toDisposable()
     
-    override fun getElementUtils() = elements
-    override fun getTypeUtils() = types
-    override fun getMessager() = messager
+    internal val project = project.toDisposable()
+    internal val psiManager = psiManager.toDisposable()
+    internal val javaPsiFacade = javaPsiFacade.toDisposable()
+    internal val projectScope = projectScope.toDisposable()
+    internal val bindingContext = bindingContext.toDisposable()
+    
+    internal val appendJavaSourceRootsHandler = appendJavaSourceRootsHandler.toDisposable()
+    private val options = Collections.unmodifiableMap(options).toDisposable()
+
+    override fun dispose() {
+        types.dispose()
+        elements.dispose()
+        dispose(elements, types, messager, filer, processors,
+                project, psiManager, javaPsiFacade, projectScope, bindingContext,
+                appendJavaSourceRootsHandler, options)
+    }
+
+    override fun getElementUtils() = elements()
+    override fun getTypeUtils() = types()
+    override fun getMessager() = messager()
     override fun getLocale() = Locale.getDefault()
     override fun getSourceVersion() = SourceVersion.RELEASE_8
-    override fun getOptions() = options
-    override fun getFiler() = filer
+    override fun getOptions() = options()
+    override fun getFiler() = filer()
 }

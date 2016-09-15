@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.annotation.processing.impl.DisposableRef
+import org.jetbrains.kotlin.annotation.processing.impl.KotlinProcessingEnvironment
 import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
 import javax.lang.model.type.DeclaredType
@@ -272,5 +275,41 @@ class ProcessorTests : AbstractProcessorTest() {
 
         assertEquals("T", baseF.asType().toString())
         check(baseF, "java.lang.String")
+    }
+    
+    fun testDispose() {
+        var savedEnv: ProcessingEnvironment? = null
+        
+        test("AsMemberOf", "*") { set, roundEnv, env ->
+            savedEnv = env
+        }
+        
+        fun <T> T.test(f: T.() -> Unit) {
+            var exceptionCaught = false
+            try {
+                f()
+            } 
+            catch (e: IllegalStateException) { 
+                exceptionCaught = true
+            }
+            
+            assertEquals("Exception was not caught", true, exceptionCaught)
+        }
+
+        with (savedEnv as KotlinProcessingEnvironment) {
+            test { elementUtils }
+            test { typeUtils }
+            test { messager }
+            test { options }
+            test { filer }
+
+            fun testDisposable(name: String) {
+                test { (javaClass.methods.first { it.name.startsWith("$name$") }.invoke(this) as DisposableRef<*>).invoke() }
+            }
+
+            testDisposable("getProject")
+            testDisposable("getJavaPsiFacade")
+            testDisposable("getBindingContext")
+        }
     }
 }
