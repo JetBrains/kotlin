@@ -141,28 +141,28 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             expectedFunctionType: KotlinType
     ) {
-        val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
+        val headerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
                                               TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
-        descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
+                resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
+        descriptorResolver.resolveGenericBounds(function, functionDescriptor, headerScope, typeParameterDescriptors, trace)
 
         val receiverTypeRef = function.receiverTypeReference
         val receiverType =
                 if (receiverTypeRef != null) {
-                    typeResolver.resolveType(innerScope, receiverTypeRef, trace, true)
+                    typeResolver.resolveType(headerScope, receiverTypeRef, trace, true)
                 }
                 else {
                     if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
                 }
 
 
-        val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
+        val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType)
 
-        innerScope.freeze()
+        headerScope.freeze()
 
-        val returnType = function.typeReference?.let { typeResolver.resolveType(innerScope, it, trace, true) }
+        val returnType = function.typeReference?.let { typeResolver.resolveType(headerScope, it, trace, true) }
 
         val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor))
         val modality = resolveMemberModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()))
