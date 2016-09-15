@@ -5,7 +5,7 @@ headers = llvm-c/Core.h llvm-c/ExecutionEngine.h llvm-c/Target.h llvm-c/Analysis
 
 compiler = cc
 
-compilerOpts = -std=c99 -I/usr/local/Cellar/llvm/3.8.1/include  -fPIC \
+compilerOpts = -std=c99 -I/opt/local/libexec/llvm-3.8/include  -fPIC \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wmissing-field-initializers \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wdelete-non-virtual-dtor \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
@@ -18,12 +18,12 @@ linkerOpts = -stdlib=libc++ -fPIC -fvisibility-inlines-hidden \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++11 \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
-    -L/usr/local/Cellar/llvm/3.8.1/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
+    -L/opt/local/libexec/llvm-3.8/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
     -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter \
     -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
     -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport -lcurses -lpthread -lz -lm \
-    -L/usr/local/Cellar/libffi/3.0.13/lib -lffi
+    -L/opt/local/lib -lffi
 
 excludedFunctions =
