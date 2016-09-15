@@ -20229,6 +20229,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inGenerics.kt")
+            public void testInGenerics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/inGenerics.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inSupertypesList.kt")
             public void testInSupertypesList() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/inSupertypesList.kt");
@@ -20388,6 +20394,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("typeAliasConstructor.kt")
             public void testTypeAliasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasNotNull.kt")
+            public void testTypeAliasNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasNotNull.kt");
                 doTest(fileName);
             }
 
