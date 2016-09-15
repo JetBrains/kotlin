@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'assert' statement") {
     override fun isApplicableTo(element: KtIfExpression): Boolean {
@@ -37,7 +38,8 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
         if (thrownExpr.valueArguments.size > 1) return false
 
         val resolvedCall = thrownExpr.getResolvedCall(thrownExpr.analyze()) ?: return false
-        return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).toString() == "java.lang.AssertionError.<init>"
+        val targetFqName = DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString()
+        return targetFqName in constant { setOf("kotlin.AssertionError.<init>", "java.lang.AssertionError.<init>") }
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
