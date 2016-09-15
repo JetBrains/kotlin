@@ -315,8 +315,8 @@ class FunctionDescriptorResolver(
         val result = ArrayList<ValueParameterDescriptor>()
 
         for (i in valueParameters.indices) {
-            val valueParameter = valueParameters.get(i)
-            val typeReference = valueParameter.getTypeReference()
+            val valueParameter = valueParameters[i]
+            val typeReference = valueParameter.typeReference
             val expectedType = expectedValueParameters?.let { if (i < it.size) it[i].type else null }
 
             val type: KotlinType
@@ -336,16 +336,12 @@ class FunctionDescriptorResolver(
                     if (expectedType == null || containsUninferredParameter) {
                         trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
                     }
-                    if (expectedType != null) {
-                        type = expectedType
-                    }
-                    else {
-                        type = TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-                    }
+
+                    type = expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
                 }
                 else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
-                    type = ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.getNameAsSafeName()}")
+                    type = ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
                 }
             }
 

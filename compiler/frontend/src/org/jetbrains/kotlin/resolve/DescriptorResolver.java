@@ -257,7 +257,9 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            LexicalScope scope, FunctionDescriptor owner, KtParameter valueParameter, int index, KotlinType type, BindingTrace trace
+            @NotNull LexicalScope scope, @NotNull FunctionDescriptor owner,
+            @NotNull KtParameter valueParameter, int index,
+            @NotNull KotlinType type, @NotNull BindingTrace trace
     ) {
         KotlinType varargElementType = null;
         KotlinType variableType = type;
