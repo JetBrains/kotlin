@@ -267,20 +267,6 @@ public final class StaticContext {
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
-            Rule<JsName> typeAliasConstructor = new Rule<JsName>() {
-                @Nullable
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof TypeAliasConstructorDescriptor) {
-                        TypeAliasConstructorDescriptor constructorDescriptor = (TypeAliasConstructorDescriptor) descriptor;
-                        return getNameForDescriptor(constructorDescriptor.getUnderlyingConstructorDescriptor());
-                    }
-                    else {
-                        return null;
-                    }
-                }
-            };
-
             Rule<JsName> namesForDynamic = new Rule<JsName>() {
                 @Override
                 @Nullable
@@ -437,7 +423,6 @@ public final class StaticContext {
                 }
             };
 
-            addRule(typeAliasConstructor);
             addRule(namesForDynamic);
             addRule(localClasses);
             addRule(namesForStandardClasses);

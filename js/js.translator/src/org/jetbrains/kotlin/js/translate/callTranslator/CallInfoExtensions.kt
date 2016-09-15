@@ -24,6 +24,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -35,7 +36,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 
 val CallInfo.callableDescriptor: CallableDescriptor
-    get() = resolvedCall.resultingDescriptor.original
+    get() {
+        val result = resolvedCall.resultingDescriptor.original
+        return if (result is TypeAliasConstructorDescriptor) result.underlyingConstructorDescriptor else result
+    }
 
 fun CallInfo.isExtension(): Boolean = extensionReceiver != null
 
