@@ -40,6 +40,11 @@ class BasicLookupElementFactory(
         private val project: Project,
         val insertHandlerProvider: InsertHandlerProvider
 ) {
+    companion object {
+        // we skip parameter names in functional types in most of cases for shortness
+        val SHORT_NAMES_RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions { parameterNamesInFunctionalTypes = false }
+    }
+
     fun createLookupElement(
             descriptor: DeclarationDescriptor,
             qualifyNestedClasses: Boolean = false,
@@ -155,18 +160,18 @@ class BasicLookupElementFactory(
         when (descriptor) {
             is FunctionDescriptor -> {
                 val returnType = descriptor.returnType
-                element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "", parametersAndTypeGrayed)
+                element = element.withTypeText(if (returnType != null) SHORT_NAMES_RENDERER.renderType(returnType) else "", parametersAndTypeGrayed)
 
                 val insertsLambda = (insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null
                 if (insertsLambda) {
                     element = element.appendTailText(" {...} ", parametersAndTypeGrayed)
                 }
 
-                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), parametersAndTypeGrayed || insertsLambda)
+                element = element.appendTailText(SHORT_NAMES_RENDERER.renderFunctionParameters(descriptor), parametersAndTypeGrayed || insertsLambda)
             }
 
             is VariableDescriptor -> {
-                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.type), parametersAndTypeGrayed)
+                element = element.withTypeText(SHORT_NAMES_RENDERER.renderType(descriptor.type), parametersAndTypeGrayed)
             }
 
             is ClassifierDescriptorWithTypeParameters -> {
@@ -178,7 +183,7 @@ class BasicLookupElementFactory(
                 var container = descriptor.containingDeclaration
 
                 if (qualifyNestedClasses) {
-                    element = element.withPresentableText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderClassifierName(descriptor))
+                    element = element.withPresentableText(SHORT_NAMES_RENDERER.renderClassifierName(descriptor))
 
                     while (container is ClassDescriptor) {
                         val containerName = container.name
@@ -194,12 +199,13 @@ class BasicLookupElementFactory(
                 }
 
                 if (descriptor is TypeAliasDescriptor) {
+                    // here we render with DescriptorRenderer.SHORT_NAMES_IN_TYPES to include parameter names in functional types
                     element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.underlyingType), false)
                 }
             }
 
             else -> {
-                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor), parametersAndTypeGrayed)
+                element = element.withTypeText(SHORT_NAMES_RENDERER.render(descriptor), parametersAndTypeGrayed)
             }
         }
 
@@ -242,7 +248,7 @@ class BasicLookupElementFactory(
             }
 
             extensionReceiver != null -> {
-                val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
+                val receiverPresentation = SHORT_NAMES_RENDERER.renderType(extensionReceiver.type)
                 appendTailText(" for $receiverPresentation")
 
                 val container = descriptor.containingDeclaration

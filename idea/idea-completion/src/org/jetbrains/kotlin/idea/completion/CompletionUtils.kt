@@ -168,7 +168,7 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, val labelName: Name?) : KeywordLookupObject()
 
 fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
-        .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
+        .withTypeText(BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderType(receiverParameter.type))
 
 fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
     val scope = position.getResolutionScope(bindingContext, resolutionFacade)
@@ -381,7 +381,7 @@ fun LookupElement.decorateAsStaticMember(
             }
 
             if (presentation.typeText.isNullOrEmpty()) {
-                presentation.typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.defaultType)
+                presentation.typeText = BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderType(classDescriptor.defaultType)
             }
         }
 
