@@ -250,9 +250,14 @@ class KotlinTypes(
         val containingType = containing.psiType
 
         val member = (element as JeElement).psi as? PsiMember ?: return element.asType()
-        val methodContainingClass = member.containingClass ?: return element.asType()
+        val memberContainingClass = member.containingClass ?: return element.asType()
 
-        val relevantSuperType = containingType.superTypes.findSuperType(methodContainingClass) ?: return element.asType()
+        val relevantSuperType = if (memberContainingClass == containingType.resolve()) {
+            containingType
+        } else {
+            containingType.superTypes.findSuperType(memberContainingClass) ?: return element.asType()
+        }
+
         val resolveResult = relevantSuperType.resolveGenerics()
         if (!resolveResult.isValidResult) return element.asType()
         val substitutor = resolveResult.substitutor
