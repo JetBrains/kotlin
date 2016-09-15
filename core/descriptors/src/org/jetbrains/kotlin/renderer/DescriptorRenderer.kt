@@ -222,7 +222,8 @@ object ExcludedTypeAnnotations {
 
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact"))
+            FqName("kotlin.internal.Exact"),
+            KotlinBuiltIns.FQ_NAMES.parameterName)
 }
 
 enum class RenderingFormat {
