@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="StubGenerator" type="JetRunConfigurationType" factoryName="Kotlin">
+    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.native.interop.gen.jvm.MainKt" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/../kni/dist/build/indexer/native" />
+    <option name="PROGRAM_PARAMETERS" value="$PROJECT_DIR$/Example/src $PROJECT_DIR$/Example/nativelib" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="StubGenerator" />
+    <envs />
+    <method />
+  </configuration>
+</component>
