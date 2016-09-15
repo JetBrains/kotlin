@@ -75,7 +75,9 @@ fun main(args: Array<String>) {
 
         val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
 
-        val linkerCmd = arrayOf(linker, *linkerOpts, outOFile.path, "-shared", "-o", outLib)
+        val linkerCmd = arrayOf(linker, *linkerOpts, outOFile.path, "-shared", "-o", outLib,
+                "-Wl,-flat_namespace,-undefined,dynamic_lookup")
+
         println(linkerCmd.joinToString(" "))
 
         val linkerRes = ProcessBuilder(*linkerCmd)
