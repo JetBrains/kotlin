@@ -130,6 +130,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest(fileName);
         }
 
+        @TestMetadata("privateTopLevelDeclarations.kt")
+        public void testPrivateTopLevelDeclarations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/privateTopLevelDeclarations.kt");
+            doSymbolTest(fileName);
+        }
+
         @TestMetadata("properties.kt")
         public void testProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/properties.kt");

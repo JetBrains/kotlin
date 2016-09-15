@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 open class KotlinDefaultNamedDeclarationPresentation(private val declaration: KtNamedDeclaration) : ColoredItemPresentation {
@@ -38,15 +39,23 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
 
     override fun getLocationString(): String? {
         val name = declaration.fqName ?: return null
-        val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
-        if (receiverTypeRef != null) {
-            return "(for " + receiverTypeRef.text + " in " + name.parent() + ")"
-        }
-        else if (declaration.parent is KtFile) {
-            return "(" + name.parent() + ")"
+        val qualifiedContainer = name.parent().toString()
+        val parent = declaration.parent
+        val containerText = if (parent is KtFile && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+            "${parent.name} in $qualifiedContainer"
         }
         else {
-            return "(in " + name.parent() + ")"
+            qualifiedContainer
+        }
+        val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
+        if (receiverTypeRef != null) {
+            return "(for " + receiverTypeRef.text + " in " + containerText + ")"
+        }
+        else if (parent is KtFile) {
+            return "(" + containerText + ")"
+        }
+        else {
+            return "(in " + containerText + ")"
         }
     }
 
