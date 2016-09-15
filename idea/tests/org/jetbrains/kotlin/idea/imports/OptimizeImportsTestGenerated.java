@@ -155,6 +155,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("KT13766.kt")
+    public void testKT13766() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/KT13766.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("KT9875.kt")
     public void testKT9875() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/KT9875.kt");
