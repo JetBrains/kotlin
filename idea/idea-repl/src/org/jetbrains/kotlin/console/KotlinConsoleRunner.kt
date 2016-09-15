@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -68,9 +67,8 @@ import org.jetbrains.kotlin.psi.moduleInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.repl.ReplState
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptParameter
 import java.awt.Color
 import java.awt.Font
 import java.util.concurrent.CountDownLatch
@@ -126,7 +124,7 @@ class KotlinConsoleRunner(
     val executor = CommandExecutor(this)
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
-    private val consoleScriptDefinition = object : KotlinScriptDefinition {
+    private val consoleScriptDefinition = object : KotlinScriptDefinitionFromTemplate(Any::class) {
         override val name = "Kotlin REPL"
         override fun <TF> isScript(file: TF): Boolean {
             val vf = when (file) {
@@ -136,7 +134,6 @@ class KotlinConsoleRunner(
             }
             return vf == consoleView.virtualFile
         }
-        override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
 

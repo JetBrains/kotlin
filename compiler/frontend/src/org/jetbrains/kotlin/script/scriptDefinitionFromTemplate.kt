@@ -35,7 +35,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.memberFunctions
 import kotlin.reflect.primaryConstructor
 
-open class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
+open class KotlinScriptDefinitionFromTemplate(final override val template: KClass<out Any>,
                                               val resolver: ScriptDependenciesResolver? = null,
                                               val scriptFilePattern: String? = null,
                                               val environment: Map<String, Any?>? = null

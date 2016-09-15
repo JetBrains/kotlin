@@ -43,6 +43,8 @@ import kotlin.script.StandardScriptTemplate
 interface KotlinScriptDefinition {
     val name: String get() = "Kotlin Script"
 
+    val template: KClass<out Any>
+
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     val fileType: LanguageFileType get() = KotlinFileType.INSTANCE
 

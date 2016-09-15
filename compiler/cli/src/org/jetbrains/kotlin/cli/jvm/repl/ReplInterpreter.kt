@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import com.google.common.base.Throwables
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
@@ -38,14 +37,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptParameter
-import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
 import java.io.PrintWriter
 import java.net.URLClassLoader
 
@@ -184,14 +180,8 @@ class ReplInterpreter(
 
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
-        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition {
+        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinitionFromTemplate(Any::class) {
             override val name = "Kotlin REPL"
-
-            override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
-
-            override fun <TF> isScript(file: TF): Boolean = StandardScriptDefinition.isScript(file)
-
-            override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
         }
 
         private fun renderStackTrace(cause: Throwable, startFromMethodName: String): String {

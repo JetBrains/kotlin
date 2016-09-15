@@ -81,6 +81,9 @@ data class KotlinScriptConfig(
         @Tag("files")
         var fileNameMatch: String = ".*\\.kts",
 
+        @Tag("template")
+        var template: String = "kotlin.script.StandardScriptTemplate",
+
         @Tag("classpath")
         @AbstractCollection(surroundWithTag = false, elementTag = "path", elementValueAttribute = "")
         var classpath: MutableList<String> = ArrayList(),

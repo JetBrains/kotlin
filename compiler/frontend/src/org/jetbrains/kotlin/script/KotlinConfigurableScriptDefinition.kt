@@ -27,10 +27,17 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.Future
+import kotlin.reflect.KClass
+import kotlin.script.StandardScriptTemplate
 
 
 data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
     override val name = config.name
+
+    // This is a temporary workaround: this class will be removed later
+    override val template: KClass<out Any>
+        get() = StandardScriptTemplate::class
+
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
         config.parameters.map { ScriptParameter(Name.identifier(it.name), getKotlinTypeByFqName(scriptDescriptor, it.type)) }
 
