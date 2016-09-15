@@ -1,4 +1,4 @@
-// MyClass
+// FQNAME: MyClass
 
 class MyClass {
     companion object {
