@@ -91,7 +91,6 @@
         <include name="core/util.runtime/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/backend-common/src"/>
-        <include name="compiler/backend-common/src"/>
         <include name="compiler/ir/backend.common/src"/>
         <include name="compiler/ir/backend.jvm/src"/>
         <include name="compiler/ir/ir.psi2ir/src"/>
