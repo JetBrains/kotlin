@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
-import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractJavaModelWrappersTest
-import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractKotlinModelWrappersTest
+import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractAnnotationProcessingTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
@@ -1092,12 +1091,8 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/plugins-tests/tests", "plugins/annotation-processing/testData") {
-        testClass<AbstractJavaModelWrappersTest>() {
-            model("javaWrappers", extension = null)
-        }
-
-        testClass<AbstractKotlinModelWrappersTest>() {
-            model("kotlinWrappers", extension = "kt")
+        testClass<AbstractAnnotationProcessingTest>() {
+            model("wrappers", recursive = true, extension = "kt")
         }
         
         testClass<AbstractBytecodeListingTestForSourceRetention>() {

@@ -1,4 +1,4 @@
-// Test
+// FQNAME: Test
 
 class Test {
     @kotlin.jvm.Transient

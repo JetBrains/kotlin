@@ -1,5 +1,6 @@
-// Simple
+// FQNAME: Simple
 
+// FILE: Simple.java
 @interface Anno {
     String[] numbers();
 }
@@ -30,3 +31,6 @@ public abstract class Simple {
         return "A";
     }
 }
+
+// FILE: KotlinAnnotation.kt
+annotation class KotlinAnnotation(val a: String, val b: Int)

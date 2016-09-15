@@ -1,5 +1,6 @@
-// WithNested
+// FQNAME: WithNested
 
+// FILE: WithNested.java
 class WithNested {
     void myClassFun() {}
     
@@ -19,3 +20,6 @@ class WithNested {
         void nestedInterfaceFun() {}
     }
 }
+
+// FILE: Anno.kt
+annotation class Anno

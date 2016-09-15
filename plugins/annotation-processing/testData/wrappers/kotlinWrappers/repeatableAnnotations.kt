@@ -1,5 +1,6 @@
-// MyClass
+// FQNAME: MyClass
 
+@Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Anno(val name: String)
 

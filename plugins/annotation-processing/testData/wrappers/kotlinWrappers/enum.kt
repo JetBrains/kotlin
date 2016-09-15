@@ -1,4 +1,4 @@
-// EnumClass
+// FQNAME: EnumClass
 
 enum class EnumClass {
     RED, GREEN, BLUE;
