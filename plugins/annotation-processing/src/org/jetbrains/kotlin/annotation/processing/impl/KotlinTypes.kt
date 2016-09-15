@@ -22,10 +22,7 @@ import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.JeElement
-import org.jetbrains.kotlin.java.model.elements.JeClassInitializerExecutableElement
-import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
-import org.jetbrains.kotlin.java.model.elements.JeTypeElement
-import org.jetbrains.kotlin.java.model.elements.JeVariableElement
+import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
@@ -250,12 +247,16 @@ class KotlinTypes(
         val containingType = containing.psiType
 
         val member = (element as JeElement).psi as? PsiMember ?: return element.asType()
-        val memberContainingClass = member.containingClass ?: return element.asType()
 
-        val relevantSuperType = if (memberContainingClass == containingType.resolve()) {
+        val memberOwnerClass = when (member) {
+            is PsiTypeParameter -> member.owner as? PsiClass
+            else -> member.containingClass
+        } ?: return element.asType()
+
+        val relevantSuperType = if (memberOwnerClass == containingType.resolve()) {
             containingType
         } else {
-            containingType.superTypes.findSuperType(memberContainingClass) ?: return element.asType()
+            containingType.superTypes.findSuperType(memberOwnerClass) ?: return element.asType()
         }
 
         val resolveResult = relevantSuperType.resolveGenerics()
@@ -270,7 +271,8 @@ class KotlinTypes(
                 JeMethodExecutableTypeMirror(method, signature, returnType)
             }
             is JeVariableElement -> substitutor.substitute(element.psi.type).toJeType(psiManager())
-            else -> throw IllegalArgumentException("Invalid element type: $element")
+            is JeTypeParameterElement -> substitutor.substitute(element.psi)?.toJeType(psiManager()) ?: element.asType()
+            else -> throw IllegalArgumentException("Invalid element type: ${element.javaClass.name} ($element)")
         }
     }
 

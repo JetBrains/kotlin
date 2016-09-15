@@ -281,6 +281,22 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals("(T)T", implM.asType().toString())
         check(implM, "(java.lang.String)java.lang.String")
     }
+
+    fun testAsMemberOfTypeParameters() = test("AsMemberOfTypeParameters", "*") { set, roundEnv, env ->
+        val intf = env.findClass("Intf")
+        val intfT = intf.typeParameters[0]
+        val base = env.findClass("Base")
+        val baseFactory = base.findMethod("factory")
+        val impl = env.findClass("Impl")
+
+        assertEquals("T", intfT.asType().toString())
+
+        val implT = env.typeUtils.asMemberOf(impl.asType() as DeclaredType, intfT)
+        assertEquals("java.lang.String", implT.toString())
+
+        val baseT = env.typeUtils.asMemberOf(baseFactory.returnType as DeclaredType, intfT)
+        assertEquals("java.lang.CharSequence", baseT.toString())
+    }
     
     fun testDispose() {
         var savedEnv: ProcessingEnvironment? = null
