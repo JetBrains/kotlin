@@ -43,12 +43,12 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         expression.transformChildren(this, data)
 
         with(expression) {
-            dispatchReceiver = dispatchReceiver?.wrapWithImplicitCast(descriptor.dispatchReceiverParameter?.type)
-            extensionReceiver = extensionReceiver?.wrapWithImplicitCast(descriptor.extensionReceiverParameter?.type)
+            dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
+            extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
             for (index in descriptor.valueParameters.indices) {
                 val argument = getArgument(index) ?: continue
                 val parameterType = descriptor.valueParameters[index].type
-                putArgument(index, argument.wrapWithImplicitCast(parameterType))
+                putArgument(index, argument.cast(parameterType))
             }
         }
 
@@ -65,7 +65,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
 
         val lastStatement = expression.statements.last()
         if (lastStatement is IrExpression) {
-            expression.putStatement(expression.statements.lastIndex, lastStatement.wrapWithImplicitCast(type))
+            expression.putStatement(expression.statements.lastIndex, lastStatement.cast(type))
         }
 
         return expression
@@ -74,7 +74,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
         expression.transformChildren(this, data)
 
-        expression.value = expression.value?.wrapWithImplicitCast(expression.returnTarget.returnType)
+        expression.value = expression.value?.cast(expression.returnTarget.returnType)
 
         return expression
     }
@@ -82,7 +82,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): IrExpression {
         expression.transformChildren(this, data)
 
-        expression.value = expression.value.wrapWithImplicitCast(expression.descriptor.type)
+        expression.value = expression.value.cast(expression.descriptor.type)
 
         return expression
     }
@@ -90,7 +90,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitSetField(expression: IrSetField, data: Nothing?): IrExpression {
         expression.transformChildren(this, data)
 
-        expression.value = expression.value.wrapWithImplicitCast(expression.descriptor.type)
+        expression.value = expression.value.cast(expression.descriptor.type)
 
         return expression
     }
@@ -98,7 +98,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitVariable(declaration: IrVariable, data: Nothing?): IrVariable {
         declaration.transformChildren(this, data)
 
-        declaration.initializer = declaration.initializer?.wrapWithImplicitCast(declaration.descriptor.type)
+        declaration.initializer = declaration.initializer?.cast(declaration.descriptor.type)
 
         return declaration
     }
@@ -112,11 +112,11 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
             val nthCondition = expression.getNthCondition(i)!!
             val nthResult = expression.getNthResult(i)!!
 
-            expression.putNthCondition(i, nthCondition.wrapWithImplicitCast(builtIns.booleanType))
-            expression.putNthResult(i, nthResult.wrapWithImplicitCast(resultType))
+            expression.putNthCondition(i, nthCondition.cast(builtIns.booleanType))
+            expression.putNthResult(i, nthResult.cast(resultType))
         }
 
-        expression.elseBranch = expression.elseBranch?.wrapWithImplicitCast(resultType)
+        expression.elseBranch = expression.elseBranch?.cast(resultType)
 
         return expression
     }
@@ -124,7 +124,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitLoop(loop: IrLoop, data: Nothing?): IrExpression {
         loop.transformChildren(this, data)
 
-        loop.condition = loop.condition.wrapWithImplicitCast(builtIns.booleanType)
+        loop.condition = loop.condition.cast(builtIns.booleanType)
 
         return loop
     }
@@ -132,24 +132,23 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
     override fun visitThrow(expression: IrThrow, data: Nothing?): IrExpression {
         expression.transformChildren(this, data)
 
-        expression.value = expression.value.wrapWithImplicitCast(builtIns.throwable.defaultType)
+        expression.value = expression.value.cast(builtIns.throwable.defaultType)
 
         return expression
     }
 
-    override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): IrExpression {
-        tryCatch.transformChildren(this, data)
+    override fun visitTry(aTry: IrTry, data: Nothing?): IrExpression {
+        aTry.transformChildren(this, data)
 
-        val resultType = tryCatch.type
+        val resultType = aTry.type
 
-        tryCatch.tryResult = tryCatch.tryResult.wrapWithImplicitCast(resultType)
+        aTry.tryResult = aTry.tryResult.cast(resultType)
 
-        for (i in tryCatch.catchClauseIndices) {
-            val nthCatchResult = tryCatch.getNthCatchResult(i)!!
-            tryCatch.putNthCatchResult(i, nthCatchResult.wrapWithImplicitCast(resultType))
+        for (aCatch in aTry.catches) {
+            aCatch.result = aCatch.result.cast(resultType)
         }
 
-        return tryCatch
+        return aTry
     }
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): IrExpression {
@@ -158,16 +157,16 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         expression.elements.forEachIndexed { i, element ->
             when (element) {
                 is IrSpreadElement ->
-                    element.expression = element.expression.wrapWithImplicitCast(expression.type)
+                    element.expression = element.expression.cast(expression.type)
                 is IrExpression ->
-                    expression.putElement(i, element.wrapWithImplicitCast(expression.varargElementType))
+                    expression.putElement(i, element.cast(expression.varargElementType))
             }
         }
 
         return expression
     }
 
-    private fun IrExpression.wrapWithImplicitCast(expectedType: KotlinType?): IrExpression {
+    private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
         if (expectedType.isError) return this
         if (KotlinBuiltIns.isUnit(expectedType)) return this // TODO expose coercion to Unit in IR?
@@ -179,7 +178,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
             return IrTypeOperatorCallImpl(
                     this.startOffset, this.endOffset, nonNullValueType,
                     IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
-            ).wrapWithImplicitCast(expectedType)
+            ).cast(expectedType)
         }
 
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType)) {

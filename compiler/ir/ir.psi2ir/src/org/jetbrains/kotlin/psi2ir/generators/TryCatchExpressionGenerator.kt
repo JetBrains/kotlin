@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrTryCatchImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -26,19 +27,18 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
         val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
-        val irTryCatch = IrTryCatchImpl(ktTry.startOffset, ktTry.endOffset, resultType)
+        val irTryCatch = IrTryImpl(ktTry.startOffset, ktTry.endOffset, resultType)
 
         irTryCatch.tryResult = statementGenerator.generateExpression(ktTry.tryBlock)
 
         for (ktCatchClause in ktTry.catchClauses) {
             val ktCatchParameter = ktCatchClause.catchParameter!!
             val ktCatchBody = ktCatchClause.catchBody!!
-
             val catchParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktCatchParameter)
-
             val irCatchResult = statementGenerator.generateExpression(ktCatchBody)
-
-            irTryCatch.addCatchClause(catchParameterDescriptor, irCatchResult)
+            val irCatch = IrCatchImpl(ktCatchClause.startOffset, ktCatchClause.endOffset,
+                                      catchParameterDescriptor, irCatchResult)
+            irTryCatch.catches.add(irCatch)
         }
 
         irTryCatch.finallyExpression = ktTry.finallyBlock?.let{ statementGenerator.generateExpression(it.finalExpression) }

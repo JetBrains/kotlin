@@ -142,14 +142,13 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitTryCatch(tryCatch: IrTryCatch, data: String) {
-        tryCatch.dumpLabeledElementWith(data) {
-            tryCatch.tryResult.accept(this, "try")
-            for (i in 0 .. tryCatch.catchClausesCount - 1) {
-                val catchClauseParameter = tryCatch.getNthCatchParameter(i)!!
-                tryCatch.getNthCatchResult(i)!!.accept(this, "catch ${catchClauseParameter.name}")
+    override fun visitTry(aTry: IrTry, data: String) {
+        aTry.dumpLabeledElementWith(data) {
+            aTry.tryResult.accept(this, "try")
+            for (aCatch in aTry.catches) {
+                aCatch.accept(this, "")
             }
-            tryCatch.finallyExpression?.accept(this, "finally")
+            aTry.finallyExpression?.accept(this, "finally")
         }
     }
 

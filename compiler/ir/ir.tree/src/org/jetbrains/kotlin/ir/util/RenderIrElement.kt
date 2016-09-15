@@ -179,8 +179,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
             "GET_CLASS type=${expression.type.render()}"
 
-    override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?): String =
-            "TRY_CATCH type=${tryCatch.type.render()}"
+    override fun visitTry(aTry: IrTry, data: Nothing?): String =
+            "TRY type=${aTry.type.render()}"
+
+    override fun visitCatch(aCatch: IrCatch, data: Nothing?): String =
+            "CATCH parameter=${aCatch.parameter.ref()}"
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
             "ERROR_DECL ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.ref()}"

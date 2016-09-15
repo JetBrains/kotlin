@@ -104,7 +104,12 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
     override fun visitWhileLoop(loop: IrWhileLoop, data: D) = visitLoop(loop, data)
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: D) = visitLoop(loop, data)
-    override fun visitTryCatch(tryCatch: IrTryCatch, data: D) = visitExpression(tryCatch, data)
+    override fun visitTry(aTry: IrTry, data: D) = visitExpression(aTry, data)
+
+    override fun visitCatch(aCatch: IrCatch, data: D): IrCatch {
+        aCatch.transformChildren(this, data)
+        return aCatch
+    }
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: D) = visitExpression(jump, data)
     override fun visitBreak(jump: IrBreak, data: D) = visitBreakContinue(jump, data)

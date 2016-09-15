@@ -17,19 +17,21 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrTryCatch : IrExpression {
+interface IrTry : IrExpression {
     var tryResult: IrExpression
 
-    val catchClausesCount: Int
-
-    fun getNthCatchParameter(n: Int): VariableDescriptor?
-    fun getNthCatchResult(n: Int): IrExpression?
-    fun putNthCatchParameter(n: Int, variableDescriptor: VariableDescriptor)
-    fun putNthCatchResult(n: Int, expression: IrExpression)
+    val catches: List<IrCatch>
 
     var finallyExpression : IrExpression?
 }
 
-val IrTryCatch.catchClauseIndices: IntRange get() = 0 ..catchClausesCount - 1
+interface IrCatch : IrElement {
+    val parameter: VariableDescriptor
+    var result: IrExpression
 
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =
+            super.transform(transformer, data) as IrCatch
+}

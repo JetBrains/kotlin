@@ -6,9 +6,10 @@ FILE /tryCatchWithImplicitCast.kt
           GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
         then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
       VAR val t: kotlin.String
-        TRY_CATCH type=kotlin.String
+        TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null
             TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-          catch e: BLOCK type=kotlin.String origin=null
-            CONST String type=kotlin.String value=''
+          CATCH parameter=e: Throwable
+            BLOCK type=kotlin.String origin=null
+              CONST String type=kotlin.String value=''

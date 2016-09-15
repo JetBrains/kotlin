@@ -174,8 +174,11 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitDoWhileLoop(loop: IrDoWhileLoop) = visitLoop(loop)
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?) = visitDoWhileLoop(loop)
 
-    fun visitTryCatch(tryCatch: IrTryCatch) = visitExpression(tryCatch)
-    override fun visitTryCatch(tryCatch: IrTryCatch, data: Nothing?) = visitTryCatch(tryCatch)
+    fun visitTry(aTry: IrTry) = visitExpression(aTry)
+    override fun visitTry(aTry: IrTry, data: Nothing?) = visitTry(aTry)
+
+    fun visitCatch(aCatch: IrCatch) = visitElement(aCatch)
+    override fun visitCatch(aCatch: IrCatch, data: Nothing?) = visitCatch(aCatch)
 
     fun visitBreakContinue(jump: IrBreakContinue) = visitExpression(jump)
     override fun visitBreakContinue(jump: IrBreakContinue, data: Nothing?) = visitBreakContinue(jump)
