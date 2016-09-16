@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.util.ProgressWrapper
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.util.Processor
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -256,22 +255,19 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 progress?.text = "Searching implicit usages..."
 
                 try {
-                    val files = ArrayList<KtFile>()
-                    ProjectRootManager.getInstance(project).fileIndex.iterateContent { file ->
-                        progress?.checkCanceled()
-                        runReadAction {
-                            if (file in scope) {
-                                files.addIfNotNull(psiManager.findFile(file) as? KtFile)
-                            }
-                        }
-                        true
-                    }
-
+                    val files = runReadAction { FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope) }
                     for ((index, file) in files.withIndex()) {
                         progress?.checkCanceled()
-                        progress?.fraction = index / files.size.toDouble()
-                        progress?.text2 = file.virtualFile.path
-                        doPlainSearch(LocalSearchScope(file))
+                        runReadAction {
+                            if (file.isValid) {
+                                progress?.fraction = index / files.size.toDouble()
+                                progress?.text2 = file.path
+                                val psiFile = psiManager.findFile(file) as? KtFile
+                                if (psiFile != null) {
+                                    doPlainSearch(LocalSearchScope(psiFile))
+                                }
+                            }
+                        }
                     }
                 }
                 finally {
