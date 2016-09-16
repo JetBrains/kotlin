@@ -30,6 +30,7 @@ import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -150,11 +151,16 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       }
 
       List<VirtualFile> files = Collections.singletonList(mainFile);
-      LintRequest request = new IntellijLintRequest(client, project, files,
-                                                    Collections.singletonList(state.getModule()), true /* incremental */);
+      final LintRequest request = new IntellijLintRequest(
+              client, project, files, Collections.singletonList(state.getModule()), true /* incremental */);
       request.setScope(scope);
 
-      lint.analyze(request);
+      ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(new Runnable() {
+        @Override
+        public void run() {
+          lint.analyze(request);
+        }
+      });
     }
     finally {
       Disposer.dispose(client);
