@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -33,14 +34,14 @@ fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
     element.transformChildren(InsertImplicitCasts(builtIns), null)
 }
 
-class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<Nothing?> {
-    override fun visitElement(element: IrElement, data: Nothing?): IrElement {
-        element.transformChildren(this, data)
+class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoid {
+    override fun visitElement(element: IrElement): IrElement {
+        element.transformChildrenVoid(this)
         return element
     }
 
-    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitGeneralCall(expression: IrGeneralCall): IrExpression {
+        expression.transformChildrenVoid(this)
 
         with(expression) {
             dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
@@ -55,8 +56,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         return expression
     }
 
-    override fun visitBlock(expression: IrBlock, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        expression.transformChildrenVoid(this)
 
         val type = expression.type
         if (expression.statements.isEmpty() || KotlinBuiltIns.isUnit(type) || KotlinBuiltIns.isNothing(type)) {
@@ -71,40 +72,40 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         return expression
     }
 
-    override fun visitReturn(expression: IrReturn, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitReturn(expression: IrReturn): IrExpression {
+        expression.transformChildrenVoid(this)
 
         expression.value = expression.value?.cast(expression.returnTarget.returnType)
 
         return expression
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+        expression.transformChildrenVoid(this)
 
         expression.value = expression.value.cast(expression.descriptor.type)
 
         return expression
     }
 
-    override fun visitSetField(expression: IrSetField, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitSetField(expression: IrSetField): IrExpression {
+        expression.transformChildrenVoid(this)
 
         expression.value = expression.value.cast(expression.descriptor.type)
 
         return expression
     }
 
-    override fun visitVariable(declaration: IrVariable, data: Nothing?): IrVariable {
-        declaration.transformChildren(this, data)
+    override fun visitVariable(declaration: IrVariable): IrVariable {
+        declaration.transformChildrenVoid(this)
 
         declaration.initializer = declaration.initializer?.cast(declaration.descriptor.type)
 
         return declaration
     }
 
-    override fun visitWhen(expression: IrWhen, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitWhen(expression: IrWhen): IrExpression {
+        expression.transformChildrenVoid(this)
 
         val resultType = expression.type
 
@@ -121,24 +122,24 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         return expression
     }
 
-    override fun visitLoop(loop: IrLoop, data: Nothing?): IrExpression {
-        loop.transformChildren(this, data)
+    override fun visitLoop(loop: IrLoop): IrExpression {
+        loop.transformChildrenVoid(this)
 
         loop.condition = loop.condition.cast(builtIns.booleanType)
 
         return loop
     }
 
-    override fun visitThrow(expression: IrThrow, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitThrow(expression: IrThrow): IrExpression {
+        expression.transformChildrenVoid(this)
 
         expression.value = expression.value.cast(builtIns.throwable.defaultType)
 
         return expression
     }
 
-    override fun visitTry(aTry: IrTry, data: Nothing?): IrExpression {
-        aTry.transformChildren(this, data)
+    override fun visitTry(aTry: IrTry): IrExpression {
+        aTry.transformChildrenVoid(this)
 
         val resultType = aTry.type
 
@@ -151,8 +152,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
         return aTry
     }
 
-    override fun visitVararg(expression: IrVararg, data: Nothing?): IrExpression {
-        expression.transformChildren(this, data)
+    override fun visitVararg(expression: IrVararg): IrExpression {
+        expression.transformChildrenVoid(this)
 
         expression.elements.forEachIndexed { i, element ->
             when (element) {
