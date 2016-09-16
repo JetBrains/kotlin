@@ -95,14 +95,23 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     protected abstract class Searcher(val element: PsiElement, val processor: Processor<UsageInfo>, val options: FindUsagesOptions) {
         private val tasks = ArrayList<() -> Boolean>()
 
+        /**
+         * Adds a time-consuming operation to be executed outside read-action
+         */
         protected fun addTask(task: () -> Boolean) {
             tasks.add(task)
         }
 
+        /**
+         * Invoked outside read-action
+         */
         fun executeTasks(): Boolean {
             return tasks.all { it() }
         }
 
+        /**
+         * Invoked under read-action, should use [addTask] for all time-consuming operations
+         */
         abstract fun buildTaskList(): Boolean
     }
 
