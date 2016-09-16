@@ -923,9 +923,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("complexExpressionAsConstructorDefaultArgument.kt")
+        public void testComplexExpressionAsConstructorDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/complexExpressionAsConstructorDefaultArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("complexExpressionAsDefaultArgument.kt")
         public void testComplexExpressionAsDefaultArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/complexExpressionAsDefaultArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionAsOverriddenDefaultArgument.kt")
+        public void testComplexExpressionAsOverriddenDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/complexExpressionAsOverriddenDefaultArgument.kt");
             doTest(fileName);
         }
 
@@ -1004,6 +1016,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("secondarySuperConstructor.kt")
         public void testSecondarySuperConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/secondarySuperConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/defaultArguments/superCall.kt");
             doTest(fileName);
         }
 
@@ -5318,6 +5336,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("interfaceMethodWithDefaultParameter.kt")
+        public void testInterfaceMethodWithDefaultParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/interfaceMethodWithDefaultParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localClassMetadata.kt")
         public void testLocalClassMetadata() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/localClassMetadata.kt");
@@ -5679,6 +5703,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
 
         public void testAllFilesPresentInNative() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("callbackOptionalParameter.kt")
+        public void testCallbackOptionalParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/callbackOptionalParameter.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("castToNativeClassChecked.kt")

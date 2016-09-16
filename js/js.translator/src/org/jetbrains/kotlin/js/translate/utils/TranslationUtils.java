@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -364,4 +365,12 @@ public final class TranslationUtils {
                 .getContributedFunctions(Name.identifier("resume"), NoLookupLocation.FROM_DESERIALIZATION)
                 .iterator().next();
     }
+
+    public static boolean isOverridableFunctionWithDefaultParameters(@NotNull FunctionDescriptor descriptor) {
+        return DescriptorUtilsKt.hasOrInheritsParametersWithDefaultValue(descriptor) &&
+               !(descriptor instanceof ConstructorDescriptor) &&
+               descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
+               ModalityKt.isOverridable(descriptor);
+    }
+
 }

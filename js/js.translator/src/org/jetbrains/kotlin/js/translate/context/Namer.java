@@ -103,6 +103,7 @@ public final class Namer {
 
     public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
+    public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
     private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
     private static final JsNameRef JS_OBJECT_CREATE_FUNCTION = new JsNameRef("create", JS_OBJECT);

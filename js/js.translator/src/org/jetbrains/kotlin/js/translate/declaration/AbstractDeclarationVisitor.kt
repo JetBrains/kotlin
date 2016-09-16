@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.js.translate.declaration
 
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.expression.translateFunction
+import org.jetbrains.kotlin.js.translate.expression.wrapWithInlineMetadata
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
@@ -35,7 +35,7 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
     override fun visitClassOrObject(classOrObject: KtClassOrObject, context: TranslationContext) {
         ClassTranslator.translate(classOrObject, context)
         val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), classOrObject)
-        addClass(descriptor)
+        context.export(descriptor)
     }
 
     override fun visitProperty(expression: KtProperty, context: TranslationContext) {
@@ -81,9 +81,8 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
 
     override fun visitNamedFunction(expression: KtNamedFunction, context: TranslationContext) {
         val descriptor = BindingUtils.getFunctionDescriptor(context.bindingContext(), expression)
-        if (descriptor.modality === Modality.ABSTRACT) return
-
-        addFunction(descriptor, translateFunction(descriptor, expression, context))
+        val jsFunction = if (descriptor.modality != Modality.ABSTRACT) translateFunction(descriptor, expression, context) else null
+        addFunction(descriptor, jsFunction)
     }
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: TranslationContext?) {}
@@ -93,17 +92,19 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             expression: KtDeclarationWithBody,
             context: TranslationContext
     ): JsExpression {
-        val innerContext = context.newDeclaration(descriptor)
-        innerContext.getInnerNameForDescriptor(descriptor)
         val function = context.getFunctionObject(descriptor)
-        return Translation.functionTranslator(expression, innerContext, function).translateAsMethod()
+        val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
+        innerContext.getInnerNameForDescriptor(descriptor)
+        if (!descriptor.isOverridable) {
+            function.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, innerContext)
+        }
+        innerContext.translateFunction(expression, function)
+        return innerContext.wrapWithInlineMetadata(function, descriptor)
     }
-
-    protected abstract fun addClass(descriptor: ClassDescriptor)
 
     protected abstract fun addFunction(
             descriptor: FunctionDescriptor,
-            expression: JsExpression
+            expression: JsExpression?
     )
 
     protected abstract fun addProperty(

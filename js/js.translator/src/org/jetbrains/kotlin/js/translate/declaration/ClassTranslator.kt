@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.*
-import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
+import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.expression.translateFunction
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -215,7 +216,8 @@ class ClassTranslator private constructor(
         val constructorInitializer = context.getFunctionObject(constructorDescriptor)
         constructorInitializer.name = context.getInnerNameForDescriptor(constructorDescriptor)
         context.addDeclarationStatement(constructorInitializer.makeStmt())
-        FunctionTranslator.newInstance(constructor, context, constructorInitializer).translateAsMethodWithoutMetadata()
+        context.translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters)
+                .translateFunction(constructor, constructorInitializer)
 
         // Translate super/this call
         val superCallGenerators = mutableListOf<(MutableList<JsStatement>) -> Unit>()

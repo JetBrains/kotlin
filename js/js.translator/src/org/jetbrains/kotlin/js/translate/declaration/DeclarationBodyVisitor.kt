@@ -16,18 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,
@@ -92,12 +94,47 @@ class DeclarationBodyVisitor(
         initializerStatements.add(statement)
     }
 
-    override fun addClass(descriptor: ClassDescriptor) {
-        context.export(descriptor)
-    }
+    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?) {
+        if (!descriptor.hasOrInheritsParametersWithDefaultValue() || !descriptor.isOverridableOrOverrides) {
+            if (expression != null) {
+                context.addFunctionToPrototype(containingClass, descriptor, expression)
+            }
+        }
+        else {
+            val bodyName = context.scope().declareName(
+                    context.getNameForDescriptor(descriptor).ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+            if (expression != null) {
+                val prototypeRef = JsAstUtils.prototypeOf(context.getInnerReference(containingClass))
+                val functionRef = JsNameRef(bodyName, prototypeRef)
+                context.addDeclarationStatement(JsAstUtils.assignment(functionRef, expression).makeStmt())
+            }
 
-    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression) {
-        context.addFunctionToPrototype(containingClass, descriptor, expression)
+            if (descriptor.hasOwnParametersWithDefaultValue()) {
+                val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
+                val callerContext = context
+                        .newDeclaration(descriptor)
+                        .translateAndAliasParameters(descriptor, caller.parameters)
+                        .innerBlock(caller.body)
+
+                val callbackName = caller.scope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+                val callee = JsNameRef(bodyName, JsLiteral.THIS)
+
+                val defaultInvocation = JsInvocation(callee, java.util.ArrayList<JsExpression>())
+                val callbackInvocation = JsInvocation(callbackName.makeRef())
+                val chosenInvocation = JsConditional(callbackName.makeRef(), callbackInvocation, defaultInvocation)
+                defaultInvocation.arguments += caller.parameters.map { it.name.makeRef() }
+                callbackInvocation.arguments += defaultInvocation.arguments.map { it.deepCopy() }
+                caller.parameters.add(JsParameter(callbackName))
+
+                caller.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, callerContext)
+
+                val returnType = descriptor.returnType!!
+                val statement = if (KotlinBuiltIns.isUnit(returnType)) chosenInvocation.makeStmt() else JsReturn(chosenInvocation)
+                caller.body.statements += statement
+
+                context.addFunctionToPrototype(containingClass, descriptor, caller)
+            }
+        }
     }
 
     override fun addProperty(descriptor: PropertyDescriptor, getter: JsExpression, setter: JsExpression?) {

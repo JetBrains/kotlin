@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.StaticContext
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.DFS
@@ -54,13 +57,36 @@ class InterfaceFunctionCopier(val context: StaticContext) {
                 .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                 .mapNotNull { it as? CallableMemberDescriptor }
 
-        for (member in members.filter { it.modality != Modality.ABSTRACT && it.kind.isReal }) {
+        for (member in members.filter { it.kind.isReal }) {
             val names = generateAllNames(member, context)
             val identifiers = names.map { it.ident }
             when (member) {
-                is FunctionDescriptor -> classModel.copiedFunctions += identifiers
-                is PropertyDescriptor -> classModel.copiedProperties += identifiers
+                is FunctionDescriptor -> {
+                    if (member.hasOrInheritsParametersWithDefaultValue()) {
+                        if (member.hasOwnParametersWithDefaultValue()) {
+                            classModel.copiedFunctions += identifiers.map { it }
+                        }
+                        if (member.modality != Modality.ABSTRACT) {
+                            classModel.copiedFunctions += identifiers.map { it + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX }
+                        }
+                    }
+                    else if (member.modality != Modality.ABSTRACT) {
+                        classModel.copiedFunctions += identifiers
+                    }
+                }
+                is PropertyDescriptor -> {
+                    if (member.modality != Modality.ABSTRACT) {
+                        classModel.copiedProperties += identifiers
+                    }
+                }
             }
+        }
+
+        for (member in members.filterIsInstance<FunctionDescriptor>()
+                .filter { it.kind.isReal && it.hasOwnParametersWithDefaultValue() }) {
+            val names = generateAllNames(member, context)
+            val identifiers = names.map { it.ident }
+            classModel.copiedFunctions += identifiers
         }
 
         val superModels = DescriptorUtils.getSuperclassDescriptors(descriptor)

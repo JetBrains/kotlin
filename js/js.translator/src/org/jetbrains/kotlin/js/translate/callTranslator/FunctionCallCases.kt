@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -241,8 +242,29 @@ object SuperCallCase : FunctionCallCase() {
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         // TODO: spread operator
         val prototypeClass = JsAstUtils.prototypeOf(calleeOwner)
-        val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
-        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(dispatchReceiver!!))
+        val arguments = argumentsInfo.translateArguments.toMutableList()
+
+        val descriptor = callableDescriptor.original
+        val shouldCallDefault = descriptor is FunctionDescriptor && TranslationUtils.isOverridableFunctionWithDefaultParameters(descriptor)
+
+        val functionRef = if (shouldCallDefault) {
+            val defaultArgumentCount = descriptor.valueParameters.size - argumentsInfo.valueArguments.size
+            repeat(defaultArgumentCount) {
+                arguments += Namer.getUndefinedExpression()
+            }
+            val callbackName = context.getScopeForDescriptor(descriptor.containingDeclaration)
+                    .declareName(functionName.ident + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+            val callbackRef = JsAstUtils.invokeBind(dispatchReceiver!!, JsNameRef(callbackName, prototypeClass))
+            arguments += callbackRef
+
+            JsAstUtils.pureFqn(functionName, dispatchReceiver)
+        }
+        else {
+            arguments.add(0, dispatchReceiver!!)
+            Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
+        }
+
+        return JsInvocation(functionRef, arguments)
     }
 }
 

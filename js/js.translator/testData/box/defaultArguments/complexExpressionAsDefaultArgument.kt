@@ -10,7 +10,9 @@ fun bar(): Int {
     return 100
 }
 
-fun foo(a: Int = when { else -> bar() }): Int = a + 1
+fun baz() = 1
+
+fun foo(a: Int = when (baz()) { 1 -> bar(); else -> 0 }): Int = a + 1
 
 fun bar0(x: String = try { global } finally {}): String {
     return "bar: ${x}"

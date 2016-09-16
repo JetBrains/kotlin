@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getDelegateNameRef
 import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.expression.translateFunction
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
@@ -220,7 +222,8 @@ private class PropertyTranslator(
     private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer {
         val descriptor = BindingUtils.getFunctionDescriptor(bindingContext(), expression)
         val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), descriptor.toString())
-        return Translation.functionTranslator(expression, context(), function).translateAsEcma5PropertyDescriptor()
+        context().translateAndAliasParameters(descriptor, function.parameters).translateFunction(expression, function)
+        return translateFunctionAsEcma5PropertyDescriptor(function, descriptor, context())
     }
 
     private fun createFunction(descriptor: VariableAccessorDescriptor) =

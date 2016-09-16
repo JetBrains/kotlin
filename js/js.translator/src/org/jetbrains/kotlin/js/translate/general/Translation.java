@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
-import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSRhinoUnitTester;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
@@ -44,7 +43,10 @@ import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -73,15 +75,6 @@ import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMuta
 public final class Translation {
 
     private Translation() {
-    }
-
-    @NotNull
-    public static FunctionTranslator functionTranslator(
-            @NotNull KtDeclarationWithBody declaration,
-            @NotNull TranslationContext context,
-            @NotNull JsFunction function
-    ) {
-        return FunctionTranslator.newInstance(declaration, context, function);
     }
 
     @NotNull

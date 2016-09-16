@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.context.isCaptured
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor
+import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
@@ -66,7 +67,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         val functionContext = invokingContext
                 .newFunctionBodyWithUsageTracker(lambda, descriptor)
                 .innerContextWithDescriptorsAliased(aliases)
-        FunctionTranslator.addParameters(lambda.parameters, descriptor, functionContext)
+                .translateAndAliasParameters(descriptor, lambda.parameters)
 
         descriptor.valueParameters.forEach {
             if (it is ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
@@ -74,8 +75,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             }
         }
 
-        val functionBody = translateFunctionBody(descriptor, declaration, functionContext)
-        lambda.body.statements.addAll(functionBody.statements)
+        lambda.body.statements += setDefaultValueForArguments(descriptor, functionContext)
+        lambda.body.statements += translateFunctionBody(descriptor, declaration, functionContext)
         lambda.functionDescriptor = descriptor
 
         val tracker = functionContext.usageTracker()!!

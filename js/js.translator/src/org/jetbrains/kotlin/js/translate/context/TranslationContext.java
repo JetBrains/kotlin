@@ -143,8 +143,10 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext newFunctionBody(@NotNull JsFunction fun, @Nullable AliasingContext aliasingContext,
-            DeclarationDescriptor descriptor) {
+    private TranslationContext newFunctionBody(
+            @NotNull JsFunction fun, @Nullable AliasingContext aliasingContext,
+            DeclarationDescriptor descriptor
+    ) {
         DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
         if (aliasingContext == null) {
             aliasingContext = this.aliasingContext.inner();
@@ -204,11 +206,13 @@ public class TranslationContext {
 
     @NotNull
     public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<KtExpression, JsExpression> aliases) {
+        if (aliases.isEmpty()) return this;
         return this.innerWithAliasingContext(aliasingContext.withExpressionsAliased(aliases));
     }
 
     @NotNull
     public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsExpression> aliases) {
+        if (aliases.isEmpty()) return this;
         return this.innerWithAliasingContext(aliasingContext.withDescriptorsAliased(aliases));
     }
 
