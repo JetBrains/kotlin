@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiConstructorCall
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -111,8 +112,14 @@ private fun KtElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     return null
 }
 
+fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
+    val task = buildProcessDelegationCallConstructorUsagesTask(scope, process)
+    return task()
+}
+
 // should be executed under read-action, returns long-running part to be executed outside read-action
 fun PsiElement.buildProcessDelegationCallConstructorUsagesTask(scope: SearchScope, process: (KtCallElement) -> Boolean): () -> Boolean {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
     val task1 = buildProcessDelegationCallKotlinConstructorUsagesTask(scope, process)
     val task2 = buildProcessDelegationCallJavaConstructorUsagesTask(scope, process)
     return { task1() && task2() }
