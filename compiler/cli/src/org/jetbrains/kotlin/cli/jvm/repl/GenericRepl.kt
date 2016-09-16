@@ -77,8 +77,6 @@ open class GenericReplChecker(
 
     protected var lineState: LineState? = null
 
-    val classpath: MutableList<File> = compilerConfiguration.jvmClasspathRoots.toMutableList()
-
     fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
     override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
@@ -108,7 +106,7 @@ open class GenericReplChecker(
 }
 
 
-abstract class GenericReplCompiler(
+open class GenericReplCompiler(
         disposable: Disposable,
         scriptDefinition: KotlinScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
@@ -132,7 +130,7 @@ abstract class GenericReplCompiler(
                     val res = check(codeLine, history)
                     when (res) {
                         ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete
-                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message)
+                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
                         ReplCheckResult.Ok -> {} // continue
                     }
                 }
@@ -140,14 +138,6 @@ abstract class GenericReplCompiler(
             }
 
             val newDependencies = scriptDefinition.getDependenciesFor(psiFile, environment.project, lastDependencies)
-            newDependencies?.let {
-                logger.debug("found dependencies: ${it.classpath}")
-                val newCp = environment.updateClasspath(it.classpath.map(::JvmClasspathRoot))
-                if (newCp != null && newCp.isNotEmpty()) {
-                    logger.debug("new dependencies: $newCp")
-                    dependenciesAdded(newCp)
-                }
-            }
             if (lastDependencies != newDependencies) {
                 lastDependencies = newDependencies
             }
@@ -179,7 +169,9 @@ abstract class GenericReplCompiler(
 
             descriptorsHistory.add(codeLine to scriptDescriptor)
 
-            return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }, state.replSpecific.hasResult)
+            return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
+                                                     state.replSpecific.hasResult,
+                                                     newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) } ?: emptyList())
         }
     }
 
@@ -193,28 +185,26 @@ open class GenericRepl(
         disposable: Disposable,
         scriptDefinition: KotlinScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        baseClassloader: ClassLoader?
 ) : ReplEvaluator, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
 
-    private val compiledEvaluator = GenericReplCompiledEvaluator(classpath)
+    private val compiledEvaluator = GenericReplCompiledEvaluator(compilerConfiguration.jvmClasspathRoots, baseClassloader)
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
-        synchronized(this) {
-
-            val (compiledClasses, hasResult) = compile(codeLine, history).let {
-                when (it) {
-                    ReplCompileResult.Incomplete -> return@eval ReplEvalResult.Incomplete
-                    is ReplCompileResult.HistoryMismatch -> return@eval ReplEvalResult.HistoryMismatch(it.lineNo)
-                    is ReplCompileResult.Error -> return@eval ReplEvalResult.Error.CompileTime(it.message)
-                    is ReplCompileResult.CompiledClasses -> it.classes to it.hasResult
-                }
-            }
-
-            return compiledEvaluator.eval(codeLine, history, compiledClasses, hasResult)
-        }
-    }
-
-    override fun dependenciesAdded(classpath: List<File>) {
-        compiledEvaluator.dependenciesAdded(classpath)
+    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult = synchronized(this) {
+        return compileAndEval(this, compiledEvaluator, codeLine, history)
     }
 }
+
+
+fun compileAndEval(replCompiler: ReplCompiler, replCompiledEvaluator: ReplCompiledEvaluator, codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult =
+        replCompiler.compile(codeLine, history).let {
+            when (it) {
+                ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete
+                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(it.lineNo)
+                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(it.message, it.location)
+                is ReplCompileResult.CompiledClasses -> replCompiledEvaluator.eval(codeLine, history, it.classes, it.hasResult, it.newClasspath)
+            }
+        }
+
+

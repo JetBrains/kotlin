@@ -49,7 +49,8 @@ class KotlinJsr232StandardScriptEngineFactory: ScriptEngineFactory {
                         // TODO: addJvmClasspathRoots(config.classpath)
                         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
                         put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
-                    })
+                    },
+                    Thread.currentThread().contextClassLoader)
 
     override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
     override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"

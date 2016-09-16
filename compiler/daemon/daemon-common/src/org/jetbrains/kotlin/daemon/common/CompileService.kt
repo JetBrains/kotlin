@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.cli.common.repl.*
+import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
@@ -44,7 +46,7 @@ interface CompileService : Remote {
             override fun hashCode(): Int = this.javaClass.hashCode() + (result?.hashCode() ?: 1)
         }
         class Ok : CallResult<Nothing>() {
-            override fun get(): Nothing = throw IllegalStateException("Gey is inapplicable to Ok call result")
+            override fun get(): Nothing = throw IllegalStateException("Get is inapplicable to Ok call result")
             override fun equals(other: Any?): Boolean = other is Ok
             override fun hashCode(): Int = this.javaClass.hashCode() + 1 // avoiding clash with the hash of class itself
         }
@@ -122,4 +124,42 @@ interface CompileService : Remote {
             serviceOutputStream: RemoteOutputStream,
             operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun leaseReplSession(
+            aliveFlagPath: String?,
+            targetPlatform: CompileService.TargetPlatform,
+            servicesFacade: CompilerCallbackServicesFacade,
+            templateClasspath: List<File>,
+            templateClassName: String,
+            compilerMessagesOutputStream: RemoteOutputStream,
+            evalOutputStream: RemoteOutputStream?,
+            evalErrorStream: RemoteOutputStream?,
+            evalInputStream: RemoteInputStream?,
+            operationsTracer: RemoteOperationsTracer?
+    ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun releaseReplSession(sessionId: Int): CallResult<Nothing>
+
+    @Throws(RemoteException::class)
+    fun remoteReplLineCheck(
+            sessionId: Int,
+            codeLine: ReplCodeLine,
+            history: List<ReplCodeLine>
+    ): CallResult<ReplCheckResult>
+
+    @Throws(RemoteException::class)
+    fun remoteReplLineCompile(
+            sessionId: Int,
+            codeLine: ReplCodeLine,
+            history: List<ReplCodeLine>
+    ): CallResult<ReplCompileResult>
+
+    @Throws(RemoteException::class)
+    fun remoteReplLineEval(
+            sessionId: Int,
+            codeLine: ReplCodeLine,
+            history: List<ReplCodeLine>
+    ): CallResult<ReplEvalResult>
 }

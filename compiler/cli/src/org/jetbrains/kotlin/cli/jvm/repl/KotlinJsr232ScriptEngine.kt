@@ -32,7 +32,8 @@ class KotlinJsr232ScriptEngine(
         disposable: Disposable,
         private val factory: ScriptEngineFactory,
         private val scriptDefinition: KotlinScriptDefinition,
-        private val compilerConfiguration: CompilerConfiguration
+        private val compilerConfiguration: CompilerConfiguration,
+        baseClassLoader: ClassLoader
 ) : AbstractScriptEngine(), ScriptEngine {
 
     data class MessageCollectorReport(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation)
@@ -72,7 +73,7 @@ class KotlinJsr232ScriptEngine(
         }
     }
 
-    private val repl = object : GenericRepl(disposable, scriptDefinition, compilerConfiguration, messageCollector) {}
+    private val repl = object : GenericRepl(disposable, scriptDefinition, compilerConfiguration, messageCollector, baseClassLoader) {}
 
     private var lineCount = 0
 

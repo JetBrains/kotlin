@@ -23,25 +23,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>) : ReplCompiledEvaluator {
-
-    private val classpath = baseClasspath.toMutableList()
+open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?) : ReplCompiledEvaluator {
 
     private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader =
-            org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader))
+            org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
     private val classLoaderLock = ReentrantReadWriteLock()
 
     private class ClassWithInstance(val klass: Class<*>, val instance: Any)
 
     private val compiledLoadedClassesHistory = arrayListOf<Pair<ReplCodeLine, ClassWithInstance>>()
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean): ReplEvalResult {
+    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, newClasspath: List<File>): ReplEvalResult {
 
         checkAndUpdateReplHistoryCollection(compiledLoadedClassesHistory, history)?.let {
             return@eval ReplEvalResult.HistoryMismatch(it)
         }
 
         classLoaderLock.read {
+            if (newClasspath.isNotEmpty()) {
+                classLoaderLock.write {
+                    classLoader = org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(newClasspath.map { it.toURI().toURL() }.toTypedArray(), classLoader))
+                }
+            }
             compiledClasses.filter { it.path.endsWith(".class") }
                     .forEach {
                         classLoader.addClass(JvmClassName.byInternalName(it.path.replaceFirst("\\.class$".toRegex(), "")), it.bytes)
@@ -69,13 +72,6 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>) : ReplCom
         val rv: Any? = rvField.get(scriptInstance)
 
         return if (hasResult) ReplEvalResult.ValueResult(rv) else ReplEvalResult.UnitResult
-    }
-
-    fun dependenciesAdded(newClasspath: List<File>) {
-        classLoaderLock.write {
-            classpath.addAll(newClasspath)
-            classLoader = org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(newClasspath.map { it.toURI().toURL() }.toTypedArray(), classLoader))
-        }
     }
 
     companion object {

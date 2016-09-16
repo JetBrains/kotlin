@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.thread
 
-
 class CompilationServices(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null
@@ -53,18 +52,12 @@ object KotlinCompilerClient {
                                 autostart: Boolean = true,
                                 checkId: Boolean = true
     ): CompileService? {
-        fun newFlagFile(): File {
-            val flagFile = File.createTempFile("kotlin-compiler-client-", "-is-running")
-            flagFile.deleteOnExit()
-            return flagFile
-        }
-
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
-                     ?.let { it.trimQuotes() }
+                     ?.let(String::trimQuotes)
                      ?.check { !it.isBlank() }
-                     ?.let { File(it) }
-                     ?.check { it.exists() }
-                     ?: newFlagFile()
+                     ?.let(::File)
+                     ?.check(File::exists)
+                     ?: makeAutodeletingFlagFile()
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
@@ -287,7 +280,7 @@ object KotlinCompilerClient {
         val daemonLauncher = Native.get(ProcessLauncher::class.java)
         val daemon = daemonLauncher.start(processBuilder)
 
-        var isEchoRead = Semaphore(1)
+        val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
         val stdoutThread =
@@ -316,7 +309,7 @@ object KotlinCompilerClient {
                     it.toLong()
                 }
                 catch (e: Exception) {
-                    reportingTargets.report(DaemonReportCategory.INFO, "unable to interpret ${COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY} property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms")
+                    reportingTargets.report(DaemonReportCategory.INFO, "unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms")
                     null
                 }
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
