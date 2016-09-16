@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class FakeCallableDescriptorForObject(
+open class FakeCallableDescriptorForObject(
         val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
@@ -34,7 +34,9 @@ class FakeCallableDescriptorForObject(
 
     }
 
-    fun getReferencedDescriptor(): ClassDescriptor = classDescriptor.getClassObjectReferenceTarget()
+    open fun getReferencedDescriptor(): ClassifierDescriptorWithTypeParameters = classDescriptor.getClassObjectReferenceTarget()
+
+    fun getReferencedObject(): ClassDescriptor = classDescriptor.getClassObjectReferenceTarget()
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
 

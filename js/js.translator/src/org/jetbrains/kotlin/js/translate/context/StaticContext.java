@@ -433,7 +433,7 @@ public final class StaticContext {
                     }
 
                     FakeCallableDescriptorForObject fakeCallableDescriptor = (FakeCallableDescriptorForObject) descriptor;
-                    return getNameForDescriptor(fakeCallableDescriptor.getReferencedDescriptor());
+                    return getNameForDescriptor(fakeCallableDescriptor.getReferencedObject());
                 }
             };
 

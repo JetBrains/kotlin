@@ -20397,6 +20397,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasInvisibleObject.kt")
+            public void testTypeAliasInvisibleObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasInvisibleObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasNotNull.kt")
             public void testTypeAliasNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasNotNull.kt");

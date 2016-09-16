@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
 import org.jetbrains.kotlin.resolve.coroutine.createCoroutineSuspensionFunctionView
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -273,7 +274,12 @@ private fun ResolutionScope.getContributedObjectVariables(name: Name, location: 
 fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
         when (classifier) {
             is TypeAliasDescriptor ->
-                getFakeDescriptorForObject(classifier.classDescriptor)
+                classifier.classDescriptor?.let { classDescriptor ->
+                    if (classDescriptor.hasClassValueDescriptor)
+                        FakeCallableDescriptorForTypeAliasObject(classifier)
+                    else
+                        null
+                }
             is ClassDescriptor ->
                 if (classifier.hasClassValueDescriptor)
                     FakeCallableDescriptorForObject(classifier)

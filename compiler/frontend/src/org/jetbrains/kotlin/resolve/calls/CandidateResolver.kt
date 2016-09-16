@@ -246,7 +246,7 @@ class CandidateResolver(
                 nestedClass = candidateDescriptor.containingDeclaration
             }
             else if (candidateDescriptor is FakeCallableDescriptorForObject) {
-                nestedClass = candidateDescriptor.getReferencedDescriptor()
+                nestedClass = candidateDescriptor.getReferencedObject()
             }
             if (nestedClass != null) {
                 tracing.nestedClassAccessViaInstanceReference(trace, nestedClass, candidateCall.explicitReceiverKind)
