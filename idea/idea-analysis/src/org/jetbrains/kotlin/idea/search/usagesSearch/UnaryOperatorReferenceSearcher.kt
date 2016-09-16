@@ -23,6 +23,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtUnaryExpression
@@ -49,7 +50,7 @@ class UnaryOperatorReferenceSearcher(
         return element.getReferencedNameElementType() == operationToken
     }
 
-    override fun extractReference(element: PsiElement): PsiReference? {
+    override fun extractReference(element: KtElement): PsiReference? {
         val unaryExpression = element as? KtUnaryExpression ?: return null
         if (unaryExpression.operationToken != operationToken) return null
         return unaryExpression.operationReference.references.firstIsInstance<KtSimpleNameReference>()

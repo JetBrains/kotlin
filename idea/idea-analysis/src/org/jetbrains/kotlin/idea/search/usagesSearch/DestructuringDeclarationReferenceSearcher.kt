@@ -44,7 +44,7 @@ class DestructuringDeclarationReferenceSearcher(
         }
     }
 
-    override fun extractReference(element: PsiElement): PsiReference? {
+    override fun extractReference(element: KtElement): PsiReference? {
         val destructuringDeclaration = element as? KtDestructuringDeclaration ?: return null
         val entries = destructuringDeclaration.entries
         if (entries.size < componentIndex) return null
