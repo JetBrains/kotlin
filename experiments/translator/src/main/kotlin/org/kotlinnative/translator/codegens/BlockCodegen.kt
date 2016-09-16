@@ -21,6 +21,8 @@ import org.kotlinnative.translator.TranslationState
 import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.*
 import org.kotlinnative.translator.llvm.types.*
+import java.lang.RuntimeException
+import java.lang.UnsupportedOperationException
 import java.rmi.UnexpectedException
 import kotlin.comparisons.compareBy
 
@@ -1095,7 +1097,7 @@ abstract class BlockCodegen(val state: TranslationState,
                     is LLVMVariable -> LLVMVariable(retVar.label, LLVMNullType(returnType!!.type), retVar.kotlinName, retVar.scope, returnType!!.pointer - 1)
                     else -> throw UnexpectedException("Unknown inheritor of LLVMSingleValue")
                 }
-                generateReferenceReturn(retVar)
+                generateReferenceReturn(retVar!!)
             }
             is LLVMVoidType -> codeBuilder.addAnyReturn(LLVMVoidType())
             else -> {
