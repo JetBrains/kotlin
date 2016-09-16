@@ -38,7 +38,7 @@ class ContainsOperatorReferenceSearcher(
 
     private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val parent = expression.parent
         when (parent) {
             is KtBinaryExpression -> {
