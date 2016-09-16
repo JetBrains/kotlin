@@ -142,40 +142,32 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 
             if (!options.searchForOperatorConventions) return null
 
-            if (name == OperatorNameConventions.INVOKE) {
-                return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
-            }
-
             val binaryOp = OperatorConventions.BINARY_OPERATION_NAMES.inverse()[name]
-            if (binaryOp != null) {
-                val assignmentOp = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
-                val operationTokens = listOf(binaryOp, assignmentOp).filterNotNull()
-                return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer)
-            }
-
             val assignmentOp = OperatorConventions.ASSIGNMENT_OPERATIONS.inverse()[name]
-            if (assignmentOp != null) {
-                return BinaryOperatorReferenceSearcher(declaration, listOf(assignmentOp), searchScope, consumer, optimizer)
-            }
-
             val unaryOp = OperatorConventions.UNARY_OPERATION_NAMES.inverse()[name]
-            if (unaryOp != null) {
-                return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer)
+
+            when {
+                binaryOp != null -> {
+                    val counterpartAssignmentOp = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
+                    val operationTokens = listOf(binaryOp, counterpartAssignmentOp).filterNotNull()
+                    return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer)
+                }
+
+                assignmentOp != null -> return BinaryOperatorReferenceSearcher(declaration, listOf(assignmentOp), searchScope, consumer, optimizer)
+
+                unaryOp != null -> return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer)
+
+                name == OperatorNameConventions.INVOKE -> return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+
+                name == OperatorNameConventions.GET -> return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = false)
+
+                name == OperatorNameConventions.SET -> return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = true)
+
+                name == OperatorNameConventions.CONTAINS -> return ContainsOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+
+                else -> return null
             }
 
-            if (name == OperatorNameConventions.GET) {
-                return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = false)
-            }
-
-            if (name == OperatorNameConventions.SET) {
-                return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = true)
-            }
-
-            if (name == OperatorNameConventions.CONTAINS) {
-                return ContainsOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
-            }
-
-            return null
         }
 
         //TODO: check no light elements here
