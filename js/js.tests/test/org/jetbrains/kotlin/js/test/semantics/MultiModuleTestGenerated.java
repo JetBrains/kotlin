@@ -41,6 +41,12 @@ public class MultiModuleTestGenerated extends AbstractMultiModuleTest {
         doTest(fileName);
     }
 
+    @TestMetadata("typealiases")
+    public void testTypealiases() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/typealiases/");
+        doTest(fileName);
+    }
+
     @TestMetadata("useElementsFromDefaultPackageInAnotherModule")
     public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule/");

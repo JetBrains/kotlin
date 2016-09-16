@@ -497,31 +497,13 @@ class DescriptorSerializer private constructor(
 
     @JvmOverloads
     fun packageProto(
-            fragments: Collection<PackageFragmentDescriptor>, skip: ((DeclarationDescriptor) -> Boolean)? = null
+            fragments: Collection<PackageFragmentDescriptor>,
+            skip: (DeclarationDescriptor) -> Boolean = { false }
     ): ProtoBuf.Package.Builder {
-        val builder = ProtoBuf.Package.newBuilder()
-
-        val members = fragments.flatMap { fragment ->
-            DescriptorUtils.getAllDescriptors(fragment.getMemberScope())
-        }
-
-        for (declaration in sort(members)) {
-            if (skip?.invoke(declaration) == true) continue
-
-            when (declaration) {
-                is PropertyDescriptor -> builder.addProperty(propertyProto(declaration))
-                is FunctionDescriptor -> builder.addFunction(functionProto(declaration))
-            }
-        }
-
-        val typeTableProto = typeTable.serialize()
-        if (typeTableProto != null) {
-            builder.typeTable = typeTableProto
-        }
-
-        extension.serializePackage(builder)
-
-        return builder
+        val members = fragments
+                .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
+                .filter { !skip(it) }
+        return packagePartProto(members)
     }
 
     fun packagePartProto(members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
