@@ -94,13 +94,13 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         ): OperatorReferenceSearcher<*>? {
             return runReadAction {
                 if (declaration.isValid)
-                    _create(declaration, searchScope, consumer, optimizer, options)
+                    createInReadAction(declaration, searchScope, consumer, optimizer, options)
                 else
                     null
             }
         }
 
-        private fun _create(
+        private fun createInReadAction(
                 declaration: PsiElement,
                 searchScope: SearchScope,
                 consumer: Processor<PsiReference>,
@@ -123,10 +123,10 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 declaration
             }
 
-            return create(declarationToUse, name, consumer, optimizer, options, searchScope)
+            return createInReadAction(declarationToUse, name, consumer, optimizer, options, searchScope)
         }
 
-        private fun create(
+        private fun createInReadAction(
                 declaration: PsiElement,
                 name: Name,
                 consumer: Processor<PsiReference>,
