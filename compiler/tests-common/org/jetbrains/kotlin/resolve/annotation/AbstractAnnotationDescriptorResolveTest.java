@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -103,7 +104,11 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         SimpleFunctionDescriptor anonymousFun = getAnonymousFunDescriptor();
         if (anonymousFun instanceof AnonymousFunctionDescriptor) {
             for (ValueParameterDescriptor descriptor : anonymousFun.getValueParameters()) {
-                checkDescriptor(expectedAnnotation, descriptor);
+                List<VariableDescriptor> destructuringVariables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(descriptor);
+                if (destructuringVariables == null) continue;
+                for (VariableDescriptor entry : destructuringVariables) {
+                    checkDescriptor(expectedAnnotation, entry);
+                }
             }
         }
 
