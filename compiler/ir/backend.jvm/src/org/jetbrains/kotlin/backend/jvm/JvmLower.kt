@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassLowering
+import org.jetbrains.kotlin.backend.jvm.lower.PropertiesLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
-        FileClassLowering(context).lower(irFile)
+        FileClassLowering(context.jvmFileClassProvider).lower(irFile)
+        PropertiesLowering().lower(irFile)
     }
 }
