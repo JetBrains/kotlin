@@ -24,6 +24,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -73,8 +74,10 @@ class MoveMemberOutOfCompanionObjectIntention : SelfTargetingRangeIntention<KtNa
         }
 
         project.checkConflictsInteractively(conflicts) {
-            Mover.Default(element, targetClass)
-            deleteCompanionIfEmpty()
+            runWriteAction {
+                Mover.Default(element, targetClass)
+                deleteCompanionIfEmpty()
+            }
         }
     }
 }
