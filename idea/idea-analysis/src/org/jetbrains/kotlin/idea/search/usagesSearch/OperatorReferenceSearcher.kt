@@ -199,16 +199,6 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         try {
             val receiverType = runReadAction { extractReceiverType() } ?: return
 
-            val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
-                ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
-                ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
-                ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED -> searchScope is LocalSearchScope // for local scope it's faster to use plain search
-            }
-            if (usePlainSearch) {
-                doPlainSearch(searchScope)
-                return
-            }
-
             ExpressionsOfTypeProcessor(
                     receiverType,
                     searchScope,

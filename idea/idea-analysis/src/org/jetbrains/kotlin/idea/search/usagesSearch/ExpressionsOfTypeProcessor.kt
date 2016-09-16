@@ -21,8 +21,8 @@ import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.*
+import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.excludeFileTypes
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
-import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -102,19 +101,6 @@ class ExpressionsOfTypeProcessor(
                 }
             }
         }
-
-        private fun SearchScope.isEmpty(): Boolean {
-            when (this) {
-                GlobalSearchScope.EMPTY_SCOPE -> return true
-
-                is GlobalSearchScope -> {
-                    val rootManager = ProjectRootManager.getInstance(project!!)
-                    return rootManager.fileIndex.iterateContent { it.isDirectory || it !in this }
-                }
-
-                else -> return (this as LocalSearchScope).scope.isEmpty()
-            }
-        }
     }
 
     // note: a Task must define equals & hashCode!
@@ -128,6 +114,16 @@ class ExpressionsOfTypeProcessor(
     private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
     fun run() {
+        val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
+            ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
+            ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
+            ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED -> searchScope is LocalSearchScope // for local scope it's faster to use plain search
+        }
+        if (usePlainSearch) {
+            possibleMatchesInScopeHandler(searchScope)
+            return
+        }
+
         val psiClass = runReadAction { detectClassToSearch() } ?: return
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
@@ -152,7 +148,7 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun detectClassToSearch(): PsiClass? {
-        if (searchScope.restrictToKotlinSources().isEmpty()) return null // optimization
+        if (searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope)) return null // optimization
 
         val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return null
         val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
