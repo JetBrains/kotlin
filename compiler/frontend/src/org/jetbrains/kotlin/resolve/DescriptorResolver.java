@@ -291,6 +291,10 @@ public class DescriptorResolver {
 
         List<VariableDescriptor> destructuringVariables;
         if (destructuringDeclaration != null) {
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)) {
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter, LanguageFeature.DestructuringLambdaParameters));
+            }
+
             destructuringVariables = destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
                     scope, destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                     ExpressionTypingContext.newContext(trace, scope, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
