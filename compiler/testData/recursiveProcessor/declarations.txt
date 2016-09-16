@@ -5,6 +5,8 @@ Class.classFunc:SimpleFunctionDescriptor
 Class.classProp:PropertyDescriptor
 Class.this:ReceiverParameterDescriptor
 Class:ClassDescriptorWithResolutionScopes
+ClassObjTypeAlias:TypeAliasDescriptor
+ClassTypeAlias:TypeAliasDescriptor
 Companion.<get-classObjProp>:PropertyGetterDescriptor
 Companion.<init>():ClassConstructorDescriptor
 Companion.<init>():ClassConstructorDescriptor
@@ -18,13 +20,17 @@ Companion:ClassDescriptorWithResolutionScopes
 NestedClass.<init>():ClassConstructorDescriptor
 NestedClass.this:ReceiverParameterDescriptor
 NestedClass:ClassDescriptorWithResolutionScopes
+NestedClassObjTypeAlias:TypeAliasDescriptor
 NestedObject.<init>():ClassConstructorDescriptor
 NestedObject.nestedFunc:SimpleFunctionDescriptor
 NestedObject.this:ReceiverParameterDescriptor
 NestedObject:ClassDescriptorWithResolutionScopes
+NestedObjectTypeAlias:TypeAliasDescriptor
 NestedTrait.nestedTraitFun:SimpleFunctionDescriptor
 NestedTrait.this:ReceiverParameterDescriptor
 NestedTrait:ClassDescriptorWithResolutionScopes
+NestedTraitTypeAlias:TypeAliasDescriptor
+ObjTypeAlias:TypeAliasDescriptor
 Object.<get-objProp>:PropertyGetterDescriptor
 Object.<init>():ClassConstructorDescriptor
 Object.objFunc:SimpleFunctionDescriptor
@@ -43,6 +49,8 @@ Trait.this:ReceiverParameterDescriptor
 Trait.traitFunc:SimpleFunctionDescriptor
 Trait.traitProp:PropertyDescriptor
 Trait:ClassDescriptorWithResolutionScopes
+TraitTypeAlias:TypeAliasDescriptor
+TypeAlias:TypeAliasDescriptor
 a:ValueParameterDescriptor
 fake Class.<get-traitProp>:PropertyGetterDescriptor
 fake Class.equals:DeserializedCallableMemberDescriptor

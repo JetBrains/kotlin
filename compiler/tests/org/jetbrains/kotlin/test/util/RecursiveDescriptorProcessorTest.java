@@ -131,8 +131,8 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
 
             @Override
             public Boolean visitTypeAliasDescriptor(TypeAliasDescriptor descriptor, Void data) {
-                add(descriptor); // TODO typealias
-                return null;
+                add(descriptor);
+                return true;
             }
 
             @Override
