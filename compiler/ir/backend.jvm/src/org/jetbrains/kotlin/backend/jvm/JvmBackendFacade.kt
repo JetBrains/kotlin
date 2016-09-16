@@ -43,9 +43,9 @@ object JvmBackendFacade {
 
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
 
-        for (ktFile in irModuleFragment.files) {
+        for (irFile in irModuleFragment.files) {
             try {
-                jvmBackend.generateFile(ktFile)
+                jvmBackend.generateFile(irFile)
                 state.afterIndependentPart()
             }
             catch (e: Throwable) {
