@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
@@ -39,9 +40,11 @@ import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
@@ -65,7 +68,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     /**
      * Extract reference that may resolve to our operator (no actual resolve to be performed)
      */
-    protected abstract fun extractReference(element: PsiElement): PsiReference?
+    protected abstract fun extractReference(element: KtElement): PsiReference?
 
     /**
      * Check if reference may potentially resolve to our operator (no actual resolve to be performed)
@@ -222,17 +225,19 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             for (element in scope.scope) {
                 runReadAction {
                     if (element.isValid) {
-                        element.accept(object : PsiRecursiveElementWalkingVisitor() {
-                            override fun visitElement(element: PsiElement) {
-                                //TODO: resolve of multiple references at once
-                                val reference = extractReference(element)
-                                if (reference != null && reference.isReferenceTo(targetDeclaration)) {
-                                    consumer.process(reference)
-                                }
+                        val refs = ArrayList<PsiReference>()
+                        val elements = element.collectDescendantsOfType<KtElement> {
+                            val ref = extractReference(it) ?: return@collectDescendantsOfType false
+                            refs.add(ref)
+                            true
+                        }
 
-                                super.visitElement(element)
-                            }
-                        })
+                        // resolve all references at once
+                        (element.containingFile as KtFile).getResolutionFacade().analyze(elements, BodyResolveMode.PARTIAL)
+
+                        refs
+                                .filter { it.isReferenceTo(targetDeclaration) }
+                                .forEach { consumer.process(it) }
                     }
                 }
             }

@@ -23,10 +23,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
-import org.jetbrains.kotlin.psi.KtWhenConditionInRange
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class ContainsOperatorReferenceSearcher(
@@ -59,7 +56,7 @@ class ContainsOperatorReferenceSearcher(
         return element.getReferencedNameElementType() in OPERATION_TOKENS
     }
 
-    override fun extractReference(element: PsiElement): PsiReference? {
+    override fun extractReference(element: KtElement): PsiReference? {
         val referenceExpression = element as? KtOperationReferenceExpression ?: return null
         if (referenceExpression.getReferencedNameElementType() !in OPERATION_TOKENS) return null
         return referenceExpression.references.firstIsInstance<KtSimpleNameReference>()
