@@ -55,8 +55,11 @@ open class GenericReplChecker(
         messageCollector: MessageCollector
 ) : ReplChecker {
     protected val environment = run {
-        compilerConfiguration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, DelegatingScriptDefWithNoParams(scriptDefinition))
-        compilerConfiguration.put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+        compilerConfiguration.apply {
+            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, DelegatingScriptDefWithNoParams(scriptDefinition))
+            put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+        }
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
