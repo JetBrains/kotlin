@@ -20,24 +20,18 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.*
 
 class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExpression>(element) {
 
     override fun getRangeInElement(): TextRange {
-        val inKeyword = expression.inKeyword
-        if (inKeyword == null)
-            return TextRange.EMPTY_RANGE
+        val inKeyword = expression.inKeyword ?: return TextRange.EMPTY_RANGE
 
         val offset = inKeyword.startOffsetInParent
         return TextRange(offset, offset + inKeyword.textLength)
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val loopRange = expression.loopRange
-        if (loopRange == null) {
-            return Collections.emptyList()
-        }
+        val loopRange = expression.loopRange ?: return emptyList()
         return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.candidateDescriptor }
     }
 
