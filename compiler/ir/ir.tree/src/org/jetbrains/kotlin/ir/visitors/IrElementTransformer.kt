@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.visitors
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 
@@ -36,7 +37,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
         return declaration
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: D): IrDeclaration {
+    override fun visitDeclaration(declaration: IrDeclaration, data: D): IrStatement {
         declaration.transformChildren(this, data)
         return declaration
     }

@@ -51,7 +51,7 @@ class IrFileImpl(
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         declarations.forEachIndexed { i, irDeclaration ->
-            declarations[i] = irDeclaration.transform(transformer, data)
+            declarations[i] = irDeclaration.transform(transformer, data) as IrDeclaration
         }
     }
 }

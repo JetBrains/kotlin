@@ -25,8 +25,8 @@ interface IrDeclaration : IrStatement {
     val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrDeclaration =
-            accept(transformer, data) as IrDeclaration
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrStatement =
+            accept(transformer, data) as IrStatement
 }
 
 enum class IrDeclarationKind {
