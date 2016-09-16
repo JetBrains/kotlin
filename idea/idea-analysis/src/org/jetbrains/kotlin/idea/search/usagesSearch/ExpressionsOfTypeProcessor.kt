@@ -69,8 +69,8 @@ class ExpressionsOfTypeProcessor(
         private val typeToSearch: FuzzyType,
         private val searchScope: SearchScope,
         private val project: Project,
-        private val suspiciousExpressionHandler: (KtExpression) -> Unit,
-        private val suspiciousScopeHandler: (SearchScope) -> Unit
+        private val possibleMatchHandler: (KtExpression) -> Unit,
+        private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
 ) {
     @TestOnly
     enum class Mode {
@@ -132,7 +132,7 @@ class ExpressionsOfTypeProcessor(
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
         if (!runReadAction { psiClass.isValid && ProjectRootsUtil.isInProjectSource (psiClass) }) {
-            suspiciousScopeHandler(searchScope)
+            possibleMatchesInScopeHandler(searchScope)
             return
         }
 
@@ -146,7 +146,7 @@ class ExpressionsOfTypeProcessor(
                     .filter { it.isValid }
                     .toTypedArray()
             if (scopeElements.isNotEmpty()) {
-                suspiciousScopeHandler(LocalSearchScope(scopeElements))
+                possibleMatchesInScopeHandler(LocalSearchScope(scopeElements))
             }
         }
     }
@@ -179,7 +179,7 @@ class ExpressionsOfTypeProcessor(
     private fun downShiftToPlainSearch() {
         tasks.clear()
         scopesToUsePlainSearch.clear()
-        suspiciousScopeHandler(searchScope)
+        possibleMatchesInScopeHandler(searchScope)
     }
 
     private fun addClassToProcess(classToSearch: PsiClass) {
@@ -533,7 +533,7 @@ class ExpressionsOfTypeProcessor(
                 inScope = inScope && element in searchScope
             }
             if (inScope) {
-                suspiciousExpressionHandler(element)
+                possibleMatchHandler(element)
             }
 
             val parent = element.parent

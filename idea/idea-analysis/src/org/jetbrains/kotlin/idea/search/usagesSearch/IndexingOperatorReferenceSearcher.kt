@@ -36,7 +36,7 @@ class IndexingOperatorReferenceSearcher(
         private val isSet: Boolean
 ) : OperatorReferenceSearcher<KtArrayAccessExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = listOf("[")) {
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val accessExpression = expression.parent as? KtArrayAccessExpression ?: return
         if (expression != accessExpression.arrayExpression) return
         if (!checkAccessExpression(accessExpression)) return

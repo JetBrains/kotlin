@@ -36,7 +36,7 @@ class UnaryOperatorReferenceSearcher(
         optimizer: SearchRequestCollector
 ) : OperatorReferenceSearcher<KtUnaryExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = listOf(operationToken.value)) {
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val unaryExpression = expression.parent as? KtUnaryExpression ?: return
         if (unaryExpression.operationToken != operationToken) return
         processReferenceElement(unaryExpression)

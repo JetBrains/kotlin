@@ -53,7 +53,7 @@ class DestructuringDeclarationReferenceSearcher(
 
     override fun isReferenceToCheck(ref: PsiReference) = ref is KtDestructuringDeclarationReference
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val parent = expression.parent
         val destructuringDeclaration = when (parent) {
             is KtDestructuringDeclaration -> parent

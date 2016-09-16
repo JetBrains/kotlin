@@ -35,7 +35,7 @@ class BinaryOperatorReferenceSearcher(
         optimizer: SearchRequestCollector
 ) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = operationTokens.map { it.value }) {
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val binaryExpression = expression.parent as? KtBinaryExpression ?: return
         if (binaryExpression.operationToken !in operationTokens) return
         if (expression != binaryExpression.left) return

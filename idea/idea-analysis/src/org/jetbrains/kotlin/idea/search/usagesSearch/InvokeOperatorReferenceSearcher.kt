@@ -33,7 +33,7 @@ class InvokeOperatorReferenceSearcher(
         optimizer: SearchRequestCollector
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = emptyList()) {
 
-    override fun processSuspiciousExpression(expression: KtExpression) {
+    override fun processPossibleReceiverExpression(expression: KtExpression) {
         val callExpression = expression.parent as? KtCallExpression ?: return
         processReferenceElement(callExpression)
     }

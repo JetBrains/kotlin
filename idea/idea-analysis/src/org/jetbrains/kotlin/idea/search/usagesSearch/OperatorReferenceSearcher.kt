@@ -58,7 +58,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 ) {
     private val project = targetDeclaration.project
 
-    protected abstract fun processSuspiciousExpression(expression: KtExpression)
+    protected abstract fun processPossibleReceiverExpression(expression: KtExpression)
 
     protected abstract fun extractReference(element: PsiElement): PsiReference?
 
@@ -204,8 +204,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                     receiverType,
                     searchScope,
                     project,
-                    suspiciousExpressionHandler = { expression -> processSuspiciousExpression(expression) },
-                    suspiciousScopeHandler = { searchScope -> doPlainSearch(searchScope) }
+                    possibleMatchHandler = { expression -> processPossibleReceiverExpression(expression) },
+                    possibleMatchesInScopeHandler = { searchScope -> doPlainSearch(searchScope) }
             ).run()
         }
         finally {
