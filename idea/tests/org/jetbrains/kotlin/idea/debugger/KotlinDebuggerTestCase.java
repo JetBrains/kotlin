@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.compiler.impl.CompilerUtil;
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
+import com.intellij.execution.ExecutionTestCase;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -50,10 +51,13 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +66,13 @@ import java.util.List;
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     private static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
     private static boolean IS_TINY_APP_COMPILED = false;
+
+    // Delete LOCAL_CACHE_DIR to invalidate caches
+    private static final boolean LOCAL_CACHE_REUSE = true;
+
+    private static final File LOCAL_CACHE_DIR = new File("out/debuggerTinyApp");
+    private static final File LOCAL_CACHE_JAR_DIR = new File(LOCAL_CACHE_DIR, "jar");
+    private static final File LOCAL_CACHE_APP_DIR = new File(LOCAL_CACHE_DIR, "app");
 
     private static File CUSTOM_LIBRARY_JAR;
     private static final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
@@ -80,13 +91,46 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         return TINY_APP;
     }
 
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Override
     protected void setUp() throws Exception {
+        boolean localCacheRebuild = !LOCAL_CACHE_DIR.exists();
+
+        if (LOCAL_CACHE_REUSE) {
+            overrideTempOutputDirectory();
+            CUSTOM_LIBRARY_JAR = new File(LOCAL_CACHE_DIR, "debuggerCustomLibrary.jar");
+            IS_TINY_APP_COMPILED = !localCacheRebuild;
+        }
+
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         if (getTestName(true).startsWith("dex")) {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
+    }
+
+    private static void overrideTempOutputDirectory() {
+        try {
+            Field ourOutputRootField = ExecutionTestCase.class.getDeclaredField("ourOutputRoot");
+            ourOutputRootField.setAccessible(true);
+
+            if (!LOCAL_CACHE_DIR.exists()) {
+                boolean result =
+                        LOCAL_CACHE_DIR.mkdir() &&
+                        LOCAL_CACHE_JAR_DIR.mkdir() &&
+                        LOCAL_CACHE_APP_DIR.mkdir();
+
+                Assert.assertTrue("Failure on local cache directories creation", result);
+            }
+
+            ourOutputRootField.set(null, LOCAL_CACHE_APP_DIR);
+        }
+        catch (NoSuchFieldException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+        catch (IllegalAccessException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     private static void configureLibrary(@NotNull ModifiableRootModel model, @NotNull String libraryName, @NotNull File classes, @NotNull File sources) {
@@ -130,8 +174,16 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
-            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false,
-                                                                     false);
+            File jarDir;
+            try {
+                jarDir = LOCAL_CACHE_REUSE ? LOCAL_CACHE_DIR : KotlinTestUtils.tmpDir("debuggerCustomLibrary");
+            }
+            catch (IOException e) {
+                throw ExceptionUtilsKt.rethrow(e);
+            }
+
+            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(
+                            CUSTOM_LIBRARY_SOURCES.getPath(), jarDir, "debuggerCustomLibrary", false, false);
 
             String sourcesDir = modulePath + File.separator + "src";
 
