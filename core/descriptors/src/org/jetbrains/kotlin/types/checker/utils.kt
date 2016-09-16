@@ -100,3 +100,5 @@ private fun TypeConstructor.debugInfo() = buildString {
         declarationDescriptor = declarationDescriptor.containingDeclaration
     }
 }
+
+interface NewTypeVariableConstructor
