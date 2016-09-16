@@ -1,16 +1,13 @@
-CXX = g++
 CXXFLAGS = -std=c++11 -g2 -Wall -Werror
+CC=$(CXX) #change linker to c++
 
 all: placer
 
 run: placer
 	./placer
-
 clean:
-	rm -f *.o placer
+	$(RM) *.o placer
 
-placer: placer.o
-	$(CXX)  $(CXXFLAGS) -o $@ $<
+placer:placer.o
 
-placer.o: placer.cc
-	$(CXX) $(CXXFLAGS) -c $<
+.PHONY: all run clean
