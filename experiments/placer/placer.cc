@@ -4,12 +4,14 @@
 
 #include <cassert>
 
-struct Container {
+class Container {
+ private:
   uint8_t* data_;
   uint8_t* current_;
   int size_;
   int ref_count_;
 
+ public:
   Container(int size)
     : size_(size), ref_count_(1) {
     data_ = reinterpret_cast<uint8_t*>(calloc(size_, 1));
@@ -22,22 +24,26 @@ struct Container {
   }
 
   void* Place(int size) {
+    size += sizeof(Container*);
     if (current_ + size > data_ + size_) {
       return nullptr;
     }
-    void* result = current_;
+    Container** result = reinterpret_cast<Container**>(current_);
+    *result = this;
     current_ += size;
     return result;
   }
 
   void AddRef() {
     if (data_) {
+      //printf("addref %d\n", ref_count_);
       ref_count_++;
     }
   }
 
   void Release() {
     if (data_) {
+      // printf("release %d\n", ref_count_);
       ref_count_--;
     }
   }
@@ -52,43 +58,61 @@ struct Container {
 };
 
 template <class T>
-struct Ref {
-  T* ref_;
-  Container* container_;
+class Ref {
+ private:
+  void* ptr_;
 
-  Ref() : ref_(nullptr), container_(nullptr) {}
-  Ref(const Ref& other) : ref_(nullptr), container_(nullptr) {
+  explicit Ref(void* ptr) : ptr_(ptr) {
+    if (ptr_) {
+      container()->AddRef();
+    }
+  }
+
+ public:
+  Ref() : ptr_(nullptr) {}
+  Ref(const Ref& other) : ptr_(nullptr) {
     Assign(other);
   }
-  Ref(T* ref, Container* container) : ref_(ref), container_(container) {
-    if (container_) {
-      container_->AddRef();
-    }
+  Ref& operator=(const Ref& other) {
+    Assign(other);
+    return *this;
   }
+
   ~Ref() {
-    if (ref_ && container_) {
-      container_->Release();
+    if (ptr_) {
+      container()->Release();
     }
   }
-  
-  static Ref<T> Alloc(Container* container) {
-    return Ref<T>(reinterpret_cast<T*>(container->Place(sizeof(T))), container);
+
+  T* ref() const {
+    if (!ptr_) return nullptr;
+    return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(ptr_) + sizeof(Container*));
+  }
+
+  Container* container() {
+    return *reinterpret_cast<Container**>(ptr_);
   }
 
   void Assign(const Ref<T>& other) {
-    if (ref_) {
-      container_->Release();
+    // TODO: optimize for an important case where containers matches.
+    if (ptr_) {
+      container()->Release();
     }
-    container_ = other.container_;
-    container_->AddRef();
-    ref_ = other.ref_;
+    ptr_ = other.ptr_;
+    if (ptr_) {
+      container()->AddRef();
+    }
   }
 
-   T* operator->() const {
-     return ref_;
-   }
-  
-  bool null() const { return ref_ == nullptr; } 
+  T* operator->() const {
+    return ref();
+  }
+
+  bool null() const { return ptr_ == nullptr; }
+
+  static Ref<T> Alloc(Container* container) {
+    return Ref<T>(container->Place(sizeof(T)));
+  }
 };
 
 struct List {
@@ -99,24 +123,25 @@ struct List {
 void test_placer() {
   printf("Start placement\n");
   Container heap(1024);
-  
-  Ref<List> head = Ref<List>::Alloc(&heap);
-  head->data_ = 1;
-  Ref<List> cur = head;
-  for (int i = 0; i < 10; ++i) {
-    cur->next_ = Ref<List>::Alloc(&heap);
-    cur = cur->next_;
-    cur->data_ = i + 2;
+  {
+    Ref<List> head = Ref<List>::Alloc(&heap);
+    head->data_ = 1;
+    Ref<List> cur = head;
+    for (int i = 0; i < 10; ++i) {
+      cur->next_ = Ref<List>::Alloc(&heap);
+      cur = cur->next_;
+      cur->data_ = i + 2;
+    }
+    cur = head;
+    while (!cur.null()) {
+      printf("next is %d\n", cur->data_);
+      cur = cur->next_;
+    }
   }
-  cur = head;
-  while (!cur.null()) {
-    printf("next is %d\n", cur->data_);
-    cur = cur->next_;
-  }
-
   heap.Dispose();
 }
 
 int main() {
   test_placer();
+  return 0;
 }
