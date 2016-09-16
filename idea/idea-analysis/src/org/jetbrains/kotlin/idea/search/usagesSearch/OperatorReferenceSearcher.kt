@@ -58,10 +58,19 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 ) {
     private val project = targetDeclaration.project
 
+    /**
+     * Invoked for all expressions that may have type matching receiver type of our operator
+     */
     protected abstract fun processPossibleReceiverExpression(expression: KtExpression)
 
+    /**
+     * Extract reference that may resolve to our operator (no actual resolve to be performed)
+     */
     protected abstract fun extractReference(element: PsiElement): PsiReference?
 
+    /**
+     * Check if reference may potentially resolve to our operator (no actual resolve to be performed)
+     */
     protected abstract fun isReferenceToCheck(ref: PsiReference): Boolean
 
     protected fun processReferenceElement(element: TReferenceElement): Boolean {
