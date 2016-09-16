@@ -116,7 +116,7 @@ class StatementGenerator(
                                                              IrStatementOrigin.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
                                                 componentVariable, irComponentCall)
-            irBlock.addStatement(irComponentVar)
+            irBlock.statements.add(irComponentVar)
         }
     }
 
@@ -128,7 +128,7 @@ class StatementGenerator(
         val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType)
 
         expression.statements.forEach {
-            irBlock.addStatement(it.genStmt())
+            irBlock.statements.add(it.genStmt())
         }
 
         return irBlock

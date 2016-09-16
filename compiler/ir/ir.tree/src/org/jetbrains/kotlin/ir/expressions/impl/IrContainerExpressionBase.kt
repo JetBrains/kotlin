@@ -28,18 +28,6 @@ abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type:
         IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
-    override fun addStatement(statement: IrStatement) {
-        statements.add(statement)
-    }
-
-    override fun addAll(statements: Collection<IrStatement>) {
-        this.statements.addAll(statements)
-    }
-
-    override fun putStatement(index: Int, statement: IrStatement) {
-        statements[index] = statement
-    }
-
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }

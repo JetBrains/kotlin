@@ -173,11 +173,11 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
             IrGetVariableImpl(irDelegate.startOffset, irDelegate.endOffset, delegatedValueParameter)
         }
         if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
-            irBlockBody.addStatement(irCall)
+            irBlockBody.statements.add(irCall)
         }
         else {
             val irReturn = IrReturnImpl(irDelegate.startOffset, irDelegate.endOffset, context.builtIns.nothingType, delegated, irCall)
-            irBlockBody.addStatement(irReturn)
+            irBlockBody.statements.add(irReturn)
         }
         return irBlockBody
     }

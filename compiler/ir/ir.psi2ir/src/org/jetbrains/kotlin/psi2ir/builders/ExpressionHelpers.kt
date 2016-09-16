@@ -37,8 +37,8 @@ inline fun IrBuilderWithScope.irLet(
     val irTemporary = scope.createTemporaryVariable(value, nameHint)
     val irResult = body(irTemporary.descriptor)
     val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-    irBlock.addStatement(irTemporary)
-    irBlock.addStatement(irResult)
+    irBlock.statements.add(irTemporary)
+    irBlock.statements.add(irResult)
     return irBlock
 }
 

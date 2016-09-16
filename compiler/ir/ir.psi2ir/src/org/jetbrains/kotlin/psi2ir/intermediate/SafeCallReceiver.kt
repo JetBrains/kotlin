@@ -53,14 +53,14 @@ class SafeCallReceiver(
 
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL)
 
-        irBlock.addStatement(irTmp)
+        irBlock.statements.add(irTmp)
 
         val irIfThenElse = IrIfThenElseImpl(startOffset, endOffset, resultType,
                                             generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
                                             generator.context.constNull(startOffset, endOffset),
                                             irResult,
                                             IrStatementOrigin.SAFE_CALL)
-        irBlock.addStatement(irIfThenElse)
+        irBlock.statements.add(irIfThenElse)
 
         return irBlock
     }

@@ -27,7 +27,7 @@ class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: Ir
         IrContainerExpressionBase(startOffset, endOffset, type, origin), IrBlock {
     constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
             this(startOffset, endOffset, type, origin) {
-        addAll(statements)
+        this.statements.addAll(statements)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -45,14 +45,14 @@ class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: Ir
 }
 
 fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
-    if (statement != null) addStatement(statement)
+    if (statement != null) statements.add(statement)
 }
 
 fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     if (statement is IrBlock) {
-        addAll(statement.statements)
+        statements.addAll(statement.statements)
     }
     else {
-        addStatement(statement)
+        statements.add(statement)
     }
 }

@@ -30,11 +30,7 @@ interface IrExpressionBody : IrBody {
 }
 
 interface IrStatementContainer {
-    val statements: List<IrStatement>
-
-    fun addStatement(statement: IrStatement)
-    fun addAll(statements: Collection<IrStatement>)
-    fun putStatement(index: Int, statement: IrStatement)
+    val statements: MutableList<IrStatement>
 }
 
 interface IrBlockBody : IrBody, IrStatementContainer

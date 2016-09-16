@@ -162,7 +162,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             irCall.putArgument(index, irArgumentValues[valueParameter]?.load())
         }
 
-        irBlock.addStatement(irCall)
+        irBlock.statements.add(irCall)
 
         return irBlock
     }

@@ -31,7 +31,7 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
         val irBlock = IrBlockImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType, IrStatementOrigin.OBJECT_LITERAL)
 
         val irClass = DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktObjectLiteral.objectDeclaration)
-        irBlock.addStatement(irClass)
+        irBlock.statements.add(irClass)
 
         val objectConstructor = irClass.descriptor.unsubstitutedPrimaryConstructor ?:
                                 throw AssertionError("Object literal should have a primary constructor: ${irClass.descriptor}")
@@ -45,7 +45,7 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
             "Object literal constructor should have no value parameters: $objectConstructor"
         }
 
-        irBlock.addStatement(IrCallImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
+        irBlock.statements.add(IrCallImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
                                         objectConstructor, IrStatementOrigin.OBJECT_LITERAL))
 
         return irBlock

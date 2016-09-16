@@ -110,13 +110,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         else {
             if (irWhen.branchesCount == 0) {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
-                irBlock.addStatement(irSubject)
+                irBlock.statements.add(irSubject)
                 return irBlock
             }
             else {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, IrStatementOrigin.WHEN)
-                irBlock.addStatement(irSubject)
-                irBlock.addStatement(irWhen)
+                irBlock.statements.add(irSubject)
+                irBlock.statements.add(irWhen)
                 return irBlock
             }
         }

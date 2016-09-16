@@ -119,12 +119,12 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrStatementOrigin.FOR_LOOP_ITERATOR)
         val irIterator = scope.createTemporaryVariable(irIteratorCall, "iterator")
         val iteratorValue = VariableLValue(irIterator)
-        irForBlock.addStatement(irIterator)
+        irForBlock.statements.add(irIterator)
 
         val irInnerWhile = IrWhileLoopImpl(ktFor.startOffset, ktFor.endOffset, context.builtIns.unitType, IrStatementOrigin.FOR_LOOP_INNER_WHILE)
         irInnerWhile.label = getLoopLabel(ktFor)
         statementGenerator.bodyGenerator.putLoop(ktFor, irInnerWhile)
-        irForBlock.addStatement(irInnerWhile)
+        irForBlock.statements.add(irInnerWhile)
 
         val hasNextCall = statementGenerator.pregenerateCall(hasNextResolvedCall)
         hasNextCall.setExplicitReceiverValue(iteratorValue)
@@ -145,14 +145,14 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         else {
             scope.createTemporaryVariable(irNextCall, "loop_parameter")
         }
-        irInnerBody.addStatement(irLoopParameter)
+        irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringParameter != null) {
             statementGenerator.declareComponentVariablesInBlock(ktLoopDestructuringParameter, irInnerBody, VariableLValue(irLoopParameter))
         }
 
         if (ktForBody != null) {
-            irInnerBody.addStatement(statementGenerator.generateExpression(ktForBody))
+            irInnerBody.statements.add(statementGenerator.generateExpression(ktForBody))
         }
 
         return irForBlock

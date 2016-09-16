@@ -38,9 +38,9 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
 
         val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, lambdaDescriptor)
         irFun.body = BodyGenerator(lambdaDescriptor, statementGenerator.context).generateLambdaBody(ktFun)
-        irBlock.addStatement(irFun)
+        irBlock.statements.add(irFun)
 
-        irBlock.addStatement(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
+        irBlock.statements.add(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
                                                      lambdaDescriptor, IrStatementOrigin.LAMBDA))
 
         return irBlock
@@ -56,9 +56,9 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
 
                 val irFun = generateFunctionDeclaration(ktFun)
-                irBlock.addStatement(irFun)
+                irBlock.statements.add(irFun)
 
-                irBlock.addStatement(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
+                irBlock.statements.add(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
                                                              irFun.descriptor, IrStatementOrigin.ANONYMOUS_FUNCTION))
 
                 irBlock

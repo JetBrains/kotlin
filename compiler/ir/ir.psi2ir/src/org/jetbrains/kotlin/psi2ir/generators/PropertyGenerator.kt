@@ -148,8 +148,8 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
 
-        irBody.addStatement(IrReturnImpl(ktProperty.startOffset, ktProperty.endOffset, context.builtIns.nothingType, getter,
-                                         IrGetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver)))
+        irBody.statements.add(IrReturnImpl(ktProperty.startOffset, ktProperty.endOffset, context.builtIns.nothingType, getter,
+                                           IrGetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver)))
         return irBody
     }
 
@@ -161,8 +161,8 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
 
         val setterParameter = setter.valueParameters.single()
-        irBody.addStatement(IrSetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver,
-                                           IrGetVariableImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)))
+        irBody.statements.add(IrSetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver,
+                                             IrGetVariableImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)))
         return irBody
     }
 

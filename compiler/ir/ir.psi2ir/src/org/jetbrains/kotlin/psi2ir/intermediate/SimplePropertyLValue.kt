@@ -82,7 +82,7 @@ class SimplePropertyLValue(
                 val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, origin)
                 irBlock.addIfNotNull(dispatchReceiverTmp)
                 irBlock.addIfNotNull(extensionReceiverTmp)
-                irBlock.addStatement(irResultExpression)
+                irBlock.statements.add(irResultExpression)
                 irBlock
             }
 

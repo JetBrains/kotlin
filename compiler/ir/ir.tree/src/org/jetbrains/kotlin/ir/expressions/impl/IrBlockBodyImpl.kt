@@ -25,18 +25,6 @@ import java.util.*
 class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrBlockBody {
     override val statements: MutableList<IrStatement> = ArrayList()
 
-    override fun addStatement(statement: IrStatement) {
-        statements.add(statement)
-    }
-
-    override fun addAll(statements: Collection<IrStatement>) {
-        this.statements.addAll(statements)
-    }
-
-    override fun putStatement(index: Int, statement: IrStatement) {
-        statements[index] = statement
-    }
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitBlockBody(this, data)
     }

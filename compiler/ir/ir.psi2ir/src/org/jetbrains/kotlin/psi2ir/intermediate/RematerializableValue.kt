@@ -31,6 +31,6 @@ class RematerializableValue(val irExpression: IrExpressionWithCopy) : Intermedia
 
 fun Scope.createTemporaryVariableInBlock(irExpression: IrExpression, block: IrContainerExpressionBase, nameHint: String? = null): IntermediateValue {
     val temporaryVariable = createTemporaryVariable(irExpression, nameHint)
-    block.addStatement(temporaryVariable)
+    block.statements.add(temporaryVariable)
     return VariableLValue(temporaryVariable)
 }

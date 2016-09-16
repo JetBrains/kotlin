@@ -74,7 +74,7 @@ open class IrBlockBodyBuilder(
     }
 
     override fun addStatement(irStatement: IrStatement) {
-        irBlockBody.addStatement(irStatement)
+        irBlockBody.statements.add(irStatement)
     }
 
     override fun doBuild(): IrBlockBody {
@@ -104,7 +104,7 @@ class IrBlockBuilder(
                          (statements.lastOrNull() as? IrExpression)?.type ?:
                          context.builtIns.unitType
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
-        irBlock.addAll(statements)
+        irBlock.statements.addAll(statements)
         return irBlock
     }
 }

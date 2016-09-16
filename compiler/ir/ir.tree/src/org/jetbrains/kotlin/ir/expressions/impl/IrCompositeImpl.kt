@@ -27,7 +27,7 @@ class IrCompositeImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin
         IrContainerExpressionBase(startOffset, endOffset, type, origin), IrComposite {
     constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
             this(startOffset, endOffset, type, origin) {
-        addAll(statements)
+        this.statements.addAll(statements)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

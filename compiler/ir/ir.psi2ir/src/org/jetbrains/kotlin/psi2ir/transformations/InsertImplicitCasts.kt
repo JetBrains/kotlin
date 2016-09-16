@@ -65,7 +65,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformer<No
 
         val lastStatement = expression.statements.last()
         if (lastStatement is IrExpression) {
-            expression.putStatement(expression.statements.lastIndex, lastStatement.cast(type))
+            expression.statements[expression.statements.lastIndex] = lastStatement.cast(type)
         }
 
         return expression
