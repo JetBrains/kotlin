@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+import java.lang.UnsupportedOperationException
 
 fun foo(): Nothing {
     throw UnsupportedOperationException()

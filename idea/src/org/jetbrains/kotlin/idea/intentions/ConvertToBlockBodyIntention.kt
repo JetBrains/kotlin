@@ -61,11 +61,11 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
 
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
+                val factory = KtPsiFactory(declaration)
+                if (bodyType != null && bodyType.isUnit() && body is KtNameReferenceExpression) return factory.createEmptyBody()
                 val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.resultingWhens().isNotEmpty()
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
-
-                val factory = KtPsiFactory(declaration)
                 val statement = if (needReturn || unitWhenAsResult) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }

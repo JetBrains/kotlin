@@ -64,7 +64,7 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
     private fun applyTo(declaration: KtDeclarationWithBody, deleteTypeHandler: ((KtCallableDeclaration) -> Unit)?) {
         val value = calcValue(declaration)!!
 
-        if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction) {
+        if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && value !is KtNameReferenceExpression) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
                 declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
@@ -91,8 +91,9 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
         if (declaration is KtFunctionLiteral) return null
         val body = declaration.bodyExpression
         if (!declaration.hasBlockBody() || body !is KtBlockExpression) return null
-
-        val statement = body.statements.singleOrNull() ?: return null
+        val bodyStatements = body.statements
+        if (bodyStatements.isEmpty()) return KtPsiFactory(declaration).createExpression("Unit")
+        val statement = bodyStatements.singleOrNull() ?: return null
         when(statement) {
             is KtReturnExpression -> {
                 return statement.returnedExpression
