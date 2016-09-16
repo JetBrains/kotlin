@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include <cassert>
+#include <cstddef>
 
 class Container {
  private:
@@ -57,30 +58,27 @@ class Container {
   }
 };
 
+// Raw reference to data, meaning T*, only for cleaness of intentions.
 template <class T>
-class Ref {
+class RawRef {
+ private:
+  T* ptr_;
+ public:
+  RawRef(T* ptr) : ptr_(ptr) {}
+  const T& get() const { return *ptr_; }
+  void set(const T& value) { *ptr_ = value; }
+};
+
+// Object reference, adds reference counting in container. In real implementation
+// we may want to differentiate between
+template <class T>
+class ObjRef {
  private:
   void* ptr_;
 
-  explicit Ref(void* ptr) : ptr_(ptr) {
+  explicit ObjRef(void* ptr) : ptr_(ptr) {
     if (ptr_) {
       container()->AddRef();
-    }
-  }
-
- public:
-  Ref() : ptr_(nullptr) {}
-  Ref(const Ref& other) : ptr_(nullptr) {
-    Assign(other);
-  }
-  Ref& operator=(const Ref& other) {
-    Assign(other);
-    return *this;
-  }
-
-  ~Ref() {
-    if (ptr_) {
-      container()->Release();
     }
   }
 
@@ -89,12 +87,28 @@ class Ref {
     return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(ptr_) + sizeof(Container*));
   }
 
+ public:
+  ObjRef() : ptr_(nullptr) {}
+  ObjRef(const ObjRef& other) : ptr_(nullptr) {
+    Assign(other);
+  }
+  ObjRef& operator=(const ObjRef& other) {
+    Assign(other);
+    return *this;
+  }
+
+  ~ObjRef() {
+    if (ptr_) {
+      container()->Release();
+    }
+  }
+
   Container* container() {
     return *reinterpret_cast<Container**>(ptr_);
   }
 
-  void Assign(const Ref<T>& other) {
-    // TODO: optimize for an important case where containers matches.
+  void Assign(const ObjRef<T>& other) {
+    // TODO: optimize for an important case where containers match.
     if (ptr_) {
       container()->Release();
     }
@@ -104,38 +118,42 @@ class Ref {
     }
   }
 
-  T* operator->() const {
-    return ref();
+  template<typename M, int offset>
+  RawRef<M> at() const {
+    return RawRef<M>(
+      reinterpret_cast<M*>(reinterpret_cast<uint8_t*>(ref()) + offset));
   }
 
   bool null() const { return ptr_ == nullptr; }
 
-  static Ref<T> Alloc(Container* container) {
-    return Ref<T>(container->Place(sizeof(T)));
+  static ObjRef<T> Alloc(Container* container) {
+    return ObjRef<T>(container->Place(sizeof(T)));
   }
 };
 
 struct List {
-  Ref<List> next_;
+  ObjRef<List> next_;
   int data_;
 };
 
 void test_placer() {
   printf("Start placement\n");
   Container heap(1024);
+  constexpr int next_offset = offsetof(struct List, next_);
+  constexpr int data_offset = offsetof(struct List, data_);
   {
-    Ref<List> head = Ref<List>::Alloc(&heap);
-    head->data_ = 1;
-    Ref<List> cur = head;
+    ObjRef<List> head = ObjRef<List>::Alloc(&heap);
+    head.at<int, data_offset>().set(1);
+    ObjRef<List> cur = head;
     for (int i = 0; i < 10; ++i) {
-      cur->next_ = Ref<List>::Alloc(&heap);
-      cur = cur->next_;
-      cur->data_ = i + 2;
+      cur.at<ObjRef<List>, next_offset>().set(ObjRef<List>::Alloc(&heap));
+      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.at<int, data_offset>().set(i + 2);
     }
     cur = head;
     while (!cur.null()) {
-      printf("next is %d\n", cur->data_);
-      cur = cur->next_;
+      printf("next is %d\n", cur.at<int, data_offset>().get());
+      cur = cur.at<ObjRef<List>, next_offset>().get();
     }
   }
   heap.Dispose();
