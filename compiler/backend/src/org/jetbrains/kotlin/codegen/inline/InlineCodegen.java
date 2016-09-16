@@ -571,6 +571,9 @@ public class InlineCodegen extends CallGenerator {
                 );
             }
         }
+        else if (expression instanceof KtFunctionLiteral) {
+            strategy = new ClosureGenerationStrategy(state, (KtDeclarationWithBody) expression);
+        }
         else {
             strategy = new FunctionGenerationStrategy.FunctionDefault(state, (KtDeclarationWithBody) expression);
         }

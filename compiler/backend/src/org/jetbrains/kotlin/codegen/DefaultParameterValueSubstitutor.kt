@@ -139,7 +139,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         }
 
         if (!state.classBuilderMode.generateBodies) {
-            FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, Label(), Label(), remainingParameters, isStatic)
+            FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, Label(), Label(), remainingParameters, isStatic, typeMapper)
             mv.visitEnd()
             return
         }
@@ -215,7 +215,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         mv.visitLabel(methodEnd)
 
         FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, methodBegin, methodEnd,
-                                                            remainingParameters, isStatic)
+                                                            remainingParameters, isStatic, typeMapper)
 
         FunctionCodegen.endVisit(mv, null, methodElement)
     }

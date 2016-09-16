@@ -1589,7 +1589,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
-                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, declaration), samType, null, null
+                declaration, descriptor, new ClosureGenerationStrategy(state, declaration), samType, null, null
         );
     }
 
@@ -3872,12 +3872,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.store(tempVarIndex, initializerAsmType);
         StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
-        for (KtDestructuringDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
-            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
-            assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-            Call call = makeFakeCall(initializerAsReceiver);
-            initializeLocalVariable(variableDeclaration, invokeFunction(call, resolvedCall, local));
-        }
+        initializeDestructuringDeclarationVariables(multiDeclaration, initializerAsReceiver, local);
 
         if (initializerAsmType.getSort() == Type.OBJECT || initializerAsmType.getSort() == Type.ARRAY) {
             v.aconst(null);
@@ -3886,6 +3881,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         myFrameMap.leaveTemp(initializerAsmType);
 
         return StackValue.none();
+    }
+
+    public void initializeDestructuringDeclarationVariables(
+            @NotNull KtDestructuringDeclaration destructuringDeclaration,
+            @NotNull ReceiverValue receiver,
+            @NotNull StackValue receiverStackValue
+    ) {
+        for (KtDestructuringDeclarationEntry variableDeclaration : destructuringDeclaration.getEntries()) {
+            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
+            assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
+            Call call = makeFakeCall(receiver);
+            initializeLocalVariable(variableDeclaration, invokeFunction(call, resolvedCall, receiverStackValue));
+        }
     }
 
     @NotNull

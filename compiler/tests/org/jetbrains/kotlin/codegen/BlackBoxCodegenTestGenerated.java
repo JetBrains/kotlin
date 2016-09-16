@@ -5657,6 +5657,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DestructuringDeclInLambdaParam extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInDestructuringDeclInLambdaParam() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/destructuringDeclInLambdaParam"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("extensionComponents.kt")
+        public void testExtensionComponents() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/extensionComponents.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/inline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherParameters.kt")
+        public void testOtherParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/otherParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stdlibUsages.kt")
+        public void testStdlibUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/stdlibUsages.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
