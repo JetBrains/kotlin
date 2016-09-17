@@ -719,6 +719,37 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
+    templates add f("onEach(action: (T) -> Unit)") {
+        inline(true)
+
+        doc { f -> "Performs the given [action] on each ${f.element} and returns the receiver afterwards." }
+        returns("SELF")
+        body {
+            """
+            return apply { for (element in this) action(element) }
+            """
+        }
+        include(Maps, CharSequences)
+
+        exclude(Iterables)
+        typeParam(Generic) { "I: Iterable<E>" }
+        typeParam(Generic) { "E" }
+        customReceiver(Generic) { "I" }
+        returns(Generic) { "I" }
+
+        doc(Sequences) { f -> "Applies the supplied [action] on each ${f.element} of the Sequence as they pass through it." }
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
+            """
+            return map {
+                action(it)
+                it
+            }
+            """
+        }
+    }
+
     templates add f("forEach(action: (T) -> Unit)") {
         inline(true)
 
