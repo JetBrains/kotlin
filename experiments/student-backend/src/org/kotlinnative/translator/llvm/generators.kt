@@ -1,9 +1,9 @@
 package org.kotlinnative.translator.llvm
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.student.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.kotlinnative.translator.TranslationState

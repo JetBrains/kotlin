@@ -1,8 +1,8 @@
 package org.kotlinnative.translator.codegens
 
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.student.descriptorUtils.nameIfStandardType
 import org.kotlinnative.translator.TranslationState
 import org.kotlinnative.translator.VariableManager
 import org.kotlinnative.translator.llvm.LLVMBuilder
