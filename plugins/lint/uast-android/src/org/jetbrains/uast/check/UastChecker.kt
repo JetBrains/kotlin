@@ -18,7 +18,6 @@ package org.jetbrains.uast.check
 import com.android.tools.klint.detector.api.Issue
 import com.android.tools.klint.detector.api.JavaContext
 import com.android.tools.klint.detector.api.Location
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -84,9 +83,9 @@ object UastChecker {
 
         val visitor = object : AbstractUastVisitor() {
             override fun visitCallExpression(node: UCallExpression): Boolean {
+                ProgressManager.checkCanceled()
                 if (applicableFunctionNames.isNotEmpty()) {
                     if (node.kind == FUNCTION_CALL && node.functionName in applicableFunctionNames) {
-                        ProgressManager.checkCanceled()
                         scanner.visitCall(context, node)
                     }
                 }
@@ -95,7 +94,6 @@ object UastChecker {
                     if (node.kind == CONSTRUCTOR_CALL) {
                         node.resolve(context)?.let { constructor ->
                             if (constructor.getContainingClass()?.fqName in applicableConstructorTypes) {
-                                ProgressManager.checkCanceled()
                                 scanner.visitConstructor(context, node, constructor)
                             }
                         }
@@ -106,9 +104,9 @@ object UastChecker {
             }
 
             override fun visitClass(node: UClass): Boolean {
+                ProgressManager.checkCanceled()
                 if (applicableSuperClasses.isNotEmpty()) {
                     if (applicableSuperClasses.any { node.isSubclassOf(it) }) {
-                        ProgressManager.checkCanceled()
                         scanner.visitClass(context, node)
                     }
                 }
@@ -117,9 +115,8 @@ object UastChecker {
             }
 
             override fun visitQualifiedExpression(node: UQualifiedExpression): Boolean {
+                ProgressManager.checkCanceled()
                 if (appliesToResourcesRefs && node.receiver is UQualifiedExpression) {
-                    ProgressManager.checkCanceled()
-
                     val parentQualifiedExpr = node.receiver as UQualifiedExpression
                     val resourceName = node.selector
                     val resourceType = parentQualifiedExpr.selector

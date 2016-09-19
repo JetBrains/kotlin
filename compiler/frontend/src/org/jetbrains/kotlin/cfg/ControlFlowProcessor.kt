@@ -642,9 +642,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val hasCatches = !catchClauses.isEmpty()
 
             var onException: Label? = null
+            var beforeCatchFromTryMagic: Label? = null
             if (hasCatches) {
                 onException = builder.createUnboundLabel("onException")
                 builder.nondeterministicJump(onException, expression, null)
+                beforeCatchFromTryMagic = builder.createUnboundLabel("beforeCatchFromTryMagic")
             }
 
             var onExceptionToFinallyBlock: Label? = null
@@ -654,15 +656,17 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
 
             val tryBlock = expression.tryBlock
-            catchFinallyStack.push(CatchFinallyLabels(onException, onExceptionToFinallyBlock, expression))
+            catchFinallyStack.push(CatchFinallyLabels(beforeCatchFromTryMagic, onExceptionToFinallyBlock, expression))
             generateInstructions(tryBlock)
             generateJumpsToCatchAndFinally()
             catchFinallyStack.pop()
 
-            if (hasCatches && onException != null) {
+            if (hasCatches && onException != null && beforeCatchFromTryMagic != null) {
                 val afterCatches = builder.createUnboundLabel("afterCatches")
                 builder.jump(afterCatches, expression)
 
+                builder.bindLabel(beforeCatchFromTryMagic)
+                builder.magic(expression, null, emptyList(), MagicKind.CATCH_FROM_TRY)
                 builder.bindLabel(onException)
                 val catchLabels = Lists.newLinkedList<Label>()
                 val catchClausesSize = catchClauses.size
@@ -687,6 +691,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                         generateInitializer(catchParameter, createSyntheticValue(catchParameter, MagicKind.FAKE_INITIALIZER))
                     }
                     generateInstructions(catchClause.catchBody)
+                    builder.magic(expression, null, emptyList(), MagicKind.OUT_OF_CATCH)
                     builder.jump(afterCatches, expression)
                     builder.exitBlockScope(catchClause)
                 }

@@ -7,11 +7,13 @@ tailrec fun foo() {
     }
 }
 ---------------------
-                                                    <v2>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v2>                            
+                                                    <v2>: *                NEW: magic[CATCH_FROM_TRY](try { return foo() } catch (e: Throwable) { }) -> <v2>
+                                                    <v3>: {<: Throwable}   NEW: magic[FAKE_INITIALIZER](e: Throwable) -> <v3>
+                                                    <v4>: *                NEW: magic[OUT_OF_CATCH](try { return foo() } catch (e: Throwable) { }) -> <v4>
 foo()                                               <v0>: Unit             NEW: call(foo(), foo) -> <v0>
-return foo()                                        !<v1>: *                                                                                             
-{ return foo() }                                    !<v1>: *               COPY                                                                          
-{ }                                                 !<v3>: *                                                                                             
-try { return foo() } catch (e: Throwable) { }       <v4>: *                NEW: merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>
-{ try { return foo() } catch (e: Throwable) { } }   <v4>: *                COPY                                                                          
+return foo()                                        !<v1>: *
+{ return foo() }                                    !<v1>: *               COPY
+{ }                                                 !<v5>: *
+try { return foo() } catch (e: Throwable) { }       <v6>: *                NEW: merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v5>) -> <v6>
+{ try { return foo() } catch (e: Throwable) { } }   <v6>: *                COPY
 =====================

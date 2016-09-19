@@ -63,6 +63,8 @@ enum class InitState(private val s: String) {
     INITIALIZED("I"),
     // Fake initializer in else branch of "exhaustive when without else", see MagicKind.EXHAUSTIVE_WHEN_ELSE
     INITIALIZED_EXHAUSTIVELY("IE"),
+    // Temporary for 1.0.4: initialized in try during catch block
+    INITIALIZED_IN_TRY("IT"),
     // Initialized in some branches, not initialized in other branches
     UNKNOWN("I?"),
     // Definitely not initialized
@@ -74,6 +76,12 @@ enum class InitState(private val s: String) {
         // else X merge Y = I?
         if (this == other || other == INITIALIZED_EXHAUSTIVELY) return this
         if (this == INITIALIZED_EXHAUSTIVELY) return other
+        if (this == INITIALIZED_IN_TRY) {
+            return if (other == NOT_INITIALIZED) this else other
+        }
+        if (other == INITIALIZED_IN_TRY) {
+            return if (this == NOT_INITIALIZED) other else this
+        }
         return UNKNOWN
     }
 
@@ -101,6 +109,8 @@ class VariableControlFlowState private constructor(val initState: InitState, val
         private val VS_IF = VariableControlFlowState(InitState.INITIALIZED, false)
         private val VS_ET = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, true)
         private val VS_EF = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, false)
+        private val VS_TT = VariableControlFlowState(InitState.INITIALIZED_IN_TRY, true)
+        private val VS_TF = VariableControlFlowState(InitState.INITIALIZED_IN_TRY, false)
         private val VS_UT = VariableControlFlowState(InitState.UNKNOWN, true)
         private val VS_UF = VariableControlFlowState(InitState.UNKNOWN, false)
         private val VS_NT = VariableControlFlowState(InitState.NOT_INITIALIZED, true)
@@ -110,12 +120,17 @@ class VariableControlFlowState private constructor(val initState: InitState, val
             when (initState) {
                 InitState.INITIALIZED -> if (isDeclared) VS_IT else VS_IF
                 InitState.INITIALIZED_EXHAUSTIVELY -> if (isDeclared) VS_ET else VS_EF
+                InitState.INITIALIZED_IN_TRY -> if (isDeclared) VS_TT else VS_TF
                 InitState.UNKNOWN -> if (isDeclared) VS_UT else VS_UF
                 InitState.NOT_INITIALIZED -> if (isDeclared) VS_NT else VS_NF
             }
 
         fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState {
             return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
+        }
+
+        fun createInitializedInTry(isDeclared: Boolean): VariableControlFlowState {
+            return create(InitState.INITIALIZED_IN_TRY, isDeclared)
         }
 
         fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState {

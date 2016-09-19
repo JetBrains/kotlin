@@ -13,14 +13,16 @@ fun foo() {
     "after"
 }
 ---------------------
-                                                                                              <v2>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                    
-"before"                                                                                      <v0>: *                NEW: r("before") -> <v0>                                                                              
-foo()                                                                                         <v1>: *                NEW: call(foo(), foo) -> <v1>                                                                         
-{ foo() }                                                                                     <v1>: *                COPY                                                                                                  
-e                                                                                             <v3>: {<: Exception}   NEW: r(e) -> <v3>                                                                                     
-{ val a = e }                                                                                 !<v5>: *                                                                                                                     
-1                                                                                             <v4>: Int              NEW: r(1) -> <v4>                                                                                     
-try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v6>: *                NEW: merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v5>) -> <v6>
-"after"                                                                                       <v7>: *                NEW: r("after") -> <v7>                                                                               
-{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v7>: *                COPY                                                                                                  
+                                                                                              <v2>: *                NEW: magic[CATCH_FROM_TRY](try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }) -> <v2>
+                                                                                              <v3>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: Exception) -> <v3>
+                                                                                              <v5>: *                NEW: magic[OUT_OF_CATCH](try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }) -> <v5>
+"before"                                                                                      <v0>: *                NEW: r("before") -> <v0>
+foo()                                                                                         <v1>: *                NEW: call(foo(), foo) -> <v1>
+{ foo() }                                                                                     <v1>: *                COPY
+e                                                                                             <v4>: {<: Exception}   NEW: r(e) -> <v4>
+{ val a = e }                                                                                 !<v7>: *
+1                                                                                             <v6>: Int              NEW: r(1) -> <v6>
+try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }                        <v8>: *                NEW: merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v7>) -> <v8>
+"after"                                                                                       <v9>: *                NEW: r("after") -> <v9>
+{ "before" try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 } "after" }   <v9>: *                COPY
 =====================
