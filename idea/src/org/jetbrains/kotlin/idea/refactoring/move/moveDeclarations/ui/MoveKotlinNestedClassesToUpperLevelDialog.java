@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
@@ -219,6 +220,10 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             packageNameField.prependItem(packageFqName.asString());
         }
 
+        KotlinRefactoringSettings settings = KotlinRefactoringSettings.getInstance();
+        searchForTextOccurrencesCheckBox.setSelected(settings.MOVE_TO_UPPER_LEVEL_SEARCH_FOR_TEXT);
+        searchInCommentsCheckBox.setSelected(settings.MOVE_TO_UPPER_LEVEL_SEARCH_IN_COMMENTS);
+
         super.init();
     }
 
@@ -356,6 +361,10 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             CommonRefactoringUtil.showErrorMessage(MoveInnerImpl.REFACTORING_NAME, e.getMessage(), HelpID.MOVE_INNER_UPPER, project);
             return;
         }
+
+        KotlinRefactoringSettings settings = KotlinRefactoringSettings.getInstance();
+        settings.MOVE_TO_UPPER_LEVEL_SEARCH_FOR_TEXT = searchForTextOccurrencesCheckBox.isSelected();
+        settings.MOVE_TO_UPPER_LEVEL_SEARCH_IN_COMMENTS = searchInCommentsCheckBox.isSelected();
 
         KotlinMoveTarget moveTarget;
         if (target instanceof PsiDirectory) {

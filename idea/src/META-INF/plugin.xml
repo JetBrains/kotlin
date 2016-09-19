@@ -648,6 +648,9 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
     <editorSmartKeysConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"
+                        serviceImplementation="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"/>
+
     <statementUpDownMover id="jetExpression"
                           implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover"
                           order="before declaration" />
