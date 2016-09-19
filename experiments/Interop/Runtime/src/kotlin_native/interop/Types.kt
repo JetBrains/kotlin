@@ -1,10 +1,23 @@
 package kotlin_native.interop
 
+import java.io.Closeable
+
 // TODO: what about equals/hashCode?
 
 open class NativeRef(val ptr: NativePtr) {
     open class Type<T : NativeRef>(val byPtr: (NativePtr) -> T)
     open class TypeWithSize<T : NativeRef>(val size: Int, byPtr: (NativePtr) -> T) : NativeRef.Type<T>(byPtr)
+
+    final override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other !is NativeRef) return false
+
+        return ptr == other.ptr
+    }
+
+    final override fun hashCode(): Int{
+        return ptr.hashCode()
+    }
 }
 
 fun <T : NativeRef> NativePtr?.asRef(type: NativeRef.Type<T>) = this?.let { type.byPtr(this) }
@@ -138,4 +151,48 @@ class CString private constructor(internal val array: NativeArray<Int8Box>) : Na
         }
         return String(bytes) // TODO: encoding
     }
+
+    fun asCharPtr() = array[0]
+}
+
+class __va_list_tag(ptr: NativePtr) : NativeRef(ptr) // FIXME
+
+interface Placement {
+    fun alloc(size: Int): NativePtr
+}
+
+object heap : Placement {
+    override fun alloc(size: Int) = bridge.malloc(size)
+
+    fun free(ptr: NativePtr) = bridge.free(ptr)
+
+    fun free(ref: NativeRef) = free(ref.ptr)
+}
+
+// TODO: implement optimally
+class Arena : Placement, Closeable {
+
+    private val allocatedChunks = mutableListOf<NativePtr>()
+
+    override fun alloc(size: Int): NativePtr {
+        val res = heap.alloc(size)
+        try {
+            allocatedChunks.add(res)
+            return res
+        } catch (e: Throwable) {
+            heap.free(res)
+            throw e
+        }
+    }
+
+    fun clear() {
+        allocatedChunks.forEach {
+            heap.free(it)
+        }
+
+        allocatedChunks.clear()
+    }
+
+    override fun close() = clear()
+
 }

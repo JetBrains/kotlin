@@ -2,12 +2,12 @@ package kotlin_native.interop
 
 fun <T : NativeRef> malloc(type: NativeRef.TypeWithSize<T>) = type.byPtr(bridge.malloc(type.size))
 
-fun <T : NativeRef, R> malloc(type: NativeRef.TypeWithSize<T>, action: (T) -> R): R {
+inline fun <T : NativeRef, R> malloc(type: NativeRef.TypeWithSize<T>, action: (T) -> R): R {
     val ref = malloc(type)
     try {
         return action(ref)
     } finally {
-        bridge.free(ref.ptr)
+        free(ref)
     }
 }
 
@@ -43,3 +43,7 @@ fun CString.Companion.fromString(str: String?): CString? {
 
     return CString.fromArray(nativeBytes)
 }
+
+fun NativeArray<Int8Box>.asCString() = CString.fromArray(this)
+fun Int8Box.asCString() = CString.fromArray(NativeArray.byRefToFirstElem(this, Int8Box))
+fun String.toCString() = CString.fromString(this)
