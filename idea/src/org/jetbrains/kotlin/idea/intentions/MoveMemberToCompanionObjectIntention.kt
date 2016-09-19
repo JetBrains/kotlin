@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchReques
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -236,6 +237,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         runTemplateForInstanceParam(newDeclaration, nameSuggestions, editor)
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
         val project = element.project
 
@@ -277,33 +280,35 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         }
 
         project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
-            ReferencesSearch.search(element).mapNotNullTo(externalUsages) { ref ->
-                when (ref) {
-                    is PsiReferenceExpression -> JavaUsageInfo(ref)
-                    is KtSimpleNameReference -> {
-                        val refExpr = ref.expression
-                        if (element.isAncestor(refExpr)) return@mapNotNullTo null
-                        val context = refExpr.analyze(BodyResolveMode.PARTIAL)
-                        val resolvedCall = refExpr.getResolvedCall(context) ?: return@mapNotNullTo null
+            runReadAction {
+                ReferencesSearch.search(element).mapNotNullTo(externalUsages) { ref ->
+                    when (ref) {
+                        is PsiReferenceExpression -> JavaUsageInfo(ref)
+                        is KtSimpleNameReference -> {
+                            val refExpr = ref.expression
+                            if (element.isAncestor(refExpr)) return@mapNotNullTo null
+                            val context = refExpr.analyze(BodyResolveMode.PARTIAL)
+                            val resolvedCall = refExpr.getResolvedCall(context) ?: return@mapNotNullTo null
 
-                        val callExpression = resolvedCall.call.callElement as? KtExpression ?: return@mapNotNullTo null
+                            val callExpression = resolvedCall.call.callElement as? KtExpression ?: return@mapNotNullTo null
 
-                        val extensionReceiver = resolvedCall.extensionReceiver
-                        if (extensionReceiver != null && extensionReceiver !is ImplicitReceiver) {
-                            conflicts.putValue(callExpression,
-                                               "Calls with explicit extension receiver won't be processed: ${callExpression.text}")
-                            return@mapNotNullTo null
-                        }
+                            val extensionReceiver = resolvedCall.extensionReceiver
+                            if (extensionReceiver != null && extensionReceiver !is ImplicitReceiver) {
+                                conflicts.putValue(callExpression,
+                                                   "Calls with explicit extension receiver won't be processed: ${callExpression.text}")
+                                return@mapNotNullTo null
+                            }
 
-                        val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@mapNotNullTo null
-                        if (dispatchReceiver is ExpressionReceiver) {
-                            ExplicitReceiverUsageInfo(refExpr, dispatchReceiver.expression)
+                            val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@mapNotNullTo null
+                            if (dispatchReceiver is ExpressionReceiver) {
+                                ExplicitReceiverUsageInfo(refExpr, dispatchReceiver.expression)
+                            }
+                            else {
+                                ImplicitReceiverUsageInfo(refExpr, callExpression)
+                            }
                         }
-                        else {
-                            ImplicitReceiverUsageInfo(refExpr, callExpression)
-                        }
+                        else -> null
                     }
-                    else -> null
                 }
             }
         }
