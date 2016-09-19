@@ -45,7 +45,16 @@ class IrIfThenElseImpl(
             if (n == 0) condition else null
 
     override fun getNthResult(n: Int): IrExpression? =
-            if (n == 0) thenBranch else null
+            when (n) {
+                0 -> {
+                    thenBranch
+                }
+                1 -> {
+                    elseBranch
+                }
+                else -> null
+            }
+
 
     override fun putNthCondition(n: Int, expression: IrExpression) {
         if (n == 0) condition = expression
