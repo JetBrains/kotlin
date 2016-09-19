@@ -3469,40 +3469,39 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         });
     }
 
+    /*
+     * Translates x in a..b (for int and char ranges only)
+     * to a <= x && x >= b same way as javac 1.8.0_91 does.
+     */
     private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression) {
-        v.iconst(1);
-        // 1
-        leftValue.put(Type.INT_TYPE, v);
-        // 1 l
-        v.dup2();
-        // 1 l 1 l
-
-        //noinspection ConstantConditions
+        // Load left bound
         gen(rangeExpression.getLeft(), Type.INT_TYPE);
-        // 1 l 1 l r
-        Label lok = new Label();
-        v.ificmpge(lok);
-        // 1 l 1
-        v.pop();
-        v.iconst(0);
-        v.mark(lok);
-        // 1 l c
-        v.dupX2();
-        // c 1 l c
-        v.pop();
-        // c 1 l
+        // Load argument
+        leftValue.put(Type.INT_TYPE, v);
 
+        // If (left > arg) goto L1 (return)
+        Label l1 = new Label();
+        v.ificmpgt(l1);
+
+        // Load argument again
+        leftValue.put(Type.INT_TYPE, v);
+        // Load right bound
         gen(rangeExpression.getRight(), Type.INT_TYPE);
-        // c 1 l r
-        Label rok = new Label();
-        v.ificmple(rok);
-        // c 1
-        v.pop();
-        v.iconst(0);
-        v.mark(rok);
-        // c c
+        // If (x > right) goto L1 (return)
+        v.ificmpgt(l1);
 
-        v.and(Type.INT_TYPE);
+        Label l2 = new Label();
+        // Push 'true'
+        v.iconst(1);
+        // Goto return
+        v.goTo(l2);
+
+        // L1: push 'false'
+        v.mark(l1);
+        v.iconst(0);
+
+        // L2: implicit ireturn
+        v.mark(l2);
     }
 
     private StackValue generateBooleanAnd(KtBinaryExpression expression) {
