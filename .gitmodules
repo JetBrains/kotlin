@@ -2,6 +2,3 @@
 	path = experiments/kotlin-ir
 	url = git@github.com:JetBrains/kotlin.git
 	branch = rr/pdn_ir_prototype
-[submodule "experiments/kni"]
-	path = experiments/kni
-	url = https://github.com/SvyatoslavScherbina/kni
