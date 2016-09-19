@@ -10,4 +10,7 @@ clean:
 
 placer: placer.o
 
+place.o: placer.cc layout.h
+	$(CXX) $(CXXFLAGS) -c placer.cc
+
 .PHONY: all run clean
