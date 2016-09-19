@@ -54,10 +54,8 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKot
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.utils.keysToMap
@@ -69,9 +67,17 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
         override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement): KtNamedDeclaration {
             return when (targetContainer) {
                 is KtFile -> targetContainer.add(originalElement) as KtNamedDeclaration
-                is KtClassOrObject -> targetContainer.addDeclaration(originalElement) as KtNamedDeclaration
+                is KtClassOrObject -> targetContainer.addDeclaration(originalElement)
                 else -> error("Unexpected element: ${targetContainer.getElementTextWithContext()}")
-            }.apply { originalElement.deleteSingle() }
+            }.apply {
+                val container = originalElement.containingClassOrObject
+                if (container is KtObjectDeclaration && container.isCompanion() && container.declarations.singleOrNull() == originalElement) {
+                    container.deleteSingle()
+                }
+                else {
+                    originalElement.deleteSingle()
+                }
+            }
         }
     }
 

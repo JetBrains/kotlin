@@ -129,6 +129,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Pull Up: Drop 'override' modifier if moved member doesn't override anything
 - [`KT-13660`](https://youtrack.jetbrains.com/issue/KT-13660) Move: Do not drop object receivers when calling variable of extension functional type
 - [`KT-13759`](https://youtrack.jetbrains.com/issue/KT-13759) Rename: Process object-wrapping alias references
+- [`KT-13903`](https://youtrack.jetbrains.com/issue/KT-13903) Move: Remove companion object which becomes empty after the move
 
 ##### New features
 
