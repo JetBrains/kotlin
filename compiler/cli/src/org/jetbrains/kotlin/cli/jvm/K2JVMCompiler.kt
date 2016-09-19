@@ -237,7 +237,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     ): KotlinCoreEnvironment? {
 
         val scriptResolverEnv = hashMapOf<String, Any?>()
-        configureScriptDefinitions(arguments, configuration, messageCollector, scriptResolverEnv)
+        configureScriptDefinitions(arguments.scriptTemplates, configuration, messageCollector, scriptResolverEnv)
         if (!messageCollector.hasErrors()) {
             val environment = createCoreEnvironment(rootDisposable, configuration)
             if (!messageCollector.hasErrors()) {
@@ -246,50 +246,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
         return null
-    }
-
-    private fun configureScriptDefinitions(arguments: K2JVMCompilerArguments,
-                                           configuration: CompilerConfiguration,
-                                           messageCollector: MessageCollector,
-                                           scriptResolverEnv: HashMap<String, Any?>) {
-        val classpath = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance(JvmClasspathRoot::class.java).mapNotNull { it.file }
-        // TODO: consider using escaping to allow kotlin escaped names in class names
-        if (arguments.scriptTemplates != null && arguments.scriptTemplates.isNotEmpty()) {
-            val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
-            var hasErrors = false
-            for (template in arguments.scriptTemplates) {
-                try {
-                    val cls = classloader.loadClass(template)
-                    val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, scriptResolverEnv)
-                    configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
-                    messageCollector.report(
-                            CompilerMessageSeverity.INFO,
-                            "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",
-                            CompilerMessageLocation.NO_LOCATION
-                    )
-                }
-                catch (ex: ClassNotFoundException) {
-                    messageCollector.report(
-                            CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template", CompilerMessageLocation.NO_LOCATION
-                    )
-                    hasErrors = true
-                }
-                catch (ex: Exception) {
-                    messageCollector.report(
-                            CompilerMessageSeverity.ERROR, "Error processing script definition template $template: ${ex.message}", CompilerMessageLocation.NO_LOCATION
-                    )
-                    hasErrors = true
-                    break
-                }
-            }
-            if (hasErrors) {
-                messageCollector.report(
-                        CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)", CompilerMessageLocation.NO_LOCATION
-                )
-                return
-            }
-        }
-        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
     }
 
     private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {
@@ -430,6 +386,50 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 return INTERNAL_ERROR
             }
             return OK
+        }
+
+        fun configureScriptDefinitions(scriptTemplates: Array<String>?,
+                                       configuration: CompilerConfiguration,
+                                       messageCollector: MessageCollector,
+                                       scriptResolverEnv: HashMap<String, Any?>) {
+            val classpath = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).filterIsInstance(JvmClasspathRoot::class.java).mapNotNull { it.file }
+            // TODO: consider using escaping to allow kotlin escaped names in class names
+            if (scriptTemplates != null && scriptTemplates.isNotEmpty()) {
+                val classloader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
+                var hasErrors = false
+                for (template in scriptTemplates) {
+                    try {
+                        val cls = classloader.loadClass(template)
+                        val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, scriptResolverEnv)
+                        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
+                        messageCollector.report(
+                                CompilerMessageSeverity.INFO,
+                                "Added script definition $template to configuration: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",
+                                CompilerMessageLocation.NO_LOCATION
+                        )
+                    }
+                    catch (ex: ClassNotFoundException) {
+                        messageCollector.report(
+                                CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template", CompilerMessageLocation.NO_LOCATION
+                        )
+                        hasErrors = true
+                    }
+                    catch (ex: Exception) {
+                        messageCollector.report(
+                                CompilerMessageSeverity.ERROR, "Error processing script definition template $template: ${ex.message}", CompilerMessageLocation.NO_LOCATION
+                        )
+                        hasErrors = true
+                        break
+                    }
+                }
+                if (hasErrors) {
+                    messageCollector.report(
+                            CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)", CompilerMessageLocation.NO_LOCATION
+                    )
+                    return
+                }
+            }
+            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
         }
     }
 }

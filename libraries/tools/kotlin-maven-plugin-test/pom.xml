@@ -25,6 +25,16 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-script-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -75,6 +85,7 @@
                             <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
+                            <showErrors>true</showErrors>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>false</streamLogs>
                             <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>

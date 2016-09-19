@@ -65,6 +65,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.jdkHome", required = false, readonly = false)
     protected String jdkHome;
 
+    @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
+    protected List<String> scriptTemplates;
+
     @NotNull
     @Override
     protected K2JVMCompiler createCompiler() {
@@ -113,6 +116,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (jdkHome != null) {
             getLog().info("Overriding JDK home path with: " + jdkHome);
             arguments.jdkHome = jdkHome;
+        }
+
+        if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
+            arguments.scriptTemplates = scriptTemplates.toArray(new String[0]);
         }
     }
 }
