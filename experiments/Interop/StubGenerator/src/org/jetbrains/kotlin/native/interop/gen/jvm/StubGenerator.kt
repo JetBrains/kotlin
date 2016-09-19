@@ -17,6 +17,9 @@ class StubGenerator(
 
     val enums = translationUnit.enumList.map { it.name to it }.toMap()
 
+    val structs = translationUnit.structList.map { it.name to it }.toMap()
+
+
     val functionsToBind = translationUnit.functionList.uniqueBy { it.name }.filter { it.name !in excludedFunctions }
 
     private fun mangleStructName(name: String) = if (name !in forbiddenStructNames) name else (name + "Struct")
@@ -27,6 +30,9 @@ class StubGenerator(
 
     val NativeIndex.CForwardStruct.mangledName: String
         get() = mangleStructName(name)
+
+    val EnumType.baseType: DirectlyMappedType
+        get() = (parseType(enums[name]!!.type) as DirectlyMappedType)
 
     private var out: (String) -> Unit = {
         throw IllegalStateException()
@@ -67,7 +73,7 @@ class StubGenerator(
             is Int64Type -> "int64_t"
             is UInt64Type -> "uint64_t"
             is PointerType -> pointeeType.getStringRepresentation() + "*"
-            is RecordType -> "struct $name"
+            is RecordType -> structs[name]?.spelling ?: "void" // FIXME
             is FunctionPointerType -> this.returnType.getStringRepresentation() + " (*)(" +
                     this.parameterTypes.map { it.getStringRepresentation() }.joinToString(", ") + ")"
             is ArrayType -> "void*" // TODO
@@ -84,6 +90,7 @@ class StubGenerator(
         is Int32Type, is UInt32Type -> NativeRefType("Int32Box")
         is Int64Type, is UInt64Type -> NativeRefType("Int64Box")
         is RecordType -> NativeRefType("${mangleStructName(type.name)}")
+        is EnumType -> NativeRefType("${type.name}.ref")
         is PointerType -> {
             if (type.pointeeType is VoidType) {
                 NativeRefType("NativePtrBox")
@@ -148,10 +155,19 @@ class StubGenerator(
         is EnumType -> OutValueBinding(
                 kotlinType = type.name,
                 kotlinConv = { "$it.value" },
-                kotlinJniBridgeType = "Long"
+                kotlinJniBridgeType = type.baseType.kotlinType
         )
         is ArrayType -> outValueRefBinding(getKotlinNativeRefType(type))
         is FunctionPointerType -> getOutValueBinding(PointerType(VoidType))
+        is RecordType -> {
+            val refType = getKotlinNativeRefType(type)
+            // pointer will be converted to value in C code
+            OutValueBinding(
+                    kotlinType = refType.typeName,
+                    kotlinConv = { "$it.getNativePtr().asLong()" },
+                    kotlinJniBridgeType = "Long"
+            )
+        }
         else -> throw NotImplementedError()
     }
 
@@ -170,11 +186,20 @@ class StubGenerator(
             }
         }
         is EnumType -> InValueBinding(
-                kotlinJniBridgeType = "Long",
+                kotlinJniBridgeType = type.baseType.kotlinType,
                 conv = { "${type.name}.byValue($it)" },
                 kotlinType = type.name
         )
         is ArrayType -> inValueRefBinding(getKotlinNativeRefType(type))
+        is RecordType -> {
+            // FIXME
+            val refType = getKotlinNativeRefType(type)
+            InValueBinding(
+                    kotlinJniBridgeType = "Long",
+                    conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
+                    kotlinType = refType.typeName
+            )
+        }
         else -> throw NotImplementedError()
     }
 
@@ -215,7 +240,10 @@ class StubGenerator(
     }
 
     private fun generateKotlinEnum(e: NativeIndex.CEnum) {
-        out("enum class ${e.name}(val value: Long) {")
+        val baseType = (parseType(e.type) as DirectlyMappedType)
+        val baseRefType = getKotlinNativeRefType(baseType)
+
+        out("enum class ${e.name}(val value: ${baseType.kotlinType}) {")
         indent {
             e.valueList.forEach {
                 out("${it.name}(${it.value}),")
@@ -223,8 +251,16 @@ class StubGenerator(
             out(";")
             out("")
             out("companion object {")
-            out("    fun byValue(value: Long) = ${e.name}.values().find { it.value == value }!!")
+            out("    fun byValue(value: ${baseType.kotlinType}) = ${e.name}.values().find { it.value == value }!!")
             out("}")
+            out("")
+            out("class ref(ptr: NativePtr) : NativeRef(ptr) {")
+            out("    companion object : TypeWithSize<ref>(${baseRefType.typeExpr}.size, ::ref)")
+            out("    var value: ${e.name}")
+            out("        get() = byValue(${baseRefType.typeExpr}.byPtr(ptr).value)")
+            out("        set(value) { ${baseRefType.typeExpr}.byPtr(ptr).value = value.value }")
+            out("}")
+
         }
         out("}")
     }
@@ -234,15 +270,33 @@ class StubGenerator(
     private fun paramBindings(func: NativeIndex.Function): Array<OutValueBinding> {
         val paramBindings = func.parameterList.map { param ->
             getOutValueBinding(parseType(param.type))
-        }.toTypedArray()
-        return paramBindings
+        }.toMutableList()
+
+        val retValType = parseType(func.returnType)
+        if (retValType is RecordType) {
+            val retValRefType = getKotlinNativeRefType(retValType)
+            val typeExpr = retValRefType.typeExpr
+
+            paramBindings.add(OutValueBinding(
+                    kotlinType = "Placement",
+                    kotlinConv = { name -> "$name.alloc($typeExpr.size).asLong()" },
+                    kotlinJniBridgeType = "Long"
+            ))
+        }
+
+        return paramBindings.toTypedArray()
     }
 
     private fun paramNames(func: NativeIndex.Function): Array<String> {
         val paramNames = func.parameterList.mapIndexed { i: Int, parameter: NativeIndex.Function.Parameter ->
             if (parameter.name != "") parameter.name else "arg$i"
-        }.toTypedArray()
-        return paramNames
+        }.toMutableList()
+
+        if (parseType(func.returnType) is RecordType) {
+            paramNames.add("retValPlacement")
+        }
+
+        return paramNames.toTypedArray()
     }
 
     private fun generateKotlinBindingMethod(func: NativeIndex.Function) {
@@ -394,7 +448,11 @@ class StubGenerator(
 
                 val params = func.parameterList.mapIndexed { i, parameter ->
                     val cType = parseType(parameter.type).getStringRepresentation()
-                    "($cType)${paramNames[i]}"
+                    if (parseType(parameter.type) is RecordType) {
+                        "*($cType*)${paramNames[i]}" // FIXME
+                    } else {
+                        "($cType)${paramNames[i]}"
+                    }
                 }.joinToString(", ")
 
                 val callExpr = "${func.name}($params)"
@@ -406,8 +464,12 @@ class StubGenerator(
                 val jniFuncName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
 
                 out("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args) {")
+
                 if (cReturnType == "void") {
                     out("    $callExpr;")
+                } else if (retValBinding.kotlinType in structs) { // FIXME
+                    out("    *(${structs[retValBinding.kotlinType]!!.spelling}*)retValPlacement = $callExpr;")
+                    out("    return ($cReturnType) retValPlacement;")
                 } else {
                     out("    return ($cReturnType) ($callExpr);")
                 }
