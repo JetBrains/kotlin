@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-interface IrCall : IrGeneralCall {
+interface IrCall : IrMemberAccessExpression {
     val superQualifier: ClassDescriptor?
 }
 

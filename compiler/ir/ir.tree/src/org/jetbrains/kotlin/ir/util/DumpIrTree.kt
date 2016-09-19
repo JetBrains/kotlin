@@ -95,7 +95,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
-    override fun visitGeneralCall(expression: IrGeneralCall, data: String) {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")

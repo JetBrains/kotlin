@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 
-interface IrDelegatingConstructorCall : IrGeneralCall {
+interface IrDelegatingConstructorCall : IrMemberAccessExpression {
     override val descriptor: ConstructorDescriptor
 }
 

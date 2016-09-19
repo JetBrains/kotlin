@@ -16,8 +16,26 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+
 interface IrMemberAccessExpression : IrDeclarationReference {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
+
+    val origin: IrStatementOrigin?
+    override val descriptor: CallableDescriptor
+
+    fun getArgument(index: Int): IrExpression?
+    fun putArgument(index: Int, valueArgument: IrExpression?)
+    fun removeArgument(index: Int)
+}
+
+
+inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression): T {
+    descriptor.valueParameters.forEach {
+        putArgument(it.index, transform(it))
+    }
+    return this
 }
 

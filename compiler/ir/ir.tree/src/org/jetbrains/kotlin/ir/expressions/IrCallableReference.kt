@@ -16,5 +16,5 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrCallableReference : IrGeneralCall
+interface IrCallableReference : IrMemberAccessExpression
 

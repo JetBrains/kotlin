@@ -24,7 +24,7 @@ class IrDelegatingConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         override val descriptor: ConstructorDescriptor
-) : IrGeneralCallBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size), IrDelegatingConstructorCall {
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size), IrDelegatingConstructorCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)
     }

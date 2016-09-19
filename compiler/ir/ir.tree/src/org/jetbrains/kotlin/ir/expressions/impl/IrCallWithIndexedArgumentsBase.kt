@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGeneralCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
-abstract class IrGeneralCallBase(
+abstract class IrCallWithIndexedArgumentsBase(
         startOffset: Int, endOffset: Int, type: KotlinType,
         numArguments: Int,
         override val origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type), IrGeneralCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type) {
     protected val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(numArguments)
 

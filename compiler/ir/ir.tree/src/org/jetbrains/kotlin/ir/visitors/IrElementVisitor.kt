@@ -64,13 +64,13 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: D) = visitDeclarationReference(expression, data)
-    fun visitGeneralCall(expression: IrGeneralCall, data: D) = visitDeclarationReference(expression, data)
-    fun visitCall(expression: IrCall, data: D) = visitGeneralCall(expression, data)
-    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitGeneralCall(expression, data)
-    fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitGeneralCall(expression, data)
+    fun visitMemberAccess(expression: IrMemberAccessExpression, data: D) = visitDeclarationReference(expression, data)
+    fun visitCall(expression: IrCall, data: D) = visitMemberAccess(expression, data)
+    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitMemberAccess(expression, data)
+    fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitMemberAccess(expression, data)
     fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
 
-    fun visitCallableReference(expression: IrCallableReference, data: D) = visitGeneralCall(expression, data)
+    fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
     fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 
     fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: D) = visitExpression(expression, data)

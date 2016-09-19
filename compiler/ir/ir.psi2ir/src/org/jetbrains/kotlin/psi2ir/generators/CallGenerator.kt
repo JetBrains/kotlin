@@ -116,7 +116,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         }
     }
 
-    private fun addParametersToCall(startOffset: Int, endOffset: Int, call: CallBuilder, irCall: IrGeneralCallBase, returnType: KotlinType): IrExpression =
+    private fun addParametersToCall(startOffset: Int, endOffset: Int, call: CallBuilder, irCall: IrCallWithIndexedArgumentsBase, returnType: KotlinType): IrExpression =
             if (call.isValueArgumentReorderingRequired()) {
                 generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, returnType)
             }
@@ -129,7 +129,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             }
 
     private fun generateCallWithArgumentReordering(
-            irCall: IrGeneralCall,
+            irCall: IrMemberAccessExpression,
             startOffset: Int,
             endOffset: Int,
             call: CallBuilder,

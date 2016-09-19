@@ -40,7 +40,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         return element
     }
 
-    override fun visitGeneralCall(expression: IrGeneralCall): IrExpression {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         with(expression) {

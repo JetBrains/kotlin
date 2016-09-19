@@ -78,13 +78,13 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     override fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: D) = visitDeclarationReference(expression, data)
-    override fun visitGeneralCall(expression: IrGeneralCall, data: D) = visitDeclarationReference(expression, data)
-    override fun visitCall(expression: IrCall, data: D) = visitGeneralCall(expression, data)
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitGeneralCall(expression, data)
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitGeneralCall(expression, data)
+    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitDeclarationReference(expression, data)
+    override fun visitCall(expression: IrCall, data: D) = visitMemberAccess(expression, data)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitMemberAccess(expression, data)
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitMemberAccess(expression, data)
     override fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
 
-    override fun visitCallableReference(expression: IrCallableReference, data: D) = visitGeneralCall(expression, data)
+    override fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
     override fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: D) = visitExpression(expression, data)

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 
 
-interface IrEnumConstructorCall : IrGeneralCall {
+interface IrEnumConstructorCall : IrMemberAccessExpression {
     override val descriptor: ConstructorDescriptor
     val enumEntryDescriptor: ClassDescriptor?
 }

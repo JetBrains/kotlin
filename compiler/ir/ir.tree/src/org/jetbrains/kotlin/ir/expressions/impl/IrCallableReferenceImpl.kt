@@ -28,7 +28,7 @@ class IrCallableReferenceImpl(
         type: KotlinType,
         override val descriptor: CallableDescriptor,
         override val origin: IrStatementOrigin? = null
-) : IrGeneralCallBase(startOffset, endOffset, type, descriptor.valueParameters.size, origin), IrCallableReference {
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, descriptor.valueParameters.size, origin), IrCallableReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCallableReference(this, data)
     }

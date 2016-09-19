@@ -135,22 +135,22 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)
 
-    fun visitGeneralCall(expression: IrGeneralCall) = visitDeclarationReference(expression)
-    override fun visitGeneralCall(expression: IrGeneralCall, data: Nothing?) = visitGeneralCall(expression)
+    fun visitMemberAccess(expression: IrMemberAccessExpression) = visitDeclarationReference(expression)
+    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)
 
-    fun visitCall(expression: IrCall) = visitGeneralCall(expression)
+    fun visitCall(expression: IrCall) = visitMemberAccess(expression)
     override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
-    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitGeneralCall(expression)
+    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitMemberAccess(expression)
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) = visitDelegatingConstructorCall(expression)
 
-    fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitGeneralCall(expression)
+    fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitMemberAccess(expression)
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?) = visitEnumConstructorCall(expression)
 
     fun visitGetClass(expression: IrGetClass) = visitExpression(expression)
     override fun visitGetClass(expression: IrGetClass, data: Nothing?) = visitGetClass(expression)
 
-    fun visitCallableReference(expression: IrCallableReference) = visitGeneralCall(expression)
+    fun visitCallableReference(expression: IrCallableReference) = visitMemberAccess(expression)
     override fun visitCallableReference(expression: IrCallableReference, data: Nothing?) = visitCallableReference(expression)
 
     fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)

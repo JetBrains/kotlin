@@ -30,7 +30,7 @@ class IrCallImpl(
         override val descriptor: CallableDescriptor,
         override val origin: IrStatementOrigin? = null,
         override val superQualifier: ClassDescriptor? = null
-) : IrGeneralCallBase(startOffset, endOffset, type, descriptor.valueParameters.size), IrCall {
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, descriptor.valueParameters.size), IrCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitCall(this, data)
 }
