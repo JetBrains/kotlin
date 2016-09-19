@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrDelegatingConstructorCallImpl(
@@ -27,7 +28,7 @@ class IrDelegatingConstructorCallImpl(
         endOffset: Int,
         override val descriptor: ConstructorDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?
-) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size, typeArguments),
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.builtIns.unitType, descriptor.valueParameters.size, typeArguments),
         IrDelegatingConstructorCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)

@@ -56,17 +56,35 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         return expression
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
+    override fun visitBlockBody(body: IrBlockBody): IrBody {
+        body.transformChildrenVoid(this)
+
+        body.statements.forEachIndexed { i, irStatement ->
+            if (irStatement is IrExpression) {
+                body.statements[i] = irStatement.coerceToUnit(builtIns.unitType)
+            }
+        }
+
+        return body
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         val type = expression.type
-        if (expression.statements.isEmpty() || KotlinBuiltIns.isUnit(type) || KotlinBuiltIns.isNothing(type)) {
+        if (expression.statements.isEmpty()) {
             return expression
         }
 
-        val lastStatement = expression.statements.last()
-        if (lastStatement is IrExpression) {
-            expression.statements[expression.statements.lastIndex] = lastStatement.cast(type)
+        val lastIndex = expression.statements.lastIndex
+        expression.statements.forEachIndexed { i, irStatement ->
+            if (irStatement is IrExpression) {
+                expression.statements[i] =
+                        if (i == lastIndex)
+                            irStatement.cast(type)
+                        else
+                            irStatement.coerceToUnit(builtIns.unitType)
+            }
         }
 
         return expression
@@ -169,8 +187,10 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
+
         if (expectedType.isError) return this
-        if (KotlinBuiltIns.isUnit(expectedType)) return this // TODO expose coercion to Unit in IR?
+
+        if (KotlinBuiltIns.isUnit(expectedType)) return coerceToUnit(expectedType)
 
         val valueType = this.type
 
@@ -188,6 +208,14 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         }
 
         return this
+    }
+
+    private fun IrExpression.coerceToUnit(unitType: KotlinType): IrExpression {
+        val valueType = this.type
+
+        if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, unitType)) return this
+
+        return IrTypeOperatorCallImpl(startOffset, endOffset, unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, unitType, this)
     }
 }
 

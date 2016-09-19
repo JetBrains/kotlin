@@ -25,7 +25,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1(xx: kotlin.Int, yy: kotlin.Int)
       BLOCK_BODY
-        BLOCK type=Base origin=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_y: kotlin.Int
             GET_VAR 'value-parameter yy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_x: kotlin.Int
@@ -37,7 +37,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(xx: kotlin.Int, yy: kotlin.Int)
       BLOCK_BODY
-        BLOCK type=Base origin=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_y: kotlin.Int
             GET_VAR 'value-parameter yy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_x: kotlin.Int
@@ -48,7 +48,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     CONSTRUCTOR public constructor Test2(xxx: kotlin.Int, yyy: kotlin.Int, a: kotlin.Any)
       BLOCK_BODY
-        BLOCK type=Test2 origin=ARGUMENTS_REORDERING_FOR_CALL
+        BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_yy: kotlin.Int
             GET_VAR 'value-parameter yyy: Int' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp1_xx: kotlin.Int

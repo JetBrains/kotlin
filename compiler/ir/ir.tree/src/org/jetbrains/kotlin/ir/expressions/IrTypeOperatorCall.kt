@@ -22,6 +22,7 @@ enum class IrTypeOperator {
     CAST,
     IMPLICIT_CAST,
     IMPLICIT_NOTNULL,
+    IMPLICIT_COERCION_TO_UNIT,
     SAFE_CAST,
     INSTANCEOF,
     NOT_INSTANCEOF;

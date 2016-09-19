@@ -52,13 +52,14 @@ FILE /whileDoWhile.kt
             other: CONST Int type=kotlin.Int value='15'
       DO_WHILE label=null origin=DO_WHILE_LOOP
         body: BLOCK type=kotlin.Unit origin=null
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
-              GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
-            SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
-              CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
-            GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+          TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            BLOCK type=kotlin.Int origin=POSTFIX_INCR
+              VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
+                GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
+              SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                  $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+              GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
         condition: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'x: Int' type=kotlin.Int origin=null

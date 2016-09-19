@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.psi2ir.generators.constNull
 import org.jetbrains.kotlin.psi2ir.generators.equalsNull
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 
@@ -31,7 +32,8 @@ class SafeCallReceiver(
         val startOffset: Int,
         val endOffset: Int,
         val explicitReceiver: IrExpression,
-        val implicitDispatchReceiverValue: IntermediateValue?
+        val implicitDispatchReceiverValue: IntermediateValue?,
+        val isAssignmentReceiver: Boolean
 ) : CallReceiver {
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(explicitReceiver, "safe_receiver")
@@ -49,7 +51,7 @@ class SafeCallReceiver(
         }
 
         val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
-        val resultType = irResult.type.makeNullable()
+        val resultType = if (isAssignmentReceiver) irResult.type.builtIns.unitType else irResult.type.makeNullable()
 
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL)
 

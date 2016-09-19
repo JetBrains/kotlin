@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -63,7 +64,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor, getTypeArguments(call.original))
             irCall.dispatchReceiver = dispatchReceiver?.load()
             irCall.extensionReceiver = extensionReceiver?.load()
-            addParametersToCall(startOffset, endOffset, call, irCall, descriptor.returnType)
+            addParametersToCall(startOffset, endOffset, call, irCall, descriptor.builtIns.unitType)
         }
     }
 

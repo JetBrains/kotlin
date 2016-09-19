@@ -46,16 +46,20 @@ FILE /localDelegatedProperties.kt
                   thisRef: CONST Null type=kotlin.Nothing? value='null'
                   property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                   value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-      CALL '<set-x>(Int): Int' type=kotlin.Int origin=EQ
-        value: CONST Int type=kotlin.Int value='0'
-      BLOCK type=kotlin.Int origin=POSTFIX_INCR
-        VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
-          CALL '<get-x>(): Int' type=kotlin.Int origin=POSTFIX_INCR
-        CALL '<set-x>(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
-          value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-            $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-        GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      CALL '<set-x>(Int): Int' type=kotlin.Int origin=PLUSEQ
-        value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL '<get-x>(): Int' type=kotlin.Int origin=PLUSEQ
-          other: CONST Int type=kotlin.Int value='1'
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<set-x>(Int): Int' type=kotlin.Int origin=EQ
+          value: CONST Int type=kotlin.Int value='0'
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+            CALL '<get-x>(): Int' type=kotlin.Int origin=POSTFIX_INCR
+          TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CALL '<set-x>(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
+              value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<set-x>(Int): Int' type=kotlin.Int origin=PLUSEQ
+          value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL '<get-x>(): Int' type=kotlin.Int origin=PLUSEQ
+            other: CONST Int type=kotlin.Int value='1'

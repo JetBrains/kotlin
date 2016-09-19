@@ -59,19 +59,20 @@ FILE /arrayAugmentedAssignment1.kt
             other: CONST Int type=kotlin.Int value='2'
   FUN public fun testMember(c: C): kotlin.Unit
     BLOCK_BODY
-      BLOCK type=kotlin.Int origin=POSTFIX_INCR
-        VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
-          CALL '<get-x>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
-            $this: GET_VAR 'value-parameter c: C' type=C origin=null
-        VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
-          CONST Int type=kotlin.Int value='0'
-        VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
-          CALL 'get(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE val tmp0_array: kotlin.IntArray
+            CALL '<get-x>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
+              $this: GET_VAR 'value-parameter c: C' type=C origin=null
+          VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.Int
+            CONST Int type=kotlin.Int value='0'
+          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+            CALL 'get(Int): Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
+              index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
+          CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
             $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
-        CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=POSTFIX_INCR
-          $this: GET_VAR 'tmp0_array: IntArray' type=kotlin.IntArray origin=null
-          index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
-          value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-            $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
-        GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+            value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
