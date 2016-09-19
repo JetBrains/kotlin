@@ -254,7 +254,14 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
-        var expectedType = constraintSystem.build().currentSubstitutor.substitute(effectiveExpectedType, Variance.INVARIANT)
+
+        val currentSubstitutor = constraintSystem.build().currentSubstitutor
+        val newSubstitution = object : DelegatedTypeSubstitution(currentSubstitutor.substitution) {
+            override fun approximateContravariantCapturedTypes() = true
+        }
+
+        var expectedType = newSubstitution.buildSubstitutor().substitute(effectiveExpectedType, Variance.IN_VARIANCE)
+
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
         }

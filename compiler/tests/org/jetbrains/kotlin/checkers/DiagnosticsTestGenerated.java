@@ -14982,6 +14982,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("capturedTypesInLambdaParameter.kt")
+            public void testCapturedTypesInLambdaParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/capturedTypesInLambdaParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorVsCompanion.kt")
             public void testConstructorVsCompanion() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/constructorVsCompanion.kt");

@@ -35,6 +35,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("samWithConsumer.kt")
+    public void testSamWithConsumer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/samWithConsumer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
