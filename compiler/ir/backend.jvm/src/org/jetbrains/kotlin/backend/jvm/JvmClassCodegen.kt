@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SuperClassInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,10 +29,12 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.Type
+import java.lang.RuntimeException
 
 class JvmClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext) {
 
@@ -40,7 +44,21 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
 
     val descriptor = irClass.descriptor
 
-    val type = typeMapper.mapType(descriptor)
+    val type: Type
+
+    init {
+        if (descriptor.isFileDescriptor) {
+            descriptor.name
+            val fileClassInfo = state.fileClassesProvider.getFileClassInfo((irClass.descriptor.source as KotlinSourceElement).psi.getContainingKtFile())
+            if (fileClassInfo.withJvmMultifileClass) {
+                assert(false) { "TODO: support multifile facades" }
+            }
+            type = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+        }
+        else {
+            type = typeMapper.mapType(descriptor)
+        }
+    }
 
     val visitor: ClassBuilder
 
@@ -50,16 +68,29 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
     }
 
     fun generate() {
-        val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
-        val signature = ImplementationBodyCodegen.signature(descriptor, type, superClassInfo, typeMapper)
+        if (descriptor.isFileDescriptor) {
+            visitor.defineClass((irClass.descriptor.source as KotlinSourceElement).psi,
+                                state.classFileVersion,
+                                descriptor.calculateClassFlags(),
+                                type.internalName,
+                                null,
+                                "java/lang/Object",
+                                ArrayUtil.EMPTY_STRING_ARRAY
+            )
+        }
+        else {
+            val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
+            val signature = ImplementationBodyCodegen.signature(descriptor, type, superClassInfo, typeMapper)
 
-        visitor.defineClass(irClass.OtherOrigin.element, state.classFileVersion,
-                            descriptor.calculateClassFlags(),
-                            signature.name,
-                            signature.javaGenericSignature,
-                            signature.superclassName,
-                            signature.interfaces.toTypedArray()
-        )
+            visitor.defineClass(irClass.OtherOrigin.element, state.classFileVersion,
+                                descriptor.calculateClassFlags(),
+                                signature.name,
+                                signature.javaGenericSignature,
+                                signature.superclassName,
+                                signature.interfaces.toTypedArray()
+            )
+
+        }
 
         irClass.declarations.forEach {
             generateDeclaration(it)
@@ -166,3 +197,6 @@ val IrField.OtherOrigin: JvmDeclarationOrigin
 
 val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin((this.descriptor.source as PsiSourceElement).psi!!, this.descriptor)
+
+val ClassDescriptor.isFileDescriptor: Boolean
+    get() = this is FileClassDescriptor

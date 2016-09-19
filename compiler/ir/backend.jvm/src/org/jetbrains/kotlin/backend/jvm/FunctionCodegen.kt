@@ -26,8 +26,13 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: JvmClassCode
 
     fun generate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
-        val frameMap = createFrameMap(classCodegen.state, irFunction.descriptor, signature, isStaticMethod(OwnerKind.IMPLEMENTATION,
-                                                                                                           irFunction.descriptor))
+        val frameMap = createFrameMap(
+                classCodegen.state, irFunction.descriptor, signature,
+                isStaticMethod(
+                        if (classCodegen.descriptor.isFileDescriptor) OwnerKind.PACKAGE else OwnerKind.IMPLEMENTATION,
+                        irFunction.descriptor
+                )
+        )
         val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin, irFunction.descriptor.calculateCommonFlags(), irFunction.descriptor.name.asString(), signature.asmMethod.descriptor,
                                                            signature.genericsSignature, null/*TODO support exception*/)
 
