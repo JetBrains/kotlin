@@ -80,18 +80,15 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     public LockBasedStorageManager() {
-        this(getPointOfConstruction(), ExceptionHandlingStrategy.THROW, new ReentrantLock());
+        this(defaultDebugName(), ExceptionHandlingStrategy.THROW, new ReentrantLock());
     }
 
     protected LockBasedStorageManager(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
-        this(getPointOfConstruction(), exceptionHandlingStrategy, new ReentrantLock());
+        this(defaultDebugName(), exceptionHandlingStrategy, new ReentrantLock());
     }
 
-    private static String getPointOfConstruction() {
-        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-        // we need to skip frames for getStackTrace(), this method and the constructor that's calling it
-        if (trace.length <= 3) return "<unknown creating class>";
-        return trace[3].toString();
+    private static String defaultDebugName() {
+        return "<unknown creating class>";
     }
 
     @Override
@@ -478,7 +475,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull LockBasedStorageManager base,
             @NotNull ExceptionHandlingStrategy newStrategy
     ) {
-        return new LockBasedStorageManager(getPointOfConstruction(), newStrategy, base.lock);
+        return new LockBasedStorageManager(defaultDebugName(), newStrategy, base.lock);
     }
 
     @NotNull
