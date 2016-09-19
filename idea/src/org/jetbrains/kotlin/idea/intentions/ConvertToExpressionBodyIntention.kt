@@ -37,6 +37,7 @@ class ConvertToExpressionBodyIntention(
         KtDeclarationWithBody::class.java, "Convert to expression body"
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody): Boolean {
+        if (element is KtConstructor<*>) return false
         val value = calcValue(element) ?: return false
         return !value.anyDescendantOfType<KtReturnExpression>(
                 canGoInside = { it !is KtFunctionLiteral && it !is KtNamedFunction && it !is KtPropertyAccessor }
@@ -100,13 +101,13 @@ class ConvertToExpressionBodyIntention(
 
     private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
         val body = declaration.blockExpression() ?: return null
-        return calcValue(body, emptyAllowed = declaration !is KtConstructor<*> && convertEmptyToUnit)
+        return calcValue(body)
     }
 
-    private fun calcValue(body: KtBlockExpression, emptyAllowed: Boolean = true): KtExpression? {
+    private fun calcValue(body: KtBlockExpression): KtExpression? {
         val bodyStatements = body.statements
         if (bodyStatements.isEmpty()) {
-            return if (emptyAllowed) KtPsiFactory(body).createExpression("Unit") else null
+            return if (convertEmptyToUnit) KtPsiFactory(body).createExpression("Unit") else null
         }
         val statement = bodyStatements.singleOrNull() ?: return null
         when (statement) {
