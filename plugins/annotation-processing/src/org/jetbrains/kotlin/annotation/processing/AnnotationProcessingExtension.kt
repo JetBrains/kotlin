@@ -45,6 +45,7 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 import javax.tools.Diagnostic
+import kotlin.system.measureTimeMillis
 
 class ClasspathBasedAnnotationProcessingExtension(
         val annotationProcessingClasspath: List<File>,
@@ -114,6 +115,8 @@ abstract class AbstractAnnotationProcessingExtension(
             return null
         }
 
+        val startTime = System.currentTimeMillis()
+
         val psiManager = PsiManager.getInstance(project)
         val javaPsiFacade = JavaPsiFacade.getInstance(project)
         val projectScope = GlobalSearchScope.projectScope(project)
@@ -134,8 +137,8 @@ abstract class AbstractAnnotationProcessingExtension(
 
         annotationProcessingComplete = true
         log {
-            "Annotation processing complete, " + 
-                    processingResult.errorCount.count("error") + ", " + 
+            "Annotation processing complete in ${System.currentTimeMillis() - startTime} ms, " +
+                    processingResult.errorCount.count("error") + ", " +
                     processingResult.warningCount.count("warning")
         }
 
