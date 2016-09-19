@@ -906,7 +906,7 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    private static FrameMap createFrameMap(
+    public static FrameMap createFrameMap(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor function,
             @NotNull JvmMethodSignature signature,

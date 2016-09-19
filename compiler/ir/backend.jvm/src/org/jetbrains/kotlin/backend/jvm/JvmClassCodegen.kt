@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SuperClassInfo
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -33,8 +30,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class JvmClassCodegen private constructor(val irClass: IrClass, context: JvmBackendContext) {
+class JvmClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext) {
 
     val state = context.state
 
@@ -119,9 +117,7 @@ class JvmClassCodegen private constructor(val irClass: IrClass, context: JvmBack
     }
 
     fun generateMethod(method: IrFunction) {
-        val signature = typeMapper.mapSignatureWithGeneric(method.descriptor, OwnerKind.IMPLEMENTATION)
-        visitor.newMethod(method.OtherOrigin, method.descriptor.calculateCommonFlags(), method.descriptor.name.asString(), signature.asmMethod.descriptor,
-                          signature.genericsSignature, null/*TODO support exception*/)
+        FunctionCodegen(method, this).generate()
     }
 
 }
@@ -146,8 +142,14 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
     }
 
     when (modality) {
-        Modality.ABSTRACT -> {flags = flags.or(Opcodes.ACC_ABSTRACT)}
-        Modality.FINAL -> {flags = flags.or(Opcodes.ACC_FINAL)}
+        Modality.ABSTRACT -> {
+            flags = flags.or(Opcodes.ACC_ABSTRACT)
+        }
+        Modality.FINAL -> {
+            if (this !is ConstructorDescriptor) {
+                flags = flags.or(Opcodes.ACC_FINAL)
+            }
+        }
         Modality.OPEN -> {
             assert(!Visibilities.isPrivate(visibility))
         }
