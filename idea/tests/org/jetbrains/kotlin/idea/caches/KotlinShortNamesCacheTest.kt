@@ -23,7 +23,6 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.sun.tools.javac.util.Convert.shortName
-import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -35,11 +34,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-
-/**
- * Created by Semoro on 06.09.16.
- * ©XCodersTeam, 2016
- */
 class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
 
     lateinit var cacheInstance: PsiShortNamesCache
@@ -217,7 +211,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
 
         configureByFile(file)
         val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
-        checkIsVarAccessorsFound(scope,"topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
+        checkIsVarAccessorsFound(scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
                                  "KotlinShortNameCacheTestData.setTopLevelVar", true)
 
         checkIsVarAccessorsFound(scope, "B1.staticObjectVar", true)
@@ -256,6 +250,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
             assertSize(1, it)
         }
     }
+
     fun testGetFieldsByName() {
         val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestDataFields.kt")
         configureByFile(file)

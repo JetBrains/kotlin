@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 import java.util.*
 
 class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
@@ -99,26 +100,34 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
                 .filter { it.name == name }
 
-        val propertyAccessorsPsi = getPropertyNamesCandidatesByAccessorName(Name.identifier(name)).asSequence()
+        val propertyAccessorsPsi = sequenceOfLazyValues({ getPropertyNamesCandidatesByAccessorName(Name.identifier(name)) })
+                .flatMap { it.asSequence() }
                 .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
                 .flatMap { LightClassUtil.getLightClassPropertyMethods(it).allDeclarations.asSequence() }
                 .filter { it.name == name }
                 .map { it as? PsiMethod }
 
-        return (propertyAccessorsPsi + kotlinFunctionsPsi).filterNotNull()
+        return (kotlinFunctionsPsi + propertyAccessorsPsi).filterNotNull()
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
+        require(maxCount < Int.MAX_VALUE)
+        require(maxCount >= 0)
         val psiMethods = getMethodSequenceByName(name, scope)
-        val limitedByMaxCount = psiMethods.take(maxCount)
-        psiMethods.drop(maxCount).firstOrNull()?.let { return PsiMethod.EMPTY_ARRAY }
-        return limitedByMaxCount.toList().toTypedArray()
+        val limitedByMaxCount = psiMethods.take(maxCount + 1).toList()
+        if (limitedByMaxCount.size > maxCount)
+            return PsiMethod.EMPTY_ARRAY
+        return limitedByMaxCount.toTypedArray()
     }
 
     override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiField> {
+        require(maxCount < Int.MAX_VALUE)
+        require(maxCount >= 0)
         val psiFields = getFieldSequenceByName(name, scope)
-        psiFields.drop(maxCount).firstOrNull()?.let { return PsiField.EMPTY_ARRAY }
-        return psiFields.take(maxCount).toList().toTypedArray()
+        val limitedByMaxCount = psiFields.take(maxCount + 1).toList()
+        if (limitedByMaxCount.size > maxCount)
+            return PsiField.EMPTY_ARRAY
+        return limitedByMaxCount.toTypedArray()
     }
 
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean
