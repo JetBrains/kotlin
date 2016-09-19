@@ -98,12 +98,14 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
 
     private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
         val body = declaration.blockExpression() ?: return null
-        return calcValue(body)
+        return calcValue(body, emptyAllowed = declaration !is KtConstructor<*>)
     }
 
-    private fun calcValue(body: KtBlockExpression): KtExpression? {
+    private fun calcValue(body: KtBlockExpression, emptyAllowed: Boolean = true): KtExpression? {
         val bodyStatements = body.statements
-        if (bodyStatements.isEmpty()) return KtPsiFactory(body).createExpression("Unit")
+        if (bodyStatements.isEmpty()) {
+            return if (emptyAllowed) KtPsiFactory(body).createExpression("Unit") else null
+        }
         val statement = bodyStatements.singleOrNull() ?: return null
         when (statement) {
             is KtReturnExpression -> {
