@@ -70,34 +70,18 @@ class RawRef {
   void set(const T& value) { *ptr_ = value; }
 };
 
-// Object reference, adds reference counting in container.
-template <class T>
-class ObjRef {
- private:
+class AnyObjRef {
+ protected:
   void* ptr_;
 
-  explicit ObjRef(void* ptr) : ptr_(ptr) {
+  explicit AnyObjRef(void* ptr) : ptr_(ptr) {
     if (ptr_) {
       container()->AddRef();
     }
   }
 
-  T* ref() const {
-    if (!ptr_) return nullptr;
-    return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(ptr_) + sizeof(Container*));
-  }
-
  public:
-  ObjRef() : ptr_(nullptr) {}
-  ObjRef(const ObjRef& other) : ptr_(nullptr) {
-    Assign(other);
-  }
-  ObjRef& operator=(const ObjRef& other) {
-    Assign(other);
-    return *this;
-  }
-
-  ~ObjRef() {
+  ~AnyObjRef() {
     if (ptr_) {
       container()->Release();
     }
@@ -110,11 +94,11 @@ class ObjRef {
   template<typename M, int offset>
   RawRef<M> at() const {
     return RawRef<M>(
-      reinterpret_cast<M*>(reinterpret_cast<uint8_t*>(ref()) + offset));
+      reinterpret_cast<M*>(reinterpret_cast<uint8_t*>(any_ref()) + offset));
   }
 
-  void Assign(const ObjRef<T>& other) {
-    // TODO: optimize for an important case where containers match.
+  void Assign(const AnyObjRef& other) {
+    // TODO: optimize for an important case where containers match?
     if (ptr_) {
       container()->Release();
     }
@@ -124,14 +108,69 @@ class ObjRef {
     }
   }
 
-  ObjRef<T> Clone(Container* container) {
-    ObjRef<T> result = Alloc(container);
-    // TODO: take into account object references in T!
-    memcpy(result.ref(), ref(), sizeof(T));
-    return result;
+  uint8_t* any_ref() const {
+    if (!ptr_) return nullptr;
+    return reinterpret_cast<uint8_t*>(ptr_) + sizeof(Container*);
+  }
+
+  AnyObjRef any_obj_at(int offset) const {
+    assert(ptr_);
+    return AnyObjRef(*reinterpret_cast<void**>(any_ref() + offset));
   }
 
   bool null() const { return ptr_ == nullptr; }
+};
+
+// Object reference, adds reference counting in container.
+template <class T>
+class ObjRef : public AnyObjRef {
+ private:
+  explicit ObjRef(void* ptr) : AnyObjRef(ptr) {}
+
+  T* ref() const {
+    if (!ptr_) return nullptr;
+    return reinterpret_cast<T*>(any_ref());
+  }
+
+ public:
+  ObjRef(const ObjRef& other) : AnyObjRef(nullptr) {
+    Assign(other);
+  }
+  ObjRef& operator=(const ObjRef& other) {
+    Assign(other);
+    return *this;
+  }
+
+  void Assign(const ObjRef<T>& other) {
+    AnyObjRef::Assign(other);
+  }
+
+  void CopyTo(ObjRef<T> other) const {
+    assert(!other.null());
+    if (ref()) {
+      memcpy(other.ref(), ref(), sizeof(T));
+      for (int i = 0; i < sizeof(T::obj_offsets) / sizeof(T::obj_offsets[0]); ++i) {
+	AnyObjRef any = other.any_obj_at(T::obj_offsets[i]);
+	if (!any.null()) {
+	  any.container()->AddRef();
+	}
+      }
+    } else {
+      // TODO: shall we do anything if copy from/to null?
+    }
+  }
+
+  ObjRef<T> Clone(Container* container) {
+    ObjRef<T> result = Alloc(container);
+    CopyTo(result);
+    return result;
+  }
+
+  template<typename M, int offset>
+  ObjRef<M> obj_at() const {
+    return ObjRef<M>(
+      reinterpret_cast<M*>(any_ref() + offset));
+  }
 
   static ObjRef<T> Alloc(Container* container) {
     return ObjRef<T>(container->Place(sizeof(T)));
@@ -140,8 +179,13 @@ class ObjRef {
 
 struct List {
   ObjRef<List> next_;
+  ObjRef<List> prev_;
   int data_;
+  // Object offsets in the class, needed for CopyTo() operation to update refs and for GC.
+  static constexpr int obj_offsets[] = { 0 /* =offsetof(struct List, next_) */, 8 /* =offsetof(struct List, prev_) */ };
 };
+
+constexpr int List::obj_offsets[];
 
 void UpdateElement(ObjRef<List> element) {
   element.at<int, offsetof(struct List, data_)>().set
@@ -153,10 +197,21 @@ void DoNotUpdateElement(ObjRef<List> element) {
     (element.at<int, offsetof(struct List, data_)>().get() + 100);
 }
 
+constexpr int next_offset = offsetof(struct List, next_);
+constexpr int data_offset = offsetof(struct List, data_);
+
+void ReturnByValue(ObjRef<List> value) {
+  value.at<int, data_offset>().set(239);
+}
+
+ObjRef<List> ReturnByRef(Container* container) {
+  auto result = ObjRef<List>::Alloc(container);
+  result.at<int, data_offset>().set(30);
+  return result;
+}
+
 void test_placer() {
   Container heap(1024);
-  constexpr int next_offset = offsetof(struct List, next_);
-  constexpr int data_offset = offsetof(struct List, data_);
   {
     ObjRef<List> head = ObjRef<List>::Alloc(&heap);
     head.at<int, data_offset>().set(1);
@@ -166,6 +221,32 @@ void test_placer() {
       cur = cur.at<ObjRef<List>, next_offset>().get();
       cur.at<int, data_offset>().set(i + 2);
     }
+
+    // Pass by reference.
+    cur = head;
+    while (!cur.null()) {
+      UpdateElement(cur);
+      cur = cur.at<ObjRef<List>, next_offset>().get();
+    }
+
+    // Pass by value.
+    cur = head;
+    while (!cur.null()) {
+      // We could place clone on stack as well.
+      DoNotUpdateElement(cur.Clone(&heap));
+      cur = cur.at<ObjRef<List>, next_offset>().get();
+    }
+
+    // Return by value is trivial in this system. CopyTo() into provided container.
+    auto value = ObjRef<List>::Alloc(&heap);
+    ReturnByValue(value);
+    printf("By value is %d\n", value.at<int, data_offset>().get());
+
+    // Return by references assumes passing of container where results to be allocated.
+    value = ReturnByRef(&heap /* or stack container */);
+    printf("By ref is %d\n", value.at<int, data_offset>().get());
+
+    // Dump results.
     cur = head;
     // Pass by reference.
     while (!cur.null()) {
