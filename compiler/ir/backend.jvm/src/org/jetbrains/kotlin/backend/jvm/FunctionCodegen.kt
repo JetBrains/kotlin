@@ -20,20 +20,24 @@ import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.FunctionCodegen.createFrameMap
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class FunctionCodegen(val irFunction: IrFunction, val classCodegen: JvmClassCodegen) {
 
     fun generate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
+        val isStatic = isStaticMethod(
+                if (classCodegen.descriptor.isFileDescriptor) OwnerKind.PACKAGE else OwnerKind.IMPLEMENTATION,
+                irFunction.descriptor
+        )
         val frameMap = createFrameMap(
                 classCodegen.state, irFunction.descriptor, signature,
-                isStaticMethod(
-                        if (classCodegen.descriptor.isFileDescriptor) OwnerKind.PACKAGE else OwnerKind.IMPLEMENTATION,
-                        irFunction.descriptor
-                )
+                isStatic
         )
-        val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin, irFunction.descriptor.calculateCommonFlags(), irFunction.descriptor.name.asString(), signature.asmMethod.descriptor,
+        val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin,
+                                                           irFunction.descriptor.calculateCommonFlags().or(if (isStatic) ACC_STATIC else 0),
+                                                           irFunction.descriptor.name.asString(), signature.asmMethod.descriptor,
                                                            signature.genericsSignature, null/*TODO support exception*/)
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()

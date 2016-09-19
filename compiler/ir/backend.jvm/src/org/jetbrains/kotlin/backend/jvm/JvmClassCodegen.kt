@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.backend.jvm
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
-import org.jetbrains.kotlin.codegen.SuperClassInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
@@ -186,6 +183,7 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
         }
         else -> throw RuntimeException("Unsupported modality $modality for descriptor $this")
     }
+
     return flags
 }
 
