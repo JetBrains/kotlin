@@ -1,3 +1,1 @@
-// WITH_RUNTIME
-
 fun foo(): Unit = Unit
