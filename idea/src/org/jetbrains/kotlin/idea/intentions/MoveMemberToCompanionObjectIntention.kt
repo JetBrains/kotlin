@@ -36,12 +36,10 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.CollectingNameValidator
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.OuterInstanceReferenceUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.collectOuterInstanceReferences
@@ -53,7 +51,6 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -62,6 +59,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -237,6 +235,14 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         runTemplateForInstanceParam(newDeclaration, nameSuggestions, editor)
     }
 
+    private fun hasTypeParameterReferences(containingClass: KtClassOrObject, element: KtNamedDeclaration): Boolean {
+        val containingClassDescriptor = containingClass.resolveToDescriptor()
+        return element.collectDescendantsOfType<KtTypeReference> {
+            val referencedDescriptor = it.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, it]?.constructor?.declarationDescriptor
+            referencedDescriptor is TypeParameterDescriptor && referencedDescriptor.containingDeclaration == containingClassDescriptor
+        }.isNotEmpty()
+    }
+
     override fun startInWriteAction() = false
 
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
@@ -259,10 +265,14 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             return
         }
 
+        val description = RefactoringUIUtil.getDescription(element, false).capitalize()
+
         if (HierarchySearchRequest(element, element.useScope, false).searchOverriders().any()) {
-            val description = RefactoringUIUtil.getDescription(element, false).capitalize()
-            CommonRefactoringUtil.showErrorHint(project, editor, "$description is overridden by declaration(s) in a subclass", text, null)
-            return
+            return CommonRefactoringUtil.showErrorHint(project, editor, "$description is overridden by declaration(s) in a subclass", text, null)
+        }
+
+        if (hasTypeParameterReferences(element.containingClassOrObject!!, element)) {
+            return CommonRefactoringUtil.showErrorHint(project, editor, "$description references type parameters of the containing class", text, null)
         }
 
         val externalUsages = SmartList<UsageInfo>()
