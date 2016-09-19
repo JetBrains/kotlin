@@ -41,7 +41,7 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         irBlock.statements.add(irFun)
 
         irBlock.statements.add(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                                                     lambdaDescriptor, IrStatementOrigin.LAMBDA))
+                                                     lambdaDescriptor, null, IrStatementOrigin.LAMBDA))
 
         return irBlock
     }
@@ -59,7 +59,7 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 irBlock.statements.add(irFun)
 
                 irBlock.statements.add(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
-                                                             irFun.descriptor, IrStatementOrigin.ANONYMOUS_FUNCTION))
+                                                             irFun.descriptor, null, IrStatementOrigin.ANONYMOUS_FUNCTION))
 
                 irBlock
             }

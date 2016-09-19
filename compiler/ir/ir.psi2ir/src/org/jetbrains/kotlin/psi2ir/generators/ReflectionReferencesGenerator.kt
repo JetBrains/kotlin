@@ -50,8 +50,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
         val irCallableRef = IrCallableReferenceImpl(ktCallableReference.startOffset, ktCallableReference.endOffset,
-                                                                                        getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                                                                                        resolvedCall.resultingDescriptor)
+                                                    getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                                                    resolvedCall.resultingDescriptor, null)
         resolvedCall.dispatchReceiver?.let { dispatchReceiver ->
             if (dispatchReceiver !is TransientReceiver) {
                 irCallableRef.dispatchReceiver = statementGenerator.generateReceiver(ktCallableReference, dispatchReceiver).load()

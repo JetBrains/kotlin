@@ -275,7 +275,8 @@ class StatementGenerator(
                     CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall!!))
                 }
                 is VariableDescriptor ->
-                    CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor)
+                    CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor,
+                                                            getTypeArguments(resolvedCall))
                 else ->
                     IrErrorExpressionImpl(
                             expression.startOffset, expression.endOffset, getInferredTypeWithImplicitCastsOrFail(expression),

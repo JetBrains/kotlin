@@ -46,7 +46,7 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
         }
 
         irBlock.statements.add(IrCallImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
-                                        objectConstructor, IrStatementOrigin.OBJECT_LITERAL))
+                                        objectConstructor, null, IrStatementOrigin.OBJECT_LITERAL))
 
         return irBlock
     }

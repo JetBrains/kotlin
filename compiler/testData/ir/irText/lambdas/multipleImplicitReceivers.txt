@@ -23,18 +23,24 @@ FILE /multipleImplicitReceivers.kt
   FUN public fun test(fooImpl: IFoo, invokeImpl: IInvoke): kotlin.Unit
     BLOCK_BODY
       CALL 'with(A, A.() -> Int): Int' type=kotlin.Int origin=null
+        <T>: A
+        <R>: Int
         receiver: GET_OBJECT 'A' type=A
         block: BLOCK type=A.() -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun A.<anonymous>(): kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
                 CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int origin=null
+                  <T>: IFoo
+                  <R>: Int
                   receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
                   block: BLOCK type=IFoo.() -> kotlin.Int origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IFoo.<anonymous>(): kotlin.Int
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
                           CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int origin=null
+                            <T>: IInvoke
+                            <R>: Int
                             receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null
                             block: BLOCK type=IInvoke.() -> kotlin.Int origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun IInvoke.<anonymous>(): kotlin.Int

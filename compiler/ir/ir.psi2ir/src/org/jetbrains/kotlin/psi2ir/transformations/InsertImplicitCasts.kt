@@ -47,9 +47,9 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
             dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
             extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
             for (index in descriptor.valueParameters.indices) {
-                val argument = getArgument(index) ?: continue
+                val argument = getValueArgument(index) ?: continue
                 val parameterType = descriptor.valueParameters[index].type
-                putArgument(index, argument.cast(parameterType))
+                putValueArgument(index, argument.cast(parameterType))
             }
         }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
@@ -148,6 +150,15 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
     val call = pregenerateCallWithReceivers(resolvedCall)
     pregenerateValueArguments(call, resolvedCall)
     return call
+}
+
+fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
+    if (resolvedCall == null) return null
+
+    val descriptor = resolvedCall.resultingDescriptor
+    if (descriptor.typeParameters.isEmpty()) return null
+
+    return resolvedCall.typeArguments
 }
 
 private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, resolvedCall: ResolvedCall<*>) {

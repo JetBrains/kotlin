@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 import java.lang.UnsupportedOperationException
 
 abstract class IrPrimitiveCallBase(
@@ -47,7 +49,10 @@ abstract class IrPrimitiveCallBase(
                 throw UnsupportedOperationException("Operator call expression can't have a receiver")
         }
 
-    override fun removeArgument(index: Int) {
+    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
+            null // IR primitives have no type parameters
+
+    override fun removeValueArgument(index: Int) {
         throw AssertionError("Operator call expression can't have a default argument")
     }
 
@@ -63,9 +68,9 @@ abstract class IrPrimitiveCallBase(
 
 class IrNullaryPrimitiveImpl constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
         IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
-    override fun getArgument(index: Int): IrExpression? = null
+    override fun getValueArgument(index: Int): IrExpression? = null
 
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         throw UnsupportedOperationException("Nullary operator $descriptor doesn't have arguments")
     }
 
@@ -88,14 +93,14 @@ class IrUnaryPrimitiveImpl private constructor(startOffset: Int, endOffset: Int,
 
     lateinit var argument: IrExpression
 
-    override fun getArgument(index: Int): IrExpression? {
+    override fun getValueArgument(index: Int): IrExpression? {
         return when (index) {
             ARGUMENT0 -> argument
             else -> null
         }
     }
 
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         when (index) {
             ARGUMENT0 -> argument = valueArgument ?: throw AssertionError("Primitive call $descriptor argument is null")
             else -> throw AssertionError("Primitive call $descriptor: no such argument index $index")
@@ -124,7 +129,7 @@ class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatemen
     lateinit var argument0: IrExpression
     lateinit var argument1: IrExpression
 
-    override fun getArgument(index: Int): IrExpression? {
+    override fun getValueArgument(index: Int): IrExpression? {
         return when (index) {
             ARGUMENT0 -> argument0
             ARGUMENT1 -> argument1
@@ -132,7 +137,7 @@ class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatemen
         }
     }
 
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         val argument = valueArgument ?: throw AssertionError("Primitive call $descriptor argument is null")
         when (index) {
             ARGUMENT0 -> argument0 = argument

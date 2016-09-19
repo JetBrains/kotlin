@@ -150,7 +150,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val superQualifier = getSuperQualifier(resolvedCall)
 
         return SimplePropertyLValue(context, scope, ktLeft.startOffset, ktLeft.endOffset, origin, descriptor,
-                                    propertyReceiver, superQualifier)
+                                    getTypeArguments(resolvedCall), propertyReceiver, superQualifier)
     }
 
     private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =

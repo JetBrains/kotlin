@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -25,10 +26,14 @@ import org.jetbrains.kotlin.types.KotlinType
 abstract class IrMemberAccessExpressionBase(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType
+        type: KotlinType,
+        private val typeArguments: Map<TypeParameterDescriptor, KotlinType>?
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null
     override var extensionReceiver: IrExpression? = null
+
+    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
+            typeArguments?.get(typeParameterDescriptor)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)

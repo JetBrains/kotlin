@@ -26,7 +26,8 @@ class IrEnumConstructorCallImpl(
         endOffset: Int,
         override val descriptor: ConstructorDescriptor,
         override val enumEntryDescriptor: ClassDescriptor? = null
-) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size), IrEnumConstructorCall {
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.returnType, descriptor.valueParameters.size, null),
+        IrEnumConstructorCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitEnumConstructorCall(this, data)
     }

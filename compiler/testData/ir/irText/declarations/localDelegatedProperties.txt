@@ -4,6 +4,7 @@ FILE /localDelegatedProperties.kt
       LOCAL_DELEGATED_PROPERTY val x: kotlin.Int
         VAR DELEGATE val `x$delegate`: kotlin.Lazy<kotlin.Int>
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+            <T>: Int
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
                 BLOCK_BODY
@@ -14,6 +15,7 @@ FILE /localDelegatedProperties.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+                <T>: Int
                 $receiver: GET_VAR '`x$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
                 property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -24,10 +26,13 @@ FILE /localDelegatedProperties.kt
       LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
         VAR DELEGATE val `x$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
           CALL 'hashMapOf(vararg Pair<String, Int>): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+            <K>: String
+            <V>: Int
         FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-x>(): kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
+                <V>: Int
                 $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
                 property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -36,6 +41,7 @@ FILE /localDelegatedProperties.kt
             RETURN type=kotlin.Nothing from='<set-x>(Int): Int'
               TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Int
                 CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
+                  <V>: Int
                   $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                   thisRef: CONST Null type=kotlin.Nothing? value='null'
                   property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

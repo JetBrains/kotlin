@@ -3,6 +3,7 @@ FILE /vararg.kt
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
+          <reified T>: String
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Array<kotlin.String>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Array<String>'
@@ -11,6 +12,7 @@ FILE /vararg.kt
     FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
+          <reified T>: String
           elements: VARARG type=Array<out String> varargElementType=String
             CONST String type=kotlin.String value='1'
             CONST String type=kotlin.String value='2'
@@ -23,6 +25,7 @@ FILE /vararg.kt
     FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
+          <reified T>: String
           elements: VARARG type=Array<out String> varargElementType=String
             CONST String type=kotlin.String value='0'
             SPREAD_ELEMENT

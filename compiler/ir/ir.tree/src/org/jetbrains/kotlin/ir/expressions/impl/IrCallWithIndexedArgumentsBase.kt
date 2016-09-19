@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -26,22 +27,23 @@ import java.lang.AssertionError
 abstract class IrCallWithIndexedArgumentsBase(
         startOffset: Int, endOffset: Int, type: KotlinType,
         numArguments: Int,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         override val origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type) {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments) {
     protected val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(numArguments)
 
-    override fun getArgument(index: Int): IrExpression? =
+    override fun getValueArgument(index: Int): IrExpression? =
             argumentsByParameterIndex[index]
 
-    override fun putArgument(index: Int, valueArgument: IrExpression?) {
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         if (index >= argumentsByParameterIndex.size) {
             throw AssertionError("$this: No such argument slot: $index")
         }
         argumentsByParameterIndex[index] = valueArgument
     }
 
-    override fun removeArgument(index: Int) {
+    override fun removeValueArgument(index: Int) {
         argumentsByParameterIndex[index] = null
     }
 

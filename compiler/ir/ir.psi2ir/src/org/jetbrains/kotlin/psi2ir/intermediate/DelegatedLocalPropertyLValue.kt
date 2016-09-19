@@ -31,11 +31,11 @@ class DelegatedLocalPropertyLValue(
     override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression =
-            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, origin)
+            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, null, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.setter!!, origin).apply {
-                putArgument(0, irExpression)
+            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.setter!!, null, origin).apply {
+                putValueArgument(0, irExpression)
             }
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =

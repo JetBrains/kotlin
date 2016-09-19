@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -27,8 +28,10 @@ class IrCallableReferenceImpl(
         endOffset: Int,
         type: KotlinType,
         override val descriptor: CallableDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         override val origin: IrStatementOrigin? = null
-) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, descriptor.valueParameters.size, origin), IrCallableReference {
+) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, descriptor.valueParameters.size, typeArguments, origin),
+        IrCallableReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCallableReference(this, data)
     }

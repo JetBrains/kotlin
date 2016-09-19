@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -31,6 +32,7 @@ class SimplePropertyLValue(
         val endOffset: Int,
         val origin: IrStatementOrigin?,
         val descriptor: PropertyDescriptor,
+        val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         val callReceiver: CallReceiver,
         val superQualifier: ClassDescriptor?
 ) : LValue, AssignmentReceiver {
@@ -39,7 +41,7 @@ class SimplePropertyLValue(
     override fun load(): IrExpression =
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 descriptor.getter?.let { getter ->
-                    IrGetterCallImpl(startOffset, endOffset, getter,
+                    IrGetterCallImpl(startOffset, endOffset, getter, typeArguments,
                                      dispatchReceiverValue?.load(),
                                      extensionReceiverValue?.load(),
                                      origin,
@@ -51,7 +53,7 @@ class SimplePropertyLValue(
     override fun store(irExpression: IrExpression) =
             callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 descriptor.setter?.let { setter ->
-                    IrSetterCallImpl(startOffset, endOffset, setter,
+                    IrSetterCallImpl(startOffset, endOffset, setter, typeArguments,
                                      dispatchReceiverValue?.load(),
                                      extensionReceiverValue?.load(),
                                      irExpression,
@@ -74,7 +76,7 @@ class SimplePropertyLValue(
                 val extensionReceiverValue2 = extensionReceiverTmp?.let { VariableLValue(it) }
 
                 val irResultExpression = withLValue(
-                        SimplePropertyLValue(context, scope, startOffset, endOffset, origin, descriptor,
+                        SimplePropertyLValue(context, scope, startOffset, endOffset, origin, descriptor, typeArguments,
                                              SimpleCallReceiver(dispatchReceiverValue2, extensionReceiverValue2),
                                              superQualifier)
                 )

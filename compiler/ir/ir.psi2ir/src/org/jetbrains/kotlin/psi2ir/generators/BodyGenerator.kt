@@ -224,7 +224,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     private fun generateAnySuperConstructorCAll(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
         val anyConstructor = context.builtIns.any.constructors.single()
-        irBlockBody.statements.add(IrDelegatingConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, anyConstructor))
+        irBlockBody.statements.add(IrDelegatingConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, anyConstructor, null))
     }
 
     private fun generateEnumSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {

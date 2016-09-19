@@ -3,6 +3,8 @@ FILE /extensionLambda.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(): Int'
         CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int origin=null
+          <T>: String
+          <R>: Int
           $receiver: CONST String type=kotlin.String value='42'
           block: BLOCK type=kotlin.String.() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.String.<anonymous>(): kotlin.Int

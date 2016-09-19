@@ -37,7 +37,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
             is VariableDescriptor ->
                 call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                    generateGetVariable(startOffset, endOffset, descriptor, origin)
+                    generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(call.original), origin)
                 }
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, origin, call)
@@ -46,9 +46,12 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         }
     }
 
-    fun generateGetVariable(startOffset: Int, endOffset: Int, descriptor: VariableDescriptor, origin: IrStatementOrigin? = null) =
+    fun generateGetVariable(startOffset: Int, endOffset: Int,
+                            descriptor: VariableDescriptor,
+                            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+                            origin: IrStatementOrigin? = null) =
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
-                IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
+                IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
             else
                 IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
 
@@ -57,7 +60,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         if (descriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $descriptor")
 
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
-            val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor)
+            val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor, getTypeArguments(call.original))
             irCall.dispatchReceiver = dispatchReceiver?.load()
             irCall.extensionReceiver = extensionReceiver?.load()
             addParametersToCall(startOffset, endOffset, call, irCall, descriptor.returnType)
@@ -88,6 +91,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             descriptor.getter?.let { getter ->
                 IrGetterCallImpl(startOffset, endOffset, getter,
+                                 getTypeArguments(call.original),
                                  dispatchReceiverValue?.load(),
                                  extensionReceiverValue?.load(),
                                  IrStatementOrigin.GET_PROPERTY,
@@ -108,7 +112,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         val returnType = descriptor.returnType!!
 
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, origin, call.superQualifier)
+            val irCall = IrCallImpl(startOffset, endOffset, returnType, descriptor, getTypeArguments(call.original), origin, call.superQualifier)
             irCall.dispatchReceiver = dispatchReceiverValue?.load()
             irCall.extensionReceiver = extensionReceiverValue?.load()
 
@@ -123,7 +127,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             else {
                 val valueArguments = call.getValueArgumentsInParameterOrder()
                 for ((index, valueArgument) in valueArguments.withIndex()) {
-                    irCall.putArgument(index, valueArgument)
+                    irCall.putValueArgument(index, valueArgument)
                 }
                 irCall
             }
@@ -159,7 +163,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
 
         resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
             val valueParameter = valueParameters[index]
-            irCall.putArgument(index, irArgumentValues[valueParameter]?.load())
+            irCall.putValueArgument(index, irArgumentValues[valueParameter]?.load())
         }
 
         irBlock.statements.add(irCall)

@@ -163,7 +163,7 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     private fun generateDelegateFunctionBody(irDelegate: IrFieldImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
         val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
         val returnType = overridden.returnType!!
-        val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden)
+        val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden, null)
         irCall.dispatchReceiver = IrGetVariableImpl(irDelegate.startOffset, irDelegate.endOffset, irDelegate.descriptor)
         irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
             IrGetExtensionReceiverImpl(irDelegate.startOffset, irDelegate.endOffset, extensionReceiver)

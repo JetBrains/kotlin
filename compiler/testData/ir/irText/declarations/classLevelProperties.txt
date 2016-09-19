@@ -72,6 +72,7 @@ FILE /classLevelProperties.kt
       FIELD DELEGATE val `test7$delegate`: kotlin.Lazy<kotlin.Int>
         EXPRESSION_BODY
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+            <T>: Int
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Int
                 BLOCK_BODY
@@ -82,6 +83,7 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test7>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+              <T>: Int
               $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: THIS of 'C' type=C
               thisRef: THIS of 'C' type=C
@@ -90,10 +92,13 @@ FILE /classLevelProperties.kt
       FIELD DELEGATE val `test8$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
         EXPRESSION_BODY
           CALL 'hashMapOf(vararg Pair<String, Int>): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+            <K>: String
+            <V>: Int
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test8>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test8>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
+              <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 receiver: THIS of 'C' type=C
               thisRef: THIS of 'C' type=C
@@ -102,6 +107,7 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
+              <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 receiver: THIS of 'C' type=C
               thisRef: THIS of 'C' type=C

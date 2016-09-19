@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrDeclarationReference {
     var dispatchReceiver: IrExpression?
@@ -26,15 +28,27 @@ interface IrMemberAccessExpression : IrDeclarationReference {
     val origin: IrStatementOrigin?
     override val descriptor: CallableDescriptor
 
-    fun getArgument(index: Int): IrExpression?
-    fun putArgument(index: Int, valueArgument: IrExpression?)
-    fun removeArgument(index: Int)
+    fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType?
+
+    fun getValueArgument(index: Int): IrExpression?
+    fun putValueArgument(index: Int, valueArgument: IrExpression?)
+    fun removeValueArgument(index: Int)
 }
 
+fun IrMemberAccessExpression.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
+        getValueArgument(valueParameterDescriptor.index)
+
+fun IrMemberAccessExpression.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
+    putValueArgument(valueParameterDescriptor.index, valueArgument)
+}
+
+fun IrMemberAccessExpression.removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
+    removeValueArgument(valueParameterDescriptor.index)
+}
 
 inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression): T {
     descriptor.valueParameters.forEach {
-        putArgument(it.index, transform(it))
+        putValueArgument(it.index, transform(it))
     }
     return this
 }
