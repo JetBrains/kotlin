@@ -1,38 +1,46 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import org.jetbrains.kni.indexer.NativeIndex
-import org.jetbrains.kotlin.native.interop.gen.*
+import org.jetbrains.kotlin.native.interop.indexer.*
 
 class StubGenerator(
-        val translationUnit: NativeIndex.TranslationUnit,
+        val nativeIndex: NativeIndex,
         val pkgName: String,
         val libName: String,
         val excludedFunctions: Set<String>) {
 
     val forbiddenStructNames = run {
-        val functionNames = translationUnit.functionList.map { it.name }
-        val fieldNames = translationUnit.structList.flatMap { it.fieldList }.map { it.name }
+        val functionNames = nativeIndex.functions.map { it.name }
+        val fieldNames = nativeIndex.structs.mapNotNull { it.def }.flatMap { it.fields }.map { it.name }
         (functionNames + fieldNames).toSet()
     }
 
-    val enums = translationUnit.enumList.map { it.name to it }.toMap()
+    val StructDecl.kotlinName: String
+        get() = if (spelling.startsWith("struct ") || spelling.startsWith("union ")) {
+            spelling.substringAfter(' ')
+        } else {
+            spelling
+        }
 
-    val structs = translationUnit.structList.map { it.name to it }.toMap()
+    val EnumDef.kotlinName: String
+        get() = if (spelling.startsWith("enum ")) {
+            spelling.substringAfter(' ')
+        } else {
+            spelling
+        }
+
+    val RecordType.kotlinName: String
+        get() = decl.kotlinName
+
+    val EnumType.kotlinName: String
+        get() = def.kotlinName
 
 
-    val functionsToBind = translationUnit.functionList.uniqueBy { it.name }.filter { it.name !in excludedFunctions }
+    val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
 
     private fun mangleStructName(name: String) = if (name !in forbiddenStructNames) name else (name + "Struct")
 
-    val NativeIndex.CStruct.mangledName: String
-        get() = mangleStructName(name)
-
-
-    val NativeIndex.CForwardStruct.mangledName: String
-        get() = mangleStructName(name)
-
-    val EnumType.baseType: DirectlyMappedType
-        get() = (parseType(enums[name]!!.type) as DirectlyMappedType)
+    val StructDecl.mangledName: String
+        get() = mangleStructName(kotlinName)
 
     private var out: (String) -> Unit = {
         throw IllegalStateException()
@@ -61,8 +69,10 @@ class StubGenerator(
         return withOutput({ oldOut("    $it") }, action)
     }
 
-    fun CType.getStringRepresentation(): String {
+    // TODO: use libclang to implement:
+    fun Type.getStringRepresentation(): String {
         return when (this) {
+
             is VoidType -> "void"
             is Int8Type -> "char"
             is UInt8Type -> "unsigned char"
@@ -70,44 +80,75 @@ class StubGenerator(
             is UInt16Type -> "unsigned short"
             is Int32Type -> "int"
             is UInt32Type -> "unsigned int"
+            is IntPtrType -> "intptr_t"
+            is UIntPtrType -> "uintptr_t"
             is Int64Type -> "int64_t"
             is UInt64Type -> "uint64_t"
-            is PointerType -> pointeeType.getStringRepresentation() + "*"
-            is RecordType -> structs[name]?.spelling ?: "void" // FIXME
-            is FunctionPointerType -> this.returnType.getStringRepresentation() + " (*)(" +
-                    this.parameterTypes.map { it.getStringRepresentation() }.joinToString(", ") + ")"
+
+            is PointerType -> {
+                val pointeeType = this.pointeeType
+                if (pointeeType is FunctionType) {
+                    pointeeType.returnType.getStringRepresentation() + " (*)(" +
+                            pointeeType.parameterTypes.map { it.getStringRepresentation() }.joinToString(", ") + ")"
+                } else {
+                    pointeeType.getStringRepresentation() + "*"
+                }
+            }
+
+            is RecordType -> this.decl.spelling
+
             is ArrayType -> "void*" // TODO
-            is EnumType -> enums["${this.name}"]!!.spelling
+
+            is EnumType -> this.def.spelling
+
             else -> throw kotlin.NotImplementedError()
         }
     }
 
+    val PrimitiveType.kotlinType: String
+        get() = when (this) {
+
+            is Int8Type, is UInt8Type -> "Byte"
+            is Int16Type, is UInt16Type -> "Short"
+            is Int32Type, is UInt32Type -> "Int"
+            is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
+            is Int64Type, is UInt64Type -> "Long"
+
+            else -> throw NotImplementedError()
+        }
+
     class NativeRefType(val typeName: String, val typeExpr: String = typeName)
 
-    fun getKotlinNativeRefType(type: CType): NativeRefType = when (type) {
+    fun getKotlinTypeForRefTo(type: Type): NativeRefType = when (type) {
         is Int8Type, is UInt8Type -> NativeRefType("Int8Box")
         is Int16Type, is UInt16Type -> NativeRefType("Int16Box")
         is Int32Type, is UInt32Type -> NativeRefType("Int32Box")
+        is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
         is Int64Type, is UInt64Type -> NativeRefType("Int64Box")
-        is RecordType -> NativeRefType("${mangleStructName(type.name)}")
-        is EnumType -> NativeRefType("${type.name}.ref")
+
+        is RecordType -> NativeRefType("${mangleStructName(type.kotlinName)}")
+
+        is EnumType -> NativeRefType("${type.kotlinName}.ref")
+
         is PointerType -> {
-            if (type.pointeeType is VoidType) {
+            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
                 NativeRefType("NativePtrBox")
             } else {
-                val pointeeRefType = getKotlinNativeRefType(type.pointeeType)
+                val pointeeRefType = getKotlinTypeForRefTo(type.pointeeType)
                 NativeRefType("RefBox<${pointeeRefType.typeName}>", "${pointeeRefType.typeExpr}.ref")
             }
         }
-        is FunctionPointerType -> getKotlinNativeRefType(PointerType(VoidType))
+
         is ConstArrayType -> {
-            val elemRefType = getKotlinNativeRefType(type.elemType)
+            val elemRefType = getKotlinTypeForRefTo(type.elemType)
             NativeRefType("NativeArray<${elemRefType.typeName}>", "array[${type.length}](${elemRefType.typeExpr})")
         }
+
         is IncompleteArrayType -> {
-            val elemRefType = getKotlinNativeRefType(type.elemType)
+            val elemRefType = getKotlinTypeForRefTo(type.elemType)
             NativeRefType("NativeArray<${elemRefType.typeName}>", "array(${elemRefType.typeExpr})")
         }
+
         else -> throw NotImplementedError()
     }
 
@@ -132,10 +173,12 @@ class StubGenerator(
             kotlinType = refType.typeName + "?"
     )
 
-    fun getOutValueBinding(type: CType): OutValueBinding = when (type) {
-        is DirectlyMappedType -> OutValueBinding(type.kotlinType)
+    fun getOutValueBinding(type: Type): OutValueBinding = when (type) {
+
+        is PrimitiveType -> OutValueBinding(type.kotlinType)
+
         is PointerType -> {
-            if (type.pointeeType is VoidType) {
+            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
                 OutValueBinding(
                         kotlinType = "NativePtr?",
                         kotlinConv = { "$it.asLong()" },
@@ -149,18 +192,20 @@ class StubGenerator(
                         kotlinJniBridgeType = "Long"
                 )
             } else {
-                outValueRefBinding(getKotlinNativeRefType(type.pointeeType))
+                outValueRefBinding(getKotlinTypeForRefTo(type.pointeeType))
             }
         }
+
         is EnumType -> OutValueBinding(
-                kotlinType = type.name,
+                kotlinType = type.kotlinName,
                 kotlinConv = { "$it.value" },
-                kotlinJniBridgeType = type.baseType.kotlinType
+                kotlinJniBridgeType = type.def.baseType.kotlinType
         )
-        is ArrayType -> outValueRefBinding(getKotlinNativeRefType(type))
-        is FunctionPointerType -> getOutValueBinding(PointerType(VoidType))
+
+        is ArrayType -> outValueRefBinding(getKotlinTypeForRefTo(type))
+
         is RecordType -> {
-            val refType = getKotlinNativeRefType(type)
+            val refType = getKotlinTypeForRefTo(type)
             // pointer will be converted to value in C code
             OutValueBinding(
                     kotlinType = refType.typeName,
@@ -168,61 +213,69 @@ class StubGenerator(
                     kotlinJniBridgeType = "Long"
             )
         }
+
         else -> throw NotImplementedError()
     }
 
-    fun getInValueBinding(type: CType): InValueBinding = when (type) {
+    fun getInValueBinding(type: Type): InValueBinding = when (type) {
+
+        is PrimitiveType -> InValueBinding(type.kotlinType)
+
         is VoidType -> InValueBinding("Unit")
-        is DirectlyMappedType -> InValueBinding(type.kotlinType)
+
         is PointerType -> {
-            if (type.pointeeType is VoidType) {
+            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
                 InValueBinding(
                         kotlinJniBridgeType = "Long",
                         conv = { "NativePtr.byValue($it)" },
                         kotlinType = "NativePtr?"
                 )
             } else {
-                inValueRefBinding(getKotlinNativeRefType(type.pointeeType))
+                inValueRefBinding(getKotlinTypeForRefTo(type.pointeeType))
             }
         }
+
         is EnumType -> InValueBinding(
-                kotlinJniBridgeType = type.baseType.kotlinType,
-                conv = { "${type.name}.byValue($it)" },
-                kotlinType = type.name
+                kotlinJniBridgeType = type.def.baseType.kotlinType,
+                conv = { "${type.kotlinName}.byValue($it)" },
+                kotlinType = type.kotlinName
         )
-        is ArrayType -> inValueRefBinding(getKotlinNativeRefType(type))
+
+        is ArrayType -> inValueRefBinding(getKotlinTypeForRefTo(type))
+
         is RecordType -> {
-            // FIXME
-            val refType = getKotlinNativeRefType(type)
+            // TODO: valid only for return values
+            val refType = getKotlinTypeForRefTo(type)
             InValueBinding(
                     kotlinJniBridgeType = "Long",
                     conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
                     kotlinType = refType.typeName
             )
         }
+
         else -> throw NotImplementedError()
     }
 
 
-    private fun <T> Iterable<T>.uniqueBy(key: (T) -> Any): List<T> {
-        val found = mutableSetOf<Any>()
-        return this.filter { found.add(key(it)) }
-    }
+    private fun generateKotlinStruct(decl: StructDecl) {
+        val def = decl.def
+        if (def == null) {
+            generateKotlinForwardStruct(decl)
+            return
+        }
 
-
-    private fun generateKotlinStruct(s: NativeIndex.CStruct) {
-        val className = s.mangledName
+        val className = decl.mangledName
         out("class $className(ptr: NativePtr) : NativeStruct(ptr) {")
         indent {
             out("")
-            out("companion object : Type<$className>(${s.size}, ::$className)")
+            out("companion object : Type<$className>(${def.size}, ::$className)")
             out("")
-            s.fieldList.forEach { field ->
+            def.fields.forEach { field ->
                 try {
                     if (field.offset < 0) throw NotImplementedError();
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
-                    val fieldRefType = getKotlinNativeRefType(parseType(field.type))
+                    val fieldRefType = getKotlinTypeForRefTo(field.type)
                     out("val ${field.name} by ${fieldRefType.typeExpr} at $offset")
                 } catch (e: Throwable) {
                     println("Warning: cannot generate definition for field $className.${field.name}")
@@ -232,31 +285,30 @@ class StubGenerator(
         out("}")
     }
 
-    private fun generateKotlinForwardStruct(s: NativeIndex.CForwardStruct) {
+    private fun generateKotlinForwardStruct(s: StructDecl) {
         val className = s.mangledName
         out("class $className(ptr: NativePtr) : NativeRef(ptr) {")
         out("    companion object : Type<$className>(::$className)")
         out("}")
     }
 
-    private fun generateKotlinEnum(e: NativeIndex.CEnum) {
-        val baseType = (parseType(e.type) as DirectlyMappedType)
-        val baseRefType = getKotlinNativeRefType(baseType)
+    private fun generateKotlinEnum(e: EnumDef) {
+        val baseRefType = getKotlinTypeForRefTo(e.baseType)
 
-        out("enum class ${e.name}(val value: ${baseType.kotlinType}) {")
+        out("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType}) {")
         indent {
-            e.valueList.forEach {
+            e.values.forEach {
                 out("${it.name}(${it.value}),")
             }
             out(";")
             out("")
             out("companion object {")
-            out("    fun byValue(value: ${baseType.kotlinType}) = ${e.name}.values().find { it.value == value }!!")
+            out("    fun byValue(value: ${e.baseType.kotlinType}) = ${e.kotlinName}.values().find { it.value == value }!!")
             out("}")
             out("")
             out("class ref(ptr: NativePtr) : NativeRef(ptr) {")
             out("    companion object : TypeWithSize<ref>(${baseRefType.typeExpr}.size, ::ref)")
-            out("    var value: ${e.name}")
+            out("    var value: ${e.kotlinName}")
             out("        get() = byValue(${baseRefType.typeExpr}.byPtr(ptr).value)")
             out("        set(value) { ${baseRefType.typeExpr}.byPtr(ptr).value = value.value }")
             out("}")
@@ -265,16 +317,16 @@ class StubGenerator(
         out("}")
     }
 
-    private fun retValBinding(func: NativeIndex.Function) = getInValueBinding(parseType(func.returnType))
+    private fun retValBinding(func: FunctionDecl) = getInValueBinding(func.returnType)
 
-    private fun paramBindings(func: NativeIndex.Function): Array<OutValueBinding> {
-        val paramBindings = func.parameterList.map { param ->
-            getOutValueBinding(parseType(param.type))
+    private fun paramBindings(func: FunctionDecl): Array<OutValueBinding> {
+        val paramBindings = func.parameters.map { param ->
+            getOutValueBinding(param.type)
         }.toMutableList()
 
-        val retValType = parseType(func.returnType)
+        val retValType = func.returnType
         if (retValType is RecordType) {
-            val retValRefType = getKotlinNativeRefType(retValType)
+            val retValRefType = getKotlinTypeForRefTo(retValType)
             val typeExpr = retValRefType.typeExpr
 
             paramBindings.add(OutValueBinding(
@@ -287,19 +339,24 @@ class StubGenerator(
         return paramBindings.toTypedArray()
     }
 
-    private fun paramNames(func: NativeIndex.Function): Array<String> {
-        val paramNames = func.parameterList.mapIndexed { i: Int, parameter: NativeIndex.Function.Parameter ->
-            if (parameter.name != "") parameter.name else "arg$i"
+    private fun paramNames(func: FunctionDecl): Array<String> {
+        val paramNames = func.parameters.mapIndexed { i: Int, parameter: Parameter ->
+            val name = parameter.name
+            if (name != null && name != "") {
+                name
+            } else {
+                "arg$i"
+            }
         }.toMutableList()
 
-        if (parseType(func.returnType) is RecordType) {
+        if (func.returnType is RecordType) {
             paramNames.add("retValPlacement")
         }
 
         return paramNames.toTypedArray()
     }
 
-    private fun generateKotlinBindingMethod(func: NativeIndex.Function) {
+    private fun generateKotlinBindingMethod(func: FunctionDecl) {
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
@@ -337,7 +394,7 @@ class StubGenerator(
         out("}")
     }
 
-    private fun generateKotlinExternalMethod(func: NativeIndex.Function) {
+    private fun generateKotlinExternalMethod(func: FunctionDecl) {
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
@@ -368,29 +425,18 @@ class StubGenerator(
             }
         }
 
-        val generatedStructs = mutableSetOf<String>()
-
-        translationUnit.structList.uniqueBy { it.name }.forEach { s ->
+        nativeIndex.structs.forEach { s ->
             try {
                 transaction {
                     generateKotlinStruct(s)
                     out("")
-                    generatedStructs.add(s.name)
                 }
             } catch (e: Throwable) {
-                println("Warning: cannot generate definition for struct ${s.name}")
+                println("Warning: cannot generate definition for struct ${s.kotlinName}")
             }
         }
 
-        translationUnit.forwardStructList
-                .uniqueBy { it.name }
-                .filter { it.name !in generatedStructs }
-                .forEach { s ->
-                    generateKotlinForwardStruct(s)
-                    out("")
-                }
-
-        translationUnit.enumList.uniqueBy { it.name }.forEach { e ->
+        nativeIndex.enums.forEach { e ->
             generateKotlinEnum(e)
             out("")
         }
@@ -421,8 +467,7 @@ class StubGenerator(
         else -> throw NotImplementedError(kotlinJniBridgeType)
     }
 
-
-    fun generateCFile(headerFiles: List<String>, translationUnit: NativeIndex.TranslationUnit) {
+    fun generateCFile(headerFiles: List<String>) {
         out("#include <stdint.h>")
         out("#include <jni.h>")
         headerFiles.forEach {
@@ -432,51 +477,56 @@ class StubGenerator(
 
         functionsToBind.forEach { func ->
             try {
-                val paramNames = paramNames(func)
-                val paramBindings = paramBindings(func)
-                val retValBinding = retValBinding(func)
-
-                val args =
-                        if (paramBindings.isEmpty())
-                            ""
-                        else paramBindings
-                                .map { getCJniBridgeType(it.kotlinJniBridgeType) }
-                                .mapIndexed { i, type -> "$type ${paramNames[i]}" }
-                                .joinToString(separator = ", ", prefix = ", ")
-
-                val cReturnType = getCJniBridgeType(retValBinding.kotlinJniBridgeType)
-
-                val params = func.parameterList.mapIndexed { i, parameter ->
-                    val cType = parseType(parameter.type).getStringRepresentation()
-                    if (parseType(parameter.type) is RecordType) {
-                        "*($cType*)${paramNames[i]}" // FIXME
-                    } else {
-                        "($cType)${paramNames[i]}"
-                    }
-                }.joinToString(", ")
-
-                val callExpr = "${func.name}($params)"
-                val funcFullName = if (pkgName.isEmpty()) {
-                    "externals.${func.name}"
-                } else {
-                    "$pkgName.externals.${func.name}"
-                }
-                val jniFuncName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
-
-                out("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args) {")
-
-                if (cReturnType == "void") {
-                    out("    $callExpr;")
-                } else if (retValBinding.kotlinType in structs) { // FIXME
-                    out("    *(${structs[retValBinding.kotlinType]!!.spelling}*)retValPlacement = $callExpr;")
-                    out("    return ($cReturnType) retValPlacement;")
-                } else {
-                    out("    return ($cReturnType) ($callExpr);")
-                }
-                out("}")
+                generateCJniFunction(func)
             } catch (e: Throwable) {
                 System.err.println("Warning: cannot generate C JNI function definition ${func.name}")
             }
         }
+    }
+
+    private fun generateCJniFunction(func: FunctionDecl) {
+        val funcReturnType = func.returnType
+        val paramNames = paramNames(func)
+        val paramBindings = paramBindings(func)
+        val retValBinding = retValBinding(func)
+
+        val args =
+                if (paramBindings.isEmpty())
+                    ""
+                else paramBindings
+                        .map { getCJniBridgeType(it.kotlinJniBridgeType) }
+                        .mapIndexed { i, type -> "$type ${paramNames[i]}" }
+                        .joinToString(separator = ", ", prefix = ", ")
+
+        val cReturnType = getCJniBridgeType(retValBinding.kotlinJniBridgeType)
+
+        val params = func.parameters.mapIndexed { i, parameter ->
+            val cType = parameter.type.getStringRepresentation()
+            if (parameter.type is RecordType) {
+                "*($cType*)${paramNames[i]}"
+            } else {
+                "($cType)${paramNames[i]}"
+            }
+        }.joinToString(", ")
+
+        val callExpr = "${func.name}($params)"
+        val funcFullName = if (pkgName.isEmpty()) {
+            "externals.${func.name}"
+        } else {
+            "$pkgName.externals.${func.name}"
+        }
+        val jniFuncName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
+
+        out("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args) {")
+
+        if (cReturnType == "void") {
+            out("    $callExpr;")
+        } else if (funcReturnType is RecordType) {
+            out("    *(${funcReturnType.decl.spelling}*)retValPlacement = $callExpr;")
+            out("    return ($cReturnType) retValPlacement;")
+        } else {
+            out("    return ($cReturnType) ($callExpr);")
+        }
+        out("}")
     }
 }

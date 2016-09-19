@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import org.jetbrains.kni.indexer.IndexerOptions
-import org.jetbrains.kni.indexer.Language
-import org.jetbrains.kni.indexer.NativeIndex
-import org.jetbrains.kni.indexer.buildNativeIndex
-import org.jetbrains.kotlin.native.interop.gen.jvm.StubGenerator
+import org.jetbrains.kotlin.native.interop.indexer.NativeIndex
+import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
 import java.io.File
 import java.util.*
 import kotlin.system.exitProcess
@@ -35,9 +32,9 @@ fun main(args: Array<String>) {
 
 
 
-        val translationUnit = buildNativeIndex(headerFiles, compilerOpts)
+        val nativeIndex = buildNativeIndex(headerFiles, compilerOpts)
 
-        val gen = StubGenerator(translationUnit, outKtPkg, libName, excludedFunctions)
+        val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions)
 
         File(outKtFile).bufferedWriter().use { out ->
             gen.withOutput({ out.appendln(it) }) {
@@ -50,7 +47,7 @@ fun main(args: Array<String>) {
 
         outCFile.bufferedWriter().use { out ->
             gen.withOutput({ out.appendln(it) }) {
-                gen.generateCFile(headerFiles, translationUnit)
+                gen.generateCFile(headerFiles)
             }
         }
 
@@ -91,12 +88,10 @@ fun main(args: Array<String>) {
 
         outCFile.delete()
         outOFile.delete()
-
     }
-
 }
 
-private fun buildNativeIndex(headerFiles: List<String>, compilerOpts: List<String>): NativeIndex.TranslationUnit {
+private fun buildNativeIndex(headerFiles: List<String>, compilerOpts: List<String>): NativeIndex {
     val tempHeaderFile = createTempFile(suffix = ".h")
     tempHeaderFile.deleteOnExit()
     tempHeaderFile.writer().buffered().use { reader ->
@@ -105,6 +100,7 @@ private fun buildNativeIndex(headerFiles: List<String>, compilerOpts: List<Strin
         }
     }
 
-    val indexerOptions = IndexerOptions(language = Language.CPP, args = compilerOpts)
-    return buildNativeIndex(tempHeaderFile, indexerOptions)
+    val res = buildNativeIndex(tempHeaderFile, compilerOpts)
+    println(res)
+    return res
 }

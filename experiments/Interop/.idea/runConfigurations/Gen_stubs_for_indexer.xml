@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="StubGenerator" type="JetRunConfigurationType" factoryName="Kotlin">
+  <configuration default="false" name="Gen stubs for indexer" type="JetRunConfigurationType" factoryName="Kotlin">
     <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.native.interop.gen.jvm.MainKt" />
     <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/Indexer/nativelib" />
-    <option name="PROGRAM_PARAMETERS" value="$PROJECT_DIR$/Example/src $PROJECT_DIR$/Example/nativelib" />
+    <option name="PROGRAM_PARAMETERS" value="$PROJECT_DIR$/Indexer/src $PROJECT_DIR$/Indexer/nativelib" />
     <option name="WORKING_DIRECTORY" value="" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" />

@@ -3,10 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Example/Example.iml" filepath="$PROJECT_DIR$/Example/Example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Indexer/Indexer.iml" filepath="$PROJECT_DIR$/Indexer/Indexer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Interop.iml" filepath="$PROJECT_DIR$/Interop.iml" />
       <module fileurl="file://$PROJECT_DIR$/Runtime/Runtime.iml" filepath="$PROJECT_DIR$/Runtime/Runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/StubGenerator/StubGenerator.iml" filepath="$PROJECT_DIR$/StubGenerator/StubGenerator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../kni/indexer/indexer.iml" filepath="$PROJECT_DIR$/../kni/indexer/indexer.iml" />
     </modules>
   </component>
 </project>
