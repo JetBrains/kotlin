@@ -17,7 +17,6 @@
 package kotlin.text
 
 import kotlin.text.js.*
-import java.util.*
 
 /**
  * Provides enumeration values to use to set regular expression options.

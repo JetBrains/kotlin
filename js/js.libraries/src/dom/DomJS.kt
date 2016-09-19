@@ -4,7 +4,6 @@ import org.w3c.dom.*
 import org.w3c.dom.DOMTokenList
 import org.w3c.dom.HTMLCollection
 import org.w3c.dom.HTMLElement
-import java.util.*
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
 operator fun Document?.get(selector: String): List<Element> {
