@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String
@@ -60,7 +63,11 @@ class KotlinImplicitThisUsage(
 ): KotlinImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String {
         val name = targetDescriptor.name
-        return if (name.isSpecial) "this" else "this@${name.asString()}"
+        return when {
+            name.isSpecial -> "this"
+            DescriptorUtils.isCompanionObject(targetDescriptor) -> IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(targetDescriptor as ClassifierDescriptor)
+            else -> "this@${name.asString()}"
+        }
     }
 
     override fun processReplacedElement(element: KtElement) {
