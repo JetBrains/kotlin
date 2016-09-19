@@ -8,6 +8,6 @@ run: placer
 clean:
 	$(RM) *.o placer
 
-placer:placer.o
+placer: placer.o
 
 .PHONY: all run clean

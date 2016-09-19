@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <cassert>
 #include <cstddef>
@@ -58,7 +59,7 @@ class Container {
   }
 };
 
-// Raw reference to data, meaning T*, only for cleaness of intentions.
+// Raw reference to data, meaning T*, invented only for cleaness of intentions.
 template <class T>
 class RawRef {
  private:
@@ -69,8 +70,7 @@ class RawRef {
   void set(const T& value) { *ptr_ = value; }
 };
 
-// Object reference, adds reference counting in container. In real implementation
-// we may want to differentiate between
+// Object reference, adds reference counting in container.
 template <class T>
 class ObjRef {
  private:
@@ -107,6 +107,12 @@ class ObjRef {
     return *reinterpret_cast<Container**>(ptr_);
   }
 
+  template<typename M, int offset>
+  RawRef<M> at() const {
+    return RawRef<M>(
+      reinterpret_cast<M*>(reinterpret_cast<uint8_t*>(ref()) + offset));
+  }
+
   void Assign(const ObjRef<T>& other) {
     // TODO: optimize for an important case where containers match.
     if (ptr_) {
@@ -118,10 +124,11 @@ class ObjRef {
     }
   }
 
-  template<typename M, int offset>
-  RawRef<M> at() const {
-    return RawRef<M>(
-      reinterpret_cast<M*>(reinterpret_cast<uint8_t*>(ref()) + offset));
+  ObjRef<T> Clone(Container* container) {
+    ObjRef<T> result = Alloc(container);
+    // TODO: take into account object references in T!
+    memcpy(result.ref(), ref(), sizeof(T));
+    return result;
   }
 
   bool null() const { return ptr_ == nullptr; }
@@ -136,8 +143,17 @@ struct List {
   int data_;
 };
 
+void UpdateElement(ObjRef<List> element) {
+  element.at<int, offsetof(struct List, data_)>().set
+    (element.at<int, offsetof(struct List, data_)>().get() + 10);
+}
+
+void DoNotUpdateElement(ObjRef<List> element) {
+  element.at<int, offsetof(struct List, data_)>().set
+    (element.at<int, offsetof(struct List, data_)>().get() + 100);
+}
+
 void test_placer() {
-  printf("Start placement\n");
   Container heap(1024);
   constexpr int next_offset = offsetof(struct List, next_);
   constexpr int data_offset = offsetof(struct List, data_);
@@ -149,6 +165,18 @@ void test_placer() {
       cur.at<ObjRef<List>, next_offset>().set(ObjRef<List>::Alloc(&heap));
       cur = cur.at<ObjRef<List>, next_offset>().get();
       cur.at<int, data_offset>().set(i + 2);
+    }
+    cur = head;
+    // Pass by reference.
+    while (!cur.null()) {
+      UpdateElement(cur);
+      cur = cur.at<ObjRef<List>, next_offset>().get();
+    }
+     // Pass by value.
+    while (!cur.null()) {
+      // We could place clone on stack as well.
+      DoNotUpdateElement(cur.Clone(&heap));
+      cur = cur.at<ObjRef<List>, next_offset>().get();
     }
     cur = head;
     while (!cur.null()) {
