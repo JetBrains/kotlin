@@ -4903,6 +4903,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constructorWithEmptyBody.kt")
+        public void testConstructorWithEmptyBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/constructorWithEmptyBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("declaration.kt")
         public void testDeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/declaration.kt");
