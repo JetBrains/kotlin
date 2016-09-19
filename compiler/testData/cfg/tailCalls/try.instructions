@@ -11,27 +11,30 @@ L0:
   1 <START>
   2 mark({ try { return foo() } catch (e: Throwable) { } })
     mark(try { return foo() } catch (e: Throwable) { })
-    jmp?(L2)                                                                     NEXT:[v(e: Throwable), mark({ return foo() })]
+    jmp?(L2)                                                                        NEXT:[v(e: Throwable), mark({ return foo() })]
   3 mark({ return foo() })
-    jmp?(L2)                                                                     NEXT:[v(e: Throwable), mark(foo())]
+    jmp?(L3)                                                                        NEXT:[magic[CATCH_FROM_TRY](try { return foo() } catch (e: Throwable) { }) -> <v2>, mark(foo())]
     mark(foo())
     call(foo(), foo) -> <v0>
-    ret(*|<v0>) L1                                                               NEXT:[<END>]
-- 2 jmp?(L2)                                                                     NEXT:[v(e: Throwable), jmp(L3)]                                                     PREV:[]
--   jmp(L3)                                                                      NEXT:[merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>]    PREV:[]
+    ret(*|<v0>) L1                                                                  NEXT:[<END>]
+- 2 jmp?(L3)                                                                        NEXT:[magic[CATCH_FROM_TRY](try { return foo() } catch (e: Throwable) { }) -> <v2>, jmp(L4)]        PREV:[]
+-   jmp(L4)                                                                         NEXT:[merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v5>) -> <v6>]                    PREV:[]
+L3 [beforeCatchFromTryMagic]:
+    magic[CATCH_FROM_TRY](try { return foo() } catch (e: Throwable) { }) -> <v2>    PREV:[jmp?(L3)]
 L2 [onException]:
-  3 v(e: Throwable)                                                              PREV:[jmp?(L2), jmp?(L2)]
-    magic[FAKE_INITIALIZER](e: Throwable) -> <v2>
-    w(e|<v2>)
+  3 v(e: Throwable)                                                                 PREV:[jmp?(L2), magic[CATCH_FROM_TRY](try { return foo() } catch (e: Throwable) { }) -> <v2>]
+    magic[FAKE_INITIALIZER](e: Throwable) -> <v3>
+    w(e|<v3>)
   4 mark({ })
     read (Unit)
-  3 jmp(L3)
-L3 [afterCatches]:
-  2 merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>
+  3 magic[OUT_OF_CATCH](try { return foo() } catch (e: Throwable) { }) -> <v4>
+    jmp(L4)
+L4 [afterCatches]:
+  2 merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v5>) -> <v6>
 L1:
-  1 <END>                                                                        NEXT:[<SINK>]                                                                       PREV:[ret(*|<v0>) L1, merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v3>) -> <v4>]
+  1 <END>                                                                           NEXT:[<SINK>]                                                                                       PREV:[ret(*|<v0>) L1, merge(try { return foo() } catch (e: Throwable) { }|!<v1>, !<v5>) -> <v6>]
 error:
-    <ERROR>                                                                      PREV:[]
+    <ERROR>                                                                         PREV:[]
 sink:
-    <SINK>                                                                       PREV:[<ERROR>, <END>]
+    <SINK>                                                                          PREV:[<ERROR>, <END>]
 =====================
