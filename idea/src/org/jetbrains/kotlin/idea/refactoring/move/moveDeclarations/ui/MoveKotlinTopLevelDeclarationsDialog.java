@@ -453,14 +453,15 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             if (ret != Messages.YES) return null;
         }
 
-        PsiDirectory selectedPsiDirectory;
-        if (initialTargetDirectory == null) {
-            DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper)destinationFolderCB.getComboBox().getSelectedItem();
-            selectedPsiDirectory = selectedItem != null ? selectedItem.getDirectory() : null;
-            if (selectedPsiDirectory == null) return Pair.create(null, new MultipleRootsMoveDestination(targetPackage));
-        }
-        else {
-            selectedPsiDirectory = initialTargetDirectory;
+        DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper)destinationFolderCB.getComboBox().getSelectedItem();
+        PsiDirectory selectedPsiDirectory = selectedItem != null ? selectedItem.getDirectory() : null;
+        if (selectedPsiDirectory == null) {
+            if (initialTargetDirectory != null) {
+                selectedPsiDirectory = initialTargetDirectory;
+            }
+            else {
+                return Pair.create(null, new MultipleRootsMoveDestination(targetPackage));
+            }
         }
 
         VirtualFile targetDirectory = selectedPsiDirectory.getVirtualFile();
