@@ -112,7 +112,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
                 return
             }
             else -> {
-                overriddenDescriptors.forEach { traverse(it) }
+                overriddenDescriptors.forEach(::traverse)
             }
         }
     }
@@ -147,13 +147,6 @@ private fun DeclarationDescriptor.getDeprecationByAnnotation(): DeprecatedByAnno
             val propertyAnnotation = propertyDescriptor.getDeclaredDeprecatedAnnotation()
             if (propertyAnnotation != null)
                 return DeprecatedByAnnotation(propertyAnnotation, propertyDescriptor)
-
-            val classDescriptor = containingDeclaration as? ClassDescriptor
-            if (classDescriptor != null && classDescriptor.isCompanionObject) {
-                val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
-                if (classAnnotation != null)
-                    return DeprecatedByAnnotation(classAnnotation, classDescriptor)
-            }
         }
     }
     return null

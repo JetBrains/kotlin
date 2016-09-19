@@ -1,13 +1,13 @@
 fun test() {
-   <warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">MyClass</warning>.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
+   <warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">MyClass</warning>.test
    MyClass()
    val a: MyClass? = null
    val b: MyTrait? = null
-   <warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>.<warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">test</warning>
+   <warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>.test
    MyTrait.<warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">Companion</warning>
    <warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>
    MyClass.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>
-   MyClass.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
+   MyClass.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>.test
 
    a == b
 }
