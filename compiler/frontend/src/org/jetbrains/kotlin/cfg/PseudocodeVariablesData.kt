@@ -112,14 +112,35 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             enterInstructionData: InitControlFlowInfo,
             blockScopeVariableInfo: BlockScopeVariableInfo): InitControlFlowInfo {
         if (instruction is MagicInstruction) {
-            if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
-                val exitInstructionData = enterInstructionData.copy()
-                for ((key, value) in enterInstructionData) {
-                    if (!value.definitelyInitialized()) {
-                        exitInstructionData.put(key, VariableControlFlowState.createInitializedExhaustively(value.isDeclared))
+            when (instruction.kind) {
+                MagicKind.EXHAUSTIVE_WHEN_ELSE -> {
+                    val exitInstructionData = enterInstructionData.copy()
+                    for ((key, value) in enterInstructionData) {
+                        if (!value.definitelyInitialized()) {
+                            exitInstructionData.put(key, VariableControlFlowState.createInitializedExhaustively(value.isDeclared))
+                        }
                     }
+                    return exitInstructionData
                 }
-                return exitInstructionData
+                MagicKind.CATCH_FROM_TRY -> {
+                    val exitInstructionData = enterInstructionData.copy()
+                    for ((key, value) in enterInstructionData) {
+                        if (value.mayBeInitialized()) {
+                            exitInstructionData.put(key, VariableControlFlowState.createInitializedInTry(value.isDeclared))
+                        }
+                    }
+                    return exitInstructionData
+                }
+                MagicKind.OUT_OF_CATCH -> {
+                    val exitInstructionData = enterInstructionData.copy()
+                    for ((key, value) in enterInstructionData) {
+                        if (value.initState == InitState.INITIALIZED_IN_TRY) {
+                            exitInstructionData.put(key, VariableControlFlowState.create(InitState.UNKNOWN, value.isDeclared))
+                        }
+                    }
+                    return exitInstructionData
+                }
+                else -> {}
             }
         }
         if (instruction !is WriteValueInstruction && instruction !is VariableDeclarationInstruction) {

@@ -453,6 +453,9 @@ class ControlFlowInformationProvider private constructor(
                     if (captured && !mayBeInitializedNotHere && hasBackingField && isThisOrNoDispatchReceiver) {
                         report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
                     }
+                    else if (ctxt.enterInitState?.initState == InitState.INITIALIZED_IN_TRY) {
+                        report(Errors.VAL_REASSIGNMENT_IN_CATCH.on(expression, variableDescriptor), ctxt)
+                    }
                     else {
                         report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
                     }
