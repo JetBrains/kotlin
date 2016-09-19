@@ -22,12 +22,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
@@ -61,13 +63,13 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     }
 
-    @NotNull
-    private static final BinaryOperationIntrinsicBase INTEGER_DIVISION_INTRINSIC = new BinaryOperationIntrinsicBase() {
+    private static final BinaryOperationIntrinsicBase INT_MULTIPLICATION_INTRINSIC = new BinaryOperationIntrinsicBase() {
         @NotNull
         @Override
-        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            JsBinaryOperation div = new JsBinaryOperation(JsBinaryOperator.DIV, left, right);
-            return JsAstUtils.toInt32(div);
+        public JsExpression doApply(
+                @NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context
+        ) {
+            return new JsInvocation(Namer.imul(), left, right);
         }
     };
 
@@ -91,6 +93,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES);
+
+    private static final DescriptorPredicate INT_BINARY_OPERATIONS = pattern("Int.plus|minus|div(Int)");
+    private static final DescriptorPredicate SIMPLE_INT_MULTIPLICATION = pattern("Byte|Short.times(Byte|Short)");
+    private static final DescriptorPredicate INT_DIVISION = pattern("Byte|Short|Int.div(Byte|Short|Int)");
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, BINARY_OPERATIONS);
 
@@ -102,6 +108,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     );
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
+    private static final DescriptorPredicate INT_MULTIPLICATION = pattern("Int.times(Int)");
 
     private static final DescriptorPredicate CHAR_RANGE_TO = pattern("Char.rangeTo(Char)");
     private static final DescriptorPredicate NUMBER_RANGE_TO = pattern("Byte|Short|Int.rangeTo(Byte|Short|Int)");
@@ -139,9 +146,8 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return null;
         }
 
-
-        if (pattern("Int|Short|Byte.div(Int|Short|Byte)").apply(descriptor)) {
-            return INTEGER_DIVISION_INTRINSIC;
+        if (INT_MULTIPLICATION.apply(descriptor)) {
+            return INT_MULTIPLICATION_INTRINSIC;
         }
         if (NUMBER_RANGE_TO.apply(descriptor)) {
             return new RangeToIntrinsic(descriptor);
@@ -153,6 +159,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             }
         }
         JsBinaryOperator operator = getOperator(descriptor);
+        if (INT_BINARY_OPERATIONS.apply(descriptor) || SIMPLE_INT_MULTIPLICATION.apply(descriptor) || INT_DIVISION.apply(descriptor)) {
+            return new IntBinaryOperationFunctionIntrinsic(operator);
+        }
         BinaryOperationIntrinsicBase result = new PrimitiveBinaryOperationFunctionIntrinsic(operator);
 
         if (pattern("Char.plus|minus(Int)").apply(descriptor)) {
@@ -193,6 +202,18 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
             return new JsBinaryOperation(operator, left, right);
+        }
+    }
+
+    private static class IntBinaryOperationFunctionIntrinsic extends PrimitiveBinaryOperationFunctionIntrinsic {
+        private IntBinaryOperationFunctionIntrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return JsAstUtils.toInt32(super.doApply(left, right, context));
         }
     }
 

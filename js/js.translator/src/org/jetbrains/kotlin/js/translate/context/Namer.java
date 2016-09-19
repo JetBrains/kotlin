@@ -465,6 +465,10 @@ public final class Namer {
         return sb.toString();
     }
 
+    public static JsNameRef imul() {
+        return pureFqn("imul", kotlinObject());
+    }
+
     public static boolean requiresEscaping(@NotNull String name) {
         // TODO: remove if there is existing implementation of this method
         // TODO: handle JavaScript keywords

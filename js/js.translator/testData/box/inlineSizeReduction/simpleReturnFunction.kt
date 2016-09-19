@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test except=imul
 // CHECK_VARS_COUNT: function=test count=0
 
 // A copy of stdlib run function.

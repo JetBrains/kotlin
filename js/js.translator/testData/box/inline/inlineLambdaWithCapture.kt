@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: maxBySquare
+// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul
 
 internal data class Result(var value: Int = 0, var invocationCount: Int = 0)
 

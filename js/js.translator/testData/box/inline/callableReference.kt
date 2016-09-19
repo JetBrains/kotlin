@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: multiplyInline
+// CHECK_CONTAINS_NO_CALLS: multiplyInline except=imul
 // CHECK_NOT_CALLED: runNoinline
 
 internal inline fun multiply(a: Int, b: Int) = a * b
