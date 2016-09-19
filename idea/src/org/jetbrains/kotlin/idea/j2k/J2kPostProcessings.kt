@@ -58,7 +58,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(RemoveRedundantCastToNullableProcessing())
 
-        registerIntentionBasedProcessing(ConvertToExpressionBodyIntention()) { it is KtPropertyAccessor }
+        registerIntentionBasedProcessing(ConvertToExpressionBodyIntention(convertEmptyToUnit = false)) { it is KtPropertyAccessor }
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
         registerIntentionBasedProcessing(IfThenToElvisIntention())
         registerIntentionBasedProcessing(IfNullToElvisIntention())
