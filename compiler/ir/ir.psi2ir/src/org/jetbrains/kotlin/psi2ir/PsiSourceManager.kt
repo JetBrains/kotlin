@@ -20,6 +20,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 class PsiSourceManager : SourceManager {
@@ -67,15 +68,15 @@ class PsiSourceManager : SourceManager {
         override fun toString(): String = getRecognizableName()
     }
 
-    private val fileEntriesByPsiFile = HashMap<PsiFile, PsiFileEntry>()
+    private val fileEntriesByKtFile = HashMap<KtFile, PsiFileEntry>()
     private val fileEntriesByIrFile = HashMap<IrFile, PsiFileEntry>()
-    private val psiFileByFileEntry = HashMap<PsiFileEntry, PsiFile>()
+    private val ktFileByFileEntry = HashMap<PsiFileEntry, KtFile>()
 
-    fun createFileEntry(psiFile: PsiFile): PsiFileEntry {
-        if (psiFile in fileEntriesByPsiFile) error("PsiFileEntry is already created for $psiFile")
-        val newEntry = PsiFileEntry(psiFile)
-        fileEntriesByPsiFile[psiFile] = newEntry
-        psiFileByFileEntry[newEntry] = psiFile
+    fun createFileEntry(ktFile: KtFile): PsiFileEntry {
+        if (ktFile in fileEntriesByKtFile) error("PsiFileEntry is already created for $ktFile")
+        val newEntry = PsiFileEntry(ktFile)
+        fileEntriesByKtFile[ktFile] = newEntry
+        ktFileByFileEntry[newEntry] = ktFile
         return newEntry
     }
 
@@ -83,14 +84,14 @@ class PsiSourceManager : SourceManager {
         fileEntriesByIrFile[irFile] = fileEntry
     }
 
-    fun getOrCreateFileEntry(psiFile: PsiFile): PsiFileEntry =
-            fileEntriesByPsiFile.getOrElse(psiFile) { createFileEntry(psiFile) }
+    fun getOrCreateFileEntry(ktFile: KtFile): PsiFileEntry =
+            fileEntriesByKtFile.getOrElse(ktFile) { createFileEntry(ktFile) }
 
-    fun getFileEntry(psiFile: PsiFile): PsiFileEntry? =
-            fileEntriesByPsiFile[psiFile]
+    fun getKtFile(fileEntry: PsiFileEntry): KtFile? =
+            ktFileByFileEntry[fileEntry]
 
-    fun getPsiFile(fileEntry: PsiFileEntry) =
-            psiFileByFileEntry[fileEntry]
+    fun getKtFile(irFile: IrFile): KtFile? =
+            (irFile.fileEntry as? PsiFileEntry)?.let { ktFileByFileEntry[it] }
 
     override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry =
             fileEntriesByIrFile[irFile]!!

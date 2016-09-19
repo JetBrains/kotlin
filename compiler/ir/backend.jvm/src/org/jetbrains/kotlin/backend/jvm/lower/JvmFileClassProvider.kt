@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import java.lang.AssertionError
 import java.util.*
 
@@ -42,20 +42,24 @@ class JvmFileClassProvider : Psi2IrTranslator.PostprocessingStep {
     }
 
     private val fileClassInfoByFileEntry = HashMap<SourceManager.FileEntry, JvmFileClassInfo>()
+    private val sourceElementByFileEntry = HashMap<SourceManager.FileEntry, SourceElement>()
 
     private fun recordFileClassInfo(context: GeneratorContext, irFile: IrFile) {
-        val jvmFileClassInfo = context.sourceManager.getFileClassInfo(irFile.fileEntry)
+        context.sourceManager.getKtFile(irFile)?.let { ktFile ->
+            sourceElementByFileEntry[irFile.fileEntry] = KotlinSourceElement(ktFile)
+        }
+        val jvmFileClassInfo = context.sourceManager.getFileClassInfo(irFile) ?: return
         fileClassInfoByFileEntry[irFile.fileEntry] = jvmFileClassInfo
     }
 
-    private fun PsiSourceManager.getKtFile(fileEntry: SourceManager.FileEntry) =
-            getPsiFile(fileEntry as PsiSourceManager.PsiFileEntry) as KtFile
-
-    private fun PsiSourceManager.getFileClassInfo(fileEntry: SourceManager.FileEntry): JvmFileClassInfo =
-            JvmFileClassUtil.getFileClassInfoNoResolve(getKtFile(fileEntry))
+    private fun PsiSourceManager.getFileClassInfo(irFile: IrFile): JvmFileClassInfo? {
+        val file = getKtFile(irFile) ?: return null
+        return JvmFileClassUtil.getFileClassInfoNoResolve(file)
+    }
 
     fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
         val fileClassInfo = fileClassInfoByFileEntry[fileEntry] ?: throw AssertionError("No file class info for ${fileEntry.name})")
-        return FileClassDescriptorImpl(fileClassInfo.fileClassFqName.shortName(), packageFragment, SourceElement.NO_SOURCE)
+        val sourceElement = sourceElementByFileEntry[fileEntry] ?: SourceElement.NO_SOURCE
+        return FileClassDescriptorImpl(fileClassInfo.fileClassFqName.shortName(), packageFragment, sourceElement)
     }
 }
