@@ -124,16 +124,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = getAnnotationByName(descriptor, new FqName(JS_NAME));
-        if (annotation == null) return null;
-
-        if (descriptor instanceof PropertyAccessorDescriptor) {
-            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
-            AnnotationDescriptor propertyAnnotation = getAnnotationByName(accessor.getCorrespondingProperty(), new FqName(JS_NAME));
-            if (propertyAnnotation == annotation) return null;
-        }
-
-        return annotation;
+        return getAnnotationByName(descriptor, new FqName(JS_NAME));
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
