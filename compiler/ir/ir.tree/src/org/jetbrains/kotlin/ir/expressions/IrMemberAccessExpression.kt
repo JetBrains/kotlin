@@ -28,6 +28,7 @@ interface IrMemberAccessExpression : IrDeclarationReference {
     val origin: IrStatementOrigin?
     override val descriptor: CallableDescriptor
 
+    // NB `typeParameterDescriptor` should be taken from `descriptor.original`
     fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType?
 
     fun getValueArgument(index: Int): IrExpression?
