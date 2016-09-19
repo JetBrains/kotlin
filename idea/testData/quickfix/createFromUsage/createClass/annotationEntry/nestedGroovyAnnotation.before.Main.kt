@@ -1,5 +1,6 @@
 // "Create annotation 'foo'" "false"
 // ERROR: Unresolved reference: foo
+// ACTION: Convert to expression body
 // ACTION: Make private
 // ACTION: Make internal
 
