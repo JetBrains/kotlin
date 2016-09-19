@@ -159,7 +159,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     fun isOpenInEditor(): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) return false
-        return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, true)
+        return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
     }
 
     private fun validateOKButton() {
@@ -167,7 +167,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
 
     override fun doOKAction() {
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, true)
+        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, false)
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
         if (DumbService.isDumb(project)) {
