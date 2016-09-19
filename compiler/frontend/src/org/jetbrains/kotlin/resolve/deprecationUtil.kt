@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -188,7 +189,7 @@ fun DeclarationDescriptor.isDeprecatedHidden(): Boolean {
 }
 
 @JvmOverloads
-fun DeclarationDescriptor.isHiddenInResolution(isSuperCall: Boolean = false): Boolean {
+fun DeclarationDescriptor.isHiddenInResolution(languageVersionSettings: LanguageVersionSettings, isSuperCall: Boolean = false): Boolean {
     if (this is FunctionDescriptor) {
         if (isHiddenToOvercomeSignatureClash) return true
         if (isHiddenForResolutionEverywhereBesideSupercalls && !isSuperCall) return true

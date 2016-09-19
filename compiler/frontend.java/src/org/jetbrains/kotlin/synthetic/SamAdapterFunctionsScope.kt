@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -38,7 +39,10 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, SyntheticM
     override val baseDescriptorForSynthetic: FunctionDescriptor
 }
 
-class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope {
+class SamAdapterFunctionsScope(
+        storageManager: StorageManager,
+        private val languageVersionSettings: LanguageVersionSettings
+) : SyntheticScope {
     private val extensionForFunction = storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
         extensionForFunctionNotCached(function)
     }
@@ -48,7 +52,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
         if (!function.hasJavaOriginInHierarchy()) return null //TODO: should we go into base at all?
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
         if (function.returnType == null) return null
-        if (function.isHiddenInResolution()) return null
+        if (function.isHiddenInResolution(languageVersionSettings)) return null
         return MyFunctionDescriptor.create(function)
     }
 
