@@ -1,0 +1,1 @@
+Type alias 5 typealias B = A<Int>

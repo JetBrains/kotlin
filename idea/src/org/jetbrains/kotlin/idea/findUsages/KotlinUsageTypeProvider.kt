@@ -46,6 +46,7 @@ object KotlinUsageTypeProvider : UsageTypeProviderEx {
             COMPANION_OBJECT_ACCESS -> KotlinUsageTypes.COMPANION_OBJECT_ACCESS
             EXTENSION_RECEIVER_TYPE -> KotlinUsageTypes.EXTENSION_RECEIVER_TYPE
             SUPER_TYPE_QUALIFIER -> KotlinUsageTypes.SUPER_TYPE_QUALIFIER
+            TYPE_ALIAS -> KotlinUsageTypes.TYPE_ALIAS
 
             FUNCTION_CALL -> KotlinUsageTypes.FUNCTION_CALL
             IMPLICIT_GET -> KotlinUsageTypes.IMPLICIT_GET
@@ -89,6 +90,7 @@ object KotlinUsageTypes {
     val COMPANION_OBJECT_ACCESS = UsageType(KotlinBundle.message("usageType.companion.object"))
     val EXTENSION_RECEIVER_TYPE = UsageType(KotlinBundle.message("usageType.extension.receiver.type"))
     val SUPER_TYPE_QUALIFIER = UsageType(KotlinBundle.message("usageType.super.type.qualifier"))
+    val TYPE_ALIAS = UsageType("Type alias")
 
     // functions
     val FUNCTION_CALL = UsageType(KotlinBundle.message("usageType.function.call"))

@@ -112,6 +112,9 @@ object UsageTypeUtils {
                 refExpr.getParentOfTypeAndBranch<KtSuperExpression>(){ superTypeQualifier } != null ->
                     SUPER_TYPE_QUALIFIER
 
+                refExpr.getParentOfTypeAndBranch<KtTypeAlias> { getTypeReference() } != null ->
+                    TYPE_ALIAS
+
                 else -> null
             }
         }
@@ -217,6 +220,7 @@ enum class UsageTypeEnum {
     COMPANION_OBJECT_ACCESS,
     EXTENSION_RECEIVER_TYPE,
     SUPER_TYPE_QUALIFIER,
+    TYPE_ALIAS,
 
     FUNCTION_CALL,
     IMPLICIT_GET,

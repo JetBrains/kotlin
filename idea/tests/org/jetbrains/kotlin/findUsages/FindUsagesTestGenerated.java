@@ -623,6 +623,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/primaryConstructorWithDefaultParams.0.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("usageInTypeAlias.0.kt")
+            public void testUsageInTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/usageInTypeAlias.0.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/kotlin/findFunctionUsages")
