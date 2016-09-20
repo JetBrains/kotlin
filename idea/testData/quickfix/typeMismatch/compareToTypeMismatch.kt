@@ -1,4 +1,4 @@
-// "Change 'A.compareTo' function return type to 'Int'" "true"
+// "Change return type of invoked function 'A.compareTo' to 'Int'" "true"
 interface A {
     operator fun compareTo(other: Any): String
 }

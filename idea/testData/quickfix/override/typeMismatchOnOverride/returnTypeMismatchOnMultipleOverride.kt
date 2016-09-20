@@ -1,4 +1,4 @@
-// "Change 'B.foo' function return type to 'T'" "true"
+// "Change return type to 'T'" "true"
 open class S {}
 open class T : S() {}
 

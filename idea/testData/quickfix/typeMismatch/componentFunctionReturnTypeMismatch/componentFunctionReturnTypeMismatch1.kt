@@ -1,4 +1,4 @@
-// "Change 'A.component1' function return type to 'Int'" "true"
+// "Change return type of invoked function 'A.component1' to 'Int'" "true"
 abstract class A {
     abstract operator fun component1()
     abstract operator fun component2(): Int

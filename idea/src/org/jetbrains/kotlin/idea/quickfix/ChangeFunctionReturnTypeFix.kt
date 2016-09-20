@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -44,9 +45,11 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : KotlinQuickFixAction<KtFunction>(element) {
+abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : KotlinQuickFixAction<KtFunction>(element) {
+
     private val changeFunctionLiteralReturnTypeFix: ChangeFunctionLiteralReturnTypeFix?
 
     private val typeContainsError = ErrorUtils.containsErrorType(type)
@@ -64,30 +67,61 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
         }
     }
 
+    open fun functionPresentation(): String? {
+        val name = element.name
+        if (name != null) {
+            val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
+            val containerName = container?.name?.check { !it.isSpecial }?.asString()
+            return "function " + (if (containerName != null) "'$containerName.$name'" else "'$name'")
+        }
+        else {
+            return null
+        }
+    }
+
+    class OnType(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type), HighPriorityAction {
+        override fun functionPresentation() = null
+    }
+
+    class ForCurrent(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type), HighPriorityAction {
+        override fun functionPresentation(): String? {
+            val presentation = super.functionPresentation() ?: return "current function"
+            return "current $presentation"
+        }
+    }
+
+    class ForInvoked(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type) {
+        override fun functionPresentation(): String? {
+            val presentation = super.functionPresentation() ?: return "invoked function"
+            return "invoked $presentation"
+        }
+    }
+
+    class ForOverridden(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type) {
+        override fun functionPresentation(): String? {
+            val presentation = super.functionPresentation() ?: return null
+            return "overridden $presentation"
+        }
+    }
+
     override fun getText(): String {
         if (changeFunctionLiteralReturnTypeFix != null) {
             return changeFunctionLiteralReturnTypeFix.text
         }
 
-        val shortName = element.name
-        val functionName = if (shortName != null) {
-            val containingDescriptor = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
-            val containerName = containingDescriptor?.name
-            if (containerName != null && !containerName.isSpecial) "${containerName.asString()}.$shortName" else shortName
-        }
-        else null
+        val functionPresentation = functionPresentation()
 
         if (isUnitType && element.hasBlockBody()) {
-            return if (functionName == null)
-                KotlinBundle.message("remove.no.name.function.return.type")
+            return if (functionPresentation == null)
+                "Remove explicitly specified return type"
             else
-                KotlinBundle.message("remove.function.return.type", functionName)
+                "Remove explicitly specified return type of $functionPresentation"
         }
 
-        return if (functionName == null)
-            KotlinBundle.message("change.no.name.function.return.type", typePresentation)
+        return if (functionPresentation == null)
+            "Change return type to '$typePresentation'"
         else
-            KotlinBundle.message("change.function.return.type", functionName, typePresentation)
+            "Change return type of $functionPresentation to '$typePresentation'"
     }
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
@@ -121,7 +155,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
             val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
             val componentFunction = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as KtFunction? ?: return null
             val expectedType = context[BindingContext.TYPE, entry.typeReference!!] ?: return null
-            return ChangeFunctionReturnTypeFix(componentFunction, expectedType)
+            return ChangeFunctionReturnTypeFix.ForInvoked(componentFunction, expectedType)
         }
     }
 
@@ -133,7 +167,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
             val resolvedCall = context[BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression] ?: return null
             val hasNextDescriptor = resolvedCall.candidateDescriptor
             val hasNextFunction = DescriptorToSourceUtils.descriptorToDeclaration(hasNextDescriptor) as KtFunction? ?: return null
-            return ChangeFunctionReturnTypeFix(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
+            return ChangeFunctionReturnTypeFix.ForInvoked(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
         }
     }
 
@@ -144,7 +178,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
             val resolvedCall = expression.getResolvedCall(context) ?: return null
             val compareToDescriptor = resolvedCall.candidateDescriptor
             val compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor) as? KtFunction ?: return null
-            return ChangeFunctionReturnTypeFix(compareTo, compareToDescriptor.builtIns.intType)
+            return ChangeFunctionReturnTypeFix.ForInvoked(compareTo, compareToDescriptor.builtIns.intType)
         }
     }
 
@@ -158,7 +192,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
 
             val matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
             if (matchingReturnType != null) {
-                actions.add(ChangeFunctionReturnTypeFix(function, matchingReturnType))
+                actions.add(ChangeFunctionReturnTypeFix.OnType(function, matchingReturnType))
             }
 
             val functionType = descriptor.returnType ?: return actions
@@ -174,7 +208,7 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
             if (overriddenMismatchingFunctions.size == 1) {
                 val overriddenFunction = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingFunctions[0])
                 if (overriddenFunction is KtFunction) {
-                    actions.add(ChangeFunctionReturnTypeFix(overriddenFunction, functionType))
+                    actions.add(ChangeFunctionReturnTypeFix.ForOverridden(overriddenFunction, functionType))
                 }
             }
 
@@ -185,14 +219,14 @@ class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType) : Kotli
     object ChangingReturnTypeToUnitFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix(function, function.platform.builtIns.unitType)
+            return ChangeFunctionReturnTypeFix.ForCurrent(function, function.platform.builtIns.unitType)
         }
     }
 
     object ChangingReturnTypeToNothingFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix(function, function.platform.builtIns.nothingType)
+            return ChangeFunctionReturnTypeFix.ForCurrent(function, function.platform.builtIns.nothingType)
         }
     }
 

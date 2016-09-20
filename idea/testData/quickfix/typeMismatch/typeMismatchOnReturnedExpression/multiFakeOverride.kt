@@ -1,5 +1,5 @@
-// "Change 'AA.f' function return type to 'Boolean'" "false"
-// ACTION: Change 'AAA.g' function return type to 'Int'
+// "Change return type of invoked function 'AA.f' to 'Boolean'" "false"
+// ACTION: Change return type of current function 'AAA.g' to 'Int'
 // ACTION: Convert to expression body
 // ERROR: Type mismatch: inferred type is Int but Boolean was expected
 interface A {

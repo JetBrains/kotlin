@@ -1,4 +1,4 @@
-// "Change 'foo' function return type to 'Boolean'" "true"
+// "Change return type to 'Boolean'" "true"
 
 interface A {
     fun foo(): Boolean
