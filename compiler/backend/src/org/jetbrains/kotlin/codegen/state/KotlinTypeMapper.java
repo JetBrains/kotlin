@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -194,6 +195,10 @@ public class KotlinTypeMapper {
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
             String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, publicFacade);
             if (facadeFqName != null) return facadeFqName;
+        }
+
+        if (descriptor instanceof IrBuiltinOperatorDescriptorBase) {
+            return "intrinsic";
         }
 
         throw new RuntimeException("Could not find package member for " + descriptor +
