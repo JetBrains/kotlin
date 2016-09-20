@@ -504,7 +504,7 @@ public class FunctionCodegen {
             if (destructuringVariables == null) continue;
 
             for (VariableDescriptor entry : destructuringVariables) {
-                Type type = typeMapper.mapType(parameter.getType());
+                Type type = typeMapper.mapType(entry.getType());
                 mv.visitLocalVariable(entry.getName().asString(), type.getDescriptor(), null, methodBegin, methodEnd, shift);
                 shift += type.getSize();
             }
