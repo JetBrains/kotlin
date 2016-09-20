@@ -1,6 +1,4 @@
 class Class {
-    companion object {
-    }
 }
 
 fun f() {

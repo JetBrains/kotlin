@@ -36,7 +36,11 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 
-class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = false) : MemberInfoBase<KtNamedDeclaration>(member) {
+class KotlinMemberInfo @JvmOverloads constructor(
+        member: KtNamedDeclaration,
+        val isSuperClass: Boolean = false,
+        val isCompanionMember: Boolean = false
+) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
         private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
             modifiers = DescriptorRendererModifier.INNER.singletonOrEmptySet()
@@ -61,6 +65,9 @@ class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = f
             displayName = RENDERER.render(memberDescriptor)
             if (memberDescriptor is MemberDescriptor && memberDescriptor.modality == Modality.ABSTRACT) {
                 displayName = "abstract $displayName"
+            }
+            if (isCompanionMember) {
+                displayName = "companion $displayName"
             }
 
             val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.overriddenDescriptors ?: emptySet()

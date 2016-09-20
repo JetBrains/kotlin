@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringBundle
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -109,6 +111,13 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
     conflicts.putValue(member, message.capitalize())
 }
 
+private fun PsiClass.isSourceOrTarget(data: KotlinPullUpData): Boolean {
+    var element = unwrapped
+    if (element is KtObjectDeclaration && element.isCompanion()) element = element.containingClassOrObject
+
+    return element == data.sourceClass || element == data.targetClass
+}
+
 private fun KotlinPullUpData.checkAccidentalOverrides(
         member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
@@ -119,7 +128,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
             HierarchySearchRequest<PsiElement>(targetClass, targetClass.useScope)
                     .searchInheritors()
                     .asSequence()
-                    .filterNot { it.unwrapped == sourceClass || it.unwrapped == targetClass }
+                    .filterNot { it.isSourceOrTarget(this) }
                     .mapNotNull { it.unwrapped as? KtClassOrObject }
                     .forEach {
                         val subClassDescriptor = resolutionFacade.resolveToDescriptor(it) as ClassDescriptor

@@ -24,6 +24,14 @@ abstract class A {
     class Y {
 
     }
+
+    companion object {
+        // INFO: {"checked": "true"}
+        val _x = 1
+
+        // INFO: {"checked": "true"}
+        fun _foo(n: Int): Boolean = n > 0
+    }
 }
 
 abstract class B: A() {

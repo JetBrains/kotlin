@@ -880,3 +880,8 @@ fun checkSuperMethods(
 
     return askUserForMethodsToSearch(declarationDescriptor, overriddenElementsToDescriptor)
 }
+
+fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
+    val containingObject = containingClassOrObject as? KtObjectDeclaration ?: return false
+    return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
+}

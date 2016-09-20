@@ -28,8 +28,12 @@ import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
 import org.jetbrains.kotlin.psi.*
 
 class KotlinPullUpDialog(
@@ -62,14 +66,18 @@ class KotlinPullUpDialog(
             val superClass = superClass ?: return false
             if (superClass is PsiClass) return false
             if (superClass !is KtClass) return false
-            if (!superClass.isInterface()) return true
 
             val member = memberInfo.member
+            if (member.isCompanionMemberOf(sourceClass)) return false
+
+            if (!superClass.isInterface()) return true
+
             return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
             val member = memberInfo.member
+            if (member.isCompanionMemberOf(sourceClass)) return false
             return ((member is KtProperty || member is KtParameter) && superClass !is PsiClass)
                    || (member is KtNamedFunction && superClass is PsiClass)
         }
@@ -78,7 +86,10 @@ class KotlinPullUpDialog(
             val superClass = superClass ?: return false
             val member = memberInfo.member
 
-            if (superClass is PsiClass && !member.canMoveMemberToJavaClass(superClass)) return false
+            if (superClass is PsiClass) {
+                if (!member.canMoveMemberToJavaClass(superClass)) return false
+                if (member.isCompanionMemberOf(sourceClass)) return false
+            }
             if (memberInfo in memberInfoStorage.getDuplicatedMemberInfos(superClass)) return false
             if (member in memberInfoStorage.getExtending(superClass)) return false
             return true
