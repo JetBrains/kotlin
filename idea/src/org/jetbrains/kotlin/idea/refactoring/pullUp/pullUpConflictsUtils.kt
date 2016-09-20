@@ -90,13 +90,22 @@ internal fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: C
 private fun KotlinPullUpData.checkClashWithSuperDeclaration(
         member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
-        conflicts: MultiMap<PsiElement, String>) {
+        conflicts: MultiMap<PsiElement, String>
+) {
+    val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
+
+    if (member is KtParameter) {
+        if (((targetClass as? KtClass)?.getPrimaryConstructorParameters() ?: emptyList()).any { it.name == member.name }) {
+            conflicts.putValue(member, message.capitalize())
+        }
+        return
+    }
+
     if (memberDescriptor !is CallableMemberDescriptor) return
 
     val clashingSuper = getClashingMemberInTargetClass(memberDescriptor) ?: return
     if (clashingSuper.modality == Modality.ABSTRACT) return
     if (clashingSuper.kind != CallableMemberDescriptor.Kind.DECLARATION) return
-    val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
     conflicts.putValue(member, message.capitalize())
 }
 

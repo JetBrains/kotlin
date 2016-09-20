@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
@@ -36,7 +37,7 @@ class KotlinMemberSelectionTable(
         if (memberInfo.isStatic()) return null
 
         val member = memberInfo.member
-        if (member !is KtNamedFunction && member !is KtProperty) return null
+        if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return null
 
         if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return it }
@@ -51,7 +52,7 @@ class KotlinMemberSelectionTable(
         if (memberInfo.isStatic()) return false
 
         val member = memberInfo.member
-        if (member !is KtNamedFunction && member !is KtProperty) return false
+        if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return false
 
         if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return false }
@@ -68,7 +69,7 @@ class KotlinMemberSelectionTable(
         val defaultIcon = AbstractMemberSelectionTable.EMPTY_OVERRIDE_ICON
 
         val member = memberInfo.member
-        if (member !is KtNamedFunction && member !is KtProperty) return defaultIcon
+        if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return defaultIcon
 
         return when (memberInfo.getOverrides()) {
             true -> AllIcons.General.OverridingMethod

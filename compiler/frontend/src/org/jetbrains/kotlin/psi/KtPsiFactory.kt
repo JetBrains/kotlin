@@ -439,6 +439,8 @@ class KtPsiFactory(private val project: Project) {
         return argumentList.arguments.single()
     }
 
+    fun createArgument(text: String) = createCallArguments("($text)").arguments.first()!!
+
     fun createSuperTypeCallEntry(text: String): KtSuperTypeCallEntry {
         return createClass("class A: $text").getSuperTypeListEntries().first() as KtSuperTypeCallEntry
     }

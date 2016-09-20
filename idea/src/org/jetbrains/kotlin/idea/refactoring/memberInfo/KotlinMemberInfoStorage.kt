@@ -99,6 +99,11 @@ fun extractClassMembers(
                 .mapTo(result) { KotlinMemberInfo(it, true) }
     }
 
+    aClass.getPrimaryConstructor()
+            ?.valueParameters
+            ?.filter { it.hasValOrVar() }
+            ?.mapTo(result) { KotlinMemberInfo(it) }
+
     aClass.declarations
             .filter { it is KtNamedDeclaration
                       && it !is KtConstructor<*>

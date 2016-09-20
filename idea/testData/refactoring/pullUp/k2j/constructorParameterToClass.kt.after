@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+abstract class B(
+    // INFO: {"checked": "true"}
+        // INFO: {"checked": "true"}
+        val b: Boolean
+): A()
