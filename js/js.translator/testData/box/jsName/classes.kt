@@ -1,11 +1,11 @@
 package foo
 
 @JsName("AA") object A {
-    @JsName("foo") fun foo() = "A.foo"
+    @JsName("foo") fun bar() = "A.foo"
 }
 
 @JsName("BB") class B {
-    @JsName("foo") fun foo() = "B.foo"
+    @JsName("foo") fun bar() = "B.foo"
 }
 
 fun testA() = js("""

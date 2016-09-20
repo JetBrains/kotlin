@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
 import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -80,14 +81,10 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         EXTENSION_PROPERTY
     }
 
-    private fun DeclarationDescriptor.isExtensionProperty() =
-            this is PropertyDescriptor &&
-            extensionReceiverParameter != null
-
     private fun getDeclarationCategory(a: DeclarationDescriptor): DeclarationCategory =
             when (a) {
                 is PropertyDescriptor ->
-                    if (a.isExtensionProperty())
+                    if (a.isExtensionProperty)
                         DeclarationCategory.EXTENSION_PROPERTY
                     else
                         DeclarationCategory.TYPE_OR_VALUE

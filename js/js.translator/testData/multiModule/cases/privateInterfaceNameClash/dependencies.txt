@@ -1,0 +1,3 @@
+lib1->
+lib2->
+main->lib1,lib2

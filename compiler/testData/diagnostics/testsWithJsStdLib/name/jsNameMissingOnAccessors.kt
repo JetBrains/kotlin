@@ -6,8 +6,8 @@ class A {
         set(value) {}
 
     <!JS_NAME_IS_NOT_ON_ALL_ACCESSORS!>var y: Int<!>
-        @JsName("get_y") get() = 23
-        set(value) {}
+        get() = 23
+        @JsName("set_y") set(value) {}
 
     var z: Int
         @JsName("get_z") get() = 23

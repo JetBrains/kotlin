@@ -322,5 +322,16 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
     return result
 }
 
+fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
+    val methodTypeParameters = valueParameters
+    val nullableString = TypeUtils.makeNullable(builtIns.stringType)
+    return DescriptorUtils.ENUM_VALUE_OF == name
+           && methodTypeParameters.size == 1
+           && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
+}
+
+val DeclarationDescriptor.isExtensionProperty: Boolean
+    get() = this is PropertyDescriptor && extensionReceiverParameter != null
+
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
         generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())

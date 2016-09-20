@@ -113,8 +113,6 @@ public final class StaticContext {
     @NotNull
     private final Map<PropertyDescriptor, JsName> backingFieldNameCache = new HashMap<PropertyDescriptor, JsName>();
 
-    private final Map<JsScope, Map<String, JsName>> persistentNames = new HashMap<JsScope, Map<String, JsName>>();
-
     @NotNull
     private final Map<DeclarationDescriptor, JsExpression> fqnCache = new HashMap<DeclarationDescriptor, JsExpression>();
 
@@ -224,13 +222,8 @@ public final class StaticContext {
         SuggestedName suggested = nameSuggestion.suggest(descriptor);
         if (suggested == null) {
             ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-            if (currentModule == module) {
-                return pureFqn(Namer.getRootPackageName(), null);
-            }
-            else {
-                JsExpression result = getModuleExpressionFor(module);
-                return result != null ? result : JsAstUtils.pureFqn(rootScope.declareName(Namer.getRootPackageName()), null);
-            }
+            JsExpression result = getModuleExpressionFor(module);
+            return result != null ? result : pureFqn(Namer.getRootPackageName(), null);
         }
 
         JsExpression expression;
@@ -239,22 +232,20 @@ public final class StaticContext {
             expression = Namer.kotlinObject();
             partNames = Collections.singletonList(standardClasses.getStandardObjectName(suggested.getDescriptor()));
         }
-        else if (isLibraryObject(suggested.getDescriptor())) {
-            expression = Namer.kotlinObject();
-            partNames = getActualNameFromSuggested(suggested);
-        }
-        else if (isNative(suggested.getDescriptor()) && !isNativeObject(suggested.getScope())) {
-            expression = null;
-            partNames = getActualNameFromSuggested(suggested);
-        }
         else {
-            if (suggested.getDescriptor() instanceof CallableDescriptor && suggested.getScope() instanceof FunctionDescriptor) {
+            partNames = getActualNameFromSuggested(suggested);
+            if (isLibraryObject(suggested.getDescriptor())) {
+                expression = Namer.kotlinObject();
+            }
+            // Don't generate qualifier for top-level native declarations
+            // Don't generate qualifier for local declarations
+            else if (isNativeObject(suggested.getDescriptor()) && !isNativeObject(suggested.getScope()) ||
+                     suggested.getDescriptor() instanceof CallableDescriptor && suggested.getScope() instanceof FunctionDescriptor) {
                 expression = null;
             }
             else {
                 expression = getQualifiedExpression(suggested.getScope());
             }
-            partNames = getActualNameFromSuggested(suggested);
         }
         for (JsName partName : partNames) {
             expression = new JsNameRef(partName, expression);
@@ -262,17 +253,6 @@ public final class StaticContext {
         }
         assert expression != null : "Since partNames is not empty, expression must be non-null";
         return expression;
-    }
-
-    private static boolean isNative(DeclarationDescriptor descriptor) {
-        if (isNativeObject(descriptor)) return true;
-
-        if (descriptor instanceof PropertyAccessorDescriptor) {
-            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
-            return isNative(accessor.getCorrespondingProperty());
-        }
-
-        return false;
     }
 
     @NotNull
@@ -300,11 +280,7 @@ public final class StaticContext {
             assert fqn.getNames().size() == 1 : "Private names must always consist of exactly one name";
 
             JsScope scope = getScopeForDescriptor(fqn.getScope());
-
-            if (DynamicCallsKt.isDynamic(property)) {
-                scope = JsDynamicScope.INSTANCE;
-            }
-            String baseName = fqn.getNames().get(0) + "_0";
+            String baseName = NameSuggestion.getPrivateMangledName(fqn.getNames().get(0), property) + "_0";
             name = scope.declareFreshName(baseName);
             backingFieldNameCache.put(property, name);
         }
@@ -322,18 +298,9 @@ public final class StaticContext {
 
         List<JsName> names = new ArrayList<JsName>();
         if (suggested.getStable()) {
-            Map<String, JsName> scopeNames = persistentNames.get(scope);
-            if (scopeNames == null) {
-                scopeNames = new HashMap<String, JsName>();
-                persistentNames.put(scope, scopeNames);
-            }
+
             for (String namePart : suggested.getNames()) {
-                JsName name = scopeNames.get(namePart);
-                if (name == null) {
-                    name = scope.declareName(namePart);
-                    scopeNames.put(namePart, name);
-                }
-                names.add(name);
+                names.add(scope.declareName(namePart));
             }
         }
         else {

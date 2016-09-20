@@ -25,22 +25,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
+import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName;
-import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 
 /**
  * Encapsulates different types of constants and naming conventions.
@@ -298,6 +302,17 @@ public final class Namer {
 
         isTypeName = kotlinScope.declareName("isType");
         modulesMap = kotlin("modules");
+    }
+
+    // TODO: get rid of this function
+    @NotNull
+    public static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
+        Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
+                Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
+        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
+        SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
+        assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();
+        return suggested.getNames().get(0);
     }
 
     @NotNull
