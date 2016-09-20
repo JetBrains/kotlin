@@ -1,4 +1,4 @@
-// "Change 'A.plus' function return type to '() -> Int'" "true"
+// "Change return type of invoked function 'A.plus' to '() -> Int'" "true"
 interface A {
     operator fun plus(a: A): String
 }

@@ -1,4 +1,4 @@
-// "Change 'A.not' function return type to 'A'" "true"
+// "Change return type of invoked function 'A.not' to 'A'" "true"
 interface A {
     operator fun not(): String
     operator fun times(a: A): A

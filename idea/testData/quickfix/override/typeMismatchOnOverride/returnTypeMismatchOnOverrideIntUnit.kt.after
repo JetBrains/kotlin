@@ -1,4 +1,4 @@
-// "Change 'B.foo' function return type to 'Int'" "true"
+// "Change return type to 'Int'" "true"
 abstract class A {
     abstract fun foo() : Int;
 }

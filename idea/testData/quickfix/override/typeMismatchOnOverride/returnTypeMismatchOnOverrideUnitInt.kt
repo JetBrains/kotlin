@@ -1,4 +1,4 @@
-// "Remove explicitly specified return type in 'A.remove' function" "true"
+// "Remove explicitly specified return type" "true"
 abstract class A : java.util.Iterator<Int> {
     public abstract override fun remove() : Int<caret>;
 }

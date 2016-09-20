@@ -1,4 +1,4 @@
-// "Change 'A.foo' function return type to 'Int'" "true"
+// "Change return type of current function 'A.foo' to 'Int'" "true"
 package foo.bar
 
 fun test() {

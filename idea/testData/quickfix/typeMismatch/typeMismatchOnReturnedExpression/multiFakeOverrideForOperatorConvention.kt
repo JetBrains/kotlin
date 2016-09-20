@@ -1,5 +1,5 @@
-// "Change 'AA.contains' function return type to 'Int'" "false"
-// ACTION: Change 'AAA.g' function return type to 'Boolean'
+// "Change return type of invoked function 'AA.contains' to 'Int'" "false"
+// ACTION: Change return type of current function 'AAA.g' to 'Boolean'
 // ACTION: Convert to expression body
 // ACTION: Replace overloaded operator with function call
 // ERROR: Type mismatch: inferred type is Boolean but Int was expected
