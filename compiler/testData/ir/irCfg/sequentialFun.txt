@@ -1,0 +1,16 @@
+// FILE: /sequentialFun.kt
+// FUN: foo
+BB 0
+CONTENT
+      1 FUN public fun foo(arg: kotlin.Int): kotlin.Int
+      2 CALL 'times(Int): Int' type=kotlin.Int origin=MUL
+      3 VAR val dbl: kotlin.Int
+      4 GET_VAR 'dbl: Int' type=kotlin.Int origin=null
+      5 RETURN type=kotlin.Nothing from='foo(Int): Int'
+OUTGOING -> NONE
+    Function exit: FUN public fun foo(arg: kotlin.Int): kotlin.Int
+
+// END FUN: foo
+
+// END FILE: /sequentialFun.kt
+

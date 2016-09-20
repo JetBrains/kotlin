@@ -1,0 +1,12 @@
+// FILE: /simpleFun.kt
+// FUN: foo
+BB 0
+CONTENT
+      1 FUN public fun foo(): kotlin.Unit
+OUTGOING -> NONE
+    Function exit: FUN public fun foo(): kotlin.Unit
+
+// END FUN: foo
+
+// END FILE: /simpleFun.kt
+

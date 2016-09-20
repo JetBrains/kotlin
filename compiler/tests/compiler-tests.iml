@@ -71,5 +71,6 @@
     <orderEntry type="module" module-name="ir.tree" scope="TEST" />
     <orderEntry type="module" module-name="backend.common" scope="TEST" />
     <orderEntry type="module" module-name="ir.psi2ir" scope="TEST" />
+    <orderEntry type="module" module-name="ir.ir2cfg" scope="TEST" />
   </component>
 </module>

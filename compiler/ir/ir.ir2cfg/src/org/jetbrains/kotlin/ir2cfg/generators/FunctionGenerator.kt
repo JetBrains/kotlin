@@ -45,7 +45,7 @@ class FunctionGenerator(val function: IrFunction) {
             if (data) {
                 builder.add(declaration)
             }
-            val result = declaration.body?.process()
+            val result = declaration.body?.process() ?: if (data) declaration else null
             if (result != null && !result.isNothing()) {
                 builder.jump(exit, from = result)
             }
@@ -63,7 +63,7 @@ class FunctionGenerator(val function: IrFunction) {
         private fun IrElement?.isNothing() = this is IrExpression && KotlinBuiltIns.isNothing(type)
 
         override fun visitBlockBody(body: IrBlockBody, data: Boolean): IrElement? {
-            return body.process() ?: body
+            return body.process()
         }
 
         override fun visitBlock(expression: IrBlock, data: Boolean): IrElement? {

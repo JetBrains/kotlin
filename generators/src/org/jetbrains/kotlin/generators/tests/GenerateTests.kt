@@ -122,10 +122,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.AbstractClosureAnnotatorTestCase
-import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
-import org.jetbrains.kotlin.ir.AbstractPsi2IrBoxTestCase
-import org.jetbrains.kotlin.ir.AbstractPsi2IrDiagnosticsTest
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
@@ -250,6 +247,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrTextTestCase>() {
             model("ir/irText")
+        }
+
+        testClass<AbstractIrCfgTestCase>() {
+            model("ir/irCfg")
         }
 
 //      Uncomment the following lines to generate IR generator tests based on existing compiler tests.
