@@ -620,7 +620,7 @@ fun elements(): List<GenericFunction> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
                         throw NoSuchElementException("Collection is empty.")
-                    var single = iterator.next()
+                    val single = iterator.next()
                     if (iterator.hasNext())
                         throw IllegalArgumentException("Collection has more than one element.")
                     return single
@@ -633,7 +633,7 @@ fun elements(): List<GenericFunction> {
             val iterator = iterator()
             if (!iterator.hasNext())
                 throw NoSuchElementException("Sequence is empty.")
-            var single = iterator.next()
+            val single = iterator.next()
             if (iterator.hasNext())
                 throw IllegalArgumentException("Sequence has more than one element.")
             return single
@@ -661,7 +661,7 @@ fun elements(): List<GenericFunction> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
                         return null
-                    var single = iterator.next()
+                    val single = iterator.next()
                     if (iterator.hasNext())
                         return null
                     return single
@@ -674,7 +674,7 @@ fun elements(): List<GenericFunction> {
             val iterator = iterator()
             if (!iterator.hasNext())
                 return null
-            var single = iterator.next()
+            val single = iterator.next()
             if (iterator.hasNext())
                 return null
             return single
