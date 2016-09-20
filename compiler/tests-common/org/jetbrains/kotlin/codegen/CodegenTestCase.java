@@ -482,6 +482,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
     }
 
+    protected void updateConfiguration(CompilerConfiguration configuration) {
+
+    }
+
     protected void compile(
             @NotNull List<TestFile> files,
             @Nullable File javaSourceDir,
@@ -495,6 +499,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
+        updateConfiguration(configuration);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES

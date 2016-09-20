@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -220,6 +221,10 @@ fun main(args: Array<String>) {
         GenerateRangesCodegenTestData.main(arrayOf<String>())
 
         testClass<AbstractBlackBoxCodegenTest>() {
+            model("codegen/box", targetBackend = TargetBackend.JVM)
+        }
+
+        testClass<AbstractIrBlackBoxCodegenTest>() {
             model("codegen/box", targetBackend = TargetBackend.JVM)
         }
 
