@@ -111,21 +111,19 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
-        require(maxCount < Int.MAX_VALUE)
         require(maxCount >= 0)
         val psiMethods = getMethodSequenceByName(name, scope)
-        val limitedByMaxCount = psiMethods.take(maxCount + 1).toList()
-        if (limitedByMaxCount.size > maxCount)
+        val limitedByMaxCount = psiMethods.take(maxCount).toList()
+        if(limitedByMaxCount.size == 0)
             return PsiMethod.EMPTY_ARRAY
         return limitedByMaxCount.toTypedArray()
     }
 
     override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiField> {
-        require(maxCount < Int.MAX_VALUE)
         require(maxCount >= 0)
         val psiFields = getFieldSequenceByName(name, scope)
-        val limitedByMaxCount = psiFields.take(maxCount + 1).toList()
-        if (limitedByMaxCount.size > maxCount)
+        val limitedByMaxCount = psiFields.take(maxCount).toList()
+        if(limitedByMaxCount.size == 0)
             return PsiField.EMPTY_ARRAY
         return limitedByMaxCount.toTypedArray()
     }

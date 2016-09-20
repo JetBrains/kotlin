@@ -56,18 +56,18 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
         val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData1.kt")
         configureByFile(file)
         val scope = GlobalSearchScope.allScope(project)
-        assertEmpty(cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, 2).asList())
+        assertSize(2, cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, 2))
         assertSize(3, cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, 3))
-        assertNotEmpty(cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, Int.MAX_VALUE).asList())
+        assertSize(3, cacheInstance.getMethodsByNameIfNotMoreThan("foobar", scope, Int.MAX_VALUE))
     }
 
     fun testGetFieldsByNameIfNotMoreThanLimits() {
         val file = KotlinTestUtils.navigationMetadata("idea/testData/cache/kotlinShortNamesCacheTestData1.kt")
         configureByFile(file)
         val scope = GlobalSearchScope.allScope(project)
-        assertEmpty(cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, 2).asList())
+        assertSize(2, cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, 2))
         assertSize(3, cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, 3))
-        assertNotEmpty(cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, Int.MAX_VALUE).asList())
+        assertSize(3, cacheInstance.getFieldsByNameIfNotMoreThan("barfoo", scope, Int.MAX_VALUE))
     }
 
     fun testGetAllFields() {
