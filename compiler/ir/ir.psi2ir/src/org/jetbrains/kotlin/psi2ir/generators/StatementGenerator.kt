@@ -203,18 +203,20 @@ class StatementGenerator(
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
         val entries = expression.entries
-        when (entries.size) {
-            1 -> return entries[0].genExpr()
-            0 -> return IrConstImpl.string(expression.startOffset, expression.endOffset,
-                                           getInferredTypeWithImplicitCastsOrFail(expression), "")
+        val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
+        return when (entries.size) {
+            1 -> {
+                val irArg = entries[0].genExpr()
+                if (irArg is IrConst<*> && irArg.kind == IrConstKind.String)
+                    irArg
+                else
+                    IrStringConcatenationImpl(expression.startOffset, expression.endOffset, resultType, listOf(irArg))
+            }
+            0 ->
+                IrConstImpl.string(expression.startOffset, expression.endOffset, resultType, "")
+            else ->
+                IrStringConcatenationImpl(expression.startOffset, expression.endOffset, resultType, entries.map { it.genExpr() })
         }
-
-        val irStringTemplate = IrStringConcatenationImpl(expression.startOffset, expression.endOffset,
-                                                                                             getInferredTypeWithImplicitCastsOrFail(expression))
-        entries.forEach {
-            irStringTemplate.addArgument(it.genExpr())
-        }
-        return irStringTemplate
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrStatement =
@@ -267,7 +269,7 @@ class StatementGenerator(
                             IrGetEnumValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
                         else -> {
                             IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType,
-                                                                                     descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
+                                                 descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
                         }
                     }
                 }

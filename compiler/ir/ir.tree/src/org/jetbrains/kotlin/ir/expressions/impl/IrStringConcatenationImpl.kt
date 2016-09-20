@@ -16,20 +16,19 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class IrStringConcatenationImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
+class IrStringConcatenationImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
+        IrExpressionBase(startOffset, endOffset, type), IrStringConcatenation {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType, arguments: Collection<IrExpression>) : this(startOffset, endOffset, type) {
+        this.arguments.addAll(arguments)
+    }
+
     override val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun addArgument(argument: IrExpression) {
