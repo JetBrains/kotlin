@@ -9133,6 +9133,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redeclarationConflict.kt")
+        public void testRedeclarationConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/redeclarationConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevelFunction.kt")
         public void testTopLevelFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/topLevelFunction.kt");
