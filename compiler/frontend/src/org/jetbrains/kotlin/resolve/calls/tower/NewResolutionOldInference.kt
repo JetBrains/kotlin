@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -44,17 +43,16 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
+import java.lang.IllegalStateException
 import java.util.*
 
 class NewResolutionOldInference(
@@ -62,7 +60,8 @@ class NewResolutionOldInference(
         private val towerResolver: TowerResolver,
         private val resolutionResultsHandler: ResolutionResultsHandler,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
-        private val syntheticScopes: SyntheticScopes
+        private val syntheticScopes: SyntheticScopes,
+        private val syntheticConstructorsProvider: SyntheticConstructorsProvider
 ) {
 
     sealed class ResolutionKind<D : CallableDescriptor> {
@@ -151,7 +150,7 @@ class NewResolutionOldInference(
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
+        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, syntheticConstructorsProvider, context.call.createLookupLocation())
 
         val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, detailedReceiver, context)
 
@@ -282,6 +281,7 @@ class NewResolutionOldInference(
             val resolutionContext: ResolutionContext<*>,
             override val dynamicScope: MemberScope,
             override val syntheticScopes: SyntheticScopes,
+            override val syntheticConstructorsProvider: SyntheticConstructorsProvider,
             override val location: LookupLocation
     ): ImplicitScopeTower {
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()

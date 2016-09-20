@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
@@ -33,6 +34,8 @@ interface ImplicitScopeTower {
     val dynamicScope: MemberScope
 
     val syntheticScopes: SyntheticScopes
+
+    val syntheticConstructorsProvider: SyntheticConstructorsProvider
 
     val location: LookupLocation
 

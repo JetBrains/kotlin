@@ -161,7 +161,7 @@ internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qual
             }
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) = qualifier.staticScope
-            .getContributedFunctionsAndConstructors(name, location).map {
+            .getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticConstructorsProvider).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 }
@@ -172,7 +172,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
         private val resolutionScope: ResolutionScope
 ) : AbstractScopeTowerLevel(scopeTower) {
 
-    internal constructor(scopeTower: ImplicitScopeTower, lexicalScope: LexicalScope): this(scopeTower, lexicalScope as ResolutionScope)
+    internal constructor(scopeTower: ImplicitScopeTower, lexicalScope: LexicalScope) : this(scopeTower, lexicalScope as ResolutionScope)
 
     override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
             = resolutionScope.getContributedVariables(name, location).map {
@@ -185,7 +185,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
             }
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
-            = resolutionScope.getContributedFunctionsAndConstructors(name, location).map {
+            = resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticConstructorsProvider).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 }
@@ -260,11 +260,17 @@ private fun KotlinType?.getInnerConstructors(name: Name, location: LookupLocatio
     return classifierDescriptor?.constructors?.filter { it.dispatchReceiverParameter != null } ?: emptyList()
 }
 
-private fun ResolutionScope.getContributedFunctionsAndConstructors(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+private fun ResolutionScope.getContributedFunctionsAndConstructors(
+        name: Name,
+        location: LookupLocation,
+        syntheticConstructorsProvider: SyntheticConstructorsProvider
+): Collection<FunctionDescriptor> {
     val classifier = getContributedClassifier(name, location)
     return getContributedFunctions(name, location) +
            (getClassWithConstructors(classifier)?.constructors?.filter { it.dispatchReceiverParameter == null } ?: emptyList()) +
-           (classifier?.getTypeAliasConstructors()?.filter { it.dispatchReceiverParameter == null } ?: emptyList())
+           (classifier?.getTypeAliasConstructors()?.filter { it.dispatchReceiverParameter == null } ?: emptyList()) +
+           (classifier?.let { syntheticConstructorsProvider.getSyntheticConstructors(it, location) }
+                    ?.filter { it.dispatchReceiverParameter == null } ?: emptyList())
 }
 
 private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -47,6 +48,7 @@ abstract class TargetPlatform(
                     override fun configure(container: StorageComponentContainer) {
                         super.configure(container)
                         container.useInstance(SyntheticScopes.Empty)
+                        container.useInstance(SyntheticConstructorsProvider.Empty)
                         container.useInstance(TypeSpecificityComparator.NONE)
                     }
                 }
