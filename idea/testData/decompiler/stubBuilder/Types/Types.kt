@@ -22,4 +22,6 @@ abstract class Types {
     abstract val extFun: @ExtensionFunctionType Function2<Int, Int, Unit>
     abstract val listExtStarFun: List<@ExtensionFunctionType Function1<*, *>>
     abstract val funTypeWithStarAndNonStar: Function1<*, Int>
+
+    abstract fun functionTypeWithNamedArgs(fType: (first: String, second: Any?) -> Int)
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.name.FqName
@@ -38,7 +39,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     classWithPrimaryConstructor = true
     secondaryConstructorsAsPrimary = false
     modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+    excludedTypeAnnotationClasses = (ExcludedTypeAnnotations.annotationsForNullabilityAndMutability + KotlinBuiltIns.FQ_NAMES.parameterName).toSet()
     alwaysRenderModifiers = true
 }
 
