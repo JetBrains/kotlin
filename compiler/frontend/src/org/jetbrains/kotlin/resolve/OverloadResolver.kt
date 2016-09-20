@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.name.Name

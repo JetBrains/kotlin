@@ -20382,6 +20382,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateInFile.kt")
+            public void testPrivateInFile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/privateInFile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("projectionsInTypeAliasConstructor.kt")
             public void testProjectionsInTypeAliasConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/projectionsInTypeAliasConstructor.kt");
@@ -20454,18 +20460,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("typeAliasInvisibleObject.kt")
-            public void testTypeAliasInvisibleObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasInvisibleObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("typeAliasNotNull.kt")
-            public void testTypeAliasNotNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasNotNull.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("typeAliasConstructorInSuperCall.kt")
             public void testTypeAliasConstructorInSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorInSuperCall.kt");
@@ -20481,6 +20475,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("typeAliasConstructorWrongVisibility.kt")
             public void testTypeAliasConstructorWrongVisibility() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorWrongVisibility.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasInvisibleObject.kt")
+            public void testTypeAliasInvisibleObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasInvisibleObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasNotNull.kt")
+            public void testTypeAliasNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasNotNull.kt");
                 doTest(fileName);
             }
 
