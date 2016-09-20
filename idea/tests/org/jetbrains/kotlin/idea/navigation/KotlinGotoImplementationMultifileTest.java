@@ -66,6 +66,10 @@ public class KotlinGotoImplementationMultifileTest extends KotlinLightCodeInsigh
         doJavaKotlinTest();
     }
 
+    public void testImplementJavaInnerInterfaceFromUsage() throws Exception {
+        doJavaKotlinTest();
+    }
+
     private void doKotlinJavaTest() throws Exception {
         doMultifileTest(getTestName(false) + ".kt", getTestName(false) + ".java");
     }
