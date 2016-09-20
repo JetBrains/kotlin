@@ -1,5 +1,10 @@
 // WITH_RUNTIME
 abstract class <caret>B: A() {
+    companion object {
+        // INFO: {"checked": "true"}
+        val _x = 1
+    }
+
     // INFO: {"checked": "true"}
     val x = 1
     // INFO: {"checked": "true"}

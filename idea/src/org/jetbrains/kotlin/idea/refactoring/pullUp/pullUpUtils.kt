@@ -64,18 +64,18 @@ fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrOb
     return movedMember
 }
 
+private fun KtParameter.needToBeAbstract(targetClass: KtClassOrObject): Boolean {
+    return hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass is KtClass && targetClass.isInterface()
+}
+
 private fun KtParameter.toProperty(): KtProperty = KtPsiFactory(this).createProperty(text)
 
 fun doAddCallableMember(
         memberCopy: KtCallableDeclaration,
         clashingSuper: KtCallableDeclaration?,
-        targetClass: KtClass
+        targetClass: KtClassOrObject
 ): KtCallableDeclaration {
-    val memberToAdd =
-            if (memberCopy is KtParameter && (memberCopy.hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass.isInterface())) {
-                memberCopy.toProperty()
-            }
-            else memberCopy
+    val memberToAdd = if (memberCopy is KtParameter && memberCopy.needToBeAbstract(targetClass)) memberCopy.toProperty() else memberCopy
 
     if (clashingSuper != null && clashingSuper.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
         return clashingSuper.replaced(if (memberToAdd is KtParameter && clashingSuper is KtProperty) memberToAdd.toProperty() else memberToAdd)

@@ -19,9 +19,23 @@ interface T {
     class Y {
 
     }
+
+    companion object {
+        // INFO: {"checked": "true"}
+        val _x: Int
+
+        // INFO: {"checked": "true"}
+        fun foo(n: Int): Boolean = n > 0
+    }
 }
 
 abstract class B: T {
+    companion object {
+        // INFO: {"checked": "true"}
+        override val _x = 1
+
+    }
+
     // INFO: {"checked": "true"}
     override val x = 1
     // INFO: {"checked": "true"}

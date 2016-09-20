@@ -34,7 +34,7 @@ class KotlinMemberSelectionTable(
         abstractColumnHeader: String?
 ) : AbstractMemberSelectionTable<KtNamedDeclaration, KotlinMemberInfo>(memberInfos, memberInfoModel, abstractColumnHeader) {
     override fun getAbstractColumnValue(memberInfo: KotlinMemberInfo): Any? {
-        if (memberInfo.isStatic()) return null
+        if (memberInfo.isStatic || memberInfo.isCompanionMember) return null
 
         val member = memberInfo.member
         if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return null

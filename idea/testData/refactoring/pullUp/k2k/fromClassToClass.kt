@@ -2,6 +2,14 @@
 open class A
 
 abstract class <caret>B: A() {
+    companion object {
+        // INFO: {"checked": "true"}
+        val _x = 1
+
+        // INFO: {"checked": "true"}
+        fun _foo(n: Int): Boolean = n > 0
+    }
+
     // INFO: {"checked": "true"}
     val x = 1
     // INFO: {"checked": "true"}

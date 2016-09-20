@@ -2,6 +2,14 @@
 interface T
 
 abstract class <caret>B: T {
+    companion object {
+        // INFO: {"checked": "true"}
+        val _x = 1
+
+        // INFO: {"checked": "true"}
+        fun foo(n: Int): Boolean = n > 0
+    }
+
     // INFO: {"checked": "true"}
     val x = 1
     // INFO: {"checked": "true"}
