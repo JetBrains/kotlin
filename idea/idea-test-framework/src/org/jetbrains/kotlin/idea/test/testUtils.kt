@@ -175,7 +175,13 @@ fun patchThreadTracker(runnable: () -> Unit) {
         println("Patching!")
 
         try {
-            val wellKnownOffendersField = ThreadTracker::class.java.getDeclaredField("wellKnownOffenders")
+            val wellKnownOffendersField = try {
+                ThreadTracker::class.java.getDeclaredField("wellKnownOffenders")
+            }
+            catch (communityPropertyNotFoundEx: NoSuchFieldException) {
+                ThreadTracker::class.java.getDeclaredField("a")
+            }
+
             wellKnownOffendersField.isAccessible = true
 
             @Suppress("UNCHECKED_CAST")
