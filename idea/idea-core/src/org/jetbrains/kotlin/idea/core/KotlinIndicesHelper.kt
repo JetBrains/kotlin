@@ -221,6 +221,7 @@ class KotlinIndicesHelper(
         val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scopeWithoutKotlin).asSequence() +
                                PsiShortNamesCache.getInstance(project).getMethodsByName(name, scopeWithoutKotlin).asSequence()
         return javaDeclarations
+                .filterNot { it is KtLightElement<*,*> }
                 .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) as? CallableDescriptor }
                 .filter(descriptorFilter)
                 .toSet()
