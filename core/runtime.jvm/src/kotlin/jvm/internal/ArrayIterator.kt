@@ -22,4 +22,4 @@ private class ArrayIterator<T>(val array: Array<T>) : Iterator<T> {
     override fun next() = array[index++]
 }
 
-fun <T> iterator(array: Array<T>): Iterator<T> = ArrayIterator(array)
+public fun <T> iterator(array: Array<T>): Iterator<T> = ArrayIterator(array)

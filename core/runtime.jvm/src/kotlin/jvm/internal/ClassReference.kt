@@ -18,7 +18,7 @@ package kotlin.jvm.internal
 
 import kotlin.reflect.*
 
-class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
+public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
     override val simpleName: String?
         get() = error()
 
