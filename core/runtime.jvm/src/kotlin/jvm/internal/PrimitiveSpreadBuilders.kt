@@ -16,7 +16,7 @@
 
 package kotlin.jvm.internal
 
-abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
+public abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
     abstract protected fun T.getSize(): Int
 
     protected var position: Int = 0
@@ -24,7 +24,7 @@ abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
     @Suppress("UNCHECKED_CAST")
     private val spreads: Array<T?> = arrayOfNulls<Any>(size) as Array<T?>
 
-    fun addSpread(spreadArgument: T) {
+    public fun addSpread(spreadArgument: T) {
         spreads[position++] = spreadArgument
     }
 
@@ -60,90 +60,90 @@ abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
     }
 }
 
-class ByteSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ByteArray>(size) {
+public class ByteSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ByteArray>(size) {
     private val values: ByteArray = ByteArray(size)
     override fun ByteArray.getSize(): Int = this.size
 
-    fun add(value: Byte) {
+    public fun add(value: Byte) {
         values[position++] = value
     }
 
-    fun toArray(): ByteArray = toArray(values, ByteArray(size()))
+    public fun toArray(): ByteArray = toArray(values, ByteArray(size()))
 }
 
-class CharSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<CharArray>(size) {
+public class CharSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<CharArray>(size) {
     private val values: CharArray = CharArray(size)
     override fun CharArray.getSize(): Int = this.size
 
-    fun add(value: Char) {
+    public fun add(value: Char) {
         values[position++] = value
     }
 
-    fun toArray(): CharArray = toArray(values, CharArray(size()))
+    public fun toArray(): CharArray = toArray(values, CharArray(size()))
 }
 
-class DoubleSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<DoubleArray>(size) {
+public class DoubleSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<DoubleArray>(size) {
     private val values: DoubleArray = DoubleArray(size)
     override fun DoubleArray.getSize(): Int = this.size
 
-    fun add(value: Double) {
+    public fun add(value: Double) {
         values[position++] = value
     }
 
-    fun toArray(): DoubleArray = toArray(values, DoubleArray(size()))
+    public fun toArray(): DoubleArray = toArray(values, DoubleArray(size()))
 }
 
-class FloatSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<FloatArray>(size) {
+public class FloatSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<FloatArray>(size) {
     private val values: FloatArray = FloatArray(size)
     override fun FloatArray.getSize(): Int = this.size
 
-    fun add(value: Float) {
+    public fun add(value: Float) {
         values[position++] = value
     }
 
-    fun toArray(): FloatArray = toArray(values, FloatArray(size()))
+    public fun toArray(): FloatArray = toArray(values, FloatArray(size()))
 }
 
-class IntSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<IntArray>(size) {
+public class IntSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<IntArray>(size) {
     private val values: IntArray = IntArray(size)
     override fun IntArray.getSize(): Int = this.size
 
-    fun add(value: Int) {
+    public fun add(value: Int) {
         values[position++] = value
     }
 
-    fun toArray(): IntArray = toArray(values, IntArray(size()))
+    public fun toArray(): IntArray = toArray(values, IntArray(size()))
 }
 
-class LongSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<LongArray>(size) {
+public class LongSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<LongArray>(size) {
     private val values: LongArray = LongArray(size)
     override fun LongArray.getSize(): Int = this.size
 
-    fun add(value: Long) {
+    public fun add(value: Long) {
         values[position++] = value
     }
 
-    fun toArray(): LongArray = toArray(values, LongArray(size()))
+    public fun toArray(): LongArray = toArray(values, LongArray(size()))
 }
 
-class ShortSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ShortArray>(size) {
+public class ShortSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ShortArray>(size) {
     private val values: ShortArray = ShortArray(size)
     override fun ShortArray.getSize(): Int = this.size
 
-    fun add(value: Short) {
+    public fun add(value: Short) {
         values[position++] = value
     }
 
-    fun toArray(): ShortArray = toArray(values, ShortArray(size()))
+    public fun toArray(): ShortArray = toArray(values, ShortArray(size()))
 }
 
-class BooleanSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<BooleanArray>(size) {
+public class BooleanSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<BooleanArray>(size) {
     private val values: BooleanArray = BooleanArray(size)
     override fun BooleanArray.getSize(): Int = this.size
 
-    fun add(value: Boolean) {
+    public fun add(value: Boolean) {
         values[position++] = value
     }
 
-    fun toArray(): BooleanArray = toArray(values, BooleanArray(size()))
+    public fun toArray(): BooleanArray = toArray(values, BooleanArray(size()))
 }
