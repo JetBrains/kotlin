@@ -1,6 +1,6 @@
-public class ImplementJavaInnerInterface {
+public class ImplementJavaInnerInterfaceFromUsage {
     interface Test {
-        void <caret>foo();
+        void foo();
     }
 
     void test() {
@@ -20,10 +20,9 @@ public class ImplementJavaInnerInterface {
     }
 
     void usage(Test test) {
-        test.foo();
+        test.<caret>foo();
     }
 }
 
-// REF: (in ImplementJavaInnerInterface.OtherJava).foo()
-// REF: (in KotlinTest).foo()
+// REF: (in ImplementJavaInnerInterfaceFromUsage.OtherJava).foo()
 // REF: <anonymous>.foo()
