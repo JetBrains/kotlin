@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.script
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -40,19 +41,18 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         val path = getFilePath(file)
         return cache[path]
                ?: if (cacheOfNulls.contains(path)) null
-               else scriptDefinitionProvider.findScriptDefinition(file)
-                ?.let { it.getDependenciesFor(file, project, null) }
-                .apply {
-                    log.info("[kts] new cached deps for $path: ${this?.classpath?.joinToString(File.pathSeparator)}")
-                    cacheLock.write {
-                        if (this == null) {
-                            cacheOfNulls.add(path)
-                        }
-                        else {
-                            cache.put(path, this)
+               else scriptDefinitionProvider.findScriptDefinition(file)?.getDependenciesFor(file, project, null)
+                    .apply {
+                        log.info("[kts] new cached deps for $path: ${this?.classpath?.joinToString(File.pathSeparator)}")
+                        cacheLock.write {
+                            if (this == null) {
+                                cacheOfNulls.add(path)
+                            }
+                            else {
+                                cache.put(path, this)
+                            }
                         }
                     }
-                }
     }
 
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
@@ -162,3 +162,5 @@ internal fun Iterable<File>.isSamePathListAs(other: Iterable<File>): Boolean =
             !(first.hasNext() || second.hasNext())
         }
 
+fun getScriptExternalDependencies(file: VirtualFile, project: Project): KotlinScriptExternalDependencies?  =
+        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(file)

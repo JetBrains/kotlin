@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
@@ -99,7 +99,7 @@ done
             environment: Map<String, Any?>? = null,
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput)
+            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,

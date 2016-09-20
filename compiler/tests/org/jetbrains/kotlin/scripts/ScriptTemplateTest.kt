@@ -228,7 +228,7 @@ class ScriptTemplateTest {
             runIsolated: Boolean = true,
             suppressOutput: Boolean = false,
             includeKotlinRuntime: Boolean = true): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput, includeKotlinRuntime)
+            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput, includeKotlinRuntime)
 
     private fun compileScriptImpl(
             scriptPath: String,

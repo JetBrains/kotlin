@@ -255,20 +255,6 @@ fun <D : CallableDescriptor> D.overriddenTreeUniqueAsSequence(useOriginal: Boole
     return doBuildOverriddenTreeAsSequence()
 }
 
-fun ClassDescriptor.getConstructorByParams(params: List<KotlinType>): ConstructorDescriptor? =
-    getConstructors().firstOrNull {
-        when {
-            it.valueParameters.isEmpty() && params.isEmpty() -> true
-            it.valueParameters.size != params.size -> false
-            else -> it.valueParameters.zip(params) { ctorP, p -> ctorP.type == p }.all { it }
-        }
-    }
-
-// TODO: inline and remove as soon as all usage sies are converted to kotlin
-fun getConstructorByParamsMap(classDescriptor: ClassDescriptor, params: List<Pair<Name, KotlinType>>): ConstructorDescriptor? =
-        classDescriptor.getConstructorByParams(params.map { it.second })
-
-
 fun CallableDescriptor.varargParameterPosition() =
         valueParameters.indexOfFirst { it.varargElementType != null }
 

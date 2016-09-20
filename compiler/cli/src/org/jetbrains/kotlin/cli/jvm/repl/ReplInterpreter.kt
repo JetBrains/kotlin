@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.PrintWriter
 import java.net.URLClassLoader
 
@@ -179,7 +179,7 @@ class ReplInterpreter(
 
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
-        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinitionFromTemplate(Any::class) {
+        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition(Any::class) {
             override val name = "Kotlin REPL"
         }
 

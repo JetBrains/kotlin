@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.script.getKotlinTypeByFqName
 import org.jetbrains.kotlin.script.getScriptDefinition
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -79,14 +79,5 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() = scriptDefinition.getScriptSupertypes(this).ifEmpty { listOf(builtIns.anyType) }
-
-    override fun getScriptParametersToPassToSuperclass(): List<Pair<Name, KotlinType>> {
-        val scriptParams = scriptDefinition.getScriptParameters(this)
-        return scriptDefinition.getScriptParametersToPassToSuperclass(this).map { name ->
-            Pair(name,
-                 scriptParams.find { it.name == name }?.type
-                    ?: throw RuntimeException("Unknown script parameter '$name' is specified as a script base class parameter"))
-        }
-    }
+    override fun computeSupertypes() = listOf(getKotlinTypeByFqName(this, scriptDefinition.template.qualifiedName!!)).ifEmpty { listOf(builtIns.anyType) }
 }

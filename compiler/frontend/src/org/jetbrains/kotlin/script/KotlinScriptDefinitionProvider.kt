@@ -72,3 +72,9 @@ class KotlinScriptDefinitionProvider {
                 ServiceManager.getService(project, KotlinScriptDefinitionProvider::class.java)
     }
 }
+
+fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
+        KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
+
+fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
+        KotlinScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile)

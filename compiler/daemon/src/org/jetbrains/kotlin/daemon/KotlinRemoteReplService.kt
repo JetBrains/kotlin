@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.daemon.common.RemoteInputStream
 import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
 import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -85,7 +85,7 @@ open class KotlinJvmReplService(
 
         try {
             val cls = classloader.loadClass(templateClassName)
-            val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, emptyMap())
+            val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
             messageCollector.report(
                     CompilerMessageSeverity.INFO,
                     "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", resolver = ${def.resolver?.javaClass?.name}",

@@ -16,12 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KotlinType;
-
-import java.util.List;
 
 public interface ScriptDescriptor extends ClassDescriptor {
     int getPriority();
@@ -29,6 +24,4 @@ public interface ScriptDescriptor extends ClassDescriptor {
     @NotNull
     @Override
     ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();
-
-    List<Pair<Name, KotlinType>> getScriptParametersToPassToSuperclass();
 }

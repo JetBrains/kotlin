@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHand
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -400,7 +400,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 for (template in scriptTemplates) {
                     try {
                         val cls = classloader.loadClass(template)
-                        val def = KotlinScriptDefinitionFromTemplate(cls.kotlin, null, null, scriptResolverEnv)
+                        val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, scriptResolverEnv)
                         configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
                         messageCollector.report(
                                 CompilerMessageSeverity.INFO,

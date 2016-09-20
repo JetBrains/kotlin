@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.Pair;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
@@ -24,18 +23,17 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.ScriptContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,17 +152,19 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false);
             }
             else {
-                List<Pair<Name, KotlinType>> superclassParamsMap = scriptDescriptor.getScriptParametersToPassToSuperclass();
-                ConstructorDescriptor ctorDesc = DescriptorUtilsKt.getConstructorByParamsMap(superclass, superclassParamsMap);
+                // TODO: check if it is correct way to find a promary constructor
+                Collection<ClassConstructorDescriptor> ctorDescriptors = superclass.getConstructors();
+                assert ctorDescriptors.size() == 1;
+                ConstructorDescriptor ctorDesc = ctorDescriptors.iterator().next();
                 assert ctorDesc != null;
 
                 iv.load(0, classType);
 
                 List<ValueParameterDescriptor> valueParameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
-                for (Pair<Name, KotlinType> superclassParam: superclassParamsMap) {
+                for (ValueParameterDescriptor superclassParam: ctorDesc.getValueParameters()) {
                     ValueParameterDescriptor valueParam = null;
                     for (ValueParameterDescriptor vpd: valueParameters) {
-                        if (vpd.getName().equals(superclassParam.getFirst())) {
+                        if (vpd.getName().equals(superclassParam.getName())) {
                             valueParam = vpd;
                             break;
                         }

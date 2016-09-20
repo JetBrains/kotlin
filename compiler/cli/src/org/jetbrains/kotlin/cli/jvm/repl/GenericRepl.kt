@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
-import org.jetbrains.kotlin.script.ScriptParameter
-import java.io.File
 
 private val logger = Logger.getInstance(GenericRepl::class.java)
 
@@ -56,7 +54,7 @@ open class GenericReplChecker(
 ) : ReplChecker {
     protected val environment = run {
         compilerConfiguration.apply {
-            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, DelegatingScriptDefWithNoParams(scriptDefinition))
+            add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
         }
@@ -70,10 +68,6 @@ open class GenericReplChecker(
             val codeLine: ReplCodeLine,
             val psiFile: KtFile,
             val errorHolder: DiagnosticMessageHolder)
-
-    protected class DelegatingScriptDefWithNoParams(parent: KotlinScriptDefinition) : KotlinScriptDefinition by parent {
-        override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
-    }
 
     protected var lineState: LineState? = null
 
