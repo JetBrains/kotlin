@@ -1,4 +1,4 @@
-// "Change 't' type to 'T'" "true"
+// "Change type of 't' to 'T'" "true"
 interface T
 
 fun foo() {

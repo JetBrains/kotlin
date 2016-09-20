@@ -1,4 +1,4 @@
-// "Change 'f' type to '() -> Unit'" "true"
+// "Change type of 'f' to '() -> Unit'" "true"
 fun foo() {
     val f: () -> Int = {
         var x = 1

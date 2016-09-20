@@ -1,4 +1,4 @@
-// "Change 'y' type to 'Int'" "true"
+// "Change type of 'y' to 'Int'" "true"
 class A {
     operator fun component1() = 42
     operator fun component2() = 42

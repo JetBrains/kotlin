@@ -1,4 +1,4 @@
-// "Change 'B.x' type to '(String) -> Int'" "true"
+// "Change type to '(String) -> Int'" "true"
 interface A {
     var x: (String) -> Int
 }
