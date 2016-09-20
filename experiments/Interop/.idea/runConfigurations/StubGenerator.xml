@@ -8,7 +8,9 @@
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="PASS_PARENT_ENVS" value="true" />
     <module name="StubGenerator" />
-    <envs />
+    <envs>
+      <env name="LIBCLANG_DISABLE_CRASH_RECOVERY" value="1" />
+    </envs>
     <method />
   </configuration>
 </component>
