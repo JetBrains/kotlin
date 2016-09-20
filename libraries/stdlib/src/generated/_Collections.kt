@@ -455,7 +455,7 @@ public fun <T> Iterable<T>.single(): T {
             val iterator = iterator()
             if (!iterator.hasNext())
                 throw NoSuchElementException("Collection is empty.")
-            var single = iterator.next()
+            val single = iterator.next()
             if (iterator.hasNext())
                 throw IllegalArgumentException("Collection has more than one element.")
             return single
@@ -501,7 +501,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
             val iterator = iterator()
             if (!iterator.hasNext())
                 return null
-            var single = iterator.next()
+            val single = iterator.next()
             if (iterator.hasNext())
                 return null
             return single

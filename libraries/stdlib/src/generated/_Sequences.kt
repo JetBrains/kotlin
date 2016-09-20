@@ -231,7 +231,7 @@ public fun <T> Sequence<T>.single(): T {
     val iterator = iterator()
     if (!iterator.hasNext())
         throw NoSuchElementException("Sequence is empty.")
-    var single = iterator.next()
+    val single = iterator.next()
     if (iterator.hasNext())
         throw IllegalArgumentException("Sequence has more than one element.")
     return single
@@ -261,7 +261,7 @@ public fun <T> Sequence<T>.singleOrNull(): T? {
     val iterator = iterator()
     if (!iterator.hasNext())
         return null
-    var single = iterator.next()
+    val single = iterator.next()
     if (iterator.hasNext())
         return null
     return single
