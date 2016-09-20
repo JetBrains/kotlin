@@ -422,5 +422,7 @@ class QuickFixRegistrar : QuickFixContributor {
         FINAL_UPPER_BOUND.registerFactory(RemoveFinalUpperBoundFix)
 
         TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
+
+        TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.registerFactory(TooLongCharLiteralToStringFix)
     }
 }
