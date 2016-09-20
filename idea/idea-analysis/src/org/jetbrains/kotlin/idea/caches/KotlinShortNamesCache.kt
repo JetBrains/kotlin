@@ -107,14 +107,14 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 .filter { it.name == name }
                 .map { it as? PsiMethod }
 
-        return (kotlinFunctionsPsi + propertyAccessorsPsi).filterNotNull()
+        return sequenceOfLazyValues({ kotlinFunctionsPsi }, { propertyAccessorsPsi }).flatMap { it }.filterNotNull()
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
         require(maxCount >= 0)
         val psiMethods = getMethodSequenceByName(name, scope)
         val limitedByMaxCount = psiMethods.take(maxCount).toList()
-        if(limitedByMaxCount.size == 0)
+        if (limitedByMaxCount.size == 0)
             return PsiMethod.EMPTY_ARRAY
         return limitedByMaxCount.toTypedArray()
     }
@@ -123,7 +123,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         require(maxCount >= 0)
         val psiFields = getFieldSequenceByName(name, scope)
         val limitedByMaxCount = psiFields.take(maxCount).toList()
-        if(limitedByMaxCount.size == 0)
+        if (limitedByMaxCount.size == 0)
             return PsiField.EMPTY_ARRAY
         return limitedByMaxCount.toTypedArray()
     }
