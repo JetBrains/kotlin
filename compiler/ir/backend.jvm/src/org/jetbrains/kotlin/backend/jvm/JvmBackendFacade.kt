@@ -54,7 +54,7 @@ object JvmBackendFacade {
         }
     }
 
-    private fun createJvmBackendContext(psi2ir: Psi2IrTranslator, state: GenerationState): JvmBackendContext {
+    fun createJvmBackendContext(psi2ir: Psi2IrTranslator, state: GenerationState): JvmBackendContext {
         val jvmFileClassProvider = JvmFileClassProvider()
         psi2ir.add(jvmFileClassProvider)
 

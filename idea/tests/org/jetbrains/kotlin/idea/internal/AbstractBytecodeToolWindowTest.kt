@@ -44,7 +44,7 @@ abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTest
         if (InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") == false) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true)
         }
-        val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, configuration, false)
+        val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, configuration)
         assert(bytecodes.contains("// ================")) {
             "The header \"// ================\" is missing.\n This means that there is an exception failed during compilation:\n$bytecodes"
         }

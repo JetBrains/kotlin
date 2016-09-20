@@ -133,7 +133,11 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8);
             }
 
-            return getBytecodeForFile(ktFile, configuration, ir.isSelected());
+            if (ir.isSelected()) {
+                configuration.put(JVMConfigurationKeys.IR, true);
+            }
+
+            return getBytecodeForFile(ktFile, configuration);
         }
 
         @Override
@@ -241,10 +245,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
     // public for tests
     @NotNull
-    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration, boolean newIRGenerator) {
+    public static String getBytecodeForFile(@NotNull KtFile ktFile, @NotNull CompilerConfiguration configuration) {
         GenerationState state;
         try {
-            state = compileSingleFile(ktFile, configuration, newIRGenerator);
+            state = compileSingleFile(ktFile, configuration);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -284,8 +288,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     @NotNull
     public static GenerationState compileSingleFile(
             @NotNull final KtFile ktFile,
-            @NotNull CompilerConfiguration configuration,
-            boolean newIRGenerator
+            @NotNull CompilerConfiguration configuration
     ) {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(ktFile);
 
@@ -324,11 +327,9 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 ktFile.getProject(), ClassBuilderFactories.TEST, resolutionFacade.getModuleDescriptor(), bindingContext, toProcess,
                 configuration, generateClassFilter
         );
-        if (newIRGenerator) {
-            JvmBackendFacade.INSTANCE.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
-        } else {
-            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
-        }
+
+        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+
         return state;
     }
 

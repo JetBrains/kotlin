@@ -82,4 +82,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
             CompilerConfigurationKey.create("friend module paths");
+
+    public static final CompilerConfigurationKey<Boolean> IR =
+            CompilerConfigurationKey.create("IR");
 }
