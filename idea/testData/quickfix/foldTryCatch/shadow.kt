@@ -1,4 +1,4 @@
-// "Lift assignment out of 'try' expression" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.LiftAssignmentOutOfTryFix" "false"
 // ACTION: Make variable mutable
 // ERROR: Val cannot be reassigned
 // ERROR: Val cannot be reassigned

@@ -1,4 +1,4 @@
-// "Make 'My' final" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddModifierFix" "false"
 // ACTION: Add 'my =' to argument
 
 abstract class My {

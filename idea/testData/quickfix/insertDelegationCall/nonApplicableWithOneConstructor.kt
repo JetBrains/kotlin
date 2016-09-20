@@ -1,4 +1,4 @@
-// "Insert 'this()' call" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.InsertDelegationCallQuickfix" "false"
 // ACTION: Insert 'super()' call
 // ERROR: Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments
 

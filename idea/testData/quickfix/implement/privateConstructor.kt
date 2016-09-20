@@ -1,3 +1,3 @@
-// "Implement abstract class" "false"
+// "class org.jetbrains.kotlin.idea.intentions.CreateKotlinSubClassIntention" "false"
 
 abstract class Base private constructor

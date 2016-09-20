@@ -1,4 +1,4 @@
-// "Insert 'super()' call" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.InsertDelegationCallQuickfix" "false"
 // ACTION: Insert 'this()' call
 // ERROR: Primary constructor call expected
 

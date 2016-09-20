@@ -1,4 +1,4 @@
-// "Make constructor parameter a property" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.MakeConstructorParameterPropertyFix" "false"
 // ERROR: Cannot access 'foo': it is invisible (private in a supertype) in 'A'
 
 open class Base(private val foo: String)

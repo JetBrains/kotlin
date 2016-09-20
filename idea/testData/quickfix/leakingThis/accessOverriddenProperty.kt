@@ -1,4 +1,4 @@
-// "Make 'x' final" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddModifierFix" "false"
 // ACTION: Convert property initializer to getter
 
 open class My(open val x: Int) {
