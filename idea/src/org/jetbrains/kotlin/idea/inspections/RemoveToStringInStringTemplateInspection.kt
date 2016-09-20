@@ -33,6 +33,7 @@ class RemoveToStringInStringTemplateInspection : AbstractKotlinInspection(), Cle
                 override fun visitCallExpression(expression: KtCallExpression) {
                     val qualifiedExpression = expression.parent as? KtDotQualifiedExpression ?: return
                     if (qualifiedExpression.parent !is KtBlockStringTemplateEntry) return
+                    if (qualifiedExpression.receiverExpression is KtSuperExpression) return
                     if (!qualifiedExpression.isToString()) return
 
                     holder.registerProblem(expression,
