@@ -77,6 +77,7 @@
 - [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Interface" refactoring
 Pull Up: Support properties declared in the primary constructor
 Pull Up: Support members declared in the companion object of the original class
+Pull Up: Show member dependencies in the refactoring dialog
 
 ##### Issues Fixed
 

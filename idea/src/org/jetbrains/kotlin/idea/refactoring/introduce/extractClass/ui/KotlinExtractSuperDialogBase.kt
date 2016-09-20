@@ -20,7 +20,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.extractSuperclass.JavaExtractSuperBaseDialog
 import com.intellij.refactoring.util.DocCommentPolicy
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesDependencyMemberInfoModel
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
@@ -58,8 +58,10 @@ abstract class KotlinExtractSuperDialogBase(
     private val fileNameField = JTextField()
 
     open class MemberInfoModelBase(
-            val memberInfos: List<KotlinMemberInfo>
-    ) : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>() {
+            originalClass: KtClassOrObject,
+            val memberInfos: List<KotlinMemberInfo>,
+            interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
+    ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(originalClass, null, false, interfaceContainmentVerifier) {
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
     }
 

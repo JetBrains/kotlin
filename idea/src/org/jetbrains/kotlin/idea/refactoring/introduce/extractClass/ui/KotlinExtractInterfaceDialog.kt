@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuper
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractInterfaceHandler
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
+import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
 import org.jetbrains.kotlin.idea.refactoring.pullUp.mustBeAbstractInInterface
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -48,7 +49,11 @@ class KotlinExtractInterfaceDialog(
             member is KtClass && member.hasModifier(KtTokens.INNER_KEYWORD)
         }
         extractableMemberInfos.forEach { it.isToAbstract = true }
-        return object : MemberInfoModelBase(extractableMemberInfos) {
+        return object : MemberInfoModelBase(
+                originalClass,
+                extractableMemberInfos,
+                getInterfaceContainmentVerifier { selectedMembers }
+        ) {
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
                 val member = memberInfo.member
                 return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
