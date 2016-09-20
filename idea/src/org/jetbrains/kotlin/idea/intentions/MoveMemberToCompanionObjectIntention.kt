@@ -34,11 +34,13 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.OuterInstanceReferenceUsageInfo
@@ -64,6 +66,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java,
                                                                                              "Move to companion object") {
@@ -248,6 +251,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
         val project = element.project
 
+        val containingClass = element.containingClassOrObject as KtClass
+
         if (element is KtClassOrObject) {
             val nameSuggestions = if (traverseOuterInstanceReferences(element, true)) getNameSuggestionsForOuterInstance(element) else emptyList()
             val outerInstanceName = nameSuggestions.firstOrNull()
@@ -258,7 +263,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                 }
             }
             val moveDescriptor = MoveDeclarationsDescriptor(listOf(element),
-                                                            KotlinMoveTargetForCompanion(element.containingClassOrObject!! as KtClass),
+                                                            KotlinMoveTargetForCompanion(containingClass),
                                                             MoveDeclarationsDelegate.NestedClass(null, outerInstanceName),
                                                             moveCallback = MoveCallback { runTemplateForInstanceParam(movedClass!!, nameSuggestions, editor) })
             MoveKotlinDeclarationsProcessor(project, moveDescriptor, mover).run()
@@ -271,13 +276,23 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             return CommonRefactoringUtil.showErrorHint(project, editor, "$description is overridden by declaration(s) in a subclass", text, null)
         }
 
-        if (hasTypeParameterReferences(element.containingClassOrObject!!, element)) {
+        if (hasTypeParameterReferences(containingClass, element)) {
             return CommonRefactoringUtil.showErrorHint(project, editor, "$description references type parameters of the containing class", text, null)
         }
 
         val externalUsages = SmartList<UsageInfo>()
         val outerInstanceUsages = SmartList<UsageInfo>()
         val conflicts = MultiMap<PsiElement, String>()
+
+        containingClass.getCompanionObjects().firstOrNull()?.let { companion ->
+            val companionDescriptor = companion.resolveToDescriptor() as ClassDescriptor
+            val callableDescriptor = element.resolveToDescriptor() as CallableMemberDescriptor
+            companionDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
+                DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)
+            }?.let {
+                conflicts.putValue(it, "Companion object already contains ${RefactoringUIUtil.getDescription(it, false)}")
+            }
+        }
 
         val outerInstanceReferences = collectOuterInstanceReferences(element)
         if (outerInstanceReferences.isNotEmpty()) {
