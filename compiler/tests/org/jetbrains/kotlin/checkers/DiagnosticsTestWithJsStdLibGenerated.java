@@ -289,6 +289,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("classAndFunction.kt")
+        public void testClassAndFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classLevelMethodAndProperty.kt")
         public void testClassLevelMethodAndProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classLevelMethodAndProperty.kt");

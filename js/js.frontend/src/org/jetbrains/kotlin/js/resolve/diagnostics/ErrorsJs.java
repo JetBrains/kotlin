@@ -44,7 +44,7 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtExpression> NATIVE_INNER_CLASS_PROHIBITED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtElement, String, DeclarationDescriptor> JS_NAME_CLASH = DiagnosticFactory2.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory3<KtElement, String, DeclarationDescriptor, DeclarationDescriptor> JS_NAME_CLASH_SYNTHETIC =
+    DiagnosticFactory3<KtElement, String, DeclarationDescriptor, DeclarationDescriptor> JS_FAKE_NAME_CLASH =
             DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_NAME_ON_ACCESSOR_AND_PROPERTY = DiagnosticFactory0.create(ERROR);

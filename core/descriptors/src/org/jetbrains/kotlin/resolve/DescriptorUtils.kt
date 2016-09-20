@@ -315,3 +315,6 @@ fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
            && methodTypeParameters.size == 1
            && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
 }
+
+val DeclarationDescriptor.isExtensionProperty: Boolean
+    get() = this is PropertyDescriptor && extensionReceiverParameter != null

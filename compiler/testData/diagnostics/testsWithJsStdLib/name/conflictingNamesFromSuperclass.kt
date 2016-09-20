@@ -12,7 +12,7 @@ class C : A, B {
     <!JS_NAME_CLASH!>override fun g()<!> {}
 }
 
-abstract class <!JS_NAME_CLASH_SYNTHETIC!>D<!> : A, B
+abstract class <!JS_FAKE_NAME_CLASH!>D<!> : A, B
 
 open class E {
     open fun f() {}
@@ -20,4 +20,4 @@ open class E {
     open fun g() {}
 }
 
-class <!JS_NAME_CLASH_SYNTHETIC!>F<!> : E(), A, B
+class <!JS_FAKE_NAME_CLASH!>F<!> : E(), A, B

@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JsNameClashChecker : DeclarationChecker {
@@ -40,20 +40,24 @@ class JsNameClashChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (declaration !is KtProperty || !descriptor.isExtension) {
+        // We don't generate JS properties for extension properties, we generate methods instead, so in this case
+        // check name clash only for accessors, not properties
+        if (!descriptor.isExtensionProperty) {
             checkDescriptor(descriptor, declaration, diagnosticHolder)
         }
     }
 
     private fun checkDescriptor(descriptor: DeclarationDescriptor, declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+        if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
+
         val suggested = nameSuggestion.suggest(descriptor)!!
-        if (suggested.stable && suggested.scope is ClassOrPackageFragmentDescriptor && isOpaque(suggested.descriptor)) {
+        if (suggested.stable && suggested.scope is ClassOrPackageFragmentDescriptor && presentsInGeneratedCode(suggested.descriptor)) {
             val scope = getScope(suggested.scope)
             val name = suggested.names.last()
             val existing = scope[name]
             if (existing != null && existing != suggested.descriptor) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
-                val existingDeclaration = existing.findPsi() ?: declaration
+                val existingDeclaration = existing.findPsi()
                 if (clashedDescriptors.add(existing) && existingDeclaration is KtDeclaration && existingDeclaration != declaration) {
                     diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(existingDeclaration, name, descriptor))
                 }
@@ -71,14 +75,14 @@ class JsNameClashChecker : DeclarationChecker {
                 val name = overrideFqn.names.last()
                 val existing = scope[name]
                 if (existing != null && existing != overrideFqn.descriptor) {
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH_SYNTHETIC.on(declaration, name, override, existing))
+                    diagnosticHolder.report(ErrorsJs.JS_FAKE_NAME_CLASH.on(declaration, name, override, existing))
                     break
                 }
 
                 val clashedOverrides = clashedFakeOverrides[override]
                 if (clashedOverrides != null) {
                     val (firstExample, secondExample) = clashedOverrides
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH_SYNTHETIC.on(declaration, name, firstExample, secondExample))
+                    diagnosticHolder.report(ErrorsJs.JS_FAKE_NAME_CLASH.on(declaration, name, firstExample, secondExample))
                     break
                 }
             }
@@ -115,33 +119,29 @@ class JsNameClashChecker : DeclarationChecker {
         }
 
         val fqn = nameSuggestion.suggest(descriptor) ?: return
-        if (fqn.stable && isOpaque(fqn.descriptor)) {
+        if (fqn.stable && presentsInGeneratedCode(fqn.descriptor)) {
             target[fqn.names.last()] = fqn.descriptor
             (fqn.descriptor as? CallableMemberDescriptor)?.let { checkOverrideClashes(it, target) }
         }
     }
 
     private fun checkOverrideClashes(descriptor: CallableMemberDescriptor, target: MutableMap<String, DeclarationDescriptor>) {
-        var overridden = descriptor.overriddenDescriptors
-        while (overridden.isNotEmpty()) {
-            for (overridenDescriptor in overridden) {
-                val overriddenFqn = nameSuggestion.suggest(overridenDescriptor)!!
-                if (overriddenFqn.stable) {
-                    val existing = target[overriddenFqn.names.last()]
-                    if (existing != null) {
-                        if (existing != descriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                            clashedFakeOverrides[descriptor] = Pair(existing, overridenDescriptor)
-                        }
-                    }
-                    else {
-                        target[overriddenFqn.names.last()] = descriptor
+        for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDeclarations(descriptor)) {
+            val overriddenFqn = nameSuggestion.suggest(overriddenDescriptor)!!
+            if (overriddenFqn.stable) {
+                val existing = target[overriddenFqn.names.last()]
+                if (existing != null) {
+                    if (existing != descriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                        clashedFakeOverrides[descriptor] = Pair(existing, overriddenDescriptor)
                     }
                 }
+                else {
+                    target[overriddenFqn.names.last()] = descriptor
+                }
             }
-            overridden = overridden.flatMap { it.overriddenDescriptors }
         }
     }
 
-    private fun isOpaque(descriptor: DeclarationDescriptor) =
+    private fun presentsInGeneratedCode(descriptor: DeclarationDescriptor) =
             !AnnotationsUtils.isNativeObject(descriptor) && !AnnotationsUtils.isLibraryObject(descriptor)
 }

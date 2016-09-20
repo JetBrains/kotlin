@@ -189,14 +189,16 @@ class NameSuggestion {
                 overriddenDescriptor is CallableDescriptor && stable -> {
                     getStableMangledName(baseName, getArgumentTypesAsString(overriddenDescriptor))
                 }
-                shouldMangleUnstable(overriddenDescriptor) -> {
-                    val ownerName = descriptor.containingDeclaration!!.fqNameUnsafe.asString()
-                    getStableMangledName(baseName, ownerName + ":" + getArgumentTypesAsString(overriddenDescriptor as CallableDescriptor))
-                }
+                shouldMangleUnstable(overriddenDescriptor) -> getPrivateMangledName(baseName, overriddenDescriptor as CallableDescriptor)
                 else -> baseName
             }
 
             return Pair(finalName, stable)
+        }
+
+        @JvmStatic fun getPrivateMangledName(baseName: String, descriptor: CallableDescriptor): String {
+            val ownerName = descriptor.containingDeclaration.fqNameUnsafe.asString()
+            return getStableMangledName(baseName, ownerName + ":" + getArgumentTypesAsString(descriptor))
         }
 
         private fun getArgumentTypesAsString(descriptor: CallableDescriptor): String {
@@ -226,7 +228,7 @@ class NameSuggestion {
             return false
         }
 
-        fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
+        @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {
             val suffix = if (forCalculateId.isEmpty()) "" else "_${mangledId(forCalculateId)}\$"
             return suggestedName + suffix
         }
