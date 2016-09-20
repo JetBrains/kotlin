@@ -22,7 +22,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.JavaRefactoringSettings
-import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
@@ -48,7 +47,16 @@ class KotlinPullUpDialog(
         init()
     }
 
-    private inner class MemberInfoModelImpl : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>() {
+    private inner class MemberInfoModelImpl(
+            originalClass: KtClassOrObject,
+            superClass: PsiNamedElement?,
+            interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
+    ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(
+            originalClass,
+            superClass,
+            false,
+            interfaceContainmentVerifier
+    ) {
         private var lastSuperClass: PsiNamedElement? = null
 
         // Abstract members remain abstract
@@ -96,11 +104,13 @@ class KotlinPullUpDialog(
         }
 
         override fun memberInfoChanged(event: MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo>) {
+            super.memberInfoChanged(event)
             val superClass = superClass ?: return
             if (superClass != lastSuperClass) {
                 lastSuperClass = superClass
                 val isInterface = superClass is KtClass && superClass.isInterface()
                 event.changedMembers.forEach { it.isToAbstract = isInterface }
+                setSuperClass(superClass)
             }
         }
     }
@@ -114,7 +124,7 @@ class KotlinPullUpDialog(
     override fun getSuperClass() = super.getSuperClass()
 
     override fun createMemberInfoModel(): MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> =
-            MemberInfoModelImpl()
+            MemberInfoModelImpl(sourceClass, preselection, getInterfaceContainmentVerifier { selectedMemberInfos })
 
     override fun getPreselection() = mySuperClasses.firstOrNull { !it.isInterfaceClass() } ?: mySuperClasses.firstOrNull()
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuper
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractSuperclassHandler
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
+import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -44,7 +45,11 @@ class KotlinExtractSuperclassDialog(
     }
 
     override fun createMemberInfoModel(): MemberInfoModelBase {
-        return object : MemberInfoModelBase(extractClassMembers(originalClass)) {
+        return object : MemberInfoModelBase(
+                originalClass,
+                extractClassMembers(originalClass),
+                getInterfaceContainmentVerifier { selectedMembers }
+        ) {
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
                 val member = memberInfo.member
                 return member is KtNamedFunction || member is KtProperty || member is KtParameter

@@ -17,11 +17,15 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.lightElementForMemberInfo
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -166,4 +170,16 @@ fun addSuperTypeEntry(
     val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
     val newSpecifier = KtPsiFactory(targetClass).createSuperTypeEntry(renderedType)
     targetClass.addSuperTypeListEntry(newSpecifier).addToShorteningWaitSet()
+}
+
+fun getInterfaceContainmentVerifier(getMemberInfos: () -> List<KotlinMemberInfo>): (KtNamedDeclaration) -> Boolean {
+    return result@ { member ->
+        val psiMethodToCheck = lightElementForMemberInfo(member) as? PsiMethod ?: return@result false
+        getMemberInfos().any {
+            if (!it.isSuperClass || it.overrides != false) return@any false
+
+            val psiSuperInterface = (it.member as? KtClass)?.toLightClass()
+            psiSuperInterface?.findMethodBySignature(psiMethodToCheck, true) != null
+        }
+    }
 }

@@ -472,3 +472,5 @@ fun isTypeConstructorReference(e: PsiElement): Boolean {
     val parent = e.parent
     return parent is KtUserType && parent.referenceExpression == e
 }
+
+fun KtParameter.isPropertyParameter() = ownerFunction is KtPrimaryConstructor && hasValOrVar()

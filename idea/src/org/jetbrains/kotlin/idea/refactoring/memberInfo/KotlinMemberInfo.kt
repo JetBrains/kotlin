@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
@@ -78,9 +79,8 @@ class KotlinMemberInfo @JvmOverloads constructor(
     }
 }
 
-fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
-    val declaration = member
-    val psiMember: PsiMember? = when (declaration) {
+fun lightElementForMemberInfo(declaration: KtNamedDeclaration?): PsiMember? {
+    return when (declaration) {
         is KtNamedFunction -> declaration.getRepresentativeLightMethod()
         is KtProperty, is KtParameter -> declaration.toLightElements().let {
             it.firstIsInstanceOrNull<PsiMethod>() ?: it.firstIsInstanceOrNull<PsiField>()
@@ -88,8 +88,14 @@ fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
         is KtClassOrObject -> declaration.toLightClass()
         else -> null
     }
-    val info = MemberInfo(psiMember ?: return null, isSuperClass, null)
+}
+
+fun MemberInfoBase<out KtNamedDeclaration>.toJavaMemberInfo(): MemberInfo? {
+    val declaration = member
+    val psiMember: PsiMember? = lightElementForMemberInfo(declaration)
+    val info = MemberInfo(psiMember ?: return null, psiMember is PsiClass && overrides != null, null)
     info.isToAbstract = isToAbstract
+    info.isChecked = isChecked
     return info
 }
 
