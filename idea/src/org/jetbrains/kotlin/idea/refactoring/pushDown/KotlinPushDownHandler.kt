@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.PULL_MEMBERS_UP
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 
 val PUSH_MEMBERS_DOWN = "Push Members Down"
@@ -71,7 +72,7 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
             return
         }
 
-        val members = KotlinMemberInfoStorage(classOrObject).getClassMemberInfos(classOrObject)
+        val members = KotlinMemberInfoStorage(classOrObject).getClassMemberInfos(classOrObject).filter { it.member !is KtParameter }
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val helper = dataContext?.getData(PUSH_DOWN_TEST_HELPER_KEY) as TestHelper
             val selectedMembers = helper.adjustMembers(members)

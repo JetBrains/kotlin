@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,10 +38,10 @@ fun KtProperty.mustBeAbstractInInterface() =
 
 fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
     return when (this) {
-        is KtProperty -> {
+        is KtProperty, is KtParameter -> {
             if (targetClass.isInterface) return false
             if (hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.ABSTRACT_KEYWORD)) return false
-            if (accessors.isNotEmpty() || delegateExpression != null) return false
+            if (this is KtProperty && (accessors.isNotEmpty() || delegateExpression != null)) return false
             true
         }
         is KtNamedFunction -> valueParameters.all { it.defaultValue == null }
@@ -51,22 +50,38 @@ fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean 
 }
 
 fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrObject): KtNamedDeclaration {
+    if (targetMember is KtParameter) {
+        val parameterList = (targetClass as KtClass).createPrimaryConstructorIfAbsent().valueParameterList!!
+        val anchor = parameterList.parameters.firstOrNull { it.isVarArg || it.hasDefaultValue() }
+        return parameterList.addParameterBefore(targetMember, anchor)
+    }
+
     val anchor = targetClass.declarations.filterIsInstance(targetMember.javaClass).lastOrNull()
     val movedMember = when {
         anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)
     }
-    return movedMember as KtNamedDeclaration
+    return movedMember
 }
+
+private fun KtParameter.toProperty(): KtProperty = KtPsiFactory(this).createProperty(text)
 
 fun doAddCallableMember(
         memberCopy: KtCallableDeclaration,
         clashingSuper: KtCallableDeclaration?,
-        targetClass: KtClass): KtCallableDeclaration {
+        targetClass: KtClass
+): KtCallableDeclaration {
+    val memberToAdd =
+            if (memberCopy is KtParameter && (memberCopy.hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass.isInterface())) {
+                memberCopy.toProperty()
+            }
+            else memberCopy
+
     if (clashingSuper != null && clashingSuper.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-        return clashingSuper.replaced(memberCopy)
+        return clashingSuper.replaced(if (memberToAdd is KtParameter && clashingSuper is KtProperty) memberToAdd.toProperty() else memberToAdd)
     }
-    return addMemberToTarget(memberCopy, targetClass) as KtCallableDeclaration
+
+    return addMemberToTarget(memberToAdd, targetClass) as KtCallableDeclaration
 }
 
 // TODO: Formatting rules don't apply here for some reason
@@ -85,13 +100,11 @@ fun KtClass.makeAbstract() {
 fun KtClassOrObject.getSuperTypeEntryByDescriptor(
         descriptor: ClassDescriptor,
         context: BindingContext
-): KtSuperTypeEntry? {
-    return getSuperTypeListEntries()
-            .filterIsInstance<KtSuperTypeEntry>()
-            .firstOrNull {
-                val referencedType = context[BindingContext.TYPE, it.typeReference]
-                referencedType?.constructor?.declarationDescriptor == descriptor
-            }
+): KtSuperTypeListEntry? {
+    return getSuperTypeListEntries().firstOrNull {
+        val referencedType = context[BindingContext.TYPE, it.typeReference]
+        referencedType?.constructor?.declarationDescriptor == descriptor
+    }
 }
 
 fun makeAbstract(member: KtCallableDeclaration,
@@ -136,7 +149,7 @@ fun makeAbstract(member: KtCallableDeclaration,
 }
 
 fun addSuperTypeEntry(
-        delegator: KtSuperTypeEntry,
+        delegator: KtSuperTypeListEntry,
         targetClass: KtClassOrObject,
         targetClassDescriptor: ClassDescriptor,
         context: BindingContext,

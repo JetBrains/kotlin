@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.util.classMembers.MemberInfo
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 
 class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = false) : MemberInfoBase<KtNamedDeclaration>(member) {
@@ -72,7 +75,9 @@ fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
     val declaration = member
     val psiMember: PsiMember? = when (declaration) {
         is KtNamedFunction -> declaration.getRepresentativeLightMethod()
-        is KtProperty -> declaration.getRepresentativeLightMethod() ?: LightClassUtil.getLightClassPropertyMethods(declaration).backingField
+        is KtProperty, is KtParameter -> declaration.toLightElements().let {
+            it.firstIsInstanceOrNull<PsiMethod>() ?: it.firstIsInstanceOrNull<PsiField>()
+        } as PsiMember?
         is KtClassOrObject -> declaration.toLightClass()
         else -> null
     }

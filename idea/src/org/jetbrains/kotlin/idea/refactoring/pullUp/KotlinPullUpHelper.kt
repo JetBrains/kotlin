@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
@@ -42,11 +43,9 @@ import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.asAssignment
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -380,11 +379,16 @@ class KotlinPullUpHelper(
         val lightMethod = member.getRepresentativeLightMethod()!!
 
         val movedMember: PsiMember = when (member) {
-            is KtProperty -> {
+            is KtProperty, is KtParameter -> {
                 val newType = substitutor.substitute(lightMethod.returnType)
                 val newField = createJavaField(member, data.targetClass)
                 newField.typeElement?.replace(elementFactory.createTypeElement(newType))
-                member.delete()
+                if (member is KtParameter) {
+                    (member.parent as? KtParameterList)?.removeParameter(member)
+                }
+                else {
+                    member.delete()
+                }
                 newField
             }
             is KtNamedFunction -> {
@@ -448,6 +452,8 @@ class KotlinPullUpHelper(
             val movedMember: KtCallableDeclaration
             val clashingSuper = fixOverrideAndGetClashingSuper(member, memberCopy)
 
+            val psiFactory = KtPsiFactory(member)
+
             val originalIsAbstract = member.hasModifier(KtTokens.ABSTRACT_KEYWORD)
             val toAbstract = when {
                 info.isToAbstract -> true
@@ -469,7 +475,33 @@ class KotlinPullUpHelper(
             }
             else {
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, data.targetClass)
-                member.delete()
+                if (member is KtParameter && movedMember is KtParameter) {
+                    member.valOrVarKeyword?.delete()
+
+                    val superEntry = data.superEntryForTargetClass
+                    val superResolvedCall = data.targetClassSuperResolvedCall
+                    if (superResolvedCall != null) {
+                        val superCall = if (superEntry !is KtSuperTypeCallEntry || superEntry.valueArgumentList == null) {
+                            superEntry!!.replaced(psiFactory.createSuperTypeCallEntry("${superEntry.text}()"))
+                        } else superEntry
+                        val argumentList = superCall.valueArgumentList!!
+
+                        val parameterIndex = movedMember.parameterIndex()
+                        val prevParameterDescriptor = superResolvedCall.resultingDescriptor.valueParameters.getOrNull(parameterIndex - 1)
+                        val prevArgument = superResolvedCall.valueArguments[prevParameterDescriptor]?.arguments?.singleOrNull() as? KtValueArgument
+                        val newArgumentName = if (prevArgument != null && prevArgument.isNamed()) Name.identifier(member.name!!) else null
+                        val newArgument = psiFactory.createArgument(psiFactory.createExpression(member.name!!), newArgumentName)
+                        if (prevArgument == null) {
+                            argumentList.addArgument(newArgument)
+                        }
+                        else {
+                            argumentList.addArgumentAfter(newArgument, prevArgument)
+                        }
+                    }
+                }
+                else {
+                    member.delete()
+                }
             }
 
             if (originalIsAbstract && data.isInterfaceTarget) {

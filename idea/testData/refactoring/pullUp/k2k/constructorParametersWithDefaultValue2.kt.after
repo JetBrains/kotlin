@@ -1,0 +1,8 @@
+open class A(n: Int, val i: Int, s: String = "") {
+
+}
+
+class B(
+        // INFO: {"checked": "true"}
+        i: Int
+) : A(1, i)

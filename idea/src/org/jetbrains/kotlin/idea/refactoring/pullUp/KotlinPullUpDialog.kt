@@ -65,12 +65,13 @@ class KotlinPullUpDialog(
             if (!superClass.isInterface()) return true
 
             val member = memberInfo.member
-            return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface())
+            return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
             val member = memberInfo.member
-            return (member is KtProperty && superClass !is PsiClass) || (member is KtNamedFunction && superClass is PsiClass)
+            return ((member is KtProperty || member is KtParameter) && superClass !is PsiClass)
+                   || (member is KtNamedFunction && superClass is PsiClass)
         }
 
         override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {

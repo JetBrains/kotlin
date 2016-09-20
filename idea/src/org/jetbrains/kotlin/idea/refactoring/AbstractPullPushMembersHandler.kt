@@ -27,11 +27,11 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import java.util.HashSet
+import java.util.*
 
 abstract class AbstractPullPushMembersHandler(
         private val refactoringName: String,
@@ -42,6 +42,8 @@ abstract class AbstractPullPushMembersHandler(
         val message = RefactoringBundle.getCannotRefactorMessage(wrongPositionMessage)
         CommonRefactoringUtil.showErrorHint(project, editor, message, refactoringName, helpId)
     }
+
+    private fun KtParameter.getContainingClass() = if (hasValOrVar()) (ownerFunction as? KtPrimaryConstructor)?.containingClassOrObject else null
 
     protected fun reportWrongContext(project: Project, editor: Editor?) {
         val message = RefactoringBundle.getCannotRefactorMessage(
@@ -61,7 +63,9 @@ abstract class AbstractPullPushMembersHandler(
         editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
         val target = (file.findElementAt(offset) ?: return).parentsWithSelf.firstOrNull {
-            it is KtClassOrObject || ((it is KtNamedFunction || it is KtProperty) && it.parent is KtClassBody)
+            it is KtClassOrObject
+            || ((it is KtNamedFunction || it is KtProperty) && it.parent is KtClassBody)
+            || it is KtParameter && it.hasValOrVar() && it.ownerFunction is KtPrimaryConstructor
         }
 
         if (target == null) {
@@ -80,6 +84,7 @@ abstract class AbstractPullPushMembersHandler(
 
         val (classOrObject, member) = when (element) {
             is KtNamedFunction, is KtProperty -> element.getStrictParentOfType<KtClassOrObject>() to element as KtNamedDeclaration?
+            is KtParameter -> element.getContainingClass() to element
             is KtClassOrObject -> element to null
             else -> {
                 reportWrongPosition(project, editor)
@@ -93,8 +98,8 @@ abstract class AbstractPullPushMembersHandler(
     override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean {
         return elements.mapTo(HashSet<PsiElement>()) {
             when (it) {
-                is KtNamedFunction, is KtProperty ->
-                    (it.parent as? KtClassBody)?.parent as? KtClassOrObject
+                is KtNamedFunction, is KtProperty -> (it.parent as? KtClassBody)?.parent as? KtClassOrObject
+                is KtParameter -> it.getContainingClass()
                 is KtClassOrObject -> it
                 else -> null
             } ?: return false
