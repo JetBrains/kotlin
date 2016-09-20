@@ -95,6 +95,12 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionalTypeWithNamedArguments")
+    public void testFunctionalTypeWithNamedArguments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/FunctionalTypeWithNamedArguments/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Inherited")
     public void testInherited() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Inherited/");

@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.idea.decompiler.js.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getFileIds() = listOf(
             "java.util", "jquery", "jquery.ui",
             "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
-    ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) }
+    ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) } + ClassId.topLevel(FqName("kotlin.js.JsonClass"))
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
         JsVirtualFileFinder.SERVICE.getInstance(project)
