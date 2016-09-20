@@ -25,14 +25,17 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.HashSet
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.asJava.getAccessorNamesCandidatesByPropertyName
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 import java.util.*
 
 class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
@@ -85,30 +88,79 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         dest.addAll(allClassNames)
     }
 
-    override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod>
-            = emptyArray()
+    override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
+        return getMethodSequenceByName(name, scope).toList().toTypedArray()
+    }
 
-    override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod>
-            = emptyArray()
+    fun getMethodSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
+        val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
+        val functionIndex = KotlinFunctionShortNameIndex.getInstance()
 
-    override fun getFieldsByNameIfNotMoreThan(s: String, scope: GlobalSearchScope, i: Int): Array<PsiField>
-            = emptyArray()
+        val kotlinFunctionsPsi = functionIndex.get(name, project, scope).asSequence()
+                .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
+                .filter { it.name == name }
+
+        val propertyAccessorsPsi = sequenceOfLazyValues({ getPropertyNamesCandidatesByAccessorName(Name.identifier(name)) })
+                .flatMap { it.asSequence() }
+                .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
+                .flatMap { LightClassUtil.getLightClassPropertyMethods(it).allDeclarations.asSequence() }
+                .filter { it.name == name }
+                .map { it as? PsiMethod }
+
+        return sequenceOfLazyValues({ kotlinFunctionsPsi }, { propertyAccessorsPsi }).flatMap { it }.filterNotNull()
+    }
+
+    override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
+        require(maxCount >= 0)
+        val psiMethods = getMethodSequenceByName(name, scope)
+        val limitedByMaxCount = psiMethods.take(maxCount).toList()
+        if (limitedByMaxCount.size == 0)
+            return PsiMethod.EMPTY_ARRAY
+        return limitedByMaxCount.toTypedArray()
+    }
+
+    override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiField> {
+        require(maxCount >= 0)
+        val psiFields = getFieldSequenceByName(name, scope)
+        val limitedByMaxCount = psiFields.take(maxCount).toList()
+        if (limitedByMaxCount.size == 0)
+            return PsiField.EMPTY_ARRAY
+        return limitedByMaxCount.toTypedArray()
+    }
 
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean
             = ContainerUtil.process(getMethodsByName(name, scope), processor)
 
-    override fun getAllMethodNames(): Array<String>
-            = emptyArray()
+    override fun getAllMethodNames(): Array<String> {
+        val functionIndex = KotlinFunctionShortNameIndex.getInstance()
+        val functionNames = functionIndex.getAllKeys(project)
 
-    override fun getAllMethodNames(set: HashSet<String>) {
+        val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
+        val propertyAccessorNames = propertiesIndex.getAllKeys(project)
+                .flatMap(::getAccessorNamesCandidatesByPropertyName)
+
+        return (functionNames + propertyAccessorNames).toTypedArray()
     }
 
-    override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField>
-            = emptyArray()
+    override fun getAllMethodNames(set: HashSet<String>) {
+        set.addAll(allMethodNames)
+    }
 
-    override fun getAllFieldNames(): Array<String>
-            = emptyArray()
+    fun getFieldSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
+        return KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
+                .map { LightClassUtil.getLightClassBackingField(it) }
+                .filterNotNull()
+    }
+
+    override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField> {
+        return getFieldSequenceByName(name, scope).toList().toTypedArray()
+    }
+
+    override fun getAllFieldNames(): Array<String> {
+        return KotlinPropertyShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
+    }
 
     override fun getAllFieldNames(set: HashSet<String>) {
+        set.addAll(allFieldNames)
     }
 }

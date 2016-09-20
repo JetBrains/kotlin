@@ -1,0 +1,47 @@
+// FILE: bar/Foo.before.java
+// "Static import constant 'foo.Bar.Companion.foobar'" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Rename reference
+// ACTION: Create field 'foobar'
+// ACTION: Create parameter 'foobar'
+// ACTION: Create local variable 'foobar'
+// WITH_RUNTIME
+package bar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret> = "barfoo";
+    }
+}
+
+
+// FILE: foo/Bar.dependency.kt
+package foo
+
+object Bar {
+    companion object {
+        @JvmField var foobar = "foobar"
+    }
+}
+
+// FILE: bar/Foo.after.java
+// "Static import constant 'foo.Bar.Companion.foobar'" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Rename reference
+// ACTION: Create field 'foobar'
+// ACTION: Create parameter 'foobar'
+// ACTION: Create local variable 'foobar'
+// WITH_RUNTIME
+package bar;
+
+import static foo.Bar.Companion.foobar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret> = "barfoo";
+    }
+}
+
+
