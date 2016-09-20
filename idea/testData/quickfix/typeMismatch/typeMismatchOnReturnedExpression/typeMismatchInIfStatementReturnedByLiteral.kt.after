@@ -1,4 +1,4 @@
-// "Change 'f' type to '(Int, Int) -> (String) -> Int'" "true"
+// "Change type of 'f' to '(Int, Int) -> (String) -> Int'" "true"
 fun foo() {
     val f: (Int, Int) -> (String) -> Int = {
         a: Int, b: Int ->

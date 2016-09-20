@@ -1,4 +1,4 @@
-// "Change 'B.x' type to '(Int) -> Int'" "true"
+// "Change type of overridden property 'B.x' to '(Int) -> Int'" "true"
 interface A {
     val x: (Int) -> Int
 }

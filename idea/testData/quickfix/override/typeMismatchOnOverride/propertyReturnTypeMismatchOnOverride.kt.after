@@ -1,4 +1,4 @@
-// "Change 'A.x' type to 'Int'" "true"
+// "Change type to 'Int'" "true"
 interface X {
     val x: Int
 }
