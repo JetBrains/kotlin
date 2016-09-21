@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.utils.sure
 class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManager) {
     // Module containing JDK classes or having them among dependencies
     private var ownerModuleDescriptor: ModuleDescriptor? = null
+    private var isAdditionalBuiltInsFeatureSupported: Boolean = true
 
-    fun initialize(moduleDescriptor: ModuleDescriptor) {
+    fun initialize(moduleDescriptor: ModuleDescriptor, isAdditionalBuiltInsFeatureSupported: Boolean) {
         assert(ownerModuleDescriptor == null) { "JvmBuiltins repeated initialization" }
         this.ownerModuleDescriptor = moduleDescriptor
+        this.isAdditionalBuiltInsFeatureSupported = isAdditionalBuiltInsFeatureSupported
     }
 
     lateinit var settings: JvmBuiltInsSettings
@@ -39,7 +41,8 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
     override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter {
         settings = JvmBuiltInsSettings(
                 builtInsModule, storageManager,
-                { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } }
+                { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } },
+                { isAdditionalBuiltInsFeatureSupported }
         )
 
         return settings

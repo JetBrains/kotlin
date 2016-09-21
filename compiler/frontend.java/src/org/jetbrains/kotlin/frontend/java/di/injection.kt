@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.frontend.java.di
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
@@ -140,7 +141,8 @@ fun StorageComponentContainer.javaAnalysisInit() {
 // 'initBuiltIns' body cannot be merged with 'javaAnalysisInit' because the latter is used in IDE,
 // where built-ins instances are shared between modules and manual initialization is necessary (to avoid multiple initialization)
 fun StorageComponentContainer.initJvmBuiltInsForTopDownAnalysis() {
-    get<JvmBuiltIns>().initialize(get<ModuleDescriptor>())
+    get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(),
+                                  get<LanguageVersionSettings>().supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 }
 
 class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {

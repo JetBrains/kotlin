@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -77,7 +80,11 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                 packagePartProviderFactory = { a, b -> JvmPackagePartProvider(environment) }
         )
 
-        builtIns.initialize(resolverForProject.descriptorForModule(resolverForProject.allModules.first()))
+        builtIns.initialize(
+                resolverForProject.descriptorForModule(resolverForProject.allModules.first()),
+                resolverForProject.resolverForModule(resolverForProject.allModules.first())
+                        .componentProvider.get<LanguageVersionSettings>()
+                        .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 
         performChecks(resolverForProject, modules)
     }

@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
@@ -381,9 +384,12 @@ private fun globalResolveSessionProvider(
 
     if (newBuiltIns is JvmBuiltIns) {
         val sdkInfo = SdkInfo(project, sdk!!)
-        newBuiltIns.initialize(moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo))
+        newBuiltIns.initialize(
+                moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo),
+                moduleResolverProvider.resolverForProject.resolverForModule(sdkInfo)
+                        .componentProvider.get<LanguageVersionSettings>()
+                        .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
     }
 
     moduleResolverProvider
 }
-

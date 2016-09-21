@@ -63,7 +63,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)
 
-            builtIns.initialize(module)
+            builtIns.initialize(module, isAdditionalBuiltInsFeatureSupported = true)
 
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, javaResolverCache)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)

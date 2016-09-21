@@ -54,8 +54,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 UnsupportedSyntheticCallableReferenceChecker(),
                 SuperCallWithDefaultArgumentsChecker(),
                 MissingDependencyClassChecker(),
-                ProtectedSyntheticExtensionCallChecker,
-                AdditionalBuiltInsMembersCallChecker
+                ProtectedSyntheticExtensionCallChecker
         ),
 
         additionalTypeCheckers = listOf(
