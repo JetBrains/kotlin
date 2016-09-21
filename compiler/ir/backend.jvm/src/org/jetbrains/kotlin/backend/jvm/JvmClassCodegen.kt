@@ -145,7 +145,7 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
     }
 
     fun generateMethod(method: IrFunction) {
-        FunctionCodegen(method, this).generate()
+        JvmFunctionCodegen(method, this).generate()
     }
 
 }
