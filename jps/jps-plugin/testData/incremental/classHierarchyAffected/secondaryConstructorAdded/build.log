@@ -9,7 +9,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'public constructor A(x: String)' conflicts with another declaration in package '<root>'
+Conflicting overloads: public constructor A(x: String) defined in A, public fun A(x: String): A defined in root package
 
 ================ Step #2 =================
 

@@ -10,4 +10,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'public constructor function()' conflicts with another declaration in package 'test'
+Conflicting overloads: public constructor function() defined in test.function, public fun function(): Unit defined in test
