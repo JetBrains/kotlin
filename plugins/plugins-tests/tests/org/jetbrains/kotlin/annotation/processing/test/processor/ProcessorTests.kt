@@ -333,4 +333,16 @@ class ProcessorTests : AbstractProcessorTest() {
             testDisposable("getBindingContext")
         }
     }
+
+    fun testMapMutableMap() = test("MapMutableMap", "*") { set, roundEnv, env ->
+        val test = env.findClass("Test")
+        fun test(name: String, expected: String) {
+            assertEquals(expected, test.findMethods(name).single().parameters.single().asType().toString())
+        }
+
+        test("a", "java.util.Map<java.lang.Integer,? extends Intf>")
+        test("b", "java.util.Map<java.lang.Integer,Intf>")
+        test("c", "java.util.Map<java.lang.Integer,Test>")
+        test("d", "java.util.Map<java.lang.Integer,Test>")
+    }
 }
