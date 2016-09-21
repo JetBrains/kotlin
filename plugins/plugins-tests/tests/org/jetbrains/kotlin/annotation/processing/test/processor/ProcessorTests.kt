@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.impl.PsiSubstitutorImpl
+import com.intellij.psi.util.PsiTypesUtil
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.annotation.processing.impl.DisposableRef
 import org.jetbrains.kotlin.annotation.processing.impl.KotlinProcessingEnvironment
@@ -148,11 +151,11 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals(2, bASuperTypes.size) // Object and I
         
         fun List<TypeMirror>.iInterface() = first { it.toString().matches("I(<.*>)?".toRegex()) } as DeclaredType
-        
+
         val bai = bASuperTypes.iInterface()
         assertEquals(1, bai.typeArguments.size)
         assertEquals("java.lang.String", bai.typeArguments.first().toString())
-        
+
         val c = env.findClass("C")
         val cSuperTypes = env.typeUtils.directSupertypes(c.asType())
         assertEquals(1, cSuperTypes.size)
@@ -164,6 +167,12 @@ class ProcessorTests : AbstractProcessorTest() {
         val a2 = env.findClass("A2")
         val i2 = env.typeUtils.directSupertypes(a2.asType()).first { it.toString().matches("I2(<.*>)?".toRegex()) } as JeDeclaredType
         assertEquals("I2<T>", i2.toString())
+
+        val stringType = env.elementUtils.getTypeElement("java.lang.String").asType()
+        val a3 = env.findClass("A3")
+        val resolvedA3 = env.typeUtils.getDeclaredType(a3, stringType)
+        val i3 = env.typeUtils.directSupertypes(resolvedA3).first { it.toString().matches("I3(<.*>)?".toRegex()) } as JeDeclaredType
+        assertEquals("I3<java.util.List<? extends java.lang.String>>", i3.toString())
     }
     
     fun testErasureSimple() = test("ErasureSimple", "*") { set, roundEnv, env -> 
