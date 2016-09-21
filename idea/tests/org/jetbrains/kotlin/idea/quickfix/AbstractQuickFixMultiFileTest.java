@@ -302,6 +302,9 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                             KotlinTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
                         }
                     }
+                    else {
+                        assertNull(".after file should not exist", afterFile);
+                    }
                 }
                 catch (ComparisonFailure e) {
                     throw e;
