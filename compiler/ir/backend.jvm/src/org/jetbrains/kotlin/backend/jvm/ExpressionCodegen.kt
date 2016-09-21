@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
-import org.jetbrains.kotlin.codegen.BranchedValue
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.FrameMap
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil.boxType
+import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -31,8 +30,11 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -102,7 +104,7 @@ class ExpressionCodegen(
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
         val result = expression.statements.fold(none()) {
             r, exp ->
-            coerceNotToUnit(r.type, Type.VOID_TYPE)
+            //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
         coerceNotToUnit(result.type, expression.asmType)
@@ -114,13 +116,45 @@ class ExpressionCodegen(
     }
 
     override fun visitCall(expression: IrCall, data: BlockInfo): StackValue {
+        if (expression.descriptor is ConstructorDescriptor) {
+            return generateNewCall(expression, data)
+        }
+        return generateCall(expression, expression.superQualifier, data)
+    }
+
+    private fun generateNewCall(expression: IrCall, data: BlockInfo): StackValue {
+        val type = expression.asmType
+        if (type.sort == Type.ARRAY) {
+            //noinspection ConstantConditions
+            return generateNewArray(expression, data)
+        }
+
+        mv.anew(expression.asmType)
+        mv.dup()
+        generateCall(expression, expression.superQualifier, data)
+        return expression.onStack
+    }
+
+    fun generateNewArray(
+            expression: IrCall, data: BlockInfo
+    ): StackValue {
+        val args = expression.descriptor.valueParameters
+        assert(args.size == 1 || args.size == 2) { "Unknown constructor called: " + args.size + " arguments" }
+
+        if (args.size == 1) {
+            val sizeExpression = expression.getValueArgument(0)!!
+            gen(sizeExpression, Type.INT_TYPE, data)
+            newArrayInstruction(expression.type)
+            return expression.onStack
+        }
+
         return generateCall(expression, expression.superQualifier, data)
     }
 
     private fun generateCall(expression: IrMemberAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): StackValue {
         val callable = resolveToCallable(expression, superQualifier != null)
         if (callable is IrIntrinsicFunction) {
-            callable.invoke(mv, this, data)
+            return callable.invoke(mv, this, data)
         } else {
             val receiver = expression.dispatchReceiver
             receiver?.apply {
@@ -135,13 +169,12 @@ class ExpressionCodegen(
             }
 
             callable.genInvokeInstruction(mv)
-            if (expression !is ConstructorDescriptor) {
-                coerce(callable.returnType, expression.asmType, mv)
-            }
+            return StackValue.onStack(callable.returnType)
+//            if (expression.descriptor !is ConstructorDescriptor) {
+//                //coerce(callable.returnType, expression.asmType, mv)
+//            }
         }
-        if (expression.descriptor is ConstructorDescriptor) {
-            return none()
-        }
+
         return expression.onStack
     }
 
@@ -162,8 +195,7 @@ class ExpressionCodegen(
         val index = frame.enter(declaration.descriptor, varType)
 
         declaration.initializer?.apply {
-            gen(this, varType, data)
-            StackValue.local(index, varType).store(StackValue.onStack(this.asmType), mv)
+            StackValue.local(index, varType).store(gen(this, varType, data), mv)
         }
 
         val info = VariableInfo(
@@ -177,13 +209,13 @@ class ExpressionCodegen(
         return none()
     }
 
-    fun gen(expression: IrExpression, type: Type, data: BlockInfo) {
-        expression.accept(this, data)
-        StackValue.onStack(expression.asmType).put(type, mv)
+    fun gen(expression: IrElement, type: Type, data: BlockInfo): StackValue {
+        expression.accept(this, data).put(type, mv)
+        return onStack(type)
     }
 
-    fun gen(expression: IrExpression, data: BlockInfo) {
-        gen(expression, expression.asmType, data)
+    fun gen(expression: IrExpression, data: BlockInfo): StackValue {
+        return gen(expression, expression.asmType, data)
     }
 
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: BlockInfo): StackValue {
@@ -200,8 +232,8 @@ class ExpressionCodegen(
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
-        expression.value.accept(this, data)
-        StackValue.local(frame.getIndex(expression.descriptor), expression.asmType).store(StackValue.onStack(expression.value.asmType), mv)
+        val value = expression.value.accept(this, data)
+        StackValue.local(frame.getIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
         //UNIT?
         return expression.onStack
     }
@@ -222,13 +254,47 @@ class ExpressionCodegen(
         TODO("not implemented for $element") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun visitVararg(expression: IrVararg, data: BlockInfo): StackValue {
+        val size = expression.elements.size
+        mv.iconst(size)
+        val varargType = expression.asmType
+        val elementType = correctElementType(varargType)
+        val asmType = elementType
+        newArrayInstruction(expression.type)
+        for ((i, element)  in expression.elements.withIndex()) {
+            mv.dup()
+            StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
+            val rightSide = gen(element, asmType, data)
+            StackValue.arrayElement(asmType, StackValue.onStack(asmType), StackValue.onStack(Type.INT_TYPE)).store(rightSide, mv)
+        }
+        return expression.onStack
+    }
+
+    fun newArrayInstruction(arrayType: KotlinType) {
+        if (KotlinBuiltIns.isArray(arrayType)) {
+            val elementJetType = arrayType.arguments[0].type
+//            putReifiedOperationMarkerIfTypeIsReifiedParameter(
+//                    elementJetType,
+//                    ReifiedTypeInliner.OperationKind.NEW_ARRAY
+//            )
+            mv.newarray(boxType(elementJetType.asmType))
+        }
+        else {
+            val type = typeMapper.mapType(arrayType)
+            mv.newarray(correctElementType(type))
+        }
+    }
+
+
     fun markNewLabel(): Label {
         return Label().apply { mv.visitLabel(this) }
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
-        expression.value?.accept(this, data)
-        mv.areturn(expression.asmType)
+        expression.value?.apply {
+            gen(this, data)
+        }
+        mv.areturn((expression.value ?: expression).asmType)
         return expression.onStack
     }
 
@@ -264,13 +330,53 @@ class ExpressionCodegen(
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): StackValue {
-        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-            expression.argument.accept(this, data)
-            coerce(expression.argument.asmType, Type.VOID_TYPE, mv)
-            return none()
-        } else {
-            return super.visitTypeOperator(expression, data)
+        when (expression.operator) {
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                expression.argument.accept(this, data)
+                coerce(expression.argument.asmType, Type.VOID_TYPE, mv)
+                return none()
+            }
+
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
+                expression.argument.accept(this, data)
+                mv.checkcast(expression.typeOperand.asmType)
+            }
+
+            else -> super.visitTypeOperator(expression, data)
         }
+        return expression.onStack
+    }
+
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): StackValue {
+        AsmUtil.genStringBuilderConstructor(mv)
+        expression.arguments.forEach {
+            AsmUtil.genInvokeAppendMethod(mv, gen(it, data).type)
+        }
+
+        mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+        return expression.onStack
+    }
+
+    override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): StackValue {
+        val entry = Label()
+        mv.visitLabel(entry)
+
+        val condition = loop.condition
+        gen(condition, data)
+        val endLabel = Label()
+        BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+
+        loop.body?.apply {
+            gen(this, data)
+        }
+        mv.goTo(entry)
+        mv.mark(endLabel)
+
+        return loop.onStack
+    }
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
+        return super.visitDoWhileLoop(loop, data)
     }
 
     private fun coerceNotToUnit(fromType: Type, toType: Type) {
@@ -293,5 +399,11 @@ class ExpressionCodegen(
 
         return typeMapper.mapToCallableMethod(irCall.descriptor as FunctionDescriptor, isSuper)
     }
+
+    private val KotlinType.asmType: Type
+        get() = typeMapper.mapType(this)
+
+    private val CallableDescriptor.asmType: Type
+        get() = typeMapper.mapType(this)
 }
 
