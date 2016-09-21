@@ -10,7 +10,7 @@ class NativeInteropPlugin implements Plugin<Project> {
     void apply(Project prj) {
         // TODO: handle other source sets
         def srcDir = prj.file("src/main/kotlin")
-        def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs")
+        def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs/kotlin")
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
 
         prj.configurations {
@@ -26,7 +26,7 @@ class NativeInteropPlugin implements Plugin<Project> {
             classpath = prj.configurations.interopStubGenerator
             main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             args = [srcDir, generatedSrcDir, nativeLibsDir]
-            systemProperties "java.library.path" : prj.findProject(":Interop:Indexer").file("prebuilt/nativelibs")
+            systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
 
             inputs.files prj.fileTree(srcDir.path).include('**/*.def')
