@@ -38,8 +38,8 @@ fun box(): String {
     assertEquals(listOf(), getOwnPropertyNames(emptyObjectExpr))
     assertEquals(listOf(), keys(emptyObjectExpr))
 
-    assertEquals(listOf("foo_0", "bar_0"), getOwnPropertyNames(someObjectExpr))
-    assertEquals(listOf("foo_0", "bar_0"), keys(someObjectExpr))
+    assertEquals(listOf("foo", "bar"), getOwnPropertyNames(someObjectExpr))
+    assertEquals(listOf("foo", "bar"), keys(someObjectExpr))
 
     return "OK"
 }
