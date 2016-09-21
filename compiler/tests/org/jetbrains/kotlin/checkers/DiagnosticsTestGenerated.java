@@ -5658,6 +5658,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedHidden.kt")
+            public void testDeprecatedHidden() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedHidden.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("deprecatedInheritance.kt")
             public void testDeprecatedInheritance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
@@ -12017,6 +12023,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("sameSuperTraitGenerics.kt")
                 public void testSameSuperTraitGenerics() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/duplicateSuper/sameSuperTraitGenerics.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/multimodule/hiddenClass")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class HiddenClass extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInHiddenClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/hiddenClass"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("deprecatedHiddenImportPriority.kt")
+                public void testDeprecatedHiddenImportPriority() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/hiddenClass/deprecatedHiddenImportPriority.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("deprecatedHiddenMultipleClasses.kt")
+                public void testDeprecatedHiddenMultipleClasses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/hiddenClass/deprecatedHiddenMultipleClasses.kt");
                     doTest(fileName);
                 }
             }

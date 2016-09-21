@@ -1,0 +1,49 @@
+// -- Module: <m1> --
+package
+
+package p1 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Use p2.A instead") public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun m1(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package p2 {
+
+    public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun m2(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m3> --
+package
+
+public fun test(/*0*/ a: p1.A): kotlin.Unit
+public fun test(/*0*/ a: p2.A): kotlin.Unit
+
+package p1 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Use p2.A instead") public final class A {
+        // -- Module: <m1> --
+    }
+}
+
+package p2 {
+
+    public final class A {
+        // -- Module: <m2> --
+    }
+}
