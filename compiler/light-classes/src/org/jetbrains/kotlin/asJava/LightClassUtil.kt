@@ -170,7 +170,7 @@ object LightClassUtil {
         val wrapperClass = getWrappingClass(declaration) ?: return emptySequence()
         val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
         if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion()) {
-            return sequenceOfLazyValues({ wrapperClass }, { wrapperClass.parent as KtLightClass })
+            return sequenceOfLazyValues({ wrapperClass }, { wrapperClass.parent as PsiClass })
         }
         return sequenceOf(wrapperClass)
     }
