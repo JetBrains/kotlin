@@ -347,6 +347,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("noFunctionImportOnSimpleName.test")
+        public void testNoFunctionImportOnSimpleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noFunctionImportOnSimpleName.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("noImportForFunInQualifiedNotFirst.before.Main.kt")
         public void testNoImportForFunInQualifiedNotFirst() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForFunInQualifiedNotFirst.before.Main.kt");
@@ -404,6 +410,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("noImportsForFunctionInExcludedPackage.before.Main.kt")
         public void testNoImportsForFunctionInExcludedPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForFunctionInExcludedPackage.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noMemberFunctionImportOnSimpleName.test")
+        public void testNoMemberFunctionImportOnSimpleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noMemberFunctionImportOnSimpleName.test");
             doTestWithExtraFile(fileName);
         }
 
