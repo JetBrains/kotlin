@@ -23,5 +23,6 @@ fun test2(): Int {
     }
     finally {
         println()
+        555
     }
 }

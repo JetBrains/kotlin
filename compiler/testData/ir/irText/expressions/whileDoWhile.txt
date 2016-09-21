@@ -13,39 +13,42 @@ FILE /whileDoWhile.kt
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'x: Int' type=kotlin.Int origin=null
             other: CONST Int type=kotlin.Int value='5'
-        body: BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
-            GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
-          SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
-            CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-          GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+        body: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
+              GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
+            SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
+              CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
+            GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'x: Int' type=kotlin.Int origin=null
             other: CONST Int type=kotlin.Int value='10'
-        body: BLOCK type=kotlin.Int origin=null
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
-              GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
-            SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
-              CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-                $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
-            GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
+        body: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          BLOCK type=kotlin.Int origin=null
+            BLOCK type=kotlin.Int origin=POSTFIX_INCR
+              VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Int
+                GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
+              SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                  $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
+              GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
       DO_WHILE label=null origin=DO_WHILE_LOOP
         condition: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'x: Int' type=kotlin.Int origin=null
             other: CONST Int type=kotlin.Int value='0'
       DO_WHILE label=null origin=DO_WHILE_LOOP
-        body: BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
-            GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
-          SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
-            CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
-          GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+        body: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+              GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
+            SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
+              CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+            GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
         condition: CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
           arg0: CALL 'compareTo(Int): Int' type=kotlin.Int origin=LT
             $this: GET_VAR 'x: Int' type=kotlin.Int origin=null
