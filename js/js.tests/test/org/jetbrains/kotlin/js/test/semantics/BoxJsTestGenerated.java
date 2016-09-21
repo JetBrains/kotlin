@@ -2211,6 +2211,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localInInitBlock.kt")
+            public void testLocalInInitBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/function/localInInitBlock.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("loopClosure.kt")
             public void testLoopClosure() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/function/loopClosure.kt");
@@ -4924,6 +4930,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateInterfaceNameClash.kt")
+        public void testPrivateInterfaceNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/privateInterfaceNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateNameClash.kt")
+        public void testPrivateNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/privateNameClash.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
@@ -5248,6 +5266,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inheritanceFromNativeTrait.kt")
         public void testInheritanceFromNativeTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceFromNativeTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritanceInNativeClass.kt")
+        public void testInheritanceInNativeClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceInNativeClass.kt");
             doTest(fileName);
         }
 

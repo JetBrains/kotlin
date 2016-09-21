@@ -8,7 +8,7 @@ package foo
 // CHECK_HAS_INLINE_METADATA: apply_hiyix$
 // CHECK_HAS_INLINE_METADATA: applyL_hiyix$
 // CHECK_HAS_INLINE_METADATA: applyM_hiyix$
-// CHECK_HAS_NO_INLINE_METADATA: applyN_0
+// CHECK_HAS_NO_INLINE_METADATA: applyN_hiyix$
 // CHECK_HAS_NO_INLINE_METADATA: applyO_hiyix$
 
 inline

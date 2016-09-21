@@ -69,6 +69,7 @@ abstract class BasicBoxTest(
     val TEST_MODULE = "JS_TESTS"
     val DEFAULT_MODULE = "main"
     val TEST_FUNCTION = "box"
+    private val OLD_MODULE_SUFFIX = "-old"
 
     fun doTest(filePath: String) {
         val file = File(filePath)
@@ -83,12 +84,13 @@ abstract class BasicBoxTest(
 
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
-            val generatedJsFiles = orderedModules.asReversed().map { module ->
+            val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1)
-                outputFileName
+
+                if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
             }
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
             val mainModule = modules[mainModuleName]!!
@@ -239,7 +241,7 @@ abstract class BasicBoxTest(
     }
 
     private fun createConfig(module: TestModule, dependencies: List<String>, multiModule: Boolean): JsConfig {
-        val configBuilder = LibrarySourcesConfig.Builder(project, module.name, LibrarySourcesConfig.JS_STDLIB + dependencies)
+        val configBuilder = LibrarySourcesConfig.Builder(project, module.name.removeSuffix(OLD_MODULE_SUFFIX), LibrarySourcesConfig.JS_STDLIB + dependencies)
                 .ecmaVersion(EcmaVersion.v5)
                 .sourceMap(false)
                 .inlineEnabled(!module.inliningDisabled)
@@ -275,7 +277,7 @@ abstract class BasicBoxTest(
                 (module ?: defaultModule).inliningDisabled = true
             }
 
-            val temporaryFile = File(tmpDir, fileName)
+            val temporaryFile = File(tmpDir, "${(module ?: defaultModule).name}/$fileName")
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 

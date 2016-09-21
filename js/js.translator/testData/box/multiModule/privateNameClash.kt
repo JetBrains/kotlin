@@ -1,3 +1,25 @@
+// MODULE: lib
+// FILE: lib.kt
+package lib
+
+open class A {
+    private val x = 23
+
+    fun foo() = x
+}
+
+// MODULE: lib-old
+// FILE: lib.kt
+package lib
+
+open class A {
+    fun foo() = 12
+}
+
+inline fun check() = true
+
+// MODULE: main(lib-old)
+// FILE: main.kt
 package main
 
 import lib.A
@@ -14,10 +36,10 @@ class B : A() {
 // it won't report false positives eventually. So be patient and just update this test whenever you changed
 // algorithm of assigning unique identifiers.
 // Please, check that A.x and B.x have different JS names.
-private fun checkJsNames(o: dynamic): Boolean = "x_i8qwny\$_0" in o && "x_dqqnpp\$_0" in o
+private fun checkJsNames(o: dynamic): Boolean = "x_i8qwny\$_0" in o && "x_0" in o
 
 fun box(): String {
-    if (!check()) return "check failed: did not compile agains old library"
+    if (!check()) return "check failed: did not compile against old library"
 
     val a = A()
     if (a.foo() != 23) return "fail1: ${a.foo()}"

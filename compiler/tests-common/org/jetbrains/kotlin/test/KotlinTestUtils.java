@@ -116,7 +116,7 @@ public class KotlinTestUtils {
      * Several files may follow one module
      */
     public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:, [\\w\\d_\\-]+)*\\))?\\s*)?" +
+            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:,\\s*[\\w\\d_\\-]+)*\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
