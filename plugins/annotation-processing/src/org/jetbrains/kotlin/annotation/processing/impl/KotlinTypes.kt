@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.annotation.processing.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.JeElement
@@ -135,10 +134,6 @@ class KotlinTypes(
     override fun directSupertypes(t: TypeMirror): List<TypeMirror> {
         if (t is NoType || t is ExecutableType) throw IllegalArgumentException("Invalid type: $t")
 
-        if (t is JeDeclaredType && t.psiType is PsiImmediateClassType) {
-            return t.psiClass.superTypes.map { it.toJeType(psiManager()) }
-        }
-
         val psiType = (t as? JePsiType)?.psiType as? PsiClassType ?: return emptyList()
         return psiType.superTypes.map { it.toJeType(psiManager()) }
     }
@@ -197,7 +192,7 @@ class KotlinTypes(
             i, t -> (t as? JePsiType)?.psiType ?: throw IllegalArgumentException("Invalid type argument #$i: $t") 
         }
 
-        val psiType = createDeclaredType(psiClass, typeArgs) ?: 
+        val psiType = createImmediateClassType(psiClass, typeArgs) ?:
                       throw IllegalStateException("Can't create declared type ($psiClass, $typeArgs)")
         return JeDeclaredType(psiType, psiClass)
     }
@@ -229,7 +224,7 @@ class KotlinTypes(
             i, t -> (t as? JePsiType)?.psiType ?: throw IllegalArgumentException("Invalid type argument #$i: $t")
         }
 
-        val psiType = createDeclaredType(psiClass, typeArgs) ?:
+        val psiType = createImmediateClassType(psiClass, typeArgs) ?:
                       throw IllegalStateException("Can't create declared type ($psiClass, $typeArgs)")
         return JeDeclaredType(psiType, psiClass, containing)
     }

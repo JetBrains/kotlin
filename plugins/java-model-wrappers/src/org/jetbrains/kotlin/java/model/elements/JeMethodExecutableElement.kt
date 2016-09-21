@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.java.model.elements
 
 import com.intellij.psi.*
-import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.*
+import org.jetbrains.kotlin.java.model.internal.getTypeWithTypeParameters
 import org.jetbrains.kotlin.java.model.internal.isStatic
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
 import org.jetbrains.kotlin.java.model.types.JeNoneType
@@ -84,7 +84,7 @@ fun PsiMethod.getReceiverTypeMirror(): TypeMirror {
         val containingClass = containingClass
         if (containingClass != null && !containingClass.isStatic) {
             containingClass.containingClass?.let {
-                return PsiTypesUtil.getClassType(it).toJeType(manager)
+                return it.getTypeWithTypeParameters().toJeType(manager)
             }
         }
 
@@ -92,6 +92,6 @@ fun PsiMethod.getReceiverTypeMirror(): TypeMirror {
     }
 
     val containingClass = containingClass ?: return JeNoneType
-    return PsiTypesUtil.getClassType(containingClass).toJeType(manager)
-    
+    return containingClass.getTypeWithTypeParameters().toJeType(manager)
+
 }
