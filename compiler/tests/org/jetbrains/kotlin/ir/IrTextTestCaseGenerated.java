@@ -715,4 +715,19 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/ir/irText/regressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Regressions extends AbstractIrTextTestCase {
+        public void testAllFilesPresentInRegressions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("coercionInLoop.kt")
+        public void testCoercionInLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/regressions/coercionInLoop.kt");
+            doTest(fileName);
+        }
+    }
 }

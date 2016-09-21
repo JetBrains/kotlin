@@ -145,6 +145,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
         loop.condition = loop.condition.cast(builtIns.booleanType)
 
+        loop.body = loop.body?.coerceToUnit(builtIns.unitType)
+
         return loop
     }
 
