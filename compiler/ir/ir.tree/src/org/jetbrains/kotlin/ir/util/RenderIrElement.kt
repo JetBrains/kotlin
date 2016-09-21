@@ -155,6 +155,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitWhen(expression: IrWhen, data: Nothing?): String =
             "WHEN type=${expression.type.render()} origin=${expression.origin}"
 
+    override fun visitBranch(branch: IrBranch, data: Nothing?): String =
+            "BRANCH"
+
     override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
             "WHILE label=${loop.label} origin=${loop.origin}"
 

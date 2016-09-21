@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.KotlinType
@@ -303,13 +301,13 @@ class ExpressionCodegen(
         /*TODO */
         if (expression is IrIfThenElseImpl) {
             val elseLabel = Label()
-            val condition = expression.getNthCondition(0)!!
+            val condition = expression.branches[0].condition
             gen(condition, data)
             BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, true, mv)
 
             val end = Label()
 
-            expression.getNthResult(0)!!.apply {
+            expression.branches[0].result.apply {
                 gen(this, data)
                 coerceNotToUnit(this.asmType, expression.asmType)
             }
@@ -317,7 +315,7 @@ class ExpressionCodegen(
             mv.goTo(end)
             mv.mark(elseLabel)
 
-            expression.getNthResult(1)?.apply {
+            expression.branches.getOrNull(1)?.result?.apply {
                 gen(this, data)
                 coerceNotToUnit(this.asmType, expression.asmType)
             }

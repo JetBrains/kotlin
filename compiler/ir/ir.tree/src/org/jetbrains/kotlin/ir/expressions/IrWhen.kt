@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
 interface IrWhen : IrExpression {
     val origin: IrStatementOrigin?
 
-    val branchesCount: Int
-
-    fun getNthCondition(n: Int): IrExpression?
-    fun getNthResult(n: Int): IrExpression?
-
-    fun putNthCondition(n: Int, expression: IrExpression)
-    fun putNthResult(n: Int, expression: IrExpression)
-
-    var elseBranch: IrExpression?
+    val branches: MutableList<IrBranch>
 }
 
-val IrWhen.branchIndices: IntRange get() = 0 ..branchesCount - 1
+interface IrBranch : IrElement {
+    var condition: IrExpression
+    var result: IrExpression
 
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
+            transformer.visitBranch(this, data)
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitBranch(this, data)
+}

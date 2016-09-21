@@ -3,4 +3,6 @@ FILE /whenElse.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): Int'
         WHEN type=kotlin.Int origin=WHEN
-          else: CONST Int type=kotlin.Int value='42'
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: CONST Int type=kotlin.Int value='42'

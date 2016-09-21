@@ -131,11 +131,16 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     override fun visitWhen(expression: IrWhen, data: String) {
         expression.dumpLabeledElementWith(data) {
-            for (i in 0 .. expression.branchesCount - 1) {
-                expression.getNthCondition(i)!!.accept(this, "if")
-                expression.getNthResult(i)!!.accept(this, "then")
+            expression.branches.forEach {
+                it.accept(this, "")
             }
-            expression.elseBranch?.accept(this, "else")
+        }
+    }
+
+    override fun visitBranch(branch: IrBranch, data: String) {
+        branch.dumpLabeledElementWith(data) {
+            branch.condition.accept(this, "if")
+            branch.result.accept(this, "then")
         }
     }
 

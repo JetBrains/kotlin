@@ -16,17 +16,19 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrIfThenElseImpl(
         startOffset: Int, endOffset: Int, type: KotlinType,
         override val origin: IrStatementOrigin? = null
-) : IrExpressionBase(startOffset, endOffset, type), IrWhen {
+) : IrWhenBase(startOffset, endOffset, type) {
+    override val branches: MutableList<IrBranch> = SmartList()
+
     constructor(
             startOffset: Int, endOffset: Int, type: KotlinType,
             condition: IrExpression,
@@ -34,56 +36,9 @@ class IrIfThenElseImpl(
             elseBranch: IrExpression? = null,
             origin: IrStatementOrigin? = null
     ) : this(startOffset, endOffset, type, origin) {
-        this.condition = condition
-        this.thenBranch = thenBranch
-        this.elseBranch = elseBranch
-    }
-
-    override val branchesCount: Int get() = 1
-
-    override fun getNthCondition(n: Int): IrExpression? =
-            if (n == 0) condition else null
-
-    override fun getNthResult(n: Int): IrExpression? =
-            when (n) {
-                0 -> {
-                    thenBranch
-                }
-                1 -> {
-                    elseBranch
-                }
-                else -> null
-            }
-
-
-    override fun putNthCondition(n: Int, expression: IrExpression) {
-        if (n == 0) condition = expression
-        else throw AssertionError("No such branch $n")
-    }
-
-    override fun putNthResult(n: Int, expression: IrExpression) {
-        if (n == 0) thenBranch = expression
-        else throw AssertionError("No such branch $n")
-    }
-
-    lateinit var condition: IrExpression
-
-    lateinit var thenBranch: IrExpression
-
-    override var elseBranch: IrExpression? = null
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitWhen(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        condition.accept(visitor, data)
-        thenBranch.accept(visitor, data)
-        elseBranch?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        thenBranch = thenBranch.transform(transformer, data)
-        elseBranch = elseBranch?.transform(transformer, data)
+        branches.add(IrBranchImpl(startOffset, endOffset, condition, thenBranch))
+        if (elseBranch != null) {
+            branches.add(IrBranchImpl.elseBranch(elseBranch))
+        }
     }
 }

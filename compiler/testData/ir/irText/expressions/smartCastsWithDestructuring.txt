@@ -11,10 +11,11 @@ FILE /smartCastsWithDestructuring.kt
         CONST String type=kotlin.String value=''
   FUN public fun test(x: I1): kotlin.Unit
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=I2
-          GET_VAR 'value-parameter x: I1' type=I1 origin=null
-        then: RETURN type=kotlin.Nothing from='test(I1): Unit'
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=I2
+            GET_VAR 'value-parameter x: I1' type=I1 origin=null
+          then: RETURN type=kotlin.Nothing from='test(I1): Unit'
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE val tmp0_container: I1
           GET_VAR 'value-parameter x: I1' type=I1 origin=null

@@ -1,11 +1,12 @@
 FILE /varargWithImplicitCast.kt
   FUN public fun testScalar(a: kotlin.Any): kotlin.IntArray
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.Int
-          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-        then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
-          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.Int
+            GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
+            CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
@@ -13,11 +14,12 @@ FILE /varargWithImplicitCast.kt
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN public fun testSpread(a: kotlin.Any): kotlin.IntArray
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
-          GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-        then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
-          CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
+            GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
+            CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int

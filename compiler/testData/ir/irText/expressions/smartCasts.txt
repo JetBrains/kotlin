@@ -13,10 +13,11 @@ FILE /smartCasts.kt
         GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test1(x: kotlin.Any): kotlin.Unit
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-        then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
       CALL 'println(Int): Unit' type=kotlin.Unit origin=null
         message: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
           $this: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
@@ -34,22 +35,24 @@ FILE /smartCasts.kt
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test2(x: kotlin.Any): kotlin.String
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-        then: RETURN type=kotlin.Nothing from='test2(Any): String'
-          CONST String type=kotlin.String value=''
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='test2(Any): String'
+            CONST String type=kotlin.String value=''
       RETURN type=kotlin.Nothing from='test2(Any): String'
         CALL 'overloaded(String): String' type=kotlin.String origin=null
           s: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test3(x: kotlin.Any): kotlin.String
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
-          GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-        then: RETURN type=kotlin.Nothing from='test3(Any): String'
-          CONST String type=kotlin.String value=''
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='test3(Any): String'
+            CONST String type=kotlin.String value=''
       RETURN type=kotlin.Nothing from='test3(Any): String'
         TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null

@@ -165,6 +165,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitWhen(expression: IrWhen) = visitExpression(expression)
     override fun visitWhen(expression: IrWhen, data: Nothing?) = visitWhen(expression)
 
+    fun visitBranch(branch: IrBranch) = visitElement(branch)
+    override fun visitBranch(branch: IrBranch, data: Nothing?) = visitBranch(branch)
+
     fun visitLoop(loop: IrLoop) = visitExpression(loop)
     override fun visitLoop(loop: IrLoop, data: Nothing?) = visitLoop(loop)
 

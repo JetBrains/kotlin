@@ -99,45 +99,50 @@ FILE /dataClasses.kt
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
-          if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
-            arg0: THIS of 'Test1' type=Test1
-            arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-            CONST Boolean type=kotlin.Boolean value='true'
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: THIS of 'Test1' type=Test1
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
         WHEN type=kotlin.Unit origin=null
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=Test1
-            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
-          then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-            CONST Boolean type=kotlin.Boolean value='false'
+          BRANCH
+            if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=Test1
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
         VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test1
           TYPE_OP origin=CAST typeOperand=Test1
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
-          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                $this: THIS of 'Test1' type=Test1
-              arg1: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
-          then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-            CONST Boolean type=kotlin.Boolean value='false'
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                  $this: THIS of 'Test1' type=Test1
+                arg1: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
         WHEN type=kotlin.Unit origin=null
-          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
-                $this: THIS of 'Test1' type=Test1
-              arg1: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
-                $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
-          then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-            CONST Boolean type=kotlin.Boolean value='false'
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
+                  $this: THIS of 'Test1' type=Test1
+                arg1: CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
         WHEN type=kotlin.Unit origin=null
-          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
-                $this: THIS of 'Test1' type=Test1
-              arg1: CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
-                $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
-          then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
-            CONST Boolean type=kotlin.Boolean value='false'
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
+                  $this: THIS of 'Test1' type=Test1
+                arg1: CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test1' type=Test1 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value='true'

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.defaultLoad
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -32,13 +33,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
 
         var ktLastIf: KtIfExpression = expression
-        val irBranches = SmartList<Pair<IrExpression, IrExpression>>()
+        val irBranches = SmartList<IrBranch>()
         var irElseBranch: IrExpression? = null
 
         whenBranches@while (true) {
             val irCondition = statementGenerator.generateExpression(ktLastIf.condition!!)
             val irThenBranch = statementGenerator.generateExpression(ktLastIf.then!!)
-            irBranches.add(Pair(irCondition, irThenBranch))
+            irBranches.add(IrBranchImpl(irCondition, irThenBranch))
 
             val ktElse = ktLastIf.`else`?.deparenthesize()
             when (ktElse) {
@@ -52,19 +53,29 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             }
         }
 
-        return if (irBranches.size == 1) {
-            val (irCondition, irThenBranch) = irBranches[0]
-            IrIfThenElseImpl(expression.startOffset, expression.endOffset, resultType,
-                             irCondition, irThenBranch, irElseBranch, IrStatementOrigin.IF)
+        return createIrWhen(expression, irBranches, irElseBranch, resultType)
+    }
+
+    private fun createIrWhen(
+            ktIf: KtIfExpression,
+            irBranches: List<IrBranch>,
+            irElseResult: IrExpression?,
+            resultType: KotlinType
+    ): IrWhen {
+        if (irBranches.size == 1) {
+            return IrIfThenElseImpl(ktIf.startOffset, ktIf.endOffset, resultType,
+                                    irBranches[0].condition, irBranches[0].result, irElseResult)
         }
-        else {
-            val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrStatementOrigin.WHEN)
-            for ((irCondition, irThenBranch) in irBranches) {
-                irWhen.addBranch(irCondition, irThenBranch)
-            }
-            irWhen.elseBranch = irElseBranch
-            irWhen
+
+        val irWhen = IrWhenImpl(ktIf.startOffset, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
+
+        irWhen.branches.addAll(irBranches)
+
+        irElseResult?.let {
+            irWhen.branches.add(IrBranchImpl.elseBranch(it))
         }
+
+        return irWhen
     }
 
     fun generateWhenExpression(expression: KtWhenExpression): IrExpression {
@@ -78,7 +89,8 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
-                irWhen.elseBranch = statementGenerator.generateExpression(ktEntry.expression!!)
+                val irElseResult = statementGenerator.generateExpression(ktEntry.expression!!)
+                irWhen.branches.add(IrBranchImpl.elseBranch(irElseResult))
                 break
             }
 
@@ -94,7 +106,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             }
 
             val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!)
-            irWhen.addBranch(irBranchCondition!!, irBranchResult)
+            irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
         }
 
         return generateWhenBody(expression, irSubject, irWhen)
@@ -102,13 +114,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
         if (irSubject == null) {
-            if (irWhen.branchesCount == 0 && irWhen.elseBranch == null)
+            if (irWhen.branches.isEmpty())
                 return IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
             else
                 return irWhen
         }
         else {
-            if (irWhen.branchesCount == 0) {
+            if (irWhen.branches.isEmpty()) {
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 return irBlock

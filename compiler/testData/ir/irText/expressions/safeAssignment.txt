@@ -24,11 +24,14 @@ FILE /safeAssignment.kt
         VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: C?
           GET_VAR 'value-parameter nc: C?' type=C? origin=null
         WHEN type=kotlin.Unit origin=SAFE_CALL
-          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-            arg0: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
-            arg1: CONST Null type=kotlin.Nothing? value='null'
-          then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CONST Null type=kotlin.Nothing? value='null'
-          else: CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
-            $this: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
-            <set-?>: CONST Int type=kotlin.Int value='42'
+          BRANCH
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              CONST Null type=kotlin.Nothing? value='null'
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
+              $this: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
+              <set-?>: CONST Int type=kotlin.Int value='42'

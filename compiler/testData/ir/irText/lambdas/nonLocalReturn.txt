@@ -34,11 +34,12 @@ FILE /nonLocalReturn.kt
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
-              WHEN type=kotlin.Unit origin=IF
-                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-                  arg1: CONST Int type=kotlin.Int value='0'
-                then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              WHEN type=kotlin.Unit origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Int value='0'
+                  then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
@@ -51,11 +52,12 @@ FILE /nonLocalReturn.kt
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
             BLOCK_BODY
-              WHEN type=kotlin.Unit origin=IF
-                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-                  arg1: CONST Int type=kotlin.Int value='0'
-                then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+              WHEN type=kotlin.Unit origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Int value='0'
+                  then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null

@@ -127,15 +127,10 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
         val resultType = expression.type
 
-        for (i in expression.branchIndices) {
-            val nthCondition = expression.getNthCondition(i)!!
-            val nthResult = expression.getNthResult(i)!!
-
-            expression.putNthCondition(i, nthCondition.cast(builtIns.booleanType))
-            expression.putNthResult(i, nthResult.cast(resultType))
+        for (irBranch in expression.branches) {
+            irBranch.condition = irBranch.condition.cast(builtIns.booleanType)
+            irBranch.result = irBranch.result.cast(resultType)
         }
-
-        expression.elseBranch = expression.elseBranch?.cast(resultType)
 
         return expression
     }

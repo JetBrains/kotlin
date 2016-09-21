@@ -3,16 +3,22 @@ FILE /booleanOperators.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND
-          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
-          then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-          else: CONST Boolean type=kotlin.Boolean value='false'
+          BRANCH
+            if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
+            then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: CONST Boolean type=kotlin.Boolean value='false'
   FUN public fun test2(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Boolean, Boolean): Boolean'
         WHEN type=kotlin.Boolean origin=OROR
-          if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
-          then: CONST Boolean type=kotlin.Boolean value='true'
-          else: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
+          BRANCH
+            if: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
+            then: CONST Boolean type=kotlin.Boolean value='true'
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
   FUN public fun test1x(a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1x(Boolean, Boolean): Boolean'

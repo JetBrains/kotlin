@@ -18,12 +18,15 @@ FILE /safeCallWithIncrementDecrement.kt
           VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int?
             $RECEIVER of 'inc() on Int?: Int?' type=kotlin.Int?
           WHEN type=kotlin.Int? origin=SAFE_CALL
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
-              arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: CONST Null type=kotlin.Nothing? value='null'
-            else: CALL 'inc(): Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: CONST Null type=kotlin.Nothing? value='null'
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value='true'
+              then: CALL 'inc(): Int' type=kotlin.Int origin=null
+                $this: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
   FUN public operator fun kotlin.Int?.get(index: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='get(Int) on Int?: Int'
@@ -36,24 +39,27 @@ FILE /safeCallWithIncrementDecrement.kt
         VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
           GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
         WHEN type=kotlin.Unit origin=SAFE_CALL
-          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-            arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-            arg1: CONST Null type=kotlin.Nothing? value='null'
-          then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CONST Null type=kotlin.Nothing? value='null'
-          else: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE val tmp1_this: test.C?
-                GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+          BRANCH
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+              arg1: CONST Null type=kotlin.Nothing? value='null'
+            then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              CONST Null type=kotlin.Nothing? value='null'
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value='true'
+            then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               BLOCK type=kotlin.Int origin=POSTFIX_INCR
-                VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
-                  CALL '<get-p>() on C?: Int' type=kotlin.Int origin=POSTFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE val tmp1_this: test.C?
+                  GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+                BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                  VAR IR_TEMPORARY_VARIABLE val tmp2: kotlin.Int
+                    CALL '<get-p>() on C?: Int' type=kotlin.Int origin=POSTFIX_INCR
+                      $this: GET_VAR 'tmp1_this: C?' type=test.C? origin=null
+                  CALL '<set-p>(Int) on C?: Unit' type=kotlin.Unit origin=POSTFIX_INCR
                     $this: GET_VAR 'tmp1_this: C?' type=test.C? origin=null
-                CALL '<set-p>(Int) on C?: Unit' type=kotlin.Unit origin=POSTFIX_INCR
-                  $this: GET_VAR 'tmp1_this: C?' type=test.C? origin=null
-                  value: CALL 'inc() on Int?: Int?' type=kotlin.Int? origin=POSTFIX_INCR
-                    $receiver: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
-                GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+                    value: CALL 'inc() on Int?: Int?' type=kotlin.Int? origin=POSTFIX_INCR
+                      $receiver: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
+                  GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
   FUN public fun testArrayAccess(nc: test.C?): kotlin.Unit
     BLOCK_BODY
       TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -63,12 +69,15 @@ FILE /safeCallWithIncrementDecrement.kt
               VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
                 GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
               WHEN type=kotlin.Int? origin=SAFE_CALL
-                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-                  arg1: CONST Null type=kotlin.Nothing? value='null'
-                then: CONST Null type=kotlin.Nothing? value='null'
-                else: CALL '<get-p>() on C?: Int' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+                BRANCH
+                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value='null'
+                  then: CONST Null type=kotlin.Nothing? value='null'
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value='true'
+                  then: CALL '<get-p>() on C?: Int' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
           VAR IR_TEMPORARY_VARIABLE val tmp4_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
           VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
