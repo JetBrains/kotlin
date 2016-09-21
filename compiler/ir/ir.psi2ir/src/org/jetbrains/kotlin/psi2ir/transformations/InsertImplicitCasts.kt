@@ -61,7 +61,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
         body.statements.forEachIndexed { i, irStatement ->
             if (irStatement is IrExpression) {
-                body.statements[i] = irStatement.coerceToUnit(builtIns.unitType)
+                body.statements[i] = irStatement.coerceToUnit()
             }
         }
 
@@ -83,7 +83,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
                         if (i == lastIndex)
                             irStatement.cast(type)
                         else
-                            irStatement.coerceToUnit(builtIns.unitType)
+                            irStatement.coerceToUnit()
             }
         }
 
@@ -145,7 +145,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
         loop.condition = loop.condition.cast(builtIns.booleanType)
 
-        loop.body = loop.body?.coerceToUnit(builtIns.unitType)
+        loop.body = loop.body?.coerceToUnit()
 
         return loop
     }
@@ -168,6 +168,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         for (aCatch in aTry.catches) {
             aCatch.result = aCatch.result.cast(resultType)
         }
+
+        aTry.finallyExpression = aTry.finallyExpression?.coerceToUnit()
 
         return aTry
     }
@@ -192,7 +194,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
         if (expectedType.isError) return this
 
-        if (KotlinBuiltIns.isUnit(expectedType)) return coerceToUnit(expectedType)
+        if (KotlinBuiltIns.isUnit(expectedType)) return coerceToUnit()
 
         val valueType = this.type
 
@@ -212,12 +214,14 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         return this
     }
 
-    private fun IrExpression.coerceToUnit(unitType: KotlinType): IrExpression {
+    private fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = this.type
 
-        if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, unitType)) return this
-
-        return IrTypeOperatorCallImpl(startOffset, endOffset, unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, unitType, this)
+        return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType))
+            this
+        else
+            IrTypeOperatorCallImpl(startOffset, endOffset, builtIns.unitType,
+                                   IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this)
     }
 }
 
