@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.FrameMap
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -38,8 +40,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class BlockInfo {
     val variables: MutableList<VariableInfo> = mutableListOf()
 }
-/*TODO*/
-val intrinsics = IntrinsicMethods()
 
 class VariableInfo(val name: String, val index: Int, val type: Type, val startLabel: Label)
 
@@ -49,6 +49,9 @@ class ExpressionCodegen(
         val mv: InstructionAdapter,
         val classCodegen: JvmClassCodegen
 ) : IrElementVisitor<StackValue, BlockInfo> {
+
+    /*TODO*/
+    val intrinsics = IrIntrinsicMethods(classCodegen.context.irBuiltIns)
 
     val typeMapper = classCodegen.typeMapper
 
@@ -106,11 +109,15 @@ class ExpressionCodegen(
         return expression.onStack
     }
 
+    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: BlockInfo): StackValue {
+        return generateCall(expression, null, data)
+    }
+
     override fun visitCall(expression: IrCall, data: BlockInfo): StackValue {
         return generateCall(expression, expression.superQualifier, data)
     }
 
-    private fun generateCall(expression: IrCall, superQualifier: ClassDescriptor?, data: BlockInfo): StackValue {
+    private fun generateCall(expression: IrMemberAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): StackValue {
         val callable = resolveToCallable(expression, superQualifier != null)
         if (callable is IrIntrinsicFunction) {
             callable.invoke(mv, this, data)
@@ -227,7 +234,8 @@ class ExpressionCodegen(
 
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
-        if (IrStatementOrigin.IF == expression.origin) {
+        /*TODO */
+        if (expression is IrIfThenElseImpl) {
             val elseLabel = Label()
             val condition = expression.getNthCondition(0)!!
             gen(condition, data)
@@ -277,7 +285,7 @@ class ExpressionCodegen(
     val IrExpression.onStack: StackValue
         get() = StackValue.onStack(this.asmType)
 
-    private fun resolveToCallable(irCall: IrCall, isSuper: Boolean): Callable {
+    private fun resolveToCallable(irCall: IrMemberAccessExpression, isSuper: Boolean): Callable {
         val intrinsic = intrinsics.getIntrinsic(irCall.descriptor as CallableMemberDescriptor)
         if (intrinsic != null) {
             return intrinsic.toCallable(irCall, typeMapper.mapSignatureSkipGeneric(irCall.descriptor as FunctionDescriptor), classCodegen.context)

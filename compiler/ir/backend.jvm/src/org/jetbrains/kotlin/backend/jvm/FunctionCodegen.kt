@@ -35,9 +35,10 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: JvmClassCode
                 classCodegen.state, irFunction.descriptor, signature,
                 isStatic
         )
+
         val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin,
                                                            irFunction.descriptor.calculateCommonFlags().or(if (isStatic) ACC_STATIC else 0),
-                                                           irFunction.descriptor.name.asString(), signature.asmMethod.descriptor,
+                                                           signature.asmMethod.name, signature.asmMethod.descriptor,
                                                            signature.genericsSignature, null/*TODO support exception*/)
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()

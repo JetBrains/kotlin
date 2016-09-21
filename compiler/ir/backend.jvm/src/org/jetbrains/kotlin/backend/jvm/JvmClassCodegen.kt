@@ -151,7 +151,9 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
 }
 
 fun ClassDescriptor.calculateClassFlags(): Int {
-    return Opcodes.ACC_SUPER.or(calculateCommonFlags()).or(if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else 0)
+    return (if (!DescriptorUtils.isInterface(this)) Opcodes.ACC_SUPER else 0).
+            or(calculateCommonFlags()).
+            or(if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else 0)
 }
 
 fun MemberDescriptor.calculateCommonFlags(): Int {

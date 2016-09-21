@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.lower.JvmFileClassProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 class JvmBackendContext(
         val state: GenerationState,
-        val jvmFileClassProvider: JvmFileClassProvider
+        val jvmFileClassProvider: JvmFileClassProvider,
+        val irBuiltIns: IrBuiltIns
         )
