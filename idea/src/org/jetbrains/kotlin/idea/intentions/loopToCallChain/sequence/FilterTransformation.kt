@@ -115,6 +115,10 @@ class FilterTransformation(
             val condition = ifStatement.condition ?: return null
             val then = ifStatement.then ?: return null
 
+            // we do not allow filter() which uses neither input variable nor index variable (though is technically possible but looks confusing)
+            // shouldUseInputVariables = false does not work for us because we sometimes return Result match in this matcher
+            if (!state.inputVariable.hasUsages(condition) && (state.indexVariable == null || !state.indexVariable.hasUsages(condition))) return null
+
             if (state.statements.size == 1) {
                 val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, condition, isInverse = false)
                 val newState = state.copy(statements = listOf(then))
