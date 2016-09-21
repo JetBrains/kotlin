@@ -17,16 +17,3 @@ package bar
 
 fun foobar() {
 }
-
-//FILE: main.after.kt
-// "class org.jetbrains.kotlin.idea.quickfix.ImportMemberFix" "false"
-// ERROR: Unresolved reference: foobar
-// ACTION: Create function 'foobar'
-// ACTION: Rename reference
-
-//KT-9009
-
-
-fun f() {
-    foobar<caret>()
-}

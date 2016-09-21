@@ -14,8 +14,3 @@ package a
 import kotlin.reflect.KProperty
 
 fun String.getValue(x: Any?, y: KProperty<*>) = ""
-
-
-
-// FILE: first.after.kt
-// Should not be checked
