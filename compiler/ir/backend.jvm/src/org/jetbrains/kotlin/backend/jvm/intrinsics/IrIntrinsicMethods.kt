@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
-    private val intrinsics = IntrinsicMethods()
+    val intrinsics = IntrinsicMethods()
 
     private val irMapping = hashMapOf<CallableMemberDescriptor, IntrinsicMethod>()
 
@@ -31,6 +31,11 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
         irMapping.put(irBuiltIns.eqeq, Equals(KtTokens.EQEQ))
         irMapping.put(irBuiltIns.eqeqeq, Equals(KtTokens.EQEQEQ))
         irMapping.put(irBuiltIns.booleanNot, Not())
+        val compare = CompareTo()
+        irMapping.put(irBuiltIns.lt0, compare)
+        irMapping.put(irBuiltIns.lteq0, compare)
+        irMapping.put(irBuiltIns.gt0, compare)
+        irMapping.put(irBuiltIns.gteq0, compare)
     }
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {

@@ -88,8 +88,7 @@ open class IrIntrinsicFunction(
                    signature: JvmMethodSignature,
                    context: JvmBackendContext,
                    invokeInstuction: (InstructionAdapter) -> Unit): IrIntrinsicFunction {
-            val args = (expression.dispatchReceiver?.let { listOf(context.state.typeMapper.mapType(it.type)) } ?: emptyList<Type>()) +
-                       signature.valueParameters.map { it.asmType }
+            val args = expression.receiverAndArgs().map { context.state.typeMapper.mapType(it.type) }
             return object : IrIntrinsicFunction(expression, signature, args) {
                 override fun genInvokeInstruction(v: InstructionAdapter) {
                     invokeInstuction(v)
@@ -104,4 +103,13 @@ open class IrIntrinsicFunction(
             return create(expression, signature, listOf(type), invokeInstuction)
         }
     }
+}
+
+fun IrMemberAccessExpression.receiverAndArgs(): List<IrExpression> {
+    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
+                 descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->getValueArgument(i)}).filterNotNull()
+}
+
+fun List<IrExpression>.asmTypes(context: JvmBackendContext): List<Type> {
+    return map { context.state.typeMapper.mapType(it.type) }
 }

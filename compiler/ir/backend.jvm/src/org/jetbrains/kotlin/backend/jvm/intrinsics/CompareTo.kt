@@ -16,10 +16,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
+import org.jetbrains.kotlin.backend.jvm.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -37,12 +46,42 @@ class CompareTo : IntrinsicMethod() {
     }
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val parameterType = comparisonOperandType(
-                expressionType(expression.dispatchReceiver ?: expression.extensionReceiver!!, context),
-                signature.valueParameters.single().asmType
-        )
-        return IrIntrinsicFunction.create(expression, signature, listOf(parameterType, parameterType)) {
-            genInvoke(parameterType, it)
+        assert (expression is IrUnaryPrimitiveImpl)
+        val compareCall = expression.getValueArgument(0) as IrCall
+        val args = compareCall.receiverAndArgs()
+        val argTypes = args.asmTypes(context)
+        val leftType = argTypes[0]
+        val rightType = argTypes[1]
+        val parameterType = comparisonOperandType(leftType, rightType)
+
+        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(compareCall.descriptor as FunctionDescriptor, OwnerKind.IMPLEMENTATION)
+        return object : IrIntrinsicFunction(compareCall, newSignature, listOf(parameterType, parameterType)) {
+            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+                val isPrimitiveIntrinsic = codegen.intrinsics.intrinsics.getIntrinsic(compareCall.descriptor as FunctionDescriptor) != null
+                val operationType: Type
+                val leftValue: StackValue
+                val rightValue: StackValue
+                if (isPrimitive(leftType) && isPrimitive(rightType) && isPrimitiveIntrinsic) {
+                    operationType = comparisonOperandType(leftType, rightType)
+                    leftValue = codegen.gen(args[0], operationType, data)
+                    rightValue = codegen.gen(args[1], operationType,data)
+                }
+                else {
+                    operationType = Type.INT_TYPE
+                    leftValue = codegen.gen(compareCall, data)
+                    rightValue = StackValue.constant(0, leftType)
+                }
+                val origin = expression.origin
+                val token = when (origin) {
+                    IrStatementOrigin.GT -> KtTokens.GT
+                    IrStatementOrigin.GTEQ -> KtTokens.GTEQ
+                    IrStatementOrigin.LT -> KtTokens.LT
+                    IrStatementOrigin.LTEQ -> KtTokens.LTEQ
+                    else -> TODO()
+                }
+                StackValue.cmp(token, operationType, leftValue, rightValue).put(Type.BOOLEAN_TYPE, v)
+                return StackValue.onStack(Type.BOOLEAN_TYPE)
+            }
         }
     }
 }
