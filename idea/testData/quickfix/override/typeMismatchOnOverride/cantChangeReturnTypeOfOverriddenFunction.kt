@@ -9,5 +9,5 @@ interface B {
 }
 
 interface C : A, B {
-    override fun foo(): Long
+    override fun foo(): <caret>Long
 }

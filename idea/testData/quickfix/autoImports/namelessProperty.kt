@@ -3,6 +3,6 @@
 
 val : Int
     get() {
-        val t : TTT = null
+        val t : <caret>TTT = null
         return 1
     }

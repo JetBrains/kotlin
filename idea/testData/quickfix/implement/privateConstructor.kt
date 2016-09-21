@@ -1,3 +1,4 @@
-// "Implement abstract class" "false"
+// "class org.jetbrains.kotlin.idea.intentions.CreateKotlinSubClassIntention" "false"
+// ACTION: Create test
 
-abstract class Base private constructor
+abstract class <caret>Base private constructor

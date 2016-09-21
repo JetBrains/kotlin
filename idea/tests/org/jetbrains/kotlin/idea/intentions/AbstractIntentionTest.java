@@ -136,6 +136,8 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
 
         String fileText = FileUtil.loadFile(mainFile, true);
 
+        assertTrue("\"<caret>\" is missing in file \"" + mainFile + "\"", fileText.contains("<caret>"));
+
         String minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ");
         if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return;
 

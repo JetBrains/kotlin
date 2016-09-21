@@ -2,5 +2,5 @@
 // ERROR: Unresolved reference: TTT
 
 class {
-  val t: TTT = null
+  val t: <caret>TTT = null
 }
