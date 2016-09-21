@@ -341,16 +341,16 @@ object Renderers {
         }
 
         val typeParameter = typeVariableWithCapturedConstraint.originalTypeParameter
-
-        val explanation: String
         val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameter)
-        if (!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.typeProjection.projectionKind == Variance.IN_VARIANCE) {
-            explanation = "Type parameter has an upper bound '" + result.typeRenderer.render(upperBound, RenderingContext.of(upperBound)) + "'" +
-                          " that cannot be satisfied capturing 'in' projection"
+
+        assert(!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.typeProjection.projectionKind == Variance.IN_VARIANCE) {
+            "There is the only reason to report TYPE_INFERENCE_CANNOT_CAPTURE_TYPES"
         }
-        else {
-            explanation = "Only top-level type projections can be captured"
-        }
+
+        val explanation =
+                "Type parameter has an upper bound '" + result.typeRenderer.render(upperBound, RenderingContext.of(upperBound)) + "'" +
+                " that cannot be satisfied capturing 'in' projection"
+
         result.text(newText().normal(
                 "'" + typeParameter.name + "'" +
                 " cannot capture " +

@@ -1,0 +1,19 @@
+package
+
+public fun bar(/*0*/ b: B<in A<out kotlin.Number>>, /*1*/ bOut: B<out A<out kotlin.Number>>, /*2*/ bOut2: B<out A<kotlin.Number>>): kotlin.Unit
+public fun </*0*/ E> baz(/*0*/ b: B<out A<E>>): kotlin.Unit
+public fun </*0*/ E> foo(/*0*/ b: B<in A<E>>): kotlin.Unit
+
+public final class A</*0*/ T> {
+    public constructor A</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ T> {
+    public constructor B</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

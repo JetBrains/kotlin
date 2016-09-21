@@ -3,6 +3,7 @@ package
 public fun number(/*0*/ x: kotlin.Number): kotlin.Unit
 public fun test(/*0*/ b: B<out kotlin.Number>): kotlin.Unit
 public fun </*0*/ T> B<T>.bar(/*0*/ f: (T, T) -> kotlin.Unit, /*1*/ g: (T, T) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> B<T>.baz(/*0*/ f: (B<T>) -> kotlin.Unit): kotlin.Unit
 public fun </*0*/ T> B<T>.foo(/*0*/ f: (T) -> kotlin.Unit): kotlin.Unit
 public fun kotlin.Number.foobar(): kotlin.Unit
 

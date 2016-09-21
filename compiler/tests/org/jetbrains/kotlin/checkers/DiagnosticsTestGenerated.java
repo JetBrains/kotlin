@@ -9389,6 +9389,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noCaptureTypeErrorForNonTopLevel.kt")
+                public void testNoCaptureTypeErrorForNonTopLevel() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/noCaptureTypeErrorForNonTopLevel.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("notApproximateWhenCopyDescriptors.kt")
                 public void testNotApproximateWhenCopyDescriptors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/notApproximateWhenCopyDescriptors.kt");

@@ -1,10 +1,8 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: TYPE_INFERENCE_CANNOT_CAPTURE_TYPES
 
-class My<R, T>
+fun <R : Any> bar(a: Array<R>): Array<R?> =  null!!
 
-fun <R, T> foo(my: My<Array<R>, T>): My<Array<R>, T> = my
-
-fun test11(my: My<Array<out Int>, out Int>) {
-    foo(my)
+fun test1(a: Array<in Int>) {
+    val r: Array<in Int?> = bar(a)
 }
