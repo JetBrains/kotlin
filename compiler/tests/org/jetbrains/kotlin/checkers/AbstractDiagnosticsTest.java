@@ -354,8 +354,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         boolean isMultiModuleTest = modules.size() != 1;
         StringBuilder rootPackageText = new StringBuilder();
 
-        for (TestModule module : CollectionsKt.sorted(modules.keySet())) {
-            ModuleDescriptorImpl moduleDescriptor = modules.get(module);
+        for (Iterator<TestModule> module = CollectionsKt.sorted(modules.keySet()).iterator(); module.hasNext(); ) {
+            ModuleDescriptorImpl moduleDescriptor = modules.get(module.next());
             PackageViewDescriptor aPackage = moduleDescriptor.getPackage(FqName.ROOT);
             assertFalse(aPackage.isEmpty());
 
@@ -366,7 +366,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             String actualSerialized = comparator.serializeRecursively(aPackage);
             rootPackageText.append(actualSerialized);
 
-            if (isMultiModuleTest) {
+            if (isMultiModuleTest && module.hasNext()) {
                 rootPackageText.append("\n\n");
             }
         }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -50,7 +51,8 @@ class FileScopeFactory(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
         private val ktImportsFactory: KtImportsFactory,
-        private val platformToKotlinClassMap: PlatformToKotlinClassMap
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     private val defaultImports by storageManager.createLazyValue {
         ktImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
@@ -87,7 +89,7 @@ class FileScopeFactory(
 
         fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null) =
                 LazyImportResolver(
-                        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap,
+                        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap, languageVersionSettings,
                         indexedImports, aliasImportNames concat excludedImports, trace, packageFragment
                 )
 
