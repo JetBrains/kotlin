@@ -381,7 +381,7 @@ private fun globalResolveSessionProvider(
 
     if (newBuiltIns is JvmBuiltIns) {
         val sdkInfo = SdkInfo(project, sdk!!)
-        newBuiltIns.setOwnerModuleDescriptor(moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo))
+        newBuiltIns.initialize(moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo))
     }
 
     moduleResolverProvider

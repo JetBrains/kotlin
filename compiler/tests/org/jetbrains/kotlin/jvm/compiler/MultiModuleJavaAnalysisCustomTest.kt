@@ -77,7 +77,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                 packagePartProviderFactory = { a, b -> JvmPackagePartProvider(environment) }
         )
 
-        builtIns.setOwnerModuleDescriptor(resolverForProject.descriptorForModule(resolverForProject.allModules.first()))
+        builtIns.initialize(resolverForProject.descriptorForModule(resolverForProject.allModules.first()))
 
         performChecks(resolverForProject, modules)
     }

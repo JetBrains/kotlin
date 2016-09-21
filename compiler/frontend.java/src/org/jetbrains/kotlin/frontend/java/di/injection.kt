@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -125,13 +127,20 @@ fun createContainerForTopDownAnalyzerForJvm(
     useImpl<SingleModuleClassResolver>()
 }.let {
     it.javaAnalysisInit()
+    it.initJvmBuiltInsForTopDownAnalysis()
 
     ContainerForTopDownAnalyzerForJvm(it)
 }
 
-private fun StorageComponentContainer.javaAnalysisInit() {
+fun StorageComponentContainer.javaAnalysisInit() {
     get<JavaClassFinderImpl>().initialize()
     get<JavaClassFinderPostConstruct>().postCreate()
+}
+
+// 'initBuiltIns' body cannot be merged with 'javaAnalysisInit' because the latter is used in IDE,
+// where built-ins instances are shared between modules and manual initialization is necessary (to avoid multiple initialization)
+fun StorageComponentContainer.initJvmBuiltInsForTopDownAnalysis() {
+    get<JvmBuiltIns>().initialize(get<ModuleDescriptor>())
 }
 
 class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {

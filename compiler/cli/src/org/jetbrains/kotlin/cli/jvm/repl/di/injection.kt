@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
+import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.frontend.java.di.javaAnalysisInit
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
-import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -52,8 +52,9 @@ fun createContainerForReplWithJava(
 
     useImpl<SingleModuleClassResolver>()
 }.let {
-    it.get<JavaClassFinderImpl>().initialize()
-    it.get<JavaClassFinderPostConstruct>().postCreate()
+    it.javaAnalysisInit()
+    it.initJvmBuiltInsForTopDownAnalysis()
+
     ContainerForReplWithJava(it)
 }
 

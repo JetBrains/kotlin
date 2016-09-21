@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -37,14 +38,16 @@ class DeserializationComponentsForJava(
     val components: DeserializationComponents
 
     init {
-        val settings = JvmBuiltInsSettings(moduleDescriptor, storageManager, { moduleDescriptor })
+        // currently built-ins may be not an instance of JvmBuiltIns only in case of built-ins serialization
+        val jvmBuiltIns = moduleDescriptor.builtIns as? JvmBuiltIns
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
                 LocalClassifierTypeSettings.Default,
                 errorReporter, lookupTracker, JavaFlexibleTypeDeserializer, ClassDescriptorFactory.EMPTY,
                 notFoundClasses,
-                additionalClassPartsProvider = settings,
-                platformDependentDeclarationFilter = settings
+                additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
+                platformDependentDeclarationFilter =
+                    jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent
         )
     }
 }

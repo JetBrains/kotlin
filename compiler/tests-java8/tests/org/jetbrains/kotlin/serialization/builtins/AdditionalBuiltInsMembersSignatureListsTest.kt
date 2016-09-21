@@ -48,7 +48,6 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     fun testAllListedSignaturesExistInJdk() {
         val jvmBuiltIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
         val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", JvmPlatform, jvmBuiltIns)
-        jvmBuiltIns.setOwnerModuleDescriptor(emptyModule)
 
         val moduleContext = ModuleContext(emptyModule, environment.project)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())

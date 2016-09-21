@@ -154,7 +154,6 @@ public enum TopDownAnalyzerFacadeForJVM {
                 projectContext, Name.special("<" + configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME) + ">"),
                 JvmPlatform.INSTANCE, builtIns
         );
-        builtIns.setOwnerModuleDescriptor(context.getModule());
         context.setDependencies(context.getModule(), context.getBuiltIns().getBuiltInsModule());
         return context;
     }
