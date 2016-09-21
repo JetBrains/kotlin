@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.FunctionCodegen.createFrameMap

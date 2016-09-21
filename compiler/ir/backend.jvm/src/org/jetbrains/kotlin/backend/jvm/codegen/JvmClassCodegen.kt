@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor

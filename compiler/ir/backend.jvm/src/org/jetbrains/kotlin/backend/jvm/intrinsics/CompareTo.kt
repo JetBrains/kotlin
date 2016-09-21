@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
