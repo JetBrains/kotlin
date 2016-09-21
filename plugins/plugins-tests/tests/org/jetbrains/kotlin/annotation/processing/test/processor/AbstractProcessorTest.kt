@@ -142,7 +142,11 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
             fail("Annotation processor " + (if (shouldRun) "was not started" else "was started"))
         }
     }
-    
+
+    protected fun TypeElement.findMethods(name: String): List<JeMethodExecutableElement> {
+        return enclosedElements.filterIsInstance<JeMethodExecutableElement>().filter { it.simpleName.toString() == name }
+    }
+
     protected fun TypeElement.findMethod(name: String, vararg parameterTypes: String): JeMethodExecutableElement {
         return enclosedElements.first {
             if (it !is JeMethodExecutableElement
