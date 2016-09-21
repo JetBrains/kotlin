@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FunctionInvokeDescriptor private constructor(
         container: DeclarationDescriptor,
         original: FunctionInvokeDescriptor?,
-        callableKind: CallableMemberDescriptor.Kind,
-        private val hasSynthesizedParameterNames: Boolean
+        callableKind: CallableMemberDescriptor.Kind
 ) : SimpleFunctionDescriptorImpl(
         container,
         original,
@@ -41,12 +41,8 @@ class FunctionInvokeDescriptor private constructor(
 ) {
     init {
         this.isOperator = true
+        this.setHasStableParameterNames(false)
     }
-
-    // "p0", "p1", etc. should not be baked into the language
-    override fun hasStableParameterNames(): Boolean = false
-
-    override fun hasSynthesizedParameterNames(): Boolean = hasSynthesizedParameterNames
 
     override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
         val substituted = super.doSubstitute(configuration) as FunctionInvokeDescriptor? ?: return null
@@ -63,7 +59,7 @@ class FunctionInvokeDescriptor private constructor(
             annotations: Annotations,
             source: SourceElement
     ): FunctionDescriptorImpl {
-        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind, hasSynthesizedParameterNames)
+        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
     }
 
     override fun isExternal(): Boolean = false
@@ -72,12 +68,10 @@ class FunctionInvokeDescriptor private constructor(
 
     override fun isTailrec(): Boolean = false
 
-    private fun replaceParameterNames(parameterNames: List<Name?>): FunctionInvokeDescriptor {
+    private fun replaceParameterNames(parameterNames: List<Name?>): FunctionDescriptor {
         val indexShift = valueParameters.size - parameterNames.size
         assert(indexShift == 0 || indexShift == 1) // indexShift == 1 for extension function type
 
-        val hasSynthesizedParameterNames = parameterNames.any { it == null }
-        val newDescriptor = FunctionInvokeDescriptor(containingDeclaration, this, kind, hasSynthesizedParameterNames)
         val newValueParameters = valueParameters.map {
             var newName = it.name
             val parameterIndex = it.index
@@ -88,17 +82,22 @@ class FunctionInvokeDescriptor private constructor(
                     newName = parameterName
                 }
             }
-            it.copy(newDescriptor, newName, parameterIndex)
+            it.copy(this, newName, parameterIndex)
         }
-        newDescriptor.initialize(extensionReceiverParameterType, dispatchReceiverParameter, typeParameters, newValueParameters, returnType, modality, visibility)
-        return newDescriptor
+
+        val copyConfiguration = newCopyBuilder(TypeSubstitutor.EMPTY)
+                .setHasSynthesizedParameterNames(parameterNames.any { it == null })
+                .setValueParameters(newValueParameters)
+                .setOriginal(original)
+
+        return super.doSubstitute(copyConfiguration)!!
     }
 
     companion object Factory {
         fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
             val typeParameters = functionClass.declaredTypeParameters
 
-            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION, hasSynthesizedParameterNames = true)
+            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
             result.initialize(
                     null,
                     functionClass.thisAsReceiverParameter,
@@ -110,6 +109,7 @@ class FunctionInvokeDescriptor private constructor(
                     Modality.ABSTRACT,
                     Visibilities.PUBLIC
             )
+            result.setHasSynthesizedParameterNames(true)
             return result
         }
 

@@ -351,6 +351,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private boolean isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
         private SourceElement sourceElement;
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
+        private Boolean newHasSynthesizedParameterNames = null;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -507,6 +508,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return this;
         }
 
+        public CopyConfiguration setHasSynthesizedParameterNames(boolean value) {
+            this.newHasSynthesizedParameterNames = value;
+            return this;
+        }
+
         @NotNull
         @Override
         public CopyConfiguration setSubstitution(@NotNull TypeSubstitution substitution) {
@@ -626,9 +632,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setSuspend(isSuspend);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
-        substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);
+
+        substitutedDescriptor.setHasSynthesizedParameterNames(
+                configuration.newHasSynthesizedParameterNames != null ? configuration.newHasSynthesizedParameterNames : hasSynthesizedParameterNames
+        );
 
         if (!configuration.userDataMap.isEmpty() || userDataMap != null) {
             Map<UserDataKey<?>, Object> newMap = configuration.userDataMap;
