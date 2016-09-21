@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
@@ -64,13 +65,7 @@ class KotlinIndicesHelper(
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
     private val project = resolutionFacade.project
-    private val scopeWithoutKotlin = ScopeWithoutKotlin(scope)
-
-    class ScopeWithoutKotlin(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-        override fun contains(file: VirtualFile): Boolean {
-            return file in myBaseScope && file.fileType != KotlinBuiltInFileType && file.fileType != KotlinFileType.INSTANCE
-        }
-    }
+    private val scopeWithoutKotlin = scope.excludeKotlinSources() as GlobalSearchScope
 
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
         if (it.isHiddenInResolution()) return@filter false
