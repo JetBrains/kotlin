@@ -2,5 +2,12 @@
 
 ## Usage
 
-Open `Interop` project in IDEA. Run `StubGenerator` configuration to process all `.def` files in `Example` module.
-Then run `Example` configuration to run the example.
+Create a Gradle subproject somewhere under `../`, using `../InteropExample` as a template.
+
+To generate the interop stubs and libraries you can run the following command from `../`:
+
+    ./gradlew InteropExample:build
+
+To run the example (if 'application' plugin is enabled):
+
+    ./gradlew InteropExample:run

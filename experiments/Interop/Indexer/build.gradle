@@ -1,0 +1,45 @@
+buildscript {
+   ext.kotlin_version = '1.0.3'
+
+   repositories {
+     mavenCentral()
+   }
+
+   dependencies {
+     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+   }
+}
+
+apply plugin: 'kotlin'
+
+/*
+apply plugin: 'c'
+
+model {
+    components {
+        callback(NativeLibrarySpec) {
+            binaries.all {
+                cCompiler.args "-I/System/Library/Frameworks/JavaVM.framework/Headers"
+            }
+        }
+    }
+
+}
+*/
+
+sourceSets {
+    main {
+        kotlin {
+            srcDirs 'prebuilt/nativeInteropStubs'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile project(':Interop:Runtime')
+}
