@@ -19,11 +19,15 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportOnDeclaration
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
-import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.util.*
 
 class OverloadResolver(
         private val trace: BindingTrace,
@@ -73,11 +77,94 @@ class OverloadResolver(
     }
 
     private fun checkOverloadsInPackages(c: BodiesResolveContext) {
-        val membersByName = overloadChecker.groupModulePackageMembersByFqName(c, overloadFilter)
+        val membersByName = groupModulePackageMembersByFqName(c, overloadFilter)
 
         for (e in membersByName.entrySet()) {
             checkOverloadsInPackage(e.value)
         }
+    }
+
+    private fun groupModulePackageMembersByFqName(
+            c: BodiesResolveContext,
+            overloadFilter: OverloadFilter
+    ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
+        val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
+
+        collectModulePackageMembersWithSameName(
+                packageMembersByName,
+                c.functions.values + c.declaredClasses.values + c.typeAliases.values,
+                overloadFilter
+        ) {
+            scope, name ->
+            val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            when (classifier) {
+                is ClassDescriptor ->
+                    if (!classifier.kind.isSingleton)
+                        functions + classifier.constructors
+                    else
+                        functions
+                is TypeAliasDescriptor ->
+                    functions + classifier.getTypeAliasConstructors()
+                else ->
+                    functions
+            }
+        }
+
+        collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
+            scope, name ->
+            val variables = scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            variables + classifier.singletonOrEmptyList()
+        }
+
+        return packageMembersByName
+    }
+
+    private inline fun collectModulePackageMembersWithSameName(
+            packageMembersByName: MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>,
+            interestingDescriptors: Collection<DeclarationDescriptor>,
+            overloadFilter: OverloadFilter,
+            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+    ) {
+        val observedFQNs = hashSetOf<FqNameUnsafe>()
+        for (descriptor in interestingDescriptors) {
+            if (descriptor.containingDeclaration !is PackageFragmentDescriptor) continue
+
+            val descriptorFQN = DescriptorUtils.getFqName(descriptor)
+            if (observedFQNs.contains(descriptorFQN)) continue
+            observedFQNs.add(descriptorFQN)
+
+            val packageMembersWithSameName = getModulePackageMembersWithSameName(descriptor, overloadFilter, getMembersByName)
+            packageMembersByName.putValues(descriptorFQN, packageMembersWithSameName)
+        }
+    }
+
+    private inline fun getModulePackageMembersWithSameName(
+            descriptor: DeclarationDescriptor,
+            overloadFilter: OverloadFilter,
+            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+    ): Collection<DeclarationDescriptorNonRoot> {
+        val containingPackage = descriptor.containingDeclaration
+        if (containingPackage !is PackageFragmentDescriptor) {
+            throw AssertionError("$descriptor is not a top-level package member")
+        }
+
+        val containingModule = DescriptorUtils.getContainingModuleOrNull(descriptor) ?:
+                               return when (descriptor) {
+                                   is CallableMemberDescriptor -> listOf(descriptor)
+                                   is ClassDescriptor -> descriptor.constructors
+                                   else -> throw AssertionError("Unexpected descriptor kind: $descriptor")
+                               }
+
+        val containingPackageScope = containingModule.getPackage(containingPackage.fqName).memberScope
+        val possibleOverloads =
+                getMembersByName(containingPackageScope, descriptor.name).filter {
+                    // NB memberScope for PackageViewDescriptor includes module dependencies
+                    DescriptorUtils.getContainingModule(it) == containingModule
+                }
+
+        return overloadFilter.filterPackageMemberOverloads(possibleOverloads)
     }
 
     private fun checkOverloadsInClass(
@@ -102,10 +189,51 @@ class OverloadResolver(
 
     private fun checkOverloadsInPackage(members: Collection<DeclarationDescriptorNonRoot>) {
         if (members.size == 1) return
-        for (redeclarationGroup in overloadChecker.getPossibleRedeclarationGroups(members)) {
-            reportRedeclarations(findRedeclarations(redeclarationGroup))
+
+        val redeclarationsMap = LinkedHashMap<DeclarationDescriptorNonRoot, MutableSet<DeclarationDescriptorNonRoot>>()
+        for (redeclarationGroup in getPossibleRedeclarationGroups(members)) {
+            val redeclarations = findRedeclarations(redeclarationGroup)
+            redeclarations.forEach {
+                redeclarationsMap.getOrPut(it) { LinkedHashSet() }.addAll(redeclarations)
+            }
+        }
+
+        val reported = HashSet<DeclarationDescriptorNonRoot>()
+        for ((member, conflicting) in redeclarationsMap) {
+            if (!reported.contains(member)) {
+                reported.addAll(conflicting)
+                reportRedeclarations(conflicting)
+            }
         }
     }
+
+    private fun getPossibleRedeclarationGroups(members: Collection<DeclarationDescriptorNonRoot>): Collection<Collection<DeclarationDescriptorNonRoot>> {
+        val result = arrayListOf<Collection<DeclarationDescriptorNonRoot>>()
+
+        val nonPrivates = members.filter { !it.isPrivate() }
+
+        val bySourceFile = members.groupBy { DescriptorUtils.getContainingSourceFile(it) }
+
+        var hasGroupIncludingNonPrivateMembers = false
+        for ((sourceFile, membersInFile) in bySourceFile) {
+            // File member groups are interesting in redeclaration check if at least one file member is private.
+            if (membersInFile.any { it.isPrivate() }) {
+                hasGroupIncludingNonPrivateMembers = true
+                val group = LinkedHashSet<DeclarationDescriptorNonRoot>(nonPrivates) + membersInFile
+                result.add(group)
+            }
+        }
+
+        if (!hasGroupIncludingNonPrivateMembers && nonPrivates.size > 1) {
+            result.add(nonPrivates)
+        }
+
+        return result
+    }
+
+    private fun DeclarationDescriptor.isPrivate() =
+            this is DeclarationDescriptorWithVisibility &&
+            Visibilities.isPrivate(this.visibility)
 
     private fun checkOverloadsInClass(members: Collection<CallableMemberDescriptor>) {
         if (members.size == 1) return
@@ -115,8 +243,8 @@ class OverloadResolver(
     private fun DeclarationDescriptor.isSynthesized() =
             this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    private fun findRedeclarations(members: Collection<DeclarationDescriptorNonRoot>): Set<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>> {
-        val redeclarations = linkedSetOf<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>>()
+    private fun findRedeclarations(members: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
+        val redeclarations = linkedSetOf<DeclarationDescriptorNonRoot>()
         for (member1 in members) {
             if (member1.isSynthesized()) continue
 
@@ -126,8 +254,7 @@ class OverloadResolver(
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
 
                 if (!overloadChecker.isOverloadable(member1, member2)) {
-                    val ktDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(member1) as KtDeclaration?
-                    redeclarations.add(ktDeclaration to member1)
+                    redeclarations.add(member1)
                 }
             }
         }
@@ -154,33 +281,16 @@ class OverloadResolver(
         return file1 == null || file2 == null || file1 !== file2
     }
 
-    private fun reportRedeclarations(redeclarations: Set<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>>) {
+    private fun reportRedeclarations(redeclarations: Collection<DeclarationDescriptorNonRoot>) {
         if (redeclarations.isEmpty()) return
 
-        val redeclarationsIterator = redeclarations.iterator()
-        val firstRedeclarationDescriptor = redeclarationsIterator.next().second
-        val otherRedeclarationDescriptor = redeclarationsIterator.check { it.hasNext() }?.next()?.second
-
-        for ((ktDeclaration, memberDescriptor) in redeclarations) {
-            if (ktDeclaration == null) continue
-
+        for (memberDescriptor in redeclarations) {
             when (memberDescriptor) {
                 is PropertyDescriptor,
-                is ClassifierDescriptor -> {
-                    trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.name.asString()))
-                }
-                is FunctionDescriptor -> {
-                    val redeclarationDescriptor =
-                            if (otherRedeclarationDescriptor == null)
-                                firstRedeclarationDescriptor
-                            else if (memberDescriptor == firstRedeclarationDescriptor)
-                                otherRedeclarationDescriptor
-                            else
-                                firstRedeclarationDescriptor
-
-                    trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor,
-                                                                 redeclarationDescriptor.containingDeclaration))
-                }
+                is ClassifierDescriptor ->
+                    reportOnDeclaration(trace, memberDescriptor) { Errors.REDECLARATION.on(it, redeclarations) }
+                is FunctionDescriptor ->
+                    reportOnDeclaration(trace, memberDescriptor) { Errors.CONFLICTING_OVERLOADS.on(it, redeclarations) }
             }
         }
     }

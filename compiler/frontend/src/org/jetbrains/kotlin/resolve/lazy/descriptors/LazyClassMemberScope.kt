@@ -23,14 +23,13 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERR
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportOnDeclarationAs
+import org.jetbrains.kotlin.diagnostics.reportOnDeclarationOrFail
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -107,13 +106,13 @@ open class LazyClassMemberScope(
             }
 
             override fun overrideConflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as? KtDeclaration ?: error("fromCurrent can not be a fake override")
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromSuper.containingDeclaration))
+                reportOnDeclarationOrFail(trace, fromCurrent) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(fromCurrent, fromSuper)) }
             }
 
             override fun inheritanceConflict(first: CallableMemberDescriptor, second: CallableMemberDescriptor) {
-                val thisClassDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(thisDescriptor) as? KtClassOrObject ?: error("No class declaration")
-                trace.report(Errors.CONFLICTING_INHERITED_MEMBERS.on(thisClassDeclaration, thisDescriptor, listOf(first, second)))
+                reportOnDeclarationAs<KtClassOrObject>(trace, thisDescriptor) { ktClassOrObject ->
+                    Errors.CONFLICTING_INHERITED_MEMBERS.on(ktClassOrObject, thisDescriptor, listOf(first, second))
+                }
             }
         })
         OverrideResolver.resolveUnknownVisibilities(result, trace)

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.util.*
 
 class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
@@ -98,118 +99,4 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
                     error("Unexpected declaration kind: $a")
             }
 
-    fun groupModulePackageMembersByFqName(
-            c: BodiesResolveContext,
-            overloadFilter: OverloadFilter
-    ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
-        val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
-
-        collectModulePackageMembersWithSameName(
-                packageMembersByName,
-                c.functions.values + c.declaredClasses.values + c.typeAliases.values,
-                overloadFilter
-        ) {
-            scope, name ->
-            val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-            when (classifier) {
-                is ClassDescriptor ->
-                    if (!classifier.kind.isSingleton)
-                        functions + classifier.constructors
-                    else
-                        functions
-                is TypeAliasDescriptor ->
-                    functions + classifier.getTypeAliasConstructors()
-                else ->
-                    functions
-            }
-        }
-
-        collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
-            scope, name ->
-            val variables = scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-            variables + classifier.singletonOrEmptyList()
-        }
-
-        return packageMembersByName
-    }
-
-    private inline fun collectModulePackageMembersWithSameName(
-            packageMembersByName: MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>,
-            interestingDescriptors: Collection<DeclarationDescriptor>,
-            overloadFilter: OverloadFilter,
-            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
-    ) {
-        val observedFQNs = hashSetOf<FqNameUnsafe>()
-        for (descriptor in interestingDescriptors) {
-            if (descriptor.containingDeclaration !is PackageFragmentDescriptor) continue
-
-            val descriptorFQN = DescriptorUtils.getFqName(descriptor)
-            if (observedFQNs.contains(descriptorFQN)) continue
-            observedFQNs.add(descriptorFQN)
-
-            val packageMembersWithSameName = getModulePackageMembersWithSameName(descriptor, overloadFilter, getMembersByName)
-            packageMembersByName.putValues(descriptorFQN, packageMembersWithSameName)
-        }
-    }
-
-    private inline fun getModulePackageMembersWithSameName(
-            descriptor: DeclarationDescriptor,
-            overloadFilter: OverloadFilter,
-            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
-    ): Collection<DeclarationDescriptorNonRoot> {
-        val containingPackage = descriptor.containingDeclaration
-        if (containingPackage !is PackageFragmentDescriptor) {
-            throw AssertionError("$descriptor is not a top-level package member")
-        }
-
-        val containingModule = DescriptorUtils.getContainingModuleOrNull(descriptor) ?:
-                               return when (descriptor) {
-                                   is CallableMemberDescriptor -> listOf(descriptor)
-                                   is ClassDescriptor -> descriptor.constructors
-                                   else -> throw AssertionError("Unexpected descriptor kind: $descriptor")
-                               }
-
-        val containingPackageScope = containingModule.getPackage(containingPackage.fqName).memberScope
-        val possibleOverloads =
-                getMembersByName(containingPackageScope, descriptor.name).filter {
-                    // NB memberScope for PackageViewDescriptor includes module dependencies
-                    DescriptorUtils.getContainingModule(it) == containingModule
-                }
-
-        return overloadFilter.filterPackageMemberOverloads(possibleOverloads)
-    }
-
-    private fun DeclarationDescriptor.isPrivate() =
-            this is DeclarationDescriptorWithVisibility &&
-            Visibilities.isPrivate(this.visibility)
-
-    fun getPossibleRedeclarationGroups(
-            members: Collection<DeclarationDescriptorNonRoot>
-    ): Collection<Collection<DeclarationDescriptorNonRoot>> {
-        val result = arrayListOf<Collection<DeclarationDescriptorNonRoot>>()
-
-        val nonPrivates = members.filter { !it.isPrivate() }
-        if (nonPrivates.size > 1) {
-            result.add(nonPrivates)
-        }
-
-        val bySourceFile = MultiMap.createSmart<SourceFile, DeclarationDescriptorNonRoot>()
-        for (member in members) {
-            val sourceFile = DescriptorUtils.getContainingSourceFile(member)
-            if (sourceFile != SourceFile.NO_SOURCE_FILE) {
-                bySourceFile.putValue(sourceFile, member)
-            }
-        }
-
-        for ((sourceFile, membersInFile) in bySourceFile.entrySet()) {
-            // File member groups are interesting in redeclaration check if at least one file member is private.
-            if (membersInFile.size > 1 && membersInFile.any { it.isPrivate() }) {
-                result.add(membersInFile)
-            }
-        }
-
-        return result
-    }
 }

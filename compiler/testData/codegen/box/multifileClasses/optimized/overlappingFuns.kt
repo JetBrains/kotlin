@@ -16,7 +16,7 @@ private fun overlapping() = "oops #1"
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-fun overlapping() = "OK"
+private fun overlapping() = "OK"
 
 fun ok() = overlapping()
 

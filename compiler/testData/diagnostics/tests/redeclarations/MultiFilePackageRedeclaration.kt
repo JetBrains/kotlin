@@ -1,7 +1,7 @@
 // FILE: f.kt
 package a
-class <!REDECLARATION!>b<!> {}
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!> {}
 // FILE: f.kt
-package a.<!REDECLARATION!>b<!>
+package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>
 // FILE: f.kt
-package a.<!REDECLARATION!>b<!>
+package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>

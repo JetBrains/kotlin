@@ -1,2 +1,2 @@
 <!-- conflictingOverloadsDefaultPackage2 -->
-'public fun foo(y: Int): Int' conflicts with another declaration in package '<root>'
+Conflicting overloads: public fun foo(x: Int): Int defined in root package, public fun foo(y: Int): Int defined in root package

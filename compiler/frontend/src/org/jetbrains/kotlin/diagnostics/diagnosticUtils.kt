@@ -17,14 +17,16 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
@@ -139,3 +141,22 @@ fun ResolutionContext<*>.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(
 private fun isScalaLikeEqualsBlock(expression: KtElement): Boolean =
         expression is KtLambdaExpression &&
         expression.parent.let { it is KtNamedFunction && it.equalsToken != null }
+
+inline fun reportOnDeclaration(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
+    DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
+        trace.report(what(psiElement))
+    }
+}
+inline fun reportOnDeclarationOrFail(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
+    DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
+        trace.report(what(psiElement))
+    } ?: throw AssertionError("No declaration for $descriptor")
+}
+
+inline fun <reified T : KtDeclaration> reportOnDeclarationAs(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (T) -> Diagnostic) {
+    DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
+        (psiElement as? T)?.let {
+            trace.report(what(it))
+        } ?: throw AssertionError("Declaration for $descriptor is expected to be ${T::class.simpleName}, actual declaration: $psiElement")
+    } ?: throw AssertionError("No declaration for $descriptor")
+}

@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
-import com.google.common.collect.Sets
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
+import org.jetbrains.kotlin.diagnostics.reportOnDeclaration
+import org.jetbrains.kotlin.diagnostics.reportOnDeclarationOrFail
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -60,39 +59,18 @@ class DeclarationResolver(
                 }
             }
 
-            reportRedeclarations(descriptorMap)
+            reportRedeclarationsWithClassifiers(descriptorMap)
         }
     }
 
-    private fun reportRedeclarations(descriptorMap: Multimap<Name, DeclarationDescriptor>) {
-        val redeclarations = Sets.newHashSet<Pair<PsiElement, Name>>()
+    private fun reportRedeclarationsWithClassifiers(descriptorMap: Multimap<Name, DeclarationDescriptor>) {
         for (name in descriptorMap.keySet()) {
             val descriptors = descriptorMap[name]
-            if (descriptors.size <= 1) {
-                continue
-            }
-            // We mustn't compare PropertyDescriptor with PropertyDescriptor because we do this at OverloadResolver
-            for (descriptor in descriptors) {
-                if (descriptor is ClassifierDescriptor) {
-                    for (descriptor2 in descriptors) {
-                        if (descriptor === descriptor2) {
-                            continue
-                        }
-
-                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.let {
-                            redeclarations.add(Pair(it, descriptor.getName()))
-                        }
-                        if (descriptor2 is PropertyDescriptor) {
-                            DescriptorToSourceUtils.descriptorToDeclaration(descriptor2)?.let {
-                                redeclarations.add(Pair(it, descriptor2.getName()))
-                            }
-                        }
-                    }
+            if (descriptors.size > 1 && descriptors.any { it is ClassifierDescriptor }) {
+                for (descriptor in descriptors) {
+                    reportOnDeclaration(trace, descriptor) { REDECLARATION.on(it, descriptors) }
                 }
             }
-        }
-        for ((first, second) in redeclarations) {
-            trace.report(REDECLARATION.on(first, second.asString()))
         }
     }
 
@@ -107,7 +85,7 @@ class DeclarationResolver(
                     val reportAt =
                             if (declarationOrPackageDirective is KtPackageDirective) declarationOrPackageDirective.getNameIdentifier()
                             else declarationOrPackageDirective
-                    trace.report(Errors.REDECLARATION.on(reportAt!!, fqName.shortName().asString()))
+                    trace.report(Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION.on(reportAt!!, fqName.shortName().asString()))
                 }
             }
         }

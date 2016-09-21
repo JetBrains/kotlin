@@ -10,4 +10,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Redeclaration: property
+Conflicting declarations: public val property: Int, public val property: Int

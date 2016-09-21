@@ -135,8 +135,6 @@ public class IdeErrorMessages {
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
                 RENDER_CLASS_OR_OBJECT, HTML);
-        MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />conflicts with another declaration in {1}</html>",
-                IdeRenderers.HTML_COMPACT_WITH_MODIFIERS, Renderers.DECLARATION_NAME_WITH_KIND);
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +

@@ -1,2 +1,2 @@
 <!-- constructorsRedeclarationTopLevel1 -->
-'public fun Element(x: String): Unit' conflicts with another declaration in class 'Element'
+Conflicting overloads: public fun Element(x: String): Unit defined in root package, public constructor Element(x: String) defined in Element

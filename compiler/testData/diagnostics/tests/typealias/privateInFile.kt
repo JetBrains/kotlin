@@ -1,9 +1,9 @@
 // FILE: file1.kt
-private class <!REDECLARATION!>C<!> {
+private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     companion object
 }
 
-private typealias <!REDECLARATION!>TA<!> = C
+private typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = C
 
 private val test1: C = C()
 private val test1co: C.Companion = C
@@ -18,5 +18,5 @@ private val test1co: <!INVISIBLE_REFERENCE!>C<!>.<!INVISIBLE_REFERENCE!>Companio
 private val test2: <!INVISIBLE_REFERENCE!>TA<!> = <!INVISIBLE_MEMBER!>TA<!>()
 private val test2co = <!INVISIBLE_MEMBER!>TA<!>
 
-private class <!REDECLARATION!>C<!>
-private typealias <!REDECLARATION!>TA<!> = Int
+private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!>
+private typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = Int

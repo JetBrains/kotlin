@@ -1,9 +1,14 @@
 package
 
 package a {
-    private val validProp: kotlin.Int = 1
-    private val validProp: kotlin.Int = 1
-    public val validProp: kotlin.Int = 1
+    private val invalidProp0: kotlin.Int = 1
+    private val invalidProp0: kotlin.Int = 1
+    public val invalidProp0: kotlin.Int = 1
+    private val validVal: kotlin.Int = 1
+    private val validVal: kotlin.Int = 1
+    private fun invalidFun0(): kotlin.Unit
+    private fun invalidFun0(): kotlin.Unit
+    public fun invalidFun0(): kotlin.Unit
     private fun invalidFun1(): kotlin.Unit
     private fun invalidFun1(): kotlin.Unit
     private fun invalidFun2(): kotlin.Unit
@@ -13,9 +18,10 @@ package a {
     internal fun invalidFun4(): kotlin.Unit
     private fun invalidFun4(): kotlin.Unit
     public fun invalidFun4(): kotlin.Unit
+    public fun useInvalidFun0(): [ERROR : Error function type]
+    public fun useInvalidProp0(): [ERROR : Error function type]
     private fun validFun(): kotlin.Unit
     private fun validFun(): kotlin.Unit
-    public fun validFun(): kotlin.Unit
     public fun validFun2(/*0*/ a: a.A): a.A
     public fun validFun2(/*0*/ b: a.B): a.B
 

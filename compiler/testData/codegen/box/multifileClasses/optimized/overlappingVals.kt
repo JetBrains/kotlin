@@ -4,7 +4,7 @@
 
 import a.*
 
-fun box(): String = overlapping
+fun box(): String = ok()
 
 // FILE: part1.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]
@@ -16,7 +16,9 @@ private val overlapping = run { "oops #1" }
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package a
 
-val overlapping = run { "OK" }
+private val overlapping = run { "OK" }
+
+fun ok() = overlapping
 
 // FILE: part3.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]

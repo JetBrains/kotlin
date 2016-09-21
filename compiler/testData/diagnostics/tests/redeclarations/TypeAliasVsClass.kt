@@ -1,9 +1,9 @@
 // FILE: file1.kt
-class <!REDECLARATION!>SomeClass<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeClass<!>
 
-typealias <!REDECLARATION!>SomeClass<!> = Any
-typealias <!REDECLARATION!>SomeClass<!> = Any
-typealias <!REDECLARATION!>SomeClass<!> = Any
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeClass<!> = Any
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeClass<!> = Any
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeClass<!> = Any
 
 class Outer {
     class <!REDECLARATION!>Nested<!>
@@ -14,4 +14,4 @@ class Outer {
 }
 
 // FILE: file2.kt
-typealias <!REDECLARATION!>SomeClass<!> = Any
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeClass<!> = Any

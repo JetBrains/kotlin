@@ -65,7 +65,10 @@ public interface Errors {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    DiagnosticFactory1<PsiElement, String> REDECLARATION = DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
+    DiagnosticFactory1<PsiElement, Collection<DeclarationDescriptor>> REDECLARATION =
+            DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
+    DiagnosticFactory1<PsiElement, String> PACKAGE_OR_CLASSIFIER_REDECLARATION =
+            DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
 
     DiagnosticFactory1<KtReferenceExpression, KtReferenceExpression> UNRESOLVED_REFERENCE =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
@@ -315,8 +318,8 @@ public interface Errors {
 
     // Members
 
-    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> CONFLICTING_OVERLOADS =
-            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<PsiElement, Collection<DeclarationDescriptor>> CONFLICTING_OVERLOADS =
+            DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory0<KtNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
             KtTokens.OPEN_KEYWORD));

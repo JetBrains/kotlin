@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportOnDeclarationOrFail
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -77,32 +81,12 @@ class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : Abst
 
 class TraceBasedLocalRedeclarationChecker(val trace: BindingTrace, overloadChecker: OverloadChecker): AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {
-        reportRedeclaration(first)
-        reportRedeclaration(second)
+        reportOnDeclarationOrFail(trace, first) { Errors.REDECLARATION.on(it, listOf(first, second))}
+        reportOnDeclarationOrFail(trace, second) { Errors.REDECLARATION.on(it, listOf(first, second))}
     }
 
     override fun handleConflictingOverloads(first: CallableMemberDescriptor, second: CallableMemberDescriptor) {
-        reportConflictingOverloads(first, second.containingDeclaration)
-        reportConflictingOverloads(second, first.containingDeclaration)
-    }
-
-    private fun reportConflictingOverloads(conflicting: CallableMemberDescriptor, withContainedIn: DeclarationDescriptor) {
-        val reportElement = DescriptorToSourceUtils.descriptorToDeclaration(conflicting)
-        if (reportElement != null) {
-            trace.report(Errors.CONFLICTING_OVERLOADS.on(reportElement, conflicting, withContainedIn))
-        }
-        else {
-            throw IllegalStateException("No declaration found for " + conflicting)
-        }
-    }
-
-    private fun reportRedeclaration(descriptor: DeclarationDescriptor) {
-        val firstElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
-        if (firstElement != null) {
-            trace.report(Errors.REDECLARATION.on(firstElement, descriptor.name.asString()))
-        }
-        else {
-            throw IllegalStateException("No declaration found for " + descriptor)
-        }
+        reportOnDeclarationOrFail(trace, first) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(first, second)) }
+        reportOnDeclarationOrFail(trace, second) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(first, second)) }
     }
 }

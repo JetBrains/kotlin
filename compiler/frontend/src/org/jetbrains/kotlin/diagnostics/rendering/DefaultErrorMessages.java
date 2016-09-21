@@ -110,7 +110,9 @@ public class DefaultErrorMessages {
 
         MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
+        MAP.put(REDECLARATION, "Conflicting declarations: {0}", commaSeparated(COMPACT_WITH_MODIFIERS));
+        MAP.put(PACKAGE_OR_CLASSIFIER_REDECLARATION, "Redeclaration: {0}", STRING);
+
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
         MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");
 
@@ -631,8 +633,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
-        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' conflicts with another declaration in {1}", COMPACT_WITH_MODIFIERS,
-                DECLARATION_NAME_WITH_KIND);
+        MAP.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", commaSeparated(FQ_NAMES_IN_TYPES));
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function ''" + OperatorNameConventions.INVOKE.asString() + "()'' is not found",
