@@ -150,13 +150,10 @@ class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuild
             }
 
             override fun capture(type: KotlinType, typeProjection: TypeProjection): Boolean {
-                if (isMyTypeVariable(typeProjection.type)) return false
+                if (isMyTypeVariable(typeProjection.type) || depth > 0) return false
                 val myTypeVariable = getMyTypeVariable(type)
 
                 if (myTypeVariable != null && constraintPosition.isParameter()) {
-                    if (depth > 0) {
-                        errors.add(CannotCapture(constraintPosition, myTypeVariable))
-                    }
                     generateTypeParameterCaptureConstraint(myTypeVariable, typeProjection, newConstraintContext, type.isMarkedNullable)
                     return true
                 }
