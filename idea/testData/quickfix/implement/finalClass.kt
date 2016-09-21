@@ -1,3 +1,4 @@
 // "Create subclass" "false"
+// ACTION: Create test
 
-class Base
+class <caret>Base

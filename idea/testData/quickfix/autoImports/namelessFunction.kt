@@ -3,5 +3,5 @@
 // ERROR: Function declaration must have a name
 
 fun () {
-    val tttt : TTTTT = null
+    val tttt : <caret>TTTTT = null
 }

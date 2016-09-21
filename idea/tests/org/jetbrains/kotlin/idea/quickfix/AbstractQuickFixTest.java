@@ -141,6 +141,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 List<String> fixtureClasses = Collections.emptyList();
                 try {
                     fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    assertTrue("\"<caret>\" is missing in file \"" + testName + "\"", fileText.contains("<caret>"));
 
                     fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ");
                     for (String fixtureClass : fixtureClasses) {

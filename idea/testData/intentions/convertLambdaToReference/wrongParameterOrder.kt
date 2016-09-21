@@ -2,4 +2,4 @@
 
 fun foo(y: Int, z: Int) = y - z
 
-val x = { second: Int, first: Int -> foo(first, second) }
+val x = { second: Int, first: Int -> <caret>foo(first, second) }

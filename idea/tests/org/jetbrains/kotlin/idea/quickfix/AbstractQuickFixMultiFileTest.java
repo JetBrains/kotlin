@@ -220,6 +220,8 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
             configureByExistingFile(virtualFiles.get(beforeFile));
             assertEquals(guessFileType(beforeFile), myFile.getVirtualFile().getFileType());
+
+            assertTrue("\"<caret>\" is probably missing in file \"" + beforeFile.path + "\"", myEditor.getCaretModel().getOffset() != 0);
         }
         catch (IOException e) {
             throw new RuntimeException(e);

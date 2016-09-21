@@ -2,7 +2,7 @@
 fun <T> doSomething(a: T) {}
 
 fun main(x: Int) {
-    if (x !is Int) {
+    if (x <caret>!is Int) {
         doSomething("test")
     }
 }

@@ -2,5 +2,5 @@
 // ERROR: Unresolved reference: TTT
 
 fun f(: Int) {
-    val t: TTT = null
+    val t: <caret>TTT = null
 }

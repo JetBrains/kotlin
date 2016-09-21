@@ -1,7 +1,7 @@
 // IS_APPLICABLE: false
 
 class Foo {
-    lateinit var bar: String
+    <caret>lateinit var bar: String
 
     fun init() {
         bar = ""

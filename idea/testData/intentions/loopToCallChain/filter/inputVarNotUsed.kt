@@ -5,7 +5,7 @@ import java.util.*
 
 fun foo(list: List<String>): String? {
     val random = Random()
-    for (s in list) {
+    <caret>for (s in list) {
         if (random.nextBoolean()) {
             return s
         }
