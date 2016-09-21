@@ -538,6 +538,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val qualifier = expression.qualifierExpression
 
         var identifier = Identifier.withNoPrototype(referenceName, isNullable)
+
+
+        if (expression.getContainingClass()?.getParentOfType<PsiField>(false).let { it != null && it == expression.qualifierExpression?.reference?.resolve() }) {
+            result = QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier)
+            return
+        }
+
         if (qualifier != null && qualifier.type is PsiArrayType && referenceName == "length") {
             identifier = Identifier.withNoPrototype("size", isNullable)
         }
