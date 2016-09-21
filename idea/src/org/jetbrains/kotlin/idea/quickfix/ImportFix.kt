@@ -29,6 +29,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -122,7 +123,7 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
         }
     }
 
-    fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>):
+    private fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>):
             Collection<DeclarationDescriptor> {
         val nameStr = name.asString()
         if (nameStr.isEmpty()) return emptyList()
@@ -149,7 +150,15 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
 
         val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible)
 
-        val result = fillCandidates(nameStr, callTypeAndReceiver, bindingContext, indicesHelper)
+        var result = fillCandidates(nameStr, callTypeAndReceiver, bindingContext, indicesHelper)
+
+        // for CallType.DEFAULT do not include functions if there is no parenthesis
+        if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+            val isCall = element.parent is KtCallExpression
+            if (!isCall) {
+                result = result.filter { it !is FunctionDescriptor }
+            }
+        }
 
         return if (result.size > 1)
             reduceCandidatesBasedOnDependencyRuleViolation(result, file)
