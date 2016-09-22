@@ -56,8 +56,11 @@ fun main(args: Array<String>) {
 
         val outOFile = createTempFile(suffix = ".o")
 
+        val javaHome = System.getProperty("java.home")
+        val compilerArgsForJniIncludes = listOf("", "linux", "darwin").map { "-I$javaHome/../include/$it" }.toTypedArray()
+
         val compilerCmd = arrayOf(compiler, *compilerOpts.toTypedArray(),
-                "-I/System/Library/Frameworks/JavaVM.framework/Headers", // FIXME
+                *compilerArgsForJniIncludes,
                 "-c", outCFile.path, "-o", outOFile.path)
 
         println(compilerCmd.joinToString(" "))
