@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -725,6 +724,9 @@ class Converter private constructor(
             if (needOpenModifier(owner, isMethodInOpenClass, modifiers)) {
                 modifiers = modifiers.with(Modifier.OPEN)
             }
+
+            if (owner.hasModifierProperty(PsiModifier.NATIVE))
+                modifiers = modifiers.with(Modifier.EXTERNAL)
 
             modifiers = modifiers.adaptForContainingClassVisibility(owner.containingClass).adaptProtectedVisibility(owner)
         }

@@ -27,6 +27,7 @@ enum class Modifier(private val str: String) {
     ABSTRACT("abstract"),
     OPEN("open"),
     OVERRIDE("override"),
+    EXTERNAL("external"),
     INNER("inner");
 
     fun toKotlin(): String = str
