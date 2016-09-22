@@ -1,0 +1,34 @@
+package
+
+public interface Context {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Example {
+    public constructor Example(/*0*/ context: Context?)
+    public constructor Example(/*0*/ context: Context?, /*1*/ arg1: kotlin.Int)
+    public constructor Example(/*0*/ context: Context?, /*1*/ arg1: kotlin.Int, /*2*/ arg2: kotlin.Int)
+    public constructor Example(/*0*/ context: Context?, /*1*/ arg1: kotlin.Int, /*2*/ arg2: kotlin.Int, /*3*/ arg3: kotlin.Int)
+    public final var condition: kotlin.Boolean
+    private final var index: kotlin.Int
+    private final lateinit var latePoint1: Point
+    private final lateinit var latePoint2: Point
+    private final var nullPoint: Point?
+    private final val point1: Point
+    private final val point2: Point
+    private final val point3: Point
+    private final val point4: Point
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final fun newIndex(/*0*/ zero: kotlin.Boolean): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Point {
+    public constructor Point()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
