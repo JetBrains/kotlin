@@ -23,26 +23,26 @@ class ConcatenatedStringGenerator {
     fun create(element: KtBinaryExpression): String {
         val binaryExpression = KtPsiUtil.getTopmostParentOfTypes(element, KtBinaryExpression::class.java) as? KtBinaryExpression ?: element
         val stringBuilder = StringBuilder()
-        create(binaryExpression, stringBuilder)
+        binaryExpression.appendTo(stringBuilder)
         return stringBuilder.toString()
     }
 
-    private fun create(element: KtBinaryExpression, sb: StringBuilder) {
-        appendExpressionText(element.left, sb)
-        appendExpressionText(element.right, sb)
+    private fun KtBinaryExpression.appendTo(sb: StringBuilder) {
+        left?.appendTo(sb)
+        right?.appendTo(sb)
     }
 
-    private fun appendExpressionText(expression: KtExpression?, sb: StringBuilder) {
-        when (expression) {
-            is KtBinaryExpression -> create(expression, sb)
-            is KtConstantExpression -> sb.append(expression.text)
-            is KtStringTemplateExpression -> appendExpressionText(expression, sb)
+    private fun KtExpression.appendTo(sb: StringBuilder) {
+        when (this) {
+            is KtBinaryExpression -> this.appendTo(sb)
+            is KtConstantExpression -> sb.append(text)
+            is KtStringTemplateExpression -> this.appendTo(sb)
             else -> sb.append("?")
         }
     }
 
-    private fun appendExpressionText(expression: KtStringTemplateExpression, sb: StringBuilder) {
-        expression.collectDescendantsOfType<KtStringTemplateEntry>().forEach {
+    private fun KtStringTemplateExpression.appendTo(sb: StringBuilder) {
+        collectDescendantsOfType<KtStringTemplateEntry>().forEach {
             stringTemplate ->
             when (stringTemplate) {
                 is KtLiteralStringTemplateEntry -> sb.append(stringTemplate.text)
