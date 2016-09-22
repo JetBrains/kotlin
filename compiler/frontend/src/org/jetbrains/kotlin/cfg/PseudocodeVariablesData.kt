@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cfg
 
 import com.google.common.collect.Maps
-import com.google.common.collect.Sets
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -25,15 +24,10 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
-import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import java.util.Collections
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
@@ -56,7 +50,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         if (!includeInsideLocalDeclarations) {
             return getUpperLevelDeclaredVariables(pseudocode)
         }
-        val declaredVariables = Sets.newHashSet<VariableDescriptor>()
+        val declaredVariables = linkedSetOf<VariableDescriptor>()
         declaredVariables.addAll(getUpperLevelDeclaredVariables(pseudocode))
 
         for (localFunctionDeclarationInstruction in pseudocode.localDeclarations) {
@@ -76,7 +70,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     }
 
     private fun computeDeclaredVariablesForPseudocode(pseudocode: Pseudocode): Set<VariableDescriptor> {
-        val declaredVariables = Sets.newHashSet<VariableDescriptor>()
+        val declaredVariables = linkedSetOf<VariableDescriptor>()
         for (instruction in pseudocode.instructions) {
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.variableDeclarationElement
@@ -217,7 +211,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 incomingEdgesData: Collection<InitControlFlowInfo>
         ): InitControlFlowInfo {
             if (incomingEdgesData.size == 1) return incomingEdgesData.single()
-            val variablesInScope = Sets.newHashSet<VariableDescriptor>()
+            val variablesInScope = linkedSetOf<VariableDescriptor>()
             for (edgeData in incomingEdgesData) {
                 variablesInScope.addAll(edgeData.keys)
             }
