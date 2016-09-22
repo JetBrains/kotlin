@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.scripts
 
+import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -43,3 +44,6 @@ internal fun captureOut(body: () -> Unit): String {
     System.setOut(prevOut)
     return outStream.toString()
 }
+
+internal fun assertEqualsTrimmed(expected: String, actual: String) =
+        Assert.assertEquals(expected.trim(), actual.trim())

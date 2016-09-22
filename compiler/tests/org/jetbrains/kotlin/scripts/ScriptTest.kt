@@ -47,7 +47,7 @@ class ScriptTest : KtUsefulTestCase() {
             val anObj = tryConstructScriptClass(aClass!!, listOf("4", "comment"))
             Assert.assertNotNull(anObj)
         }
-        Assert.assertEquals(NUM_4_LINE + " (comment)" + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + " (comment)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -58,7 +58,7 @@ class ScriptTest : KtUsefulTestCase() {
             val anObj = tryConstructScriptClass(aClass!!, emptyList())
             Assert.assertNotNull(anObj)
         }
-        Assert.assertEquals(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -71,7 +71,7 @@ class ScriptTest : KtUsefulTestCase() {
             val anObj = tryConstructScriptClass(aClass!!, emptyList())
             Assert.assertNotNull(anObj)
         }
-        Assert.assertEquals(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out1)
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out1)
         val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass!!.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         Assert.assertNotNull(aClassSaved)
@@ -79,7 +79,7 @@ class ScriptTest : KtUsefulTestCase() {
             val anObjSaved = tryConstructScriptClass(aClassSaved!!, emptyList())
             Assert.assertNotNull(anObjSaved)
         }
-        Assert.assertEquals(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out2)
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out2)
     }
 
     private fun compileScript(

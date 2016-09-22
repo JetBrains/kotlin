@@ -55,7 +55,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
         }
-        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -65,7 +65,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
         }
-        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -75,7 +75,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(4, 1)
         }
-        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -87,7 +87,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
         }
-        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -99,7 +99,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
         }
-        Assert.assertEquals(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
+        assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -109,7 +109,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
         }
-        Assert.assertEquals("10\n", out)
+        assertEqualsTrimmed("10", out)
     }
 
     @Test
@@ -119,7 +119,7 @@ class ScriptTemplateTest {
         val out = captureOut {
             aClass!!.getConstructor(Integer.TYPE).newInstance(4)
         }
-        Assert.assertEquals("14\n", out)
+        assertEqualsTrimmed("14", out)
     }
 
     @Test
@@ -129,7 +129,7 @@ class ScriptTemplateTest {
         captureOut {
             aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("one", "two"))
         }.let {
-            Assert.assertEquals("one and two\n", it)
+            assertEqualsTrimmed("one and two", it)
         }
     }
 
@@ -140,7 +140,7 @@ class ScriptTemplateTest {
         captureOut {
             aClass!!.getConstructor(Int::class.javaObjectType).newInstance(null)
         }.let {
-            Assert.assertEquals("Param is null\n", it)
+            assertEqualsTrimmed("Param is null", it)
         }
     }
 
@@ -151,7 +151,7 @@ class ScriptTemplateTest {
         captureOut {
             aClass!!.getConstructor(Array<in Number>::class.java, Array<out Number>::class.java).newInstance(arrayOf("one"), arrayOf(1, 2))
         }.let {
-            Assert.assertEquals("one and 1\n", it)
+            assertEqualsTrimmed("one and 1", it)
         }
     }
 
@@ -162,7 +162,7 @@ class ScriptTemplateTest {
         captureOut {
             aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf<String?>(null))
         }.let {
-            Assert.assertEquals("nullable\n", it)
+            assertEqualsTrimmed("nullable", it)
         }
     }
 
@@ -173,7 +173,7 @@ class ScriptTemplateTest {
         captureOut {
             aClass!!.getConstructor(Array<Array<in String>>::class.java).newInstance(arrayOf(arrayOf("one"), arrayOf("two")))
         }.let {
-            Assert.assertEquals("first: one, size: 1\n", it)
+            assertEqualsTrimmed("first: one, size: 1", it)
         }
     }
 
