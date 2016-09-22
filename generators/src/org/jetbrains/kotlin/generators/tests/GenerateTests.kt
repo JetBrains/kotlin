@@ -87,6 +87,7 @@ import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
+import org.jetbrains.kotlin.idea.intentions.AbstractConcatenatedStringGeneratorTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
@@ -495,6 +496,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIntentionTest>() {
             model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractConcatenatedStringGeneratorTest> {
+            model("concatenatedStringGenerator", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractInspectionTest>() {
@@ -1027,12 +1032,12 @@ fun main(args: Array<String>) {
             model("collectToFile", recursive = false, extension = null)
         }
     }
-    
+
     testGroup("plugins/plugins-tests/tests", "plugins/annotation-processing/testData") {
         testClass<AbstractJavaModelWrappersTest>() {
             model("javaWrappers", extension = null)
         }
-        
+
         testClass<AbstractKotlinModelWrappersTest>() {
             model("kotlinWrappers", extension = "kt")
         }
