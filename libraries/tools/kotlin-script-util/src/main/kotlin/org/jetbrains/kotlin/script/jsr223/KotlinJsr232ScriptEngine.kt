@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl
+package org.jetbrains.kotlin.script.jsr223
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.repl.GenericRepl
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.Reader

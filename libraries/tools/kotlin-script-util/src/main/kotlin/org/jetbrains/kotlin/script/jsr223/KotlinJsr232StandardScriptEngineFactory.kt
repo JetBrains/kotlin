@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl
+package org.jetbrains.kotlin.script.jsr223
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.KotlinVersion
