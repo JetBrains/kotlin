@@ -152,14 +152,13 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     ): Member? {
         when (member) {
             is PsiMethod -> {
-                if (!member.hasModifierProperty(PsiModifier.NATIVE))
-                    memberToPropertyInfo[member]?.let { propertyInfo ->
-                        if (propertyInfo.field != null) return null // just drop the method, property will be generated when converting the field
-                        return if (member == propertyInfo.getMethod || propertyInfo.getMethod == null)
-                            converter.convertProperty(propertyInfo, classKind)
-                        else
-                            null // drop the method, property will be generated when converting the field or the getter
-                    }
+                memberToPropertyInfo[member]?.let { propertyInfo ->
+                    if (propertyInfo.field != null) return null // just drop the method, property will be generated when converting the field
+                    return if (member == propertyInfo.getMethod || propertyInfo.getMethod == null)
+                        converter.convertProperty(propertyInfo, classKind)
+                    else
+                        null // drop the method, property will be generated when converting the field or the getter
+                }
 
                 return converter.convertMethod(member, fieldsToDrop, constructorConverter, overloadReducer, classKind)
             }

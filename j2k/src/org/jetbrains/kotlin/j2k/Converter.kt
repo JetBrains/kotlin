@@ -351,7 +351,10 @@ class Converter private constructor(
             if (propertyInfo.needExplicitGetter) {
                 if (getMethod != null) {
                     val method = convertMethod(getMethod, null, null, null, classKind)!!
-                    getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
+                    if (method.modifiers.contains(Modifier.EXTERNAL))
+                        getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers(listOf(Modifier.EXTERNAL)).assignNoPrototype(), null, null)
+                    else
+                        getter = PropertyAccessor(AccessorKind.GETTER, method.annotations, Modifiers.Empty, method.parameterList, method.body)
                     getter.assignPrototype(getMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
@@ -373,18 +376,22 @@ class Converter private constructor(
             if (propertyInfo.needExplicitSetter) {
                 val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
                 if (setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess) {
-                    val method = setMethod.let { convertMethod(it, null, null, null, classKind)!! }
-                    val convertedParameter = method.parameterList!!.parameters.single() as FunctionParameter
-                    val parameterAnnotations = convertedParameter.annotations
-                    val parameterList = if (method.body != null || !parameterAnnotations.isEmpty) {
-                        val parameter = FunctionParameter(convertedParameter.identifier, null, FunctionParameter.VarValModifier.None, parameterAnnotations, Modifiers.Empty)
-                                .assignPrototypesFrom(convertedParameter, CommentsAndSpacesInheritance.NO_SPACES)
-                        ParameterList.withNoPrototype(listOf(parameter))
-                    }
+                    val method = convertMethod(setMethod, null, null, null, classKind)!!
+                    if (method.modifiers.contains(Modifier.EXTERNAL))
+                        setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers.with(Modifier.EXTERNAL), null, null)
                     else {
-                        null
+                        val convertedParameter = method.parameterList!!.parameters.single() as FunctionParameter
+                        val parameterAnnotations = convertedParameter.annotations
+                        val parameterList = if (method.body != null || !parameterAnnotations.isEmpty) {
+                            val parameter = FunctionParameter(convertedParameter.identifier, null, FunctionParameter.VarValModifier.None, parameterAnnotations, Modifiers.Empty)
+                                    .assignPrototypesFrom(convertedParameter, CommentsAndSpacesInheritance.NO_SPACES)
+                            ParameterList.withNoPrototype(listOf(parameter))
+                        }
+                        else {
+                            null
+                        }
+                        setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers, parameterList, method.body)
                     }
-                    setter = PropertyAccessor(AccessorKind.SETTER, method.annotations, accessorModifiers, parameterList, method.body)
                     setter.assignPrototype(setMethod, CommentsAndSpacesInheritance.NO_SPACES)
                 }
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
