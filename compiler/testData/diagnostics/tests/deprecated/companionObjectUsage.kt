@@ -18,3 +18,15 @@ fun useCompanion() {
     Another.<!DEPRECATION!>Companion<!>.use()
     <!DEPRECATION!>Another<!>.use()
 }
+
+@Deprecated("Some")
+class Some {
+    companion object {
+        fun use() {}
+    }
+}
+
+fun some() {
+    <!DEPRECATION!>Some<!>.use()
+    <!DEPRECATION!>Some<!>.Companion.use()
+}
