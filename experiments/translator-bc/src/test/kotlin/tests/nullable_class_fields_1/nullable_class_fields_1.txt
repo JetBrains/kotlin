@@ -1,0 +1,3 @@
+nullable_class_fields_1_primitives() == 29
+nullable_class_fields_1_classes() == 29
+nullable_class_fields_1_classes_not_null() == 28

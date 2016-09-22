@@ -1,0 +1,3 @@
+simple_class_2_change_Int(0) == 1
+simple_class_2_change_Int(1) == 2
+simple_class_2_testGen_Int(10) == 10

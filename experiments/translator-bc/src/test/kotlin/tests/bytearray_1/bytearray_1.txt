@@ -1,0 +1,2 @@
+bytearray_1_Byte(123) == 123
+bytearray_1_array() == 1

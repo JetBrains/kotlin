@@ -1,0 +1,2 @@
+test_simple_field() == 1
+test_field_assignment_Int(10) == 10

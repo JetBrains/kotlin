@@ -1,0 +1,1 @@
+companion_object_2_test_Int(5) == 244
