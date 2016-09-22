@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
@@ -395,13 +396,15 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
 
     override fun getLanguages() = arrayOf(KotlinLanguage.INSTANCE)
 
-    override fun acceptElement(e: PsiElement) = handler(e) != null
+    override fun acceptElement(e: PsiElement) = !DumbService.isDumb(e.project) && handler(e) != null
 
     override fun getElementInfo(e: PsiElement): String {
+        if (DumbService.isDumb(e.project)) return ""
         return handler(e)!!.elementInfo(e as KtElement)
     }
 
     override fun getElementTooltip(e: PsiElement): String {
+        if (DumbService.isDumb(e.project)) return ""
         return handler(e)!!.elementTooltip(e as KtElement)
     }
 
