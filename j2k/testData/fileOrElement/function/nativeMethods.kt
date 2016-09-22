@@ -1,6 +1,7 @@
 class Foo {
     private external fun nativeMethod()
 
-    external fun getBar(): Int
-    external fun setBar(): Int
+    var bar: Int
+        external get
+        external set
 }
