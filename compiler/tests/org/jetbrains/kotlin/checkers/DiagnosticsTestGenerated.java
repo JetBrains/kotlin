@@ -3036,6 +3036,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("multipleAreNull.kt")
+            public void testMultipleAreNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/multipleAreNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nobacking.kt")
             public void testNobacking() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/nobacking.kt");
