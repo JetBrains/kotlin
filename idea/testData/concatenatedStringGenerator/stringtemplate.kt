@@ -1,0 +1,1 @@
+"foo$foo$bar" + "${bar}${bar2()}bar"
