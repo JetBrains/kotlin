@@ -62,16 +62,4 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
     }
 }
 
-private val EXCLUDED_IMPORTS_FOR_JVM: List<FqName> = listOf(
-        "Error",
-        "Exception",
-        "RuntimeException",
-        "IllegalArgumentException",
-        "IllegalStateException",
-        "IndexOutOfBoundsException",
-        "UnsupportedOperationException",
-        "NumberFormatException",
-        "NullPointerException",
-        "ClassCastException",
-        "AssertionError"
-).map { FqName("java.lang.$it") }
+private val EXCLUDED_IMPORTS_FOR_JVM: List<FqName> = emptyList()

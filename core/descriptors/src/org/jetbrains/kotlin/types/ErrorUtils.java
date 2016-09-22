@@ -70,6 +70,12 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public List<FqName> getEffectivelyExcludedImports() {
+                return emptyList();
+            }
+
+            @NotNull
+            @Override
             public Annotations getAnnotations() {
                 return Annotations.Companion.getEMPTY();
             }

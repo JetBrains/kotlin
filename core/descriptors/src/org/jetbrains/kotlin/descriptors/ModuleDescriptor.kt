@@ -44,6 +44,8 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     fun <T> getCapability(capability: Capability<T>): T?
 
     class Capability<T>(val name: String)
+
+    val effectivelyExcludedImports: List<FqName>
 }
 
 interface ModuleParameters {

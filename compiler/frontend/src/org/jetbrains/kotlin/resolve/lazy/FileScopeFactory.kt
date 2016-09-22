@@ -95,7 +95,7 @@ class FileScopeFactory(
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace) // TODO: should we count excludedImports here also?
 
         val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
-        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace, moduleDescriptor.excludedImports)
+        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace, moduleDescriptor.effectivelyExcludedImports)
 
         val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
