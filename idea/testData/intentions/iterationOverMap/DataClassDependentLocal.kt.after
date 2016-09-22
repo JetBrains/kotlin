@@ -3,10 +3,9 @@
 
 data class XY(val x: Int, val y: Int)
 fun test(xys: Array<XY>) {
-    for (xy in xys) {
-        val x = xy.x
+    for ((x, y1) in xys) {
         println(x)
-        val y = xy.y + x
+        val y = y1 + x
         println(y)
     }
 }
