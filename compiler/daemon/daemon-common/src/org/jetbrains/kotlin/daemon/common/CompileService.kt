@@ -132,6 +132,8 @@ interface CompileService : Remote {
             servicesFacade: CompilerCallbackServicesFacade,
             templateClasspath: List<File>,
             templateClassName: String,
+            scriptArgs: Array<Any?>?,
+            scriptArgsTypes: Array<Class<*>>?,
             compilerMessagesOutputStream: RemoteOutputStream,
             evalOutputStream: RemoteOutputStream?,
             evalErrorStream: RemoteOutputStream?,

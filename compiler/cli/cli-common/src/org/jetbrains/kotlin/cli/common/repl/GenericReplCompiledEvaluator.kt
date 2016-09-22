@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?) : ReplCompiledEvaluator {
+open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?, val scriptArgs: Array<Any?>? = null, val scriptArgsTypes: Array<Class<*>>? = null) : ReplCompiledEvaluator {
 
     private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader =
             org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
@@ -53,8 +53,16 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
 
         val scriptClass = classLoaderLock.read { classLoader.loadClass("Line${codeLine.no}") }
 
-        val constructorParams = compiledLoadedClassesHistory.map { it.second.klass }.toTypedArray()
-        val constructorArgs = compiledLoadedClassesHistory.map { it.second.instance }.toTypedArray()
+        val constructorParams: Array<Class<*>> =
+                (compiledLoadedClassesHistory.map { it.second.klass } +
+                 (scriptArgs?.asIterable()
+                          ?.mapIndexed { i, it ->
+                              it?.javaClass ?: if (i < (scriptArgsTypes?.size ?: 0)) scriptArgsTypes!![i] else Any::class.java
+                          }
+                  ?: emptyList()
+                 )
+                ).toTypedArray()
+        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.map { it.second.instance } + (scriptArgs?.asIterable() ?: emptyList())).toTypedArray()
 
         val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
         val scriptInstance =

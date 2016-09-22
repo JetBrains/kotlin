@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition

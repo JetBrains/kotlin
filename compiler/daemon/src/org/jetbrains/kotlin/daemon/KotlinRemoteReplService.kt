@@ -42,6 +42,8 @@ open class KotlinJvmReplService(
         disposable: Disposable,
         templateClasspath: List<File>,
         templateClassName: String,
+        scriptArgs: Array<Any?>?,
+        scriptArgsTypes: Array<Class<*>>?,
         compilerOutputStreamProxy: RemoteOutputStream,
         evalOutputStream: RemoteOutputStream?,
         evalErrorStream: RemoteOutputStream?,
@@ -115,8 +117,8 @@ open class KotlinJvmReplService(
 
     private val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
         if (evalOutputStream == null && evalErrorStream == null && evalInputStream == null)
-            GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null)
-        else object : GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null) {
+            GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes)
+        else object : GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes) {
             val out = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(evalOutputStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
             val err = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(evalErrorStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
             val `in` = BufferedInputStream(RemoteInputStreamClient(evalInputStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)
