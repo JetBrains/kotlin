@@ -60,7 +60,12 @@ class PropertyInfo(
     //TODO: what if annotations are not empty?
     val needExplicitGetter: Boolean
         get() {
-            if (getMethod != null && getMethod.body != null && !isGetMethodBodyFieldAccess) return true
+            if (getMethod != null) {
+                if (getMethod.hasModifierProperty(PsiModifier.NATIVE))
+                    return true
+                if (getMethod.body != null && !isGetMethodBodyFieldAccess)
+                    return true
+            }
             return modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
         }
 
@@ -69,8 +74,13 @@ class PropertyInfo(
         get() {
             if (!isVar) return false
             if (specialSetterAccess != null) return true
-            if (setMethod != null && setMethod.body != null && !isSetMethodBodyFieldAccess) return true
-            return modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
+            if (setMethod != null) {
+                if (setMethod.hasModifierProperty(PsiModifier.NATIVE))
+                    return true
+                if (setMethod.body != null && !isSetMethodBodyFieldAccess)
+                    return true
+            }
+            return modifiers.contains(Modifier.EXTERNAL) || modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
         }
 
     companion object {
