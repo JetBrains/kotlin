@@ -170,7 +170,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
 
     private object PropertyAccessorHandler : ElementHandler<KtPropertyAccessor>(KtPropertyAccessor::class) {
         override fun elementInfo(element: KtPropertyAccessor): String {
-            return element.property.name + "." + (if (element.isGetter) "get" else "set")
+            return DeclarationHandler.elementInfo(element.property) + "." + (if (element.isGetter) "get" else "set")
         }
 
         override fun elementTooltip(element: KtPropertyAccessor): String {
