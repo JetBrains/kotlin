@@ -36,9 +36,9 @@ class GeneralConnectorBuilder(private val element: IrElement) : BlockConnectorBu
     }
 
     override fun build() = when {
-        next.size == 1 -> JoinBlockConnector(previous.toReadOnlyList(), element, next.single())
+        next.size <= 1 -> JoinBlockConnector(previous.toReadOnlyList(), element, next.firstOrNull())
         previous.size == 1 -> SplitBlockConnector(previous.single(), element, next.toReadOnlyList())
-        else -> throw AssertionError("Connector should have either exactly one previous block or exactly one next block, " +
+        else -> throw AssertionError("Connector should have either exactly one previous block or no more than one next block, " +
                                      "actual previous = ${previous.size}, next = ${next.size}")
     }
 }

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.ir2cfg.graph.BlockConnector
 class JoinBlockConnector(
         override val previousBlocks: List<BasicBlock>,
         override val element: IrElement,
-        next: BasicBlock
+        next: BasicBlock?
 ) : BlockConnector {
 
-    override val nextBlocks = listOf(next)
+    override val nextBlocks = listOfNotNull(next)
 }

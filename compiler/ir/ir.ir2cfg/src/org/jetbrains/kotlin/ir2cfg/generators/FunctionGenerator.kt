@@ -102,6 +102,30 @@ class FunctionGenerator(val function: IrFunction) {
             return expression
         }
 
+        override fun visitWhen(expression: IrWhen, data: Boolean): IrElement? {
+            if (data) {
+                builder.add(expression)
+            }
+            val whenExit = MergeCfgElement(expression, "When exit")
+            val branches = expression.branches
+            for (branch in branches) {
+                val condition = branch.condition
+                condition.process(includeSelf = false)
+                builder.jump(condition)
+            }
+            for (branch in branches) {
+                val result = branch.result
+                builder.move(branch.condition)
+                if (!result.process().isNothing()) {
+                    builder.jump(whenExit)
+                }
+                else {
+                    builder.move(branch.condition)
+                }
+            }
+            return whenExit
+        }
+
         override fun visitElement(element: IrElement, data: Boolean): IrElement? {
             TODO("not implemented")
         }

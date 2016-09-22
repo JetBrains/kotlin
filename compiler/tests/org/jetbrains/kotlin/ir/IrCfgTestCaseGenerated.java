@@ -70,4 +70,43 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/simpleReturn.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("compiler/testData/ir/irCfg/when")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class When extends AbstractIrCfgTestCase {
+        public void testAllFilesPresentInWhen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("cascadeIf.kt")
+        public void testCascadeIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/cascadeIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/emptyWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionIf.kt")
+        public void testExpressionIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/expressionIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifChain.kt")
+        public void testIfChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/ifChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenReturn.kt")
+        public void testWhenReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/whenReturn.kt");
+            doTest(fileName);
+        }
+    }
 }
