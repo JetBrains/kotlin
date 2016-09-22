@@ -1,4 +1,4 @@
-// "Change return type of current function 'foo' to 'Int?'" "true"
+// "Change return type of enclosing function 'foo' to 'Int?'" "true"
 
 fun foo(): String {
     val n: Int? = 1

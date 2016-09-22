@@ -1,4 +1,4 @@
-// "Change return type of overridden function 'A.foo' to 'Long'" "true"
+// "Change return type of base function 'A.foo' to 'Long'" "true"
 interface A {
     fun foo(): Long
 }

@@ -1,4 +1,4 @@
-// "Change type of overridden property 'A.x' to 'String'" "true"
+// "Change type of base property 'A.x' to 'String'" "true"
 interface A {
     var x: Int
 }

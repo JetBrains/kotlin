@@ -1,4 +1,4 @@
-// "Change return type of invoked function 'A.component2' to 'Unit'" "true"
+// "Change return type of called function 'A.component2' to 'Unit'" "true"
 // ERROR: The integer literal does not conform to the expected type Unit
 abstract class A {
     abstract operator fun component1(): Int

@@ -83,24 +83,24 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
         override fun functionPresentation() = null
     }
 
-    class ForCurrent(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type), HighPriorityAction {
+    class ForEnclosing(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type), HighPriorityAction {
         override fun functionPresentation(): String? {
-            val presentation = super.functionPresentation() ?: return "current function"
-            return "current $presentation"
+            val presentation = super.functionPresentation() ?: return "enclosing function"
+            return "enclosing $presentation"
         }
     }
 
-    class ForInvoked(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type) {
+    class ForCalled(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type) {
         override fun functionPresentation(): String? {
-            val presentation = super.functionPresentation() ?: return "invoked function"
-            return "invoked $presentation"
+            val presentation = super.functionPresentation() ?: return "called function"
+            return "called $presentation"
         }
     }
 
     class ForOverridden(element: KtFunction, type: KotlinType) : ChangeFunctionReturnTypeFix(element, type) {
         override fun functionPresentation(): String? {
             val presentation = super.functionPresentation() ?: return null
-            return "overridden $presentation"
+            return "base $presentation"
         }
     }
 
@@ -155,7 +155,7 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
             val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
             val componentFunction = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as KtFunction? ?: return null
             val expectedType = context[BindingContext.TYPE, entry.typeReference!!] ?: return null
-            return ChangeFunctionReturnTypeFix.ForInvoked(componentFunction, expectedType)
+            return ChangeFunctionReturnTypeFix.ForCalled(componentFunction, expectedType)
         }
     }
 
@@ -167,7 +167,7 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
             val resolvedCall = context[BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression] ?: return null
             val hasNextDescriptor = resolvedCall.candidateDescriptor
             val hasNextFunction = DescriptorToSourceUtils.descriptorToDeclaration(hasNextDescriptor) as KtFunction? ?: return null
-            return ChangeFunctionReturnTypeFix.ForInvoked(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
+            return ChangeFunctionReturnTypeFix.ForCalled(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
         }
     }
 
@@ -178,7 +178,7 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
             val resolvedCall = expression.getResolvedCall(context) ?: return null
             val compareToDescriptor = resolvedCall.candidateDescriptor
             val compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor) as? KtFunction ?: return null
-            return ChangeFunctionReturnTypeFix.ForInvoked(compareTo, compareToDescriptor.builtIns.intType)
+            return ChangeFunctionReturnTypeFix.ForCalled(compareTo, compareToDescriptor.builtIns.intType)
         }
     }
 
@@ -219,14 +219,14 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
     object ChangingReturnTypeToUnitFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix.ForCurrent(function, function.platform.builtIns.unitType)
+            return ChangeFunctionReturnTypeFix.ForEnclosing(function, function.platform.builtIns.unitType)
         }
     }
 
     object ChangingReturnTypeToNothingFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeFunctionReturnTypeFix.ForCurrent(function, function.platform.builtIns.nothingType)
+            return ChangeFunctionReturnTypeFix.ForEnclosing(function, function.platform.builtIns.nothingType)
         }
     }
 

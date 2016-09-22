@@ -1,4 +1,4 @@
-// "Change return type of current function 'Companion.foo' to 'Int'" "true"
+// "Change return type of enclosing function 'Companion.foo' to 'Int'" "true"
 package foo.bar
 
 class A {

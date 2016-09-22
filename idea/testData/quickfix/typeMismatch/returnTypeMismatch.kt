@@ -1,4 +1,4 @@
-// "Remove explicitly specified return type of current function 'foo'" "true"
+// "Remove explicitly specified return type of enclosing function 'foo'" "true"
 fun foo(): Int {
     return<caret>
 }
