@@ -123,7 +123,9 @@ object CodegenUtil {
             if (declaration !is CallableMemberDescriptor) continue
 
             val traitMember = findTraitImplementation(declaration)
-            if (traitMember == null || Visibilities.isPrivate(traitMember.visibility)) continue
+            if (traitMember == null ||
+                    Visibilities.isPrivate(traitMember.visibility) ||
+                    traitMember.visibility == Visibilities.INVISIBLE_FAKE) continue
 
             assert(traitMember.modality !== Modality.ABSTRACT) { "Cannot delegate to abstract trait method: $declaration" }
 
