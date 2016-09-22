@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import org.jetbrains.kotlin.native.interop.indexer.*
+import java.lang.IllegalStateException
 
 class StubGenerator(
         val nativeIndex: NativeIndex,
