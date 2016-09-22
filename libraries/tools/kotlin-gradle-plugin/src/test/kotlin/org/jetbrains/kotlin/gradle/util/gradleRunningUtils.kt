@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import java.io.File
+import java.io.StringWriter
 
 class ProcessRunResult(
         private val cmd: List<String>,
@@ -16,7 +17,6 @@ Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
     Command: ${cmd.joinToString()}
     Working directory: ${workingDir.absolutePath}
     Exit code: $exitCode
-    Output: $output
 """
 }
 
@@ -29,14 +29,11 @@ fun runProcess(cmd: List<String>, workingDir: File, environmentVariables: Map<St
 
     val process = builder.start()
     // important to read inputStream, otherwise the process may hang on some systems
-    val sb = StringBuilder()
-    process.inputStream!!.bufferedReader().forEachLine {
-        System.out.println(it)
-        sb.appendln(it)
-    }
+    val sw = StringWriter()
+    process.inputStream!!.bufferedReader().copyTo(sw)
     val exitCode = process.waitFor()
 
-    return ProcessRunResult(cmd, workingDir, exitCode, sb.toString())
+    return ProcessRunResult(cmd, workingDir, exitCode, sw.toString())
 }
 
 fun createGradleCommand(tailParameters: List<String>): List<String> {

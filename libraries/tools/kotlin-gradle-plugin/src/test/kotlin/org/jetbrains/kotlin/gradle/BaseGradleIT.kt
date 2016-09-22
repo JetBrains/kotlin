@@ -143,7 +143,13 @@ abstract class BaseGradleIT {
         }
 
         val result = runProcess(cmd, projectDir, env)
-        CompiledProject(this, result.output, result.exitCode).check()
+        try {
+            CompiledProject(this, result.output, result.exitCode).check()
+        }
+        catch (t: Throwable) {
+            System.out.println(result.output)
+            throw t
+        }
     }
 
     fun CompiledProject.assertSuccessful(): CompiledProject {
