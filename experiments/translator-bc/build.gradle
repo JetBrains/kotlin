@@ -1,4 +1,4 @@
-group 'translator'
+group 'translator-bc'
 version '1.0'
 
 buildscript {
@@ -8,13 +8,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
+apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
 repositories {
     mavenCentral()
