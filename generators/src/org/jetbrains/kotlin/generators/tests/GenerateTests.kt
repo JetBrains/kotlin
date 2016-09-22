@@ -799,6 +799,7 @@ fun main(args: Array<String>) {
             model("refactoring/introduceTypeParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeParameterTest")
             model("refactoring/introduceTypeAlias", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeAliasTest")
             model("refactoring/extractSuperclass", pattern = KT_OR_KTS, testMethod = "doExtractSuperclassTest")
+            model("refactoring/extractInterface", pattern = KT_OR_KTS, testMethod = "doExtractInterfaceTest")
         }
 
         testClass<AbstractPullUpTest>() {

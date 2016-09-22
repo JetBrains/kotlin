@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractInterfaceHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractSuperclassHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler
@@ -81,6 +82,8 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun getPushDownHandler() = KotlinPushDownHandler()
 
     override fun getExtractSuperClassHandler() = KotlinExtractSuperclassHandler
+
+    override fun getExtractInterfaceHandler() = KotlinExtractInterfaceHandler
 }
 
 class KotlinVetoRenameCondition: Condition<PsiElement> {

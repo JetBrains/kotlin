@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.chooseMembers
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperclassInfo
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperclassRefactoring
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperRefactoring
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -354,7 +354,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
         }
     }
 
-    protected fun doExtractSuperclassTest(path: String) {
+    protected fun doExtractSuperTest(path: String, isInterface: Boolean) {
         doTest(path) { file ->
             file as KtFile
 
@@ -366,20 +366,25 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             val editor = fixture.editor
             val originalClass = file.findElementAt(editor.caretModel.offset)?.getStrictParentOfType<KtClassOrObject>()!!
             val memberInfos = chooseMembers(extractClassMembers(originalClass))
-            val conflicts = ExtractSuperclassRefactoring.collectConflicts(originalClass, memberInfos, targetParent, className)
+            val conflicts = ExtractSuperRefactoring.collectConflicts(originalClass, memberInfos, targetParent, className, isInterface)
             project.checkConflictsInteractively(conflicts) {
-                val extractInfo = ExtractSuperclassInfo(
+                val extractInfo = ExtractSuperInfo(
                         originalClass,
                         memberInfos,
                         targetParent,
                         "$className.${KotlinFileType.EXTENSION}",
                         className,
+                        isInterface,
                         DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)
                 )
-                ExtractSuperclassRefactoring(extractInfo).performRefactoring()
+                ExtractSuperRefactoring(extractInfo).performRefactoring()
             }
         }
     }
+
+    protected fun doExtractSuperclassTest(path: String) = doExtractSuperTest(path, false)
+
+    protected fun doExtractInterfaceTest(path: String) = doExtractSuperTest(path, true)
 
     protected fun doTest(path: String, checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
         val mainFile = File(path)

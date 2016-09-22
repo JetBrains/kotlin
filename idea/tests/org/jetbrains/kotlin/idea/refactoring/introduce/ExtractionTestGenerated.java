@@ -4258,4 +4258,43 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractSuperclassTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/refactoring/extractInterface")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExtractInterface extends AbstractExtractionTest {
+        @TestMetadata("addInterface.kt")
+        public void testAddInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/addInterface.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("addInterfaceWithAbstract.kt")
+        public void testAddInterfaceWithAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/addInterfaceWithAbstract.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("addTypeParameters.kt")
+        public void testAddTypeParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/addTypeParameters.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("addTypeParametersWithAbstract.kt")
+        public void testAddTypeParametersWithAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/addTypeParametersWithAbstract.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        public void testAllFilesPresentInExtractInterface() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractInterface"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/annotation.kt");
+            doExtractInterfaceTest(fileName);
+        }
+    }
 }
