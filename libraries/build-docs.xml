@@ -1,6 +1,8 @@
 <project name="Kotlin standard library" default="document">
     <!-- Generates the standard library documentation using Dokka. -->
     <property name="github.revision" value="master"/>
+    <property name="dokka.path" value="../dependencies/dokka" />
+    <property name="output" value="${basedir}/doc" />
 
     <typedef resource="dokka-antlib.xml">
         <classpath>
@@ -13,17 +15,39 @@
         </classpath>
     </typedef>
 
-    <target name="document">
-        <delete dir="doc/stdlib"/>
-        <mkdir dir="doc/stdlib"/>
-        <dokka src="stdlib/src:stdlib/jre7/src:stdlib/jre8/src:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt"
-            samples="stdlib/test" outputDir="doc" moduleName="stdlib" skipDeprecated="true" outputFormat="kotlin-website"
-            include="stdlib/src/Module.md">
-            <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
-        </dokka>
+    <target name="clean">
+        <delete dir="${output}"/>
+        <mkdir dir="${output}"/>
+    </target>
+
+    <macrodef name="document-stdlib">
+        <attribute name="jdk.version" />
+        <attribute name="additional.src" default="" />
+
+        <sequential>
+            <echo message="Building stdlib docs for JRE @{jdk.version}" />
+            <dokka src="stdlib/src:@{additional.src}:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt"
+                   samples="stdlib/test" outputDir="${output}/jre@{jdk.version}" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="kotlin-website" jdkversion="@{jdk.version}"
+                   include="stdlib/src/Module.md">
+                <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            </dokka>
+            <dokka src="kotlin.test/shared/src/main/kotlin:kotlin.test/shared/src/main/kotlin.jvm:kotlin.test/junit/src/main"
+                   outputDir="${output}/jre@{jdk.version}" moduleName="kotlin-test" skipDeprecated="true" outputFormat="kotlin-website" jdkversion="@{jdk.version}">
+                <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
+            </dokka>
+        </sequential>
+    </macrodef>
+
+    <target name="document" depends="clean">
+        <document-stdlib jdk.version="6" />
+        <document-stdlib jdk.version="7" additional.src="stdlib/jre7/src" />
+        <document-stdlib jdk.version="8" additional.src="stdlib/jre7/src:stdlib/jre8/src" />
     </target>
 
     <target name="zip" depends="document">
-        <zip destfile="target/stdlib-docs.zip" basedir="doc/stdlib"/>
+        <zip destfile="target/stdlib-docs.zip" basedir="${output}/jre8/kotlin-stdlib"/>
+        <zip destfile="target/docs-jre6.zip" basedir="${output}/jre6"/>
+        <zip destfile="target/docs-jre7.zip" basedir="${output}/jre7"/>
+        <zip destfile="target/docs-jre8.zip" basedir="${output}/jre8"/>
     </target>
 </project>
