@@ -27,6 +27,8 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-compiler', version: '1.0.3'
     compile 'com.github.jshmrsn:karg:a636b3e'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 jar {
@@ -35,5 +37,8 @@ jar {
     }
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
