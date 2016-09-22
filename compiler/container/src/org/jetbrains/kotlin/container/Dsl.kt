@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.container
 
 import kotlin.reflect.KProperty
 
-fun createContainer(id: String, parent: StorageComponentContainer? = null, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
+fun composeContainer(id: String, parent: StorageComponentContainer? = null, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
     val c = StorageComponentContainer(id, parent)
     c.init()
     c.compose()

@@ -41,7 +41,7 @@ fun StorageComponentContainer.configureModule(
 
     useInstance(platform)
 
-    platform.platformConfigurator.configure(this)
+    platform.platformConfigurator.configureModuleComponents(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.addDeclarations(this, platform)
@@ -67,7 +67,7 @@ fun createContainerForBodyResolve(
         platform: TargetPlatform,
         statementFilter: StatementFilter,
         languageVersionSettings: LanguageVersionSettings
-): StorageComponentContainer = createContainer("BodyResolve") {
+): StorageComponentContainer = createContainer("BodyResolve", platform) {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(statementFilter)
@@ -86,7 +86,7 @@ fun createContainerForLazyBodyResolve(
         platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache,
         languageVersionSettings: LanguageVersionSettings
-): StorageComponentContainer = createContainer("LazyBodyResolve") {
+): StorageComponentContainer = createContainer("LazyBodyResolve", platform) {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(LookupTracker.DO_NOTHING)
@@ -105,7 +105,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         lookupTracker: LookupTracker,
         languageVersionSettings: LanguageVersionSettings,
         localClassDescriptorHolder: LocalClassDescriptorHolder
-): StorageComponentContainer = createContainer("LocalClassifierAnalyzer") {
+): StorageComponentContainer = createContainer("LocalClassifierAnalyzer", platform) {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(localClassDescriptorHolder)
@@ -132,7 +132,7 @@ fun createContainerForLazyResolve(
         platform: TargetPlatform,
         targetEnvironment: TargetEnvironment,
         languageVersionSettings: LanguageVersionSettings
-): StorageComponentContainer = createContainer("LazyResolve") {
+): StorageComponentContainer = createContainer("LazyResolve", platform) {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)

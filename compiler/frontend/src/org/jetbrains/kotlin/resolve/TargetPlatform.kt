@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
@@ -45,8 +46,7 @@ abstract class TargetPlatform(
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
                                               IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT) {
-                    override fun configure(container: StorageComponentContainer) {
-                        super.configure(container)
+                    override fun configureModuleComponents(container: StorageComponentContainer) {
                         container.useInstance(SyntheticScopes.Empty)
                         container.useInstance(SyntheticConstructorsProvider.Empty)
                         container.useInstance(TypeSpecificityComparator.NONE)
@@ -89,17 +89,17 @@ abstract class PlatformConfigurator(
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
     private val classifierUsageCheckers: List<ClassifierUsageChecker> = DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
 
-    open fun configure(container: StorageComponentContainer) {
-        with (container) {
-            useInstance(dynamicTypesSettings)
-            declarationCheckers.forEach { useInstance(it) }
-            callCheckers.forEach { useInstance(it) }
-            typeCheckers.forEach { useInstance(it) }
-            classifierUsageCheckers.forEach { useInstance(it) }
-            additionalAnnotationCheckers.forEach { useInstance(it) }
-            useInstance(identifierChecker)
-            useInstance(overloadFilter)
-        }
+    abstract fun configureModuleComponents(container: StorageComponentContainer)
+
+    val platformSpecificContainer = composeContainer(this.javaClass.simpleName) {
+        useInstance(dynamicTypesSettings)
+        declarationCheckers.forEach { useInstance(it) }
+        callCheckers.forEach { useInstance(it) }
+        typeCheckers.forEach { useInstance(it) }
+        classifierUsageCheckers.forEach { useInstance(it) }
+        additionalAnnotationCheckers.forEach { useInstance(it) }
+        useInstance(identifierChecker)
+        useInstance(overloadFilter)
     }
 }
 
@@ -110,3 +110,7 @@ fun TargetPlatform.createModule(
         builtIns: KotlinBuiltIns,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
+
+
+fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit)
+        = composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
