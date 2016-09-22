@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import java.io.File
 
-abstract class AbstractStringGeneratorTest : KotlinCodeInsightTestCase() {
+abstract class AbstractConcatenatedStringGeneratorTest : KotlinCodeInsightTestCase() {
 
     @Throws(Exception::class)
     protected fun doTest(path: String) {

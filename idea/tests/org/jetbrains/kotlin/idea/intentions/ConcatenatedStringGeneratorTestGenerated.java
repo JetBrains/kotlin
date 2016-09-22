@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/concatenatedStringGenerator")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class StringGeneratorTestGenerated extends AbstractConcatenatedStringGeneratorTest {
+public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenatedStringGeneratorTest {
     public void testAllFilesPresentInConcatenatedStringGenerator() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
     }
