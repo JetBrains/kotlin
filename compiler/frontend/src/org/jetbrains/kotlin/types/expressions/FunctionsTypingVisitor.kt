@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
@@ -123,25 +122,17 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             return createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         }
         else {
-            return components.dataFlowAnalyzer.createCheckedTypeInfo(functionDescriptor.createFunctionType(context), context, function)
+            return components.dataFlowAnalyzer.createCheckedTypeInfo(functionDescriptor.createFunctionType(), context, function)
         }
     }
 
-    private fun SimpleFunctionDescriptor.createFunctionType(context: ExpressionTypingContext): KotlinType? {
-        val bindingContext = context.trace.bindingContext
-        val parameterNames = valueParameters.map {
-            // do not include auto-created 'it' into the type signature
-            if (bindingContext[BindingContext.AUTO_CREATED_IT, it] != true)
-                it.name
-            else
-                SpecialNames.NO_NAME_PROVIDED
-        }
+    private fun SimpleFunctionDescriptor.createFunctionType(): KotlinType? {
         return createFunctionType(
                 components.builtIns,
                 Annotations.EMPTY,
                 extensionReceiverParameter?.type,
                 valueParameters.map { it.type },
-                parameterNames,
+                null,
                 returnType ?: return null
         )
     }
@@ -160,7 +151,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = functionDescriptor.createFunctionType(context)!!
+        val resultType = functionDescriptor.createFunctionType()!!
         if (functionTypeExpected) {
             // all checks were done before
             return createTypeInfo(resultType, context)

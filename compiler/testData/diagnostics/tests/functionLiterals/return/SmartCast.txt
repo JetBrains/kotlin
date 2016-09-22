@@ -1,6 +1,6 @@
 package
 
-public val a: (it: kotlin.Int?) -> kotlin.Int?
+public val a: (kotlin.Int?) -> kotlin.Int?
 public val b: kotlin.Int?
 public val c: kotlin.Int
 public fun </*0*/ R> let(/*0*/ f: (kotlin.Int?) -> R): R

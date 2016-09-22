@@ -8,11 +8,11 @@ fun foo() {
     "after"
 }
 ---------------------
-"before"                                                             <v0>: *                       NEW: r("before") -> <v0>
-1                                                                    <v1>: Int                     NEW: r(1) -> <v1>
-{ x: Int -> val a = x + b }                                          <v2>: {<: (x: Int) -> Unit}   NEW: r({ x: Int -> val a = x + b }) -> <v2>
-"after"                                                              <v3>: *                       NEW: r("after") -> <v3>
-{ "before" val b = 1 val f = { x: Int -> val a = x + b } "after" }   <v3>: *                       COPY
+"before"                                                             <v0>: *                    NEW: r("before") -> <v0>
+1                                                                    <v1>: Int                  NEW: r(1) -> <v1>
+{ x: Int -> val a = x + b }                                          <v2>: {<: (Int) -> Unit}   NEW: r({ x: Int -> val a = x + b }) -> <v2>
+"after"                                                              <v3>: *                    NEW: r("after") -> <v3>
+{ "before" val b = 1 val f = { x: Int -> val a = x + b } "after" }   <v3>: *                    COPY
 =====================
 == anonymous_0 ==
 { x: Int ->

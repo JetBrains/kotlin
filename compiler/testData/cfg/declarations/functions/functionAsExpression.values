@@ -4,8 +4,8 @@ fun test() {
     val g = fun foo(n: Int) = 2
 }
 ---------------------
-fun(n: Int): Int { return 1 }   <v0>: {<: (n: Int) -> Int}   NEW: r(fun(n: Int): Int { return 1 }) -> <v0>
-fun foo(n: Int) = 2             <v1>: {<: (n: Int) -> Int}   NEW: r(fun foo(n: Int) = 2) -> <v1>
+fun(n: Int): Int { return 1 }   <v0>: {<: (Int) -> Int}   NEW: r(fun(n: Int): Int { return 1 }) -> <v0>
+fun foo(n: Int) = 2             <v1>: {<: (Int) -> Int}   NEW: r(fun foo(n: Int) = 2) -> <v1>
 =====================
 == anonymous_0 ==
 fun(n: Int): Int { return 1 }

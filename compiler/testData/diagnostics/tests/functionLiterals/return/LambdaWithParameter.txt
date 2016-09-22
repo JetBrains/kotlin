@@ -1,6 +1,6 @@
 package
 
-public val a: (i: kotlin.Int) -> kotlin.String
+public val a: (kotlin.Int) -> kotlin.String
 public val b: kotlin.String
 public val flag: kotlin.Boolean = true
 public fun </*0*/ T> foo(/*0*/ f: (kotlin.Int) -> T): T

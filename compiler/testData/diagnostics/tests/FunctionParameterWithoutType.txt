@@ -2,7 +2,7 @@ package
 
 public val bar: (???) -> kotlin.Unit
 public val la: (???) -> kotlin.Unit
-public val las: (a: kotlin.Int) -> kotlin.Unit
+public val las: (kotlin.Int) -> kotlin.Unit
 public fun test(/*0*/ a: [ERROR : Type annotation was missing for parameter a]): kotlin.Unit
 
 public final class A {

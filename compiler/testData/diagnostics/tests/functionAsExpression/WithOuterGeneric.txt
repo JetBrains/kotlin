@@ -3,7 +3,7 @@ package
 public val </*0*/ T> T.fromVal: () -> T
 public fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
 public fun </*0*/ O> outer(): kotlin.Unit
-public fun </*0*/ T> parameter(): (t: T) -> T
+public fun </*0*/ T> parameter(): (T) -> T
 public fun </*0*/ T> receiver(): T.() -> T
 public fun </*0*/ T> returnType(): () -> T
 
@@ -11,7 +11,7 @@ public final class Outer</*0*/ O> {
     public constructor Outer</*0*/ O>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun </*0*/ T> parameter(): (t: T) -> T
+    public final fun </*0*/ T> parameter(): (T) -> T
     public final fun </*0*/ T> receiver(): T.() -> T
     public final fun </*0*/ T> returnType(): () -> T
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

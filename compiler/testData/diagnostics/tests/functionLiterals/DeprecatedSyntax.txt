@@ -1,12 +1,12 @@
 package
 
-public val newSyntax: (a: kotlin.Int) -> kotlin.Unit
+public val newSyntax: (kotlin.Int) -> kotlin.Unit
 public val newSyntax1: (???, ???) -> kotlin.Unit
-public val newSyntax2: (a: kotlin.Int, b: kotlin.Int) -> kotlin.Unit
-public val newSyntax3: (???, b: kotlin.Int) -> kotlin.Unit
-public val newSyntax4: (a: kotlin.Int, ???) -> kotlin.Unit
+public val newSyntax2: (kotlin.Int, kotlin.Int) -> kotlin.Unit
+public val newSyntax3: (???, kotlin.Int) -> kotlin.Unit
+public val newSyntax4: (kotlin.Int, ???) -> kotlin.Unit
 public val none: () -> kotlin.Unit
-public val parameterWithFunctionType: (a: ((kotlin.Int) -> kotlin.Int) -> [ERROR : No type element]) -> kotlin.Unit
+public val parameterWithFunctionType: (((kotlin.Int) -> kotlin.Int) -> [ERROR : No type element]) -> kotlin.Unit
 public val parenthesizedParameters: (???) -> kotlin.Unit
 public val parenthesizedParameters2: (???) -> kotlin.Unit
 public val receiver: () -> ???

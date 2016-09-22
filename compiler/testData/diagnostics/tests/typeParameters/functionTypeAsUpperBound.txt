@@ -1,6 +1,6 @@
 package
 
-public val </*0*/ T : (kotlin.Int) -> kotlin.String> bar: (x: kotlin.Int) -> kotlin.String
+public val </*0*/ T : (kotlin.Int) -> kotlin.String> bar: (kotlin.Int) -> kotlin.String
 public fun </*0*/ T : (kotlin.Int) -> kotlin.String> foo(): kotlin.Unit
 
 public final class A</*0*/ T : () -> kotlin.Unit, /*1*/ U : (kotlin.Int) -> kotlin.Double, /*2*/ V : (T, U) -> U> {

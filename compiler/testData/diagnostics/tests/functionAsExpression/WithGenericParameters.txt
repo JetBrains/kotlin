@@ -1,9 +1,9 @@
 package
 
-public val extension_generic_fun: T.(t: T) -> T
-public val generic_fun: (t: T) -> T
+public val extension_generic_fun: T.(T) -> T
+public val generic_fun: (T) -> T
 public fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
-public fun fun_with_where(): T.(t: T) -> T
+public fun fun_with_where(): T.(T) -> T
 public fun outer(): kotlin.Unit
 
 public interface A {
