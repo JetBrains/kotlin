@@ -95,6 +95,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("parAfterUserType.kt")
+    public void testParAfterUserType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/parAfterUserType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("return.kt")
     public void testReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/return.kt");
@@ -116,6 +122,18 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("val.kt")
     public void testVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/val.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("valAfterReceiver.kt")
+    public void testValAfterReceiver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAfterReceiver.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("valAfterSelector.kt")
+    public void testValAfterSelector() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAfterSelector.kt");
         doTest(fileName);
     }
 
