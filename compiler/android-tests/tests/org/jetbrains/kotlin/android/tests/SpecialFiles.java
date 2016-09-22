@@ -77,6 +77,9 @@ public class SpecialFiles {
         excludedFiles.add("topLevelProperty.kt");
         excludedFiles.add("typeParameters.kt");
         excludedFiles.add("kt13133.kt");
+        excludedFiles.add("genericOverriddenFunction.kt");
+        excludedFiles.add("genericOverriddenProperty.kt");
+        excludedFiles.add("genericProperty.kt");
 
         // StackOverflow with StringBuilder (escape())
         excludedFiles.add("kt684.kt");
