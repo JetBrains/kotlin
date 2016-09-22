@@ -152,13 +152,15 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false);
             }
             else {
-                // TODO: check if it is correct way to find a promary constructor
+                // TODO: check if it is correct way to find a primary constructor
                 Collection<ClassConstructorDescriptor> ctorDescriptors = superclass.getConstructors();
                 assert ctorDescriptors.size() == 1;
                 ConstructorDescriptor ctorDesc = ctorDescriptors.iterator().next();
                 assert ctorDesc != null;
 
                 iv.load(0, classType);
+
+                int valueParamStart = context.getEarlierScripts().size() + 1;
 
                 List<ValueParameterDescriptor> valueParameters = scriptDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters();
                 for (ValueParameterDescriptor superclassParam: ctorDesc.getValueParameters()) {
@@ -170,7 +172,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                         }
                     }
                     assert valueParam != null;
-                    iv.load(valueParam.getIndex() + 1, typeMapper.mapType(valueParam.getType()));
+                    iv.load(valueParam.getIndex() + valueParamStart, typeMapper.mapType(valueParam.getType()));
                 }
 
                 CallableMethod ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false);
