@@ -78,6 +78,7 @@
 Pull Up: Support properties declared in the primary constructor
 Pull Up: Support members declared in the companion object of the original class
 Pull Up: Show member dependencies in the refactoring dialog
+- [`KT-9485`](https://youtrack.jetbrains.com/issue/KT-9485) Push Down: Support moving members from Java to Kotlin class
 
 ##### Issues Fixed
 
