@@ -1,0 +1,6 @@
+abstract class A {
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract boolean foo(int n);
+
+}
