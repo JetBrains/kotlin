@@ -290,7 +290,24 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         override fun accepts(element: KtBlockExpression) = element.parent is KtTryExpression
 
         override fun elementInfo(element: KtBlockExpression) = "try"
-        override fun elementTooltip(element: KtBlockExpression) = "try"
+
+        override fun elementTooltip(element: KtBlockExpression): String {
+            return buildString {
+                val tryExpression = element.parent as KtTryExpression
+
+                append("try {$ellipsis}")
+
+                for (catchClause in tryExpression.catchClauses) {
+                    append("\ncatch(")
+                    append(catchClause.catchParameter?.typeReference?.text ?: "")
+                    append(") {$ellipsis}")
+                }
+
+                if (tryExpression.finallyBlock != null) {
+                    append("\nfinally {$ellipsis}")
+                }
+            }
+        }
     }
 
     private object CatchHandler : ElementHandler<KtCatchClause>(KtCatchClause::class) {
