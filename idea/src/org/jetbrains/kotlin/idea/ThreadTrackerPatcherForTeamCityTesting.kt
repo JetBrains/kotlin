@@ -32,7 +32,7 @@ Standard names for ForkJoinPool threads doesn't pass ThreadTracker.checkLeak() c
 As it's allowed to reorder tests on TeamCity and any test can be first at some point, this patch should be applied at
 some common place.
  */
-object ForkJoinPoolPatcherForTeamCityTesting {
+object ThreadTrackerPatcherForTeamCityTesting {
     private val patched = AtomicBoolean(false)
 
     fun patchThreadTracker() {
