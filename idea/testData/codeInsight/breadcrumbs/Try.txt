@@ -5,6 +5,7 @@ Crumbs:
   catch (RuntimeException)
 Tooltips:
   function <b><code>foo()</code></b>
-  try
+  try {…}
+catch(Exception) {…}
   finally
   catch (RuntimeException)
