@@ -55,7 +55,7 @@ public class PluginStartupComponent implements ApplicationComponent {
         registerPathVariable();
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-            ForkJoinPoolPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
+            ThreadTrackerPatcherForTeamCityTesting.INSTANCE.patchThreadTracker();
         }
 
         JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
