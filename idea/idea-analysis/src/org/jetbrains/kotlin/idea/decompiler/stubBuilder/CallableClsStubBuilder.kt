@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
@@ -78,7 +78,7 @@ private fun shouldSkip(flags: Int, name: Name): Boolean {
     return when (Flags.MEMBER_KIND.get(flags)) {
         MemberKind.FAKE_OVERRIDE, MemberKind.DELEGATION -> true
         //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> !isComponentLike(name)
+        MemberKind.SYNTHESIZED -> !DataClassDescriptorResolver.isComponentLike(name)
         else -> false
     }
 }

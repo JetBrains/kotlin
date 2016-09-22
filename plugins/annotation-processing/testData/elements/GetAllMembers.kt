@@ -1,4 +1,6 @@
-@Deprecated("")
+annotation class Anno
+
+@Anno
 class MyClass {
     var myProperty: String = "A"
     

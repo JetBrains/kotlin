@@ -1,9 +1,5 @@
 package
 
-public typealias IT = ITest
-public typealias JD = JDerived
-public typealias JT = JTest
-public typealias KT = KTest
 public val seeAlsoDerivedFoo: kotlin.String
 public val seeAlsoFoo: kotlin.String
 public val testDerivedFoo: kotlin.String
@@ -79,3 +75,7 @@ public final class KTest {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+public typealias IT = ITest
+public typealias JD = JDerived
+public typealias JT = JTest
+public typealias KT = KTest

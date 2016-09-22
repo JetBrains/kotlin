@@ -32,10 +32,7 @@ class RemoveSetterParameterTypeInspection()
 ) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
-    override fun inspectionRange(element: KtCallableDeclaration) = (element as? KtParameter)?.typeReference?.let {
-        val start = it.getStartOffsetIn(element)
-        TextRange(start, start + it.endOffset - it.startOffset)
-    }
+    override fun inspectionTarget(element: KtCallableDeclaration) = (element as? KtParameter)?.typeReference
 }
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
@@ -51,7 +48,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             return element.textRange
         }
 
-        val initializer = (element as? KtWithExpressionInitializer)?.initializer ?: return null
+        val initializer = (element as? KtDeclarationWithInitializer)?.initializer ?: return null
         if (element !is KtProperty && (element !is KtNamedFunction || element.hasBlockBody())) return null
 
         return TextRange(element.startOffset, initializer.startOffset - 1)

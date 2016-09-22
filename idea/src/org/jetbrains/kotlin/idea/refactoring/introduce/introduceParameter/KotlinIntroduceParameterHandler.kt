@@ -176,8 +176,6 @@ fun IntroduceParameterDescriptor.performRefactoring() {
     }
 }
 
-private fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDeclaration || (e is KtClass && !e.isInner())
-
 fun selectNewParameterContext(
         editor: Editor,
         file: KtFile,

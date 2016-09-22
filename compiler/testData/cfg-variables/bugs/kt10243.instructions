@@ -43,10 +43,11 @@ L3 [else branch]:
     read (Unit)                                                              INIT: in: {f=ID} out: {f=ID}
 L4 ['if' expression result]:
     merge(if (f) { x = 0 }|!<v3>) -> <v4>                                    INIT: in: {f=ID, x=I} out: {f=ID, x=I}
-  2 jmp(L5)
+  2 jmp?(L2)
+    jmp(L5)
 L2 [onExceptionToFinallyBlock]:
 L6 [start finally]:
-  3 mark({ fun bar() {} })                                                   INIT: in: {f=ID} out: {f=ID}
+  3 mark({ fun bar() {} })
     jmp?(L7)
     d(fun bar() {})
 L7 [after local declaration]:
@@ -54,7 +55,7 @@ L10 [finish finally]:
   2 jmp(error)
 L5 [skipFinallyToErrorBlock]:
 L11 [copy of L2, onExceptionToFinallyBlock]:
-  3 mark({ fun bar() {} })                                                   INIT: in: {f=ID, x=I} out: {f=ID, x=I}
+  3 mark({ fun bar() {} })
     jmp?(L12)
     d(fun bar() {})
 L12 [copy of L7, after local declaration]:
@@ -62,15 +63,15 @@ L12 [copy of L7, after local declaration]:
 L1:
   1 <END>
 error:
-    <ERROR>                                                                  INIT: in: {f=ID} out: {f=ID}
+    <ERROR>
 sink:
-    <SINK>                                                                   INIT: in: {f=ID, x=I} out: {f=ID, x=I}    USE: in: {} out: {}
+    <SINK>                                                                                                             USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}
 ---------------------
 L8:
-  4 <START>        INIT: in: {f=ID} out: {f=ID}
+  4 <START>        INIT: in: {f=ID, x=I} out: {f=ID, x=I}
   5 mark({})
     read (Unit)
 L9:
@@ -78,7 +79,7 @@ L9:
 error:
     <ERROR>        INIT: in: {} out: {}
 sink:
-    <SINK>         INIT: in: {f=ID} out: {f=ID}    USE: in: {} out: {}
+    <SINK>         INIT: in: {f=ID, x=I} out: {f=ID, x=I}    USE: in: {} out: {}
 =====================
 == bar ==
 fun bar() {}

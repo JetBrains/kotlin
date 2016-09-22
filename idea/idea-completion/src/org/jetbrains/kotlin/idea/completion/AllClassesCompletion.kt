@@ -24,6 +24,7 @@ import com.intellij.psi.PsiLiteral
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isJavaClassNotToBeUsedInKotlin
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -41,23 +42,30 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                            private val prefixMatcher: PrefixMatcher,
                            private val resolutionFacade: ResolutionFacade,
                            private val kindFilter: (ClassKind) -> Boolean,
+                           private val includeTypeAliases: Boolean,
                            private val includeJavaClassesNotToBeUsed: Boolean
 ) {
-    fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
+    fun collect(classifierDescriptorCollector: (ClassifierDescriptorWithTypeParameters) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
 
         //TODO: this is a temporary solution until we have built-ins in indices
         // we need only nested classes because top-level built-ins are all added through default imports
         for (builtinPackage in resolutionFacade.moduleDescriptor.builtIns.builtInsPackageFragments) {
             collectClassesFromScope(builtinPackage.getMemberScope()) {
                 if (it.containingDeclaration is ClassDescriptor) {
-                    classDescriptorCollector(it)
+                    classifierDescriptorCollector(it)
                 }
             }
         }
 
         kotlinIndicesHelper
                 .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
-                .forEach { classDescriptorCollector(it) }
+                .forEach { classifierDescriptorCollector(it) }
+
+        if (includeTypeAliases) {
+            kotlinIndicesHelper
+                    .getTopLevelTypeAliases(prefixMatcher.asStringNameFilter())
+                    .forEach { classifierDescriptorCollector(it) }
+        }
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)) {
             addAdaptedJavaCompletion(javaClassCollector)

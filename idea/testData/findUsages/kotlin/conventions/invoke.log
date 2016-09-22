@@ -1,0 +1,14 @@
+Checked type of pack.f()
+Checked type of v
+Resolved f(1)
+Resolved f(2)
+Resolved f(2)(2)
+Resolved listOf(pack.Obj)[0](1)
+Resolved v(1)
+Searched references to pack.B
+Searched references to pack.Obj
+Searched references to pack.f() in non-Java files
+Searched references to v in non-Java files
+Used plain search of pack.B.invoke(i: Int) in LocalSearchScope:
+    CLASS:B
+    OBJECT_DECLARATION:Obj

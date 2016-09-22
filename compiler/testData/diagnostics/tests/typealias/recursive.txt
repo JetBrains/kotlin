@@ -1,9 +1,9 @@
 package
 
+public val x: [ERROR : Recursive type alias: A]
 public typealias A = B
 public typealias B = A
 public typealias F1 = (kotlin.Int) -> F2
 public typealias F2 = (F1) -> kotlin.Int
 public typealias L = kotlin.collections.List<L>
 public typealias R = R
-public val x: [ERROR : Recursive type alias: A]

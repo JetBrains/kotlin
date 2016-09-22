@@ -39,7 +39,7 @@ public fun RegExp.reset() {
     lastIndex = 0
 }
 
-
+// TODO: Inherit from array or introduce asArray() extension
 @native public interface RegExpMatch {
     public val index: Int
     public val input: String
@@ -48,3 +48,6 @@ public fun RegExp.reset() {
     @nativeGetter
     public operator fun get(index: Int): String?
 }
+
+
+public inline fun RegExpMatch.asArray(): Array<out String?> = this.asDynamic()

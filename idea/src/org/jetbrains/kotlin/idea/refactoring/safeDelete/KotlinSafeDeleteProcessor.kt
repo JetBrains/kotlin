@@ -39,9 +39,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
+import org.jetbrains.kotlin.idea.refactoring.formatClass
+import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -177,12 +179,12 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 else -> return
             }
             for (constructor in constructors) {
-                constructor.processDelegationCallConstructorUsages(constructor.useScope) {
+                constructor.buildProcessDelegationCallConstructorUsagesTask(constructor.useScope) {
                     if (!getIgnoranceCondition().value(it)) {
                         usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
                     }
                     true
-                }
+                }.invoke()
             }
         }
 
@@ -260,10 +262,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .mapTo(ArrayList<String>()) { overridenDescriptor ->
                         KotlinBundle.message(
                                 "x.implements.y",
-                                KotlinRefactoringUtil.formatFunction(declarationDescriptor, true),
-                                KotlinRefactoringUtil.formatClass(declarationDescriptor.containingDeclaration, true),
-                                KotlinRefactoringUtil.formatFunction(overridenDescriptor, true),
-                                KotlinRefactoringUtil.formatClass(overridenDescriptor.containingDeclaration, true)
+                                formatFunction(declarationDescriptor, true),
+                                formatClass(declarationDescriptor.containingDeclaration, true),
+                                formatFunction(overridenDescriptor, true),
+                                formatClass(overridenDescriptor.containingDeclaration, true)
                         )
                     }
         }
@@ -332,21 +334,17 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         when (element) {
             is KtParameter ->
                 return element.toPsiParameters().flatMap { psiParameter ->
-                    KotlinRefactoringUtil.checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
+                    checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
                 }.ifEmpty { listOf(element) }
 
             is PsiParameter ->
-                return KotlinRefactoringUtil.checkParametersInMethodHierarchy(element)
+                return checkParametersInMethodHierarchy(element)
         }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode) return Collections.singletonList(element)
 
         return when (element) {
-            is KtNamedFunction, is KtProperty ->
-                KotlinRefactoringUtil.checkSuperMethods(
-                        element as KtDeclaration, allElementsToDelete, "super.methods.delete.with.usage.search"
-                )
-
+            is KtNamedFunction, is KtProperty -> checkSuperMethods(element as KtDeclaration, allElementsToDelete, "delete (with usage search)")
             else -> super.getElementsToSearch(element, module, allElementsToDelete)
         }
     }

@@ -19,11 +19,14 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -83,6 +86,16 @@ internal fun Visibility.toKVisibility(): KVisibility? =
             Visibilities.INTERNAL -> KVisibility.INTERNAL
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
             else -> null
+        }
+
+internal fun Annotated.computeAnnotations(): List<Annotation> =
+        annotations.mapNotNull {
+            val source = it.source
+            when (source) {
+                is ReflectAnnotationSource -> source.annotation
+                is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
+                else -> null
+            }
         }
 
 // TODO: wrap other exceptions

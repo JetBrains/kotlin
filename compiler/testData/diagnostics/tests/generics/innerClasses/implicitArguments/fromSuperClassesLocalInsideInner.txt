@@ -1,0 +1,25 @@
+package
+
+public final class A</*0*/ R1, /*1*/ R2, /*2*/ R3, /*3*/ R4, /*4*/ R5, /*5*/ R6> {
+    public constructor A</*0*/ R1, /*1*/ R2, /*2*/ R3, /*3*/ R4, /*4*/ R5, /*5*/ R6>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Outer</*0*/ T> {
+    public constructor Outer</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner</*0*/ F> /*captured type parameters: /*1*/ T*/ {
+        public constructor Inner</*0*/ F>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        private final fun </*0*/ E> foobar(): () -> Outer.Inner.foobar.<anonymous>.Derived<E, F, T>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        private final fun noParameters(): () -> Outer.Inner.noParameters.<anonymous>.Derived2<F, T>
+        public final fun test(/*0*/ z: Outer<kotlin.String>.Inner<F>): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

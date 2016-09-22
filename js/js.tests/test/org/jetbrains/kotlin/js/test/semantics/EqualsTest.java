@@ -69,4 +69,8 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testSuperEquals() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testArrays() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

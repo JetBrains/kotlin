@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -48,10 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import javax.inject.Inject
@@ -93,7 +87,7 @@ class DoubleColonExpressionResolver(
             val result = resolveDoubleColonLHS(expression, c)
             val type = result?.type
             if (type != null && !type.isError) {
-                checkClassLiteral(c, expression, result!!)
+                checkClassLiteral(c, expression, result)
                 val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type)
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
                 return dataFlowAnalyzer.checkType(createTypeInfo(kClassType, dataFlowInfo), expression, c)
@@ -119,7 +113,12 @@ class DoubleColonExpressionResolver(
             reportError = !isAllowedInClassLiteral(type)
         }
 
-        if (type.isMarkedNullable || reportError) {
+
+        val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
+        if (type is SimpleType && !type.isMarkedNullable && typeParameterDescriptor != null && !typeParameterDescriptor.isReified) {
+            c.trace.report(TYPE_PARAMETER_AS_REIFIED.on(expression, typeParameterDescriptor))
+        }
+        else if (type.isMarkedNullable || reportError) {
             c.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
         }
     }
@@ -227,7 +226,10 @@ class DoubleColonExpressionResolver(
         if (!criterion(doubleColonExpression)) return null
 
         val traceAndCache = TemporaryTraceAndCache.create(context, "resolve '::' LHS", doubleColonExpression)
-        val c = context.replaceTraceAndCache(traceAndCache).replaceExpectedType(NO_EXPECTED_TYPE)
+        val c = context
+                .replaceTraceAndCache(traceAndCache)
+                .replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceContextDependency(ContextDependency.INDEPENDENT)
 
         val lhs = resolve(expression, c)
         return LHSResolutionResult(lhs, expression, traceAndCache)

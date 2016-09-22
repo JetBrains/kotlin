@@ -84,18 +84,6 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("componentFunctions.0.kt")
-            public void testComponentFunctions() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/componentFunctions.0.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("componentFunctionsByRef.0.kt")
-            public void testComponentFunctionsByRef() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/componentFunctionsByRef.0.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("contains.0.kt")
             public void testContains() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/contains.0.kt");
@@ -172,6 +160,129 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             public void testUnaryMinus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/unaryMinus.0.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("idea/testData/findUsages/kotlin/conventions/components")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Components extends AbstractFindUsagesTest {
+                public void testAllFilesPresentInComponents() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/conventions/components"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+                }
+
+                @TestMetadata("callableReferences.0.kt")
+                public void testCallableReferences() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/callableReferences.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("companionObjectAccess.0.kt")
+                public void testCompanionObjectAccess() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/companionObjectAccess.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("componentFunForGenericType1.0.kt")
+                public void testComponentFunForGenericType1() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/componentFunForGenericType1.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("componentFunForGenericType2.0.kt")
+                public void testComponentFunForGenericType2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/componentFunForGenericType2.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataClass.0.kt")
+                public void testDataClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/dataClass.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataClassComponentByRef.0.kt")
+                public void testDataClassComponentByRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/dataClassComponentByRef.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataClassFromStdlib.0.kt")
+                public void testDataClassFromStdlib() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/dataClassFromStdlib.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataClassInsideDataClass.0.kt")
+                public void testDataClassInsideDataClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/dataClassInsideDataClass.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionComponentFun.0.kt")
+                public void testExtensionComponentFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/extensionComponentFun.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("for.0.kt")
+                public void testFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/for.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("isAndAs.0.kt")
+                public void testIsAndAs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/isAndAs.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("lambdas.0.kt")
+                public void testLambdas() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/lambdas.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("mayTypeAffectAncestors.0.kt")
+                public void testMayTypeAffectAncestors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/mayTypeAffectAncestors.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberComponentFun.0.kt")
+                public void testMemberComponentFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/memberComponentFun.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("operators.0.kt")
+                public void testOperators() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/operators.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveDataClass1.0.kt")
+                public void testRecursiveDataClass1() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/recursiveDataClass1.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveDataClass2.0.kt")
+                public void testRecursiveDataClass2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/recursiveDataClass2.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SAM.0.kt")
+                public void testSAM() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/SAM.0.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("when.0.kt")
+                public void testWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/components/when.0.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -1455,6 +1566,18 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             @TestMetadata("JKMethodUsages.0.java")
             public void testJKMethodUsages() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/JKMethodUsages.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaComponentFunctions.0.java")
+            public void testJavaComponentFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/javaComponentFunctions.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaInvoke.0.java")
+            public void testJavaInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/javaInvoke.0.java");
                 doTest(fileName);
             }
 

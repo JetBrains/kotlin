@@ -24,10 +24,16 @@ import org.jetbrains.kotlin.idea.util.CallType
 
 class KotlinPropertyInsertHandler(callType: CallType<*>) : KotlinCallableInsertHandler(callType) {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val surroundedWithBraces = surroundWithBracesIfInStringTemplate(context)
+
         super.handleInsert(context, item)
 
         if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
             deleteEmptyParenthesis(context)
+        }
+
+        if (surroundedWithBraces) {
+            removeRedundantBracesInStringTemplate(context)
         }
     }
 

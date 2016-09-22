@@ -18,36 +18,51 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 
-class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove braces") {
-    override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
-        val singleStatement = element.statements.singleOrNull() ?: return false
+class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Remove braces") {
 
-        val containerNode = element.parent as? KtContainerNode ?: return false
-        if (singleStatement is KtIfExpression && containerNode.parent is KtIfExpression) return false
-
-        val lBrace = element.lBrace ?: return false
-        val rBrace = element.rBrace ?: return false
-        if (!lBrace.textRange.containsOffset(caretOffset) && !rBrace.textRange.containsOffset(caretOffset)) return false
-
-        val description = containerNode.description() ?: return false
-        text = "Remove braces from '$description' statement"
-        return true
+    private fun KtElement.findChildBlock() = when (this) {
+        is KtBlockExpression -> this
+        is KtLoopExpression -> body as? KtBlockExpression
+        is KtWhenEntry -> expression as? KtBlockExpression
+        else -> null
     }
 
-    override fun applyTo(element: KtBlockExpression, editor: Editor?) {
-        val statement = element.statements.single()
+    override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
+        val block = element.findChildBlock() ?: return false
+        val singleStatement = block.statements.singleOrNull() ?: return false
+        val container = block.parent
+        when (container) {
+            is KtContainerNode -> {
+                if (singleStatement is KtIfExpression && container.parent is KtIfExpression) return false
 
-        val containerNode = element.parent as KtContainerNode
-        val construct = containerNode.parent as KtExpression
-        handleComments(construct, element)
+                val description = container.description() ?: return false
+                text = "Remove braces from '$description' statement"
+                return true
+            }
+            is KtWhenEntry -> {
+                text = "Remove braces from 'when' entry"
+                return singleStatement !is KtNamedDeclaration
+            }
+            else -> return false
+        }
+    }
 
-        val newElement = element.replace(statement.copy())
+    override fun applyTo(element: KtElement, editor: Editor?) {
+        val block = element.findChildBlock() ?: return
+        val statement = block.statements.single()
+
+        val container = block.parent!!
+        val construct = container.parent as KtExpression
+        handleComments(construct, block)
+
+        val newElement = block.replace(statement.copy())
 
         if (construct is KtDoWhileExpression) {
-            newElement.parent!!.addAfter(KtPsiFactory(element).createNewLine(), newElement)
+            newElement.parent!!.addAfter(KtPsiFactory(block).createNewLine(), newElement)
         }
     }
 
@@ -67,4 +82,6 @@ class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockE
             sibling = sibling.nextSibling
         }
     }
+
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtBlockExpression || element.parent is KtWhenEntry
 }

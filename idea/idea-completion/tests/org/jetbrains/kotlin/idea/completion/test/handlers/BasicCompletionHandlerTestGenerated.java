@@ -709,6 +709,24 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("GlobalVal.kt")
+        public void testGlobalVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/GlobalVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GlobalValInCurlyBraces.kt")
+        public void testGlobalValInCurlyBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/GlobalValInCurlyBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InsertCurlyBracesBeforeLetter.kt")
+        public void testInsertCurlyBracesBeforeLetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/InsertCurlyBracesBeforeLetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NotEmptyPrefix.kt")
         public void testNotEmptyPrefix() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/NotEmptyPrefix.kt");
@@ -718,6 +736,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("Replace.kt")
         public void testReplace() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/Replace.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInObject.kt")
+        public void testValInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/ValInObject.kt");
             doTest(fileName);
         }
     }

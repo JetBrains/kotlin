@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -1760,7 +1761,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
         @Nullable
-        StackValue answer = null;
+        StackValue blockResult = null;
 
         for (Iterator<KtExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
             KtExpression possiblyLabeledStatement = iterator.next();
@@ -1781,32 +1782,39 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.mark(labelBeforeLastExpression);
             }
 
-            // Note that this result value is potentially unused (in case of handleResult coroutine call)
+            // Note that this statementResult value is potentially unused (in case of handleResult coroutine call)
             // It's supposed here that no bytecode is emitted until 'put' call on relevant StackValue object
-            StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
+            StackValue statementResult = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
-                answer = result;
                 StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, possiblyLabeledStatement);
                 if (handleResultValue != null) {
-                    answer = handleResultValue;
+                    blockResult = handleResultValue;
+                }
+                else {
+                    blockResult = statementResult;
                 }
             }
             else {
-                result.put(Type.VOID_TYPE, v);
+                statementResult.put(Type.VOID_TYPE, v);
             }
 
             addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
         }
 
-        if (answer == null) {
-            answer = genControllerHandleResultForLastStatementInCoroutine(block, null);
-            if (answer == null) {
-                answer = StackValue.none();
+        if (statements.isEmpty()) {
+            StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, null);
+            if (handleResultValue != null) {
+                blockResult = handleResultValue;
+            }
+            else {
+                blockResult = StackValue.none();
             }
         }
 
-        return new StackValueWithLeaveTask(answer, new Function1<StackValue, Unit>() {
+        assert blockResult != null : "Block result should be initialized in the loop or the condition above";
+
+        return new StackValueWithLeaveTask(blockResult, new Function1<StackValue, Unit>() {
             @Override
             public Unit invoke(StackValue value) {
                 if (labelBlockEnd == null) {
@@ -1832,27 +1840,54 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression valueToReturn) {
+    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression returnValue) {
         ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(RETURN_HANDLE_RESULT_RESOLVED_CALL, callOwner);
 
         if (resolvedCall != null) {
             assert resolvedCall.getValueArgumentsByIndex() != null : "Arguments were not resolved for call element: " + callOwner.getText();
             KtExpression argumentExpression =
                     resolvedCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
-            if (valueToReturn == null
-                    && KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())) {
+
+            final StackValue putValueBeforeCall;
+            // This condition may be true in cases like return-statement without value or for last statement in a lambda block that
+            // has a type different from Unit, while 'handleResult' method accepts exactly the latter
+            // (see org.jetbrains.kotlin.coroutines.resolveCoroutineHandleResultCallIfNeeded for clarifications)
+            if (argumentExpression != returnValue) {
+                assert KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())
+                        : "If handleResult argument is different from returnValue, handleResult's first parameter must accept Unit, but " +
+                          resolvedCall.getResultingDescriptor() + " was found";
+
+                // generate last statement in the coroutine lambda
+                putValueBeforeCall = returnValue != null ? genStatement(returnValue) : null;
+
+                // Here 'argumentExpression' is a special fake one that used as an expression of Unit type
+                // when 'handleResult' call was resolved
                 tempVariables.put(argumentExpression, StackValue.unit());
             }
             else {
-                assert valueToReturn != null : "valueReturn expected to be not null for non-unit types";
-                tempVariables.put(argumentExpression, gen(valueToReturn));
+                putValueBeforeCall = null;
             }
 
             tempVariables.put(
                     resolvedCall.getValueArgumentsByIndex().get(1).getArguments().get(0).getArgumentExpression(),
                     genCoroutineInstanceValueFromResolvedCall(resolvedCall));
 
-            return invokeFunction(resolvedCall, StackValue.none());
+
+            final StackValue handleResultCallValue = invokeFunction(resolvedCall, StackValue.none());
+            if (putValueBeforeCall == null) return handleResultCallValue;
+
+            return new StackValue(handleResultCallValue.type) {
+                @Override
+                public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+                    putValueBeforeCall.put(type, v);
+                    handleResultCallValue.putSelector(type, v);
+                }
+
+                @Override
+                public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
+                    handleResultCallValue.putReceiver(v, isRead);
+                }
+            };
         }
         return null;
     }
@@ -2691,6 +2726,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     protected FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        if (descriptor instanceof TypeAliasConstructorDescriptor) {
+            descriptor = ((TypeAliasConstructorDescriptor) descriptor).getUnderlyingConstructorDescriptor();
+        }
         FunctionDescriptor originalIfSamAdapter = SamCodegenUtil.getOriginalIfSamAdapter(descriptor);
         if (originalIfSamAdapter != null) {
             descriptor = originalIfSamAdapter;
@@ -2841,7 +2879,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspensionPoint) {
-            StackValue.coerce(Type.VOID_TYPE, getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
+            AsmUtil.pushDefaultValueOnStack(getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
@@ -3236,7 +3274,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (variableDescriptor != null) {
             return generatePropertyReference(
                     expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                    resolvedCall.getDispatchReceiver(), receiverAsmType, receiverValue
+                    receiverAsmType, receiverValue
             );
         }
 
@@ -3248,7 +3286,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull VariableDescriptor target,
-            @Nullable ReceiverValue dispatchReceiver,
             @Nullable final Type receiverAsmType,
             @Nullable final StackValue receiverValue
     ) {
@@ -3262,7 +3299,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, variableDescriptor, target, dispatchReceiver, receiverAsmType
+                element, classBuilder, variableDescriptor, target, receiverAsmType
         );
         codegen.generate();
 
@@ -3922,7 +3959,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull StackValue metadataVar
     ) {
         //noinspection ConstantConditions
-        StackValue value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null, null);
+        StackValue value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null, null);
         value.put(K_PROPERTY0_TYPE, v);
         metadataVar.storeSelector(K_PROPERTY0_TYPE, v);
     }

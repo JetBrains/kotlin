@@ -5,9 +5,9 @@ public abstract data class Base {
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): Base
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final data class Complex : SuperInterface, SuperClass {
@@ -15,9 +15,9 @@ public final data class Complex : SuperInterface, SuperClass {
     public final val y: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ y: kotlin.Int = ...): Complex
-    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final class Derived : Base {
@@ -39,9 +39,9 @@ public final data class Nasty : Base {
     public final operator /*synthesized*/ fun component2(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun copy(/*0*/ x: kotlin.Int = ...): Base
     public final /*synthesized*/ fun copy(/*0*/ z: kotlin.Int = ..., /*1*/ y: kotlin.Int = ...): Nasty
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final data class SubData : Complex {
@@ -51,9 +51,9 @@ public final data class SubData : Complex {
     public final override /*1*/ /*synthesized*/ fun component1(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun copy(/*0*/ y: kotlin.Int = ...): Complex
     public final /*synthesized*/ fun copy(/*0*/ sss: kotlin.String = ...): SubData
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public open class SuperClass {

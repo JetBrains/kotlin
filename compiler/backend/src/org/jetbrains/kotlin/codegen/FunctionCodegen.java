@@ -138,7 +138,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor delegateFunctionDescriptor
     ) {
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
-                function, functionDescriptor, delegateFunctionDescriptor, owner.getContextKind(), v
+                function, functionDescriptor, delegateFunctionDescriptor, owner.getContextKind(), v, memberCodegen
         );
     }
 
@@ -199,7 +199,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state, parentBodyCodegen));
         }
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL || isAbstractMethod(functionDescriptor, contextKind, state)) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -235,7 +235,7 @@ public class FunctionCodegen {
             Method asmMethod,
             MethodVisitor mv
     ) {
-        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, typeMapper);
+        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper);
 
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
             AnnotationUseSiteTarget target = functionDescriptor instanceof PropertySetterDescriptor ? PROPERTY_SETTER : PROPERTY_GETTER;
@@ -264,7 +264,7 @@ public class FunctionCodegen {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, memberCodegen, typeMapper);
 
                 if (functionDescriptor instanceof PropertySetterDescriptor) {
                     PropertyDescriptor propertyDescriptor = ((PropertySetterDescriptor) functionDescriptor).getCorrespondingProperty();
@@ -283,7 +283,7 @@ public class FunctionCodegen {
                 ReceiverParameterDescriptor receiver = JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter();
 
                 if (receiver != null) {
-                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, memberCodegen, typeMapper);
                     Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(receiver.getType());
                     annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
 
@@ -713,9 +713,9 @@ public class FunctionCodegen {
 
         // Only method annotations are copied to the $default method. Parameter annotations are not copied until there are valid use cases;
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext) {
                 mv.visitCode();
                 generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
@@ -889,7 +889,7 @@ public class FunctionCodegen {
 
         MethodVisitor mv =
                 v.newMethod(JvmDeclarationOriginKt.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
 

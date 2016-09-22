@@ -18,11 +18,26 @@ package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
 
-interface QualifierReceiver : Receiver {
+// this receiver used only for resolution. see subtypes
+interface DetailedReceiver
+
+class ReceiverValueWithSmartCastInfo(
+        val receiverValue: ReceiverValue,
+        val possibleTypes: Set<KotlinType>, // doesn't include receiver.type
+        val isStable: Boolean
+): DetailedReceiver
+
+
+interface QualifierReceiver : Receiver, DetailedReceiver {
     val descriptor: DeclarationDescriptor
 
     val staticScope: MemberScope
 
     val classValueReceiver: ReceiverValue?
+
+    // for qualifiers smart cast is impossible
+    val classValueReceiverWithSmartCastInfo: ReceiverValueWithSmartCastInfo?
+        get() = classValueReceiver?.let { ReceiverValueWithSmartCastInfo(it, emptySet(), true) }
 }

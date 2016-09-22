@@ -91,7 +91,8 @@ public abstract class KotlinBuiltIns {
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
-                        return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+                        ClassLoader classLoader = KotlinBuiltIns.class.getClassLoader();
+                        return classLoader != null ? classLoader.getResourceAsStream(path) : ClassLoader.getSystemResourceAsStream(path);
                     }
                 }
         );

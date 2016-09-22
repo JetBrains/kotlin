@@ -1,10 +1,9 @@
 package test
 
-@test.Ann() public typealias A1 = kotlin.String
-@test.Ann(value = "OK") public typealias A2 = kotlin.String
-
 public final annotation class Ann : kotlin.Annotation {
     /*primary*/ public constructor Ann(/*0*/ value: kotlin.String = ...)
     public final val value: kotlin.String
         public final fun <get-value>(): kotlin.String
 }
+@test.Ann() public typealias A1 = kotlin.String
+@test.Ann(value = "OK") public typealias A2 = kotlin.String

@@ -153,7 +153,11 @@ class TypeAliasExpander(
             }
             else -> {
                 val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
-                    expandTypeProjection(originalArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1)
+                    val projection = expandTypeProjection(
+                            originalArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1)
+                    if (projection.isStarProjection) projection
+                    else TypeProjectionImpl(projection.projectionKind,
+                                            TypeUtils.makeNullableIfNeeded(projection.type, originalArgument.type.isMarkedNullable))
                 }
 
                 val substitutedType = type.replace(newArguments = substitutedArguments)

@@ -96,25 +96,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/notInsideElseIfBlock.kt");
             doTest(fileName);
         }
-    }
 
-    @TestMetadata("idea/testData/intentions/addBracesToWhenEntry")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AddBracesToWhenEntry extends AbstractIntentionTest {
-        public void testAllFilesPresentInAddBracesToWhenEntry() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addBracesToWhenEntry"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-
-        @TestMetadata("hasBraces.kt")
-        public void testHasBraces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBracesToWhenEntry/hasBraces.kt");
+        @TestMetadata("whenHasBraces.kt")
+        public void testWhenHasBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/whenHasBraces.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBracesToWhenEntry/simple.kt");
+        @TestMetadata("whenSimple.kt")
+        public void testWhenSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addBraces/whenSimple.kt");
             doTest(fileName);
         }
     }
@@ -2663,6 +2654,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("onAnnotation.kt")
+            public void testOnAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/onAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onAnnotationParameter.kt")
+            public void testOnAnnotationParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/onAnnotationParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/simple.kt");
@@ -3883,6 +3886,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("argumentWithReceiver.kt")
+        public void testArgumentWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/argumentWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/constructor.kt");
@@ -3949,6 +3958,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("fqNameForReceiver.kt")
+        public void testFqNameForReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/fqNameForReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("generic.kt")
         public void testGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/generic.kt");
@@ -3976,6 +3991,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapTo.kt")
         public void testMapTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/mapTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapToFqName.kt")
+        public void testMapToFqName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/mapToFqName.kt");
             doTest(fileName);
         }
 
@@ -4042,6 +4063,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("toString.kt")
         public void testToString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/toString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeFromJava.kt")
+        public void testTypeFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJava.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeFromJavaFlexibleRecursive.kt")
+        public void testTypeFromJavaFlexibleRecursive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJavaFlexibleRecursive.kt");
             doTest(fileName);
         }
 
@@ -8968,6 +9001,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveToCompanion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("doNotQualifyThisLabel.kt")
+        public void testDoNotQualifyThisLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/doNotQualifyThisLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dropFinal.kt")
         public void testDropFinal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveToCompanion/dropFinal.kt");
@@ -9605,54 +9644,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("whenLambda.kt")
+        public void testWhenLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenMultiple.kt")
+        public void testWhenMultiple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenMultiple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenNoBraces.kt")
+        public void testWhenNoBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenNoBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenSimple.kt")
+        public void testWhenSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenSimple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenSimpleOutsideBlock.kt")
+        public void testWhenSimpleOutsideBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenSimpleOutsideBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenStatement.kt")
+        public void testWhenStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whenStatement.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/while.kt");
             doTest(fileName);
         }
 
+        @TestMetadata("whileOutsideBlock.kt")
+        public void testWhileOutsideBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whileOutsideBlock.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("whileWithTwoStatements.kt")
         public void testWhileWithTwoStatements() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/whileWithTwoStatements.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/removeBracesFromWhenEntry")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class RemoveBracesFromWhenEntry extends AbstractIntentionTest {
-        public void testAllFilesPresentInRemoveBracesFromWhenEntry() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeBracesFromWhenEntry"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-
-        @TestMetadata("lambda.kt")
-        public void testLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBracesFromWhenEntry/lambda.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multiple.kt")
-        public void testMultiple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBracesFromWhenEntry/multiple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("noBraces.kt")
-        public void testNoBraces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBracesFromWhenEntry/noBraces.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBracesFromWhenEntry/simple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("statement.kt")
-        public void testStatement() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBracesFromWhenEntry/statement.kt");
             doTest(fileName);
         }
     }
@@ -10519,6 +10561,111 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("rangeTo.kt")
         public void testRangeTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceRangeToWithUntil/rangeTo.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSingleLineLetIntention")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSingleLineLetIntention extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSingleLineLetIntention() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSingleLineLetIntention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("let.kt")
+        public void testLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/let.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letMultipleLines.kt")
+        public void testLetMultipleLines() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letMultipleLines.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letNoSafeCall.kt")
+        public void testLetNoSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letNoSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letNotUseParameterReceiver.kt")
+        public void testLetNotUseParameterReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letNotUseParameterReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letNotUseReceiver.kt")
+        public void testLetNotUseReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letNotUseReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseIt.kt")
+        public void testLetUseIt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseIt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall1.kt")
+        public void testLetUseItWithMultipleMethodCall1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithMultipleMethodCall1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall2.kt")
+        public void testLetUseItWithMultipleMethodCall2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithMultipleMethodCall2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall3.kt")
+        public void testLetUseItWithMultipleMethodCall3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithMultipleMethodCall3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseParameter.kt")
+        public void testLetUseParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithMethodCall.kt")
+        public void testLetWithMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithMultipleMethodCall.kt")
+        public void testLetWithMultipleMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithMultipleMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithParameter.kt")
+        public void testLetWithParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sameLets.kt")
+        public void testSameLets() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/sameLets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/this.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisShort.kt")
+        public void testThisShort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/thisShort.kt");
             doTest(fileName);
         }
     }

@@ -10,3 +10,5 @@ val test: Int? = if (true) {
 else {
 
 }
+
+// SKIP_ANALYZE_CHECK

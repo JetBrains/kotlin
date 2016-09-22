@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -135,7 +134,7 @@ abstract class CompletionSession(
     protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, moduleDescriptor, isVisibleFilter)
 
     protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
-    protected val receiverTypes: Collection<KotlinType>?
+    protected val receiverTypes: Collection<ReceiverType>?
 
     init {
         val (callTypeAndReceiver, receiverTypes) = detectCallTypeAndReceiverTypes()
@@ -370,7 +369,7 @@ abstract class CompletionSession(
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 
         val runtimeVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
-        return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(runtimeType)))
+        return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(ReceiverType(runtimeType, 0))))
     }
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
@@ -430,19 +429,19 @@ abstract class CompletionSession(
                                     callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KotlinType>?> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<ReceiverType>?> {
         if (nameExpression == null) {
             return CallTypeAndReceiver.UNKNOWN to null
         }
 
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
 
-        var receiverTypes = callTypeAndReceiver.receiverTypes(
+        var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
                 bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
                 stableSmartCastsOnly = true /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
-            receiverTypes = receiverTypes?.map { it.makeNotNullable() }
+            receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
         }
 
         return callTypeAndReceiver to receiverTypes

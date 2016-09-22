@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import kotlin.reflect.jvm.ReflectLambdaKt;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
 /**
  * @suppress
@@ -67,38 +66,43 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return new KFunctionFromReferenceImpl(f);
+        return new KFunctionImpl(getOwner(f), f.getName(), f.getSignature());
     }
 
     // Properties
 
     @Override
     public KProperty0 property0(PropertyReference0 p) {
-        return p instanceof PropertyReference0Impl ? new KProperty0Augmented(p) : new KProperty0FromReferenceImpl(p);
+        return new KProperty0Impl(getOwner(p), p.getName(), p.getSignature());
     }
 
     @Override
     public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
-        return p instanceof MutablePropertyReference0Impl ? new KMutableProperty0Augmented(p) : new KMutableProperty0FromReferenceImpl(p);
+        return new KMutableProperty0Impl(getOwner(p), p.getName(), p.getSignature());
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
-        return p instanceof PropertyReference1Impl ? new KProperty1Augmented(p) : new KProperty1FromReferenceImpl(p);
+        return new KProperty1Impl(getOwner(p), p.getName(), p.getSignature());
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
-        return p instanceof MutablePropertyReference1Impl ? new KMutableProperty1Augmented(p) : new KMutableProperty1FromReferenceImpl(p);
+        return new KMutableProperty1Impl(getOwner(p), p.getName(), p.getSignature());
     }
 
     @Override
     public KProperty2 property2(PropertyReference2 p) {
-        return p instanceof PropertyReference2Impl ? new KProperty2Augmented(p) : new KProperty2FromReferenceImpl(p);
+        return new KProperty2Impl(getOwner(p), p.getName(), p.getSignature());
     }
 
     @Override
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
-        return p instanceof MutablePropertyReference2Impl ? new KMutableProperty2Augmented(p) : new KMutableProperty2FromReferenceImpl(p);
+        return new KMutableProperty2Impl(getOwner(p), p.getName(), p.getSignature());
+    }
+
+    private static KDeclarationContainerImpl getOwner(CallableReference reference) {
+        KDeclarationContainer owner = reference.getOwner();
+        return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
     }
 }

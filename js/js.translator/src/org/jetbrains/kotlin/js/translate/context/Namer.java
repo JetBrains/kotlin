@@ -401,6 +401,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression isInstanceOfObject(@NotNull JsExpression type) {
+        return invokeFunctionAndSetTypeCheckMetadata("isInstanceOf", type, TypeCheck.SAME_AS);
+    }
+
+    @NotNull
     public JsExpression orNull(@NotNull JsExpression callable) {
         return invokeFunctionAndSetTypeCheckMetadata("orNull", callable, TypeCheck.OR_NULL);
     }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.context
 
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 class InlineLambdaContext(
@@ -26,14 +25,18 @@ class InlineLambdaContext(
         contextKind: OwnerKind,
         parentContext: CodegenContext<*>,
         closure: MutableClosure?,
-        val isCrossInline: Boolean
+        val isCrossInline: Boolean,
+        val isPropertyReference: Boolean
 ) : MethodContext(functionDescriptor, contextKind, parentContext, closure) {
 
     override fun getFirstCrossInlineOrNonInlineContext(): CodegenContext<*> {
         if (isCrossInline) return this
 
-        val parent = parentContext as? ClosureContext ?:
-                     throw AssertionError("Parent of inlining lambda body should be ClosureContext, but: $parentContext")
+        val parent = if (isPropertyReference) parentContext as? AnonymousClassContext else  { parentContext as? ClosureContext } ?:
+                     throw AssertionError(
+                             "Parent of inlining lambda body should be " +
+                             "${if (isPropertyReference) "ClosureContext" else "AnonymousClassContext"}, but: $parentContext"
+                     )
 
         val grandParent = parent.parentContext ?:
                           throw AssertionError("Parent context of lambda class context should exist: $contextDescriptor")

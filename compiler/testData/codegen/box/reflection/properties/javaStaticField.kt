@@ -2,7 +2,9 @@
 // FILE: J.java
 
 public class J {
-    static String x;
+    public static String x;
+
+    static String packageLocalField;
 }
 
 // FILE: K.kt
@@ -18,6 +20,14 @@ fun box(): String {
     f.set("OK")
     assertEquals("OK", J.x)
     assertEquals("OK", f.getter())
+
+    val pl = J::packageLocalField.getter
+    try {
+        pl()
+        return "Fail: package local field must be inaccessible"
+    } catch (e: Exception) {
+        // OK
+    }
 
     return f.get()
 }

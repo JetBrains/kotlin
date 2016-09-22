@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
 operator fun <K, V: Any> BindingContext.get(slice: ReadOnlySlice<K, V>, key: K): V? = get(slice, key)
@@ -99,3 +101,15 @@ fun KtExpression.getReferenceTargets(context: BindingContext): Collection<Declar
 
 fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =
         context[BindingContext.ABBREVIATED_TYPE, this] ?: context[BindingContext.TYPE, this]
+
+fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType? {
+    val parent = parent
+    return when (parent) {
+        is KtTypeReference -> parent.getAbbreviatedTypeOrType(context)
+        is KtNullableType -> {
+            val outerType = parent.getAbbreviatedTypeOrType(context)
+            if (this is KtNullableType) outerType else outerType?.makeNotNullable()
+        }
+        else -> null
+    }
+}

@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
-    private long modificationStamp = 0;
+    private final AtomicLong modificationStamp = new AtomicLong();
 
     public KtDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -41,11 +43,11 @@ public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModi
     @Override
     public void subtreeChanged() {
         super.subtreeChanged();
-        modificationStamp++;
+        modificationStamp.getAndIncrement();
     }
 
     public long getModificationStamp() {
-        return modificationStamp;
+        return modificationStamp.get();
     }
 
     @Nullable

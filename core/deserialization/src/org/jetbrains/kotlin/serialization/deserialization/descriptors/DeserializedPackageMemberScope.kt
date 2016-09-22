@@ -53,7 +53,7 @@ open class DeserializedPackageMemberScope(
             (name in classNames || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name))) {
             return getClassDescriptor(name)
         }
-        return getContributedTypeAliases(name).singleOrNull()
+        return getTypeAlias(name)
     }
 
     private fun getClassDescriptor(name: Name): ClassDescriptor? =
@@ -65,16 +65,15 @@ open class DeserializedPackageMemberScope(
                 result.addIfNotNull(getClassDescriptor(className))
             }
         }
-        for (typeAliasName in typeAliasNames()) {
+        for (typeAliasName in typeAliasNames) {
             if (nameFilter(typeAliasName)) {
-                result.addAll(getContributedTypeAliases(typeAliasName))
+                result.addIfNotNull(getTypeAlias(typeAliasName))
             }
         }
     }
 
-    override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> = emptySet()
-    override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> = emptySet()
-    override fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name> = emptySet()
+    override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()
+    override fun getNonDeclaredVariableNames(): Set<Name> = emptySet()
 
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing

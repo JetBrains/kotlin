@@ -35,7 +35,7 @@ public class KtBlockExpression extends KtExpressionImpl implements KtStatementEx
 
     @Override
     public boolean shouldChangeModificationCount(PsiElement place) {
-        // To prent OutOfBlockModification increase from JavaCodeBlockModificationListener
+        // To prevent OutOfBlockModification increase from JavaCodeBlockModificationListener
         return false;
     }
 

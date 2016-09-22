@@ -1,0 +1,11 @@
+package
+
+public fun f1(): kotlin.Unit
+public fun f2(): kotlin.Unit
+public fun g1(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun g2(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun h1(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun h2(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun j(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun k1(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun k2(/*0*/ flag: kotlin.Boolean): kotlin.Unit

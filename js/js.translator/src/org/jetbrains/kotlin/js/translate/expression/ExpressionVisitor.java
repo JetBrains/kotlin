@@ -590,6 +590,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return JsEmpty.INSTANCE;
     }
 
+    @Override
+    public JsNode visitTypeAlias(@NotNull KtTypeAlias typeAlias, TranslationContext data) {
+        // Resolved by front-end, not used by backend
+        return JsEmpty.INSTANCE;
+    }
+
     private static ClassTranslator.TranslationResult translateClassOrObject(
             @NotNull KtClassOrObject declaration,
             @NotNull ClassDescriptor descriptor,

@@ -2,11 +2,11 @@
 // OPTIONS: usages
 
 class A(var n: Int) {
-    fun <caret>plusAssign(m: Int) {
+    operator fun <caret>plusAssign(m: Int) {
         n += m
     }
 
-    fun plusAssign(a: A) {
+    operator fun plusAssign(a: A) {
         this += a.n
     }
 }

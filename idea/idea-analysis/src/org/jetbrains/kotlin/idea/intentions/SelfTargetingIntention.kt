@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -81,7 +82,8 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         return null
     }
 
-    protected open fun allowCaretInsideElement(element: PsiElement): Boolean = true
+    protected open fun allowCaretInsideElement(element: PsiElement): Boolean =
+            element !is KtBlockExpression
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         val target = getTarget(editor, file) ?: return false

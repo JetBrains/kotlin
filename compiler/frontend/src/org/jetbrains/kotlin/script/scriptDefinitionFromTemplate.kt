@@ -85,7 +85,7 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>,
     override val name = template.simpleName!!
 
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-            template.primaryConstructor!!.parameters.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByFqName(scriptDescriptor, it.type.toString())) }
+            template.primaryConstructor!!.parameters.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByKType(scriptDescriptor, it.type)) }
 
     override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
             listOf(getKotlinTypeByFqName(scriptDescriptor, template.qualifiedName!!))

@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
+import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
+import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.SmartList
@@ -33,18 +37,20 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import java.lang.IllegalStateException
 import java.util.*
 
 class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction)
+        return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction) || element is FunctionWithSupersWrapper
     }
 
     override fun isToSearchInComments(psiElement: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_METHOD
@@ -87,11 +93,30 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         checkRedeclarations(descriptor, newName, result)
     }
 
+    class FunctionWithSupersWrapper(
+            val originalDeclaration: KtNamedFunction,
+            val supers: List<PsiElement>
+    ) : KtLightElement<KtNamedFunction, KtNamedFunction>, PsiNamedElement by originalDeclaration {
+        override val kotlinOrigin: KtNamedFunction?
+            get() = originalDeclaration
+        override val clsDelegate: KtNamedFunction
+            get() = originalDeclaration
+    }
+
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
         val wrappedMethod = wrapPsiMethod(element) ?: return element
 
-        // Use java dialog to ask we should rename function with the base element
-        val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
+        val deepestSuperMethods = wrappedMethod.findDeepestSuperMethods()
+        val substitutedJavaElement = when {
+            deepestSuperMethods.isEmpty() -> return element
+            wrappedMethod.isConstructor || deepestSuperMethods.size == 1 || element !is KtNamedFunction -> {
+                javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
+            }
+            else -> {
+                val chosenElements = checkSuperMethods(element, null, "rename")
+                if (chosenElements.size > 1) FunctionWithSupersWrapper(element, chosenElements) else wrappedMethod
+            }
+        }
 
         if (substitutedJavaElement is KtLightMethod && element is KtDeclaration) {
             return substitutedJavaElement.kotlinOrigin as? KtNamedFunction
@@ -100,14 +125,30 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return substitutedJavaElement
     }
 
+    override fun createRenameDialog(project: Project, element: PsiElement, nameSuggestionContext: PsiElement?, editor: Editor?): RenameDialog {
+        val elementForDialog = (element as? FunctionWithSupersWrapper)?.originalDeclaration ?: element
+        return object : RenameDialog(project, elementForDialog, nameSuggestionContext, editor) {
+            override fun createRenameProcessor(newName: String) = RenameProcessor(getProject(), element, newName, isSearchInComments, isSearchInNonJavaFiles)
+        }
+    }
+
     override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
-        if (element is KtLightMethod && newName != null && getJvmName(element) == null) {
+
+        if (newName == null) return
+
+        if (element is KtLightMethod && getJvmName(element) == null) {
             (element.kotlinOrigin as? KtNamedFunction)?.let { allRenames[it] = newName }
         }
-        val psiMethod = wrapPsiMethod(element)
-        if (psiMethod?.containingClass != null) {
-            javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
+        if (element is FunctionWithSupersWrapper) {
+            allRenames.remove(element)
+        }
+        for (declaration in (if (element is FunctionWithSupersWrapper) element.supers else listOf(element))) {
+            val psiMethod = wrapPsiMethod(declaration) ?: continue
+            allRenames[declaration] = newName
+            if (psiMethod.containingClass != null) {
+                javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
+            }
         }
     }
 

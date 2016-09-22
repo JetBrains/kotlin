@@ -1,7 +1,5 @@
 package
 
-public typealias GenericTestObject</*0*/ T>  = AnObject
-public typealias TestGCWC</*0*/ T>  = GenericClassWithCompanion<T>
 public val test11: AnObject
 public val test12: GenericTestObject<*> /* = AnObject */
 public val test13: kotlin.String = "OK"
@@ -35,3 +33,5 @@ public final class GenericClassWithCompanion</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+public typealias GenericTestObject</*0*/ T>  = AnObject
+public typealias TestGCWC</*0*/ T>  = GenericClassWithCompanion<T>

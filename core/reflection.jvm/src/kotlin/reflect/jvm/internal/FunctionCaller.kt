@@ -29,15 +29,18 @@ internal abstract class FunctionCaller<out M : Member>(
         internal val instanceClass: Class<*>?,
         valueParameterTypes: Array<Type>
 ) {
-    internal val parameterTypes: List<Type> =
+    val parameterTypes: List<Type> =
             instanceClass?.let { listOf(it, *valueParameterTypes) } ?:
             valueParameterTypes.toList()
+
+    val arity: Int
+        get() = parameterTypes.size
 
     abstract fun call(args: Array<*>): Any?
 
     protected open fun checkArguments(args: Array<*>) {
-        if (parameterTypes.size != args.size) {
-            throw IllegalArgumentException("Callable expects ${parameterTypes.size} arguments, but ${args.size} were provided.")
+        if (arity != args.size) {
+            throw IllegalArgumentException("Callable expects $arity arguments, but ${args.size} were provided.")
         }
     }
 
@@ -95,7 +98,7 @@ internal abstract class FunctionCaller<out M : Member>(
     class InstanceMethod(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return callMethod(args[0], args.asList().subList(1, args.size).toTypedArray())
+            return callMethod(args[0], args.copyOfRange(1, args.size))
         }
     }
 
@@ -103,7 +106,7 @@ internal abstract class FunctionCaller<out M : Member>(
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             checkObjectInstance(args.firstOrNull())
-            return callMethod(null, args.asList().subList(1, args.size).toTypedArray())
+            return callMethod(null, args.copyOfRange(1, args.size))
         }
     }
 

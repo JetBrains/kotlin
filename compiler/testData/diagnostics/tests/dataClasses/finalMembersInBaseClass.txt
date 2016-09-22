@@ -1,0 +1,34 @@
+package
+
+public interface AbstractAnyMembers {
+    public abstract override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun toString(): kotlin.String
+}
+
+public abstract class Base {
+    public constructor Base()
+    public final override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun toString(): kotlin.String
+}
+
+public final data class Data1 : Base {
+    public constructor Data1(/*0*/ field: kotlin.String)
+    public final val field: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ field: kotlin.String = ...): Data1
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Data2 : Base, AbstractAnyMembers {
+    public constructor Data2(/*0*/ field: kotlin.String)
+    public final val field: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ field: kotlin.String = ...): Data2
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}

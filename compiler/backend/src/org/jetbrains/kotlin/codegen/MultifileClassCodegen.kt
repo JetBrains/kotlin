@@ -263,7 +263,7 @@ class MultifileClassCodegen(
         if (Visibilities.isPrivate(descriptor.visibility)) return false
         if (AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE) return false
 
-        if (state.classBuilderMode != ClassBuilderMode.FULL) return true
+        if (!state.classBuilderMode.generateBodies) return true
 
         if (shouldGeneratePartHierarchy) {
             if (descriptor !is PropertyDescriptor || !descriptor.isConst) return false
@@ -323,7 +323,7 @@ class MultifileClassCodegen(
     }
 
     private fun writeKotlinMultifileFacadeAnnotationIfNeeded() {
-        if (!state.classBuilderMode.shouldGenerateMetadata()) return
+        if (!state.classBuilderMode.generateMetadata) return
         if (files.any { it.isScript }) return
 
         writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->

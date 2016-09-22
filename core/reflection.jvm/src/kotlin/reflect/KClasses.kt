@@ -15,12 +15,15 @@
  */
 
 @file:JvmName("KClasses")
+@file:Suppress("UNCHECKED_CAST")
+
 package kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
+import kotlin.reflect.jvm.internal.KCallableImpl
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
@@ -69,10 +72,7 @@ val KClass<*>.defaultType: KType
  * Does not include members declared in supertypes.
  */
 val KClass<*>.declaredMembers: Collection<KCallable<*>>
-    get() = with(this as KClassImpl) {
-        (getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = true) +
-         getMembers(staticScope, declaredOnly = true, nonExtensions = true, extensions = true)).toList()
-    }
+    get() = (this as KClassImpl).data().declaredMembers
 
 /**
  * Returns all functions declared in this class, including all non-static methods declared in the class
@@ -85,28 +85,19 @@ val KClass<*>.functions: Collection<KFunction<*>>
  * Returns static functions declared in this class.
  */
 val KClass<*>.staticFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = true)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().allStaticMembers.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns non-extension non-static functions declared in this class and all of its superclasses.
  */
 val KClass<*>.memberFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = false)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().allNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class and all of its superclasses.
  */
 val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = false, extensions = true)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().allNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns all functions declared in this class.
@@ -114,76 +105,57 @@ val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
  * declared in the class and the superclasses, as well as static methods declared in the class.
  */
 val KClass<*>.declaredFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = true)
-            .plus(getMembers(staticScope, declaredOnly = true, nonExtensions = true, extensions = true))
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().declaredMembers.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns non-extension non-static functions declared in this class.
  */
 val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = false)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().declaredNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class.
  */
 val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().declaredNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns static properties declared in this class.
  * Only properties representing static fields of Java classes are considered static.
  */
 val KClass<*>.staticProperties: Collection<KProperty0<*>>
-    get() = (this as KClassImpl)
-            .getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = false)
-            .filterIsInstance<KProperty0<*>>()
-            .toList()
+    get() = (this as KClassImpl).data().allStaticMembers.filter { it.isNotExtension && it is KProperty0<*> } as Collection<KProperty0<*>>
 
 /**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
 val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
-    get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = false)
-            .filterIsInstance<KProperty1<T, *>>()
-            .toList()
+    get() = (this as KClassImpl<T>).data().allNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class and all of its superclasses.
  */
 val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
-    get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = false, nonExtensions = false, extensions = true)
-            .filterIsInstance<KProperty2<T, *, *>>()
-            .toList()
+    get() = (this as KClassImpl<T>).data().allNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
 /**
  * Returns non-extension properties declared in this class.
  */
 val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
-    get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = false)
-            .filterIsInstance<KProperty1<T, *>>()
-            .toList()
+    get() = (this as KClassImpl<T>).data().declaredNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class.
  */
 val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
-    get() = (this as KClassImpl<T>)
-            .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
-            .filterIsInstance<KProperty2<T, *, *>>()
-            .toList()
+    get() = (this as KClassImpl<T>).data().declaredNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
+
+private val KCallableImpl<*>.isExtension: Boolean
+    get() = descriptor.extensionReceiverParameter != null
+
+private val KCallableImpl<*>.isNotExtension: Boolean
+    get() = !isExtension
 
 /**
  * Immediate superclasses of this class, in the order they are listed in the source code.
@@ -255,7 +227,6 @@ fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
  * @see [KClass.isInstance]
  * @see [KClass.safeCast]
  */
-@Suppress("UNCHECKED_CAST")
 fun <T : Any> KClass<T>.cast(value: Any?): T {
     if (!isInstance(value)) throw TypeCastException("Value cannot be cast to $qualifiedName")
     return value as T
@@ -268,7 +239,6 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
  * @see [KClass.isInstance]
  * @see [KClass.cast]
  */
-@Suppress("UNCHECKED_CAST")
 fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return if (isInstance(value)) value as T else null
 }

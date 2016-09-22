@@ -1,0 +1,4 @@
+// "Make 'T' reified and 'dereferenceClass' inline" "true"
+
+inline fun <reified T: Any> dereferenceClass(): Any =
+        T::class<caret>

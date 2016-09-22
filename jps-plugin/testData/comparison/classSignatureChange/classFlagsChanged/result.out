@@ -5,9 +5,9 @@ changes in test/AnnotationFlagAdded: CLASS_SIGNATURE
 changes in test/AnnotationFlagRemoved: CLASS_SIGNATURE
 changes in test/AnnotationFlagUnchanged: NONE
 changes in test/DataFlagAdded: CLASS_SIGNATURE, MEMBERS
-    [component1, copy]
+    [component1, copy, equals, hashCode, toString]
 changes in test/DataFlagRemoved: CLASS_SIGNATURE, MEMBERS
-    [component1, copy]
+    [component1, copy, equals, hashCode, toString]
 changes in test/DataFlagUnchanged: NONE
 changes in test/EnumFlagAdded: CLASS_SIGNATURE
 changes in test/EnumFlagRemoved: CLASS_SIGNATURE

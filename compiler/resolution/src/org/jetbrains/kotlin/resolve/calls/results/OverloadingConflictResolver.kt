@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import java.lang.AssertionError
 import java.util.*
 
 class OverloadingConflictResolver<C : Any>(
@@ -63,7 +64,7 @@ class OverloadingConflictResolver<C : Any>(
         if (candidates.size == 1) return candidates
 
         val fixedCandidates = if (getVariableCandidates(candidates.first()) != null) {
-            findMaximallySpecificVariableAsFunctionCalls(candidates) ?: return candidates
+            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return candidates
         }
         else {
             candidates
@@ -137,13 +138,15 @@ class OverloadingConflictResolver<C : Any>(
             }
 
     // null means ambiguity between variables
-    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Set<C>): Set<C>? {
+    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Set<C>, isDebuggerContext: Boolean): Set<C>? {
         val variableCalls = candidates.mapTo(newResolvedCallSet(candidates.size)) {
             getVariableCandidates(it) ?: throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
-        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false, false) ?: return null
+        val maxSpecificVariableCalls = chooseMaximallySpecificCandidates(variableCalls, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                                                                        isDebuggerContext = isDebuggerContext, discriminateGenerics = false)
 
+        val maxSpecificVariableCall = maxSpecificVariableCalls.singleOrNull() ?: return null
         return candidates.filterTo(newResolvedCallSet(2)) {
             getVariableCandidates(it)!!.resultingDescriptor == maxSpecificVariableCall.resultingDescriptor
         }

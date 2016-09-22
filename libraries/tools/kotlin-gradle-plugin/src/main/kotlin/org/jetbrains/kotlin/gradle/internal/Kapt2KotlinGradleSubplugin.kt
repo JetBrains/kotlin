@@ -25,9 +25,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
 // apply plugin: 'kotlin-kapt2'
@@ -40,7 +42,7 @@ class Kapt2GradleSubplugin : Plugin<Project> {
 }
 
 // Subplugin for the Kotlin Gradle plugin
-class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
+class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         private val VERBOSE_OPTION_NAME = "kapt.verbose"
 
@@ -49,7 +51,7 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
         }
     }
     
-    override fun isApplicable(project: Project, task: AbstractCompile) = Kapt2GradleSubplugin.isEnabled(project)
+    override fun isApplicable(project: Project, task: KotlinCompile) = Kapt2GradleSubplugin.isEnabled(project)
 
     fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {
         return File(project.project.buildDir, "generated/source/kapt2/$sourceSetName")
@@ -61,7 +63,7 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
 
     override fun apply(
             project: Project, 
-            kotlinCompile: AbstractCompile,
+            kotlinCompile: KotlinCompile,
             javaCompile: AbstractCompile,
             variantData: Any?,
             javaSourceSet: SourceSet?
@@ -78,19 +80,24 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
                 kaptClasspath.addAll(kapt2Configuration.resolve())
             }
         }
-
-        val generatedFilesDir = if (variantData != null) {
+        
+        val sourceSetName = if (variantData != null) {
             for (provider in (variantData as BaseVariantData<*>).sourceProviders) {
                 handleSourceSet((provider as AndroidSourceSet).name)
             }
 
-            getKaptGeneratedDir(project, variantData.name).apply { variantData.addJavaSourceFoldersToModel(this) }
+            variantData.name
         }
         else {
             if (javaSourceSet == null) error("Java source set should not be null")
 
             handleSourceSet(javaSourceSet.name)
-            getKaptGeneratedDir(project, javaSourceSet.name)
+            javaSourceSet.name
+        }
+
+        val generatedFilesDir = getKaptGeneratedDir(project, sourceSetName)
+        if (variantData != null) {
+            (variantData as BaseVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
         }
 
         // Skip annotation processing in kotlinc if no kapt dependencies were provided
@@ -116,6 +123,12 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin {
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
         }
+
+        val annotationsFile = File(kotlinCompile.taskBuildDirectory, "source-annotations.txt")
+        kotlinCompile.sourceAnnotationsRegistry = SourceAnnotationsRegistry(annotationsFile)
+
+        val incrementalCompilationDataFile = File(project.buildDir, "tmp/kapt2/$sourceSetName/incrementalData.txt")
+        pluginOptions += SubpluginOption("incrementalData", incrementalCompilationDataFile.absolutePath)
         
         return pluginOptions
     }

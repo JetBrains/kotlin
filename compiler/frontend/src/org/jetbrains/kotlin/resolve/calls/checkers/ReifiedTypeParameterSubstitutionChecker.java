@@ -50,7 +50,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
 
             if (argumentDeclarationDescriptor instanceof TypeParameterDescriptor &&
                 !((TypeParameterDescriptor) argumentDeclarationDescriptor).isReified()) {
-                context.getTrace().report(Errors.TYPE_PARAMETER_AS_REIFIED.on(reportErrorOn, parameter));
+                context.getTrace().report(Errors.TYPE_PARAMETER_AS_REIFIED.on(reportErrorOn, (TypeParameterDescriptor) argumentDeclarationDescriptor));
             }
             else if (TypeUtilsKt.cannotBeReified(argument)) {
                 context.getTrace().report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(reportErrorOn, argument));

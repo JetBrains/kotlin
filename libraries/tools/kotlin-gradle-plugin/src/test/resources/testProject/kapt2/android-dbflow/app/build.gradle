@@ -34,6 +34,6 @@ dependencies {
     compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}"
 
     // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
 
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg
 
 import com.google.common.collect.Lists
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
@@ -104,7 +105,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         builder.bindLabel(afterDeclaration)
     }
 
+    private class CatchFinallyLabels(val onException: Label?, val toFinally: Label?, val tryExpression: KtTryExpression?)
+
     private inner class CFPVisitor(private val builder: ControlFlowBuilder) : KtVisitorVoid() {
+
+        private val catchFinallyStack = Stack<CatchFinallyLabels>()
 
         private val conditionVisitor = object : KtVisitorVoid() {
 
@@ -567,9 +572,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
             fun generate() {
                 val finalExpression = finallyBlock?.finalExpression ?: return
+                catchFinallyStack.push(CatchFinallyLabels(null, null, null))
                 startFinally?.let {
                     assert(finishFinally != null) { "startFinally label is set to $startFinally but finishFinally label is not set" }
                     builder.repeatPseudocode(it, finishFinally!!)
+                    catchFinallyStack.pop()
                     return
                 }
                 builder.createUnboundLabel("start finally").let {
@@ -581,6 +588,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                     finishFinally = it
                     builder.bindLabel(it)
                 }
+                catchFinallyStack.pop()
             }
         }
 
@@ -647,7 +655,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
 
             val tryBlock = expression.tryBlock
+            catchFinallyStack.push(CatchFinallyLabels(onException, onExceptionToFinallyBlock, expression))
             generateInstructions(tryBlock)
+            generateJumpsToCatchAndFinally()
+            catchFinallyStack.pop()
 
             if (hasCatches && onException != null) {
                 val afterCatches = builder.createUnboundLabel("afterCatches")
@@ -796,6 +807,9 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitBreakExpression(expression: KtBreakExpression) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
+                if (jumpCrossesTryCatchBoundary(expression, loop)) {
+                    generateJumpsToCatchAndFinally()
+                }
                 if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopExitPoint(loop)?.let { builder.jump(it, expression) }
                 }
@@ -805,6 +819,9 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitContinueExpression(expression: KtContinueExpression) {
             val loop = getCorrespondingLoop(expression)
             if (loop != null) {
+                if (jumpCrossesTryCatchBoundary(expression, loop)) {
+                    generateJumpsToCatchAndFinally()
+                }
                 if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopConditionEntryPoint(loop)?.let { builder.jump(it, expression) }
                 }
@@ -860,6 +877,24 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             return loop
         }
 
+        private fun returnCrossesTryCatchBoundary(returnExpression: KtReturnExpression): Boolean {
+            val targetLabel = returnExpression.getTargetLabel() ?: return true
+            val labeledElement = trace.get(BindingContext.LABEL_TARGET, targetLabel) ?: return true
+            return jumpCrossesTryCatchBoundary(returnExpression, labeledElement)
+        }
+
+        private fun jumpCrossesTryCatchBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: PsiElement): Boolean {
+            var current = jumpExpression.parent
+            while (current != null) {
+                when (current) {
+                    jumpTarget -> return false
+                    is KtTryExpression -> return true
+                    else -> current = current.parent
+                }
+            }
+            return false
+        }
+
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
 
@@ -882,6 +917,9 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression) {
+            if (returnCrossesTryCatchBoundary(expression)) {
+                generateJumpsToCatchAndFinally()
+            }
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
                 generateInstructions(returnedExpression)
@@ -1124,15 +1162,30 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
         }
 
+        private fun generateJumpsToCatchAndFinally() {
+            if (catchFinallyStack.isNotEmpty()) {
+                with(catchFinallyStack.peek()) {
+                    if (tryExpression != null) {
+                        onException?.let {
+                            builder.nondeterministicJump(it, tryExpression, null)
+                        }
+                        toFinally?.let {
+                            builder.nondeterministicJump(it, tryExpression, null)
+                        }
+                    }
+                }
+            }
+        }
+
         override fun visitThrowExpression(expression: KtThrowExpression) {
             mark(expression)
 
-            val thrownExpression = expression.thrownExpression ?: return
+            generateJumpsToCatchAndFinally()
 
+            val thrownExpression = expression.thrownExpression ?: return
             generateInstructions(thrownExpression)
 
             val thrownValue = builder.getBoundValue(thrownExpression) ?: return
-
             builder.throwException(expression, thrownValue)
         }
 

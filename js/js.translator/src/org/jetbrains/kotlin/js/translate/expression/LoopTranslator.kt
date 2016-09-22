@@ -102,12 +102,12 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter
 
     val loopParameter = getLoopParameter(expression)
-    val (parameterName, parameterIsTemporary) = if (loopParameter != null) {
-        Pair(context.getNameForElement(loopParameter), false)
+    val parameterName = if (loopParameter != null) {
+        context.getNameForElement(loopParameter)
     }
     else {
         assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
-        Pair(context.scope().declareTemporary(), true)
+        context.scope().declareTemporary()
     }
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {
@@ -149,12 +149,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val conditionExpression = lessThanEq(parameterName.makeRef(), rangeEnd)
         val incrementExpression = JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef())
 
-        return if (parameterIsTemporary) {
-            JsFor(assignment(parameterName.makeRef(), rangeStart), conditionExpression, incrementExpression, body)
-        }
-        else {
-            JsFor(newVar(parameterName, rangeStart), conditionExpression, incrementExpression, body)
-        }
+        return JsFor(newVar(parameterName, rangeStart), conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverRange(): JsStatement {
@@ -171,13 +166,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         val conditionExpression = lessThanEq(parameterName.makeRef(), end)
         val incrementExpression = addAssign(parameterName.makeRef(), increment)
 
-
-        return if (parameterIsTemporary) {
-            JsFor(assignment(parameterName.makeRef(), start), conditionExpression, incrementExpression, body)
-        }
-        else {
-            JsFor(newVar(parameterName, start), conditionExpression, incrementExpression, body)
-        }
+        return JsFor(newVar(parameterName, start), conditionExpression, incrementExpression, body)
     }
 
     fun translateForOverArray(): JsStatement {

@@ -68,7 +68,13 @@ class KotlinCodeBlockModificationListener(
         }
 
         private fun isInsideCodeBlock(element: PsiElement): Boolean {
-            //TODO: other types
+            val lambda = KtPsiUtil.getTopmostParentOfTypes(element, KtLambdaExpression::class.java)
+            if (lambda is KtLambdaExpression) {
+                if (KtPsiUtil.getTopmostParentOfTypes(lambda, KtSuperTypeCallEntry::class.java) != null) {
+                    return true
+                }
+            }
+
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
             if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return false // should not be local declaration
 

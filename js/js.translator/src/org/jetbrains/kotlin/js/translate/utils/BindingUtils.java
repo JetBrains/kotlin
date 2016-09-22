@@ -106,7 +106,7 @@ public final class BindingUtils {
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull KtReferenceExpression reference) {
         if (BindingContextUtils.isExpressionWithValidReference(reference, context)) {
-            return BindingContextUtils.getNotNull(context, BindingContext.REFERENCE_TARGET, reference);
+            return resolveObjectViaTypeAlias(BindingContextUtils.getNotNull(context, BindingContext.REFERENCE_TARGET, reference));
         }
         return null;
     }
@@ -114,7 +114,24 @@ public final class BindingUtils {
     @Nullable
     private static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull KtReferenceExpression reference) {
-        return context.get(BindingContext.REFERENCE_TARGET, reference);
+        DeclarationDescriptor descriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
+        return descriptor != null ? resolveObjectViaTypeAlias(descriptor) : null;
+    }
+
+    @NotNull
+    private static DeclarationDescriptor resolveObjectViaTypeAlias(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof TypeAliasDescriptor) {
+            ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
+            assert classDescriptor != null : "Class descriptor must be non-null in resolved typealias: " + descriptor;
+            if (classDescriptor.getKind() != ClassKind.OBJECT) {
+                classDescriptor = classDescriptor.getCompanionObjectDescriptor();
+                assert classDescriptor != null : "Resolved typealias must have non-null class descriptor: " + descriptor;
+            }
+            return classDescriptor;
+        }
+        else {
+            return descriptor;
+        }
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull KtExpression expression) {

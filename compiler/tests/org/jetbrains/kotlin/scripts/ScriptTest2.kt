@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.lang.Exception
 import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
@@ -88,6 +89,41 @@ class ScriptTest2 {
         val aClass = compileScript("overriden_parameter.kts", ScriptBaseClassWithOverridenProperty::class, null)
         Assert.assertNotNull(aClass)
         aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+    }
+
+    @Test
+    fun testScriptWithArrayParam() {
+        val aClass = compileScript("array_parameter.kts", ScriptWithArrayParam::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("one", "two"))
+    }
+
+    @Test
+    fun testScriptWithNullableParam() {
+        val aClass = compileScript("nullable_parameter.kts", ScriptWithNullableParam::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Int::class.javaObjectType).newInstance(null)
+    }
+
+    @Test
+    fun testScriptVarianceParams() {
+        val aClass = compileScript("variance_parameters.kts", ScriptVarianceParams::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Array<in Number>::class.java, Array<out Number>::class.java).newInstance(arrayOf("one"), arrayOf(1, 2))
+    }
+
+    @Test
+    fun testScriptWithNullableProjection() {
+        val aClass = compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf<String?>(null))
+    }
+
+    @Test
+    fun testScriptWithArray2DParam() {
+        val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, null)
+        Assert.assertNotNull(aClass)
+        aClass!!.getConstructor(Array<Array<in String>>::class.java).newInstance(arrayOf(arrayOf("one"), arrayOf("two")))
     }
 
     private fun compileScript(
@@ -202,6 +238,21 @@ abstract class ScriptWithoutParams(num: Int)
         scriptFilePattern =".*\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptBaseClassWithOverridenProperty(override val num: Int) : TestClassWithOverridableProperty(num)
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithArrayParam(val myArgs: Array<String>)
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithNullableParam(val param: Int?)
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptVarianceParams(val param1: Array<in Number>, val param2: Array<out Number>)
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithNullableProjection(val param: Array<String?>)
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithArray2DParam(val param: Array<Array<in String>>)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)

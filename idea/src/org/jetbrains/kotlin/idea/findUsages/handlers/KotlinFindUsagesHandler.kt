@@ -68,7 +68,13 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         return searchReferences(element, processor, options) && searchTextOccurrences(element, processor, options)
     }
 
-    protected abstract fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean
+    protected fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        val searcher = createSearcher(element, processor, options)
+        if (!runReadAction { searcher.buildTaskList() }) return false
+        return searcher.executeTasks()
+    }
+
+    protected abstract fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
@@ -84,6 +90,20 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
             }
         }, options)
         return results
+    }
+
+    protected abstract class Searcher(val element: PsiElement, val processor: Processor<UsageInfo>, val options: FindUsagesOptions) {
+        private val tasks = ArrayList<() -> Boolean>()
+
+        protected fun addTask(task: () -> Boolean) {
+            tasks.add(task)
+        }
+
+        fun executeTasks(): Boolean {
+            return tasks.all { it() }
+        }
+
+        abstract fun buildTaskList(): Boolean
     }
 
     companion object {

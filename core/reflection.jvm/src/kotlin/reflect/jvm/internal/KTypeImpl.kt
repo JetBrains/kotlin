@@ -42,8 +42,7 @@ internal class KTypeImpl(
 ) : KType {
     internal val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
 
-    override val classifier: KClassifier?
-        get() = convert(type)
+    override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
     private fun convert(type: KotlinType): KClassifier? {
         val descriptor = type.constructor.declarationDescriptor
@@ -71,47 +70,46 @@ internal class KTypeImpl(
         }
     }
 
-    override val arguments: List<KTypeProjection>
-        get() {
-            val typeArguments = type.arguments
-            if (typeArguments.isEmpty()) return emptyList()
+    override val arguments: List<KTypeProjection> by ReflectProperties.lazySoft arguments@ {
+        val typeArguments = type.arguments
+        if (typeArguments.isEmpty()) return@arguments emptyList<KTypeProjection>()
 
-            val parameterizedTypeArguments by lazy(PUBLICATION) { javaType.parameterizedTypeArguments }
+        val parameterizedTypeArguments by lazy(PUBLICATION) { javaType.parameterizedTypeArguments }
 
-            return typeArguments.mapIndexed { i, typeProjection ->
-                if (typeProjection.isStarProjection) {
-                    KTypeProjection.STAR
-                }
-                else {
-                    val type = KTypeImpl(typeProjection.type) {
-                        val javaType = javaType
-                        when (javaType) {
-                            is Class<*> -> {
-                                // It's either an array or a raw type.
-                                // TODO: return upper bound of the corresponding parameter for a raw type?
-                                if (javaType.isArray) javaType.componentType else Any::class.java
-                            }
-                            is GenericArrayType -> {
-                                if (i != 0) throw KotlinReflectionInternalError("Array type has been queried for a non-0th argument: $this")
-                                javaType.genericComponentType
-                            }
-                            is ParameterizedType -> {
-                                val argument = parameterizedTypeArguments[i]
-                                // In "Foo<out Bar>", the JVM type of the first type argument should be "Bar", not "? extends Bar"
-                                if (argument !is WildcardType) argument
-                                else argument.lowerBounds.firstOrNull() ?: argument.upperBounds.first()
-                            }
-                            else -> throw KotlinReflectionInternalError("Non-generic type has been queried for arguments: $this")
+        typeArguments.mapIndexed { i, typeProjection ->
+            if (typeProjection.isStarProjection) {
+                KTypeProjection.STAR
+            }
+            else {
+                val type = KTypeImpl(typeProjection.type) {
+                    val javaType = javaType
+                    when (javaType) {
+                        is Class<*> -> {
+                            // It's either an array or a raw type.
+                            // TODO: return upper bound of the corresponding parameter for a raw type?
+                            if (javaType.isArray) javaType.componentType else Any::class.java
                         }
+                        is GenericArrayType -> {
+                            if (i != 0) throw KotlinReflectionInternalError("Array type has been queried for a non-0th argument: $this")
+                            javaType.genericComponentType
+                        }
+                        is ParameterizedType -> {
+                            val argument = parameterizedTypeArguments[i]
+                            // In "Foo<out Bar>", the JVM type of the first type argument should be "Bar", not "? extends Bar"
+                            if (argument !is WildcardType) argument
+                            else argument.lowerBounds.firstOrNull() ?: argument.upperBounds.first()
+                        }
+                        else -> throw KotlinReflectionInternalError("Non-generic type has been queried for arguments: $this")
                     }
-                    when (typeProjection.projectionKind) {
-                        Variance.INVARIANT -> KTypeProjection.invariant(type)
-                        Variance.IN_VARIANCE -> KTypeProjection.contravariant(type)
-                        Variance.OUT_VARIANCE -> KTypeProjection.covariant(type)
-                    }
+                }
+                when (typeProjection.projectionKind) {
+                    Variance.INVARIANT -> KTypeProjection.invariant(type)
+                    Variance.IN_VARIANCE -> KTypeProjection.contravariant(type)
+                    Variance.OUT_VARIANCE -> KTypeProjection.covariant(type)
                 }
             }
         }
+    }
 
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable

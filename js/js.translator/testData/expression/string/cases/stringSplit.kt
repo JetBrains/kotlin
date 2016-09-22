@@ -14,7 +14,7 @@ fun box(): String {
         val expected = test.second
         val result = testInput.splitWithRegex(regexp)
 
-        if (result != expected) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
+        if (result.asList() != expected.asList()) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
     }
 
     for (test in tests) {
@@ -23,7 +23,7 @@ fun box(): String {
         val expected = Array(limit) { test.second[it] }
         val result = testInput.splitWithRegex(regexp, limit)
 
-        if (result != expected) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
+        if (result.asList() != expected.asList()) return "Wrong result for '$regexp' -- Expected: $expected | Actual: $result"
     }
 
     return "OK"

@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessorStub>
-        implements KtDeclarationWithBody, KtModifierListOwner, KtWithExpressionInitializer {
+        implements KtDeclarationWithBody, KtModifierListOwner, KtDeclarationWithInitializer {
     public KtPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }

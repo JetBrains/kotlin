@@ -1,0 +1,13 @@
+[dataClass.0.kt] Value read 16 val (x, y) = getThis()
+[dataClass.0.kt] Value read 24 val (x, y) = get(0)
+[dataClass.1.kt] Function call 6 a.component1()
+[dataClass.1.kt] Value read 10 val (x2, y2, z2) = g()
+[dataClass.1.kt] Value read 11 val (x3, y3, z3) = h()
+[dataClass.1.kt] Value read 13 val (x4, y4, z4) = listOfA()[0]
+[dataClass.1.kt] Value read 15 val (x5, y5, z5) = javaClass.getA()[0]
+[dataClass.1.kt] Value read 25 val (x1, y1) = p1[0]
+[dataClass.1.kt] Value read 26 val (x2, y2) = p2[0]
+[dataClass.1.kt] Value read 27 val (x3, y3) = JavaClass4.getNested()[0]
+[dataClass.1.kt] Value read 5 a.n
+[dataClass.1.kt] Value read 8 val (x, y, z) = a
+[dataClass.1.kt] Value read 9 val (x1, y1, z1) = f()

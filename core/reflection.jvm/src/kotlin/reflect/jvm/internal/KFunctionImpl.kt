@@ -28,19 +28,19 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 
-internal open class KFunctionImpl protected constructor(
+internal class KFunctionImpl private constructor(
         override val container: KDeclarationContainerImpl,
         name: String,
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl() {
+) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionImpl, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
             container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
     )
 
-    override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
+    override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
     }
 
@@ -103,11 +103,7 @@ internal open class KFunctionImpl protected constructor(
         }
     }
 
-    override fun getArity(): Int {
-        return descriptor.valueParameters.size +
-               (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
-               (if (descriptor.extensionReceiverParameter != null) 1 else 0)
-    }
+    override fun getArity() = caller.arity
 
     override val isInline: Boolean
         get() = descriptor.isInline

@@ -60,7 +60,7 @@ class SpecifyTypeExplicitlyIntention :
 
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 
-        val initializer = (element as? KtWithExpressionInitializer)?.initializer
+        val initializer = (element as? KtDeclarationWithInitializer)?.initializer
         return if (initializer != null) {
             TextRange(element.startOffset, initializer.startOffset - 1)
         }

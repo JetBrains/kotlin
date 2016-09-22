@@ -1,9 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertNotEquals
@@ -108,12 +109,12 @@ class KotlinGradleIT: BaseGradleIT() {
     fun testLogLevelForceGC() {
         val debugProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.DEBUG)
         debugProject.build("build") {
-            assertContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
+            assertContains(KotlinGradleBuildServices.FORCE_SYSTEM_GC_MESSAGE)
         }
 
         val infoProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
         infoProject.build("clean", "build") {
-            assertNotContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
+            assertNotContains(KotlinGradleBuildServices.FORCE_SYSTEM_GC_MESSAGE)
         }
     }
 
@@ -141,6 +142,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
             assertReportExists("subproject")
             assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+            checkKotlinGradleBuildServices()
         }
     }
 
@@ -260,6 +262,28 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("Connected to daemon")
+        }
+    }
+
+    @Test
+    fun testTypeAliasIncremental() {
+        val project = Project("typeAlias", GRADLE_VERSION)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val curryKt = project.projectDir.getFileByName("Curry.kt")
+        val useCurryKt = project.projectDir.getFileByName("UseCurry.kt")
+
+        curryKt.modify {
+            it.replace("class Curry", "internal class Curry")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(curryKt, useCurryKt))
         }
     }
 }

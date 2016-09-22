@@ -23,5 +23,5 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Unresolved reference: SamInterface
-Unresolved reference: SamInterface
+Interface SamInterface does not have constructors
+Interface SamInterface does not have constructors

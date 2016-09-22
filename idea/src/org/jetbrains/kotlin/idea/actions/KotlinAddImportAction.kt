@@ -134,6 +134,8 @@ class KotlinAddImportAction internal constructor(
         return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("imports.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
+            override fun isSpeedSearchEnabled() = true
+
             override fun onChosen(selectedValue: AutoImportVariant?, finalChoice: Boolean): PopupStep<String>? {
                 if (selectedValue == null || project.isDisposed) return null
 

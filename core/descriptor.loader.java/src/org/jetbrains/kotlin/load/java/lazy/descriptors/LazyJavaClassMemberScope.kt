@@ -67,13 +67,15 @@ class LazyJavaClassMemberScope(
         private val jClass: JavaClass
 ) : LazyJavaScope(c) {
 
-    override fun computeMemberIndex(): MemberIndex {
-        return object : ClassMemberIndex(jClass, { !it.isStatic }) {
-            // For SAM-constructors
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
-                    = super.getMethodNames(nameFilter) + getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
+    override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass, { !it.isStatic })
+
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
+        ownerDescriptor.typeConstructor.supertypes.flatMapTo(HashSet()) {
+            it.memberScope.getFunctionNames()
+        }.apply {
+            addAll(declaredMemberIndex().getMethodNames())
+            addAll(computeClassNames(kindFilter, nameFilter))
         }
-    }
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.constructors
@@ -136,7 +138,7 @@ class LazyJavaClassMemberScope(
     }
 
     private fun searchMethodsByNameWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
-            memberIndex().findMethodsByName(name).map { resolveMethodToFunctionDescriptor(it) }
+            declaredMemberIndex().findMethodsByName(name).map { resolveMethodToFunctionDescriptor(it) }
 
     private fun searchMethodsInSupertypesWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
             getFunctionsFromSupertypes(name).filterNot {
@@ -256,14 +258,14 @@ class LazyJavaClassMemberScope(
                 name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING)
 
         // add declarations
-        addOverriddenBuiltinMethods(name, result, mergedFunctionFromSuperTypes, result) {
-            searchMethodsByNameWithoutBuiltinMagic(it)
-        }
+        addOverriddenBuiltinMethods(
+                name, result, mergedFunctionFromSuperTypes, result,
+                this::searchMethodsByNameWithoutBuiltinMagic)
 
         // add from super types
-        addOverriddenBuiltinMethods(name, result, mergedFunctionFromSuperTypes, specialBuiltinsFromSuperTypes) {
-            searchMethodsInSupertypesWithoutBuiltinMagic(it)
-        }
+        addOverriddenBuiltinMethods(
+                name, result, mergedFunctionFromSuperTypes, specialBuiltinsFromSuperTypes,
+                this::searchMethodsInSupertypesWithoutBuiltinMagic)
 
         val visibleFunctionsFromSupertypes =
                 functionsFromSupertypes.filter { isVisibleAsFunctionInCurrentClass(it) } + specialBuiltinsFromSuperTypes
@@ -344,7 +346,7 @@ class LazyJavaClassMemberScope(
             specialBuiltin: CallableDescriptor,
             alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
     ): SimpleFunctionDescriptor =
-        if (alreadyDeclaredFunctions.none { this != it && it.doesOverride(specialBuiltin) })
+        if (alreadyDeclaredFunctions.none { this != it && it.initialSignatureDescriptor == null && it.doesOverride(specialBuiltin) })
             this
         else
             newCopyBuilder().setHiddenToOvercomeSignatureClash().build()!!
@@ -406,7 +408,7 @@ class LazyJavaClassMemberScope(
     }
 
     private fun computeAnnotationProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val method = memberIndex().findMethodsByName(name).singleOrNull() ?: return
+        val method = declaredMemberIndex().findMethodsByName(name).singleOrNull() ?: return
         result.add(createPropertyDescriptorWithDefaultGetter(method, modality = Modality.FINAL))
     }
 
@@ -627,8 +629,8 @@ class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
-                val enumMemberNames: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
-                    memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
+                val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
+                    getFunctionNames() + getVariableNames()
                 }
                 EnumEntrySyntheticClassDescriptor.create(
                         c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
@@ -660,17 +662,14 @@ class LazyJavaClassMemberScope(
         return super.getContributedVariables(name, location)
     }
 
-    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
             = nestedClassIndex().keys + enumEntryIndex().keys
 
-    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
-        if (jClass.isAnnotationType) return memberIndex().getMethodNames(nameFilter)
-
-        return memberIndex().getAllFieldNames() +
-               ownerDescriptor.getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
-            supertype.memberScope.getContributedDescriptors(kindFilter, nameFilter).map { variable ->
-                variable.getName()
-            }
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
+        if (jClass.isAnnotationType) return getFunctionNames()
+        val result = LinkedHashSet(declaredMemberIndex().getFieldNames())
+        return ownerDescriptor.typeConstructor.supertypes.flatMapTo(result) { supertype ->
+            supertype.memberScope.getVariableNames()
         }
     }
 

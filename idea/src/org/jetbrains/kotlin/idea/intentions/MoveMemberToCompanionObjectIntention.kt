@@ -135,7 +135,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
                 val receiver = call.getQualifiedExpressionForSelector()?.receiverExpression
                 val receiverArg = receiver?.let { psiFactory.createArgument(it) }
-                                  ?: psiFactory.createArgument(psiFactory.createExpression("this@${classFqName.asString()}"))
+                                  ?: psiFactory.createArgument(psiFactory.createExpression("this@${classFqName.shortName().asString()}"))
                 argumentList.addArgumentBefore(receiverArg, argumentList.arguments.firstOrNull())
             }
         }

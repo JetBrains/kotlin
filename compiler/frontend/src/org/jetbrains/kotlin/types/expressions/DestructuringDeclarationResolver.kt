@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -45,7 +45,7 @@ class DestructuringDeclarationResolver(
             context: ExpressionTypingContext
     ) {
         for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
-            val componentName = createComponentName(componentIndex + 1)
+            val componentName = DataClassDescriptorResolver.createComponentName(componentIndex + 1)
 
             val componentType = resolveComponentFunctionAndGetType(componentName, context, entry, receiver, initializer)
             val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)

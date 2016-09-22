@@ -182,7 +182,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                         result = expression.accept(visitor, context);
                         // Some recursive definitions (object expressions) must put their types in the cache manually:
                         //noinspection ConstantConditions
-                        if (context.trace.get(BindingContext.PROCESSED, expression)) {
+                        if (context.trace.get(BindingContext.PROCESSED, expression) == Boolean.TRUE) {
                             KotlinType type = context.trace.getBindingContext().getType(expression);
                             return result.replaceType(type);
                         }

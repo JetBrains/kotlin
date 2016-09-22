@@ -65,7 +65,7 @@ class DeserializedClassDescriptor(
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
-    private val nestedTypeAliases = c.storageManager.createLazyValue { computeTypeAliases() }
+    private val nestedTypeAliases = c.storageManager.createLazyValue { NestedTypeAliases() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
@@ -251,33 +251,28 @@ class DeserializedClassDescriptor(
             })
         }
 
-        override fun getNonDeclaredFunctionNames(location: LookupLocation): Set<Name> {
+        override fun getNonDeclaredFunctionNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<SimpleFunctionDescriptor>().map { it.name }
-            } + c.components.additionalClassPartsProvider.getFunctionsNames(this@DeserializedClassDescriptor)
+                it.memberScope.getFunctionNames()
+            }.apply { addAll(c.components.additionalClassPartsProvider.getFunctionsNames(this@DeserializedClassDescriptor)) }
         }
 
-        override fun getNonDeclaredVariableNames(location: LookupLocation): Set<Name> {
+        override fun getNonDeclaredVariableNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<PropertyDescriptor>().map { it.name }
-            }
-        }
-
-        override fun getNonDeclaredTypeAliasNames(location: LookupLocation): Set<Name> {
-            return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-                it.memberScope.getContributedDescriptors().filterIsInstance<TypeAliasDescriptor>().map { it.name }
+                it.memberScope.getVariableNames()
             }
         }
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             recordLookup(name, location)
-            return classDescriptor.enumEntries?.findEnumEntry(name) ?: classDescriptor.nestedClasses?.findNestedClass(name)
+            return classDescriptor.enumEntries?.findEnumEntry(name) ?:
+                   classDescriptor.nestedClasses?.findNestedClass(name) ?:
+                   classDescriptor.nestedTypeAliases().findTypeAlias(name)
         }
 
         override fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.nestedClasses?.all().orEmpty())
-            result.addAll(classDescriptor.nestedTypeAliases())
-            // TODO non-declared type aliases
+            result.addAll(classDescriptor.nestedTypeAliases().all())
         }
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
@@ -308,6 +303,15 @@ class DeserializedClassDescriptor(
                 nestedClassNames.mapNotNull { name -> nestedClassByName(name) }
     }
 
+    private inner class NestedTypeAliases {
+        private val nestedTypeAliases = computeTypeAliases()
+        private val nestedTypeAliasesByName = nestedTypeAliases.associateBy { it.name }
+
+        fun all() = nestedTypeAliases
+
+        fun findTypeAlias(name: Name): TypeAliasDescriptor? = nestedTypeAliasesByName[name]
+    }
+
     private inner class EnumEntryClassDescriptors {
         private val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
 
@@ -329,7 +333,7 @@ class DeserializedClassDescriptor(
 
         fun findEnumEntry(name: Name): ClassDescriptor? = enumEntryByName(name)
 
-        private fun computeEnumMemberNames(): Collection<Name> {
+        private fun computeEnumMemberNames(): Set<Name> {
             // NOTE: order of enum entry members should be irrelevant
             // because enum entries are effectively invisible to user (as classes)
             val result = HashSet<Name>()

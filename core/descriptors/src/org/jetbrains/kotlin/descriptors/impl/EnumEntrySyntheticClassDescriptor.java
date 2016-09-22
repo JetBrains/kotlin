@@ -45,7 +45,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
     private final MemberScope scope;
-    private final NotNullLazyValue<Collection<Name>> enumMemberNames;
+    private final NotNullLazyValue<Set<Name>> enumMemberNames;
     private final Annotations annotations;
 
     /**
@@ -57,7 +57,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull StorageManager storageManager,
             @NotNull ClassDescriptor enumClass,
             @NotNull Name name,
-            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull NotNullLazyValue<Set<Name>> enumMemberNames,
             @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
@@ -71,7 +71,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull ClassDescriptor containingClass,
             @NotNull KotlinType supertype,
             @NotNull Name name,
-            @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull NotNullLazyValue<Set<Name>> enumMemberNames,
             @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
@@ -286,6 +286,18 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                 result.addAll(getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
             }
             return result;
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getFunctionNames() {
+            return enumMemberNames.invoke();
+        }
+
+        @NotNull
+        @Override
+        public Set<Name> getVariableNames() {
+            return enumMemberNames.invoke();
         }
 
         @Override

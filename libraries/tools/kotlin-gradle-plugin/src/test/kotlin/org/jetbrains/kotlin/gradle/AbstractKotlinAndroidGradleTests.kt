@@ -43,6 +43,7 @@ abstract class AbstractKotlinAndroidGradleTests(
                     ":compileFlavor1DebugUnitTestKotlin",
                     "InternalDummyTest PASSED",
                     ":compileFlavor1DebugAndroidTestKotlin")
+            checkKotlinGradleBuildServices()
         }
 
         // Run the build second time, assert everything is up-to-date
@@ -69,6 +70,7 @@ abstract class AbstractKotlinAndroidGradleTests(
                     ":compileFlavor2Jnidebug",
                     ":compileFlavor1Release",
                     ":compileFlavor2Release")
+            checkKotlinGradleBuildServices()
         }
     }
 
@@ -90,7 +92,7 @@ fun getSomething() = 10
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(listOf("src/main/kotlin/foo/KotlinActivity1.kt", "src/main/kotlin/foo/getSomething.kt"))
+            assertCompiledKotlinSources(listOf("app/src/main/kotlin/foo/KotlinActivity1.kt", "app/src/main/kotlin/foo/getSomething.kt"))
             assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
         }
     }
@@ -163,7 +165,7 @@ fun getSomething() = 10
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativizeToSubproject("app",
+            assertCompiledKotlinSources(project.relativize(
                     androidModuleKt,
                     baseApplicationKt,
                     useBuildConfigJavaKt,

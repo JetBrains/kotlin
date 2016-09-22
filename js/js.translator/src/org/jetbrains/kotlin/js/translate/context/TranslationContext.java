@@ -311,6 +311,10 @@ public class TranslationContext {
         dynamicContext.jsBlock().getStatements().add(statement);
     }
 
+    public void addStatementsToCurrentBlock(@NotNull Collection<JsStatement> statements) {
+        dynamicContext.jsBlock().getStatements().addAll(statements);
+    }
+
     public void addStatementsToCurrentBlockFrom(@NotNull TranslationContext context) {
         addStatementsToCurrentBlockFrom(context.dynamicContext().jsBlock());
     }

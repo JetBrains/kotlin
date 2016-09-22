@@ -1,4 +1,4 @@
 package
 
-public typealias S = kotlin.String
 public val s: kotlin.reflect.KClass<S /* = kotlin.String */>
+public typealias S = kotlin.String

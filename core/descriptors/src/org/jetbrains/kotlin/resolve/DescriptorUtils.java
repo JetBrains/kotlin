@@ -33,7 +33,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -418,8 +421,8 @@ public class DescriptorUtils {
 
     /**
      * Given a fake override, finds any declaration of it in the overridden descriptors. Keep in mind that there may be many declarations
-     * of the fake override in the supertypes, this method finds just the only one.
-     * TODO: probably all call-sites of this method are wrong, they should handle all super-declarations
+     * of the fake override in the supertypes, this method finds just only one of them.
+     * TODO: probably some call-sites of this method are wrong, they should handle all super-declarations
      */
     @NotNull
     @SuppressWarnings("unchecked")

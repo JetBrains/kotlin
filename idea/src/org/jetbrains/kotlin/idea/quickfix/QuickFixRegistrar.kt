@@ -176,6 +176,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
+        VAL_REASSIGNMENT.registerFactory(LiftAssignmentOutOfTryFix)
         CAPTURED_VAL_INITIALIZATION.registerFactory(ChangeVariableMutabilityFix.CAPTURED_VAL_INITIALIZATION_FACTORY)
         VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
         VAR_ANNOTATION_PARAMETER.registerFactory(ChangeVariableMutabilityFix.VAR_ANNOTATION_PARAMETER_FACTORY)
@@ -416,5 +417,10 @@ class QuickFixRegistrar : QuickFixContributor {
         VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.registerFactory(AddTypeAnnotationToValueParameterFix)
 
         UNRESOLVED_REFERENCE.registerFactory(CreateTypeParameterByRefActionFactory)
+
+        FINAL_UPPER_BOUND.registerFactory(InlineTypeParameterFix)
+        FINAL_UPPER_BOUND.registerFactory(RemoveFinalUpperBoundFix)
+
+        TYPE_PARAMETER_AS_REIFIED.registerFactory(AddReifiedToTypeParameterOfFunctionFix)
     }
 }

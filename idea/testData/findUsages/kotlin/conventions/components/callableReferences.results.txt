@@ -1,0 +1,4 @@
+Value read 19 val (a1, b1) = fun2()
+Value read 20 val (a2, b2) = fun3()
+Value read 23 val (a3, b3) = constructor(1, 2)
+Value read 25 val (a4, b4) = A::class.java.newInstance()

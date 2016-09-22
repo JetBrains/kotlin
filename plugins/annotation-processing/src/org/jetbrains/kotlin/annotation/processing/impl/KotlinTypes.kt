@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.annotation.processing.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTypesUtil
-import com.intellij.psi.util.TypeConversionUtil
+import com.intellij.psi.util.*
 import org.jetbrains.kotlin.java.model.elements.JeClassInitializerExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
@@ -61,7 +60,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
         if (componentType is ExecutableType || componentType is NoType) error(componentType)
         assertJeType(componentType); componentType as JePsiType
         
-        return JeArrayType(PsiArrayType(componentType.psiType), psiManager)
+        return JeArrayType(PsiArrayType(componentType.psiType), psiManager, isRaw = false)
     }
 
     override fun isAssignable(t1: TypeMirror, t2: TypeMirror): Boolean {
@@ -89,7 +88,7 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
             PsiWildcardType.createSuper(psiManager, (superBound as JePsiType).psiType)
         } else {
             PsiWildcardType.createUnbounded(psiManager)
-        })
+        }, isRaw = false)
     }
 
     override fun unboxedType(t: TypeMirror): PrimitiveType? {
@@ -102,9 +101,25 @@ class KotlinTypes(val javaPsiFacade: JavaPsiFacade, val psiManager: PsiManager, 
     override fun getPrimitiveType(kind: TypeKind) = kind.toJePrimitiveType()
 
     override fun erasure(t: TypeMirror): TypeMirror {
-        if (t is NoType) throw IllegalArgumentException("Invalid type: $t")
-        t as? JePsiType ?: return t
-        return TypeConversionUtil.erasure(t.psiType).toJeType(psiManager)
+        if (t.kind == TypeKind.PACKAGE) throw IllegalArgumentException("Invalid type: $t")
+        return when (t) {
+            is JeTypeVariableType -> TypeConversionUtil.typeParameterErasure(t.parameter).toJeType(t.psiManager, isRaw = true)
+            is JePsiType -> TypeConversionUtil.erasure(t.psiType).toJeType(psiManager, isRaw = true)
+            is JeMethodExecutableTypeMirror -> {
+                val oldSignature = t.signature
+                val parameterTypes = oldSignature?.parameterTypes?.toList() ?: t.psi.parameterList.parameters.map { it.type }
+                val newSignature = MethodSignatureUtil.createMethodSignature(
+                        oldSignature?.name ?: t.psi.name,
+                        parameterTypes.map { TypeConversionUtil.erasure(it) }.toTypedArray(),
+                        emptyArray(),
+                        PsiSubstitutor.EMPTY,
+                        oldSignature?.isConstructor ?: t.psi.isConstructor)
+                JeMethodExecutableTypeMirror(
+                        t.psi, newSignature,
+                        TypeConversionUtil.erasure(t.returnType ?: t.psi.returnType), isRaw = true)
+            }
+            else -> t
+        }
     }
 
     override fun directSupertypes(t: TypeMirror): List<TypeMirror> {

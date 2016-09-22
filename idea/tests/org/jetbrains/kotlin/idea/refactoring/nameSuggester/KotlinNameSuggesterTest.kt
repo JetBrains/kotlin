@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.refactoring.nameSuggester
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
+import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.lang.AssertionError
 
 class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
     fun testArrayList() { doTest() }
@@ -90,21 +91,19 @@ class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
             }
-            KotlinRefactoringUtil.selectElement(myFixture.editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION), object : KotlinRefactoringUtil.SelectElementCallback {
-                override fun run(element: PsiElement?) {
-                    val names = KotlinNameSuggester
-                            .suggestNamesByExpressionAndType(element as KtExpression,
-                                                             null,
-                                                             element.analyze(BodyResolveMode.PARTIAL),
-                                                             { true },
-                                                             "value")
-                            .sorted()
-                    val result = StringUtil.join(names, "\n").trim()
-                    assertEquals(expectedResultText, result)
-                }
-            })
+            selectElement(myFixture.editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) {
+                val names = KotlinNameSuggester
+                        .suggestNamesByExpressionAndType(it as KtExpression,
+                                                         null,
+                                                         it.analyze(BodyResolveMode.PARTIAL),
+                                                         { true },
+                                                         "value")
+                        .sorted()
+                val result = StringUtil.join(names, "\n").trim()
+                assertEquals(expectedResultText, result)
+            }
         }
-        catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
+        catch (e: IntroduceRefactoringException) {
             throw AssertionError("Failed to find expression: " + e.message)
         }
         finally {

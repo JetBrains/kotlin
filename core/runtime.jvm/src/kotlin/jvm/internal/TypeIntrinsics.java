@@ -22,7 +22,7 @@ import kotlin.jvm.internal.markers.*;
 
 import java.util.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class TypeIntrinsics {
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         return Intrinsics.sanitizeStackTrace(throwable, TypeIntrinsics.class.getName());

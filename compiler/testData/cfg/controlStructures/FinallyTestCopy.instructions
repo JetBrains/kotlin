@@ -79,9 +79,11 @@ L0:
   3 mark({ doSmth() })
     mark(doSmth())
     call(doSmth(), doSmth) -> <v0>
-  2 jmp(L4)                                                                                                                                                   NEXT:[jmp(L6)]
+  2 jmp?(L2)                                                                                                                                                  NEXT:[jmp?(L5), jmp?(L3)]
+    jmp?(L3)                                                                                                                                                  NEXT:[mark({ return 1 }), jmp(L4)]
+    jmp(L4)                                                                                                                                                   NEXT:[jmp(L6)]
 L2 [onException]:
-    jmp?(L5)                                                                                                                                                  NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                         PREV:[jmp?(L2)]
+    jmp?(L5)                                                                                                                                                  NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                         PREV:[jmp?(L2), jmp?(L2)]
   3 v(e: NullPointerException)
     magic[FAKE_INITIALIZER](e: NullPointerException) -> <v1>
     w(e|<v1>)
@@ -101,7 +103,7 @@ L4 [afterCatches]:
   2 jmp(L6)                                                                                                                                                   NEXT:[mark({ return 1 })]                                                                                                                  PREV:[jmp(L4), jmp(L4), jmp(L4)]
 L3 [onExceptionToFinallyBlock]:
 L7 [start finally]:
-  3 mark({ return 1 })                                                                                                                                        PREV:[jmp?(L3)]
+  3 mark({ return 1 })                                                                                                                                        PREV:[jmp?(L3), jmp?(L3)]
     r(1) -> <v5>
     ret(*|<v5>) L1                                                                                                                                            NEXT:[<END>]
 L8 [finish finally]:
@@ -155,9 +157,11 @@ L4 [body entry point]:
   4 mark({ doSmth() })
     mark(doSmth())
     call(doSmth(), doSmth) -> <v1>
-  3 jmp(L9)                                                                                                                                                                            NEXT:[jmp(L11)]
+  3 jmp?(L7)                                                                                                                                                                           NEXT:[jmp?(L10), jmp?(L8)]
+    jmp?(L8)                                                                                                                                                                           NEXT:[mark({ if (cond()) return else continue }), jmp(L9)]
+    jmp(L9)                                                                                                                                                                            NEXT:[jmp(L11)]
 L7 [onException]:
-    jmp?(L10)                                                                                                                                                                          NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                                                                        PREV:[jmp?(L7)]
+    jmp?(L10)                                                                                                                                                                          NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                                                                        PREV:[jmp?(L7), jmp?(L7)]
   4 v(e: NullPointerException)
     magic[FAKE_INITIALIZER](e: NullPointerException) -> <v2>
     w(e|<v2>)
@@ -177,7 +181,7 @@ L9 [afterCatches]:
   3 jmp(L11)                                                                                                                                                                           NEXT:[mark({ if (cond()) return else continue })]                                                                                                                                         PREV:[jmp(L9), jmp(L9), jmp(L9)]
 L8 [onExceptionToFinallyBlock]:
 L12 [start finally]:
-  4 mark({ if (cond()) return else continue })                                                                                                                                         PREV:[jmp?(L8)]
+  4 mark({ if (cond()) return else continue })                                                                                                                                         PREV:[jmp?(L8), jmp?(L8)]
     mark(if (cond()) return else continue)
     mark(cond())
     call(cond(), cond) -> <v6>
@@ -240,9 +244,11 @@ L0:
   3 mark({ doSmth() })
     mark(doSmth())
     call(doSmth(), doSmth) -> <v0>
-  2 jmp(L4)                                                                                                                                                          NEXT:[jmp(L6)]
+  2 jmp?(L2)                                                                                                                                                         NEXT:[jmp?(L5), jmp?(L3)]
+    jmp?(L3)                                                                                                                                                         NEXT:[mark({ while (cond()); }), jmp(L4)]
+    jmp(L4)                                                                                                                                                          NEXT:[jmp(L6)]
 L2 [onException]:
-    jmp?(L5)                                                                                                                                                         NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                                                      PREV:[jmp?(L2)]
+    jmp?(L5)                                                                                                                                                         NEXT:[v(e: Exception), v(e: NullPointerException)]                                                                                                                      PREV:[jmp?(L2), jmp?(L2)]
   3 v(e: NullPointerException)
     magic[FAKE_INITIALIZER](e: NullPointerException) -> <v1>
     w(e|<v1>)
@@ -262,7 +268,7 @@ L4 [afterCatches]:
   2 jmp(L6)                                                                                                                                                          NEXT:[mark({ while (cond()); })]                                                                                                                                        PREV:[jmp(L4), jmp(L4), jmp(L4)]
 L3 [onExceptionToFinallyBlock]:
 L7 [start finally]:
-  3 mark({ while (cond()); })                                                                                                                                        PREV:[jmp?(L3)]
+  3 mark({ while (cond()); })                                                                                                                                        PREV:[jmp?(L3), jmp?(L3)]
 L8 [loop entry point]:
 L12 [condition entry point]:
     mark(cond())                                                                                                                                                     PREV:[mark({ while (cond()); }), jmp(L8)]
@@ -320,10 +326,11 @@ L0:
   3 mark({ doSmth() })
     mark(doSmth())
     call(doSmth(), doSmth) -> <v1>
-  2 jmp(L3)                                                                  NEXT:[mark({ if(list != null) { } })]
+  2 jmp?(L2)                                                                 NEXT:[mark({ if(list != null) { } }), jmp(L3)]
+    jmp(L3)                                                                  NEXT:[mark({ if(list != null) { } })]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
-  3 mark({ if(list != null) { } })                                           PREV:[jmp?(L2)]
+  3 mark({ if(list != null) { } })                                           PREV:[jmp?(L2), jmp?(L2)]
     mark(if(list != null) { })
     r(list) -> <v2>
     r(null) -> <v3>

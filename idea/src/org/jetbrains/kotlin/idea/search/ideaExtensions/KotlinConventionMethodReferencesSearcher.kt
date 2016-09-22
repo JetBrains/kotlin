@@ -22,6 +22,7 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
+import org.jetbrains.kotlin.idea.search.usagesSearch.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -32,16 +33,24 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
         val method = queryParameters.method
         val name = runReadAction { method.name }
         if (!Name.isValidIdentifier(name)) return
-        val operationSymbolsToSearch = Name.identifier(name).getOperationSymbolsToSearch()
-        val wordsToSearch = operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value }
-        if (wordsToSearch.isEmpty()) return
-        val resultProcessor = KotlinRequestResultProcessor(method,
-                                                          filter = { ref -> ref.javaClass == operationSymbolsToSearch.second })
+        val identifier = Name.identifier(name)
 
-        wordsToSearch.forEach { word ->
-            queryParameters.optimizer.searchWord(word, queryParameters.effectiveSearchScope.restrictToKotlinSources(),
-                                                 UsageSearchContext.IN_CODE, true, method,
-                                                 resultProcessor)
+        val operatorSearcher = OperatorReferenceSearcher.create(
+                method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, KotlinReferencesSearchOptions.Empty)
+        if (operatorSearcher != null) {
+            operatorSearcher.run()
+        }
+        else {
+            val operationSymbolsToSearch = identifier.getOperationSymbolsToSearch() ?: return
+            val wordsToSearch = operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value }
+            val resultProcessor = KotlinRequestResultProcessor(method,
+                                                               filter = { ref -> ref.javaClass == operationSymbolsToSearch.second })
+
+            wordsToSearch.forEach { word ->
+                queryParameters.optimizer.searchWord(word, queryParameters.effectiveSearchScope.restrictToKotlinSources(),
+                                                     UsageSearchContext.IN_CODE, true, method,
+                                                     resultProcessor)
+            }
         }
     }
 }

@@ -143,7 +143,7 @@ abstract class ChangeFunctionSignatureFix(
                             }
                         }
 
-                        override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
+                        override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
                         override fun forcePerformForSelectedFunctionOnly() = false
                     },
                     context,

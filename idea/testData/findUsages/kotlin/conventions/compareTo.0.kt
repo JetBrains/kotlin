@@ -2,8 +2,8 @@
 // OPTIONS: usages
 
 class A(val n: Int) {
-    fun <caret>compareTo(other: A): Int = compareTo(other.n)
-    fun compareTo(m: Int): Int = n.compareTo(m)
+    infix operator fun <caret>compareTo(other: A): Int = compareTo(other.n)
+    infix operator fun compareTo(m: Int): Int = n.compareTo(m)
 }
 
 fun test() {

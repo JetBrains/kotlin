@@ -24,7 +24,9 @@ L0:
   3 mark({ foo() })
     mark(foo())
     call(foo(), foo) -> <v1>
-  2 jmp(L4)                                                                                                                                         USE: in: {} out: {}
+  2 jmp?(L2)
+    jmp?(L3)
+    jmp(L4)                                                                                                                                         USE: in: {} out: {}
 L2 [onException]:
   3 v(e: Exception)                                                                                      INIT: in: {} out: {e=D}
     magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                        INIT: in: {e=D} out: {e=D}

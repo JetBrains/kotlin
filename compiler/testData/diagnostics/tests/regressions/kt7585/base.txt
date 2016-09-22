@@ -31,9 +31,9 @@ public final data class Pair</*0*/ out T> {
     public final operator /*synthesized*/ fun component1(): T
     public final operator /*synthesized*/ fun component2(): T
     public final /*synthesized*/ fun copy(/*0*/ a: T = ..., /*1*/ b: T = ...): Pair<T>
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final class TheirWrapper : Wrapper<E> {

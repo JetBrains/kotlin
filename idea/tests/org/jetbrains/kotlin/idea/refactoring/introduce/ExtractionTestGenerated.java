@@ -3992,6 +3992,51 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @TestMetadata("idea/testData/refactoring/introduceTypeParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntroduceTypeParameter extends AbstractExtractionTest {
+        public void testAllFilesPresentInIntroduceTypeParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceTypeParameter"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("duplicates.kt")
+        public void testDuplicates() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/duplicates.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+
+        @TestMetadata("functionType.kt")
+        public void testFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/functionType.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+
+        @TestMetadata("inClass.kt")
+        public void testInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/inClass.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+
+        @TestMetadata("inProperty.kt")
+        public void testInProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/inProperty.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+
+        @TestMetadata("nullableType.kt")
+        public void testNullableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/nullableType.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+
+        @TestMetadata("userType.kt")
+        public void testUserType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeParameter/userType.kt");
+            doIntroduceTypeParameterTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/refactoring/introduceTypeAlias")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,3 +1,6 @@
+annotation class Anno
+
+@Anno
 class A {
     interface AA {
         fun onClick(o: Any)

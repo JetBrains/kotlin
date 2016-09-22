@@ -28,7 +28,7 @@ class BridgeTest : TestCase() {
     private class Fun(val text: String) : FunctionHandle {
         override val isDeclaration: Boolean get() = text[1] == 'D'
         override val isAbstract: Boolean get() = text[0] == '-'
-
+        override val isInterfaceDeclaration: Boolean get() = false
         val signature: Char get() = text[2]
 
         val overriddenFunctions: MutableList<Fun> = arrayListOf()

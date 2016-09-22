@@ -49,6 +49,6 @@ class KtTypeReference : KtElementImplStub<KotlinPlaceHolderStub<KtTypeReference>
     }
 
     fun hasParentheses(): Boolean {
-        return findChildByType<PsiElement>(KtTokens.LPAR) != null && findChildByType<PsiElement>(KtTokens.LPAR) != null
+        return findChildByType<PsiElement>(KtTokens.LPAR) != null && findChildByType<PsiElement>(KtTokens.RPAR) != null
     }
 }

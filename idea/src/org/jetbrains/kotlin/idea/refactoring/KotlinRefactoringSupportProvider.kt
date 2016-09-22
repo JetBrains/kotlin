@@ -39,7 +39,7 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
 
     override fun getIntroduceParameterHandler() = KotlinIntroduceParameterHandler()
 
-    fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler = KotlinIntroduceLambdaParameterHandler()
+    override fun getIntroduceFunctionalParameterHandler() = KotlinIntroduceLambdaParameterHandler()
 
     fun getIntroducePropertyHandler(): RefactoringActionHandler = KotlinIntroducePropertyHandler()
 
@@ -51,6 +51,7 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
 
     override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
         when (element) {
+            is KtTypeParameter -> return true
             is KtProperty -> {
                 if (element.isLocal) return true
             }

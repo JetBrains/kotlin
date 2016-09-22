@@ -1,0 +1,5 @@
+Value read 17 val (x, y) = this
+Value read 26 val (x, y) = f()
+Value read 27 val (x1, y1) = g()
+Value read 28 val (x2, y2) = h()
+Value read 9 val (x, y) = this

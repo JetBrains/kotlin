@@ -1,0 +1,47 @@
+== f ==
+fun f() {
+    var foo = 1
+    try {
+        foo = 2
+        throw RuntimeException()
+    } catch (e: Throwable) {
+        println(foo)
+    }
+}
+---------------------
+L0:
+  1 <START>                                                                                                      INIT: in: {} out: {}                            USE: in: {} out: {}
+  2 mark({ var foo = 1 try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) } })
+    v(var foo = 1)                                                                                               INIT: in: {} out: {foo=D}
+    r(1) -> <v0>                                                                                                 INIT: in: {foo=D} out: {foo=D}
+    w(foo|<v0>)                                                                                                  INIT: in: {foo=D} out: {foo=ID}
+    mark(try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) })                         INIT: in: {foo=ID} out: {foo=ID}
+    jmp?(L2)                                                                                                                                                     USE: in: {foo=READ} out: {foo=READ}
+  3 mark({ foo = 2 throw RuntimeException() })
+    r(2) -> <v1>                                                                                                                                                 USE: in: {foo=WRITTEN_AFTER_READ} out: {foo=WRITTEN_AFTER_READ}
+    w(foo|<v1>)                                                                                                                                                  USE: in: {foo=READ} out: {foo=WRITTEN_AFTER_READ}
+    mark(throw RuntimeException())
+    jmp?(L2)                                                                                                                                                     USE: in: {foo=READ} out: {foo=READ}
+    mark(RuntimeException())
+    call(RuntimeException(), <init>) -> <v2>
+    throw (throw RuntimeException()|<v2>)                                                                                                                        USE: in: {} out: {}
+- 2 jmp?(L2)
+-   jmp(L3)
+L2 [onException]:
+  3 v(e: Throwable)                                                                                              INIT: in: {foo=ID} out: {e=D, foo=ID}
+    magic[FAKE_INITIALIZER](e: Throwable) -> <v4>                                                                INIT: in: {e=D, foo=ID} out: {e=D, foo=ID}
+    w(e|<v4>)                                                                                                    INIT: in: {e=D, foo=ID} out: {e=ID, foo=ID}
+  4 mark({ println(foo) })                                                                                       INIT: in: {e=ID, foo=ID} out: {e=ID, foo=ID}    USE: in: {foo=READ} out: {foo=READ}
+    r(foo) -> <v5>                                                                                                                                               USE: in: {} out: {foo=READ}
+    mark(println(foo))
+    magic[UNRESOLVED_CALL](println(foo)|<v5>, !<v6>) -> <v7>
+  3 jmp(L3)
+L3 [afterCatches]:
+  2 merge(try { foo = 2 throw RuntimeException() } catch (e: Throwable) { println(foo) }|!<v3>, <v7>) -> <v8>    INIT: in: {foo=ID} out: {foo=ID}
+L1:
+  1 <END>                                                                                                        INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                       USE: in: {} out: {}
+=====================

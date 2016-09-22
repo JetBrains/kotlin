@@ -20,20 +20,10 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty1;
 import kotlin.reflect.KProperty1;
 
-public class MutablePropertyReference1 extends MutablePropertyReference implements KMutableProperty1 {
+public abstract class MutablePropertyReference1 extends MutablePropertyReference implements KMutableProperty1 {
     @Override
     protected KCallable computeReflected() {
         return Reflection.mutableProperty1(this);
-    }
-
-    @Override
-    public Object get(Object receiver) {
-        return ((KMutableProperty1) getReflected()).get(receiver);
-    }
-
-    @Override
-    public void set(Object receiver, Object value) {
-        ((KMutableProperty1) getReflected()).set(receiver, value);
     }
 
     @Override

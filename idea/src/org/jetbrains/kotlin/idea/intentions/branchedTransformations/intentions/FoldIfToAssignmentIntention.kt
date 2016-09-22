@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with assignment") {
+class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(
+        KtIfExpression::class.java,
+        "Lift assignment out of 'if' expression"
+) {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val branches = element.branches
 

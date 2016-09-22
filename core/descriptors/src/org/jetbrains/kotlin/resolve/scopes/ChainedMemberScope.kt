@@ -41,6 +41,9 @@ class ChainedMemberScope(
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = getFromAllScopes(scopes) { it.getContributedDescriptors(kindFilter, nameFilter) }
 
+    override fun getFunctionNames() = scopes.flatMapTo(mutableSetOf()) { it.getFunctionNames() }
+    override fun getVariableNames() = scopes.flatMapTo(mutableSetOf()) { it.getVariableNames() }
+
     override fun toString() = debugName
 
     override fun printScopeStructure(p: Printer) {

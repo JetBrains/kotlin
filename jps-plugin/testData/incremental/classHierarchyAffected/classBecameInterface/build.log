@@ -52,10 +52,10 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 This class does not have a constructor
-Unresolved reference: A
-Unresolved reference: A
-Unresolved reference: A
-Unresolved reference: A
+Interface A does not have constructors
+Interface A does not have constructors
+Interface A does not have constructors
+Interface A does not have constructors
 
 ================ Step #2 =================
 

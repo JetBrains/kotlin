@@ -68,3 +68,5 @@ abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
 abstract class AbstractCastTest : SingleFileTranslationTest("expression/cast/")
 
 abstract class AbstractLightReflectionTest : SingleFileTranslationTest("reflection/light/")
+
+abstract class AbstractTypeAliasesTests : AbstractBlackBoxTest("typealiases/")

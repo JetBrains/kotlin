@@ -1,7 +1,5 @@
 package
 
-public typealias CWI = ClassWithCompanionObjectWithInvoke
-public typealias WI = ObjectWithInvoke
 public val test1: ObjectWithInvoke
 public val test2: ObjectWithInvoke
 public val test3: ClassWithCompanionObjectWithInvoke
@@ -31,3 +29,5 @@ public object ObjectWithInvoke {
     public final operator fun invoke(): ObjectWithInvoke
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias CWI = ClassWithCompanionObjectWithInvoke
+public typealias WI = ObjectWithInvoke

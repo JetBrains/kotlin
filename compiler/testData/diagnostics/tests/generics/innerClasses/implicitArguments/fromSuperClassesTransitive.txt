@@ -1,0 +1,41 @@
+package
+
+public fun foo(): kotlin.Unit
+
+public open class BaseDerived1</*0*/ E, /*1*/ F> : Outer<F, E> {
+    public constructor BaseDerived1</*0*/ E, /*1*/ F>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class BaseDerived2</*0*/ X> : BaseDerived1<kotlin.String, X> {
+    public constructor BaseDerived2</*0*/ X>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Derived : BaseDerived2<kotlin.Int> {
+    public constructor Derived()
+    public final fun baz(): Outer<kotlin.Int, kotlin.String>.Alias<kotlin.Char> /* = kotlin.collections.Map<kotlin.Char, out kotlin.Int> */
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): Outer<kotlin.Int, kotlin.String>.Inner<kotlin.Char>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Outer</*0*/ X, /*1*/ Y> {
+    public constructor Outer</*0*/ X, /*1*/ Y>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner</*0*/ Z> /*captured type parameters: /*1*/ X, /*2*/ Y*/ {
+        public constructor Inner</*0*/ Z>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias Alias</*0*/ W>  /*captured type parameters: /*1*/ X, /*2*/ Y*/ = kotlin.collections.Map<W, X>
+}

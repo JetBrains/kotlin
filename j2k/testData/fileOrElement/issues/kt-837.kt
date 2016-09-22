@@ -11,6 +11,6 @@ class Language(protected var code: String) : Serializable {
     companion object {
         var ENGLISH = Language("en")
         var SWEDISH = Language("sv")
-        private val serialVersionUID = -2442762969929206780L
+        @JvmStatic private val serialVersionUID = -2442762969929206780L
     }
 }

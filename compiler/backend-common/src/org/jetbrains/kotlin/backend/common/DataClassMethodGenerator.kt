@@ -112,8 +112,7 @@ abstract class DataClassMethodGenerator(private val declaration: KtClassOrObject
     ): FunctionDescriptor? =
             classDescriptor.unsubstitutedMemberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                     .singleOrNull { function ->
-                        !function.kind.isReal &&
-                        function.modality != Modality.FINAL &&
+                        function.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
                         areParametersOk(function.valueParameters) &&
                         function.returnType != null &&
                         isReturnTypeOk(function.returnType!!)

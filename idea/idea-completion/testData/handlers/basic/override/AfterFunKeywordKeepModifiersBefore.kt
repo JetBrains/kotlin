@@ -3,4 +3,4 @@ class A {
     public override fun e<caret>
 }
 
-// ELEMENT_TEXT: "override operator fun equals(other: Any?): Boolean {...}"
+// ELEMENT_TEXT: "override fun equals(other: Any?): Boolean {...}"

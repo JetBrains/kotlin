@@ -28,6 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
@@ -291,17 +292,30 @@ class BasicCompletionSession(
 
             if (callTypeAndReceiver.receiver == null && prefix.isNotEmpty()) {
                 val classKindFilter: ((ClassKind) -> Boolean)?
+                val includeTypeAliases: Boolean
                 when (callTypeAndReceiver) {
-                    is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-                    is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
-                    else -> classKindFilter = null
+                    is CallTypeAndReceiver.ANNOTATION -> {
+                        classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+                        includeTypeAliases = false
+                    }
+
+                    is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> {
+                        classKindFilter = { it != ClassKind.ENUM_ENTRY }
+                        includeTypeAliases = true
+                    }
+
+                    else -> {
+                        classKindFilter = null
+                        includeTypeAliases = false
+                    }
                 }
+
                 if (classKindFilter != null) {
                     val prefixMatcher = if (configuration.useBetterPrefixMatcherForNonImportedClasses)
                         BetterPrefixMatcher(prefixMatcher, collector.bestMatchingDegree)
                     else
                         prefixMatcher
-                    addClassesFromIndex(classKindFilter, prefixMatcher)
+                    addClassesFromIndex(classKindFilter, includeTypeAliases, prefixMatcher)
                 }
             }
         }
@@ -572,15 +586,16 @@ class BasicCompletionSession(
         }
     }
 
-    private fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean, prefixMatcher: PrefixMatcher) {
-        val classDescriptorCollector = { descriptor: ClassDescriptor ->
+    private fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean, includeTypeAliases: Boolean, prefixMatcher: PrefixMatcher) {
+        val classifierDescriptorCollector = { descriptor: ClassifierDescriptorWithTypeParameters ->
             collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true)
         }
         val javaClassCollector = { javaClass: PsiClass ->
             collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true)
         }
-        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter, configuration.completeJavaClassesNotToBeUsed)
-                .collect(classDescriptorCollector, javaClassCollector)
+        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade,
+                             kindFilter, includeTypeAliases, configuration.completeJavaClassesNotToBeUsed
+        ).collect(classifierDescriptorCollector, javaClassCollector)
     }
 
 }

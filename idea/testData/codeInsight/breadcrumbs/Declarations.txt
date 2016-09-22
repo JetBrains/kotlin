@@ -1,0 +1,18 @@
+Crumbs:
+  Outer
+  companion object
+  SomeClass
+  companion object CompanionName
+  SomeObject
+  someFun()
+  localFun()
+  fun(x, y)
+Tooltips:
+  class <b><code>Outer</code></b>
+  companion object <b><code>Outer.Companion</code></b>
+  class <b><code>Outer.Companion.SomeClass</code></b>
+  companion object <b><code>Outer.Companion.SomeClass.CompanionName</code></b>
+  object <b><code>Outer.Companion.SomeClass.CompanionName.SomeObject</code></b>
+  function <b><code>Outer.Companion.SomeClass.CompanionName.SomeObject.someFun(Int, Boolean) on String</code></b>
+  function <b><code>Outer.Companion.SomeClass.CompanionName.SomeObject.someFun.localFun()</code></b>
+  fun(x: Int, y: Char)

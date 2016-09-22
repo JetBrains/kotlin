@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import com.google.common.collect.Lists
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -131,16 +129,21 @@ open class LazyClassMemberScope(
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
         val location = NoLookupLocation.FOR_ALREADY_TRACKED
 
-        val fromSupertypes = Lists.newArrayList<SimpleFunctionDescriptor>()
+        val fromSupertypes = arrayListOf<SimpleFunctionDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
             fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
-        generateDataClassMethods(result, name, location)
+        generateDataClassMethods(result, name, location, fromSupertypes)
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
     }
 
-    private fun generateDataClassMethods(result: MutableCollection<SimpleFunctionDescriptor>, name: Name, location: LookupLocation) {
+    private fun generateDataClassMethods(
+            result: MutableCollection<SimpleFunctionDescriptor>,
+            name: Name,
+            location: LookupLocation,
+            fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
         if (!thisDescriptor.isData) return
 
         val constructor = getPrimaryConstructor() ?: return
@@ -148,7 +151,7 @@ open class LazyClassMemberScope(
         val primaryConstructorParameters = declarationProvider.getOwnerInfo().primaryConstructorParameters
         assert(constructor.valueParameters.size == primaryConstructorParameters.size) { "From descriptor: " + constructor.valueParameters.size + " but from PSI: " + primaryConstructorParameters.size }
 
-        if (isComponentLike(name)) {
+        if (DataClassDescriptorResolver.isComponentLike(name)) {
             var componentIndex = 0
 
             for (parameter in constructor.valueParameters) {
@@ -162,22 +165,43 @@ open class LazyClassMemberScope(
 
                 ++componentIndex
 
-                if (name == createComponentName(componentIndex)) {
-                    val functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(componentIndex, property, parameter, thisDescriptor, trace)
-                    result.add(functionDescriptor)
+                if (name == DataClassDescriptorResolver.createComponentName(componentIndex)) {
+                    result.add(DataClassDescriptorResolver.createComponentFunctionDescriptor(
+                            componentIndex, property, parameter, thisDescriptor, trace
+                    ))
                     break
                 }
             }
         }
 
-        if (name == DescriptorResolver.COPY_METHOD_NAME) {
+        if (name == DataClassDescriptorResolver.COPY_METHOD_NAME) {
             for (parameter in constructor.valueParameters) {
                 // force properties resolution to fill BindingContext.VALUE_PARAMETER_AS_PROPERTY slice
                 getContributedVariables(parameter.name, location)
             }
 
-            val copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(constructor.valueParameters, thisDescriptor, trace)
-            result.add(copyFunctionDescriptor)
+            result.add(DataClassDescriptorResolver.createCopyFunctionDescriptor(constructor.valueParameters, thisDescriptor, trace))
+        }
+
+        fun shouldAddFunctionFromAny(checkParameters: (FunctionDescriptor) -> Boolean): Boolean {
+            // Add 'equals', 'hashCode', 'toString' iff there is no such declared member AND there is no such final member in supertypes
+            return result.none(checkParameters) &&
+                   fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
+        }
+
+        if (name == DataClassDescriptorResolver.EQUALS_METHOD_NAME && shouldAddFunctionFromAny { function ->
+            val parameters = function.valueParameters
+            parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.first().type)
+        }) {
+            result.add(DataClassDescriptorResolver.createEqualsFunctionDescriptor(thisDescriptor))
+        }
+
+        if (name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
+            result.add(DataClassDescriptorResolver.createHashCodeFunctionDescriptor(thisDescriptor))
+        }
+
+        if (name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
+            result.add(DataClassDescriptorResolver.createToStringFunctionDescriptor(thisDescriptor))
         }
     }
 
@@ -257,7 +281,7 @@ open class LazyClassMemberScope(
         // Generate componentN functions until there's no such function for some n
         var n = 1
         while (true) {
-            val componentName = createComponentName(n)
+            val componentName = DataClassDescriptorResolver.createComponentName(n)
             val functions = getContributedFunctions(componentName, location)
             if (functions.isEmpty()) break
 

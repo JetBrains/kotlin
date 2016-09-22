@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
+import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractJavaModelWrappersTest
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractKotlinModelWrappersTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -95,6 +96,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
+import org.jetbrains.kotlin.idea.navigation.AbstractGotoTypeDeclarationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
@@ -147,6 +149,7 @@ import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.uast.AbstractKotlinLintTest
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.regex.Pattern
 
@@ -447,6 +450,10 @@ fun main(args: Array<String>) {
             model("navigation/gotoSuper", extension = "test")
         }
 
+        testClass<AbstractGotoTypeDeclarationTest>() {
+            model("navigation/gotoTypeDeclaration", extension = "test")
+        }
+
         testClass<AbstractParameterInfoTest>() {
             model("parameterInfo", recursive = true, excludeDirs = listOf("withLib/sharedLib"))
         }
@@ -505,6 +512,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractJoinLinesTest>() {
             model("joinLines")
+        }
+
+        testClass<AbstractBreadcrumbsTest>() {
+            model("codeInsight/breadcrumbs")
         }
 
         testClass<AbstractIntentionTest>() {
@@ -782,6 +793,7 @@ fun main(args: Array<String>) {
             model("refactoring/introduceParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceSimpleParameterTest")
             model("refactoring/introduceLambdaParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceLambdaParameterTest")
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
+            model("refactoring/introduceTypeParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeParameterTest")
             model("refactoring/introduceTypeAlias", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeAliasTest")
         }
 
@@ -1066,6 +1078,10 @@ fun main(args: Array<String>) {
         testClass<AbstractKotlinModelWrappersTest>() {
             model("kotlinWrappers", extension = "kt")
         }
+        
+        testClass<AbstractBytecodeListingTestForSourceRetention>() {
+            model("sourceRetention", extension = "kt")
+        }
     }
 
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
@@ -1197,6 +1213,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractNonLocalReturnsTest>() {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractTypeAliasesTests>() {
+            model("codegen/box/typealias/", targetBackend = TargetBackend.JS)
         }
     }
 }

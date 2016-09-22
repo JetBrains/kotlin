@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.modules.TargetId
 
 interface IncrementalCompilationComponents {

@@ -18,15 +18,19 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -51,20 +55,39 @@ public class LambdaInfo implements LabelOwner {
 
     private SMAPAndMethodNode node;
     private List<CapturedParamDesc> capturedVars;
-    private boolean isBoundCallableReference;
+    private final boolean isBoundCallableReference;
+    private final PropertyReferenceInfo propertyReferenceInfo;
 
-    public LambdaInfo(@NotNull KtExpression expression, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline) {
+    public LambdaInfo(@NotNull KtExpression expression, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline, boolean isBoundCallableReference) {
         this.isCrossInline = isCrossInline;
         this.expression = expression instanceof KtLambdaExpression ?
                           ((KtLambdaExpression) expression).getFunctionLiteral() : expression;
 
         this.typeMapper = typeMapper;
+        this.isBoundCallableReference = isBoundCallableReference;
         BindingContext bindingContext = typeMapper.getBindingContext();
-        functionDescriptor = bindingContext.get(BindingContext.FUNCTION, this.expression);
-        assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
+        FunctionDescriptor function = bindingContext.get(BindingContext.FUNCTION, this.expression);
+        if (function == null && expression instanceof KtCallableReferenceExpression) {
+            VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, this.expression);
+            assert variableDescriptor instanceof VariableDescriptorWithAccessors :
+                    "Reference expression not resolved to variable descriptor with accessors: " + expression.getText();
+            classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
+            closureClassType = typeMapper.mapClass(classDescriptor);
+            SimpleFunctionDescriptor getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor);
+            functionDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor);
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(((KtCallableReferenceExpression) expression).getCallableReference(), bindingContext);
+            propertyReferenceInfo = new PropertyReferenceInfo(
+                    (VariableDescriptor) resolvedCall.getResultingDescriptor(), getFunction
+            );
+        }
+        else {
+            propertyReferenceInfo = null;
+            functionDescriptor = function;
+            assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
+            classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor);
+            closureClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
+        }
 
-        classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor);
-        closureClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
 
         closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure for lambda should be not null " + expression.getText();
@@ -171,7 +194,11 @@ public class LambdaInfo implements LabelOwner {
         return isBoundCallableReference;
     }
 
-    public void setBoundCallableReference(boolean boundCallableReference) {
-        isBoundCallableReference = boundCallableReference;
+    public boolean isPropertyReference() {
+        return propertyReferenceInfo != null;
+    }
+
+    public PropertyReferenceInfo getPropertyReferenceInfo() {
+        return propertyReferenceInfo;
     }
 }

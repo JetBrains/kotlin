@@ -8,6 +8,8 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
 import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.builder.dependency.DependencyContainer
+import com.android.builder.dependency.LibraryDependency
 import com.android.builder.model.SourceProvider
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.internal.DefaultDomainObjectSet
@@ -152,5 +154,51 @@ class AndroidGradleWrapper {
     }
 
     return result.toList()
+  }
+
+  @NotNull
+  static def Map<File, File> getJarToAarMapping(BaseVariantData variantData) {
+    def jarToLibraryArtifactMap = new HashMap<File, File>()
+
+    def libraries = getVariantLibraryDependencies(variantData)
+    if (libraries == null) return jarToLibraryArtifactMap
+
+    for (lib in libraries) {
+      jarToLibraryArtifactMap[lib.jarFile] = lib.bundle
+
+      // local dependencies are detected as changed by gradle, because they are seem to be
+      // rewritten every time when bundle changes
+      // when local dep will actually change, record for bundle will be removed from registry
+      for (localDep in lib.localJars) {
+        if (localDep instanceof File) {
+          // android tools 2.2
+          jarToLibraryArtifactMap[localDep] = lib.bundle
+        }
+        else if (localDep.metaClass.getMetaMethod("jarFile") != null) {
+          // android tools < 2.2
+          jarToLibraryArtifactMap[localDep.jarFile] = lib.bundle
+        }
+      }
+    }
+
+    return jarToLibraryArtifactMap
+  }
+
+  @Nullable
+  private static def Iterable<LibraryDependency> getVariantLibraryDependencies(BaseVariantData variantData) {
+    def variantDependency = variantData.variantDependency
+    if (variantDependency instanceof DependencyContainer) {
+      // android tools < 2.2
+      return variantDependency.getAndroidDependencies()
+    }
+
+    def variantDependencyMeta = variantData.variantDependency.getMetaClass()
+    def getCompileDependencies = variantDependencyMeta.getMetaMethod("getCompileDependencies")
+    if (getCompileDependencies != null && getCompileDependencies.returnType.metaClass == DependencyContainer.metaClass) {
+      // android tools 2.2
+      return variantDependency.getCompileDependencies().getAndroidDependencies()
+    }
+
+    return null
   }
 }

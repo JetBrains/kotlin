@@ -1,7 +1,5 @@
 package
 
-public typealias TC</*0*/ T1, /*1*/ T2>  = TColl<T1, T2>
-public typealias TC2</*0*/ T1, /*1*/ T2>  = TC<T1, T2>
 public val test5: TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Number>>
 public val test6: TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Int>>
 public val test7: TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>>
@@ -17,3 +15,5 @@ public final class TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias TC</*0*/ T1, /*1*/ T2>  = TColl<T1, T2>
+public typealias TC2</*0*/ T1, /*1*/ T2>  = TC<T1, T2>

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -145,7 +146,11 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                     "Wrapped into a reference object to be modified when captured in a closure"
                 else
                     "Value captured in a closure"
-                holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+
+                val parent = elementToHighlight.parent
+                if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
+                    holder.createInfoAnnotation(elementToHighlight, msg).textAttributes = WRAPPED_INTO_REF
+                }
             }
 
             if (descriptor is LocalVariableDescriptor && descriptor !is SyntheticFieldDescriptor) {
