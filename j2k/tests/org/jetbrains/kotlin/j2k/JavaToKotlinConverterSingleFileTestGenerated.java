@@ -2449,6 +2449,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("nativeMethods.java")
+        public void testNativeMethods() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/nativeMethods.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("open.java")
         public void testOpen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/open.java");
