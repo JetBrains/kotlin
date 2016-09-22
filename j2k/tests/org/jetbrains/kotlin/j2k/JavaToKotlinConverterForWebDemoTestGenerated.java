@@ -162,6 +162,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousClass/kt-13146.java");
             doTest(fileName);
         }
+
+        @TestMetadata("localSelfReference.java")
+        public void testLocalSelfReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousClass/localSelfReference.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/arrayAccessExpression")

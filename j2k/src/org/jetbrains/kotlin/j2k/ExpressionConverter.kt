@@ -540,7 +540,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         var identifier = Identifier.withNoPrototype(referenceName, isNullable)
 
 
-        if (expression.getContainingClass()?.getParentOfType<PsiField>(false).let { it != null && it == expression.qualifierExpression?.reference?.resolve() }) {
+        if (expression.getContainingClass()?.getParentOfType<PsiVariable>(false).let { it != null && it == expression.qualifierExpression?.reference?.resolve() }) {
             result = QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier)
             return
         }
