@@ -35,9 +35,13 @@ enum class ComponentStorageState {
 
 internal class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
 
-class ComponentStorage(val myId: String) : ValueResolver {
+class ComponentStorage(val myId: String, parent: ComponentStorage?) : ValueResolver {
     var state = ComponentStorageState.Initial
     private val registry = ComponentRegistry()
+    init {
+        parent?.let { registry.addAll(it.registry) }
+    }
+
     private val descriptors = LinkedHashSet<ComponentDescriptor>()
     private val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
 

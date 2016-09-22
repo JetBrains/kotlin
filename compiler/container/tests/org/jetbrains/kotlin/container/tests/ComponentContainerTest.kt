@@ -270,4 +270,46 @@ class ComponentContainerTest {
         assertTrue(c is C)
     }
 
+    @Test
+    fun use_parent_context_to_discover_dependencies() {
+        class A
+        class B(val a: A)
+
+        val ac = createContainer("a") {
+            useImpl<A>()
+        }
+
+        val bc = createContainer("b", ac) {
+            useImpl<B>()
+        }
+        val b = bc.get<B>()
+
+        val a = ac.get<A>()
+        assertTrue(b is B)
+        assertTrue(b.a is A)
+        assertTrue(a is A)
+        assertTrue(b.a === a)
+    }
+
+    @Test
+    fun several_child_dependencies() {
+        class A
+        class B(val a: A)
+
+        val ac = createContainer("a") {
+            useImpl<A>()
+        }
+
+        val bc1 = createContainer("b1", ac) {
+            useImpl<B>()
+        }
+        val bc2 = createContainer("b2", ac) {
+            useImpl<B>()
+        }
+        val a = ac.get<A>()
+        assertTrue(a is A)
+        assertTrue(a === bc2.get<B>().a)
+        assertTrue(a === bc1.get<B>().a)
+        assertTrue(a === bc1.get<A>())
+    }
 }

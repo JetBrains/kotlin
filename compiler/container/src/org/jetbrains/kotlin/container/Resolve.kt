@@ -30,8 +30,12 @@ interface ValueResolveContext {
     fun resolve(registration: Type): ValueDescriptor?
 }
 
-class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
-    override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this)
+class ComponentResolveContext(
+        val container: StorageComponentContainer,
+        val requestingDescriptor: ValueDescriptor,
+        val parentContext: ValueResolveContext? = null
+) : ValueResolveContext {
+    override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this) ?: parentContext?.resolve(registration)
 
     override fun toString(): String = "for $requestingDescriptor in $container"
 }

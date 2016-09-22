@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.MultiMap
-import java.util.ArrayList
-import java.lang.reflect.*
+import java.lang.reflect.Type
 
 internal class ComponentRegistry {
     fun buildRegistrationMap(descriptors: Collection<ComponentDescriptor>): MultiMap<Type, ComponentDescriptor> {
@@ -39,5 +38,9 @@ internal class ComponentRegistry {
 
     fun tryGetEntry(request: Type): Collection<ComponentDescriptor> {
         return registrationMap.get(request)
+    }
+
+    fun addAll(other: ComponentRegistry) {
+        registrationMap.putAllValues(other.registrationMap)
     }
 }
