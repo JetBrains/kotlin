@@ -28,6 +28,7 @@ class NativeInteropPlugin implements Plugin<Project> {
             args = [srcDir, generatedSrcDir, nativeLibsDir]
             systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
+            environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
 
             inputs.files prj.fileTree(srcDir.path).include('**/*.def')
 
