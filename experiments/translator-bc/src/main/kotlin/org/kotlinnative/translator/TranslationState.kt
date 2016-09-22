@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.native.llvm.LLVMModuleCreateWithName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.utils.PathUtil
@@ -45,6 +46,7 @@ private constructor
     val codeBuilder = LLVMBuilder(arm)
     val extensionFunctions = HashMap<String, HashMap<String, FunctionCodegen>>()
     val globalVariableCollection = HashMap<String, LLVMVariable>()
+    val llvmModule = LLVMModuleCreateWithName("main")
 
     init {
         POINTER_ALIGN = if (arm) 4 else 8
