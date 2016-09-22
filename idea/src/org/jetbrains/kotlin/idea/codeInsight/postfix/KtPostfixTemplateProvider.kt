@@ -106,7 +106,7 @@ internal fun createExpressionSelector(
 private fun PsiElement.isStatement() = parent is KtBlockExpression
 
 private class KtExpressionPostfixTemplateSelector(
-        val filter: PsiElement.() -> Boolean
+        filter: PsiElement.() -> Boolean
 ) : PostfixTemplateExpressionSelectorBase(Condition(filter)) {
     override fun getNonFilteredExpressions(
             context: PsiElement,
@@ -114,7 +114,11 @@ private class KtExpressionPostfixTemplateSelector(
             offset: Int
     ) = context.parentsWithSelf
             .filterIsInstance<KtExpression>()
-            .takeWhile { it !is KtBlockExpression && it !is KtDeclarationWithBody && !it.isEffectivelyDeclaration() }
+            .takeWhile {
+                it !is KtBlockExpression &&
+                it !is KtDeclarationWithBody &&
+                !it.isEffectivelyDeclaration()
+            }.filter { !it.isSelector && it.parent !is KtUserType }
             .toList()
 }
 
@@ -124,3 +128,6 @@ private fun KtElement.isEffectivelyDeclaration() =
         this !is KtFunctionLiteral &&
         // !(fun (a) = 1)
         (this !is KtNamedFunction || this.name == null)
+
+private val KtExpression.isSelector: Boolean
+    get() = parent is KtQualifiedExpression && (parent as KtQualifiedExpression).selectorExpression == this
