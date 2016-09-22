@@ -18,22 +18,13 @@ package org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class ConcatenatedStringGenerator {
     fun create(element: KtBinaryExpression): String {
-        val binaryExpression = getBinaryParentExpression(element)
+        val binaryExpression = KtPsiUtil.getTopmostParentOfTypes(element, KtBinaryExpression::class.java) as? KtBinaryExpression ?: element
         val stringBuilder = StringBuilder()
         create(binaryExpression, stringBuilder)
         return stringBuilder.toString()
-    }
-
-    private fun getBinaryParentExpression(element: KtBinaryExpression): KtBinaryExpression {
-        var binaryExpression = element.getStrictParentOfType<KtBinaryExpression>() ?: return element
-        while (binaryExpression != null) {
-            binaryExpression = binaryExpression.getStrictParentOfType<KtBinaryExpression>() ?: return element
-        }
-        return element
     }
 
     private fun create(element: KtBinaryExpression, sb: StringBuilder) {
