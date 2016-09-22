@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.util
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -57,8 +58,8 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         get() = ImportPathComparator
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
-        val moduleParameters = contextFile.platform.defaultModuleParameters
-        return importPath.isImported(moduleParameters.defaultImports, moduleParameters.excludedImports)
+        val moduleDescriptor = contextFile.findModuleDescriptor()
+        return importPath.isImported(moduleDescriptor.defaultImports, moduleDescriptor.effectivelyExcludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {
