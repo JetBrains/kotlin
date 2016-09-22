@@ -22,14 +22,13 @@ class TooLongCharLiteralToStringFix(
 
         val newStringContent = text
                 .slice(1..text.length - 2)
-                .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
         val newElement = KtPsiFactory(element).createStringTemplate(newStringContent)
 
         element.replace(newElement)
     }
 
-    override fun getFamilyName(): String = "Strings"
+    override fun getFamilyName(): String = text
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
