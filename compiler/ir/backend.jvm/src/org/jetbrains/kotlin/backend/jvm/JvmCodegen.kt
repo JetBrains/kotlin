@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.codegen.JvmClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
 class JvmCodegen(val context: JvmBackendContext) {
     fun generateClass(irClass: IrClass) {
-        JvmClassCodegen.generate(irClass, context)
+        ClassCodegen.generate(irClass, context)
     }
 }

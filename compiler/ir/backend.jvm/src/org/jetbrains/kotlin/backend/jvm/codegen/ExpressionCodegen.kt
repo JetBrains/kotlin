@@ -47,7 +47,7 @@ class ExpressionCodegen(
         val irFunction: IrFunction,
         val frame: FrameMap,
         val mv: InstructionAdapter,
-        val classCodegen: JvmClassCodegen
+        val classCodegen: ClassCodegen
 ) : IrElementVisitor<StackValue, BlockInfo> {
 
     /*TODO*/

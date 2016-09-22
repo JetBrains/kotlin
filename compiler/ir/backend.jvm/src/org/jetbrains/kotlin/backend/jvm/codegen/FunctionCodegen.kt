@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class JvmFunctionCodegen(val irFunction: IrFunction, val classCodegen: JvmClassCodegen) {
+class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen) {
 
     fun generate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction.descriptor, OwnerKind.IMPLEMENTATION)

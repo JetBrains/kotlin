@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class JvmClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext) {
+class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext) {
 
     val state = context.state
 
@@ -111,7 +111,7 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
                 badDescriptor(descriptor, state.classBuilderMode)
             }
 
-            JvmClassCodegen(irClass, context).generate()
+            ClassCodegen(irClass, context).generate()
         }
     }
 
@@ -146,7 +146,7 @@ class JvmClassCodegen private constructor(val irClass: IrClass, val context: Jvm
     }
 
     fun generateMethod(method: IrFunction) {
-        JvmFunctionCodegen(method, this).generate()
+        FunctionCodegen(method, this).generate()
     }
 
 }
