@@ -136,7 +136,8 @@ class StatementGenerator(
 
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
-        val irReturnedExpression = expression.returnedExpression?.genExpr()
+        val irReturnedExpression = expression.returnedExpression?.genExpr() ?:
+                                   IrGetObjectValueImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, context.builtIns.unit)
         return IrReturnImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, returnTarget, irReturnedExpression)
     }
 

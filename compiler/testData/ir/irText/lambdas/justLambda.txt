@@ -19,6 +19,7 @@ FILE /justLambda.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                GET_OBJECT 'Unit' type=kotlin.Unit
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): () -> kotlin.Unit
       BLOCK_BODY

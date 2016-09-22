@@ -18,6 +18,7 @@ FILE /smartCasts.kt
           if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
+            GET_OBJECT 'Unit' type=kotlin.Unit
       CALL 'println(Int): Unit' type=kotlin.Unit origin=null
         message: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
           $this: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String

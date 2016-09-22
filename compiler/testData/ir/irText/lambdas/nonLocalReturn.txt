@@ -7,6 +7,7 @@ FILE /nonLocalReturn.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Nothing
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='test0(): Unit'
+                GET_OBJECT 'Unit' type=kotlin.Unit
           CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
@@ -16,6 +17,7 @@ FILE /nonLocalReturn.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                GET_OBJECT 'Unit' type=kotlin.Unit
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
@@ -25,6 +27,7 @@ FILE /nonLocalReturn.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                GET_OBJECT 'Unit' type=kotlin.Unit
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     BLOCK_BODY
@@ -40,6 +43,7 @@ FILE /nonLocalReturn.kt
                     arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value='0'
                   then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                    GET_OBJECT 'Unit' type=kotlin.Unit
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
@@ -58,6 +62,7 @@ FILE /nonLocalReturn.kt
                     arg0: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value='0'
                   then: RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
+                    GET_OBJECT 'Unit' type=kotlin.Unit
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null

@@ -80,7 +80,9 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
             }
             else {
-                irBlockBody.statements.add(generateReturnExpression(ktBody.startOffset, ktBody.endOffset, null))
+                irBlockBody.statements.add(generateReturnExpression(
+                        ktBody.startOffset, ktBody.endOffset,
+                        IrGetObjectValueImpl(ktBody.startOffset, ktBody.endOffset, context.builtIns.unitType, context.builtIns.unit)))
             }
         }
 
@@ -110,7 +112,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 generateReturnExpression(startOffset, endOffset, this)
             }
 
-    private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression?): IrReturnImpl {
+    private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression): IrReturnImpl {
         val returnTarget = (scopeOwner as? CallableDescriptor) ?:
                            throw AssertionError("'return' in a non-callable: $scopeOwner")
         return IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, returnTarget, returnValue)
@@ -130,7 +132,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     private fun generateDelegatingConstructorCall(irBlockBody: IrBlockBodyImpl, ktConstructor: KtSecondaryConstructor) {
-        val constructorDescriptor = scopeOwner as ConstructorDescriptor
+        val constructorDescriptor = scopeOwner as ClassConstructorDescriptor
 
         val statementGenerator = createStatementGenerator()
         val ktDelegatingConstructorCall = ktConstructor.getDelegationCall()
@@ -167,7 +169,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
 
-        val classDescriptor = (scopeOwner as ConstructorDescriptor).containingDeclaration
+        val classDescriptor = (scopeOwner as ClassConstructorDescriptor).containingDeclaration
         irBlockBody.statements.add(IrInstanceInitializerCallImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, classDescriptor))
 
         return irBlockBody
@@ -178,7 +180,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
-        val classDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor).containingDeclaration
+        val classDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor).containingDeclaration as ClassDescriptor
         irBlockBody.statements.add(IrInstanceInitializerCallImpl(ktConstructor.startOffset, ktConstructor.endOffset, classDescriptor))
 
         ktConstructor.bodyExpression?.let { ktBody ->

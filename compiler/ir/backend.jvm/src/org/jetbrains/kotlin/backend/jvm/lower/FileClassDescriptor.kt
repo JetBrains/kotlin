@@ -31,7 +31,7 @@ class FileClassDescriptorImpl(
         private val sourceElement: SourceElement
 ) : FileClassDescriptor {
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
-    override fun getConstructors(): Collection<ConstructorDescriptor> = emptyList()
+    override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptyList()
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclarationImpl
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getDefaultType(): SimpleType = ErrorUtils.createErrorType("File class type for $nameImpl")
@@ -45,7 +45,7 @@ class FileClassDescriptorImpl(
     override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor = error("File class has no instances")
     override fun getUnsubstitutedInnerClassesScope(): MemberScope = error("File class has no inner classes scope")
     override fun getUnsubstitutedMemberScope(): MemberScope = error("File class has no member scope")
-    override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
+    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
     override fun getVisibility(): Visibility = Visibilities.PUBLIC
     override fun isCompanionObject(): Boolean = false
     override fun isData(): Boolean = false

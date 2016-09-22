@@ -163,7 +163,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     private fun getThisClass(): ClassDescriptor {
         val scopeOwner = statementGenerator.scopeOwner
         return when (scopeOwner) {
-            is ConstructorDescriptor -> scopeOwner.containingDeclaration
+            is ClassConstructorDescriptor -> scopeOwner.containingDeclaration
             is ClassDescriptor -> scopeOwner
             else -> scopeOwner.containingDeclaration as ClassDescriptor
         }

@@ -6,6 +6,7 @@ FILE /tryCatchWithImplicitCast.kt
           if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
+            GET_OBJECT 'Unit' type=kotlin.Unit
       VAR val t: kotlin.String
         TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 
 interface IrReturn : IrExpression {
-    var value: IrExpression?
+    var value: IrExpression
     val returnTarget: CallableDescriptor
 }
 

@@ -27,28 +27,17 @@ class IrReturnImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val returnTarget: CallableDescriptor
+        override val returnTarget: CallableDescriptor,
+        override var value: IrExpression
 ) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            returnTarget: CallableDescriptor,
-            value: IrExpression?
-    ) : this(startOffset, endOffset, type, returnTarget) {
-        this.value = value
-    }
-
-    override var value: IrExpression? = null
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturn(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        value?.accept(visitor, data)
+        value.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        value = value?.transform(transformer, data)
+        value = value.transform(transformer, data)
     }
 }
