@@ -47,7 +47,8 @@ class LazyTopDownAnalyzer(
         private val declarationScopeProvider: DeclarationScopeProvider,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
     fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
 
@@ -203,6 +204,8 @@ class LazyTopDownAnalyzer(
         overloadResolver.checkOverloads(c)
 
         bodyResolver.resolveBodies(c)
+
+        ClassifierUsageChecker.check(declarations, trace, classifierUsageCheckers)
 
         return c
     }

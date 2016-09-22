@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
 import org.jetbrains.kotlin.resolve.getDeprecation
 
@@ -38,6 +39,9 @@ object DeprecatedCallChecker : CallChecker {
     }
 
     private fun check(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+        // Objects will be checked by DeprecatedClassifierUsageChecker
+        if (targetDescriptor is FakeCallableDescriptorForObject) return
+
         val deprecation = targetDescriptor.getDeprecation()
 
         // avoid duplicating diagnostic when deprecation for property effectively deprecates setter

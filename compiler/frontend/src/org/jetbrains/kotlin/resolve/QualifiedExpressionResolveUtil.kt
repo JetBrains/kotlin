@@ -25,12 +25,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
 fun resolveQualifierAsReceiverInExpression(
-        qualifier: Qualifier,
-        selector: DeclarationDescriptor?,
-        context: ExpressionTypingContext,
-        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
+        qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context, classifierUsageCheckers)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context)
 
     if (referenceTarget is TypeParameterDescriptor) {
         context.trace.report(Errors.TYPE_PARAMETER_ON_LHS_OF_DOT.on(qualifier.referenceExpression, referenceTarget))
@@ -40,11 +37,9 @@ fun resolveQualifierAsReceiverInExpression(
 }
 
 fun resolveQualifierAsStandaloneExpression(
-        qualifier: Qualifier,
-        context: ExpressionTypingContext,
-        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
+        qualifier: Qualifier, context: ExpressionTypingContext
 ): DeclarationDescriptor {
-    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context, classifierUsageCheckers)
+    val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context)
 
     when (referenceTarget) {
         is TypeAliasDescriptor -> {
@@ -73,8 +68,7 @@ fun resolveQualifierAsStandaloneExpression(
 private fun resolveQualifierReferenceTarget(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
-        context: ExpressionTypingContext,
-        classifierUsageCheckers: Iterable<ClassifierUsageChecker>
+        context: ExpressionTypingContext
 ): DeclarationDescriptor {
     if (qualifier is TypeParameterQualifier) {
         return qualifier.descriptor
@@ -110,9 +104,6 @@ private fun resolveQualifierReferenceTarget(
             context.trace.recordType(qualifier.expression, classValueTypeDescriptor.defaultType)
             if (classifier.hasCompanionObject) {
                 context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, classifier)
-                for (checker in classifierUsageCheckers) {
-                    checker.check(classValueDescriptor, context.trace, qualifier.referenceExpression)
-                }
             }
             return classValueTypeDescriptor
         }
