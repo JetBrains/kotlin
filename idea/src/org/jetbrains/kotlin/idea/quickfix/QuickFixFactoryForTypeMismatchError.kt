@@ -141,7 +141,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         if (function is KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, diagnosticElement)) {
             val scope = function.getResolutionScope(context, function.getResolutionFacade())
             val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
-            actions.add(ChangeFunctionReturnTypeFix.ForCurrent(function, typeToInsert))
+            actions.add(ChangeFunctionReturnTypeFix.ForEnclosing(function, typeToInsert))
         }
 
         // Fixing overloaded operators:
@@ -150,7 +150,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             if (resolvedCall != null) {
                 val declaration = getFunctionDeclaration(resolvedCall)
                 if (declaration != null) {
-                    actions.add(ChangeFunctionReturnTypeFix.ForInvoked(declaration, expectedType))
+                    actions.add(ChangeFunctionReturnTypeFix.ForCalled(declaration, expectedType))
                 }
             }
         }
@@ -161,7 +161,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             if (resolvedCall != null) {
                 val declaration = getFunctionDeclaration(resolvedCall)
                 if (declaration != null) {
-                    actions.add(ChangeFunctionReturnTypeFix.ForInvoked(declaration, expectedType))
+                    actions.add(ChangeFunctionReturnTypeFix.ForCalled(declaration, expectedType))
                 }
             }
         }

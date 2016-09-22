@@ -73,7 +73,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
     class ForOverridden(element: KtVariableDeclaration, type: KotlinType) : ChangeVariableTypeFix(element, type) {
         override fun variablePresentation(): String? {
             val presentation = super.variablePresentation() ?: return null
-            return "overridden property $presentation"
+            return "base property $presentation"
         }
     }
 
