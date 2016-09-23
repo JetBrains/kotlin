@@ -121,7 +121,7 @@ private fun Project.createKotlinAfterJavaTask(
 }
 
 class AnnotationProcessingManager(
-        private val task: AbstractCompile,
+        task: AbstractCompile,
         private val javaTask: JavaCompile,
         private val taskQualifier: String,
         private val aptFiles: Set<File>,
@@ -130,7 +130,6 @@ class AnnotationProcessingManager(
         private val androidVariant: Any? = null) {
 
     private val project = task.project
-    private val random = Random()
     val wrappersDirectory = File(aptWorkingDir, "wrappers")
     val hackAnnotationDir = File(aptWorkingDir, "java_src")
 

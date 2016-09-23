@@ -32,7 +32,7 @@ abstract class TaskToFriendTaskMapper {
 
 sealed class RegexTaskToFriendTaskMapper(
         private val prefix: String,
-        private val suffix: String
+        suffix: String
 ) : TaskToFriendTaskMapper() {
     class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin")
     class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin")
