@@ -100,15 +100,26 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                     }
                     .map { it.getProxy(classLoader) }
         })
+
+        fun logClassloadingError(ex: Throwable) {
+            logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.WARNING, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
+        }
+
         try {
             val fileDeps = resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
             return fileDeps?.get()
         }
-        catch (ex: ClassCastException) {
-            logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.ERROR, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
-            return null
+        catch (ex: ClassNotFoundException) {
+            logClassloadingError(ex)
         }
+        catch (ex: NoClassDefFoundError) {
+            logClassloadingError(ex)
+        }
+        catch (ex: ClassCastException) {
+            logClassloadingError(ex)
+        }
+        return null
     }
 
     private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
