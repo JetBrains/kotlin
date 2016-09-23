@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.testFramework.PlatformTestCase
 import org.junit.Test
+import javax.script.ScriptContext
+import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import kotlin.test.assertFails
@@ -42,4 +44,21 @@ class IdeaJsr223Test : PlatformTestCase() {
         assertEquals(7, res2)
     }
 
+    @Test
+    fun testJsr223ScriptWithBindings() {
+        val semgr = ScriptEngineManager()
+
+        val engine = semgr.getEngineByName("kotlin")
+
+        val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE)
+
+        bindings.put(ScriptEngine.ARGV, arrayOf("42"))
+        bindings.put("abc", 13)
+
+        val res1 = engine.eval("2 + args[0].toInt()")
+        assertEquals(44, res1)
+
+        val res2 = engine.eval("2 + (bindings[\"abc\"] as Int)")
+        assertEquals(15, res2)
+    }
 }

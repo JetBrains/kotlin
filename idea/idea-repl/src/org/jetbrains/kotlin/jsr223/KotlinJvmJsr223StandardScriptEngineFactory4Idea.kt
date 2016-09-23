@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.jsr223
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.utils.PathUtil
+import javax.script.Bindings
+import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineFactory
 
@@ -38,9 +40,14 @@ class KotlinJvmJsr223StandardScriptEngineFactory4Idea : ScriptEngineFactory {
                     Disposer.newDisposable(),
                     this,
                     listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath),
-                    "kotlin.script.StandardScriptTemplate",
-                    arrayOf(emptyArray<String>()),
-                    null)
+                    "kotlin.script.ScriptTemplateWithArgsAndBindings",
+                    { ctx ->
+                        val bindings = ctx.getBindings(ScriptContext.ENGINE_SCOPE)
+                        arrayOf(
+                                (bindings[ScriptEngine.ARGV] as? Array<*>) ?: emptyArray<String>(),
+                                bindings) },
+                    arrayOf(Array<String>::class.java, java.util.Map::class.java)
+            )
 
     override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
     override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"

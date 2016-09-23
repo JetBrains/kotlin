@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.cli.common.repl.GenericReplCompiledEvaluator
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
-import org.jetbrains.kotlin.daemon.client.*
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -34,7 +37,7 @@ class KotlinJvmJsr223ScriptEngine4Idea(
         private val factory: ScriptEngineFactory,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgs: Array<Any?>?,
+        getScriptArgs: (ScriptContext) -> Array<Any?>?,
         scriptArgsTypes: Array<Class<*>>?
 ) : AbstractScriptEngine(), ScriptEngine {
 
@@ -63,7 +66,8 @@ class KotlinJvmJsr223ScriptEngine4Idea(
         }
     }
 
-    val localEvaluator by lazy { GenericReplCompiledEvaluator(emptyList(), Thread.currentThread().contextClassLoader, scriptArgs, scriptArgsTypes) }
+    // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
+    val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
 
     private var lineCount = 0
 

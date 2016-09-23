@@ -57,7 +57,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
                 (compiledLoadedClassesHistory.map { it.second.klass } +
                  (scriptArgs?.asIterable()
                           ?.mapIndexed { i, it ->
-                              it?.javaClass ?: if (i < (scriptArgsTypes?.size ?: 0)) scriptArgsTypes!![i] else Any::class.java
+                              if (i < (scriptArgsTypes?.size ?: 0)) scriptArgsTypes!![i] else it?.javaClass ?: Any::class.java
                           }
                   ?: emptyList()
                  )
