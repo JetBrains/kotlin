@@ -63,12 +63,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
-    var compilerCalled: Boolean = false
+    internal var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
-    var anyClassesCompiled: Boolean = false
-    var friendTaskName: String? = null
-    var javaOutputDir: File? = null
-    var moduleName: String = "${project.name}-${this.name}"
+    internal var anyClassesCompiled: Boolean = false
+    internal var friendTaskName: String? = null
+    internal var javaOutputDir: File? = null
+    internal var moduleName: String = "${project.name}-${this.name}"
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -109,7 +109,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
     override val compiler = K2JVMCompiler()
 
-    var parentKotlinOptionsImpl: KotlinJvmOptionsImpl? = null
+    internal var parentKotlinOptionsImpl: KotlinJvmOptionsImpl? = null
     private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
     override val kotlinOptions: KotlinJvmOptions
             get() = kotlinOptionsImpl
@@ -117,7 +117,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private val sourceRoots = HashSet<File>()
 
     // lazy because name is probably not available when constructor is called
-    val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() } }
+    internal val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() } }
     private val cacheDirectory: File by lazy { File(taskBuildDirectory, CACHES_DIR_NAME) }
     private val dirtySourcesSinceLastTimeFile: File by lazy { File(taskBuildDirectory, DIRTY_SOURCES_FILE_NAME) }
     private val lastBuildInfoFile: File by lazy { File(taskBuildDirectory, LAST_BUILD_INFO_FILE_NAME) }
@@ -127,7 +127,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                dataContainerCacheVersion(taskBuildDirectory),
                gradleCacheVersion(taskBuildDirectory))
     }
-    val isCacheFormatUpToDate: Boolean
+    internal val isCacheFormatUpToDate: Boolean
         get() {
             if (!incremental) return true
 
@@ -143,12 +143,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             get() = File(project.buildDir, "generated/source/kapt2")
 
 
-    val kaptOptions = KaptOptions()
-    val pluginOptions = CompilerPluginOptions()
-    var artifactDifferenceRegistry: ArtifactDifferenceRegistry? = null
-    var artifactFile: File? = null
+    internal val kaptOptions = KaptOptions()
+    internal val pluginOptions = CompilerPluginOptions()
+    internal var artifactDifferenceRegistry: ArtifactDifferenceRegistry? = null
+    internal var artifactFile: File? = null
     // created only if kapt2 is active
-    var sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null
+    internal var sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null
 
     override fun populateCompilerArguments(): K2JVMCompilerArguments {
         val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
@@ -578,7 +578,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         return super.source(*sourcesToAdd)
     }
 
-    fun findRootsForSources(sources: Iterable<File>): Set<File> {
+    internal fun findRootsForSources(sources: Iterable<File>): Set<File> {
         val resultRoots = HashSet<File>()
         val sourceDirs = sources.mapTo(HashSet()) { it.parentFile }
 
@@ -652,7 +652,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     }
 }
 
-class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItemsCollector? = null) : MessageCollector {
+internal class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItemsCollector? = null) : MessageCollector {
     private var hasErrors = false
 
     override fun hasErrors() = hasErrors
@@ -712,8 +712,7 @@ internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
 }
 
-inline
-internal fun Logger.kotlinDebug(message: ()->String) {
+internal inline fun Logger.kotlinDebug(message: ()->String) {
     if (isDebugEnabled) {
         kotlinDebug(message())
     }

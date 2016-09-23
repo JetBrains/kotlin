@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
@@ -106,12 +105,12 @@ class KotlinGradleIT: BaseGradleIT() {
     fun testLogLevelForceGC() {
         val debugProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.DEBUG)
         debugProject.build("build") {
-            assertContains(KotlinGradleBuildServices.FORCE_SYSTEM_GC_MESSAGE)
+            assertContains("Forcing System.gc()")
         }
 
         val infoProject = Project("simpleProject", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
         infoProject.build("clean", "build") {
-            assertNotContains(KotlinGradleBuildServices.FORCE_SYSTEM_GC_MESSAGE)
+            assertNotContains("Forcing System.gc()")
         }
     }
 

@@ -30,7 +30,7 @@ internal fun Task.finalizedByIfNotFailed(finalizer: Task) {
     this.finalizedBy(finalizer)
 }
 
-fun AbstractCompile.mapClasspath(fn: ()->FileCollection) {
+internal fun AbstractCompile.mapClasspath(fn: ()->FileCollection) {
     conventionMapping.map("classpath", fn)
 }
 

@@ -1,5 +1,5 @@
 package org.jetbrains.kotlin.gradle.plugin
 
-interface KotlinSourceSetProvider {
+internal interface KotlinSourceSetProvider {
     fun create(displayName: String): KotlinSourceSet
 }

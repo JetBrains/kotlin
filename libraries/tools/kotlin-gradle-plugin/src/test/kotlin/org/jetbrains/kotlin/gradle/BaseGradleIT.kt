@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.util.checkBytecodeNotContains
 import org.jetbrains.kotlin.gradle.util.createGradleCommand
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -183,8 +182,8 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.checkKotlinGradleBuildServices() {
-        assertSubstringCount(KotlinGradleBuildServices.INIT_MESSAGE, expectedCount = 1)
-        assertSubstringCount(KotlinGradleBuildServices.DISPOSE_MESSAGE, expectedCount = 1)
+        assertSubstringCount("Initialized KotlinGradleBuildServices", expectedCount = 1)
+        assertSubstringCount("Disposed KotlinGradleBuildServices", expectedCount = 1)
     }
 
     fun CompiledProject.assertNotContains(vararg expected: String): CompiledProject {

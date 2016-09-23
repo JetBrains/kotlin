@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
-fun configureMultiProjectIncrementalCompilation(
+internal fun configureMultiProjectIncrementalCompilation(
         project: Project,
         kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
