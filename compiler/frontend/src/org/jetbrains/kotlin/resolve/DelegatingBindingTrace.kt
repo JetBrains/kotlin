@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.util.slicedMap.*
 
 open class DelegatingBindingTrace(private val parentContext: BindingContext,
-                                  withParentDiagnostics: Boolean,
-                                  private val name: String) : BindingTrace {
+                                  private val name: String,
+                                  withParentDiagnostics: Boolean = true) : BindingTrace {
     private val map = if (BindingTraceContext.TRACK_REWRITES) TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) else SlicedMapImpl.create()
     private val mutableDiagnostics: MutableDiagnosticsWithSuppression
 
@@ -58,9 +58,6 @@ open class DelegatingBindingTrace(private val parentContext: BindingContext,
     }
 
     private val bindingContext = MyBindingContext()
-
-    constructor(parentContext: BindingContext, debugName: String) : this(parentContext, true, debugName) {
-    }
 
     init {
         this.mutableDiagnostics = if (withParentDiagnostics)
