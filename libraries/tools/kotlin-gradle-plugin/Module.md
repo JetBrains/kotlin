@@ -1,4 +1,4 @@
-# Module kotlin-gradle-plugin-dsl
+# Module kotlin-gradle-plugin
 
 `kotlin-gradle-plugin` artifact provides multiple plugins.
 
