@@ -18,20 +18,9 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
-import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
-        // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
-        val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotationEntry::class.java, true)
-        if (annotationEntry != null && annotationEntry.calleeExpression!!.constructorReferenceExpression == element) return
-
-        // Do not check types in calls to super constructor in extends list, rely on call message
-        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, KtSuperTypeCallEntry::class.java, true)
-        if (superExpression != null && superExpression.calleeExpression.constructorReferenceExpression == element) return
-
         val deprecation = targetDescriptor.getDeprecation()
         if (deprecation != null) {
             trace.report(createDeprecationDiagnostic(element, deprecation))
