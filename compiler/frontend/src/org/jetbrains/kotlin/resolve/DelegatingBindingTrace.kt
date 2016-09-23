@@ -14,179 +14,131 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
-import org.jetbrains.kotlin.util.slicedMap.*;
+import com.google.common.collect.ImmutableMap
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.util.slicedMap.*
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+open class DelegatingBindingTrace(private val parentContext: BindingContext,
+                                  withParentDiagnostics: Boolean,
+                                  private val name: String) : BindingTrace {
+    private val map = if (BindingTraceContext.TRACK_REWRITES) TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) else SlicedMapImpl.create()
+    private val mutableDiagnostics: MutableDiagnosticsWithSuppression
 
-public class DelegatingBindingTrace implements BindingTrace {
-    @SuppressWarnings("ConstantConditions")
-    private final MutableSlicedMap map = BindingTraceContext.TRACK_REWRITES ? new TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create();
+    private inner class MyBindingContext : BindingContext {
+        override fun getDiagnostics(): Diagnostics = mutableDiagnostics
 
-    private final BindingContext parentContext;
-    private final String name;
-    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
-
-    private final BindingContext bindingContext = new BindingContext() {
-        @NotNull
-        @Override
-        public Diagnostics getDiagnostics() {
-            return mutableDiagnostics;
+        override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
+            return this@DelegatingBindingTrace.get(slice, key)
         }
 
-        @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            return DelegatingBindingTrace.this.get(slice, key);
+        override fun getType(expression: KtExpression): KotlinType? {
+            return this@DelegatingBindingTrace.getType(expression)
         }
 
-
-        @Nullable
-        @Override
-        public KotlinType getType(@NotNull KtExpression expression) {
-            return DelegatingBindingTrace.this.getType(expression);
+        override fun <K, V> getKeys(slice: WritableSlice<K, V>): Collection<K> {
+            return this@DelegatingBindingTrace.getKeys(slice)
         }
 
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            return DelegatingBindingTrace.this.getKeys(slice);
+        override fun addOwnDataTo(trace: BindingTrace, commitDiagnostics: Boolean) {
+            BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics)
         }
 
-        @Override
-        public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
-            BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics);
-        }
-
-        @NotNull
         @TestOnly
-        @Override
-        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-            Map<K, V> result = Maps.newHashMap();
-            result.putAll(parentContext.getSliceContents(slice));
-            result.putAll(map.getSliceContents(slice));
-            return ImmutableMap.copyOf(result);
+        override fun <K, V> getSliceContents(slice: ReadOnlySlice<K, V>): ImmutableMap<K, V> {
+            return ImmutableMap.copyOf(parentContext.getSliceContents(slice) + map.getSliceContents(slice))
         }
-    };
-
-    public DelegatingBindingTrace(BindingContext parentContext, String debugName) {
-        this(parentContext, true, debugName);
     }
 
-    public DelegatingBindingTrace(BindingContext parentContext, boolean withParentDiagnostics, String debugName) {
-        this.parentContext = parentContext;
-        this.name = debugName;
-        this.mutableDiagnostics = withParentDiagnostics ?
-                                  new MutableDiagnosticsWithSuppression(bindingContext, parentContext.getDiagnostics()) :
-                                  new MutableDiagnosticsWithSuppression(bindingContext);
+    private val bindingContext = MyBindingContext()
+
+    constructor(parentContext: BindingContext, debugName: String) : this(parentContext, true, debugName) {
     }
 
-    public DelegatingBindingTrace(BindingContext parentContext, String debugName, @Nullable Object resolutionSubjectForMessage) {
-        this(parentContext, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage));
+    init {
+        this.mutableDiagnostics = if (withParentDiagnostics)
+            MutableDiagnosticsWithSuppression(bindingContext, parentContext.diagnostics)
+        else
+            MutableDiagnosticsWithSuppression(bindingContext)
     }
 
-    @Override
-    @NotNull
-    public BindingContext getBindingContext() {
-        return bindingContext;
+    constructor(parentContext: BindingContext,
+                debugName: String,
+                resolutionSubjectForMessage: Any?) : this(parentContext, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage)) {
     }
 
-    @Override
-    public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-        map.put(slice, key, value);
+    override fun getBindingContext(): BindingContext = bindingContext
+
+    override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
+        map.put(slice, key, value)
     }
 
-    @Override
-    public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-        record(slice, key, true);
+    override fun <K> record(slice: WritableSlice<K, Boolean>, key: K) {
+        record(slice, key, true)
     }
 
-    @Override
-    public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        V value = map.get(slice, key);
-        if (slice instanceof SetSlice) {
-            assert value != null;
-            if (!value.equals(SetSlice.DEFAULT)) return value;
+    override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
+        val value = map.get(slice, key)
+        if (slice is SetSlice<*>) {
+            assert(value != null)
+            if (value != SetSlice.DEFAULT) return value
         }
         else if (value != null) {
-            return value;
+            return value
         }
 
-        return parentContext.get(slice, key);
+        return parentContext.get(slice, key)
     }
 
-    @NotNull
-    @Override
-    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-        Collection<K> keys = map.getKeys(slice);
-        Collection<K> fromParent = parentContext.getKeys(slice);
-        if (keys.isEmpty()) return fromParent;
-        if (fromParent.isEmpty()) return keys;
+    override fun <K, V> getKeys(slice: WritableSlice<K, V>): Collection<K> {
+        val keys = map.getKeys(slice)
+        val fromParent = parentContext.getKeys(slice)
+        if (keys.isEmpty()) return fromParent
+        if (fromParent.isEmpty()) return keys
 
-        List<K> result = Lists.newArrayList(keys);
-        result.addAll(fromParent);
-        return result;
+        return keys + fromParent
     }
 
-    @Nullable
-    @Override
-    public KotlinType getType(@NotNull KtExpression expression) {
-        KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
-        return typeInfo != null ? typeInfo.getType() : null;
+    override fun getType(expression: KtExpression): KotlinType? {
+        val typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression)
+        return typeInfo?.type
     }
 
-    @Override
-    public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+    override fun recordType(expression: KtExpression, type: KotlinType?) {
+        var typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression)
         if (typeInfo == null) {
-            typeInfo = TypeInfoFactoryKt.createTypeInfo(type);
+            typeInfo = createTypeInfo(type)
         }
         else {
-            typeInfo = typeInfo.replaceType(type);
+            typeInfo = typeInfo.replaceType(type)
         }
-        record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
+        record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo)
     }
 
-    public void addOwnDataTo(@NotNull BindingTrace trace) {
-        addOwnDataTo(trace, null, true);
+    fun moveAllMyDataTo(trace: BindingTrace) {
+        addOwnDataTo(trace, null, true)
+        clear()
     }
 
-    public void moveAllMyDataTo(@NotNull BindingTrace trace) {
-        addOwnDataTo(trace, null, true);
-        clear();
+    @JvmOverloads fun addOwnDataTo(trace: BindingTrace, filter: TraceEntryFilter? = null, commitDiagnostics: Boolean = true) {
+        BindingContextUtils.addOwnDataTo(trace, filter, commitDiagnostics, map, mutableDiagnostics)
     }
 
-    public void addOwnDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
-        BindingContextUtils.addOwnDataTo(trace, filter, commitDiagnostics, map, mutableDiagnostics);
+    fun clear() {
+        map.clear()
+        mutableDiagnostics.clear()
     }
 
-    public void clear() {
-        map.clear();
-        mutableDiagnostics.clear();
+    override fun report(diagnostic: Diagnostic) {
+        mutableDiagnostics.report(diagnostic)
     }
 
-    @Override
-    public void report(@NotNull Diagnostic diagnostic) {
-        mutableDiagnostics.report(diagnostic);
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
+    override fun toString(): String = name
 }
