@@ -646,7 +646,7 @@ public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolea
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun <T> Array<out T>.contentToString(): String {
@@ -654,7 +654,7 @@ public fun <T> Array<out T>.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun ByteArray.contentToString(): String {
@@ -662,7 +662,7 @@ public fun ByteArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun ShortArray.contentToString(): String {
@@ -670,7 +670,7 @@ public fun ShortArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun IntArray.contentToString(): String {
@@ -678,7 +678,7 @@ public fun IntArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun LongArray.contentToString(): String {
@@ -686,7 +686,7 @@ public fun LongArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun FloatArray.contentToString(): String {
@@ -694,7 +694,7 @@ public fun FloatArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun DoubleArray.contentToString(): String {
@@ -702,7 +702,7 @@ public fun DoubleArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun BooleanArray.contentToString(): String {
@@ -710,7 +710,7 @@ public fun BooleanArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of the specified array as if it is [List].
+ * Returns a string representation of the contents of the specified array as if it is a [List].
  */
 @library("arrayToString")
 public fun CharArray.contentToString(): String {
@@ -718,11 +718,13 @@ public fun CharArray.contentToString(): String {
 }
 
 /**
- * Returns a string representation of the contents of this array as if it is [List].
- * 
+ * Returns a string representation of the contents of this array as if it is a [List].
  * Nested arrays are treated as lists too.
+ * 
+ * If any of arrays contains itself on any nesting level that reference
+ * is rendered as `"[...]"` to prevent recursion.
  */
-@library("arrayToString")
+@library("arrayDeepToString")
 public fun <T> Array<out T>.contentDeepToString(): String {
     return noImpl
 }
@@ -801,8 +803,8 @@ public fun CharArray.contentHashCode(): Int {
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
- * 
  * Nested arrays are treated as lists too.
+ * 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @library("arrayDeepHashCode")

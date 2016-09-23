@@ -198,7 +198,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentToString()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns a string representation of the contents of the specified array as if it is [List]." }
+        doc { "Returns a string representation of the contents of the specified array as if it is a [List]." }
         annotations("""@library("arrayToString")""")
         returns("String")
         body { "return noImpl" }
@@ -208,12 +208,14 @@ fun specialJS(): List<GenericFunction> {
         only(ArraysOfObjects)
         doc {
             """
-            Returns a string representation of the contents of this array as if it is [List].
-
+            Returns a string representation of the contents of this array as if it is a [List].
             Nested arrays are treated as lists too.
+
+            If any of arrays contains itself on any nesting level that reference
+            is rendered as `"[...]"` to prevent recursion.
             """
         }
-        annotations("""@library("arrayToString")""") // arrayToString is already deep
+        annotations("""@library("arrayDeepToString")""")
         returns("String")
         body { "return noImpl" }
     }
@@ -233,8 +235,8 @@ fun specialJS(): List<GenericFunction> {
         doc {
             """
             Returns a hash code based on the contents of this array as if it is [List].
-
             Nested arrays are treated as lists too.
+
             If any of arrays contains itself on any nesting level the behavior is undefined.
             """
         }

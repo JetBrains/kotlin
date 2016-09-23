@@ -86,7 +86,7 @@
             return "null";
         }
         else if (Array.isArray(o)) {
-            return Kotlin.arrayToString(o);
+            return "[...]";
         }
         else {
             return o.toString();
@@ -95,6 +95,21 @@
 
     Kotlin.arrayToString = function (a) {
         return "[" + a.map(Kotlin.toString).join(", ") + "]";
+    };
+
+    Kotlin.arrayDeepToString = function (a, visited) {
+        visited = visited || [a];
+        return "[" + a.map(function(e) {
+            if (Array.isArray(e) && visited.indexOf(e) < 0) {
+                visited.push(e);
+                var result = Kotlin.arrayDeepToString(e, visited);
+                visited.pop();
+                return result;
+            }
+            else {
+                return Kotlin.toString(e);
+            }
+        }).join(", ") + "]";
     };
 
     Kotlin.compareTo = function (a, b) {
@@ -398,7 +413,7 @@
         var result = 1;
         for (var i = 0, n = arr.length; i < n; i++) {
             var e = arr[i];
-            result = ((31 * result | 0) + (Array.isArray(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(arr[i]))) | 0;
+            result = ((31 * result | 0) + (Array.isArray(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
         }
         return result;
     };

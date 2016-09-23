@@ -5163,8 +5163,8 @@ public inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>):
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
- * 
  * Nested arrays are treated as lists too.
+ * 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @kotlin.jvm.JvmVersion
@@ -5174,9 +5174,11 @@ public inline fun <T> Array<out T>.contentDeepHashCode(): Int {
 }
 
 /**
- * Returns a string representation of the contents of this array as if it is [List].
- * 
+ * Returns a string representation of the contents of this array as if it is a [List].
  * Nested arrays are treated as lists too.
+ * 
+ * If any of arrays contains itself on any nesting level that reference
+ * is rendered as `"[...]"` to prevent recursion.
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly

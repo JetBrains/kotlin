@@ -56,9 +56,7 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("Boolean")
-        body {
-            "return Arrays.equals(this, other)"
-        }
+        body { "return Arrays.equals(this, other)" }
     }
 
     templates add f("contentDeepEquals(other: SELF)") {
@@ -76,9 +74,7 @@ fun arrays(): List<GenericFunction> {
             """
         }
         returns("Boolean")
-        body {
-            "return Arrays.deepEquals(this, other)"
-        }
+        body { "return Arrays.deepEquals(this, other)" }
     }
 
     templates add f("contentToString()") {
@@ -87,9 +83,7 @@ fun arrays(): List<GenericFunction> {
         inline(Inline.Only)
         doc { "Returns a string representation of the contents of the specified array as if it is [List]." }
         returns("String")
-        body {
-            "return Arrays.toString(this)"
-        }
+        body { "return Arrays.toString(this)" }
     }
 
     templates add f("contentDeepToString()") {
@@ -98,15 +92,15 @@ fun arrays(): List<GenericFunction> {
         inline(Inline.Only)
         doc {
             """
-            Returns a string representation of the contents of this array as if it is [List].
-
+            Returns a string representation of the contents of this array as if it is a [List].
             Nested arrays are treated as lists too.
+
+            If any of arrays contains itself on any nesting level that reference
+            is rendered as `"[...]"` to prevent recursion.
             """
         }
         returns("String")
-        body {
-            "return Arrays.deepToString(this)"
-        }
+        body { "return Arrays.deepToString(this)" }
     }
 
     templates add f("contentHashCode()") {
@@ -117,9 +111,7 @@ fun arrays(): List<GenericFunction> {
             "Returns a hash code based on the contents of this array as if it is [List]."
         }
         returns("Int")
-        body {
-            "return Arrays.hashCode(this)"
-        }
+        body { "return Arrays.hashCode(this)" }
     }
 
     templates add f("contentDeepHashCode()") {
@@ -129,15 +121,13 @@ fun arrays(): List<GenericFunction> {
         doc {
             """
             Returns a hash code based on the contents of this array as if it is [List].
-
             Nested arrays are treated as lists too.
+
             If any of arrays contains itself on any nesting level the behavior is undefined.
             """
         }
         returns("Int")
-        body {
-            "return Arrays.deepHashCode(this)"
-        }
+        body { "return Arrays.deepHashCode(this)" }
     }
 
     templates addAll PrimitiveType.defaultPrimitives.map { primitive ->
