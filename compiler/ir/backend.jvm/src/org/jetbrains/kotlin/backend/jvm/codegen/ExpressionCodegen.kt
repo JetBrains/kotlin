@@ -359,8 +359,11 @@ class ExpressionCodegen(
                 coerce(expression.argument.asmType, Type.VOID_TYPE, mv)
                 return none()
             }
+            IrTypeOperator.IMPLICIT_CAST -> {
+                gen(expression.argument, expression.typeOperand.asmType, data)
+            }
 
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
+            IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST -> {
                 val value = expression.argument.accept(this, data)
                 value.put(boxType(value.type), mv)
                 if (value.type === Type.VOID_TYPE) {
