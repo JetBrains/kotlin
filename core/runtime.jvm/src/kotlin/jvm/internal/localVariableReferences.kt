@@ -19,7 +19,7 @@ package kotlin.jvm.internal
 import kotlin.reflect.KDeclarationContainer
 
 private fun notSupportedError(): Nothing {
-    throw UnsupportedOperationException("Not supported for local property reference.")
+    throw kotlin.UnsupportedOperationException("Not supported for local property reference.")
 }
 
 open class LocalVariableReference : PropertyReference0() {

@@ -35,7 +35,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             LONG -> "0L"
             else -> "0"
         }
-        val checkZero = "if (step == $zero) throw IllegalArgumentException(\"Step must be non-zero\")"
+        val checkZero = "if (step == $zero) throw kotlin.IllegalArgumentException(\"Step must be non-zero\")"
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
