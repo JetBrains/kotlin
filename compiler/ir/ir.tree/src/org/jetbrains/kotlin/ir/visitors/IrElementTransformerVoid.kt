@@ -21,198 +21,193 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 
-interface IrElementTransformerVoid : IrElementTransformer<Nothing?> {
-    fun visitElement(element: IrElement): IrElement =
-            element.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
-    override fun visitElement(element: IrElement, data: Nothing?): IrElement = visitElement(element)
+abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
+    open fun visitElement(element: IrElement): IrElement = element.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitElement(element: IrElement, data: Nothing?): IrElement = visitElement(element)
 
-    fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment =
-            declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): IrModuleFragment = visitModuleFragment(declaration)
+    open fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment = declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): IrModuleFragment = visitModuleFragment(declaration)
 
-    fun visitFile(declaration: IrFile): IrFile =
-            declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    open fun visitFile(declaration: IrFile): IrFile = declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitFile(declaration: IrFile, data: Nothing?): IrFile = visitFile(declaration)
 
-    override fun visitFile(declaration: IrFile, data: Nothing?): IrFile = visitFile(declaration)
+    open fun visitDeclaration(declaration: IrDeclaration): IrStatement = declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): IrStatement = visitDeclaration(declaration)
 
-    fun visitDeclaration(declaration: IrDeclaration): IrStatement =
-            declaration.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    open fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
+    override final fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): IrStatement = visitDeclaration(declaration)
+    open fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
+    override final fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
 
-    fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
-    override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
+    open fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
+    override final fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
-    fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
+    open fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
+    override final fun visitConstructor(declaration: IrConstructor, data: Nothing?) = visitConstructor(declaration)
 
-    fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
-    override fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
+    open fun visitProperty(declaration: IrProperty) = visitDeclaration(declaration)
+    override final fun visitProperty(declaration: IrProperty, data: Nothing?) = visitProperty(declaration)
 
-    fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?) = visitConstructor(declaration)
+    open fun visitField(declaration: IrField) = visitDeclaration(declaration)
+    override final fun visitField(declaration: IrField, data: Nothing?) = visitField(declaration)
 
-    fun visitProperty(declaration: IrProperty) = visitDeclaration(declaration)
-    override fun visitProperty(declaration: IrProperty, data: Nothing?) = visitProperty(declaration)
+    open fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) = visitDeclaration(declaration)
+    override final fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = visitLocalDelegatedProperty(declaration)
 
-    fun visitField(declaration: IrField) = visitDeclaration(declaration)
-    override fun visitField(declaration: IrField, data: Nothing?) = visitField(declaration)
+    open fun visitEnumEntry(declaration: IrEnumEntry) = visitDeclaration(declaration)
+    override final fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) = visitEnumEntry(declaration)
 
-    fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) = visitDeclaration(declaration)
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = visitLocalDelegatedProperty(declaration)
+    open fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) = visitDeclaration(declaration)
+    override final fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = visitAnonymousInitializer(declaration)
 
-    fun visitEnumEntry(declaration: IrEnumEntry) = visitDeclaration(declaration)
-    override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) = visitEnumEntry(declaration)
+    open fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
+    override final fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
 
-    fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) = visitDeclaration(declaration)
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = visitAnonymousInitializer(declaration)
-
-    fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
-    override fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
-
-    fun visitBody(body: IrBody): IrBody =
+    open fun visitBody(body: IrBody): IrBody =
             body.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
-    override fun visitBody(body: IrBody, data: Nothing?): IrBody  = visitBody(body)
+    override final fun visitBody(body: IrBody, data: Nothing?): IrBody  = visitBody(body)
 
-    fun visitExpressionBody(body: IrExpressionBody) = visitBody(body)
-    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?) = visitExpressionBody(body)
+    open fun visitExpressionBody(body: IrExpressionBody) = visitBody(body)
+    override final fun visitExpressionBody(body: IrExpressionBody, data: Nothing?) = visitExpressionBody(body)
 
-    fun visitBlockBody(body: IrBlockBody) = visitBody(body)
-    override fun visitBlockBody(body: IrBlockBody, data: Nothing?) = visitBlockBody(body)
+    open fun visitBlockBody(body: IrBlockBody) = visitBody(body)
+    override final fun visitBlockBody(body: IrBlockBody, data: Nothing?) = visitBlockBody(body)
 
-    fun visitSyntheticBody(body: IrSyntheticBody) = visitBody(body)
-    override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) = visitSyntheticBody(body)
+    open fun visitSyntheticBody(body: IrSyntheticBody) = visitBody(body)
+    override final fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) = visitSyntheticBody(body)
 
-    fun visitExpression(expression: IrExpression): IrExpression =
-            expression.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
-    override fun visitExpression(expression: IrExpression, data: Nothing?): IrExpression = visitExpression(expression)
+    open fun visitExpression(expression: IrExpression): IrExpression = expression.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitExpression(expression: IrExpression, data: Nothing?): IrExpression = visitExpression(expression)
 
-    fun <T> visitConst(expression: IrConst<T>) = visitExpression(expression)
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?) = visitConst(expression)
+    open fun <T> visitConst(expression: IrConst<T>) = visitExpression(expression)
+    override final fun <T> visitConst(expression: IrConst<T>, data: Nothing?) = visitConst(expression)
 
-    fun visitVararg(expression: IrVararg) = visitExpression(expression)
-    override fun visitVararg(expression: IrVararg, data: Nothing?) = visitVararg(expression)
+    open fun visitVararg(expression: IrVararg) = visitExpression(expression)
+    override final fun visitVararg(expression: IrVararg, data: Nothing?) = visitVararg(expression)
 
-    fun visitSpreadElement(spread: IrSpreadElement) =
-            spread.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
-    override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): IrSpreadElement = visitSpreadElement(spread)
+    open fun visitSpreadElement(spread: IrSpreadElement) = spread.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): IrSpreadElement = visitSpreadElement(spread)
 
-    fun visitContainerExpression(expression: IrContainerExpression) = visitExpression(expression)
-    override fun visitContainerExpression(expression: IrContainerExpression, data: Nothing?) = visitContainerExpression(expression)
+    open fun visitContainerExpression(expression: IrContainerExpression) = visitExpression(expression)
+    override final fun visitContainerExpression(expression: IrContainerExpression, data: Nothing?) = visitContainerExpression(expression)
 
-    fun visitBlock(expression: IrBlock) = visitContainerExpression(expression)
-    override fun visitBlock(expression: IrBlock, data: Nothing?) = visitBlock(expression)
+    open fun visitBlock(expression: IrBlock) = visitContainerExpression(expression)
+    override final fun visitBlock(expression: IrBlock, data: Nothing?) = visitBlock(expression)
 
-    fun visitComposite(expression: IrComposite) = visitContainerExpression(expression)
-    override fun visitComposite(expression: IrComposite, data: Nothing?) = visitComposite(expression)
+    open fun visitComposite(expression: IrComposite) = visitContainerExpression(expression)
+    override final fun visitComposite(expression: IrComposite, data: Nothing?) = visitComposite(expression)
 
-    fun visitStringConcatenation(expression: IrStringConcatenation) = visitExpression(expression)
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?) = visitStringConcatenation(expression)
+    open fun visitStringConcatenation(expression: IrStringConcatenation) = visitExpression(expression)
+    override final fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?) = visitStringConcatenation(expression)
 
-    fun visitThisReference(expression: IrThisReference) = visitExpression(expression)
-    override fun visitThisReference(expression: IrThisReference, data: Nothing?) = visitThisReference(expression)
+    open fun visitThisReference(expression: IrThisReference) = visitExpression(expression)
+    override final fun visitThisReference(expression: IrThisReference, data: Nothing?) = visitThisReference(expression)
 
-    fun visitDeclarationReference(expression: IrDeclarationReference) = visitExpression(expression)
-    override fun visitDeclarationReference(expression: IrDeclarationReference, data: Nothing?) = visitDeclarationReference(expression)
+    open fun visitDeclarationReference(expression: IrDeclarationReference) = visitExpression(expression)
+    override final fun visitDeclarationReference(expression: IrDeclarationReference, data: Nothing?) = visitDeclarationReference(expression)
 
-    fun visitSingletonReference(expression: IrGetSingletonValue) = visitDeclarationReference(expression)
-    override fun visitSingletonReference(expression: IrGetSingletonValue, data: Nothing?) = visitSingletonReference(expression)
+    open fun visitSingletonReference(expression: IrGetSingletonValue) = visitDeclarationReference(expression)
+    override final fun visitSingletonReference(expression: IrGetSingletonValue, data: Nothing?) = visitSingletonReference(expression)
 
-    fun visitGetObjectValue(expression: IrGetObjectValue) = visitSingletonReference(expression)
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?) = visitGetObjectValue(expression)
+    open fun visitGetObjectValue(expression: IrGetObjectValue) = visitSingletonReference(expression)
+    override final fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?) = visitGetObjectValue(expression)
 
-    fun visitGetEnumValue(expression: IrGetEnumValue) = visitSingletonReference(expression)
-    override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?) = visitGetEnumValue(expression)
+    open fun visitGetEnumValue(expression: IrGetEnumValue) = visitSingletonReference(expression)
+    override final fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?) = visitGetEnumValue(expression)
 
-    fun visitVariableAccess(expression: IrVariableAccessExpression) = visitDeclarationReference(expression)
-    override fun visitVariableAccess(expression: IrVariableAccessExpression, data: Nothing?) = visitVariableAccess(expression)
+    open fun visitVariableAccess(expression: IrVariableAccessExpression) = visitDeclarationReference(expression)
+    override final fun visitVariableAccess(expression: IrVariableAccessExpression, data: Nothing?) = visitVariableAccess(expression)
 
-    fun visitGetVariable(expression: IrGetVariable) = visitVariableAccess(expression)
-    override fun visitGetVariable(expression: IrGetVariable, data: Nothing?) = visitGetVariable(expression)
+    open fun visitGetVariable(expression: IrGetVariable) = visitVariableAccess(expression)
+    override final fun visitGetVariable(expression: IrGetVariable, data: Nothing?) = visitGetVariable(expression)
 
-    fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
+    open fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
+    override final fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
-    fun visitFieldAccess(expression: IrFieldAccessExpression) = visitDeclarationReference(expression)
-    override fun visitFieldAccess(expression: IrFieldAccessExpression, data: Nothing?) = visitFieldAccess(expression)
+    open fun visitFieldAccess(expression: IrFieldAccessExpression) = visitDeclarationReference(expression)
+    override final fun visitFieldAccess(expression: IrFieldAccessExpression, data: Nothing?) = visitFieldAccess(expression)
 
-    fun visitGetField(expression: IrGetField) = visitFieldAccess(expression)
-    override fun visitGetField(expression: IrGetField, data: Nothing?) = visitGetField(expression)
+    open fun visitGetField(expression: IrGetField) = visitFieldAccess(expression)
+    override final fun visitGetField(expression: IrGetField, data: Nothing?) = visitGetField(expression)
 
-    fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
-    override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
+    open fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
+    override final fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
 
-    fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)
+    open fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
+    override final fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)
 
-    fun visitMemberAccess(expression: IrMemberAccessExpression) = visitDeclarationReference(expression)
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)
+    open fun visitMemberAccess(expression: IrMemberAccessExpression) = visitDeclarationReference(expression)
+    override final fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)
 
-    fun visitCall(expression: IrCall) = visitMemberAccess(expression)
-    override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
+    open fun visitCall(expression: IrCall) = visitMemberAccess(expression)
+    override final fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
-    fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitMemberAccess(expression)
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) = visitDelegatingConstructorCall(expression)
+    open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitMemberAccess(expression)
+    override final fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) = visitDelegatingConstructorCall(expression)
 
-    fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitMemberAccess(expression)
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?) = visitEnumConstructorCall(expression)
+    open fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitMemberAccess(expression)
+    override final fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?) = visitEnumConstructorCall(expression)
 
-    fun visitGetClass(expression: IrGetClass) = visitExpression(expression)
-    override fun visitGetClass(expression: IrGetClass, data: Nothing?) = visitGetClass(expression)
+    open fun visitGetClass(expression: IrGetClass) = visitExpression(expression)
+    override final fun visitGetClass(expression: IrGetClass, data: Nothing?) = visitGetClass(expression)
 
-    fun visitCallableReference(expression: IrCallableReference) = visitMemberAccess(expression)
-    override fun visitCallableReference(expression: IrCallableReference, data: Nothing?) = visitCallableReference(expression)
+    open fun visitCallableReference(expression: IrCallableReference) = visitMemberAccess(expression)
+    override final fun visitCallableReference(expression: IrCallableReference, data: Nothing?) = visitCallableReference(expression)
 
-    fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)
-    override fun visitClassReference(expression: IrClassReference, data: Nothing?) = visitClassReference(expression)
+    open fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)
+    override final fun visitClassReference(expression: IrClassReference, data: Nothing?) = visitClassReference(expression)
 
-    fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = visitExpression(expression)
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?) = visitInstanceInitializerCall(expression)
+    open fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = visitExpression(expression)
+    override final fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?) = visitInstanceInitializerCall(expression)
 
-    fun visitTypeOperator(expression: IrTypeOperatorCall) = visitExpression(expression)
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?) = visitTypeOperator(expression)
+    open fun visitTypeOperator(expression: IrTypeOperatorCall) = visitExpression(expression)
+    override final fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?) = visitTypeOperator(expression)
 
-    fun visitWhen(expression: IrWhen) = visitExpression(expression)
-    override fun visitWhen(expression: IrWhen, data: Nothing?) = visitWhen(expression)
+    open fun visitWhen(expression: IrWhen) = visitExpression(expression)
+    override final fun visitWhen(expression: IrWhen, data: Nothing?) = visitWhen(expression)
 
-    fun visitLoop(loop: IrLoop) = visitExpression(loop)
-    override fun visitLoop(loop: IrLoop, data: Nothing?) = visitLoop(loop)
+    open fun visitBranch(branch: IrBranch) = branch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitBranch(branch: IrBranch, data: Nothing?): IrBranch = visitBranch(branch)
 
-    fun visitWhileLoop(loop: IrWhileLoop) = visitLoop(loop)
-    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?) = visitWhileLoop(loop)
+    open fun visitLoop(loop: IrLoop) = visitExpression(loop)
+    override final fun visitLoop(loop: IrLoop, data: Nothing?) = visitLoop(loop)
 
-    fun visitDoWhileLoop(loop: IrDoWhileLoop) = visitLoop(loop)
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?) = visitDoWhileLoop(loop)
+    open fun visitWhileLoop(loop: IrWhileLoop) = visitLoop(loop)
+    override final fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?) = visitWhileLoop(loop)
 
-    fun visitTry(aTry: IrTry) = visitExpression(aTry)
-    override fun visitTry(aTry: IrTry, data: Nothing?) = visitTry(aTry)
+    open fun visitDoWhileLoop(loop: IrDoWhileLoop) = visitLoop(loop)
+    override final fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?) = visitDoWhileLoop(loop)
 
-    override fun visitCatch(aCatch: IrCatch, data: Nothing?): IrCatch =
-            aCatch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    open fun visitTry(aTry: IrTry) = visitExpression(aTry)
+    override final fun visitTry(aTry: IrTry, data: Nothing?) = visitTry(aTry)
 
-    fun visitBreakContinue(jump: IrBreakContinue) = visitExpression(jump)
-    override fun visitBreakContinue(jump: IrBreakContinue, data: Nothing?) = visitBreakContinue(jump)
+    open fun visitCatch(aCatch: IrCatch): IrCatch = aCatch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitCatch(aCatch: IrCatch, data: Nothing?): IrCatch = visitCatch(aCatch)
 
-    fun visitBreak(jump: IrBreak) = visitBreakContinue(jump)
-    override fun visitBreak(jump: IrBreak, data: Nothing?) = visitBreak(jump)
+    open fun visitBreakContinue(jump: IrBreakContinue) = visitExpression(jump)
+    override final fun visitBreakContinue(jump: IrBreakContinue, data: Nothing?) = visitBreakContinue(jump)
 
-    fun visitContinue(jump: IrContinue) = visitBreakContinue(jump)
-    override fun visitContinue(jump: IrContinue, data: Nothing?) = visitContinue(jump)
+    open fun visitBreak(jump: IrBreak) = visitBreakContinue(jump)
+    override final fun visitBreak(jump: IrBreak, data: Nothing?) = visitBreak(jump)
 
-    fun visitReturn(expression: IrReturn) = visitExpression(expression)
-    override fun visitReturn(expression: IrReturn, data: Nothing?) = visitReturn(expression)
+    open fun visitContinue(jump: IrContinue) = visitBreakContinue(jump)
+    override final fun visitContinue(jump: IrContinue, data: Nothing?) = visitContinue(jump)
 
-    fun visitThrow(expression: IrThrow) = visitExpression(expression)
-    override fun visitThrow(expression: IrThrow, data: Nothing?) = visitThrow(expression)
+    open fun visitReturn(expression: IrReturn) = visitExpression(expression)
+    override final fun visitReturn(expression: IrReturn, data: Nothing?) = visitReturn(expression)
 
-    fun visitErrorDeclaration(declaration: IrErrorDeclaration) = visitDeclaration(declaration)
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?) = visitErrorDeclaration(declaration)
+    open fun visitThrow(expression: IrThrow) = visitExpression(expression)
+    override final fun visitThrow(expression: IrThrow, data: Nothing?) = visitThrow(expression)
 
-    fun visitErrorExpression(expression: IrErrorExpression) = visitExpression(expression)
-    override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?) = visitErrorExpression(expression)
+    open fun visitErrorDeclaration(declaration: IrErrorDeclaration) = visitDeclaration(declaration)
+    override final fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?) = visitErrorDeclaration(declaration)
 
-    fun visitErrorCallExpression(expression: IrErrorCallExpression) = visitErrorExpression(expression)
-    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?) = visitErrorCallExpression(expression)
+    open fun visitErrorExpression(expression: IrErrorExpression) = visitExpression(expression)
+    override final fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?) = visitErrorExpression(expression)
+
+    open fun visitErrorCallExpression(expression: IrErrorCallExpression) = visitErrorExpression(expression)
+    override final fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?) = visitErrorCallExpression(expression)
 }
 
 fun IrElement.transformChildrenVoid(transformer: IrElementTransformerVoid) {

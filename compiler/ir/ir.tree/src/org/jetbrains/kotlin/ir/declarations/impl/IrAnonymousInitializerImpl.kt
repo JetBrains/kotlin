@@ -32,6 +32,13 @@ class IrAnonymousInitializerImpl(
         origin: IrDeclarationOrigin,
         override val descriptor: ClassDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrAnonymousInitializer {
+    constructor(
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+            body: IrBody
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        this.body = body
+    }
+
     override lateinit var body: IrBody
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

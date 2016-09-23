@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -51,6 +52,10 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         for (irTreeFileLabel in expectations.irTreeFileLabels) {
             val actualTrees = irFile.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, actualTrees)
+
+            // Check that deep copy produces an equivalent result
+            val copiedTrees = irFile.transform(DeepCopyIrTree(), null).dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
+            KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, copiedTrees)
         }
 
         try {

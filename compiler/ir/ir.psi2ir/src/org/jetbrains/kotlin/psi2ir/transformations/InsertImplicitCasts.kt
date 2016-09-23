@@ -34,7 +34,7 @@ fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
     element.transformChildren(InsertImplicitCasts(builtIns), null)
 }
 
-class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoid {
+class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoid() {
     override fun visitElement(element: IrElement): IrElement {
         element.transformChildrenVoid(this)
         return element

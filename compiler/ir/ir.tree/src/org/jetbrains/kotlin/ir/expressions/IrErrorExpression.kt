@@ -22,6 +22,6 @@ interface IrErrorExpression : IrExpression {
 
 interface IrErrorCallExpression : IrErrorExpression {
     var explicitReceiver: IrExpression?
-    val arguments: List<IrExpression>
+    val arguments: MutableList<IrExpression>
 }
 

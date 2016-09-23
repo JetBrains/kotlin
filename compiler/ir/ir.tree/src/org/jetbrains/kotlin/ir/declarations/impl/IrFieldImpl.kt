@@ -32,7 +32,7 @@ class IrFieldImpl(
         override val descriptor: PropertyDescriptor
 ): IrDeclarationBase(startOffset, endOffset, origin), IrField {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
-                initializer: IrExpressionBody?
+                initializer: IrBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }

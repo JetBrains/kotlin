@@ -46,6 +46,13 @@ class IrWhenImpl(
         type: KotlinType,
         override val origin: IrStatementOrigin? = null
 ) : IrWhenBase(startOffset, endOffset, type) {
+    constructor(
+            startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?,
+            branches: List<IrBranch>
+    ) : this(startOffset, endOffset, type, origin) {
+        this.branches.addAll(branches)
+    }
+
     override val branches: MutableList<IrBranch> = ArrayList()
 }
 

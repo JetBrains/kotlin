@@ -30,7 +30,7 @@ abstract class IrCallWithIndexedArgumentsBase(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         override val origin: IrStatementOrigin? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments) {
-    protected val argumentsByParameterIndex =
+    private val argumentsByParameterIndex =
             arrayOfNulls<IrExpression>(numArguments)
 
     override fun getValueArgument(index: Int): IrExpression? =

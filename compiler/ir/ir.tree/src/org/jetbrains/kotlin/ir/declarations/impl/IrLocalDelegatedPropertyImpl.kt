@@ -40,6 +40,20 @@ class IrLocalDelegatedPropertyImpl(
         this.delegate = delegate
     }
 
+    constructor(
+            startOffset: Int,
+            endOffset: Int,
+            origin: IrDeclarationOrigin,
+            descriptor: VariableDescriptorWithAccessors,
+            delegate: IrVariable,
+            getter: IrFunction,
+            setter: IrFunction?
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        this.delegate = delegate
+        this.getter = getter
+        this.setter = setter
+    }
+
     override lateinit var delegate: IrVariable
     override lateinit var getter: IrFunction
     override var setter: IrFunction? = null

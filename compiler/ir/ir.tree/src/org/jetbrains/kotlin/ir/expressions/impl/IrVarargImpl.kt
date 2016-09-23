@@ -29,6 +29,13 @@ class IrVarargImpl(
         type: KotlinType,
         override val varargElementType: KotlinType
 ) : IrVararg, IrExpressionBase(startOffset, endOffset, type) {
+    constructor(
+            startOffset: Int, endOffset: Int, type: KotlinType, varargElementType: KotlinType,
+            elements: List<IrVarargElement>
+    ) : this(startOffset, endOffset, type, varargElementType) {
+        this.elements.addAll(elements)
+    }
+
     override val elements: MutableList<IrVarargElement> = SmartList()
 
     fun addElement(varargElement: IrVarargElement) {

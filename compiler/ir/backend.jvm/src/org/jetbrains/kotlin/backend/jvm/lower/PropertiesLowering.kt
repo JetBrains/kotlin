@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-class PropertiesLowering : IrElementTransformerVoid {
+class PropertiesLowering : IrElementTransformerVoid() {
     fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }

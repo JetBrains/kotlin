@@ -38,7 +38,6 @@ class FileClassLowering(val jvmFileClassProvider: JvmFileClassProvider) {
         if (fileClassMembers.isEmpty()) return
 
         val fileClassDescriptor = jvmFileClassProvider.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
-
         val irFileClass = IrClassImpl(0, irFile.fileEntry.maxOffset, IrDeclarationOrigin.DEFINED, fileClassDescriptor, fileClassMembers)
         classes.add(irFileClass)
 

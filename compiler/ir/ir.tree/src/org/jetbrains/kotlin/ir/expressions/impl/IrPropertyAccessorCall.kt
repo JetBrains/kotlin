@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -49,7 +50,7 @@ class IrGetterCallImpl(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, typeArguments, origin, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, typeArguments, origin, superQualifier), IrCallWithShallowCopy {
     constructor(startOffset: Int, endOffset: Int,
                 descriptor: CallableDescriptor,
                 typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
@@ -71,6 +72,9 @@ class IrGetterCallImpl(
     override fun removeValueArgument(index: Int) {
         throw UnsupportedOperationException("Property getter call has no arguments")
     }
+
+    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
+            IrGetterCallImpl(startOffset, endOffset, newCallee, typeArguments, newOrigin, newSuperQualifier)
 }
 
 class IrSetterCallImpl(
@@ -79,7 +83,7 @@ class IrSetterCallImpl(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null,
         superQualifier: ClassDescriptor? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, typeArguments, origin, superQualifier), IrCall {
+) : IrPropertyAccessorCallBase(startOffset, endOffset, descriptor, typeArguments, origin, superQualifier), IrCallWithShallowCopy {
     constructor(startOffset: Int, endOffset: Int,
                 descriptor: CallableDescriptor,
                 typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
@@ -108,4 +112,7 @@ class IrSetterCallImpl(
         if (index != SETTER_ARGUMENT_INDEX) throw AssertionError("Property setter call $descriptor has no argument $index")
         argumentImpl = null
     }
+
+    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
+            IrSetterCallImpl(startOffset, endOffset, newCallee, typeArguments, newOrigin, newSuperQualifier)
 }

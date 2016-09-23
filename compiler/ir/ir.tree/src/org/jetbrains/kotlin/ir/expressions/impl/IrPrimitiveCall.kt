@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -31,7 +32,7 @@ import java.lang.UnsupportedOperationException
 abstract class IrPrimitiveCallBase(
         startOffset: Int,
         endOffset: Int,
-        override val origin: IrStatementOrigin,
+        override val origin: IrStatementOrigin?,
         override val descriptor: CallableDescriptor
 ) : IrExpressionBase(startOffset, endOffset, descriptor.returnType!!), IrCall {
     override val superQualifier: ClassDescriptor? get() = null
@@ -66,8 +67,8 @@ abstract class IrPrimitiveCallBase(
     }
 }
 
-class IrNullaryPrimitiveImpl constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
+class IrNullaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor), IrCallWithShallowCopy {
     override fun getValueArgument(index: Int): IrExpression? = null
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
@@ -81,12 +82,16 @@ class IrNullaryPrimitiveImpl constructor(startOffset: Int, endOffset: Int, origi
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // no children
     }
+
+    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
+            IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }
 
-class IrUnaryPrimitiveImpl private constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
-    constructor(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor,
-                argument: IrExpression
+class IrUnaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor), IrCallWithShallowCopy {
+    constructor(
+            startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, descriptor: CallableDescriptor,
+            argument: IrExpression
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.argument = argument
     }
@@ -114,12 +119,15 @@ class IrUnaryPrimitiveImpl private constructor(startOffset: Int, endOffset: Int,
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         argument = argument.transform(transformer, data)
     }
+
+    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
+                IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }
 
-class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor) {
+class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, descriptor: CallableDescriptor) :
+        IrPrimitiveCallBase(startOffset, endOffset, origin, descriptor), IrCallWithShallowCopy {
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrStatementOrigin, descriptor: CallableDescriptor,
+            startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, descriptor: CallableDescriptor,
             argument0: IrExpression, argument1: IrExpression
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.argument0 = argument0
@@ -155,4 +163,7 @@ class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatemen
         argument0 = argument0.transform(transformer, data)
         argument1 = argument1.transform(transformer, data)
     }
+
+    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
+            IrBinaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }

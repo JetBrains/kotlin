@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
+import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SuperClassInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -172,5 +173,7 @@ val IrField.OtherOrigin: JvmDeclarationOrigin
 val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
-val ClassDescriptor.isFileDescriptor: Boolean
-    get() = this is FileClassDescriptor
+fun ClassDescriptor.getMemberOwnerKind(): OwnerKind = when (this) {
+    is FileClassDescriptor -> OwnerKind.PACKAGE
+    else -> OwnerKind.IMPLEMENTATION
+}

@@ -28,6 +28,15 @@ import org.jetbrains.kotlin.utils.SmartList
 
 class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
         IrExpressionBase(startOffset, endOffset, type), IrTry {
+    constructor(
+            startOffset: Int, endOffset: Int, type: KotlinType,
+            tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?
+    ) : this(startOffset, endOffset, type) {
+        this.tryResult = tryResult
+        this.catches.addAll(catches)
+        this.finallyExpression = finallyExpression
+    }
+
     override lateinit var tryResult: IrExpression
 
     override val catches: MutableList<IrCatch> = SmartList()

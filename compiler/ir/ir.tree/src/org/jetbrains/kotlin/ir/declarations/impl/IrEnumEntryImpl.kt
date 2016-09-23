@@ -30,6 +30,14 @@ class IrEnumEntryImpl(
         origin: IrDeclarationOrigin,
         override val descriptor: ClassDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
+    constructor(
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+            correspondingClass: IrClass?, initializerExpression: IrExpression
+    ) : this(startOffset, endOffset, origin, descriptor) {
+        this.correspondingClass = correspondingClass
+        this.initializerExpression = initializerExpression
+    }
+
     override var correspondingClass: IrClass? = null
     override lateinit var initializerExpression: IrExpression
 

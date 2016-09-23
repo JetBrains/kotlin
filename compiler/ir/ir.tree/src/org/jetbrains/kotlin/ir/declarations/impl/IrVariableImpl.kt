@@ -34,7 +34,7 @@ class IrVariableImpl(
             endOffset: Int,
             origin: IrDeclarationOrigin,
             descriptor: VariableDescriptor,
-            initializer: IrExpression
+            initializer: IrExpression?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }

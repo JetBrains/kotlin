@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
 interface IrCall : IrMemberAccessExpression {
     val superQualifier: ClassDescriptor?
+}
+
+interface IrCallWithShallowCopy : IrCall {
+    fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?): IrCall
 }
 
