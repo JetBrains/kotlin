@@ -31,7 +31,7 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
         irMapping.put(irBuiltIns.eqeq, Equals(KtTokens.EQEQ))
         irMapping.put(irBuiltIns.eqeqeq, Equals(KtTokens.EQEQEQ))
         irMapping.put(irBuiltIns.booleanNot, Not())
-        val compare = CompareTo()
+        val compare = IrCompareTo()
         irMapping.put(irBuiltIns.lt0, compare)
         irMapping.put(irBuiltIns.lteq0, compare)
         irMapping.put(irBuiltIns.gt0, compare)

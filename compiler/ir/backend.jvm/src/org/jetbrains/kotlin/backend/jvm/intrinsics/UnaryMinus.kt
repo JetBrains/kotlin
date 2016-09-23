@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 class UnaryMinus : IntrinsicMethod() {
     /*TODO return type*/
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature) {
+        return IrIntrinsicFunction.create(expression, signature, context) {
             it.neg(numberFunctionOperandType(signature.returnType))
         }
     }

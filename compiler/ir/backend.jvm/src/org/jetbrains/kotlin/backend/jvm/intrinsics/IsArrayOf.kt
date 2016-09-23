@@ -17,17 +17,10 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.org.objectweb.asm.Type
 
 class IsArrayOf : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
@@ -43,7 +36,7 @@ class IsArrayOf : IntrinsicMethod() {
         val arrayKtType = builtIns.getArrayType(Variance.INVARIANT, elementType)
         val arrayType = typeMapper.mapType(arrayKtType)
 
-        return IrIntrinsicFunction.create(expression, signature) {
+        return IrIntrinsicFunction.create(expression, signature, context) {
             it.instanceOf(arrayType)
         }
     }

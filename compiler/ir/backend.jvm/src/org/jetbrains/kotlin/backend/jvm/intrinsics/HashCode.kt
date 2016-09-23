@@ -31,7 +31,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class HashCode : IntrinsicMethod() {
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, AsmTypes.OBJECT_TYPE) {
+        return IrIntrinsicFunction.create(expression, signature, context, AsmTypes.OBJECT_TYPE) {
             it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
         }
     }

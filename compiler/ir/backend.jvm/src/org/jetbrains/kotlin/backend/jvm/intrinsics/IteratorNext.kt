@@ -38,7 +38,7 @@ class IteratorNext : IntrinsicMethod() {
         }
 
         val newSignature = JvmMethodSignature(newMethod, signature.valueParameters)
-        return IrIntrinsicFunction.create(expression, newSignature, AsmTypes.OBJECT_TYPE) {
+        return IrIntrinsicFunction.create(expression, newSignature, context, AsmTypes.OBJECT_TYPE) {
             val primitiveClassName = getKotlinPrimitiveClassName(type)
             it.invokevirtual(
                     getPrimitiveIteratorType(primitiveClassName).internalName,

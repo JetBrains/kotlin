@@ -46,7 +46,20 @@ class CompareTo : IntrinsicMethod() {
     }
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        assert (expression is IrUnaryPrimitiveImpl)
+        val parameterType = comparisonOperandType(
+                expressionType(expression.dispatchReceiver ?: expression.extensionReceiver!!, context),
+                signature.valueParameters.single().asmType
+        )
+        return IrIntrinsicFunction.create(expression, signature, context, listOf(parameterType, parameterType)) {
+            genInvoke(parameterType, it)
+        }
+    }
+}
+
+
+class IrCompareTo : IntrinsicMethod() {
+    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
+        assert(expression is IrUnaryPrimitiveImpl)
         val compareCall = expression.getValueArgument(0) as IrCall
         val args = compareCall.receiverAndArgs()
         val argTypes = args.asmTypes(context)
@@ -55,7 +68,7 @@ class CompareTo : IntrinsicMethod() {
         val parameterType = comparisonOperandType(leftType, rightType)
 
         val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(compareCall.descriptor as FunctionDescriptor, OwnerKind.IMPLEMENTATION)
-        return object : IrIntrinsicFunction(compareCall, newSignature, listOf(parameterType, parameterType)) {
+        return object : IrIntrinsicFunction(compareCall, newSignature, context, listOf(parameterType, parameterType)) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
                 val isPrimitiveIntrinsic = codegen.intrinsics.intrinsics.getIntrinsic(compareCall.descriptor as FunctionDescriptor) != null
                 val operationType: Type
@@ -69,7 +82,7 @@ class CompareTo : IntrinsicMethod() {
                 else {
                     operationType = Type.INT_TYPE
                     leftValue = codegen.gen(compareCall, data)
-                    rightValue = StackValue.constant(0, leftType)
+                    rightValue = StackValue.constant(0, operationType)
                 }
                 val origin = expression.origin
                 val token = when (origin) {

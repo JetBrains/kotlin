@@ -45,7 +45,7 @@ class RangeTo : IntrinsicMethod() {
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         val argType = rangeTypeToPrimitiveType(signature.returnType)
-        return object: IrIntrinsicFunction(expression, signature, listOf(argType) + signature.valueParameters.map { argType }) {
+        return object: IrIntrinsicFunction(expression, signature, context, listOf(argType) + signature.valueParameters.map { argType }) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokespecial(signature.returnType.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
             }

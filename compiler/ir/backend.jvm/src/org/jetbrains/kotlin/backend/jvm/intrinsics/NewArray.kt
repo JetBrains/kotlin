@@ -28,7 +28,7 @@ class NewArray : IntrinsicMethod() {
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         val ktType = expression.type
-        return object : IrIntrinsicFunction(expression, signature) {
+        return object : IrIntrinsicFunction(expression, signature, context) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
                 super.invoke(v, codegen, data)
                 codegen.newArrayInstruction(ktType)

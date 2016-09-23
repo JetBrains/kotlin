@@ -20,12 +20,9 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi2ir.generators.getInfixOperator
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
@@ -43,16 +40,19 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
 
 
-        return object: IrIntrinsicFunction(expression, signature, listOf(leftType, rightType)) {
+        return object: IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 val opToken = binary.origin
-                if (opToken === KtTokens.EQEQEQ || opToken === KtTokens.EXCLEQEQEQ) {
+
+                val value = if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
                     // TODO: always casting to the type of the left operand in case of primitives looks wrong
                     val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
                     StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
                 }
-
-                genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType)).put(Type.BOOLEAN_TYPE, v)
+                else {
+                    genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
+                }
+                value.put(Type.BOOLEAN_TYPE, v)
             }
         }
     }
