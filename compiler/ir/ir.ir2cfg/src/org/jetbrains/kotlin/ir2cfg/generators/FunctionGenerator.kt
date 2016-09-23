@@ -126,6 +126,23 @@ class FunctionGenerator(val function: IrFunction) {
             return whenExit
         }
 
+        override fun visitWhileLoop(loop: IrWhileLoop, data: Boolean): IrElement? {
+            if (data) {
+                builder.add(loop)
+            }
+            val entry = MergeCfgElement(loop, "While entry")
+            builder.jump(entry)
+            val condition = loop.condition
+            condition.process(includeSelf = false)
+            builder.jump(condition)
+            val body = loop.body
+            if (!body?.process().isNothing()) {
+                builder.jump(entry)
+            }
+            builder.move(condition)
+            return condition
+        }
+
         override fun visitElement(element: IrElement, data: Boolean): IrElement? {
             TODO("not implemented")
         }
