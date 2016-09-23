@@ -65,7 +65,7 @@ class KotlinVariableInplaceIntroducer(
         editor
 ) {
     private val suggestedNames = suggestedNames.toTypedArray()
-    private lateinit var expressionTypeCheckBox: JCheckBox
+    private var expressionTypeCheckBox: JCheckBox? = null
 
     init {
         initFormComponents {
@@ -86,22 +86,24 @@ class KotlinVariableInplaceIntroducer(
             }
 
             if (expressionType != null && !noTypeInference) {
-                expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly")
-                expressionTypeCheckBox.isSelected = false
-                expressionTypeCheckBox.setMnemonic('t')
-                expressionTypeCheckBox.addActionListener {
-                    runWriteCommandAndRestart {
-                        updateVariableName()
-                        if (expressionTypeCheckBox.isSelected) {
-                            val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
-                            addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))
-                        }
-                        else {
-                            addedVariable.setTypeReference(null)
+                expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly").apply {
+                    isSelected = false
+                    setMnemonic('t')
+                    addActionListener {
+                        runWriteCommandAndRestart {
+                            updateVariableName()
+                            if (isSelected) {
+                                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
+                                addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))
+                            }
+                            else {
+                                addedVariable.setTypeReference(null)
+                            }
                         }
                     }
+
+                    addComponent(this)
                 }
-                addComponent(expressionTypeCheckBox)
             }
         }
     }
@@ -140,7 +142,7 @@ class KotlinVariableInplaceIntroducer(
     override fun getInitialName() = super.getInitialName().quoteIfNeeded()
 
     override fun updateTitle(variable: KtProperty?, value: String?) {
-        expressionTypeCheckBox.isEnabled = value == null || KotlinNameSuggester.isIdentifier(value)
+        expressionTypeCheckBox?.isEnabled = value == null || KotlinNameSuggester.isIdentifier(value)
         // No preview to update
     }
 
