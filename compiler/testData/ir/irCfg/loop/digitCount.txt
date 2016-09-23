@@ -41,6 +41,12 @@ BB 5
 INCOMING <- BB 3
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
 CONTENT
+OUTGOING -> BB 6
+    Do..while exit: DO_WHILE label=null origin=DO_WHILE_LOOP
+BB 6
+INCOMING <- BB 5
+    Do..while exit: DO_WHILE label=null origin=DO_WHILE_LOOP
+CONTENT
       1 GET_VAR 'count: Int' type=kotlin.Int origin=null
       2 RETURN type=kotlin.Nothing from='digitCountInNumber(Int, Int): Int'
 OUTGOING -> NONE

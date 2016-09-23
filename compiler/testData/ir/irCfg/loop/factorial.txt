@@ -29,6 +29,12 @@ BB 3
 INCOMING <- BB 1
     CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
 CONTENT
+OUTGOING -> BB 4
+    While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE
+BB 4
+INCOMING <- BB 3
+    While exit: WHILE label=null origin=FOR_LOOP_INNER_WHILE
+CONTENT
       1 GET_VAR 'result: Int' type=kotlin.Int origin=null
       2 RETURN type=kotlin.Nothing from='factorial(Int): Int'
 OUTGOING -> NONE

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir2cfg.graph.ControlFlowGraph
 import org.jetbrains.kotlin.ir2cfg.nodes.MergeCfgElement
@@ -30,6 +31,10 @@ class FunctionGenerator(val function: IrFunction) {
     val builder = FunctionBuilder(function)
 
     val exit = MergeCfgElement(function, "Function exit")
+
+    val loopEntries = mutableMapOf<IrLoop, IrElement>()
+
+    val loopExits = mutableMapOf<IrLoop, IrElement>()
 
     fun generate(): ControlFlowGraph {
         val visitor = FunctionVisitor()
@@ -130,7 +135,10 @@ class FunctionGenerator(val function: IrFunction) {
             if (data) {
                 builder.add(loop)
             }
+            val exit = MergeCfgElement(loop, "While exit")
+            loopExits[loop] = exit
             val entry = MergeCfgElement(loop, "While entry")
+            loopEntries[loop] = entry
             builder.jump(entry)
             val condition = loop.condition
             condition.process(includeSelf = false)
@@ -139,25 +147,45 @@ class FunctionGenerator(val function: IrFunction) {
             if (!body?.process().isNothing()) {
                 builder.jump(entry)
             }
-            builder.move(condition)
-            return condition
+            builder.jump(exit, from = condition)
+            return exit
         }
 
         override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Boolean): IrElement? {
             if (data) {
                 builder.add(loop)
             }
+            val exit = MergeCfgElement(loop, "Do..while exit")
+            loopExits[loop] = exit
             val entry = MergeCfgElement(loop, "Do..while entry")
+            loopEntries[loop] = entry
             builder.jump(entry)
             val body = loop.body
             val condition = loop.condition
-            if (body?.process() !is IrReturn) {
+            if (!body?.process().isNothing()) {
                 condition.process(includeSelf = false)
                 builder.jump(condition)
-                builder.jump(entry)
-                builder.move(condition)
+                builder.jump(entry, from = condition)
+                builder.jump(exit, from = condition)
             }
-            return condition
+            builder.move(exit)
+            return exit
+        }
+
+        override fun visitBreak(jump: IrBreak, data: Boolean): IrElement? {
+            if (data) {
+                builder.add(jump)
+            }
+            builder.jump(loopExits[jump.loop] ?: throw AssertionError("Loop exit not found for ${jump.loop.dump()}"))
+            return jump
+        }
+
+        override fun visitContinue(jump: IrContinue, data: Boolean): IrElement? {
+            if (data) {
+                builder.add(jump)
+            }
+            builder.jump(loopEntries[jump.loop] ?: throw AssertionError("Loop entry not found for ${jump.loop.dump()}"))
+            return jump
         }
 
         override fun visitElement(element: IrElement, data: Boolean): IrElement? {

@@ -90,6 +90,12 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/factorial.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("isPerfect.kt")
+        public void testIsPerfect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/isPerfect.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irCfg/when")
