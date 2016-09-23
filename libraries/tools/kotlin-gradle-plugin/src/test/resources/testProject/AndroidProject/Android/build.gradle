@@ -44,4 +44,8 @@ android {
     }
 
     publishNonDefault true
+
+    kotlinOptions {
+        noJdk = true
+    }
 }

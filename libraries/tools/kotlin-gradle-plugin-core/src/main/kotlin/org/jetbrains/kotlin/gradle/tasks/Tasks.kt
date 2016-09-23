@@ -25,21 +25,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.com.intellij.lang.Language
-import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
-import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
@@ -51,7 +43,6 @@ import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
 
-const val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val CACHES_DIR_NAME = "caches"
@@ -61,12 +52,7 @@ const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin in
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
-    abstract protected fun createBlankArgs(): T
-    open protected fun beforeCompileHook(args: T) {
-    }
-    open protected fun afterCompileHook(args: T) {
-    }
-    abstract protected fun populateTargetSpecificArgs(args: T)
+    abstract protected fun populateCompilerArguments(): T
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
@@ -79,12 +65,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
-    var kotlinOptions: T = createBlankArgs()
     var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
     var anyClassesCompiled: Boolean = false
     var friendTaskName: String? = null
     var javaOutputDir: File? = null
+    var moduleName: String = "${project.name}-${this.name}"
 
     private val loggerInstance = Logging.getLogger(this.javaClass)
     override fun getLogger() = loggerInstance
@@ -105,15 +91,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
         logger.kotlinDebug("modified ${modified.joinToString { it.path }}")
         logger.kotlinDebug("removed ${removed.joinToString { it.path }}")
-        val args = createBlankArgs()
         val sources = getKotlinSources()
         if (sources.isEmpty()) {
             logger.warn("No Kotlin files found, skipping Kotlin compiler task")
             return
         }
 
-        populateCommonArgs(args)
-        populateTargetSpecificArgs(args)
+        val args = populateCompilerArguments()
         compilerCalled = true
         callCompiler(args, sources, inputs.isIncremental, modified, removed)
     }
@@ -123,35 +107,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     protected fun File.isKotlinFile(): Boolean =
             FilenameUtils.isExtension(name.toLowerCase(), listOf("kt", "kts"))
 
-    private fun populateSources(args:T, sources: List<File>) {
-        args.freeArgs = sources.map { it.absolutePath }
-    }
-
-    private fun populateCommonArgs(args: T) {
-        args.suppressWarnings = kotlinOptions.suppressWarnings
-        args.verbose = kotlinOptions.verbose
-        args.version = kotlinOptions.version
-        args.noInline = kotlinOptions.noInline
-    }
-
-    protected open fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
-        populateSources(args, sources)
-
-        val messageCollector = GradleMessageCollector(logger)
-        logger.debug("Calling compiler")
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
-
-        when (exitCode) {
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-        }
-    }
+    protected abstract fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>)
 
 }
 
-open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
+open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
     override val compiler = K2JVMCompiler()
-    override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
+
+    var parentKotlinOptionsImpl: KotlinJvmOptionsImpl? = null
+    private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
+    override val kotlinOptions: KotlinJvmOptions
+            get() = kotlinOptionsImpl
 
     private val sourceRoots = HashSet<File>()
 
@@ -189,58 +155,37 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     // created only if kapt2 is active
     var sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null
 
-    override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
+    override fun populateCompilerArguments(): K2JVMCompilerArguments {
+        val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
 
-        if (kotlinOptions.classpath?.isNotBlank() ?: false) {
-            logger.warn("kotlinOptions.classpath will be ignored")
-        }
-        if (kotlinOptions.destination?.isNotBlank() ?: false) {
-            logger.warn("kotlinOptions.destination will be ignored")
-        }
-
-        logger.kotlinDebug("destinationDir = $destinationDir")
-
-        val extraProperties = extensions.extraProperties
-        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-        logger.kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
         handleKaptProperties()
+        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
-        logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
+        args.moduleName = moduleName
 
-        args.noStdlib = true
-        args.jdkHome = kotlinOptions.jdkHome
-        args.noJdk = kotlinOptions.noJdk
-        args.noInline = kotlinOptions.noInline
-        args.noOptimize = kotlinOptions.noOptimize
-        args.noCallAssertions = kotlinOptions.noCallAssertions
-        args.noParamAssertions = kotlinOptions.noParamAssertions
-        args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
-        args.languageVersion = kotlinOptions.languageVersion
-        args.jvmTarget = kotlinOptions.jvmTarget
-
-        fun addFriendPathForTestTask(friendKotlinTaskName: String) {
-            val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
+        friendTaskName?.let addFriendPathForTestTask@ { friendKotlinTaskName ->
+            val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return@addFriendPathForTestTask
             args.friendPaths = arrayOf(friendTask.javaOutputDir!!.absolutePath)
-            args.moduleName = friendTask.kotlinOptions.moduleName ?: friendTask.extensions.extraProperties.getOrNull<String>("defaultModuleName")
+            args.moduleName = friendTask.moduleName
             logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
         }
 
-        logger.kotlinDebug { "friendTaskName = $friendTaskName" }
-        friendTaskName?.let { addFriendPathForTestTask(it) }
-        logger.kotlinDebug("args.moduleName = ${args.moduleName}")
+        parentKotlinOptionsImpl?.updateArguments(args)
+        kotlinOptionsImpl.updateArguments(args)
 
         fun dumpPaths(files: Iterable<File>): String =
             "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
 
+        logger.kotlinDebug { "$name destinationDir = $destinationDir" }
         logger.kotlinDebug { "$name source roots: ${dumpPaths(sourceRoots)}" }
         logger.kotlinDebug { "$name java source roots: ${dumpPaths(getJavaSourceRoots())}" }
+        return args
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
-        val rootProjectDir = project.rootProject.projectDir
+        fun projectRelativePath(file: File) =
+                file.toRelativeString(project.rootProject.projectDir)
 
-        fun projectRelativePath(f: File) = f.toRelativeString(rootProjectDir)
         fun filesToString(files: Iterable<File>) =
                 "[" + files.map(::projectRelativePath).sorted().joinToString(separator = ", \n") + "]"
 
@@ -418,7 +363,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             // can be empty if only removed sources are present
             if (sourcesToCompile.isNotEmpty()) {
-                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString { projectRelativePath(it) }}")
+                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString(transform = ::projectRelativePath)}")
             }
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
@@ -527,7 +472,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 }
             }
 
-            logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
             val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
             val exitCode = compiler.exec(messageCollector, compileServices, args)
             return CompileChangedResults(
@@ -573,7 +519,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         try {
-            logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
             return compiler.exec(messageCollector, services, args)
         }
         finally {
@@ -605,7 +552,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     private fun File.isJavaFile() =
             extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
-    
+
     private fun File.isKapt2GeneratedDirectory(): Boolean {
         if (!kapt2GeneratedSourcesDir.isDirectory) return false
         return FileUtil.isAncestor(kapt2GeneratedSourcesDir, this, /* strict = */ false)
@@ -661,71 +608,51 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 }
 
-open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>() {
+open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
     override val compiler = K2JSCompiler()
+    private val kotlinOptionsImpl = KotlinJsOptionsImpl()
+    override val kotlinOptions: KotlinJsOptions
+            get() = kotlinOptionsImpl
 
-    override fun createBlankArgs(): K2JSCompilerArguments {
-        val args = K2JSCompilerArguments()
-        args.libraryFiles = arrayOf<String>()  // defaults to null
-        args.metaInfo = true
-        args.kjsm = true
-        return args
-    }
-
-    fun addLibraryFiles(vararg fs: String) {
-        kotlinOptions.libraryFiles += fs
-    }
-
-    fun addLibraryFiles(vararg fs: File) {
-        val strs = fs.map { it.path }.toTypedArray()
-        addLibraryFiles(*strs)
-    }
-
+    @Suppress("unused")
     val outputFile: String?
-            get() = kotlinOptions.outputFile
-
-    val sourceMapDestinationDir: File
-            get() = File(outputFile).let { if (it.isDirectory) it else it.parentFile!! }
-
-    val sourceMap: Boolean
-            get() = kotlinOptions.sourceMap
+        get() = kotlinOptions.outputFile
 
     init {
         outputs.file(MethodClosure(this, "getOutputFile"))
     }
 
-    override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
-        args.noStdlib = true
-        args.outputFile = outputFile
-        args.outputPrefix = kotlinOptions.outputPrefix
-        args.outputPostfix = kotlinOptions.outputPostfix
-        args.metaInfo = kotlinOptions.metaInfo
-        args.kjsm = kotlinOptions.kjsm
-        args.moduleKind = kotlinOptions.moduleKind
+    override fun populateCompilerArguments(): K2JSCompilerArguments {
+        val args = K2JSCompilerArguments().apply { fillDefaultValues() }
+        args.libraryFiles = project.configurations.getByName("compile")
+                .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
+                .map { it.canonicalPath }
+                .toTypedArray()
+        kotlinOptionsImpl.updateArguments(args)
+        return args
+    }
 
-        val kotlinJsLibsFromDependencies =
-                project.configurations.getByName("compile")
-                        .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
-                        .map { it.absolutePath }
-
-        args.libraryFiles = kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies
-        args.target = kotlinOptions.target
-        args.sourceMap = kotlinOptions.sourceMap
+    override fun callCompiler(args: K2JSCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
+        val messageCollector = GradleMessageCollector(logger)
+        logger.debug("Calling compiler")
+        destinationDir.mkdirs()
+        args.freeArgs = args.freeArgs + sources.map { it.absolutePath }
 
         if (args.outputFile == null) {
             throw GradleException("$name.kotlinOptions.outputFile should be specified.")
         }
 
-        val outputDir = File(args.outputFile).let { if (it.isDirectory) it else it.parentFile!! }
-        if (!outputDir.exists()) {
-            if (!outputDir.mkdirs()) {
-                throw GradleException("Failed to create output directory ${outputDir} or one of its ancestors")
+        logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
+
+        when (exitCode) {
+            ExitCode.OK -> {
+                logger.kotlinInfo("Compilation succeeded")
             }
+            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
+            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
+            else -> throw GradleException("Unexpected exit code: $exitCode")
         }
-
-        logger.debug("$name set libraryFiles to ${args.libraryFiles.joinToString(",")}")
-        logger.debug("$name set outputFile to ${args.outputFile}")
-
     }
 }
 

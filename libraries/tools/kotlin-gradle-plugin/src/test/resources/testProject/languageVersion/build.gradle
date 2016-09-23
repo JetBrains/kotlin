@@ -32,7 +32,9 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.languageVersion = "1.0"
+    kotlinOptions {
+        languageVersion = "1.0"
+    }
 }
 
 task wrapper(type: Wrapper) {

@@ -16,30 +16,15 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-gradle-plugin-core</artifactId>
+    <artifactId>kotlin-gradle-plugin-dsl</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-gradle-plugin-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-gradle-plugin-dsl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency> <!-- required in runtime -->
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -50,11 +35,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler-embeddable</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-annotation-processing</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -85,24 +65,35 @@
                     <execution>
                         <id>compile</id>
                         <phase>compile</phase>
-                        <goals> <goal>compile</goal> </goals>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals> <goal>test-compile</goal> </goals>
+                        <goals><goal>compile</goal></goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>0.9.9</version>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>dokka</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <excludes>
-                        <exclude>src/test/resources/**</exclude>
-                    </excludes>
+                    <outputFormat>markdown</outputFormat>
+                    <includes>
+                        <include>
+                            ${project.basedir}/Module.md
+                        </include>
+                    </includes>
+                    <sourceLinks>
+                        <link>
+                            <dir>${project.basedir}/src/main/kotlin</dir>
+                            <url>http://github.com/me/myrepo</url>
+                        </link>
+                    </sourceLinks>
                 </configuration>
             </plugin>
         </plugins>
@@ -114,4 +105,12 @@
             <url>http://repository.jetbrains.com/utils</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

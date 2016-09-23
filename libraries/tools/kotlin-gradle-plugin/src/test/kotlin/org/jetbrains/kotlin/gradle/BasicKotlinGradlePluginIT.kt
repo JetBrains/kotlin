@@ -26,65 +26,19 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSuppressWarningsAndVersionInVerboseMode() {
-        val project = Project("suppressWarningsAndVersion", GRADLE_VERSION)
+    fun testSuppressWarnings() {
+        val project = Project("suppressWarnings", GRADLE_VERSION)
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin", "i: Kotlin Compiler version", "v: Using Kotlin home directory")
+            assertContains(":compileKotlin")
             assertNotContains("w:")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertNotContains("w:")
-        }
-    }
-
-    @Test
-    fun testSuppressWarningsAndVersionInNonVerboseMode() {
-        val project = Project("suppressWarningsAndVersion", GRADLE_VERSION, minLogLevel = LogLevel.INFO)
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":compileKotlin", "i: Kotlin Compiler version")
-            assertNotContains("w:", "v:")
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertNotContains("w:", "v:")
         }
     }
 
     @Test
     fun testKotlinCustomDirectory() {
         Project("customSrcDir", GRADLE_VERSION).build("build") {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testKotlinCustomModuleName() {
-        Project("moduleNameCustom", GRADLE_VERSION).build("build") {
-            assertSuccessful()
-            assertContains("args.moduleName = myTestName")
-        }
-    }
-
-    @Test
-    fun testKotlinDefaultModuleName() {
-        Project("moduleNameDefault", GRADLE_VERSION).build("build") {
-            assertSuccessful()
-            assertContains("args.moduleName = moduleNameDefault-compileKotlin")
-        }
-    }
-
-    @Test
-    fun testAdvancedOptions() {
-        Project("advancedOptions", GRADLE_VERSION).build("build") {
             assertSuccessful()
         }
     }

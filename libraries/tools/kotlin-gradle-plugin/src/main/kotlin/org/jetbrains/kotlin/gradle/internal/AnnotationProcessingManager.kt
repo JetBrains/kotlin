@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -44,7 +45,7 @@ fun Project.initKapt(
         javaTask: AbstractCompile,
         kaptManager: AnnotationProcessingManager,
         variantName: String,
-        kotlinOptions: Any?,
+        kotlinOptions: KotlinJvmOptionsImpl?,
         subpluginEnvironment: SubpluginEnvironment,
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile? {
@@ -102,7 +103,7 @@ fun Project.initKapt(
 private fun Project.createKotlinAfterJavaTask(
         javaTask: AbstractCompile,
         kotlinTask: KotlinCompile,
-        kotlinOptions: Any?,
+        kotlinOptions: KotlinJvmOptionsImpl?,
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile {
     val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
@@ -113,10 +114,8 @@ private fun Project.createKotlinAfterJavaTask(
     kotlinAfterJavaTask.dependsOn(javaTask)
     javaTask.finalizedByIfNotFailed(kotlinAfterJavaTask)
 
-    kotlinAfterJavaTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-${kotlinTask.name}")
-    if (kotlinOptions != null) {
-        kotlinAfterJavaTask.setProperty("kotlinOptions", kotlinOptions)
-    }
+    kotlinAfterJavaTask.moduleName = kotlinTask.moduleName
+    kotlinAfterJavaTask.parentKotlinOptionsImpl = kotlinOptions
 
     return kotlinAfterJavaTask
 }

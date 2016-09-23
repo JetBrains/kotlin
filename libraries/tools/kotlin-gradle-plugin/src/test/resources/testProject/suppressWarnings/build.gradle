@@ -31,7 +31,6 @@ repositories {
 
 compileKotlin {
     kotlinOptions.suppressWarnings = true
-    kotlinOptions.version = true
 }
 
 

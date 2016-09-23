@@ -19,7 +19,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
 import org.jetbrains.kotlin.gradle.internal.Kapt2GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
@@ -38,7 +38,7 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
+abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         val project: Project,
         val javaBasePlugin: JavaBasePlugin,
         val sourceSet: SourceSet,
@@ -82,7 +82,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         logger.kotlinDebug("Creating kotlin compile task $name")
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
-        kotlinCompile.extensions.extraProperties.set("defaultModuleName", "${project.name}-$name")
+        kotlinCompile.moduleName = "${project.name}-$name"
         kotlinCompile.mapClasspath { sourceSet.compileClasspath }
         kotlinCompile.destinationDir = defaultKotlinDestinationDir
         return kotlinCompile
@@ -181,10 +181,8 @@ class Kotlin2JsSourceSetProcessor(
     override val defaultKotlinDestinationDir: File
         get() = File(project.buildDir, "kotlin2js/${sourceSetName}")
 
-
     private val clean = project.tasks.findByName("clean")
     private val build = project.tasks.findByName("build")
-
 
     override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
             tasksProvider.createKotlinJSTask(project, taskName)
@@ -200,7 +198,7 @@ class Kotlin2JsSourceSetProcessor(
     private fun createCleanSourceMapTask() {
         val taskName = sourceSet.getTaskName("clean", "sourceMap")
         val task = project.tasks.create(taskName, Delete::class.java)
-        task.onlyIf { kotlinTask.property("sourceMap") as Boolean }
+        task.onlyIf { kotlinTask.kotlinOptions.sourceMap }
         task.delete(object : Closure<String>(this) {
             override fun call(): String? = (kotlinTask.property("outputFile") as String) + ".map"
         })
@@ -289,7 +287,7 @@ open class KotlinAndroidPlugin(
             aptConfigurations.put(sourceSet.name, project.createAptConfiguration(sourceSet.name, kotlinPluginVersion))
         }
 
-        val kotlinOptions = K2JVMCompilerArguments()
+        val kotlinOptions = KotlinJvmOptionsImpl()
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
@@ -314,7 +312,7 @@ open class KotlinAndroidPlugin(
             androidExt: BaseExtension,
             androidPlugin: BasePlugin,
             aptConfigurations: Map<String, Configuration>,
-            kotlinOptions: K2JVMCompilerArguments
+            rootKotlinOptions: KotlinJvmOptionsImpl
     ) {
         val logger = project.logger
         val subpluginEnvironment = loadSubplugins(project)
@@ -332,9 +330,7 @@ open class KotlinAndroidPlugin(
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             // todo: Investigate possibility of creating and configuring kotlinTask before evaluation
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
-
-            kotlinTask.extensions.extraProperties.set("defaultModuleName", "${project.name}-$kotlinTaskName")
-            kotlinTask.kotlinOptions = kotlinOptions
+            kotlinTask.parentKotlinOptionsImpl = rootKotlinOptions
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
@@ -373,7 +369,7 @@ open class KotlinAndroidPlugin(
                         aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
 
                 kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                        variantDataName, kotlinOptions, subpluginEnvironment, tasksProvider)
+                        variantDataName, rootKotlinOptions, subpluginEnvironment, tasksProvider)
             }
 
             configureSources(kotlinTask, variantData)
