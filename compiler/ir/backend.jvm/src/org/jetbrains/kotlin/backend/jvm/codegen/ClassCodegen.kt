@@ -16,18 +16,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.util.ArrayUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
+import org.jetbrains.kotlin.codegen.SuperClassInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -42,53 +43,25 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     val descriptor = irClass.descriptor
 
-    val type: Type
+    val type: Type = typeMapper.mapType(descriptor)
 
-    init {
-        if (descriptor.isFileDescriptor) {
-            descriptor.name
-            val fileClassInfo = state.fileClassesProvider.getFileClassInfo((irClass.descriptor.source as KotlinSourceElement).psi.getContainingKtFile())
-            if (fileClassInfo.withJvmMultifileClass) {
-                assert(false) { "TODO: support multifile facades" }
-            }
-            type = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
-        }
-        else {
-            type = typeMapper.mapType(descriptor)
-        }
-    }
+    val psiElement = irClass.descriptor.psiElement
 
-    val visitor: ClassBuilder
-
-    init {
-        val element = (irClass.descriptor.source as PsiSourceElement).psi!!
-        visitor = state.factory.newVisitor(irClass.OtherOrigin, type, element.containingFile)
-    }
+    val visitor: ClassBuilder = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
 
     fun generate() {
-        if (descriptor.isFileDescriptor) {
-            visitor.defineClass((irClass.descriptor.source as KotlinSourceElement).psi,
-                                state.classFileVersion,
-                                descriptor.calculateClassFlags(),
-                                type.internalName,
-                                null,
-                                "java/lang/Object",
-                                ArrayUtil.EMPTY_STRING_ARRAY
-            )
-        }
-        else {
-            val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
-            val signature = ImplementationBodyCodegen.signature(descriptor, type, superClassInfo, typeMapper)
+        val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
+        val signature = ImplementationBodyCodegen.signature(descriptor, type, superClassInfo, typeMapper)
 
-            visitor.defineClass(irClass.OtherOrigin.element, state.classFileVersion,
-                                descriptor.calculateClassFlags(),
-                                signature.name,
-                                signature.javaGenericSignature,
-                                signature.superclassName,
-                                signature.interfaces.toTypedArray()
-            )
-
-        }
+        visitor.defineClass(
+                psiElement,
+                state.classFileVersion,
+                descriptor.calculateClassFlags(),
+                signature.name,
+                signature.javaGenericSignature,
+                signature.superclassName,
+                signature.interfaces.toTypedArray()
+        )
 
         irClass.declarations.forEach {
             generateDeclaration(it)
@@ -190,14 +163,14 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
     return flags
 }
 
-val IrClass.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin((this.descriptor.source as PsiSourceElement).psi!!, this.descriptor)
+val DeclarationDescriptorWithSource.psiElement: PsiElement
+    get() = (source as PsiSourceElement).psi!!
 
 val IrField.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin((this.descriptor.source as PsiSourceElement).psi!!, this.descriptor)
+    get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
 val IrFunction.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin((this.descriptor.source as PsiSourceElement).psi!!, this.descriptor)
+    get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
 val ClassDescriptor.isFileDescriptor: Boolean
     get() = this is FileClassDescriptor

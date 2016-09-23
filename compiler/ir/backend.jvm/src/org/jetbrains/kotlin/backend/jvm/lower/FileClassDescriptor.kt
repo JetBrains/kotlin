@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
@@ -34,9 +35,8 @@ class FileClassDescriptorImpl(
     override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptyList()
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclarationImpl
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = emptyList()
-    override fun getDefaultType(): SimpleType = ErrorUtils.createErrorType("File class type for $nameImpl")
     override fun getKind(): ClassKind = ClassKind.CLASS
-    override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope = error("File class has no member scope")
+
     override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope = error("File class has no member scope")
     override fun getModality(): Modality = Modality.FINAL
     override fun getOriginal(): ClassDescriptor = this
@@ -51,8 +51,19 @@ class FileClassDescriptorImpl(
     override fun isData(): Boolean = false
     override fun substitute(substitutor: TypeSubstitutor): ClassDescriptor = error("File class can't be substituted")
     override fun getSource(): SourceElement = sourceElement
-    override fun getTypeConstructor(): TypeConstructor = error("File class can't be used in types")
     override fun isInner(): Boolean = false
+
+    override val annotations = Annotations.EMPTY // TODO file annotations
+
+    private val typeConstructor = ClassTypeConstructorImpl(this, annotations, true, emptyList(), listOf(builtIns.anyType))
+    private val defaultType = KotlinTypeFactory.simpleNotNullType(annotations, this, emptyList())
+
+    override fun getTypeConstructor(): TypeConstructor = typeConstructor
+
+    override fun getDefaultType(): SimpleType = defaultType
+
+    override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope =
+            MemberScope.Empty // TODO do we need a more useful MemberScope here?
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitClassDescriptor(this, data)
@@ -61,9 +72,6 @@ class FileClassDescriptorImpl(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>) {
         visitor.visitClassDescriptor(this, null)
     }
-
-    override val annotations: Annotations
-        get() = TODO("not implemented")
 
     override fun toString(): String =
             "IrFileClassDescriptor($fqNameUnsafe)"
