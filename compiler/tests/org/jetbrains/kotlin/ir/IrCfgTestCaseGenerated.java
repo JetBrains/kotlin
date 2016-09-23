@@ -79,6 +79,12 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("digitCount.kt")
+        public void testDigitCount() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/digitCount.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("factorial.kt")
         public void testFactorial() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/factorial.kt");
