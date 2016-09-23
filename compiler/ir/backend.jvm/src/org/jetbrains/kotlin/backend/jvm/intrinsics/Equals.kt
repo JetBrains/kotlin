@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
@@ -30,9 +29,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val binary = expression as IrBinaryPrimitiveImpl
-        var leftType = context.state.typeMapper.mapType(binary.argument0.type)
-        var rightType = context.state.typeMapper.mapType(binary.argument1.type)
+        var leftType = context.state.typeMapper.mapType(expression.getValueArgument(0)!!.type)
+        var rightType = context.state.typeMapper.mapType(expression.getValueArgument(1)!!.type)
 
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             leftType = boxType(leftType)
@@ -42,7 +40,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
 
         return object: IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                val opToken = binary.origin
+                val opToken = expression.origin
 
                 val value = if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
                     // TODO: always casting to the type of the left operand in case of primitives looks wrong

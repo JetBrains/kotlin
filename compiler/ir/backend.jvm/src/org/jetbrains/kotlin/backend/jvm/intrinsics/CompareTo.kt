@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrPrimitiveCallBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -59,7 +60,7 @@ class CompareTo : IntrinsicMethod() {
 
 class IrCompareTo : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        assert(expression is IrUnaryPrimitiveImpl)
+        assert(expression is IrPrimitiveCallBase)
         val compareCall = expression.getValueArgument(0) as IrCall
         val args = compareCall.receiverAndArgs()
         val argTypes = args.asmTypes(context)
