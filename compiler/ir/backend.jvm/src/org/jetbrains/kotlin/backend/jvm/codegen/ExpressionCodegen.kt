@@ -350,6 +350,12 @@ class ExpressionCodegen(
                 generateAsCast(mv, expression.typeOperand, boxType(expression.typeOperand.asmType), expression.operator == IrTypeOperator.SAFE_CAST)
             }
 
+            IrTypeOperator.INSTANCEOF -> {
+                gen(expression.argument, OBJECT_TYPE, data)
+                val type = boxType(expression.typeOperand.asmType)
+                generateIsCheck(mv, expression.typeOperand, type)
+            }
+
             else -> super.visitTypeOperator(expression, data)
         }
         return expression.onStack
