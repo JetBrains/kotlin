@@ -3,6 +3,9 @@ package foo
 public fun equals(a: Any?): Boolean = true
 public fun hashCode(): Int = 0
 public fun toString(): String = ""
+fun equals(a: Any?, b: Any?): Boolean = true
+fun hashCode(i: Int): Int = 0
+fun toString(s: String): String = ""
 
 public class PublicClass {
     override fun equals(a: Any?): Boolean = this === a
@@ -58,12 +61,12 @@ fun test(expected: String, f: () -> Unit) {
     }
 }
 
-val SIMPLE_EQUALS = "equals"
-val SIMPLE_HASH_CODE_1 = "hashCode_1"
-val SIMPLE_TO_STRING_1 = "toString_1"
 val STABLE_EQUALS = { equals(0) }.extractNames()[1]
 val STABLE_HASH_CODE = { hashCode() }.extractNames()[1]
 val STABLE_TO_STRING = { toString() }.extractNames()[1]
+val STABLE_EQUALS_2 = { equals(0, 0) }.extractNames()[1]
+val STABLE_HASH_CODE_2 = { hashCode(0) }.extractNames()[1]
+val STABLE_TO_STRING_2 = { toString("") }.extractNames()[1]
 
 fun box(): String {
     testGroup = "Public Class"
@@ -75,17 +78,17 @@ fun box(): String {
     test(STABLE_EQUALS) { InternalClass().equals(0) }
     test(STABLE_HASH_CODE) { InternalClass().hashCode() }
     test(STABLE_TO_STRING) { InternalClass().toString() }
-    //test(SIMPLE_EQUALS) { InternalClass().equals(0, 1) }
-    //test(SIMPLE_HASH_CODE_1) { InternalClass().hashCode(2) }
-    //test(SIMPLE_TO_STRING_1) { InternalClass().toString("3") }
+    test(STABLE_EQUALS_2) { InternalClass().equals(0, 1) }
+    test(STABLE_HASH_CODE_2) { InternalClass().hashCode(2) }
+    test(STABLE_TO_STRING_2) { InternalClass().toString("3") }
 
     testGroup = "Private Class"
     test(STABLE_EQUALS) { PrivateClass().equals(0) }
     test(STABLE_HASH_CODE) { PrivateClass().hashCode() }
     test(STABLE_TO_STRING) { PrivateClass().toString() }
-    //test(SIMPLE_EQUALS) { PrivateClass().equals(0, 1) }
-    //test(SIMPLE_HASH_CODE_1) { PrivateClass().hashCode(2) }
-    //test(SIMPLE_TO_STRING_1) { PrivateClass().toString("3") }
+    test(STABLE_EQUALS_2) { PrivateClass().equals(0, 1) }
+    test(STABLE_HASH_CODE_2) { PrivateClass().hashCode(2) }
+    test(STABLE_TO_STRING_2) { PrivateClass().toString("3") }
 
     return "OK"
 }
