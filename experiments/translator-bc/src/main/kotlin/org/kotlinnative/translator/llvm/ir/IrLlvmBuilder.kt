@@ -138,4 +138,16 @@ class IrLlvmBuilder {
     fun memcpy(castedDst: LLVMVariable, castedSrc: LLVMVariable, size: Int, align: Int, volatile: Boolean) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    fun storeString(target: LLVMVariable, source: LLVMVariable, offset: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun storeNull(result: LLVMVariable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

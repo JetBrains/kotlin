@@ -262,18 +262,24 @@ class LLVMBuilder(arm: Boolean = false) {
         }
 
         fun storeString(target: LLVMVariable, source: LLVMVariable, offset: Int) {
-            val code = "store ${target.type} getelementptr inbounds (" +
+            ir.storeString(target, source, offset)
+            bc.storeString(target, source, offset)
+            /*val code = "store ${target.type} getelementptr inbounds (" +
                     "${(source.type as LLVMStringType).fullArrayType}* $source, i32 0, i32 $offset), ${target.pointedType} $target, align ${source.type.align}"
             (target.type as LLVMStringType).isLoaded = true
             addLLVMCodeToLocalPlace(code)
+            */
         }
 
         fun storeVariable(target: LLVMSingleValue, source: LLVMSingleValue) {
+            ir.storeVariable(target, source)
+            bc.storeVariable(target, source)
+            /*
             if ((source.type is LLVMStringType) && !(source.type.isLoaded)) {
                 storeString(target as LLVMVariable, source as LLVMVariable, 0)
             } else {
                 addLLVMCodeToLocalPlace("store ${source.pointedType} $source, ${target.pointedType} $target, align ${source.type.align}")
-            }
+            }*/
         }
 
         fun saveExpression(expression: LLVMSingleValue): LLVMVariable {
@@ -282,10 +288,13 @@ class LLVMBuilder(arm: Boolean = false) {
             return resultOp
         }
 
-        fun storeNull(result: LLVMVariable) =
-                addLLVMCodeToLocalPlace("store ${result.pointedType.dropLast(1)} null, ${result.pointedType} $result, align ${TranslationState.POINTER_ALIGN}")
+        fun storeNull(result: LLVMVariable) {
+            ir.storeNull(result)
+            bc.storeNull(result)
+            //addLLVMCodeToLocalPlace("store ${result.pointedType.dropLast(1)} null, ${result.pointedType} $result, align ${TranslationState.POINTER_ALIGN}")
+        }
 
-        override fun toString() = globalCode.toString() + localCode.toString()
+        override fun toString() = ir.toString()
 
         private fun copyVariableValue(target: LLVMVariable, source: LLVMVariable) {
             var from = source
