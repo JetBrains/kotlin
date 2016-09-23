@@ -208,12 +208,12 @@ class ExpressionCodegen(
     }
 
     fun gen(expression: IrElement, type: Type, data: BlockInfo): StackValue {
-        expression.accept(this, data).put(type, mv)
+        gen(expression, data).put(type, mv)
         return onStack(type)
     }
 
-    fun gen(expression: IrExpression, data: BlockInfo): StackValue {
-        return gen(expression, expression.asmType, data)
+    fun gen(expression: IrElement, data: BlockInfo): StackValue {
+        return expression.accept(this, data)
     }
 
     override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: BlockInfo): StackValue {
@@ -289,8 +289,8 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
-        expression.value?.apply {
-            gen(this, data)
+        val value = expression.value?.apply {
+            gen(this, this.asmType, data)
         }
         mv.areturn((expression.value ?: expression).asmType)
         return expression.onStack
@@ -298,34 +298,40 @@ class ExpressionCodegen(
 
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
-        /*TODO */
-        if (expression is IrIfThenElseImpl) {
-            val elseLabel = Label()
-            val condition = expression.branches[0].condition
-            gen(condition, data)
-            BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, true, mv)
-
-            val end = Label()
-
-            expression.branches[0].result.apply {
-                gen(this, data)
-                coerceNotToUnit(this.asmType, expression.asmType)
-            }
-
-            mv.goTo(end)
-            mv.mark(elseLabel)
-
-            expression.branches.getOrNull(1)?.result?.apply {
-                gen(this, data)
-                coerceNotToUnit(this.asmType, expression.asmType)
-            }
-
-            mv.mark(end)
-        } else {
-            super.visitWhen(expression, data)
-        }
+        val resultType = expression.asmType
+        genIfWithBranches(expression.branches[0].condition, expression.branches[0].result, data, resultType, expression.branches.drop(1))
         return expression.onStack
     }
+
+
+    fun genIfWithBranches(condition: IrExpression, thenBranch: IrExpression, data: BlockInfo, type: Type, otherBranches: List<IrBranch>) {
+        val elseLabel = Label()
+
+        //TODO don't generate condition for else branch - java verifier fails with empty stack
+        val elseBranch = condition is IrConst<*> && true == condition.value
+        if (!elseBranch) {
+            gen(condition, data)
+            BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, true, mv)
+        }
+
+        val end = Label()
+
+        thenBranch.apply {
+            gen(this, data)
+            coerceNotToUnit(this.asmType, type)
+        }
+
+        mv.goTo(end)
+        mv.mark(elseLabel)
+
+        if (!otherBranches.isEmpty()) {
+            val nextBranch = otherBranches.first()
+            genIfWithBranches(nextBranch.condition, nextBranch.result, data, type, otherBranches.drop(1))
+        }
+
+        mv.mark(end)
+    }
+
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): StackValue {
         when (expression.operator) {
@@ -335,9 +341,13 @@ class ExpressionCodegen(
                 return none()
             }
 
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                expression.argument.accept(this, data)
-                mv.checkcast(expression.typeOperand.asmType)
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
+                val value = expression.argument.accept(this, data)
+                value.put(boxType(value.type), mv)
+                if (value.type === Type.VOID_TYPE) {
+                    StackValue.putUnitInstance(mv)
+                }
+                generateAsCast(mv, expression.typeOperand, boxType(expression.typeOperand.asmType), expression.operator == IrTypeOperator.SAFE_CAST)
             }
 
             else -> super.visitTypeOperator(expression, data)
