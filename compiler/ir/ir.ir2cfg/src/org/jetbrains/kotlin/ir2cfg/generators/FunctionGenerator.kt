@@ -188,6 +188,18 @@ class FunctionGenerator(val function: IrFunction) {
             return jump
         }
 
+        override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Boolean): IrElement? {
+            expression.dispatchReceiver?.process()
+            expression.extensionReceiver?.process()
+            for (valueParameter in expression.descriptor.valueParameters) {
+                expression.getValueArgument(valueParameter)?.process()
+            }
+            if (data) {
+                builder.add(expression)
+            }
+            return expression
+        }
+
         override fun visitElement(element: IrElement, data: Boolean): IrElement? {
             TODO("not implemented")
         }

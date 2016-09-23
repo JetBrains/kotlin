@@ -15,6 +15,10 @@ INCOMING <- BB 0, 4
     Do..while entry: DO_WHILE label=null origin=DO_WHILE_LOOP
 CONTENT
       1 WHEN type=kotlin.Unit origin=null
+      2 GET_VAR 'value-parameter m: Int' type=kotlin.Int origin=null
+      3 GET_VAR 'number: Int' type=kotlin.Int origin=null
+      4 CONST Int type=kotlin.Int value='10'
+      5 CALL 'mod(Int): Int' type=kotlin.Int origin=PERC
 OUTGOING -> BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 2
@@ -29,6 +33,9 @@ INCOMING <- BB 2
     When exit: WHEN type=kotlin.Unit origin=null
 CONTENT
       1 SET_VAR 'number: Int' type=kotlin.Unit origin=DIVEQ
+      2 GET_VAR 'number: Int' type=kotlin.Int origin=null
+      3 CONST Int type=kotlin.Int value='0'
+      4 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 4, 5
     CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
 BB 4

@@ -6,24 +6,32 @@ CONTENT
       2 GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
       3 VAR IR_TEMPORARY_VARIABLE val tmp0_subject: kotlin.String
       4 WHEN type=kotlin.Nothing origin=WHEN
+      5 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+      6 CONST String type=kotlin.String value='A'
 OUTGOING -> BB 1, 5
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 1
 INCOMING <- BB 0
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
+      1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+      2 CONST String type=kotlin.String value='B'
 OUTGOING -> BB 2, 6
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 2
 INCOMING <- BB 1
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
+      1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+      2 CONST String type=kotlin.String value='C'
 OUTGOING -> BB 3, 7
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 3
 INCOMING <- BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 CONTENT
+      1 GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+      2 CONST String type=kotlin.String value='D'
 OUTGOING -> BB 4, 8
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 4
