@@ -200,6 +200,14 @@ class FunctionGenerator(val function: IrFunction) {
             return expression
         }
 
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Boolean): IrElement? {
+            expression.argument.process()
+            if (data) {
+                builder.add(expression)
+            }
+            return expression
+        }
+
         override fun visitElement(element: IrElement, data: Boolean): IrElement? {
             TODO("not implemented")
         }
