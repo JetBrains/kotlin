@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
 import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
+import org.jetbrains.kotlin.idea.intentions.AbstractConcatenatedStringGeneratorTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
@@ -527,6 +528,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIntentionTest2>() {
             model("intentions/loopToCallChain", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractConcatenatedStringGeneratorTest> {
+            model("concatenatedStringGenerator", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractInspectionTest>() {

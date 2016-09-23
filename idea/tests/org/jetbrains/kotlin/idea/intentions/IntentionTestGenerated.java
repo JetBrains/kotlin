@@ -5490,6 +5490,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     }
 
+    @TestMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CopyConcatenatedStringToClipboard extends AbstractIntentionTest {
+        public void testAllFilesPresentInCopyConcatenatedStringToClipboard() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/copyConcatenatedStringToClipboard"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constants.kt")
+        public void testConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard/constants.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("numbers.kt")
+        public void testNumbers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard/numbers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleString.kt")
+        public void testSimpleString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard/simpleString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variables.kt")
+        public void testVariables() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard/variables.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
