@@ -1359,6 +1359,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceMathMaxWithCoerceAtLeastIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceMathMinWithCoerceAtMostIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -1786,6 +1796,22 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetInspection"
                      displayName="Replace single line .let"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceMathMaxWithCoerceAtLeastInspection"
+                     displayName="Replace Math.max with coerceAtLeast"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceMathMinWithCoerceAtMostInspection"
+                     displayName="Replace Math.min with coerceAtMost"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
