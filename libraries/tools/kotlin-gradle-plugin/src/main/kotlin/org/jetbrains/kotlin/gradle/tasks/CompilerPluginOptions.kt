@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import java.io.File
 
-class CompilerPluginOptions {
+internal class CompilerPluginOptions {
     private val mutableClasspath = arrayListOf<String>()
     private val mutableArguments = arrayListOf<String>()
 

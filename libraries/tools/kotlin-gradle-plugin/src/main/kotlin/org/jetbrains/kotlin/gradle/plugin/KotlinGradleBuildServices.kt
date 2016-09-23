@@ -40,7 +40,7 @@ private fun comparableVersionStr(version: String) =
                 ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
-class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
+internal class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
     companion object {
         private val CLASS_NAME = KotlinGradleBuildServices::class.java.simpleName
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
@@ -131,7 +131,7 @@ class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapte
 }
 
 
-class CompilerServicesCleanup() {
+internal class CompilerServicesCleanup() {
     private val log = Logging.getLogger(this.javaClass)
 
     operator fun invoke(gradleVersion: String) {

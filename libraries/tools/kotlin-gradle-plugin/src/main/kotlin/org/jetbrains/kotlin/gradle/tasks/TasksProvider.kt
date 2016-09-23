@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.RegexTaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.TaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 
-open class KotlinTasksProvider {
+internal open class KotlinTasksProvider {
     fun createKotlinJVMTask(project: Project, name: String): KotlinCompile {
         return project.tasks.create(name, KotlinCompile::class.java).apply {
             friendTaskName = taskToFriendTaskMapper[this]
@@ -21,7 +21,7 @@ open class KotlinTasksProvider {
             RegexTaskToFriendTaskMapper.Default()
 }
 
-class AndroidTasksProvider : KotlinTasksProvider() {
+internal class AndroidTasksProvider : KotlinTasksProvider() {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
             RegexTaskToFriendTaskMapper.Android()
 }

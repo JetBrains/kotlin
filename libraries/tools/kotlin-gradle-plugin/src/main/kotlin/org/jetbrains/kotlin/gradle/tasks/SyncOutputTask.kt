@@ -51,7 +51,7 @@ import kotlin.properties.Delegates
  * if it's timestamp now is newer than when we copied it
  * (assuming it was modified by javac when class was converted to java).
  */
-open class SyncOutputTask : DefaultTask() {
+internal open class SyncOutputTask : DefaultTask() {
     @get:InputFiles
     var kotlinOutputDir: File by Delegates.notNull()
     var javaOutputDir: File by Delegates.notNull()

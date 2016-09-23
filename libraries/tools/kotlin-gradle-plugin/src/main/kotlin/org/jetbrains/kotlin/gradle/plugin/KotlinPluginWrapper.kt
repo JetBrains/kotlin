@@ -25,7 +25,7 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
         plugin.apply(project)
     }
 
-    protected abstract fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project>
+    internal abstract fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project>
 }
 
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {

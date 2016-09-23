@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Task
 import org.jetbrains.annotations.TestOnly
 
-abstract class TaskToFriendTaskMapper {
+internal abstract class TaskToFriendTaskMapper {
     operator fun get(task: Task): String? =
             getFriendByName(task.name)
 
@@ -30,7 +30,7 @@ abstract class TaskToFriendTaskMapper {
     protected abstract fun getFriendByName(name: String): String?
 }
 
-sealed class RegexTaskToFriendTaskMapper(
+sealed internal class RegexTaskToFriendTaskMapper(
         private val prefix: String,
         suffix: String
 ) : TaskToFriendTaskMapper() {

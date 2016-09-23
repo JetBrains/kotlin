@@ -40,7 +40,7 @@ import java.io.IOException
 import java.util.*
 import java.util.zip.ZipFile
 
-fun Project.initKapt(
+internal fun Project.initKapt(
         kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
         kaptManager: AnnotationProcessingManager,

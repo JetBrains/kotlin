@@ -18,7 +18,7 @@ import java.util.*
  *  2.1 remove classes corresponding to dirty source files
  *  2.2 add annotations from newly generated annotations file
  */
-class AnnotationFileUpdater(private val generatedAnnotationFile: File) {
+internal class AnnotationFileUpdater(private val generatedAnnotationFile: File) {
     private val logger = Logging.getLogger(this.javaClass)
     private val lastSuccessfullyUpdatedFile = File.createTempFile("kapt-annotations-copy", "tmp")
 

@@ -4,7 +4,7 @@ import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.util.*
 
-class AnnotationsRemover(annotations: Iterable<String>) {
+internal class AnnotationsRemover(annotations: Iterable<String>) {
     private val annotations = annotations.mapTo(HashSet()) { "L$it;" }
 
     fun transformClassFile(inputFile: File, outputFile: File) {

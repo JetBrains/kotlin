@@ -34,14 +34,13 @@ interface AdditionalGradleProperties {
 }
 
 fun main(args: Array<String>) {
-    val dslSrcDir = File("libraries/tools/kotlin-gradle-plugin-dsl/src/main/kotlin")
-    val dslImplDir = File("libraries/tools/kotlin-gradle-plugin-core/src/main/kotlin")
+    val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
     val additionalGradleOptions = gradleOptions<AdditionalGradleProperties>()
 
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
     val optionsFromK2JVMCompilerArguments = gradleOptions<K2JVMCompilerArguments>()
-    File(dslSrcDir, jvmInterfaceFqName).usePrinter {
+    File(srcDir, jvmInterfaceFqName).usePrinter {
         generateInterface(jvmInterfaceFqName,
                           optionsFromK2JVMCompilerArguments + additionalGradleOptions)
     }
@@ -49,7 +48,7 @@ fun main(args: Array<String>) {
     // generate jvm impl
     val k2JvmCompilerArgumentsFqName = FqName(K2JVMCompilerArguments::class.qualifiedName!!)
     val jvmImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsBase")
-    File(dslImplDir, jvmImplFqName).usePrinter {
+    File(srcDir, jvmImplFqName).usePrinter {
         generateImpl(jvmImplFqName,
                      jvmInterfaceFqName,
                      k2JvmCompilerArgumentsFqName,
@@ -59,7 +58,7 @@ fun main(args: Array<String>) {
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
     val optionsFromK2JSCompilerArguments = gradleOptions<K2JSCompilerArguments>()
-    File(dslSrcDir, jsInterfaceFqName).usePrinter {
+    File(srcDir, jsInterfaceFqName).usePrinter {
         generateInterface(jsInterfaceFqName,
                           optionsFromK2JSCompilerArguments +
                           additionalGradleOptions)
@@ -67,7 +66,7 @@ fun main(args: Array<String>) {
 
     val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
     val jsImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsBase")
-    File(dslImplDir, jsImplFqName).usePrinter {
+    File(srcDir, jsImplFqName).usePrinter {
         generateImpl(jsImplFqName,
                      jsInterfaceFqName,
                      k2JsCompilerArgumentsFqName,
@@ -110,7 +109,7 @@ private fun Printer.generateImpl(
         argsType: FqName,
         properties: List<KProperty1<*, *>>
 ) {
-    generateDeclaration("abstract class", type, afterType = ": $parentType") {
+    generateDeclaration("internal abstract class", type, afterType = ": $parentType") {
         fun KProperty1<*, *>.backingField(): String = "${this.name}Field"
 
         for (property in properties) {
@@ -137,7 +136,7 @@ private fun Printer.generateImpl(
     }
 
     println()
-    println("fun $argsType.fillDefaultValues() {")
+    println("internal fun $argsType.fillDefaultValues() {")
     withIndent {
         for (property in properties) {
             println("${property.name} = ${property.gradleDefaultValue}")

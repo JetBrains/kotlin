@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHand
 import java.io.*
 import java.util.*
 
-class SourceAnnotationsRegistry(private val file: File) : SourceRetentionAnnotationHandler {
+internal class SourceAnnotationsRegistry(private val file: File) : SourceRetentionAnnotationHandler {
     private val mutableAnnotations: MutableSet<String> by lazy { readAnnotations() }
     val annotations: Set<String>
             get() = mutableAnnotations

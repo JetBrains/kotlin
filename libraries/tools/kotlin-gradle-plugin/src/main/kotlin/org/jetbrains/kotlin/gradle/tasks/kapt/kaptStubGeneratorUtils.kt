@@ -4,7 +4,7 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
-fun generateKotlinAptAnnotation(outputDirectory: File): File {
+internal fun generateKotlinAptAnnotation(outputDirectory: File): File {
     val packageName = "__gen"
     val className = "KotlinAptAnnotation"
     val classFqName = "$packageName/$className"
@@ -25,7 +25,7 @@ fun generateKotlinAptAnnotation(outputDirectory: File): File {
     return outputFile
 }
 
-fun generateAnnotationProcessorWrapper(
+internal fun generateAnnotationProcessorWrapper(
         processorFqName: String,
         packageName: String,
         outputDirectory: File,
