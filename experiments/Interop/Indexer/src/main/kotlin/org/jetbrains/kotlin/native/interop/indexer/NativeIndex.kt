@@ -2,41 +2,68 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import java.io.File
 
+/**
+ * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
+ */
 fun buildNativeIndex(headerFile: File, args: List<String>): NativeIndex = buildNativeIndexImpl(headerFile, args)
 
+/**
+ * This class describes the IR of definitions from C header file(s).
+ */
 abstract class NativeIndex {
     abstract val structs: List<StructDecl>
     abstract val enums: List<EnumDef>
     abstract val functions: List<FunctionDecl>
 }
 
+/**
+ * C struct field.
+ */
+class Field(val name: String, val type: Type, val offset: Long)
 
-class Field(val name: String, val type: Type, val offset: Long) {
-    override fun toString(): String = "$type $name at $offset"
-}
-
+/**
+ * C struct declaration.
+ */
 abstract class StructDecl(val spelling: String) {
 
     abstract val def: StructDef?
-
 }
 
+/**
+ * C struct definition.
+ */
 abstract class StructDef(val size: Long, val decl: StructDecl) {
+
     abstract val fields: List<Field>
 }
 
+/**
+ * C enum value.
+ */
 class EnumValue(val name: String, val value: Long)
 
+/**
+ * C enum definition.
+ */
 abstract class EnumDef(val spelling: String, val baseType: PrimitiveType) {
+
     abstract val values: List<EnumValue>
 }
 
+/**
+ * C function parameter.
+ */
 class Parameter(val name: String?, val type: Type)
 
+/**
+ * C function declaration.
+ */
 class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type)
 
 
-
+/**
+ * C type.
+ */
 open class Type
 
 open class PrimitiveType : Type()

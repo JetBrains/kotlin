@@ -22,7 +22,9 @@ class NativeInteropPlugin implements Plugin<Project> {
             interopStubGenerator project(path: ":Interop:StubGenerator")
         }
 
-        prj.task("genInteropStubs", type: JavaExec) {
+        def genStubsTaskName = "genInteropStubs"
+
+        prj.task(genStubsTaskName, type: JavaExec) {
             classpath = prj.configurations.interopStubGenerator
             main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             args = [srcDir, generatedSrcDir, nativeLibsDir]
@@ -45,12 +47,12 @@ class NativeInteropPlugin implements Plugin<Project> {
         }
 
         prj.tasks.getByName("compileKotlin") {
-            dependsOn "genInteropStubs"
+            dependsOn genStubsTaskName
         }
 
         // FIXME: choose tasks more wisely
         prj.tasks.withType(JavaExec) {
-            if (name != "genInteropStubs") {
+            if (name != genStubsTaskName) {
                 systemProperties "java.library.path": nativeLibsDir
             }
         }

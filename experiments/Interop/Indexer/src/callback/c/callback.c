@@ -1,31 +1,29 @@
-#include <pthread.h>
 #include <jni.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
 
 static JavaVM *vm = NULL;
 
+// Returns the JNI env which can be used by the caller.
+// If current thread is not attached to JVM, then it gets attached as daemon.
 static JNIEnv* getCurrentEnv() {
-//    printf("%p\n", pthread_self());
     JNIEnv* env;
     assert (vm != NULL);
     jint res = (*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_1);
     if (res != JNI_OK) {
-	assert(res == JNI_EDETACHED);
-	res = (*vm)->AttachCurrentThreadAsDaemon(vm, (void**)&env, NULL);
-	assert (res == JNI_OK);
+        assert (res == JNI_EDETACHED);
+        res = (*vm)->AttachCurrentThreadAsDaemon(vm, (void**)&env, NULL);
+        assert (res == JNI_OK);
     }
     return env;
 }
 
 jint JNI_OnLoad(JavaVM *vm_, void *reserved) {
     vm = vm_;
-    getCurrentEnv();
     return JNI_VERSION_1_1;
 }
 
-
+// The implementation of native callback.
 void indexDeclarationNativeCallback(void* arg1, void* arg2) {
     JNIEnv* env = getCurrentEnv();
 
@@ -34,15 +32,15 @@ void indexDeclarationNativeCallback(void* arg1, void* arg2) {
 
     if (cls == NULL) {
         cls = (*env)->FindClass(env, "org/jetbrains/kotlin/native/interop/indexer/indexDeclarationCallback");
-	assert(cls != NULL);
-	entryFromNative = (*env)->GetStaticMethodID(env, cls, "entryFromNative", "(J)V");
-	assert(entryFromNative != NULL);
+        assert(cls != NULL);
+        entryFromNative = (*env)->GetStaticMethodID(env, cls, "entryFromNative", "(J)V");
+        assert(entryFromNative != NULL);
     }
     
     (*env)->CallStaticVoidMethod(env, cls, entryFromNative, (jlong) arg2);
     if ((*env)->ExceptionCheck(env)) {
-	(*env)->ExceptionDescribe(env);
-	assert(0);
+        (*env)->ExceptionDescribe(env);
+        assert(0);
     }
 }
 
