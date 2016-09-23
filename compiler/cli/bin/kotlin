@@ -1,4 +1,4 @@
-#!/bin/bash --posix
+#!/usr/bin/env bash
 
 # Copyright 2010-2015 JetBrains s.r.o.
 #
