@@ -90,12 +90,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     }
 
     private fun isLetMethod(element: KtCallExpression) =
-            element.calleeExpression?.text == "let" && isMethodCall(element, "kotlin.let")
-
-    private fun isMethodCall(expression: KtExpression, fqMethodName: String): Boolean {
-        val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return false
-        return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
-    }
+            element.calleeExpression?.text == "let" && element.isMethodCall("kotlin.let")
 
     private fun KtLambdaExpression.getParameterName(): String? {
         val parameters = valueParameters

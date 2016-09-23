@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
@@ -70,6 +71,11 @@ fun KtContainerNode.description(): String? {
         }
     }
     return null
+}
+
+fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
+    val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
+    return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
 }
 
 fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
