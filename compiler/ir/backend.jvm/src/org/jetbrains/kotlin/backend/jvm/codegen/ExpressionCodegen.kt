@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -240,6 +241,11 @@ class ExpressionCodegen(
     private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
         StackValue.local(frame.getIndex(descriptor), type).put(type, mv)
         return onStack(type)
+    }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: BlockInfo): StackValue {
+        StackValue.singleton(expression.descriptor, typeMapper).put(expression.asmType, mv)
+        return expression.onStack
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
