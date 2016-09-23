@@ -119,23 +119,6 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testModuleNameAndroid() {
-        val project = Project("AndroidProject", gradleVersion)
-
-        project.build("build") {
-            assertContains(
-                    "args.moduleName = Lib-compileReleaseKotlin",
-                    "args.moduleName = Lib-compileDebugKotlin",
-                    "args.moduleName = Android-compileFlavor1DebugKotlin",
-                    "args.moduleName = Android-compileFlavor2DebugKotlin",
-                    "args.moduleName = Android-compileFlavor1JnidebugKotlin",
-                    "args.moduleName = Android-compileFlavor2JnidebugKotlin",
-                    "args.moduleName = Android-compileFlavor1ReleaseKotlin",
-                    "args.moduleName = Android-compileFlavor2ReleaseKotlin")
-        }
-    }
-
-    @Test
     fun testAndroidDaggerIC() {
         val project = Project("AndroidDaggerProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
