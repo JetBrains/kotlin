@@ -33,7 +33,9 @@ class KotlinJvmJsr223ScriptEngine4Idea(
         disposable: Disposable,
         private val factory: ScriptEngineFactory,
         templateClasspath: List<File>,
-        templateClassName: String
+        templateClassName: String,
+        scriptArgs: Array<Any?>?,
+        scriptArgsTypes: Array<Class<*>>?
 ) : AbstractScriptEngine(), ScriptEngine {
 
     private val daemon by lazy {
@@ -61,7 +63,7 @@ class KotlinJvmJsr223ScriptEngine4Idea(
         }
     }
 
-    val localEvaluator by lazy { GenericReplCompiledEvaluator(emptyList(), Thread.currentThread().contextClassLoader) }
+    val localEvaluator by lazy { GenericReplCompiledEvaluator(emptyList(), Thread.currentThread().contextClassLoader, scriptArgs, scriptArgsTypes) }
 
     private var lineCount = 0
 

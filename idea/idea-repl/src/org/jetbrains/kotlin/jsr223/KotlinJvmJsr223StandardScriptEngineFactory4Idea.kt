@@ -38,7 +38,9 @@ class KotlinJvmJsr223StandardScriptEngineFactory4Idea : ScriptEngineFactory {
                     Disposer.newDisposable(),
                     this,
                     listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath),
-                    "kotlin.script.StandardScriptTemplate")
+                    "kotlin.script.StandardScriptTemplate",
+                    arrayOf(emptyArray<String>()),
+                    null)
 
     override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
     override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"
