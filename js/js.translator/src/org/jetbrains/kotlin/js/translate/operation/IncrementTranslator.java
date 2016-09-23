@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +50,11 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull KtUnaryExpression expression,
                                          @NotNull TranslationContext context) {
-        if (hasCorrespondingFunctionIntrinsic(context, expression) || isDynamic(context, expression)) {
-            return IntrinsicIncrementTranslator.doTranslate(expression, context);
+        if (isDynamic(context, expression)) {
+            return DynamicIncrementTranslator.doTranslate(expression, context);
+        }
+        if (hasCorrespondingFunctionIntrinsic(context, expression)) {
+            return new IntrinsicIncrementTranslator(expression, context).translateIncrementExpression();
         }
         return (new OverloadedIncrementTranslator(expression, context)).translateIncrementExpression();
     }
@@ -84,7 +88,9 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         JsExpression getExpression = accessTranslator.translateAsGet();
         JsExpression reassignment = variableReassignment(getExpression);
         JsExpression getNewValue = accessTranslator.translateAsGet();
-        return new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+        JsExpression result = new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+        MetadataProperties.setSynthetic(result, true);
+        return result;
     }
 
     //TODO: decide if this expression can be optimised in case of direct access (not property)
@@ -93,10 +99,10 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = context().declareTemporary(t1.reference());
         JsExpression variableReassignment = variableReassignment(t1.reference());
-        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
-                                   variableReassignment, t2.reference());
+        JsExpression result = AstUtil.newSequence(t1.assignmentExpression(), variableReassignment, t1.reference());
+        MetadataProperties.setSynthetic(result, true);
+        return result;
     }
 
     @NotNull

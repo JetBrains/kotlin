@@ -5999,6 +5999,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intIncDecOverflow.kt")
+        public void testIntIncDecOverflow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/intIncDecOverflow.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("intOverflow.kt")
         public void testIntOverflow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/intOverflow.kt");

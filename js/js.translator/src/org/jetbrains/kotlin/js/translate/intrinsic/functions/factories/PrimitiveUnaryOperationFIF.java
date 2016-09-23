@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.patterns.NamePredicate.PRIMITIVE_NUMBERS;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 
 public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
@@ -61,11 +60,66 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = Predicates.and(PRIMITIVE_UNARY_OPERATION_NAMES, NO_PARAMETERS);
 
-    @NotNull
-    private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern(PRIMITIVE_NUMBERS, "inc");
+    private static final DescriptorPredicate INC_OPERATION_FOR_INT = pattern("Int.inc");
+    private static final DescriptorPredicate DEC_OPERATION_FOR_INT = pattern("Int.dec");
+    private static final DescriptorPredicate INC_OPERATION_FOR_BYTE = pattern("Byte.inc");
+    private static final DescriptorPredicate DEC_OPERATION_FOR_BYTE = pattern("Byte.dec");
+    private static final DescriptorPredicate INC_OPERATION_FOR_SHORT = pattern("Short.inc");
+    private static final DescriptorPredicate DEC_OPERATION_FOR_SHORT = pattern("Short.dec");
 
     @NotNull
-    private static final DescriptorPredicate DEC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern(PRIMITIVE_NUMBERS, "dec");
+    private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.inc()");
+
+    @NotNull
+    private static final DescriptorPredicate DEC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.dec()");
+
+    private static class IntOverflowIntrinsic extends FunctionIntrinsic {
+        private final FunctionIntrinsic underlyingIntrinsic;
+
+        public IntOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+            this.underlyingIntrinsic = underlyingIntrinsic;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            return JsAstUtils.toInt32(underlyingIntrinsic.apply(receiver, arguments, context));
+        }
+    }
+
+    private static class ShortOverflowIntrinsic extends FunctionIntrinsic {
+        private final FunctionIntrinsic underlyingIntrinsic;
+
+        public ShortOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+            this.underlyingIntrinsic = underlyingIntrinsic;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            return JsAstUtils.toShort(underlyingIntrinsic.apply(receiver, arguments, context));
+        }
+    }
+
+    private static class ByteOverflowIntrinsic extends FunctionIntrinsic {
+        private final FunctionIntrinsic underlyingIntrinsic;
+
+        public ByteOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+            this.underlyingIntrinsic = underlyingIntrinsic;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            return JsAstUtils.toByte(underlyingIntrinsic.apply(receiver, arguments, context));
+        }
+    }
 
     @NotNull
     private static final FunctionIntrinsic NUMBER_INC_INTRINSIC = new FunctionIntrinsic() {
@@ -182,6 +236,25 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         }
         if (pattern("Char.dec()").apply(descriptor)) {
             return CHAR_DEC;
+        }
+
+        if (INC_OPERATION_FOR_INT.apply(descriptor)) {
+            return new IntOverflowIntrinsic(NUMBER_INC_INTRINSIC);
+        }
+        if (DEC_OPERATION_FOR_INT.apply(descriptor)) {
+            return new IntOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
+        }
+        if (INC_OPERATION_FOR_SHORT.apply(descriptor)) {
+            return new ShortOverflowIntrinsic(NUMBER_INC_INTRINSIC);
+        }
+        if (DEC_OPERATION_FOR_SHORT.apply(descriptor)) {
+            return new ShortOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
+        }
+        if (INC_OPERATION_FOR_BYTE.apply(descriptor)) {
+            return new ByteOverflowIntrinsic(NUMBER_INC_INTRINSIC);
+        }
+        if (DEC_OPERATION_FOR_BYTE.apply(descriptor)) {
+            return new ByteOverflowIntrinsic(NUMBER_DEC_INTRINSIC);
         }
 
         if (INC_OPERATION_FOR_PRIMITIVE_NUMBER.apply(descriptor)) {

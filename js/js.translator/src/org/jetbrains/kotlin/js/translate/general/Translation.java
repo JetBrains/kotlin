@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -107,9 +104,11 @@ public final class Translation {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
         if (compileTimeValue != null) {
             KotlinType type = context.bindingContext().getType(expression);
-            if (type != null && KotlinBuiltIns.isLong(type)) {
-                JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
-                if (constantResult != null) return constantResult;
+            if (type != null) {
+                if (KotlinBuiltIns.isLong(type) || (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression)) {
+                    JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+                    if (constantResult != null) return constantResult;
+                }
             }
         }
 

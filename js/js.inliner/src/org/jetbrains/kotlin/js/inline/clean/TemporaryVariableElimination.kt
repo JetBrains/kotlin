@@ -103,9 +103,6 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
     private val namesWithSideEffects = mutableSetOf<JsName>()
 
-    // Unused variables that are safe to remove
-    private val variablesToRemove = mutableSetOf<JsName>()
-
     fun apply(): Boolean {
         analyze()
         perform()
@@ -263,13 +260,8 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                         }
                     }
                 }
-                else {
-                    if (shouldConsiderUnused(name)) {
-                        variablesToRemove += name
-                    }
-                    if (sideEffects) {
-                        invalidateTemporaries()
-                    }
+                else if (sideEffects) {
+                    invalidateTemporaries()
                 }
             }
 
@@ -506,7 +498,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     hasChanges = true
                 }
 
-                val ranges = x.vars.splitToRanges { it.name in variablesToRemove }
+                val ranges = x.vars.splitToRanges { shouldConsiderUnused(it.name) }
                 if (ranges.size == 1 && !ranges[0].second) return super.visit(x, ctx)
 
                 hasChanges = true
@@ -536,7 +528,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val (name, value) = assignment
-                    if (name in variablesToRemove) {
+                    if (shouldConsiderUnused(name)) {
                         hasChanges = true
                         ctx.replaceMe(JsExpressionStatement(value).run {
                             synthetic = true
@@ -571,6 +563,17 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             override fun visit(x: JsBreak, ctx: JsContext<*>) = false
 
             override fun visit(x: JsContinue, ctx: JsContext<*>) = false
+
+            override fun endVisit(x: JsBinaryOperation, ctx: JsContext<JsNode>) {
+                val assignment = JsAstUtils.decomposeAssignmentToVariable(x)
+                if (assignment != null) {
+                    val name = assignment.first
+                    if (shouldConsiderUnused(name)) {
+                        ctx.replaceMe(x.arg2)
+                    }
+                }
+                super.endVisit(x, ctx)
+            }
         }.accept(root)
     }
 
@@ -613,7 +616,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
         }
         is JsLiteral.JsValueLiteral -> expr.toString().length < 10
         is JsInvocation -> expr.sideEffects == SideEffectKind.PURE && isTrivial(expr.qualifier) && expr.arguments.all { isTrivial(it) }
-        is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression)
+        is JsArrayAccess -> isTrivial(expr.arrayExpression) && isTrivial(expr.indexExpression) && expr.sideEffects == SideEffectKind.PURE
         else -> false
     }
 }

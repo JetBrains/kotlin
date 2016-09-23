@@ -18,67 +18,37 @@ package org.jetbrains.kotlin.js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isPrefix;
-import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleNameExpressionNotDelegatedLocalVar;
 
 
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
-
     @NotNull
-    public static JsExpression doTranslate(@NotNull KtUnaryExpression expression,
-                                           @NotNull TranslationContext context) {
-        return (new IntrinsicIncrementTranslator(expression, context))
-                .translate();
-    }
+    private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
-    private IntrinsicIncrementTranslator(@NotNull KtUnaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public IntrinsicIncrementTranslator(@NotNull KtUnaryExpression expression,
+                                        @NotNull TranslationContext context) {
         super(expression, context);
-    }
-
-    @NotNull
-    private JsExpression translate() {
-        if (isSimpleNameExpressionNotDelegatedLocalVar(expression.getBaseExpression(), context())) {
-            return primitiveExpressionIncrement();
-        }
-        return translateIncrementExpression();
-    }
-
-    @NotNull
-    private JsExpression primitiveExpressionIncrement() {
-        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
-        JsExpression getExpression = accessTranslator.translateAsGet();
-        if (isPrefix(expression)) {
-            return new JsPrefixOperation(operator, getExpression);
-        }
-        else {
-            return new JsPostfixOperation(operator, getExpression);
-        }
+        this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return unaryAsBinary(receiver);
+        FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsic(resolvedCall.getResultingDescriptor());
+        return intrinsic.apply(receiver, Collections.<JsExpression>emptyList(), context());
     }
-
-    @NotNull
-    private JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
-        JsNumberLiteral oneLiteral = program().getNumberLiteral(1);
-        KtToken token = getOperationToken(expression);
-        if (token.equals(KtTokens.PLUSPLUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.ADD, leftExpression, oneLiteral);
-        }
-        if (token.equals(KtTokens.MINUSMINUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.SUB, leftExpression, oneLiteral);
-        }
-        throw new AssertionError("This method should be called only for increment and decrement operators");
-    }
-
 }
