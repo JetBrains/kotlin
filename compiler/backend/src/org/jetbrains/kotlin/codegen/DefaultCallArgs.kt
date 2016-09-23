@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
 class DefaultCallArgs(val size: Int) {
@@ -60,6 +61,19 @@ class DefaultCallArgs(val size: Int) {
 
             val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
             callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType))
+        }
+        return toInts.isNotEmpty()
+    }
+
+    fun generateOnStackIfNeeded(iv: InstructionAdapter, isConstructor: Boolean): Boolean {
+        val toInts = toInts()
+        if (!toInts.isEmpty()) {
+            for (mask in toInts) {
+                iv.iconst(mask)
+            }
+
+            val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
+            iv.aconst(null)
         }
         return toInts.isNotEmpty()
     }

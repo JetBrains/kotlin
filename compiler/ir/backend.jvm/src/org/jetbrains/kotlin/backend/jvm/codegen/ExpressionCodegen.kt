@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.boxType
-import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
+import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -158,19 +157,33 @@ class ExpressionCodegen(
             receiver?.apply {
                 gen(receiver, callable.owner, data)
             }
-            val args = (listOf(expression.extensionReceiver) +
+
+            val args = (listOf(expression.extensionReceiver).filterNotNull() +
                        expression.descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-                           expression.getValueArgument(i)
-                       }).filterNotNull()
+                           expression.getValueArgument(i) ?: DefaultArg(i)
+                       })
+
+            val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
             args.forEachIndexed { i, expression ->
-                gen(expression, callable.parameterTypes[i], data)
+                when (expression) {
+                    is IrExpression -> {
+                        gen(expression, callable.parameterTypes[i], data)
+                    }
+                    is DefaultArg -> {
+                        pushDefaultValueOnStack(callable.parameterTypes[i], mv)
+                        defaultMask.mark(expression.index)
+                    }
+                    else -> TODO()
+                }
             }
 
-            callable.genInvokeInstruction(mv)
+
+            if (!defaultMask.generateOnStackIfNeeded(mv, expression.descriptor is ConstructorDescriptor)) {
+                callable.genInvokeInstruction(mv)
+            } else {
+                (callable as CallableMethod).genInvokeDefaultInstruction(mv)
+            }
             return StackValue.onStack(callable.returnType)
-//            if (expression.descriptor !is ConstructorDescriptor) {
-//                //coerce(callable.returnType, expression.asmType, mv)
-//            }
         }
 
         return expression.onStack
@@ -421,3 +434,4 @@ class ExpressionCodegen(
         get() = typeMapper.mapType(this)
 }
 
+private class DefaultArg(val index: Int)
