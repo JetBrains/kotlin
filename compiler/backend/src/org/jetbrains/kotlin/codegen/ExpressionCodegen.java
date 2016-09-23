@@ -3448,21 +3448,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final KtExpression deparenthesized = KtPsiUtil.deparenthesize(rangeExpression);
 
         assert deparenthesized != null : "For with empty range expression";
-
+        final boolean isInverted = operationReference.getReferencedNameElementType() == KtTokens.NOT_IN;
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
                 if (isIntRangeExpr(deparenthesized) && AsmUtil.isIntPrimitive(leftValue.type)) {
-                    genInIntRange(leftValue, (KtBinaryExpression) deparenthesized);
+                    genInIntRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
                 }
                 else {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
                             .getResolvedCallWithAssert(operationReference, bindingContext);
                     StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, StackValue.none());
                     result.put(result.type, v);
-                }
-                if (operationReference.getReferencedNameElementType() == KtTokens.NOT_IN) {
-                    genInvertBoolean(v);
+                    if (isInverted) {
+                        genInvertBoolean(v);
+                    }
                 }
                 return null;
             }
@@ -3471,8 +3471,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     /*
      * Translates x in a..b (for int and char ranges only) to a <= x && x <= b
+     * and x !in a..b to a > x || x > b
      */
-    private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression) {
+    private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression, boolean isInverted) {
         int localVarIndex = myFrameMap.enterTemp(Type.INT_TYPE);
 
         // Load left bound
@@ -3492,11 +3493,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.ificmpgt(l1);
 
         Label l2 = new Label();
-        v.iconst(1);
+        v.iconst(isInverted ? 0 : 1);
         v.goTo(l2);
 
         v.mark(l1);
-        v.iconst(0);
+        v.iconst(isInverted? 1 : 0);
         v.mark(l2);
         myFrameMap.leaveTemp(Type.INT_TYPE);
     }
