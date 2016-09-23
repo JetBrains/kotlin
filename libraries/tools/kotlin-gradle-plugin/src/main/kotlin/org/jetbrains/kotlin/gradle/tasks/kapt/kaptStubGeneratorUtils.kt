@@ -4,12 +4,7 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
-/*
-    This file should be a part of AnnotationProcessingManager in kotlin-gradle-plugin,
-    but org.jetbrains.org.objectweb.asm can't be used there.
- */
-
-public fun generateKotlinAptAnnotation(outputDirectory: File): File {
+fun generateKotlinAptAnnotation(outputDirectory: File): File {
     val packageName = "__gen"
     val className = "KotlinAptAnnotation"
     val classFqName = "$packageName/$className"
@@ -30,7 +25,7 @@ public fun generateKotlinAptAnnotation(outputDirectory: File): File {
     return outputFile
 }
 
-public fun generateAnnotationProcessorWrapper(
+fun generateAnnotationProcessorWrapper(
         processorFqName: String,
         packageName: String,
         outputDirectory: File,

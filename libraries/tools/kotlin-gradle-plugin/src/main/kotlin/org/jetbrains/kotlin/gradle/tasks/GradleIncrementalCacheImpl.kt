@@ -58,7 +58,7 @@ internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir:
         }
 
         operator fun get(sourceFile: File): Collection<File> =
-                storage[sourceFile.absolutePath].orEmpty().map { File(it) }
+                storage[sourceFile.absolutePath].orEmpty().map(::File)
 
         override fun dumpValue(value: Collection<String>) = value.dumpCollection()
 

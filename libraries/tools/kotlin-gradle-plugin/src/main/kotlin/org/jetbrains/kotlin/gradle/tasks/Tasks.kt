@@ -5,8 +5,6 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -71,9 +69,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     var friendTaskName: String? = null
     var javaOutputDir: File? = null
     var moduleName: String = "${project.name}-${this.name}"
-
-    private val loggerInstance = Logging.getLogger(this.javaClass)
-    override fun getLogger() = loggerInstance
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -143,7 +138,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private val additionalClasspath = arrayListOf<File>()
     private val compileClasspath: Iterable<File>
             get() = (classpath + additionalClasspath)
-                    .filterTo(LinkedHashSet()) { it.exists() }
+                    .filterTo(LinkedHashSet(), File::exists)
     private val kapt2GeneratedSourcesDir: File
             get() = File(project.buildDir, "generated/source/kapt2")
 
@@ -619,6 +614,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         get() = kotlinOptions.outputFile
 
     init {
+        @Suppress("LeakingThis")
         outputs.file(MethodClosure(this, "getOutputFile"))
     }
 
@@ -653,16 +649,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             else -> throw GradleException("Unexpected exit code: $exitCode")
         }
-    }
-}
-
-private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
-    try {
-        @Suppress("UNCHECKED_CAST")
-        return get(id) as? T
-    }
-    catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
-        return null
     }
 }
 

@@ -49,7 +49,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         val taskDescription: String
 ) {
     abstract protected fun doTargetSpecificProcessing()
-    val logger = Logging.getLogger(this.javaClass)
+    protected val logger = Logging.getLogger(this.javaClass)!!
 
     protected val sourceSetName: String = sourceSet.name
     protected val sourceRootDir: String = "src/$sourceSetName/kotlin"
@@ -179,7 +179,7 @@ class Kotlin2JsSourceSetProcessor(
         compileTaskNameSuffix = "kotlin2Js"
 ) {
     override val defaultKotlinDestinationDir: File
-        get() = File(project.buildDir, "kotlin2js/${sourceSetName}")
+        get() = File(project.buildDir, "kotlin2js/$sourceSetName")
 
     private val clean = project.tasks.findByName("clean")
     private val build = project.tasks.findByName("build")

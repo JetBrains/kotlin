@@ -25,8 +25,6 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
 import org.jetbrains.kotlin.bytecode.AnnotationsRemover
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.md5
-import org.jetbrains.org.objectweb.asm.*
 import java.io.*
 import java.util.*
 import kotlin.properties.Delegates
