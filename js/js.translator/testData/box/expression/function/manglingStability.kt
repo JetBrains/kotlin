@@ -31,9 +31,9 @@ private fun private_foo(): Int = 1
 private fun private_foo(i: Int): Int = 2
 
 @native private fun private_boo(a: Array<Int>): String = "should be ignored"
+private fun private_boo(): Int = 1
 private fun private_boo(i: Int): Int = 2
 private fun private_boo(s: String): Int = 3
-private fun private_boo(): Int = 1
 
 val private_f = { private_foo() + private_foo(1) }
 val private_b = { private_boo() + private_boo(1) }
@@ -56,12 +56,12 @@ val mixed_b = { mixed_boo() + mixed_boo(1) + mixed_boo("str") + mixed_boo("str",
 
 
 class TestInternal {
-    @JsName("foo") internal fun foo(): Int = 1
-    @JsName("foo_2") internal fun foo(i: Int): Int = 2
+    internal fun foo(): Int = 1
+    internal fun foo(i: Int): Int = 2
 
-    @JsName("boo_2") internal fun boo(i: Int): Int = 2
-    @JsName("boo_3") internal fun boo(s: String): Int = 3
-    @JsName("boo") internal fun boo(): Int = 1
+    internal fun boo(): Int = 1
+    internal fun boo(i: Int): Int = 2
+    internal fun boo(s: String): Int = 3
 }
 
 val internal_in_class_f = { TestInternal().foo() + TestInternal().foo(1) }
@@ -85,9 +85,9 @@ class TestPrivate {
     private fun foo(): Int = 1
     private fun foo(i: Int): Int = 2
 
+    private fun boo(): Int = 1
     private fun boo(i: Int): Int = 2
     private fun boo(s: String): Int = 3
-    private fun boo(): Int = 1
 
     val f = { foo() + foo(1) }
     val b = { boo() + boo(1) }
@@ -149,12 +149,12 @@ fun test(testName: String, ff: Any, fb: Any) {
 fun box(): String {
     test("internal", internal_f, internal_b)
     test("public", public_f, public_b)
-    //test("private", private_f, private_b)
+    test("private", private_f, private_b)
     test("mixed", mixed_f, mixed_b)
 
     test("internal_in_class", internal_in_class_f, internal_in_class_b)
     test("public_in_class", public_in_class_f, public_in_class_b)
-    //test("private_in_class", private_in_class_f, private_in_class_b)
+    test("private_in_class", private_in_class_f, private_in_class_b)
     test("mixed_in_class", mixed_in_class_f, mixed_in_class_b)
 
     test("public_ext_prop", public_ext_f, public_ext_b)

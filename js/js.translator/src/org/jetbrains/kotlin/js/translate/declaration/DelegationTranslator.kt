@@ -62,7 +62,6 @@ class DelegationTranslator(
             }
             else {
                 val classFqName = DescriptorUtils.getFqName(classDescriptor)
-                val typeFqName = DescriptorUtils.getFqName(descriptor)
                 val idForMangling = classFqName.asString()
                 val suggestedName = NameSuggestion.getStableMangledName(Namer.getDelegatePrefix(), idForMangling)
                 val delegateName = context.getScopeForDescriptor(classDescriptor).declareFreshName("${suggestedName}_0")
