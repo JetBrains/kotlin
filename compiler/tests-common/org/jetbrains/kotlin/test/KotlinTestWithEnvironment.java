@@ -27,12 +27,9 @@ import java.lang.reflect.Field;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
     private KotlinCoreEnvironment environment;
-    private Application application;
 
     @Override
     protected void setUp() throws Exception {
-        application = ApplicationManager.getApplication();
-
         super.setUp();
         environment = createEnvironment();
     }
@@ -42,23 +39,6 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
         removeEnvironment();
         environment = null;
         super.tearDown();
-
-        if (application == null) {
-            resetApplicationToNull();
-        }
-
-        application = null;
-    }
-
-    protected void resetApplicationToNull() {
-        try {
-            Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
-            ourApplicationField.setAccessible(true);
-            ourApplicationField.set(null, null);
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
     }
 
     protected abstract KotlinCoreEnvironment createEnvironment() throws Exception;

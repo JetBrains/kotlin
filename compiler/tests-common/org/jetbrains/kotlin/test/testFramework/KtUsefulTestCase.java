@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.test.testFramework;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
@@ -36,6 +38,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -54,6 +57,8 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private static final Map<String, Long> TOTAL_SETUP_COST_MILLIS = new HashMap<String, Long>();
     private static final Map<String, Long> TOTAL_TEARDOWN_COST_MILLIS = new HashMap<String, Long>();
+
+    private Application application;
 
     @NotNull
     protected final Disposable myTestRootDisposable = new Disposable() {
@@ -81,6 +86,8 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
+        application = ApplicationManager.getApplication();
+
         super.setUp();
 
         String testName =  FileUtil.sanitizeFileName(getTestName(true));
@@ -121,6 +128,23 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         UIUtil.removeLeakingAppleListeners();
         super.tearDown();
+
+        if (application == null) {
+            resetApplicationToNull();
+        }
+
+        application = null;
+    }
+
+    protected void resetApplicationToNull() {
+        try {
+            Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
+            ourApplicationField.setAccessible(true);
+            ourApplicationField.set(null, null);
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     private boolean hasTmpFilesToKeep() {
