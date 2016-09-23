@@ -3470,38 +3470,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     /*
-     * Translates x in a..b (for int and char ranges only)
-     * to a <= x && x >= b same way as javac 1.8.0_91 does.
+     * Translates x in a..b (for int and char ranges only) to a <= x && x <= b
      */
     private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression) {
+        int localVarIndex = myFrameMap.enterTemp(Type.INT_TYPE);
+
         // Load left bound
         gen(rangeExpression.getLeft(), Type.INT_TYPE);
-        // Load argument
+        // Load x into local variable to avoid StackValue#put side-effects
         leftValue.put(Type.INT_TYPE, v);
+        v.store(localVarIndex, Type.INT_TYPE);
+        v.load(localVarIndex, Type.INT_TYPE);
 
-        // If (left > arg) goto L1 (return)
+        // If (x < left) goto L1
         Label l1 = new Label();
         v.ificmpgt(l1);
 
-        // Load argument again
-        leftValue.put(Type.INT_TYPE, v);
-        // Load right bound
+        // If (x > right) goto L1
+        v.load(localVarIndex, Type.INT_TYPE);
         gen(rangeExpression.getRight(), Type.INT_TYPE);
-        // If (x > right) goto L1 (return)
         v.ificmpgt(l1);
 
         Label l2 = new Label();
-        // Push 'true'
         v.iconst(1);
-        // Goto return
         v.goTo(l2);
 
-        // L1: push 'false'
         v.mark(l1);
         v.iconst(0);
-
-        // L2: implicit ireturn
         v.mark(l2);
+        myFrameMap.leaveTemp(Type.INT_TYPE);
     }
 
     private StackValue generateBooleanAnd(KtBinaryExpression expression) {
