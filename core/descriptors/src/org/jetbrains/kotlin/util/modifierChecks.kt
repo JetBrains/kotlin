@@ -182,14 +182,14 @@ object OperatorChecks : AbstractModifierChecks() {
             Checks(RANGE_TO, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
             Checks(EQUALS, Member) {
                 fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-                ensure(overriddenDescriptors.any { it.containingDeclaration.isAny() }) { "must override ''equals()'' in Any" }
+                ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) { "must override ''equals()'' in Any" }
             },
             Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),
             Checks(BINARY_OPERATION_NAMES, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
             Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
             Checks(listOf(INC, DEC), MemberOrExtension) {
                 val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
-                ensure(receiver != null && (returnType?.let { it.isSubtypeOf(receiver.type) } ?: false)) {
+                ensure(receiver != null && (returnType?.isSubtypeOf(receiver.type) ?: false)) {
                     "receiver must be a supertype of the return type"
                 }
             },

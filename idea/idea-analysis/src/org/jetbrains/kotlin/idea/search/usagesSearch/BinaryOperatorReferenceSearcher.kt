@@ -22,6 +22,7 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -33,8 +34,9 @@ class BinaryOperatorReferenceSearcher(
         private val operationTokens: List<KtSingleValueToken>,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
-        optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = operationTokens.map { it.value }) {
+        optimizer: SearchRequestCollector,
+        options: KotlinReferencesSearchOptions
+) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = operationTokens.map { it.value }) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val binaryExpression = expression.parent as? KtBinaryExpression ?: return

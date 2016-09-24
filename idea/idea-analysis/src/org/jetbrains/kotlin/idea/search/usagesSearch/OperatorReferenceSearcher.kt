@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.fuzzyExtensionReceiverType
 import org.jetbrains.kotlin.idea.util.toFuzzyType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -56,6 +57,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private val searchScope: SearchScope,
         private val consumer: Processor<PsiReference>,
         private val optimizer: SearchRequestCollector,
+        private val options: KotlinReferencesSearchOptions,
         private val wordsToSearch: List<String>
 ) {
     private val project = targetDeclaration.project
@@ -138,8 +140,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         ): OperatorReferenceSearcher<*>? {
             if (isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
-                val componentIndex = getComponentIndex(name.asString())
-                return DestructuringDeclarationReferenceSearcher(declaration, componentIndex, searchScope, consumer, optimizer)
+                val componentIndex = DataClassDescriptorResolver.getComponentIndex(name.asString())
+                return DestructuringDeclarationReferenceSearcher(declaration, componentIndex, searchScope, consumer, optimizer, options)
             }
 
             if (!options.searchForOperatorConventions) return null
@@ -152,22 +154,32 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 binaryOp != null -> {
                     val counterpartAssignmentOp = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()[binaryOp]
                     val operationTokens = listOf(binaryOp, counterpartAssignmentOp).filterNotNull()
-                    return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer)
+                    return BinaryOperatorReferenceSearcher(declaration, operationTokens, searchScope, consumer, optimizer, options)
                 }
 
-                assignmentOp != null -> return BinaryOperatorReferenceSearcher(declaration, listOf(assignmentOp), searchScope, consumer, optimizer)
+                assignmentOp != null ->
+                    return BinaryOperatorReferenceSearcher(declaration, listOf(assignmentOp), searchScope, consumer, optimizer, options)
 
-                unaryOp != null -> return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer)
+                unaryOp != null ->
+                    return UnaryOperatorReferenceSearcher(declaration, unaryOp, searchScope, consumer, optimizer, options)
 
-                name == OperatorNameConventions.INVOKE -> return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+                name == OperatorNameConventions.INVOKE ->
+                    return InvokeOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options)
 
-                name == OperatorNameConventions.GET -> return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = false)
+                name == OperatorNameConventions.GET ->
+                    return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options, isSet = false)
 
-                name == OperatorNameConventions.SET -> return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, isSet = true)
+                name == OperatorNameConventions.SET ->
+                    return IndexingOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options, isSet = true)
 
-                name == OperatorNameConventions.CONTAINS -> return ContainsOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer)
+                name == OperatorNameConventions.CONTAINS ->
+                    return ContainsOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options)
 
-                else -> return null
+                name == OperatorNameConventions.EQUALS ->
+                    return BinaryOperatorReferenceSearcher(declaration, listOf(KtTokens.EQEQ, KtTokens.EXCLEQ), searchScope, consumer, optimizer, options)
+
+                else ->
+                    return null
             }
 
         }
@@ -247,7 +259,8 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             if (wordsToSearch.isNotEmpty()) {
                 val unwrappedElement = targetDeclaration.namedUnwrappedElement ?: return
                 val resultProcessor = KotlinRequestResultProcessor(unwrappedElement,
-                                                                   filter = { ref -> isReferenceToCheck(ref) })
+                                                                   filter = { ref -> isReferenceToCheck(ref) },
+                                                                   options = options)
                 wordsToSearch.forEach {
                     optimizer.searchWord(it, scope.restrictToKotlinSources(), UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
                 }
