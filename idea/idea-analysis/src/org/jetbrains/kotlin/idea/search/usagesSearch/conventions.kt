@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -43,11 +42,8 @@ val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier
 
 val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
 
-val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
-
 fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>>? {
     when (this) {
-        OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH to KtSimpleNameReference::class.java
         OperatorNameConventions.ITERATOR -> return IN_OPERATIONS_TO_SEARCH to KtForLoopInReference::class.java
         in DELEGATE_ACCESSOR_NAMES -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java

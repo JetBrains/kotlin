@@ -178,6 +178,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 name == OperatorNameConventions.EQUALS ->
                     return BinaryOperatorReferenceSearcher(declaration, listOf(KtTokens.EQEQ, KtTokens.EXCLEQ), searchScope, consumer, optimizer, options)
 
+                name == OperatorNameConventions.COMPARE_TO ->
+                    return BinaryOperatorReferenceSearcher(declaration, listOf(KtTokens.LT, KtTokens.GT, KtTokens.LTEQ, KtTokens.GTEQ), searchScope, consumer, optimizer, options)
+
                 else ->
                     return null
             }
