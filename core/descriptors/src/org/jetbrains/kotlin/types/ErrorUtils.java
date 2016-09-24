@@ -23,14 +23,13 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -55,12 +54,6 @@ public class ErrorUtils {
             @Override
             public <T> T getCapability(@NotNull Capability<T> capability) {
                 return null;
-            }
-
-            @NotNull
-            @Override
-            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-                throw new IllegalStateException("Should not be called!");
             }
 
             @NotNull

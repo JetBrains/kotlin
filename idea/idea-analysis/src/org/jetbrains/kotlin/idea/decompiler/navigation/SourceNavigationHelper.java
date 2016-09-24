@@ -46,8 +46,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.frontend.di.InjectionKt;
 import org.jetbrains.kotlin.idea.stubindex.*;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
@@ -56,7 +54,6 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -239,17 +236,8 @@ public class SourceNavigationHelper {
             @NotNull Collection<KtNamedDeclaration> candidates,
             @NotNull Project project
     ) {
-
-        TargetPlatform platform = TargetPlatform.Default.INSTANCE;
-        ModuleParameters defaultJvmModuleParameters = JvmPlatform.INSTANCE.getDefaultModuleParameters();
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
-                project, Name.special("<library module>"),
-                ModuleDescriptorKt.ModuleParameters(
-                        defaultJvmModuleParameters.getDefaultImports(),
-                        defaultJvmModuleParameters.getExcludedImports(),
-                        PlatformToKotlinClassMap.EMPTY
-                ),
-                DefaultBuiltIns.getInstance()
+                project, Name.special("<library module>"), JvmPlatform.INSTANCE.getDefaultModuleParameters(), DefaultBuiltIns.getInstance()
         );
 
         newModuleContext.setDependencies(newModuleContext.getModule(), newModuleContext.getModule().getBuiltIns().getBuiltInsModule());
@@ -263,7 +251,7 @@ public class SourceNavigationHelper {
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
-                platform,
+                TargetPlatform.Default.INSTANCE,
                 LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
         );
 
