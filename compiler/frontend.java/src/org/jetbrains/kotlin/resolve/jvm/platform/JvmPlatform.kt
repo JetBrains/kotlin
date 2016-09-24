@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -31,8 +29,6 @@ import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
     override val defaultModuleParameters = object : ModuleParameters {
-        override val platformToKotlinClassMap: PlatformToKotlinClassMap
-            get() = JavaToKotlinClassMap.INSTANCE
         override val defaultImports: List<ImportPath>
             get() = DEFAULT_IMPORTS_FOR_JVM
     }

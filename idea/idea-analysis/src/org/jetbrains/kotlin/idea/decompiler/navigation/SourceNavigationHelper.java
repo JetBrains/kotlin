@@ -40,13 +40,11 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
 import org.jetbrains.kotlin.frontend.di.InjectionKt;
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
@@ -58,7 +56,6 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -241,14 +238,10 @@ public class SourceNavigationHelper {
             @NotNull Collection<KtNamedDeclaration> candidates,
             @NotNull Project project
     ) {
-
         TargetPlatform platform = TargetPlatform.Default.INSTANCE;
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 project, Name.special("<library module>"),
-                ModuleDescriptorKt.ModuleParameters(
-                        JvmPlatform.INSTANCE.getDefaultModuleParameters().getDefaultImports(),
-                        PlatformToKotlinClassMap.EMPTY
-                ),
+                JvmPlatform.INSTANCE.getDefaultModuleParameters(),
                 DefaultBuiltIns.getInstance()
         );
 
@@ -263,7 +256,7 @@ public class SourceNavigationHelper {
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
-                platform,
+                TargetPlatform.Default.INSTANCE,
                 LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
         );
 

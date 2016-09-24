@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleParameters
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -37,9 +36,6 @@ object JsPlatform : TargetPlatform("JS") {
                 ImportPath("kotlin.text.*"),
                 ImportPath("kotlin.js.*")
         )
-
-        override val platformToKotlinClassMap: PlatformToKotlinClassMap
-            get() = PlatformToKotlinClassMap.EMPTY
     }
 
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator

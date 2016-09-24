@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -49,16 +48,8 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 
 interface ModuleParameters {
     val defaultImports: List<ImportPath>
-    val platformToKotlinClassMap: PlatformToKotlinClassMap
 
-    object Empty: ModuleParameters {
+    object Empty : ModuleParameters {
         override val defaultImports: List<ImportPath> = emptyList()
-        override val platformToKotlinClassMap: PlatformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
     }
 }
-
-fun ModuleParameters(defaultImports: List<ImportPath>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
-        object : ModuleParameters {
-            override val defaultImports: List<ImportPath> = defaultImports
-            override val platformToKotlinClassMap: PlatformToKotlinClassMap = platformToKotlinClassMap
-        }

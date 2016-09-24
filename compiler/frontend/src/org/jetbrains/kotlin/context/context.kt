@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.createModule
 import org.jetbrains.kotlin.storage.ExceptionTracker
@@ -41,9 +40,6 @@ interface ProjectContext : GlobalContext {
 
 interface ModuleContext : ProjectContext {
     val module: ModuleDescriptor
-
-    val platformToKotlinClassMap: PlatformToKotlinClassMap
-        get() = module.platformToKotlinClassMap
 }
 
 interface MutableModuleContext: ModuleContext {
