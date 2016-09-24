@@ -43,6 +43,10 @@ public class SpecialFiles {
         excludedFiles.add("functionNtoStringNoReflect.kt");
         excludedFiles.add("innerGeneric.kt");
         excludedFiles.add("simpleCreateType.kt");
+        excludedFiles.add("equalsHashCodeToString.kt");
+        excludedFiles.add("arrayOfKClasses.kt");
+        excludedFiles.add("enumKClassAnnotation.kt");
+        excludedFiles.add("primitivesAndArrays.kt");
 
         // Reflection is used to check full class name
         excludedFiles.add("native");
