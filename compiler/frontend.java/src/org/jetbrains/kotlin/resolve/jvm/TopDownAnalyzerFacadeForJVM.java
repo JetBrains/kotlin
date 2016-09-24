@@ -92,10 +92,9 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull PackagePartProvider packagePartProvider
     ) {
         Project project = moduleContext.getProject();
-        List<KtFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
 
         FileBasedDeclarationProviderFactory providerFactory =
-                new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
+                new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files);
 
         LookupTracker lookupTracker =
                 incrementalCompilationComponents != null
@@ -148,7 +147,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             if (provider != null) additionalProviders.add(provider);
         }
 
-        container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
+        container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, files, additionalProviders);
 
         BindingContext bindingContext = trace.getBindingContext();
         ModuleDescriptor module = moduleContext.getModule();
