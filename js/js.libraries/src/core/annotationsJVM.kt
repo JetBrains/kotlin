@@ -31,3 +31,8 @@ internal annotation class JvmName(public val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 internal annotation class JvmMultifileClass
+
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+internal annotation class JvmField

@@ -2,6 +2,28 @@ public final class kotlin/ExceptionsKt {
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
 }
 
+public final class kotlin/KotlinVersion : java/lang/Comparable {
+	public static final field CURRENT Lkotlin/KotlinVersion;
+	public static final field Companion Lkotlin/KotlinVersion$Companion;
+	public fun <init> (II)V
+	public fun <init> (III)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlin/KotlinVersion;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public final fun isAtLeast (II)Z
+	public final fun isAtLeast (III)Z
+	public final fun isAtLeast (Lkotlin/KotlinVersion;)Z
+	public final fun toInt ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/KotlinVersion$Companion {
+}
+
 public abstract interface class kotlin/Lazy {
 	public abstract fun getValue ()Ljava/lang/Object;
 	public abstract fun isInitialized ()Z
