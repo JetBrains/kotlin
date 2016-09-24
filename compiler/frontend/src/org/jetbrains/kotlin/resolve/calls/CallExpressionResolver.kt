@@ -222,7 +222,7 @@ class CallExpressionResolver(
             val type = functionDescriptor.returnType
             // Extracting jump out possible and jump point flow info from arguments, if any
             val arguments = callExpression.valueArguments
-            val resultFlowInfo = resolvedCall.dataFlowInfoForArguments.resultInfo
+            val resultFlowInfo = resolvedCall!!.dataFlowInfoForArguments.resultInfo
             var jumpFlowInfo = resultFlowInfo
             var jumpOutPossible = false
             for (argument in arguments) {
