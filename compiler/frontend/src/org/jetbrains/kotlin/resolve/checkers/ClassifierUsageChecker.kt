@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -42,7 +43,7 @@ interface ClassifierUsageChecker {
                         return
                     }
 
-                    val target = trace.bindingContext.get(BindingContext.REFERENCE_TARGET, expression) as? ClassifierDescriptor ?: return
+                    val target = getReferencedClassifier(expression) ?: return
 
                     for (checker in checkers) {
                         checker.check(target, trace, expression)
@@ -56,12 +57,26 @@ interface ClassifierUsageChecker {
                     }
                 }
 
+                private fun getReferencedClassifier(expression: KtReferenceExpression): ClassifierDescriptor? {
+                    val target = trace.get(BindingContext.REFERENCE_TARGET, expression) as? ClassifierDescriptor
+                    if (target != null) return target
+
+                    // "Comparable" in "import java.lang.Comparable" references both a class and a SAM constructor and prevents
+                    // REFERENCE_TARGET from being recorded in favor of AMBIGUOUS_REFERENCE_TARGET. But we must still run checkers
+                    // to report if there's something wrong with the class. We characterize this case below by the following properties:
+                    // 1) Exactly one of the references is a classifier
+                    // 2) All references refer to the same source element, i.e. their source is the same
+                    val targets = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return null
+                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return null
+                    return targets.filterIsInstance<ClassifierDescriptor>().singleOrNull()
+                }
+
                 /**
                  * @return true iff [expression] references the companion of a class Foo via the name Foo, e.g. in `Foo.bar()`
                  */
                 private fun isReferenceToCompanionViaOuterClass(expression: KtReferenceExpression, target: ClassifierDescriptor?): Boolean {
                     return DescriptorUtils.isCompanionObject(target) &&
-                           trace.bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression] != null
+                           trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression) != null
                 }
             }
 
