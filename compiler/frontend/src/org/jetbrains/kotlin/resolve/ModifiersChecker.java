@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker;
+import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 
 import java.util.*;
 
