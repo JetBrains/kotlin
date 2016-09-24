@@ -36,11 +36,8 @@ val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .add(KtTokens.BY_KEYWORD)
         .build()
 
-val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
-
 fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>>? {
     when (this) {
-        in DELEGATE_ACCESSOR_NAMES -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD) to KtPropertyDelegationMethodsReference::class.java
     }
 
