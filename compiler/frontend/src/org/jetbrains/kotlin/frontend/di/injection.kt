@@ -36,7 +36,7 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module)
     useInstance(moduleContext.project)
     useInstance(moduleContext.storageManager)
-    useInstance(moduleContext.builtIns)
+    useInstance(moduleContext.module.builtIns)
     useInstance(moduleContext.platformToKotlinClassMap)
 
     useInstance(platform)
