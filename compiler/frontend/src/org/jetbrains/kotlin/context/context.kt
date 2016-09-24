@@ -44,9 +44,6 @@ interface ModuleContext : ProjectContext {
 
     val platformToKotlinClassMap: PlatformToKotlinClassMap
         get() = module.platformToKotlinClassMap
-
-    val builtIns: KotlinBuiltIns
-        get() = module.builtIns
 }
 
 interface MutableModuleContext: ModuleContext {

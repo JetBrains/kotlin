@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.*
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -36,7 +39,7 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module)
     useInstance(moduleContext.project)
     useInstance(moduleContext.storageManager)
-    useInstance(moduleContext.builtIns)
+    useInstance(moduleContext.module.builtIns)
     useInstance(moduleContext.platformToKotlinClassMap)
 
     useInstance(platform)
