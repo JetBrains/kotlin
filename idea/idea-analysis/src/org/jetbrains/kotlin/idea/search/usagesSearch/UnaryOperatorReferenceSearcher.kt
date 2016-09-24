@@ -22,10 +22,10 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
@@ -34,8 +34,9 @@ class UnaryOperatorReferenceSearcher(
         private val operationToken: KtSingleValueToken,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
-        optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtUnaryExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = listOf(operationToken.value)) {
+        optimizer: SearchRequestCollector,
+        options: KotlinReferencesSearchOptions
+) : OperatorReferenceSearcher<KtUnaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf(operationToken.value)) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val unaryExpression = expression.parent as? KtUnaryExpression ?: return

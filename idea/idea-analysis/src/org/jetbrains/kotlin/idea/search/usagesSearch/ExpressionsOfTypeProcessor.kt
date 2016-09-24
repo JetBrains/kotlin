@@ -125,10 +125,13 @@ class ExpressionsOfTypeProcessor(
             return
         }
 
-        val psiClass = runReadAction { detectClassToSearch() } ?: return
+        // optimization
+        if (runReadAction { searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope) }) return
+
+        val psiClass = runReadAction { detectClassToSearch() }
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
-        if (!runReadAction { psiClass.isValid && ProjectRootsUtil.isInProjectSource (psiClass) }) {
+        if (psiClass == null || !runReadAction { psiClass.isValid && ProjectRootsUtil.isInProjectSource(psiClass) }) {
             possibleMatchesInScopeHandler(searchScope)
             return
         }
@@ -149,8 +152,6 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun detectClassToSearch(): PsiClass? {
-        if (searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope)) return null // optimization
-
         val classDescriptor = typeToSearch.type.constructor.declarationDescriptor ?: return null
         val classDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor)
         return when (classDeclaration) {

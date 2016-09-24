@@ -22,6 +22,7 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -30,8 +31,9 @@ class ContainsOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
         consumer: Processor<PsiReference>,
-        optimizer: SearchRequestCollector
-) : OperatorReferenceSearcher<KtOperationReferenceExpression>(targetFunction, searchScope, consumer, optimizer, wordsToSearch = listOf("in")) {
+        optimizer: SearchRequestCollector,
+        options: KotlinReferencesSearchOptions
+) : OperatorReferenceSearcher<KtOperationReferenceExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
 
     private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
 

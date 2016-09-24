@@ -36,7 +36,7 @@ class KotlinConventionMethodReferencesSearcher() : QueryExecutorBase<PsiReferenc
         val identifier = Name.identifier(name)
 
         val operatorSearcher = OperatorReferenceSearcher.create(
-                method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, KotlinReferencesSearchOptions.Empty)
+                method, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, KotlinReferencesSearchOptions(acceptCallableOverrides = true))
         if (operatorSearcher != null) {
             operatorSearcher.run()
         }

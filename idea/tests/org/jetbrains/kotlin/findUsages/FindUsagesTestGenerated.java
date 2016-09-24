@@ -96,6 +96,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equalsNotAny.0.kt")
+            public void testEqualsNotAny() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/equalsNotAny.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forIteration.0.kt")
             public void testForIteration() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/forIteration.0.kt");

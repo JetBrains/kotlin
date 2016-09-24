@@ -1,0 +1,4 @@
+Function call 13 A(0) == A(1)
+Function call 14 A(0) != A(1)
+Function call 15 A(0) equals A(1)
+Function call 6 fun foo(a: A) = a == this
