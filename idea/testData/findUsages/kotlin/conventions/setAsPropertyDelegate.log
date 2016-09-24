@@ -1,0 +1,4 @@
+Resolved by Delegate()
+Searched references to Delegate
+Used plain search of Delegate.setValue(thisRef: Any?, property: KProperty<*>, value: String) in LocalSearchScope:
+    CLASS:Delegate
