@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -26,11 +25,9 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import java.util.*
 
 class JvmPlatformParameters(
         val moduleByJavaClass: (JavaClass) -> ModuleInfo?
@@ -58,9 +54,8 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
-        val filesToAnalyze = getAllFilesToAnalyze(project, moduleInfo, syntheticFiles)
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, moduleContext.storageManager, filesToAnalyze,
+                project, moduleContext.storageManager, syntheticFiles,
                 if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
@@ -104,14 +99,6 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 .mapNotNull { it.getPackageFragmentProvider(project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo) }
 
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
-    }
-
-    @JvmStatic fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<KtFile>): List<KtFile> {
-        val allFiles = ArrayList(baseFiles)
-        for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
-            allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))
-        }
-        return allFiles
     }
 
     override val targetPlatform: TargetPlatform

@@ -8,9 +8,6 @@
                         interface="org.jetbrains.kotlin.resolve.diagnostics.SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"/>
-        <extensionPoint name="externalDeclarationsProvider"
-                        interface="org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider"
-                        area="IDEA_PROJECT"/>
         <extensionPoint name="expressionCodegenExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension"
                         area="IDEA_PROJECT"/>
