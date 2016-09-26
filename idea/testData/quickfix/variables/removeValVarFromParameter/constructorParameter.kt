@@ -3,5 +3,6 @@
 // ACTION: Make private
 // ACTION: Make protected
 // ACTION: Create test
+// ACTION: Convert to secondary constructor
 class C(<caret>val x: String) {
 }

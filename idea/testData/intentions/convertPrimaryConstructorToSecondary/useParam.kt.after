@@ -1,0 +1,7 @@
+class UseParam {
+    constructor(x: Int) {
+        this.y = x
+    }
+
+    val y: Int
+}
