@@ -56,7 +56,7 @@ class FileScopeFactory(
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null): FileScopes {
         val debugName = "LazyFileScope for file " + file.name
-        val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
+        val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
 
         val imports = file.importDirectives
 

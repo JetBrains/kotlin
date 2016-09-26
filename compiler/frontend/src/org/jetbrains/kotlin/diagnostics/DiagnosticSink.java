@@ -30,6 +30,11 @@ public interface DiagnosticSink {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
         }
+
+        @Override
+        public boolean wantsDiagnostics() {
+            return false;
+        }
     };
 
     DiagnosticSink THROW_EXCEPTION = new DiagnosticSink() {
@@ -42,7 +47,13 @@ public interface DiagnosticSink {
                 throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }
+
+        @Override
+        public boolean wantsDiagnostics() {
+            return true;
+        }
     };
 
     void report(@NotNull Diagnostic diagnostic);
+    boolean wantsDiagnostics();
 }

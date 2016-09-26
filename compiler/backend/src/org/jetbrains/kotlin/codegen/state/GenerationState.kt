@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BindingTraceFilter
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.io.File
@@ -70,7 +71,8 @@ class GenerationState @JvmOverloads constructor(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val progress: Progress = Progress.DEAF,
         private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
-        dumpBinarySignatureMappingTo: File? = null
+        dumpBinarySignatureMappingTo: File? = null,
+        wantsDiagnostics: Boolean = true
 ) {
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
@@ -99,7 +101,7 @@ class GenerationState @JvmOverloads constructor(
                 incrementalCompilationComponents.getIncrementalCache(targetId)
             else null
 
-    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this.javaClass}", false)
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -111,7 +113,8 @@ class GenerationState @JvmOverloads constructor(
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
-    val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
+    val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState",
+                                                            filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS)
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
             this.bindingContext, classBuilderMode, fileClassesProvider, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),

@@ -103,7 +103,8 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     generateDeclaredClassFilter = generateClassFilter,
                     disableInline = false,
                     disableOptimization = false,
-                    useTypeTableInSerializer = false)
+                    useTypeTableInSerializer = false,
+                    wantsDiagnostics = false)
             state.beforeCompile()
 
             bindingContext = state.bindingContext

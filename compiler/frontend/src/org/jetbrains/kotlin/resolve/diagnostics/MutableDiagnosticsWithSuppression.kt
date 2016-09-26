@@ -37,7 +37,7 @@ class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         CachedValueProvider.Result(DiagnosticsWithSuppression(bindingContext, allDiagnostics), modificationTracker)
     })
 
-    private fun readonlyView() = cache.value!!
+    private fun readonlyView(): DiagnosticsWithSuppression = cache.value!!
 
     override val modificationTracker = CompositeModificationTracker(delegateDiagnostics.modificationTracker)
 
@@ -46,7 +46,9 @@ class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
     override fun noSuppression() = readonlyView().noSuppression()
 
     //essential that this list is readonly
-    fun getOwnDiagnostics(): List<Diagnostic> = diagnosticList
+    fun getOwnDiagnostics(): List<Diagnostic> {
+        return diagnosticList
+    }
 
     fun report(diagnostic: Diagnostic) {
         diagnosticList.add(diagnostic)

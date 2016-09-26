@@ -91,5 +91,9 @@ public class ObservableBindingTrace implements BindingTrace {
         handlers = handlers.plus(slice, handler);
         return this;
     }
-    
+
+    @Override
+    public boolean wantsDiagnostics() {
+        return originalTrace.wantsDiagnostics();
+    }
 }

@@ -25,7 +25,7 @@ public class ChainedTemporaryBindingTrace extends TemporaryBindingTrace {
     }
 
     private ChainedTemporaryBindingTrace(TemporaryBindingTrace trace, String debugName) {
-        super(trace, debugName);
+        super(trace, debugName, BindingTraceFilter.Companion.getACCEPT_ALL());
     }
 
     @Override
