@@ -15,9 +15,9 @@ L0:
     r(1) -> <v1>                                                      INIT: in: {b=D} out: {b=D}
     w(b|<v1>)                                                         INIT: in: {b=D} out: {b=ID}
     jmp?(L2)                                                          INIT: in: {b=ID} out: {b=ID}
-    d(fun local(x: Int) = x + b)                                                                      USE: in: {b=READ} out: {b=READ}
+    d(fun local(x: Int) = x + b)                                      INIT: in: {b=I?} out: {b=I?}    USE: in: {b=READ} out: {b=READ}
 L2 [after local declaration]:
-    mark("after")
+    mark("after")                                                     INIT: in: {b=ID} out: {b=ID}
     r("after") -> <v2>
 L1:
   1 <END>                                                             INIT: in: {} out: {}
@@ -44,5 +44,5 @@ L4:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {b=I?, x=I?} out: {b=I?, x=I?}    USE: in: {} out: {}
 =====================

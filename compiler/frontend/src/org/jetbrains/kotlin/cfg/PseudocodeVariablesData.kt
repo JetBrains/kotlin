@@ -221,12 +221,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 var initState: InitState? = null
                 var isDeclared = true
                 for (edgeData in incomingEdgesData) {
-                    val varControlFlowState = edgeData[variable]
-                    if (varControlFlowState != null) {
-                        initState = initState?.merge(varControlFlowState.initState) ?: varControlFlowState.initState
-                        if (!varControlFlowState.isDeclared) {
-                            isDeclared = false
-                        }
+                    val varControlFlowState = edgeData[variable] ?: VariableControlFlowState.create(isInitialized = false)
+                    initState = initState?.merge(varControlFlowState.initState) ?: varControlFlowState.initState
+                    if (!varControlFlowState.isDeclared) {
+                        isDeclared = false
                     }
                 }
                 if (initState == null) {

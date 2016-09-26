@@ -24,9 +24,9 @@ L0:
     r(1) -> <v1>                                                                                  INIT: in: {bar=D, x=D} out: {bar=D, x=D}
     w(x|<v1>)                                                                                     INIT: in: {bar=D, x=D} out: {bar=D, x=ID}
   2 jmp?(L2)                                                                                      INIT: in: {bar=D} out: {bar=D}
-    d(fun foo() { val a = 2 })
+    d(fun foo() { val a = 2 })                                                                    INIT: in: {bar=-} out: {bar=-}
 L2 [after local declaration]:
-    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>
+    r(object { init { val x = 1 } fun foo() { val a = 2 } }) -> <v2>                              INIT: in: {bar=D} out: {bar=D}
     w(bar|<v2>)                                                                                   INIT: in: {bar=D} out: {bar=ID}
     mark("after")                                                                                 INIT: in: {bar=ID} out: {bar=ID}
     r("after") -> <v3>
@@ -53,5 +53,5 @@ L4:
 error:
     <ERROR>                INIT: in: {} out: {}
 sink:
-    <SINK>                 INIT: in: {bar=D} out: {bar=D}               USE: in: {} out: {}
+    <SINK>                 INIT: in: {bar=-} out: {bar=-}               USE: in: {} out: {}
 =====================

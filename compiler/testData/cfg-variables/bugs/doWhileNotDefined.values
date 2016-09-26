@@ -1,0 +1,17 @@
+== test ==
+fun test(cond1: Boolean) {
+    do {
+        if (cond1) continue
+        val cond2 = false
+    } while (cond2)
+}
+---------------------
+                                                                 <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](cond1: Boolean) -> <v0>
+cond1                                                            <v1>: Boolean   NEW: r(cond1) -> <v1>
+continue                                                         !<v2>: *
+if (cond1) continue                                              <v3>: *         NEW: merge(if (cond1) continue|!<v2>) -> <v3>
+false                                                            <v4>: Boolean   NEW: r(false) -> <v4>
+cond2                                                            <v5>: Boolean   NEW: r(cond2) -> <v5>
+do { if (cond1) continue val cond2 = false } while (cond2)       !<v6>: *
+{ do { if (cond1) continue val cond2 = false } while (cond2) }   !<v6>: *        COPY
+=====================

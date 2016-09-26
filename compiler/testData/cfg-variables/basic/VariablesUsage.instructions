@@ -61,5 +61,5 @@ L1:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================

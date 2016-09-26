@@ -48,7 +48,7 @@ L1:
 error:
     <ERROR>                                      INIT: in: {} out: {}
 sink:
-    <SINK>                                       INIT: in: {foo=ID} out: {foo=ID}    USE: in: {} out: {}
+    <SINK>                                       INIT: in: {foo=I?} out: {foo=I?}    USE: in: {} out: {}
 =====================
 == Foo ==
 interface Foo {
@@ -63,5 +63,5 @@ L1:
 error:
     <ERROR>          INIT: in: {} out: {}
 sink:
-    <SINK>           INIT: in: {c=D} out: {c=D}    USE: in: {} out: {}
+    <SINK>           INIT: in: {c=-} out: {c=-}    USE: in: {} out: {}
 =====================

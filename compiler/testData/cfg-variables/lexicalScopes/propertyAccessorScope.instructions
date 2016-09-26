@@ -16,11 +16,11 @@ L0:
   2 mark({ class A { var a : Int get() { return field } set(v: Int) { field = v } } })
     jmp?(L2)
     v(var a : Int get() { return field } set(v: Int) { field = v })                       INIT: in: {} out: {a=D}
-    jmp?(L3)                                                                              INIT: in: {a=D} out: {a=D}                      USE: in: {field=ONLY_WRITTEN_NEVER_READ, field=READ} out: {field=ONLY_WRITTEN_NEVER_READ, field=READ}
-    d(get() { return field })                                                                                                             USE: in: {field=READ} out: {field=READ}
+    jmp?(L3)                                                                              INIT: in: {a=D} out: {a=D}                        USE: in: {field=ONLY_WRITTEN_NEVER_READ, field=READ} out: {field=ONLY_WRITTEN_NEVER_READ, field=READ}
+    d(get() { return field })                                                             INIT: in: {a=-} out: {a=-}                        USE: in: {field=READ} out: {field=READ}
 L3 [after local declaration]:
-    jmp?(L6)
-    d(set(v: Int) { field = v })                                                          INIT: in: {a=D, field=I} out: {a=D, field=I}    USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ}
+    jmp?(L6)                                                                              INIT: in: {a=D} out: {a=D}
+    d(set(v: Int) { field = v })                                                          INIT: in: {a=-, field=I?} out: {a=-, field=I?}    USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ}
 L1:
 L2 [after local class]:
 L6 [after local declaration]:
@@ -28,7 +28,7 @@ L6 [after local declaration]:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                INIT: in: {field=I} out: {field=I}              USE: in: {} out: {}
+    <SINK>                                                                                INIT: in: {field=I?} out: {field=I?}              USE: in: {} out: {}
 =====================
 == get_a ==
 get() {
@@ -45,7 +45,7 @@ L5:
 error:
     <ERROR>                   INIT: in: {} out: {}
 sink:
-    <SINK>                    INIT: in: {a=D} out: {a=D}    USE: in: {} out: {}
+    <SINK>                    INIT: in: {a=-} out: {a=-}    USE: in: {} out: {}
 =====================
 == set_a ==
 set(v: Int) {
@@ -57,13 +57,13 @@ L7:
     v(v: Int)                                  INIT: in: {a=D} out: {a=D, v=D}
     magic[FAKE_INITIALIZER](v: Int) -> <v0>    INIT: in: {a=D, v=D} out: {a=D, v=D}
     w(v|<v0>)                                  INIT: in: {a=D, v=D} out: {a=D, v=ID}
-  4 mark({ field = v })                        INIT: in: {a=D, v=ID} out: {a=D, v=ID}                      USE: in: {field=ONLY_WRITTEN_NEVER_READ, v=READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
-    r(v) -> <v1>                                                                                           USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
-    w(field|<v1>)                              INIT: in: {a=D, v=ID} out: {a=D, field=I, v=ID}             USE: in: {} out: {field=ONLY_WRITTEN_NEVER_READ}
+  4 mark({ field = v })                        INIT: in: {a=D, v=ID} out: {a=D, v=ID}                        USE: in: {field=ONLY_WRITTEN_NEVER_READ, v=READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
+    r(v) -> <v1>                                                                                             USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
+    w(field|<v1>)                              INIT: in: {a=D, v=ID} out: {a=D, field=I, v=ID}               USE: in: {} out: {field=ONLY_WRITTEN_NEVER_READ}
 L8:
   3 <END>                                      INIT: in: {a=D, field=I, v=ID} out: {a=D, field=I, v=ID}
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {a=D, field=I, v=ID} out: {a=D, field=I, v=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=-, field=I?, v=I?} out: {a=-, field=I?, v=I?}    USE: in: {} out: {}
 =====================

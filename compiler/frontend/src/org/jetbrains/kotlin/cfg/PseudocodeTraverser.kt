@@ -63,7 +63,6 @@ fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
         initialInfo: I
 ): Map<Instruction, Edges<I>> {
     val edgesMap = LinkedHashMap<Instruction, Edges<I>>()
-    initializeEdgesMap(edgesMap, initialInfo)
     edgesMap.put(getStartInstruction(traversalOrder), Edges(initialInfo, initialInfo))
 
     val changed = BooleanArray(1)
@@ -75,20 +74,6 @@ fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
                 mergeEdges, updateEdge, Collections.emptyList<Instruction>(), changed, false)
     }
     return edgesMap
-}
-
-private fun <I> Pseudocode.initializeEdgesMap(
-        edgesMap: MutableMap<Instruction, Edges<I>>,
-        initialInfo: I
-) {
-    val instructions = instructions
-    val initialEdge = Edges(initialInfo, initialInfo)
-    for (instruction in instructions) {
-        edgesMap.put(instruction, initialEdge)
-        if (instruction is LocalFunctionDeclarationInstruction) {
-            instruction.body.initializeEdgesMap(edgesMap, initialInfo)
-        }
-    }
 }
 
 private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(

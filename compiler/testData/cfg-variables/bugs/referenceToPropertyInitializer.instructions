@@ -10,16 +10,16 @@ L0:
     v(val sum: (Int)->Int = { x: Int -> sum(x - 1) + x })    INIT: in: {} out: {sum=D}
     mark({ x: Int -> sum(x - 1) + x })                       INIT: in: {sum=D} out: {sum=D}
     jmp?(L2)
-    d({ x: Int -> sum(x - 1) + x })                                                                USE: in: {sum=READ} out: {sum=READ}
+    d({ x: Int -> sum(x - 1) + x })                          INIT: in: {sum=-} out: {sum=-}      USE: in: {sum=READ} out: {sum=READ}
 L2 [after local declaration]:
-    r({ x: Int -> sum(x - 1) + x }) -> <v0>
+    r({ x: Int -> sum(x - 1) + x }) -> <v0>                  INIT: in: {sum=D} out: {sum=D}
     w(sum|<v0>)                                              INIT: in: {sum=D} out: {sum=ID}
 L1:
     <END>                                                    INIT: in: {sum=ID} out: {sum=ID}
 error:
     <ERROR>                                                  INIT: in: {} out: {}
 sink:
-    <SINK>                                                   INIT: in: {sum=I?D} out: {sum=I?D}    USE: in: {} out: {}
+    <SINK>                                                   INIT: in: {sum=I?} out: {sum=I?}    USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { x: Int ->
@@ -49,7 +49,7 @@ L4:
 error:
     <ERROR>                                          INIT: in: {} out: {}
 sink:
-    <SINK>                                           INIT: in: {sum=D, x=ID} out: {sum=D, x=ID}    USE: in: {} out: {}
+    <SINK>                                           INIT: in: {sum=-, x=I?} out: {sum=-, x=I?}    USE: in: {} out: {}
 =====================
 == A ==
 open class A(val a: A)
@@ -64,7 +64,7 @@ L1:
 error:
     <ERROR>                                      INIT: in: {} out: {}
 sink:
-    <SINK>                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                       INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================
 == TestObjectLiteral ==
 class TestObjectLiteral {
@@ -92,16 +92,16 @@ L0:
     r(obj|<v3>) -> <v4>
     w(x|<v4>)                                                                            INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
   1 jmp?(L2)                                                                             INIT: in: {obj=D} out: {obj=D}
-    d(fun foo() { val y = obj })                                                                                                      USE: in: {obj=READ} out: {obj=READ}
+    d(fun foo() { val y = obj })                                                         INIT: in: {obj=-} out: {obj=-}               USE: in: {obj=READ} out: {obj=READ}
 L2 [after local declaration]:
-    r(object: A(obj) { init { val x = obj } fun foo() { val y = obj } }) -> <v5>
+    r(object: A(obj) { init { val x = obj } fun foo() { val y = obj } }) -> <v5>         INIT: in: {obj=D} out: {obj=D}
     w(obj|<v5>)                                                                          INIT: in: {obj=D} out: {obj=ID}
 L1:
     <END>                                                                                INIT: in: {obj=ID} out: {obj=ID}
 error:
     <ERROR>                                                                              INIT: in: {} out: {}
 sink:
-    <SINK>                                                                               INIT: in: {obj=I?D} out: {obj=I?D}           USE: in: {} out: {}
+    <SINK>                                                                               INIT: in: {obj=I?} out: {obj=I?}             USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -120,7 +120,7 @@ L4:
 error:
     <ERROR>                                  INIT: in: {} out: {}
 sink:
-    <SINK>                                   INIT: in: {obj=D} out: {obj=D}               USE: in: {} out: {}
+    <SINK>                                   INIT: in: {obj=-} out: {obj=-}               USE: in: {} out: {}
 =====================
 == TestOther ==
 class TestOther {
@@ -141,5 +141,5 @@ L1:
 error:
     <ERROR>                                 INIT: in: {} out: {}
 sink:
-    <SINK>                                  INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+    <SINK>                                  INIT: in: {x=I?} out: {x=I?}    USE: in: {} out: {}
 =====================
