@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -77,19 +80,19 @@ object TopDownAnalyzerFacadeForJVM {
         if (incrementalComponents != null) {
             targetIds?.mapTo(additionalProviders) { targetId ->
                 IncrementalPackageFragmentProvider(
-                        files, module, storageManager, container.deserializationComponentsForJava.components,
+                        files, module, storageManager, container.get<DeserializationComponentsForJava>().components,
                         incrementalComponents.getIncrementalCache(targetId), targetId
                 )
             }
         }
 
-        additionalProviders.add(container.javaDescriptorResolver.packageFragmentProvider)
+        additionalProviders.add(container.get<JavaDescriptorResolver>().packageFragmentProvider)
 
         PackageFragmentProviderExtension.getInstances(project).mapNotNullTo(additionalProviders) { extension ->
             extension.getPackageFragmentProvider(project, module, storageManager, trace, null)
         }
 
-        container.lazyTopDownAnalyzerForTopLevel.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, additionalProviders)
+        container.get<LazyTopDownAnalyzerForTopLevel>().analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, additionalProviders)
 
         for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
             val result = extension.analysisCompleted(project, module, trace, files)

@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.di
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.getValue
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
@@ -32,11 +31,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.createContainer
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 fun createContainerForReplWithJava(
@@ -45,7 +41,7 @@ fun createContainerForReplWithJava(
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
         packagePartProvider: PackagePartProvider
-): ContainerForReplWithJava = createContainer("ReplWithJava", JvmPlatform) {
+): ComponentProvider = createContainer("ReplWithJava", JvmPlatform) {
     useInstance(packagePartProvider)
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, LanguageVersionSettingsImpl.DEFAULT)
@@ -55,15 +51,7 @@ fun createContainerForReplWithJava(
     CompilerEnvironment.configure(this)
 
     useImpl<SingleModuleClassResolver>()
-}.let {
-    it.javaAnalysisInit()
-    it.initJvmBuiltInsForTopDownAnalysis()
-
-    ContainerForReplWithJava(it)
-}
-
-class ContainerForReplWithJava(container: StorageComponentContainer) {
-    val resolveSession: ResolveSession by container
-    val lazyTopDownAnalyzerForTopLevel: LazyTopDownAnalyzerForTopLevel by container
-    val javaDescriptorResolver: JavaDescriptorResolver by container
+}.apply {
+    javaAnalysisInit()
+    initJvmBuiltInsForTopDownAnalysis()
 }

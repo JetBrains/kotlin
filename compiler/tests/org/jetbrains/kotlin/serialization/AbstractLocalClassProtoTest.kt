@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.*
@@ -63,9 +66,9 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 providerFactory, GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
                 LanguageVersionSettingsImpl.DEFAULT
         )
-        moduleContext.initializeModuleContents(container.javaDescriptorResolver.packageFragmentProvider)
+        moduleContext.initializeModuleContents(container.get<JavaDescriptorResolver>().packageFragmentProvider)
 
-        val components = container.deserializationComponentsForJava.components
+        val components = container.get<DeserializationComponentsForJava>().components
 
         val classDescriptor = components.classDeserializer.deserializeClass(clazz.classId)
                               ?: error("Class is not resolved: $clazz (classId = ${clazz.classId})")

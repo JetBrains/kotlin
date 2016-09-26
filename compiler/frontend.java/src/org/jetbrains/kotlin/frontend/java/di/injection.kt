@@ -115,7 +115,7 @@ fun createContainerForTopDownAnalyzerForJvm(
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings
-): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm", JvmPlatform) {
+): ComponentProvider = createContainer("TopDownAnalyzerForJvm", JvmPlatform) {
     useInstance(packagePartProvider)
 
     configureModule(moduleContext, JvmPlatform, bindingTrace)
@@ -126,11 +126,9 @@ fun createContainerForTopDownAnalyzerForJvm(
     CompilerEnvironment.configure(this)
 
     useImpl<SingleModuleClassResolver>()
-}.let {
-    it.javaAnalysisInit()
-    it.initJvmBuiltInsForTopDownAnalysis()
-
-    ContainerForTopDownAnalyzerForJvm(it)
+}.apply {
+    javaAnalysisInit()
+    initJvmBuiltInsForTopDownAnalysis()
 }
 
 fun StorageComponentContainer.javaAnalysisInit() {
@@ -143,10 +141,4 @@ fun StorageComponentContainer.javaAnalysisInit() {
 fun StorageComponentContainer.initJvmBuiltInsForTopDownAnalysis() {
     get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(),
                                   get<LanguageVersionSettings>().supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
-}
-
-class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {
-    val lazyTopDownAnalyzerForTopLevel: LazyTopDownAnalyzerForTopLevel by container
-    val javaDescriptorResolver: JavaDescriptorResolver by container
-    val deserializationComponentsForJava: DeserializationComponentsForJava by container
 }

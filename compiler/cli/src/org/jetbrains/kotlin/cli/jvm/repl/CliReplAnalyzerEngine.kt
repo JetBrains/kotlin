@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.repl.di.createContainerForReplWithJava
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -60,19 +62,18 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
                 JvmPackagePartProvider(environment)
         )
 
+        this.resolveSession = container.get<ResolveSession>()
         this.topDownAnalysisContext = TopDownAnalysisContext(
-                TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, container.resolveSession.declarationScopeProvider
+                TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
-        this.topDownAnalyzer = container.lazyTopDownAnalyzerForTopLevel
-        this.resolveSession = container.resolveSession
+        this.topDownAnalyzer = container.get<LazyTopDownAnalyzerForTopLevel>()
 
         moduleContext.initializeModuleContents(CompositePackageFragmentProvider(
                 listOf(
-                        container.resolveSession.packageFragmentProvider,
-                        container.javaDescriptorResolver.packageFragmentProvider
+                        resolveSession.packageFragmentProvider,
+                        container.get<JavaDescriptorResolver>().packageFragmentProvider
                 )
         ))
-
     }
 
     interface ReplLineAnalysisResult {
