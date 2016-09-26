@@ -9302,6 +9302,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/unnecessaryLateinit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnnecessaryLateinit extends AbstractQuickFixTest {
+        public void testAllFilesPresentInUnnecessaryLateinit() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unnecessaryLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lateinitWithConstructor.kt")
+        public void testLateinitWithConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/lateinitWithConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithInit.kt")
+        public void testLateinitWithInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/lateinitWithInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleConstructors.kt")
+        public void testLateinitWithMultipleConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/lateinitWithMultipleConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleConstructorsAndDelegation.kt")
+        public void testLateinitWithMultipleConstructorsAndDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/lateinitWithMultipleConstructorsAndDelegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitWithMultipleInit.kt")
+        public void testLateinitWithMultipleInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/lateinitWithMultipleInit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorDelegateItself.kt")
+        public void testSecondaryConstructorDelegateItself() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/unnecessaryLateinit/secondaryConstructorDelegateItself.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/unusedSuppressAnnotation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
