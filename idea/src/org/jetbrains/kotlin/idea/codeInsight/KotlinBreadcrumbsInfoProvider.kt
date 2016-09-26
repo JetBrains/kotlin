@@ -70,7 +70,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                     val callExpression = parent.parent as? KtCallExpression
                     val callName = callExpression?.getCallNameExpression()?.getReferencedName()
                     if (callName != null) {
-                        val receiverText = callExpression.getQualifiedExpressionForSelector()?.let {
+                        val receiverText = callExpression!!.getQualifiedExpressionForSelector()?.let {
                             it.receiverExpression.text.orEllipsis(TextKind.INFO) + it.operationSign.value
                         } ?: ""
 
