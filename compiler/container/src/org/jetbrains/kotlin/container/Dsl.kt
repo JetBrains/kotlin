@@ -33,8 +33,10 @@ inline fun <reified T : Any> ComponentProvider.get(): T {
     return getService(T::class.java)
 }
 
-@Suppress("UNCHECKED_CAST") fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
-    return resolve(request)!!.getValue() as T
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
+    val valueDescriptor = resolve(request) ?: throw IllegalArgumentException("Unresolved service: $request")
+    return valueDescriptor.getValue() as T
 }
 
 fun StorageComponentContainer.useInstance(instance: Any) {
