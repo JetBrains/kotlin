@@ -42,3 +42,8 @@ sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
 
+genInteropStubs {
+    environment 'CPATH'        : "$llvmInstallPath/include"
+    environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
+}
+

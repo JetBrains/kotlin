@@ -29,6 +29,7 @@ class NativeInteropPlugin implements Plugin<Project> {
             main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             args = [srcDir, generatedSrcDir, nativeLibsDir]
             systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
+            systemProperties "llvmInstallPath" : prj.llvmInstallPath
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
             environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
 

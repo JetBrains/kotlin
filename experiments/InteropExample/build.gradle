@@ -22,4 +22,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
+genInteropStubs {
+    // these variables will be passed to native toolchain used by stub generator:
+    environment 'CPATH'        : "$llvmInstallPath/include"
+    environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
+}
+
 mainClassName = 'MainKt'

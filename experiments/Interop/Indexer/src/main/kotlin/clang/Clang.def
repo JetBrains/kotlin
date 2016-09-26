@@ -2,13 +2,13 @@ libName = clangbridge
 
 headers = clang-c/Index.h
 
-compiler = cc
+compiler = clang
 
-compilerOpts = -std=c99 -I/usr/local/Cellar/llvm/3.8.1/include  -fPIC
+compilerOpts = -std=c99 -fPIC
 
-linker = cc
+linker = clang
 
 linkerOpts = -fPIC \
-    -L/usr/local/Cellar/llvm/3.8.1/lib -lclang
+    -lclang
 
 excludedFunctions =

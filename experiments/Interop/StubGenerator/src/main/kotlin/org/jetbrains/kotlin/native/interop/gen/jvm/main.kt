@@ -7,6 +7,8 @@ import java.util.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    val llvmInstallPath = System.getProperty("llvmInstallPath")!!
+
     val ktSrcRoot = args[0]
     val ktGenRoot = args[1]
     val nativeLibsDir = args[2]
@@ -59,7 +61,7 @@ fun main(args: Array<String>) {
         val javaHome = System.getProperty("java.home")
         val compilerArgsForJniIncludes = listOf("", "linux", "darwin").map { "-I$javaHome/../include/$it" }.toTypedArray()
 
-        val compilerCmd = arrayOf(compiler, *compilerOpts.toTypedArray(),
+        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
                 *compilerArgsForJniIncludes,
                 "-c", outCFile.path, "-o", outOFile.path)
 
@@ -78,7 +80,7 @@ fun main(args: Array<String>) {
 
         val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
 
-        val linkerCmd = arrayOf(linker, *linkerOpts, outOFile.path, "-shared", "-o", outLib,
+        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
                 "-Wl,-flat_namespace,-undefined,dynamic_lookup")
 
         println(linkerCmd.joinToString(" "))
