@@ -1,0 +1,14 @@
+
+ERR:
+hello.kt:12:12: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+@InlineOnly public inline fun String.toInt(): Int defined in kotlin.text
+private fun Iterable<FlagEnum>.toInt(): Int defined in kotlin.text
+        it.toInt()
+           ^
+hello.kt:16:11: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+@InlineOnly public inline fun String.toInt(): Int defined in kotlin.text
+private fun Iterable<FlagEnum>.toInt(): Int defined in kotlin.text
+        x.toInt()
+          ^
+
+Return code: 1

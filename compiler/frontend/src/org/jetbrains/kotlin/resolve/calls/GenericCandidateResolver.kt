@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.util.PRESERVE_1_0_4_COMPATIBILITY
 
 class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeResolver) {
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
@@ -257,7 +258,8 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
 
         val currentSubstitutor = constraintSystem.build().currentSubstitutor
         val newSubstitution = object : DelegatedTypeSubstitution(currentSubstitutor.substitution) {
-            override fun approximateContravariantCapturedTypes() = true
+            override fun approximateContravariantCapturedTypes() =
+                    !PRESERVE_1_0_4_COMPATIBILITY || currentSubstitutor.substitution.approximateContravariantCapturedTypes()
         }
 
         var expectedType = newSubstitution.buildSubstitutor().substitute(effectiveExpectedType, Variance.IN_VARIANCE)

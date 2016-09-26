@@ -263,12 +263,15 @@ fun CallableDescriptor.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Seq
  * }
  */
 
-val IMPLICIT_ARGUMENTS_ONLY_FROM_CONTAINING_CLASSES: String? = System.getProperty("IMPLICIT_ARGUMENTS_ONLY_FROM_CONTAINING_CLASSES")
-
-fun findImplicitOuterClassArguments(scopeOwner: ClassDescriptor, outerClass: ClassDescriptor): List<TypeProjection>? {
+fun findImplicitOuterClassArguments(
+        scopeOwner: ClassDescriptor,
+        outerClass: ClassDescriptor,
+        // this parameter must be removed after 1.0.5 release
+        preserveCompatibility: Boolean
+): List<TypeProjection>? {
     for (current in scopeOwner.classesFromInnerToOuter()) {
         val typesToConsider =
-                if (IMPLICIT_ARGUMENTS_ONLY_FROM_CONTAINING_CLASSES == "1")
+                if (preserveCompatibility)
                     listOf(current.defaultType)
                 else
                     current.getAllSuperClassesTypesIncludeItself()

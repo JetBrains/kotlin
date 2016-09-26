@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import org.jetbrains.kotlin.util.PRESERVE_1_0_4_COMPATIBILITY
 
 class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -593,7 +594,7 @@ class TypeResolver(
                 null
         } ?: return null
 
-        return findImplicitOuterClassArguments(enclosingClass, outerClass)
+        return findImplicitOuterClassArguments(enclosingClass, outerClass, PRESERVE_1_0_4_COMPATIBILITY)
     }
 
     fun resolveClass(
