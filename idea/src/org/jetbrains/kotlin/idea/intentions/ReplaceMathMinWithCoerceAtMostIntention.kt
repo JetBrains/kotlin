@@ -16,30 +16,8 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+class ReplaceMathMinWithCoerceAtMostIntention : ReplaceMathMethodsWithKotlinNativeMethodsIntention("Replace Math.min with coerceAtMost") {
+    override fun replacedMethodName() = "coerceAtMost"
 
-class ReplaceMathMinWithCoerceAtMostIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
-        KtCallExpression::class.java, "Replace Math.min with coerceAtMost") {
-
-    override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        val target = element.getStrictParentOfType<KtDotQualifiedExpression>() ?: element
-        val valueArguments = element.valueArguments
-        val newExpression = KtPsiFactory(element).createExpression("${valueArguments[0].text}.coerceAtMost(${valueArguments[1].text})")
-        target.replaced(newExpression)
-    }
-
-    override fun isApplicableTo(element: KtCallExpression) = isMinMethod(element)
-
-    private fun isMinMethod(element: KtCallExpression) =
-            element.calleeExpression?.text == "min" && element.valueArguments.size == 2 && element.isMethodCall("java.lang.Math.min")
-
+    override fun mathMethodName() = "min"
 }
