@@ -1,19 +1,17 @@
-package stepOverInsideInlineFun
+package soInlineFunWithLastStatementMultilineArgumentCall
 
 fun main(args: Array<String>) {
+    var k = 444
     bar {
         val b = 1
     }
+
+    k++
 }
 
 inline fun bar(f: (Int) -> Unit) {
     //Breakpoint!
-    val a = 1
-    foo()
-    val f = f(1)
-    val c = 1
+    f(1)
 }
 
-fun foo() {}
-
-// STEP_OVER: 4
+// STEP_OVER: 1
