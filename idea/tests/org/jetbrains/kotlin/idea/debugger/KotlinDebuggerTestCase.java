@@ -68,7 +68,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     private static boolean IS_TINY_APP_COMPILED = false;
 
     // Delete LOCAL_CACHE_DIR to invalidate caches
-    private static final boolean LOCAL_CACHE_REUSE = true;
+    private static final boolean LOCAL_CACHE_REUSE = false;
 
     private static final File LOCAL_CACHE_DIR = new File("out/debuggerTinyApp");
     private static final File LOCAL_CACHE_JAR_DIR = new File(LOCAL_CACHE_DIR, "jar");
@@ -176,6 +176,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             File jarDir;
             try {
+                //noinspection ConstantConditions
                 jarDir = LOCAL_CACHE_REUSE ? LOCAL_CACHE_DIR : KotlinTestUtils.tmpDir("debuggerCustomLibrary");
             }
             catch (IOException e) {
