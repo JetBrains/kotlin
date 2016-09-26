@@ -196,5 +196,8 @@ fun DeclarationDescriptor.isHiddenInResolution(languageVersionSettings: Language
         if (isHiddenToOvercomeSignatureClash) return true
         if (isHiddenForResolutionEverywhereBesideSupercalls && !isSuperCall) return true
     }
+
+    if (!checkSinceKotlinVersionAccessibility(languageVersionSettings)) return true
+
     return isDeprecatedHidden()
 }

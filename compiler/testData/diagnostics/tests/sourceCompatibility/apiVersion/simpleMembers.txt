@@ -1,0 +1,9 @@
+package
+
+@kotlin.SinceKotlin(version = "1.1") public var p: kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1") public fun f(): kotlin.Unit
+public fun t1(): [ERROR : Error function type]
+public fun t2(): [ERROR : Error function type]
+public fun t3(): kotlin.Unit
+public fun t4(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1.2") public fun z(): kotlin.Unit

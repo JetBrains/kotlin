@@ -1,4 +1,10 @@
 compiler/testData/cli/jvm/languageVersion.kt:5:17: error: this type is sealed, so it can be inherited by only its own nested classes or objects
 class Derived : Base()
                 ^
+compiler/testData/cli/jvm/languageVersion.kt:8:5: error: the feature is only available since Kotlin 1.1: bound callable references
+    ""::class.isInstance(42)
+    ^
+compiler/testData/cli/jvm/languageVersion.kt:8:15: error: unresolved reference: isInstance
+    ""::class.isInstance(42)
+              ^
 COMPILATION_ERROR

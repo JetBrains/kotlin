@@ -83,3 +83,11 @@ This directive lets you enable or disable certain language features. Language fe
     // !LANGUAGE: -TopLevelSealedInheritance
 
     // !LANGUAGE: +TypeAliases -LocalDelegatedProperties
+
+### 5. API_VERSION
+
+This directive emulates the behavior of the `-api-version` command line option, disallowing to use declarations annotated with `@SinceKotlin(X)` where X is greater than the specified API version.
+
+#### Usage:
+
+    // !API_VERSION: 1.0

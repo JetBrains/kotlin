@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-api-version
+239.42

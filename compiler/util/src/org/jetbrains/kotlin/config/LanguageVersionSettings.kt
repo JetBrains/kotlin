@@ -45,6 +45,8 @@ enum class LanguageVersion(val versionString: String) {
     KOTLIN_1_0("1.0"),
     KOTLIN_1_1("1.1");
 
+    override fun toString() = versionString
+
     companion object {
         @JvmStatic
         fun fromVersionString(str: String) = values().find { it.versionString == str }
@@ -56,15 +58,22 @@ enum class LanguageVersion(val versionString: String) {
 
 interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
+
+    val apiVersion: ApiVersion
 }
 
-class LanguageVersionSettingsImpl(private val languageVersion: LanguageVersion) : LanguageVersionSettings {
+class LanguageVersionSettingsImpl(
+        private val languageVersion: LanguageVersion,
+        override val apiVersion: ApiVersion
+) : LanguageVersionSettings {
     override fun supportsFeature(feature: LanguageFeature): Boolean {
-        return languageVersion.ordinal >= feature.sinceVersion.ordinal
+        return languageVersion >= feature.sinceVersion
     }
+
+    override fun toString() = "Language = $languageVersion, API = $apiVersion"
 
     companion object {
         @JvmField
-        val DEFAULT = LanguageVersionSettingsImpl(LanguageVersion.LATEST)
+        val DEFAULT = LanguageVersionSettingsImpl(LanguageVersion.LATEST, ApiVersion.LATEST)
     }
 }

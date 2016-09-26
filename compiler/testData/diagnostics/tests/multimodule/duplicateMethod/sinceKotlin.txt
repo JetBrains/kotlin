@@ -1,0 +1,29 @@
+// -- Module: <m1> --
+package
+
+package p1 {
+    @kotlin.SinceKotlin(version = "1.1") public fun foo(/*0*/ s: kotlin.Int): kotlin.String
+}
+
+
+// -- Module: <m2> --
+package
+
+package p2 {
+    public fun foo(/*0*/ s: kotlin.Int): kotlin.Int
+}
+
+
+// -- Module: <m3> --
+package
+
+public fun test1(): kotlin.Int
+public fun test2(): kotlin.Int
+
+package p1 {
+    @kotlin.SinceKotlin(version = "1.1") public fun foo(/*0*/ s: kotlin.Int): kotlin.String
+}
+
+package p2 {
+    public fun foo(/*0*/ s: kotlin.Int): kotlin.Int
+}

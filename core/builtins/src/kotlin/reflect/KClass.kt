@@ -61,6 +61,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     /**
      * Returns `true` if [value] is an instance of this class on a given platform.
      */
+    @SinceKotlin("1.1")
     public fun isInstance(value: Any?): Boolean
 
     /**

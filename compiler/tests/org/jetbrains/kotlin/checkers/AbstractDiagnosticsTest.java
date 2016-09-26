@@ -143,7 +143,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
-            LanguageVersionSettings languageVersionSettings = loadCustomLanguageVersionSettings(testFilesInModule);
+            LanguageVersionSettings languageVersionSettings = loadLanguageVersionSettings(testFilesInModule);
             ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
 
             boolean separateModules = groupedByModule.size() == 1;
@@ -210,17 +210,19 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
     }
 
     @Nullable
-    private LanguageVersionSettings loadCustomLanguageVersionSettings(List<? extends TestFile> module) {
+    private LanguageVersionSettings loadLanguageVersionSettings(List<? extends TestFile> module) {
         LanguageVersionSettings result = null;
         for (TestFile file : module) {
-            if (file.customLanguageVersionSettings != null) {
-                if (result != null) {
+            LanguageVersionSettings current = file.customLanguageVersionSettings;
+            if (current != null) {
+                if (result != null && !result.equals(current)) {
                     Assert.fail(
-                            "More than one file in the module has " + BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive specified. " +
+                            "More than one file in the module has " + BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " or " +
+                            BaseDiagnosticsTest.API_VERSION_DIRECTIVE + " directive specified. " +
                             "This is not supported. Please move all directives into one file"
                     );
                 }
-                result = file.customLanguageVersionSettings;
+                result = current;
             }
         }
 

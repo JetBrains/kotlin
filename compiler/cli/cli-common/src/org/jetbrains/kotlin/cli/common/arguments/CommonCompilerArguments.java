@@ -30,6 +30,11 @@ public abstract class CommonCompilerArguments {
     @ValueDescription("<version>")
     public String languageVersion;
 
+    @GradleOption(DefaultValues.LanguageVersions.class)
+    @Argument(value = "api-version", description = "Allow to use declarations only from the specified version of bundled libraries")
+    @ValueDescription("<version>")
+    public String apiVersion;
+
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;

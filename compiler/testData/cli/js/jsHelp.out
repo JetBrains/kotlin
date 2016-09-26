@@ -13,6 +13,7 @@ where possible options include:
   -output-prefix <path>      Path to file which will be added to the beginning of output file
   -output-postfix <path>     Path to file which will be added to the end of output file
   -language-version <version> Provide source compatibility with specified language version
+  -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version

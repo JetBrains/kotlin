@@ -4,6 +4,11 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions {
 
+    private var apiVersionField: kotlin.String? = null
+    override var apiVersion: kotlin.String
+        get() = apiVersionField ?: "1.1"
+        set(value) { apiVersionField = value }
+
     private var includeRuntimeField: kotlin.Boolean? = null
     override var includeRuntime: kotlin.Boolean
         get() = includeRuntimeField ?: false
@@ -50,6 +55,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         set(value) { verboseField = value }
 
     open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
+        apiVersionField?.let { args.apiVersion = it }
         includeRuntimeField?.let { args.includeRuntime = it }
         jdkHomeField?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
@@ -63,6 +69,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
+    apiVersion = "1.1"
     includeRuntime = false
     jdkHome = null
     jvmTarget = "1.6"

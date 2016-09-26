@@ -1,0 +1,18 @@
+package
+
+@Anno1() @Anno2() public fun t1(): kotlin.Unit
+
+@kotlin.SinceKotlin(version = "1.1") public final annotation class Anno1 : kotlin.Annotation {
+    public constructor Anno1(/*0*/ s: kotlin.String)
+    public final val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Anno2 : kotlin.Annotation {
+    @kotlin.SinceKotlin(version = "1.1") public constructor Anno2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
