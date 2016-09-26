@@ -68,25 +68,41 @@ class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return getStepOverCommand(suspendContext, ignoreBreakpoints, debuggerContext.sourcePosition)
     }
 
-    fun getStepOverCommand(suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean, sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
-        val file = sourcePosition.file as? KtFile ?: return null
-        if (sourcePosition.line < 0) return null
+    private fun getStepOverCommand(
+            suspendContext: SuspendContextImpl,
+            ignoreBreakpoints: Boolean,
+            sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
+        val kotlinSourcePosition = KotlinSourcePosition.create(sourcePosition) ?: return null
 
-        val containingFunction = sourcePosition.elementAt.parents
-                                         .filterIsInstance<KtNamedFunction>()
-                                         .firstOrNull { !it.isLocal } ?: return null
+        if (!isSpecialStepOverNeeded(kotlinSourcePosition)) return null
 
-        val startLineNumber = containingFunction.getLineNumber(true) + 1
-        val endLineNumber = containingFunction.getLineNumber(false) + 1
-        if (startLineNumber > endLineNumber) return null
+        return DebuggerSteppingHelper.createStepOverCommand(suspendContext, ignoreBreakpoints, kotlinSourcePosition)
+    }
 
-        val linesRange = startLineNumber..endLineNumber
+    data class KotlinSourcePosition(val file: KtFile, val function: KtNamedFunction,
+                                    val linesRange: IntRange, val sourcePosition: SourcePosition) {
+        companion object {
+            fun create(sourcePosition: SourcePosition): KotlinSourcePosition? {
+                val file = sourcePosition.file as? KtFile ?: return null
+                if (sourcePosition.line < 0) return null
 
-        val inlineArgumentsToSkip = getElementsToSkip(containingFunction as KtNamedFunction, sourcePosition) ?: return null
+                val containingFunction = sourcePosition.elementAt.parents
+                                                 .filterIsInstance<KtNamedFunction>()
+                                                 .firstOrNull { !it.isLocal } ?: return null
 
-        val additionalElementsToSkip = sourcePosition.elementAt.getAdditionalElementsToSkip()
+                val startLineNumber = containingFunction.getLineNumber(true) + 1
+                val endLineNumber = containingFunction.getLineNumber(false) + 1
+                if (startLineNumber > endLineNumber) return null
 
-        return DebuggerSteppingHelper.createStepOverCommand(suspendContext, ignoreBreakpoints, file, linesRange, inlineArgumentsToSkip, additionalElementsToSkip)
+                val linesRange = startLineNumber..endLineNumber
+
+                return KotlinSourcePosition(file, containingFunction, linesRange, sourcePosition)
+            }
+        }
+    }
+
+    private fun isSpecialStepOverNeeded(kotlinSourcePosition: KotlinSourcePosition): Boolean {
+        return getElementsToSkip(kotlinSourcePosition.function, kotlinSourcePosition.sourcePosition) != null
     }
 
     @TestOnly
@@ -326,6 +342,20 @@ sealed class Action(val position: XSourcePositionImpl?) {
             is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints)
         }
     }
+}
+
+fun getStepOverPosition(
+        location: Location,
+        kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition
+): Action {
+    val (inlineArgumentsToSkip, additionalElementsToSkip) = runReadAction {
+        val inlineArgumentsToSkip = getElementsToSkip(kotlinSourcePosition.function, kotlinSourcePosition.sourcePosition)!!
+        val additionalElementsToSkip = kotlinSourcePosition.sourcePosition.elementAt.getAdditionalElementsToSkip()
+
+        Pair(inlineArgumentsToSkip, additionalElementsToSkip)
+    }
+
+    return getStepOverPosition(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange, inlineArgumentsToSkip, additionalElementsToSkip)
 }
 
 fun getStepOverPosition(

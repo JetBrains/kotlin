@@ -24,7 +24,6 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.settings.DebuggerSettings;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.psi.PsiElement;
 import com.intellij.ui.classFilter.ClassFilter;
 import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
 import com.sun.jdi.Location;
@@ -34,11 +33,8 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.StepRequest;
-import kotlin.ranges.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 
@@ -51,10 +47,7 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             final SuspendContextImpl suspendContext,
             final boolean ignoreBreakpoints,
-            final KtFile file,
-            final IntRange linesRange,
-            final List<KtFunction> inlineArguments,
-            final List<PsiElement> additionalElementsToSkip
+            final KotlinSteppingCommandProvider.KotlinSourcePosition kotlinSourcePosition
     ) {
         final DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new ResumeCommand(suspendContext) {
@@ -65,10 +58,7 @@ public class DebuggerSteppingHelper {
                     if (frameProxy != null) {
                         Action action = KotlinSteppingCommandProviderKt.getStepOverPosition(
                                 frameProxy.location(),
-                                file,
-                                linesRange,
-                                inlineArguments,
-                                additionalElementsToSkip
+                                kotlinSourcePosition
                         );
 
                         DebugProcessImpl.ResumeCommand command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
