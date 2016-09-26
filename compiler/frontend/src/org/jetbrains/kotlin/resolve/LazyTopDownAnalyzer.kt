@@ -207,12 +207,20 @@ class LazyTopDownAnalyzer(
 
         ClassifierUsageChecker.check(declarations, trace, classifierUsageCheckers)
 
+        resolveImportsInAllFiles(c)
+
         return c
     }
 
     private fun resolveAllHeadersInClasses(c: TopDownAnalysisContext) {
         for (classDescriptor in c.allClasses) {
             (classDescriptor as LazyClassDescriptor).resolveMemberHeaders()
+        }
+    }
+
+    private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
+        for (file in c.files + c.scripts.keys.map { it.getContainingKtFile() }) {
+            fileScopeProvider.getImportResolver(file).forceResolveAllImports()
         }
     }
 
