@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+
+class VarArg {
+    constructor(vararg x: String) {
+        this.strList = x.toList()
+    }
+
+    val strList: List<String>
+}
