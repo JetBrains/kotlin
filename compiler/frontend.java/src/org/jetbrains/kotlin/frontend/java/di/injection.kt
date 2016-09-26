@@ -36,11 +36,10 @@ import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
@@ -71,7 +70,6 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<JavaPropertyInitializerEvaluatorImpl>()
     useInstance(SamConversionResolverImpl)
     useImpl<JavaSourceElementFactoryImpl>()
-    useImpl<JavaLazyAnalyzerPostConstruct>()
     useInstance(InternalFlexibleTypeTransformer)
 
     useInstance(languageVersionSettings)
@@ -102,7 +100,7 @@ fun createContainerForLazyResolveWithJava(
         useImpl<LazyResolveToken>()
     }
 }.apply {
-    javaAnalysisInit()
+    get<JavaClassFinderImpl>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }
 
 
@@ -121,13 +119,6 @@ fun createContainerForTopDownAnalyzerForJvm(
     initJvmBuiltInsForTopDownAnalysis(moduleContext.module, languageVersionSettings)
 }
 
-fun StorageComponentContainer.javaAnalysisInit() {
-    get<JavaClassFinderImpl>().initialize()
-    get<JavaClassFinderPostConstruct>().postCreate()
-}
-
-// 'initBuiltIns' body cannot be merged with 'javaAnalysisInit' because the latter is used in IDE,
-// where built-ins instances are shared between modules and manual initialization is necessary (to avoid multiple initialization)
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
     get<JvmBuiltIns>().initialize(module, languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 }
