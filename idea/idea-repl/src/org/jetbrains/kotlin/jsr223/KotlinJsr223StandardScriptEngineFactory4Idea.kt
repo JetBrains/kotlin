@@ -17,26 +17,16 @@
 package org.jetbrains.kotlin.jsr223
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.common.KotlinVersion
+import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.utils.PathUtil
-import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
-import javax.script.ScriptEngineFactory
 
 @Suppress("unused") // used in javax.script.ScriptEngineFactory META-INF file
-class KotlinJvmJsr223StandardScriptEngineFactory4Idea : ScriptEngineFactory {
-
-    override fun getLanguageName(): String = "kotlin"
-    override fun getLanguageVersion(): String = KotlinVersion.VERSION
-    override fun getEngineName(): String = "kotlin"
-    override fun getEngineVersion(): String = KotlinVersion.VERSION
-    override fun getExtensions(): List<String> = listOf("kts")
-    override fun getMimeTypes(): List<String> = listOf("text/x-kotlin")
-    override fun getNames(): List<String> = listOf("kotlin")
+class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     override fun getScriptEngine(): ScriptEngine =
-            KotlinJvmJsr223ScriptEngine4Idea(
+            KotlinJsr223JvmScriptEngine4Idea(
                     Disposer.newDisposable(),
                     this,
                     listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath),
@@ -48,22 +38,4 @@ class KotlinJvmJsr223StandardScriptEngineFactory4Idea : ScriptEngineFactory {
                                 bindings) },
                     arrayOf(Array<String>::class.java, java.util.Map::class.java)
             )
-
-    override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
-    override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"
-
-    override fun getProgram(vararg statements: String): String {
-        val sep = System.getProperty("line.separator")
-        return statements.joinToString(sep) + sep
-    }
-
-    override fun getParameter(key: String?): Any? =
-            when (key) {
-                ScriptEngine.NAME -> engineName
-                ScriptEngine.LANGUAGE -> languageName
-                ScriptEngine.LANGUAGE_VERSION -> languageVersion
-                ScriptEngine.ENGINE -> engineName
-                ScriptEngine.ENGINE_VERSION -> engineVersion
-                else -> null
-            }
 }

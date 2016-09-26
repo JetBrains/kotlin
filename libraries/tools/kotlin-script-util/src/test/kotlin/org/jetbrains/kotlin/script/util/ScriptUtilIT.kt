@@ -116,7 +116,7 @@ done
         try {
             val configuration = CompilerConfiguration().apply {
                 addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                val rtJar = System.getProperty("runtimeJar")
+                val rtJar = System.getProperty("KOTLIN_JAVA_RUNTIME_JAR")
                 Assert.assertNotNull(rtJar)
                 addJvmClasspathRoot(File(rtJar))
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)

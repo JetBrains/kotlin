@@ -74,6 +74,7 @@
     <modules>
         <module>tools/kotlin-compiler</module>
         <module>tools/kotlin-compiler-embeddable</module>
+        <module>tools/kotlin-daemon-client</module>
         <module>tools/kotlin-build-common</module>
         <module>tools/kotlin-build-common-test</module>
         <module>tools/kotlin-maven-plugin</module>
@@ -112,6 +113,9 @@
         <module>examples/kotlin-gradle-subplugin-example</module>
         <module>examples/browser-example</module>
         <module>examples/browser-example-with-library</module>
+        <module>examples/kotlin-jsr223-local-example</module>
+        <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
+        <module>examples/kotlin-jsr223-daemon-remote-eval-example</module>
     </modules>
 
     <dependencies>

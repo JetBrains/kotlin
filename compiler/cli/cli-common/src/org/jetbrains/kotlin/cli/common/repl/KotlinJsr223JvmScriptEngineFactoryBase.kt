@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script.jsr223
+package org.jetbrains.kotlin.cli.common.repl
 
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.KotlinVersion
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.utils.PathUtil
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineFactory
 
-@Suppress("unused") // used in javax.script.ScriptEngineFactory META-INF file
-class KotlinJsr232StandardScriptEngineFactory: ScriptEngineFactory {
+abstract class KotlinJsr223JvmScriptEngineFactoryBase : ScriptEngineFactory {
 
     override fun getLanguageName(): String = "kotlin"
     override fun getLanguageVersion(): String = KotlinVersion.VERSION
@@ -37,20 +29,6 @@ class KotlinJsr232StandardScriptEngineFactory: ScriptEngineFactory {
     override fun getExtensions(): List<String> = listOf("kts")
     override fun getMimeTypes(): List<String> = listOf("text/x-kotlin")
     override fun getNames(): List<String> = listOf("kotlin")
-
-    override fun getScriptEngine(): ScriptEngine =
-            KotlinJsr232ScriptEngine(
-                    Disposer.newDisposable(),
-                    this,
-                    StandardScriptDefinition,
-                    CompilerConfiguration().apply {
-                        addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                        addJvmClasspathRoots(PathUtil.getKotlinPathsForCompiler().let { listOf(it.runtimePath, it.reflectPath) })
-                        // TODO: addJvmClasspathRoots(config.classpath)
-                        put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
-                        put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
-                    },
-                    Thread.currentThread().contextClassLoader)
 
     override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
     override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"

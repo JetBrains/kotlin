@@ -21,21 +21,30 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericRepl
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import java.io.Reader
-import javax.script.*
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
+import java.net.URLClassLoader
+import javax.script.ScriptContext
+import javax.script.ScriptEngineFactory
+import javax.script.ScriptException
 
-class KotlinJsr232ScriptEngine(
+class KotlinJsr232JvmLocalScriptEngine(
         disposable: Disposable,
-        private val factory: ScriptEngineFactory,
-        private val scriptDefinition: KotlinScriptDefinition,
-        private val compilerConfiguration: CompilerConfiguration,
-        baseClassLoader: ClassLoader
-) : AbstractScriptEngine(), ScriptEngine {
+        factory: ScriptEngineFactory,
+        val templateClasspath: List<File>,
+        templateClassName: String,
+        getScriptArgs: (ScriptContext) -> Array<Any?>?,
+        scriptArgsTypes: Array<Class<*>>?
+) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     data class MessageCollectorReport(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation)
 
@@ -74,33 +83,32 @@ class KotlinJsr232ScriptEngine(
         }
     }
 
-    private val repl = object : GenericRepl(disposable, scriptDefinition, compilerConfiguration, messageCollector, baseClassLoader) {}
-
-    private var lineCount = 0
-
-    private val history = arrayListOf<ReplCodeLine>()
-
-    override fun eval(script: String, context: ScriptContext?): Any? {
-        lineCount += 1
-        // TODO bind to context
-        val codeLine = ReplCodeLine(lineCount, script)
-        val evalResult = repl.eval(codeLine, history)
-        messageCollector.resetAndThrowOnErrors()
-        val ret = when (evalResult) {
-            is ReplEvalResult.ValueResult -> evalResult.value
-            is ReplEvalResult.UnitResult -> null
-            is ReplEvalResult.Error -> throw ScriptException(evalResult.message)
-            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${evalResult.lineNo}")
-        }
-        history.add(codeLine)
-        // TODO update context
-        return ret
+    private val repl by lazy {
+        GenericRepl(
+                disposable,
+                makeScriptDefinition(templateClasspath, templateClassName),
+                makeCompilerConfiguration(),
+                messageCollector,
+                Thread.currentThread().contextClassLoader,
+                getScriptArgs(getContext()),
+                scriptArgsTypes)
     }
 
-    override fun eval(script: Reader, context: ScriptContext?): Any? = eval(script.readText(), context)
+    private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
+        val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
+        val cls = classloader.loadClass(templateClassName)
+        return KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
+    }
 
-    override fun createBindings(): Bindings = SimpleBindings()
+    private fun makeCompilerConfiguration() = CompilerConfiguration().apply {
+        addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
+        addJvmClasspathRoots(templateClasspath)
+        put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
+    }
 
-    override fun getFactory(): ScriptEngineFactory = factory
+    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
+        val evalResult = repl.eval(codeLine, history)
+        messageCollector.resetAndThrowOnErrors()
+        return evalResult
+    }
 }

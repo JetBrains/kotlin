@@ -16,33 +16,18 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.junit.Assert
 import org.junit.Test
 import javax.script.ScriptEngine
-import javax.script.ScriptEngineFactory
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
 
-class KotlinJsr223ScriptEngineTest : TestCase() {
-
-    private var factory: ScriptEngineFactory? = null
-    private var engine: ScriptEngine? = null
-
-    override fun setUp() {
-        super.setUp()
-        factory = ScriptEngineManager().getEngineByExtension("kts").factory
-        engine = factory?.scriptEngine
-    }
-
-    override fun tearDown() {
-        factory = null
-        super.tearDown()
-    }
+class KotlinJsr223ScriptEngineIT {
 
     @Test
     fun testEngineFactory() {
+        val factory = ScriptEngineManager().getEngineByExtension("kts").factory
         Assert.assertNotNull(factory)
         factory!!.apply {
             Assert.assertEquals("kotlin", languageName)
@@ -63,17 +48,21 @@ class KotlinJsr223ScriptEngineTest : TestCase() {
 
     @Test
     fun testEngine() {
-        Assert.assertNotNull(engine as? KotlinJsr232ScriptEngine)
+        val factory = ScriptEngineManager().getEngineByExtension("kts").factory
+        Assert.assertNotNull(factory)
+        val engine = factory!!.scriptEngine
+        Assert.assertNotNull(engine as? KotlinJsr223JvmDaemonLocalEvalScriptEngine)
         Assert.assertSame(factory, engine!!.factory)
-        val bindings = engine!!.createBindings()
+        val bindings = engine.createBindings()
         Assert.assertTrue(bindings is SimpleBindings)
     }
 
     @Test
     fun testSimpleEval() {
-        val res1 = engine!!.eval("val x = 3")
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val res1 = engine.eval("val x = 3")
         Assert.assertNull(res1)
-        val res2 = engine!!.eval("x + 2")
+        val res2 = engine.eval("x + 2")
         Assert.assertEquals(5, res2)
     }
 }
