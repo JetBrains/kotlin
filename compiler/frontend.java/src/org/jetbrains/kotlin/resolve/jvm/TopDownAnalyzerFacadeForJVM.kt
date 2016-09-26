@@ -20,33 +20,27 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.context.*
+import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm
-import org.jetbrains.kotlin.frontend.java.di.*
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.modules.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-
-import java.util.ArrayList
+import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
@@ -71,7 +65,8 @@ object TopDownAnalyzerFacadeForJVM {
     ): AnalysisResult {
         return analyzeFilesWithJavaIntegration(
                 moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, modules, incrementalCompilationComponents,
-                packagePartProvider)
+                packagePartProvider
+        )
     }
 
     private fun analyzeFilesWithJavaIntegration(
@@ -80,78 +75,52 @@ object TopDownAnalyzerFacadeForJVM {
             trace: BindingTrace,
             topDownAnalysisMode: TopDownAnalysisMode,
             modules: List<Module>?,
-            incrementalCompilationComponents: IncrementalCompilationComponents?,
+            incrementalComponents: IncrementalCompilationComponents?,
             packagePartProvider: PackagePartProvider
     ): AnalysisResult {
-        var packagePartProvider = packagePartProvider
+        val storageManager = moduleContext.storageManager
         val project = moduleContext.project
+        val module = moduleContext.module
 
-        val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, files)
+        val lookupTracker = incrementalComponents?.getLookupTracker() ?: LookupTracker.DO_NOTHING
 
-        val lookupTracker = if (incrementalCompilationComponents != null)
-            incrementalCompilationComponents.getLookupTracker()
-        else
-            LookupTracker.DO_NOTHING
-
-        var targetIds: MutableList<TargetId>? = null
-        if (modules != null) {
-            targetIds = ArrayList<TargetId>(modules.size)
-
-            for (module in modules) {
-                targetIds.add(TargetId(module))
-            }
-        }
-
-        packagePartProvider = IncrementalPackagePartProvider.create(
-                packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.storageManager
-        )
+        val targetIds = modules?.map(::TargetId)
 
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
-                providerFactory,
+                FileBasedDeclarationProviderFactory(storageManager, files),
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
-                packagePartProvider,
+                IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalComponents, storageManager),
                 LanguageVersionSettingsImpl.DEFAULT
         )
 
         val additionalProviders = ArrayList<PackageFragmentProvider>()
 
-        if (targetIds != null && incrementalCompilationComponents != null) {
-            for (targetId in targetIds) {
-                val incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId)
-
-                additionalProviders.add(
-                        IncrementalPackageFragmentProvider(
-                                files, moduleContext.module, moduleContext.storageManager,
-                                container.deserializationComponentsForJava.components,
-                                incrementalCache, targetId
-                        )
+        if (incrementalComponents != null) {
+            targetIds?.mapTo(additionalProviders) { targetId ->
+                IncrementalPackageFragmentProvider(
+                        files, module, storageManager, container.deserializationComponentsForJava.components,
+                        incrementalComponents.getIncrementalCache(targetId), targetId
                 )
             }
         }
+
         additionalProviders.add(container.javaDescriptorResolver.packageFragmentProvider)
 
-        for (extension in PackageFragmentProviderExtension.getInstances(project)) {
-            val provider = extension.getPackageFragmentProvider(
-                    project, moduleContext.module, moduleContext.storageManager, trace, null)
-            if (provider != null) additionalProviders.add(provider)
+        PackageFragmentProviderExtension.getInstances(project).mapNotNullTo(additionalProviders) { extension ->
+            extension.getPackageFragmentProvider(project, module, storageManager, trace, null)
         }
 
         container.lazyTopDownAnalyzerForTopLevel.analyzeFiles(topDownAnalysisMode, files, additionalProviders)
 
-        val bindingContext = trace.bindingContext
-        val module = moduleContext.module
-
-        val analysisCompletedHandlerExtensions = AnalysisCompletedHandlerExtension.getInstances(moduleContext.project)
-
-        for (extension in analysisCompletedHandlerExtensions) {
+        for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
             val result = extension.analysisCompleted(project, module, trace, files)
             if (result != null) return result
         }
 
-        return AnalysisResult.success(bindingContext, module)
+        return AnalysisResult.success(trace.bindingContext, module)
     }
 
     @JvmStatic
