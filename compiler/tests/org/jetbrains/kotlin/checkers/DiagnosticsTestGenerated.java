@@ -5504,6 +5504,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/delegation/covariantOverrides")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CovariantOverrides extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInCovariantOverrides() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/covariantOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("fromClass.kt")
+                public void testFromClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/covariantOverrides/fromClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("irrelevant.kt")
+                public void testIrrelevant() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/covariantOverrides/irrelevant.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt13952.kt")
+                public void testKt13952() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/covariantOverrides/kt13952.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/covariantOverrides/simple.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")

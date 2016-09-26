@@ -240,7 +240,7 @@ public class OverrideResolver {
 
         @Override
         public void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-            reportDelegationProblemIfRequired(OVERRIDING_FINAL_MEMBER_BY_DELEGATION, overriding, overridden);
+            reportDelegationProblemIfRequired(OVERRIDING_FINAL_MEMBER_BY_DELEGATION, null, overriding, overridden);
         }
 
         @Override
@@ -248,7 +248,8 @@ public class OverrideResolver {
                 @NotNull CallableMemberDescriptor overriding,
                 @NotNull CallableMemberDescriptor overridden
         ) {
-            // Always reported as RETURN_TYPE_MISMATCH_ON_INHERITANCE
+            reportDelegationProblemIfRequired(
+                    RETURN_TYPE_MISMATCH_BY_DELEGATION, RETURN_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden);
         }
 
         @Override
@@ -256,22 +257,25 @@ public class OverrideResolver {
                 @NotNull PropertyDescriptor overriding,
                 @NotNull PropertyDescriptor overridden
         ) {
-            // Always reported as PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
+            reportDelegationProblemIfRequired(
+                    PROPERTY_TYPE_MISMATCH_BY_DELEGATION, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden);
         }
 
         @Override
         public void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-            reportDelegationProblemIfRequired(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, overriding, overridden);
+            reportDelegationProblemIfRequired(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, null, overriding, overridden);
         }
 
         private void reportDelegationProblemIfRequired(
                 @NotNull DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> diagnosticFactory,
+                @Nullable DiagnosticFactoryWithPsiElement<?, ?> relevantDiagnosticFromInheritance,
                 @NotNull CallableMemberDescriptor delegate,
                 @NotNull CallableMemberDescriptor overridden
         ) {
             assert delegate.getKind() == DELEGATION : "Delegate expected, got " + delegate + " of kind " + delegate.getKind();
 
-            if (!onceErrorsReported.contains(diagnosticFactory)) {
+            if (!onceErrorsReported.contains(diagnosticFactory) &&
+                    (relevantDiagnosticFromInheritance == null || !onceErrorsReported.contains(relevantDiagnosticFromInheritance))) {
                 onceErrorsReported.add(diagnosticFactory);
                 trace.report(diagnosticFactory.on(klass, delegate, overridden));
             }
