@@ -84,7 +84,10 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
             val method = LightClassUtil.getLightClassMethod(it)
             method == null || it.name != method.name
         }
-        result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter { it.containingClass()?.isInterface() ?: false }
+        result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
+            LightClassUtil.getLightClassBackingField(it) == null ||
+            it.containingClass()?.isInterface() ?: false
+        }
         result += KotlinClassShortNameIndex.getInstance().get(name, project, BuiltInClassesScope(noLibrarySourceScope))
         result += KotlinTypeAliasShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
 
