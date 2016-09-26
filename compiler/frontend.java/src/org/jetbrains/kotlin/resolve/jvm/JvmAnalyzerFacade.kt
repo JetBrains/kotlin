@@ -21,11 +21,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -83,10 +85,12 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 trace,
                 declarationProviderFactory,
                 moduleContentScope,
-                moduleClassResolver,
+                { useInstance(moduleClassResolver) },
                 targetEnvironment,
+                LookupTracker.DO_NOTHING,
                 packagePartProvider,
-                LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
+                LanguageVersionSettingsImpl.DEFAULT, // TODO: see KT-12410
+                useLazyResolve = true
         )
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()

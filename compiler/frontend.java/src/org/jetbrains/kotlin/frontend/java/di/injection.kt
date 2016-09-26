@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.components.*
-import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
@@ -83,25 +82,25 @@ fun createContainerForLazyResolveWithJava(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
-        moduleClassResolver: ModuleClassResolver,
-        targetEnvironment: TargetEnvironment = CompilerEnvironment,
+        registerModuleClassResolver: StorageComponentContainer.() -> Unit,
+        targetEnvironment: TargetEnvironment,
+        lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
-        languageVersionSettings: LanguageVersionSettings
-): ComponentProvider = createContainer("LazyResolveWithJava", JvmPlatform) {
-    //TODO: idea specific code
-    useInstance(packagePartProvider)
-
+        languageVersionSettings: LanguageVersionSettings,
+        useLazyResolve: Boolean
+): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatform) {
     configureModule(moduleContext, JvmPlatform, bindingTrace)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageVersionSettings)
 
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING, languageVersionSettings)
-
-    useInstance(moduleClassResolver)
-
+    useInstance(packagePartProvider)
+    registerModuleClassResolver()
     useInstance(declarationProviderFactory)
 
     targetEnvironment.configure(this)
 
-    useImpl<LazyResolveToken>()
+    if (useLazyResolve) {
+        useImpl<LazyResolveToken>()
+    }
 }.apply {
     javaAnalysisInit()
 }
@@ -115,20 +114,11 @@ fun createContainerForTopDownAnalyzerForJvm(
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings
-): ComponentProvider = createContainer("TopDownAnalyzerForJvm", JvmPlatform) {
-    useInstance(packagePartProvider)
-
-    configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageVersionSettings)
-
-    useInstance(declarationProviderFactory)
-
-    CompilerEnvironment.configure(this)
-
-    useImpl<SingleModuleClassResolver>()
-}.apply {
-    javaAnalysisInit()
-    initJvmBuiltInsForTopDownAnalysis()
+): ComponentProvider = createContainerForLazyResolveWithJava(
+        moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, { useImpl<SingleModuleClassResolver>() },
+        CompilerEnvironment, lookupTracker, packagePartProvider, languageVersionSettings, useLazyResolve = false
+).apply {
+    initJvmBuiltInsForTopDownAnalysis(moduleContext.module, languageVersionSettings)
 }
 
 fun StorageComponentContainer.javaAnalysisInit() {
@@ -138,7 +128,6 @@ fun StorageComponentContainer.javaAnalysisInit() {
 
 // 'initBuiltIns' body cannot be merged with 'javaAnalysisInit' because the latter is used in IDE,
 // where built-ins instances are shared between modules and manual initialization is necessary (to avoid multiple initialization)
-fun StorageComponentContainer.initJvmBuiltInsForTopDownAnalysis() {
-    get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(),
-                                  get<LanguageVersionSettings>().supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
+fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
+    get<JvmBuiltIns>().initialize(module, languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 }

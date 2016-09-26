@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import kotlin.properties.Delegates
 import javax.inject.Inject
 
 interface ModuleClassResolver {
@@ -28,12 +26,10 @@ interface ModuleClassResolver {
 }
 
 class SingleModuleClassResolver() : ModuleClassResolver {
-    override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-        return resolver!!.resolveClass(javaClass)
-    }
+    override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = resolver.resolveClass(javaClass)
 
     // component dependency cycle
-    var resolver: JavaDescriptorResolver? = null
+    lateinit var resolver: JavaDescriptorResolver
         @Inject set
 }
 

@@ -20,12 +20,14 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.repl.di.createContainerForReplWithJava
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -54,12 +56,14 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
 
         scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
 
-        val container = createContainerForReplWithJava(
+        val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(environment.project),
-                JvmPackagePartProvider(environment)
+                LookupTracker.DO_NOTHING,
+                JvmPackagePartProvider(environment),
+                LanguageVersionSettingsImpl.DEFAULT
         )
 
         this.resolveSession = container.get<ResolveSession>()
