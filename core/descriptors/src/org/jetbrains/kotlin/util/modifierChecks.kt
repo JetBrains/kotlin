@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -96,6 +97,22 @@ private object NoDefaultAndVarargsCheck : Check {
     override val description = "should not have varargs or parameters with default values"
     override fun check(functionDescriptor: FunctionDescriptor) =
             functionDescriptor.valueParameters.all { !it.hasDefaultValue() && it.varargElementType == null }
+}
+
+private object FirstNoDefaultAndDefaultParameters : Check {
+    override val description = "should not have first parameter with default values. " +
+                               "and should have remaining parameters with default value"
+    override fun check(functionDescriptor: FunctionDescriptor): Boolean {
+        val hasDefaultValueFirstParameter = functionDescriptor.valueParameters[0].hasDefaultValue()
+        val hasDefaultValueRemainingParameters = functionDescriptor.valueParameters.filterIndexed { i, valueParameterDescriptor -> i != 0 }.all(ValueParameterDescriptor::hasDefaultValue)
+        return !hasDefaultValueFirstParameter && hasDefaultValueRemainingParameters
+
+    }
+}
+
+private object NoVarargParameters : Check {
+    override val description = "should not have varargs"
+    override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.all { it.varargElementType == null }
 }
 
 private object NoTypeParametersCheck : Check {
@@ -185,7 +202,7 @@ object OperatorChecks : AbstractModifierChecks() {
             Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),
             Checks(SET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(3), IsKPropertyCheck),
             Checks(INVOKE, MemberOrExtension),
-            Checks(CONTAINS, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck, ReturnsBoolean),
+            Checks(CONTAINS, MemberOrExtension, ValueParameterCountCheck.AtLeast(1) , FirstNoDefaultAndDefaultParameters, NoVarargParameters, ReturnsBoolean),
             Checks(ITERATOR, MemberOrExtension, NoValueParameters),
             Checks(NEXT, MemberOrExtension, NoValueParameters),
             Checks(HAS_NEXT, MemberOrExtension, NoValueParameters, ReturnsBoolean),
