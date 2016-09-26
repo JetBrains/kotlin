@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.context;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -54,11 +56,12 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext,
-              collectAllCandidates, callPosition);
+              collectAllCandidates, callPosition, expressionContextProvider);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.candidateResolveMode = candidateResolveMode;
@@ -74,7 +77,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.statementFilter,
-                candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
+                candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
+                context.callPosition, context.expressionContextProvider);
     }
 
     @NotNull
@@ -86,7 +90,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.statementFilter,
                 CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition);
+                context.callPosition, context.expressionContextProvider);
     }
 
     @Override
@@ -99,11 +103,12 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
-                candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider);
     }
 }

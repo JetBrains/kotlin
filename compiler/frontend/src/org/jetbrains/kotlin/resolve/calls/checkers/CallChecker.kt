@@ -35,15 +35,19 @@ interface CallChecker {
 }
 
 class CallCheckerContext(
+        val resolutionContext: ResolutionContext<*>,
         val trace: BindingTrace,
-        val scope: LexicalScope,
         val languageVersionSettings: LanguageVersionSettings,
         val dataFlowInfo: DataFlowInfo,
         val isAnnotationContext: Boolean
 ) {
-    constructor(c: ResolutionContext<*>, languageVersionSettings: LanguageVersionSettings) : this(
-            c.trace, c.scope, languageVersionSettings, c.dataFlowInfo, c.isAnnotationContext
-    )
+    constructor(c: ResolutionContext<*>, languageVersionSettings: LanguageVersionSettings)
+        : this(c, c.trace, languageVersionSettings, c.dataFlowInfo, c.isAnnotationContext)
+
+    val scope: LexicalScope
+        get() = resolutionContext.scope
+
+
 }
 
 // Use this utility to avoid premature computation of deferred return type of a resolved callable descriptor.

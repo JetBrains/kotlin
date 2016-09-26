@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.context;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -56,6 +60,23 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final CallPosition callPosition;
 
+    /**
+     * Used for analyzing expression in the given context.
+     * Should be used for going through parents to find containing function, loop etc.
+     * The provider should return specific context expression (which can be used instead of parent)
+     * for the given expression or null otherwise.
+     * @see #getContextParentOfType
+     */
+    @NotNull
+    public final Function1<KtExpression, KtExpression> expressionContextProvider;
+
+    public static final Function1<KtExpression, KtExpression> DEFAULT_EXPRESSION_CONTEXT_PROVIDER = new Function1<KtExpression, KtExpression>() {
+        @Override
+        public KtExpression invoke(KtExpression expression) {
+            return null;
+        }
+    };
+
     protected ResolutionContext(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
@@ -67,7 +88,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -80,6 +102,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.isDebuggerContext = isDebuggerContext;
         this.collectAllCandidates = collectAllCandidates;
         this.callPosition = callPosition;
+        this.expressionContextProvider = expressionContextProvider;
     }
 
     protected abstract Context create(
@@ -91,7 +114,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     );
 
     @NotNull
@@ -104,14 +128,14 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
         return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
@@ -119,28 +143,28 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceScope(@NotNull LexicalScope newScope) {
         if (newScope == scope) return self();
         return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
         return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
@@ -151,18 +175,50 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      newCollectAllCandidates, callPosition);
+                      newCollectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceStatementFilter(@NotNull StatementFilter statementFilter) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
     }
 
     @NotNull
     public Context replaceCallPosition(@NotNull CallPosition callPosition) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates, callPosition);
+                      collectAllCandidates, callPosition, expressionContextProvider);
+    }
+
+    @NotNull
+    public Context replaceExpressionContextProvider(@NotNull Function1<KtExpression, KtExpression> expressionContextProvider) {
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
+                      collectAllCandidates, callPosition, expressionContextProvider);
+    }
+
+    @Nullable
+    public <T extends PsiElement> T getContextParentOfType(@NotNull KtExpression expression, @NotNull Class<? extends T>... classes) {
+        PsiElement current = expression.getParent();
+        while (current != null) {
+            for (Class<? extends T> klass : classes) {
+                if (klass.isInstance(current)) {
+                    //noinspection unchecked
+                    return (T) current;
+                }
+            }
+
+            if (current instanceof PsiFile) return null;
+
+            if (current instanceof KtExpression) {
+                KtExpression context = expressionContextProvider.invoke((KtExpression) current);
+                if (context != null) {
+                    current = context;
+                    continue;
+                }
+            }
+
+            current = current.getParent();
+        }
+        return null;
     }
 }

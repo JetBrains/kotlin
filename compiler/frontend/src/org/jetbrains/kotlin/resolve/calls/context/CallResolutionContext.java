@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.context;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
@@ -50,10 +52,11 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
-            @NotNull CallPosition callPosition
+            @NotNull CallPosition callPosition,
+            @NotNull Function1<KtExpression, KtExpression> expressionContextProvider
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
-              statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+              statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

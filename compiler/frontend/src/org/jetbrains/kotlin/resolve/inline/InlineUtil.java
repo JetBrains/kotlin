@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.inline;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -25,9 +24,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -62,19 +61,19 @@ public class InlineUtil {
     public static boolean checkNonLocalReturnUsage(
             @NotNull DeclarationDescriptor fromFunction,
             @NotNull KtExpression startExpression,
-            @NotNull BindingTrace trace
+            @NotNull ResolutionContext<?> context
     ) {
-        PsiElement containingFunction = PsiTreeUtil.getParentOfType(startExpression, KtClassOrObject.class, KtDeclarationWithBody.class);
+        PsiElement containingFunction = context.getContextParentOfType(startExpression, KtClassOrObject.class, KtDeclarationWithBody.class);
         if (containingFunction == null) {
             return false;
         }
 
-        DeclarationDescriptor containingFunctionDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction);
+        DeclarationDescriptor containingFunctionDescriptor = context.trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction);
         if (containingFunctionDescriptor == null) {
             return false;
         }
 
-        BindingContext bindingContext = trace.getBindingContext();
+        BindingContext bindingContext = context.trace.getBindingContext();
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
             if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {
