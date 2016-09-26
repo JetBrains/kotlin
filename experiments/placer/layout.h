@@ -451,6 +451,7 @@ constexpr uint32_t crc32<size_t(-1)>(const char * str) {
     return 0xFFFFFFFF;
 }
 
-constexpr name_hash_t NameHash(const char* name) {
-  return crc32<sizeof(name) - 2>(name) ^ 0xFFFFFFFF;
+template<size_t len_plus_one>
+constexpr name_hash_t NameHash(char const (&name)[len_plus_one]) {
+  return crc32<len_plus_one - 2>(name) ^ 0xFFFFFFFF;
 }
