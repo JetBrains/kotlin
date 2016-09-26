@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.Variance
 
 interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
     val underlyingConstructorDescriptor: ClassConstructorDescriptor
+    val typeAliasDescriptor: TypeAliasDescriptor
 
     override fun getContainingDeclaration(): TypeAliasDescriptor
 
@@ -45,7 +46,7 @@ interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
 }
 
 class TypeAliasConstructorDescriptorImpl private constructor(
-        val typeAliasDescriptor: TypeAliasDescriptor,
+        override val typeAliasDescriptor: TypeAliasDescriptor,
         override val underlyingConstructorDescriptor: ClassConstructorDescriptor,
         original: TypeAliasConstructorDescriptor?,
         annotations: Annotations,

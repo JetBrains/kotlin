@@ -1,2 +1,2 @@
  main.kt
-typealias <1>SimpleClassAlias = SimpleClass
+typealias <1><2>SimpleClassAlias = SimpleClass

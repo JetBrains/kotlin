@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.EverythingGlobalScope
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -81,6 +82,7 @@ private fun findCandidateDeclarationsInIndex(
     }
 
     val topLevelDeclaration = DescriptorUtils.getParentOfType(referencedDescriptor, PropertyDescriptor::class.java, false)
+                              ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasConstructorDescriptor::class.java, false)?.typeAliasDescriptor
                               ?: DescriptorUtils.getParentOfType(referencedDescriptor, FunctionDescriptor::class.java, false)
                               ?: DescriptorUtils.getParentOfType(referencedDescriptor, TypeAliasDescriptor::class.java, false)
                               ?: return emptyList()
@@ -108,6 +110,10 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
     internal fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor, file: KtDecompiledFile): KtDeclaration? {
         val original = descriptor.original
+
+        if (original is TypeAliasConstructorDescriptor) {
+            return getDeclarationForDescriptor(original.typeAliasDescriptor, file)
+        }
 
         if (original is ValueParameterDescriptor) {
             val callable = original.containingDeclaration
