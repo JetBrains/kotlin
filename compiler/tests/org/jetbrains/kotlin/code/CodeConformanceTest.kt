@@ -40,8 +40,9 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "compiler/testData/psi/kdoc",
-                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt"
-        ).map { File(it) }
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java"
+        ).map(::File)
     }
 
     fun testParserCode() {
