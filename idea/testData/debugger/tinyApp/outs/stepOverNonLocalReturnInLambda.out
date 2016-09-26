@@ -11,7 +11,7 @@ stepOverNonLocalReturnInLambda.kt:35
 stepOverNonLocalReturnInLambda.kt:7
 stepOverNonLocalReturnInLambda.kt:52
 stepOverNonLocalReturnInLambda.kt:53
-stepOverNonLocalReturnInLambda.kt:10
+stepOverNonLocalReturnInLambda.kt:9
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -1,6 +1,7 @@
-LineBreakpoint created at stepOverInlinedLambda.kt:6
+LineBreakpoint created at stepOverInlinedLambda.kt:5
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepOverInlinedLambda.StepOverInlinedLambdaKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+stepOverInlinedLambda.kt:5
 stepOverInlinedLambda.kt:6
 stepOverInlinedLambda.kt:7
 stepOverInlinedLambda.kt:10
@@ -11,8 +12,7 @@ stepOverInlinedLambda.kt:19
 stepOverInlinedLambda.kt:20
 stepOverInlinedLambda.kt:23
 stepOverInlinedLambda.kt:29
-stepOverInlinedLambda.kt:31
-stepOverInlinedLambda.kt:32
+stepOverInlinedLambda.kt:30
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -19,15 +19,21 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -38,12 +44,14 @@ import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -102,7 +110,23 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     }
 
     private fun isSpecialStepOverNeeded(kotlinSourcePosition: KotlinSourcePosition): Boolean {
-        return getElementsToSkip(kotlinSourcePosition.function, kotlinSourcePosition.sourcePosition) != null
+        val sourcePosition = kotlinSourcePosition.sourcePosition
+
+        val hasInlineCallsOnLine = getInlineFunctionCallsIfAny(sourcePosition).isNotEmpty()
+        if (hasInlineCallsOnLine) {
+            return true
+        }
+
+        // Step over calls to lambda arguments in inline function while execution is already in that function
+        val containingFunctionDescriptor = kotlinSourcePosition.function.resolveToDescriptor()
+        if (InlineUtil.isInline(containingFunctionDescriptor)) {
+            val inlineArgumentsCallsIfAny = getInlineArgumentsCallsIfAny(sourcePosition, containingFunctionDescriptor)
+            if (inlineArgumentsCallsIfAny != null && inlineArgumentsCallsIfAny.isNotEmpty()) {
+                return true
+            }
+        }
+
+        return false
     }
 
     @TestOnly
@@ -132,121 +156,13 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     }
 }
 
-private fun getElementsToSkip(containingFunction: KtNamedFunction, sourcePosition: SourcePosition): List<KtFunction>? {
-    val inlineFunctionCalls = getInlineFunctionCallsIfAny(sourcePosition)
-    if (!inlineFunctionCalls.isEmpty()) {
-        val inlineArguments = getInlineArgumentsIfAny(inlineFunctionCalls)
-        if (inlineArguments.isNotEmpty() && inlineArguments.all { !it.shouldNotUseStepOver(sourcePosition.elementAt) }) {
-            return inlineArguments
-        }
-
-        if (inlineArguments.isEmpty() && inlineFunctionCalls.all { !it.shouldNotUseStepOver(sourcePosition.elementAt) }) {
-            return emptyList()
-        }
-    }
-
-    // Step over calls to lambda arguments in inline function while execution is already in that function
-    if (InlineUtil.isInline(containingFunction.resolveToDescriptor())) {
-        return emptyList()
-    }
-
-    return null
-}
-
-private fun PsiElement.getAdditionalElementsToSkip(): List<PsiElement> {
-    val result = arrayListOf<PsiElement>()
-    val ifParent = getParentOfType<KtIfExpression>(false)
-    if (ifParent != null) {
-        if (ifParent.then.contains(this)) {
-            ifParent.elseKeyword?.let { result.add(it) }
-            ifParent.`else`?.let { result.add(it) }
-        }
-    }
-    val tryParent = getParentOfType<KtTryExpression>(false)
-    if (tryParent != null) {
-        val catchClause = getParentOfType<KtCatchClause>(false)
-        if (catchClause != null) {
-            result.addAll(tryParent.catchClauses.filter { it != catchClause })
-        }
-    }
-
-    val whenEntry = getParentOfType<KtWhenEntry>(false)
-    if (whenEntry != null) {
-        if (whenEntry.expression.contains(this)) {
-            val whenParent = whenEntry.getParentOfType<KtWhenExpression>(false)
-            if (whenParent != null) {
-                result.addAll(whenParent.entries.filter { it != whenEntry })
-            }
-        }
-    }
-
-    return result
-}
-
-private fun PsiElement.shouldNotUseStepOver(elementAt: PsiElement): Boolean {
-    val ifParent = getParentOfType<KtIfExpression>(false)
-    if (ifParent != null) {
-        // if (inlineFunCall()) {...}
-        if (ifParent.condition.contains(this)) {
-            return true
-        }
-
-        /*
-        <caret>if (...) inlineFunCall()
-                   else inlineFunCall()
-         */
-        val ifParentElementAt = elementAt.getParentOfType<KtIfExpression>(false)
-        if (ifParentElementAt == null) {
-            if (ifParent.then.contains(this)) {
-                return true
-            }
-            if (ifParent.`else`.contains(this)) {
-                return true
-            }
-        }
-    }
-
-    val tryParent = getParentOfType<KtTryExpression>(false)
-    if (tryParent != null) {
-        /* try { inlineFunCall() }
-           catch()...
-         */
-        if (tryParent.tryBlock.contains(this)) {
-            return true
-        }
-    }
-
-    val whenEntry = getParentOfType<KtWhenEntry>(false)
-    if (whenEntry != null) {
-        // <caret>inlineFunCall -> ...
-        if (whenEntry.conditions.any { it.contains(this) } ) {
-            return true
-        }
-
-        // <caret>1 == 2 -> inlineFunCall()
-        if (whenEntry.expression.contains(this)) {
-            val parentEntryElementAt = elementAt.getParentOfType<KtWhenEntry>(false) ?: return true
-            return parentEntryElementAt == whenEntry &&
-                   whenEntry.conditions.any { it.contains(elementAt) }
-        }
-    }
-
-    val whileParent = getParentOfType<KtWhileExpression>(false)
-    if (whileParent != null) {
-        // while (inlineFunCall()) {...}
-        if (whileParent.condition.contains(this)) {
-            return true
-        }
-
-        // last statement in while
-        return (whileParent.body as? KtBlockExpression)?.statements?.lastOrNull()?.getLineNumber() == elementAt.getLineNumber()
-    }
-
-    return false
-}
-
 private fun PsiElement?.contains(element: PsiElement): Boolean {
     return this?.textRange?.contains(element.textRange) ?: false
+}
+
+private fun getInlineCallFunctionArgumentsIfAny(sourcePosition: SourcePosition): List<KtFunction> {
+    val inlineFunctionCalls = getInlineFunctionCallsIfAny(sourcePosition)
+    return getInlineArgumentsIfAny(inlineFunctionCalls)
 }
 
 private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunction> {
@@ -269,14 +185,46 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
 private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<KtCallExpression>): List<KtFunction> {
     return inlineFunctionCalls.flatMap {
         it.valueArguments
-                .map { getArgumentExpression(it)  }
+                .map { getArgumentExpression(it) }
                 .filterIsInstance<KtFunction>()
     }
 }
 
 private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
 
+private fun getInlineArgumentsCallsIfAny(sourcePosition: SourcePosition, declarationDescriptor: DeclarationDescriptor): List<KtCallExpression>? {
+    if (declarationDescriptor !is CallableDescriptor) return null
+
+    val valueParameters = declarationDescriptor.valueParameters.filter { it.type.isFunctionType }.toSet()
+
+    if (valueParameters.isEmpty()) {
+        return null
+    }
+
+    fun isCallOfArgument(ktCallExpression: KtCallExpression): Boolean {
+        val context = ktCallExpression.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = ktCallExpression.getResolvedCall(context) ?: return false
+
+        if (resolvedCall !is VariableAsFunctionResolvedCallImpl) return false
+        val candidateDescriptor = resolvedCall.variableCall.candidateDescriptor
+
+        return candidateDescriptor in valueParameters
+    }
+
+    return findCallsOnPosition(sourcePosition, ::isCallOfArgument)
+}
+
 private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<KtCallExpression> {
+    fun isInlineCall(expr: KtCallExpression): Boolean {
+        val context = expr.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = expr.getResolvedCall(context) ?: return false
+        return InlineUtil.isInline(resolvedCall.resultingDescriptor)
+    }
+
+    return findCallsOnPosition(sourcePosition, ::isInlineCall)
+}
+
+private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallExpression) -> Boolean): List<KtCallExpression> {
     val file = sourcePosition.file as? KtFile ?: return emptyList()
     val lineNumber = sourcePosition.line
     var elementAt = sourcePosition.elementAt
@@ -298,22 +246,16 @@ private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<Kt
     val start = topMostElement.startOffset
     val end = topMostElement.endOffset
 
-    fun isInlineCall(expr: KtExpression): Boolean {
-        val context = expr.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = expr.getResolvedCall(context) ?: return false
-        return InlineUtil.isInline(resolvedCall.resultingDescriptor)
-    }
-
-    val allInlineFunctionCalls = CodeInsightUtils.
+    val allFilteredCalls = CodeInsightUtils.
             findElementsOfClassInRange(file, start, end, KtExpression::class.java)
             .map { KtPsiUtil.getParentCallIfPresent(it as KtExpression) }
             .filterIsInstance<KtCallExpression>()
-            .filter { isInlineCall(it) }
+            .filter { filter(it) }
             .toSet()
 
     // It is necessary to check range because of multiline assign
     var linesRange = lineNumber..lineNumber
-    return allInlineFunctionCalls.filter {
+    return allFilteredCalls.filter {
         val shouldInclude = it.getLineNumber() in linesRange
         if (shouldInclude) {
             linesRange = Math.min(linesRange.start, it.getLineNumber())..Math.max(linesRange.endInclusive, it.getLineNumber(false))
@@ -322,10 +264,16 @@ private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<Kt
     }
 }
 
-sealed class Action(val position: XSourcePositionImpl?) {
-    class STEP_OVER: Action(null)
-    class STEP_OUT: Action(null)
-    class RUN_TO_CURSOR(position: XSourcePositionImpl): Action(position)
+
+sealed class Action(val position: XSourcePositionImpl? = null,
+                    val lineNumber: Int? = null,
+                    val stepOverLines: Set<Int>? = null,
+                    val inlineRangeVariables: List<LocalVariable>? = null) {
+    class STEP_OVER : Action()
+    class STEP_OUT : Action()
+    class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position)
+    class STEP_OVER_INLINED(lineNumber: Int, stepOverLines: Set<Int>, inlineVariables: List<LocalVariable>) : Action(
+            lineNumber = lineNumber, stepOverLines = stepOverLines, inlineRangeVariables = inlineVariables)
 
     fun apply(debugProcess: DebugProcessImpl,
               suspendContext: SuspendContextImpl,
@@ -338,30 +286,63 @@ sealed class Action(val position: XSourcePositionImpl?) {
             }
             is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
             is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
+            is Action.STEP_OVER_INLINED -> KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
+                    KotlinStepOverInlineFilter(stepOverLines!!, lineNumber ?: -1, inlineRangeVariables!!)).contextAction(suspendContext)
         }
+    }
+}
+
+interface KotlinMethodFilter: MethodFilter {
+    fun locationMatches(context: SuspendContextImpl, location: Location): Boolean
+}
+
+class KotlinStepOverInlineFilter(val stepOverLines: Set<Int>, val fromLine: Int,
+                                 val inlineFunRangeVariables: List<LocalVariable>) : KotlinMethodFilter {
+    override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
+        val frameProxy = context.frameProxy
+        if (frameProxy == null) return true
+
+        val currentLine = location.lineNumber()
+
+        if (!(stepOverLines.contains(location.lineNumber()))) {
+            return currentLine != fromLine
+        }
+
+        val visibleInlineVariables = getInlineRangeLocalVariables(frameProxy)
+
+        // Our ranges check missed exit from inline function. This is when breakpoint was in last statement of inline functions.
+        // This can be observed by inline local range-variables. Absence of any means step out was done.
+        return inlineFunRangeVariables.any { !visibleInlineVariables.contains(it) }
+    }
+
+    override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
+        throw IllegalStateException() // Should not be called from Kotlin hint
+    }
+
+    override fun getCallingExpressionLines(): Range<Int>? {
+        throw IllegalStateException() // Should not be called from Kotlin hint
     }
 }
 
 fun getStepOverAction(
         location: Location,
-        kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition
+        kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition,
+        frameProxy: StackFrameProxyImpl
 ): Action {
-    val (inlineArgumentsToSkip, additionalElementsToSkip) = runReadAction {
-        val inlineArgumentsToSkip = getElementsToSkip(kotlinSourcePosition.function, kotlinSourcePosition.sourcePosition)!!
-        val additionalElementsToSkip = kotlinSourcePosition.sourcePosition.elementAt.getAdditionalElementsToSkip()
-
-        Pair(inlineArgumentsToSkip, additionalElementsToSkip)
+    val inlineArgumentsToSkip = runReadAction {
+        getInlineCallFunctionArgumentsIfAny(kotlinSourcePosition.sourcePosition)
     }
 
-    return getStepOverAction(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange, inlineArgumentsToSkip, additionalElementsToSkip)
+    return getStepOverAction(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange,
+                             inlineArgumentsToSkip, frameProxy)
 }
 
 fun getStepOverAction(
         location: Location,
         file: KtFile,
         range: IntRange,
-        inlinedArguments: List<KtElement>,
-        elementsToSkip: List<PsiElement>
+        inlineFunctionArguments: List<KtElement>,
+        frameProxy: StackFrameProxyImpl
 ): Action {
     val computedReferenceType = location.declaringType() ?: return Action.STEP_OVER()
 
@@ -389,38 +370,46 @@ fun getStepOverAction(
         return previousSuitableLocation != null && previousSuitableLocation.lineNumber() > location.lineNumber()
     }
 
-    if (isBackEdgeLocation()) {
-        return Action.STEP_OVER()
+    val patchedLocation = if (isBackEdgeLocation()) {
+        // Pretend we had already did a backing step
+        computedReferenceType.allLineLocations()
+                .filter(::isLocationSuitable)
+                .first { it.lineNumber() == location.lineNumber() }
+    }
+    else {
+        location
     }
 
-    // Predict step over location by assuming that it will be next valid location in the range of current function.
-    // This prediction doesn't work in branching position when there're several valid location after current position.
-    val locations = computedReferenceType.allLineLocations()
-            .dropWhile { it != location }
+    val lambdaArgumentRanges = runReadAction {
+        inlineFunctionArguments.filterIsInstance<KtElement>().map {
+            val startLineNumber = it.getLineNumber(true) + 1
+            val endLineNumber = it.getLineNumber(false) + 1
+
+            startLineNumber..endLineNumber
+        }
+    }
+
+    val inlineRangeVariables = getInlineRangeLocalVariables(frameProxy)
+
+    // Try to find the range of inlined lines:
+    // - Lines from other files and from functions that are not in range of current one are definitely inlined
+    // - Lines in function arguments of inlined functions are inlined too as we found them starting from the position of inlined call.
+    //
+    // This heuristic doesn't work for DEX, because of missing strata information (https://code.google.com/p/android/issues/detail?id=82972)
+    //
+    // It also thinks that too many lines are inlined when there's a call of function argument or other
+    // inline function in last statement of inline function. The list of inlineRangeVariables is used to overcome it.
+    val probablyInlinedLocations = computedReferenceType.allLineLocations()
+            .dropWhile { it != patchedLocation }
             .drop(1)
-            .filter(::isLocationSuitable)
-            .dropWhile { it.lineNumber() == location.lineNumber() }
+            .dropWhile { it.lineNumber() == patchedLocation.lineNumber() }
+            .takeWhile { locationAtLine ->
+                !isLocationSuitable(locationAtLine) || lambdaArgumentRanges.any { locationAtLine.lineNumber() in it }
+            }
+            .dropWhile { it.lineNumber() == patchedLocation.lineNumber() }
 
-    for (locationAtLine in locations) {
-        val xPosition = runReadAction l@ {
-            val lineNumber = locationAtLine.lineNumber()
-            val lineStartOffset = file.getLineStartOffset(lineNumber - 1) ?: return@l null
-            if (inlinedArguments.any { it.textRange.contains(lineStartOffset) }) return@l null
-            if (elementsToSkip.any { it.textRange.contains(lineStartOffset) }) return@l null
-
-            if (locationAtLine.lineNumber() == location.lineNumber()) return@l null
-
-            val elementAt = file.findElementAt(lineStartOffset) ?: return@l null
-            XSourcePositionImpl.createByElement(elementAt)
-        }
-
-        if (xPosition != null) {
-            return Action.RUN_TO_CURSOR(xPosition)
-        }
-    }
-
-    if (locations.isNotEmpty()) {
-        return Action.STEP_OUT()
+    if (!probablyInlinedLocations.isEmpty()) {
+        return Action.STEP_OVER_INLINED(patchedLocation.lineNumber(), probablyInlinedLocations.map { it.lineNumber() }.toSet(), inlineRangeVariables)
     }
 
     return Action.STEP_OVER()
@@ -505,6 +494,15 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
     }
 
     return null
+}
+
+private fun getInlineRangeLocalVariables(stackFrame: StackFrameProxyImpl): List<LocalVariable> {
+    return stackFrame.visibleVariables()
+            .filter {
+                val name = it.name()
+                name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
+            }
+            .map { it.variable }
 }
 
 private fun getInlineArgumentIfAny(elementAt: PsiElement?): KtFunctionLiteral? {
