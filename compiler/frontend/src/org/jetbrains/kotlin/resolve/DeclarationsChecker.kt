@@ -657,8 +657,8 @@ class DeclarationsChecker(
             }
         }
         else {
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit &&
-                trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false) {
+            val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && isUninitialized) {
                 if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
@@ -668,6 +668,9 @@ class DeclarationsChecker(
             }
             else if (property.typeReference == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
+            }
+            if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized) {
+                trace.report(UNNECESSARY_LATEINIT.on(property))
             }
         }
     }
