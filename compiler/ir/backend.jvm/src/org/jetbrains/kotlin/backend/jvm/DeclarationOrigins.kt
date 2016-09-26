@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.declarations
+package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
-interface IrAnonymousInitializer : IrDeclaration {
-    override val descriptor: ClassDescriptor // TODO special descriptor for anonymous initializer blocks
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.ANONYMOUS_INITIALIZER
-
-    var body: IrBlockBody
+object JvmDeclarationOrigins {
+    object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
 }
-

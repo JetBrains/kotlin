@@ -46,7 +46,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     val type: Type = typeMapper.mapType(descriptor)
 
-    val psiElement = irClass.descriptor.psiElement
+    val psiElement = irClass.descriptor.psiElement!!
 
     val visitor: ClassBuilder = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
 
@@ -91,21 +91,13 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     fun generateDeclaration(declaration: IrDeclaration) {
         when (declaration) {
-            is IrProperty -> {
-                declaration.backingField?.let {
-                    generateField(it)
-                }
-
-                declaration.getter?.let {
-                    generateMethod(it)
-                }
-
-                declaration.setter?.let {
-                    generateMethod(it)
-                }
-            }
+            is IrField ->
+                generateField(declaration)
             is IrFunction -> {
                 generateMethod(declaration)
+            }
+            is IrAnonymousInitializer -> {
+                // skip
             }
             else -> throw RuntimeException("Unsupported declaration $declaration")
         }
@@ -161,11 +153,17 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
         else -> throw RuntimeException("Unsupported modality $modality for descriptor $this")
     }
 
+    if (this is CallableMemberDescriptor) {
+        if (this !is ConstructorDescriptor && dispatchReceiverParameter == null) {
+            flags = flags or Opcodes.ACC_STATIC
+        }
+    }
+
     return flags
 }
 
-val DeclarationDescriptorWithSource.psiElement: PsiElement
-    get() = (source as PsiSourceElement).psi!!
+val DeclarationDescriptorWithSource.psiElement: PsiElement?
+    get() = (source as? PsiSourceElement)?.psi
 
 val IrField.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
@@ -173,7 +171,12 @@ val IrField.OtherOrigin: JvmDeclarationOrigin
 val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)
 
-fun ClassDescriptor.getMemberOwnerKind(): OwnerKind = when (this) {
-    is FileClassDescriptor -> OwnerKind.PACKAGE
-    else -> OwnerKind.IMPLEMENTATION
+fun DeclarationDescriptor.getMemberOwnerKind(): OwnerKind = when (this) {
+    is FileClassDescriptor ->
+        OwnerKind.PACKAGE
+    is PackageFragmentDescriptor,
+    is ClassDescriptor ->
+        OwnerKind.IMPLEMENTATION
+    else ->
+        throw AssertionError("Unexpected declaration container: $this")
 }

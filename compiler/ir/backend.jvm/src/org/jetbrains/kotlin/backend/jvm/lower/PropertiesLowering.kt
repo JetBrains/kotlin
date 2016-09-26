@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.jvm.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -26,8 +27,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-class PropertiesLowering : IrElementTransformerVoid() {
-    fun lower(irFile: IrFile) {
+class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
 
@@ -44,18 +45,18 @@ class PropertiesLowering : IrElementTransformerVoid() {
     }
 
     private fun transformDeclarations(declarations: MutableList<IrDeclaration>) {
-        val properties = linkedSetOf<IrProperty>()
-
-        declarations.filterIsInstanceTo(properties)
-
-        declarations.removeAll(properties)
-
-        properties.flatMapTo(declarations) { irProperty ->
-            val result = ArrayList<IrDeclaration>(3)
-            result.addIfNotNull(irProperty.backingField)
-            result.addIfNotNull(irProperty.getter)
-            result.addIfNotNull(irProperty.setter)
-            result
+        val newDeclarations = ArrayList<IrDeclaration>()
+        for (declaration in declarations) {
+            if (declaration is IrProperty) {
+                newDeclarations.addIfNotNull(declaration.backingField)
+                newDeclarations.addIfNotNull(declaration.getter)
+                newDeclarations.addIfNotNull(declaration.setter)
+            }
+            else {
+                newDeclarations.add(declaration)
+            }
         }
+        declarations.clear()
+        declarations.addAll(newDeclarations)
     }
 }

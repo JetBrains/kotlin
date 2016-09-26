@@ -238,6 +238,26 @@ class ExpressionCodegen(
         return generateLocal(expression.descriptor, expression.asmType)
     }
 
+    private fun generateFieldValue(expression: IrFieldAccessExpression, data: BlockInfo): StackValue {
+        val receiverValue = expression.receiver?.accept(this, data) ?: StackValue.none()
+        val propertyDescriptor = expression.descriptor
+        val fieldType = typeMapper.mapType(propertyDescriptor.type)
+        val ownerType = typeMapper.mapImplementationOwner(propertyDescriptor)
+        val fieldName = propertyDescriptor.name.asString()
+        val isStatic = expression.receiver == null // TODO
+        return StackValue.field(fieldType, ownerType, fieldName, isStatic, receiverValue, propertyDescriptor)
+    }
+
+    override fun visitGetField(expression: IrGetField, data: BlockInfo): StackValue {
+        return generateFieldValue(expression, data)
+    }
+
+    override fun visitSetField(expression: IrSetField, data: BlockInfo): StackValue {
+        val fieldValue = generateFieldValue(expression, data)
+        fieldValue.store(expression.value.accept(this, data), mv)
+        return expression.onStack
+    }
+
     private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
         StackValue.local(frame.getIndex(descriptor), type).put(type, mv)
         return onStack(type)

@@ -23,7 +23,6 @@ interface IrDeclarationOrigin {
     object DELEGATE : IrDeclarationOriginImpl("DELEGATE")
     object DELEGATED_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("DELEGATED_PROPERTY_ACCESSOR")
     object DELEGATED_MEMBER : IrDeclarationOriginImpl("DELEGATED_MEMBER")
-    object CLASS_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("CLASS_FOR_ENUM_ENTRY")
     object ENUM_CLASS_SPECIAL_MEMBER : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER")
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
     object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")

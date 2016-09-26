@@ -37,5 +37,5 @@ interface IrField : IrDeclaration {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FIELD
 
-    var initializer: IrBody?
+    var initializer: IrExpressionBody?
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.jvm.FileLoweringPass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import java.util.*
 
-class FileClassLowering(val jvmFileClassProvider: JvmFileClassProvider) {
-    fun lower(irFile: IrFile) {
+class FileClassLowering(val jvmFileClassProvider: JvmFileClassProvider) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()
         val fileClassMembers = ArrayList<IrDeclaration>()
 

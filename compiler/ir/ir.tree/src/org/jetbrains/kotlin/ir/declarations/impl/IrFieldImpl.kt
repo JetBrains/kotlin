@@ -32,12 +32,12 @@ class IrFieldImpl(
         override val descriptor: PropertyDescriptor
 ): IrDeclarationBase(startOffset, endOffset, origin), IrField {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
-                initializer: IrBody?
+                initializer: IrExpressionBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }
 
-    override var initializer: IrBody? = null
+    override var initializer: IrExpressionBody? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)
@@ -48,6 +48,6 @@ class IrFieldImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializer = initializer?.transform(transformer, data)
+        initializer = initializer?.transform(transformer, data) as? IrExpressionBody
     }
 }

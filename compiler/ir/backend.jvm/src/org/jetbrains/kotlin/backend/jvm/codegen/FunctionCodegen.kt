@@ -24,7 +24,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen) {
-
     fun generate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
         val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), irFunction.descriptor)

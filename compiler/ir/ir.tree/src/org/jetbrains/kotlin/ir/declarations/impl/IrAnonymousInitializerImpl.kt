@@ -34,12 +34,12 @@ class IrAnonymousInitializerImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrAnonymousInitializer {
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-            body: IrBody
+            body: IrBlockBody
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }
 
-    override lateinit var body: IrBody
+    override lateinit var body: IrBlockBody
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousInitializer(this, data)
@@ -50,6 +50,6 @@ class IrAnonymousInitializerImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        body = body.transform(transformer, data)
+        body = body.transform(transformer, data) as IrBlockBody
     }
 }

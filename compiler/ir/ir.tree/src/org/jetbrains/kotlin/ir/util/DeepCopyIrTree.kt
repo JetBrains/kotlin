@@ -137,7 +137,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     declaration.startOffset, declaration.endOffset,
                     mapDeclarationOrigin(declaration.origin),
                     mapPropertyDeclaration(declaration.descriptor),
-                    declaration.initializer?.transform(this, null)
+                    declaration.initializer?.transform(this, null) as? IrExpressionBody
             )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
@@ -164,7 +164,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     declaration.startOffset, declaration.endOffset,
                     mapDeclarationOrigin(declaration.origin),
                     mapClassDeclaration(declaration.descriptor),
-                    declaration.body.transform(this, null)
+                    declaration.body.transform(this, null) as IrBlockBody
             )
 
     override fun visitVariable(declaration: IrVariable): IrVariable =

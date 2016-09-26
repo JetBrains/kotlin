@@ -17,12 +17,38 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassLowering
+import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.jvm.lower.PropertiesLowering
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
         FileClassLowering(context.jvmFileClassProvider).lower(irFile)
         PropertiesLowering().lower(irFile)
+        InitializersLowering().runOnNormalizedFile(irFile)
     }
+}
+
+interface FileLoweringPass {
+    fun lower(irFile: IrFile
+    )
+}
+
+interface ClassLoweringPass {
+    fun lower(irClass: IrClass)
+}
+
+fun ClassLoweringPass.runOnNormalizedFile(irFile: IrFile) {
+    fun runPostfix(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.forEach {
+            if (it is IrClass) {
+                runPostfix(it)
+                lower(it)
+            }
+        }
+    }
+
+    runPostfix(irFile)
 }
