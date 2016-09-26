@@ -1,7 +1,0 @@
-class My {
-    lateinit var x: String
-
-    init {
-        x = "My"
-    }
-}

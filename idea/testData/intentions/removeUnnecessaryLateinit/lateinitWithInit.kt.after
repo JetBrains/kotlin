@@ -1,9 +1,0 @@
-// INTENTION_TEXT: Remove unnecessary lateinit
-
-class Foo {
-    var bar: String
-
-    init {
-        bar = ""
-    }
-}

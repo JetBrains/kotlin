@@ -1274,11 +1274,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveUnnecessaryLateinitIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveSingleExpressionStringTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1658,14 +1653,6 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveSetterParameterTypeInspection"
                      displayName="Redundant setter parameter type"
-                     groupName="Kotlin"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveUnnecessaryLateinitInspection"
-                     displayName="Unnecessary lateinit"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
