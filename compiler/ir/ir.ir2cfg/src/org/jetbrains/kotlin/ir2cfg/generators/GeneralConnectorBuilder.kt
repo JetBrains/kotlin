@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.ir2cfg.generators
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.builders.BlockConnectorBuilder
 import org.jetbrains.kotlin.ir2cfg.graph.BasicBlock
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-class GeneralConnectorBuilder(private val element: IrElement) : BlockConnectorBuilder {
+class GeneralConnectorBuilder(private val element: IrStatement) : BlockConnectorBuilder {
 
     private val next = linkedSetOf<BasicBlock>()
 

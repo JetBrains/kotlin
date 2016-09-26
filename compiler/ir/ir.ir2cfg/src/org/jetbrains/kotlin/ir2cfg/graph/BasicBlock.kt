@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.ir2cfg.graph
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 
 interface BasicBlock : CfgNode {
 
-    val elements: List<IrElement>
+    val elements: List<IrStatement>
 
     val incoming: BlockConnector?
 

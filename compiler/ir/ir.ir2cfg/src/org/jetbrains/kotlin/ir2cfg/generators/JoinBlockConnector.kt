@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.ir2cfg.generators
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.graph.BasicBlock
 import org.jetbrains.kotlin.ir2cfg.graph.BlockConnector
 
 class JoinBlockConnector(
         override val previousBlocks: List<BasicBlock>,
-        override val element: IrElement,
+        override val element: IrStatement,
         next: BasicBlock?
 ) : BlockConnector {
 

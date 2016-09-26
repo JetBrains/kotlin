@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.ir2cfg.builders
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.graph.ControlFlowGraph
 
 interface ControlFlowGraphBuilder {
     // Add element to the builder pointer
-    fun add(element: IrElement)
+    fun add(element: IrStatement)
 
     // Move builder pointer to element without changing graph
-    fun move(to: IrElement)
+    fun move(to: IrStatement)
 
     // Connect builder pointer with the given element and move pointer to this element
-    fun jump(to: IrElement)
+    fun jump(to: IrStatement)
 
     // Connect from with to and move pointer to the destination
-    fun jump(to: IrElement, from: IrElement)
+    fun jump(to: IrStatement, from: IrStatement)
 
     // Build CFG from builder
     fun build(): ControlFlowGraph

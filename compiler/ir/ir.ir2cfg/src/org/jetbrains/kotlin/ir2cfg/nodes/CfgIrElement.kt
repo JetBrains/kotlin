@@ -16,6 +16,6 @@
 
 package org.jetbrains.kotlin.ir2cfg.nodes
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 
-interface CfgIrElement : IrElement
+interface CfgIrElement : IrStatement

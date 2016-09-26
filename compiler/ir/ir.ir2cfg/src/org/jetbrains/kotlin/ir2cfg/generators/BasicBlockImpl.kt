@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.ir2cfg.generators
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.graph.BasicBlock
 import org.jetbrains.kotlin.ir2cfg.graph.BlockConnector
 
-class BasicBlockImpl(override val elements: List<IrElement>) : BasicBlock {
+class BasicBlockImpl(override val elements: List<IrStatement>) : BasicBlock {
 
     override var incoming: BlockConnector? = null
         internal set(arg) {

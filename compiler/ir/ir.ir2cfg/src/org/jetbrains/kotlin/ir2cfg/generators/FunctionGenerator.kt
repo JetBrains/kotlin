@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir2cfg.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -32,9 +33,9 @@ class FunctionGenerator(val function: IrFunction) {
 
     val exit = MergeCfgElement(function, "Function exit")
 
-    val loopEntries = mutableMapOf<IrLoop, IrElement>()
+    val loopEntries = mutableMapOf<IrLoop, IrStatement>()
 
-    val loopExits = mutableMapOf<IrLoop, IrElement>()
+    val loopExits = mutableMapOf<IrLoop, IrStatement>()
 
     fun generate(): ControlFlowGraph {
         val visitor = FunctionVisitor()
@@ -42,11 +43,11 @@ class FunctionGenerator(val function: IrFunction) {
         return builder.build()
     }
 
-    inner class FunctionVisitor : IrElementVisitor<IrElement?, Boolean> {
+    inner class FunctionVisitor : IrElementVisitor<IrStatement?, Boolean> {
 
         inline fun <reified IE : IrElement> IE.process(includeSelf: Boolean = true) = this.accept(this@FunctionVisitor, includeSelf)
 
-        override fun visitFunction(declaration: IrFunction, data: Boolean): IrElement? {
+        override fun visitFunction(declaration: IrFunction, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(declaration)
             }
@@ -57,8 +58,8 @@ class FunctionGenerator(val function: IrFunction) {
             return result
         }
 
-        private fun IrStatementContainer.process(): IrElement? {
-            var result: IrElement? = null
+        private fun IrStatementContainer.process(): IrStatement? {
+            var result: IrStatement? = null
             for (statement in statements) {
                 result = statement.process()
             }
@@ -67,15 +68,15 @@ class FunctionGenerator(val function: IrFunction) {
 
         private fun IrElement?.isNothing() = this is IrExpression && KotlinBuiltIns.isNothing(type)
 
-        override fun visitBlockBody(body: IrBlockBody, data: Boolean): IrElement? {
+        override fun visitBlockBody(body: IrBlockBody, data: Boolean): IrStatement? {
             return body.process()
         }
 
-        override fun visitBlock(expression: IrBlock, data: Boolean): IrElement? {
+        override fun visitBlock(expression: IrBlock, data: Boolean): IrStatement? {
             return expression.process() ?: expression
         }
 
-        override fun visitVariable(declaration: IrVariable, data: Boolean): IrElement? {
+        override fun visitVariable(declaration: IrVariable, data: Boolean): IrStatement? {
             declaration.initializer?.process()
             return if (data) {
                 builder.add(declaration)
@@ -84,7 +85,7 @@ class FunctionGenerator(val function: IrFunction) {
             else null
         }
 
-        override fun visitReturn(expression: IrReturn, data: Boolean): IrElement? {
+        override fun visitReturn(expression: IrReturn, data: Boolean): IrStatement? {
             expression.value.process()
             if (data) {
                 builder.add(expression)
@@ -93,21 +94,18 @@ class FunctionGenerator(val function: IrFunction) {
             return expression
         }
 
-        override fun visitExpressionBody(body: IrExpressionBody, data: Boolean): IrElement? {
-            if (data) {
-                builder.add(body)
-            }
+        override fun visitExpressionBody(body: IrExpressionBody, data: Boolean): IrStatement? {
             return body.expression.process()
         }
 
-        override fun visitExpression(expression: IrExpression, data: Boolean): IrElement? {
+        override fun visitExpression(expression: IrExpression, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(expression)
             }
             return expression
         }
 
-        override fun visitWhen(expression: IrWhen, data: Boolean): IrElement? {
+        override fun visitWhen(expression: IrWhen, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(expression)
             }
@@ -131,7 +129,7 @@ class FunctionGenerator(val function: IrFunction) {
             return whenExit
         }
 
-        override fun visitWhileLoop(loop: IrWhileLoop, data: Boolean): IrElement? {
+        override fun visitWhileLoop(loop: IrWhileLoop, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(loop)
             }
@@ -151,7 +149,7 @@ class FunctionGenerator(val function: IrFunction) {
             return exit
         }
 
-        override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Boolean): IrElement? {
+        override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(loop)
             }
@@ -172,7 +170,7 @@ class FunctionGenerator(val function: IrFunction) {
             return exit
         }
 
-        override fun visitBreak(jump: IrBreak, data: Boolean): IrElement? {
+        override fun visitBreak(jump: IrBreak, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(jump)
             }
@@ -180,7 +178,7 @@ class FunctionGenerator(val function: IrFunction) {
             return jump
         }
 
-        override fun visitContinue(jump: IrContinue, data: Boolean): IrElement? {
+        override fun visitContinue(jump: IrContinue, data: Boolean): IrStatement? {
             if (data) {
                 builder.add(jump)
             }
@@ -188,7 +186,7 @@ class FunctionGenerator(val function: IrFunction) {
             return jump
         }
 
-        override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Boolean): IrElement? {
+        override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Boolean): IrStatement? {
             expression.dispatchReceiver?.process()
             expression.extensionReceiver?.process()
             for (valueParameter in expression.descriptor.valueParameters) {
@@ -200,7 +198,7 @@ class FunctionGenerator(val function: IrFunction) {
             return expression
         }
 
-        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Boolean): IrElement? {
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Boolean): IrStatement? {
             expression.argument.process()
             if (data) {
                 builder.add(expression)
@@ -208,7 +206,7 @@ class FunctionGenerator(val function: IrFunction) {
             return expression
         }
 
-        override fun visitElement(element: IrElement, data: Boolean): IrElement? {
+        override fun visitElement(element: IrElement, data: Boolean): IrStatement? {
             TODO("not implemented")
         }
     }

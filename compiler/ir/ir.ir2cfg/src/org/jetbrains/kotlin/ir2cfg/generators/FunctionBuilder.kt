@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir2cfg.generators
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir2cfg.builders.BasicBlockBuilder
 import org.jetbrains.kotlin.ir2cfg.builders.BlockConnectorBuilder
@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.ir2cfg.graph.ControlFlowGraph
 
 class FunctionBuilder(val function: IrFunction)  : ControlFlowGraphBuilder {
 
-    private val blockBuilderMap = mutableMapOf<IrElement, BasicBlockBuilder>()
+    private val blockBuilderMap = mutableMapOf<IrStatement, BasicBlockBuilder>()
 
     private var currentBlockBuilder: BasicBlockBuilder? = null
 
     private val blocks = mutableListOf<BasicBlock>()
 
-    private val connectorBuilderMap = mutableMapOf<IrElement, BlockConnectorBuilder>()
+    private val connectorBuilderMap = mutableMapOf<IrStatement, BlockConnectorBuilder>()
 
     private fun createBlockBuilder(after: BlockConnectorBuilder?): BasicBlockBuilder {
         val result = GeneralBlockBuilder(after)
@@ -41,25 +41,25 @@ class FunctionBuilder(val function: IrFunction)  : ControlFlowGraphBuilder {
         return result
     }
 
-    private fun BasicBlockBuilder.shiftTo(element: IrElement) {
+    private fun BasicBlockBuilder.shiftTo(element: IrStatement) {
         blockBuilderMap.remove(last)
         add(element)
         blockBuilderMap[element] = this
     }
 
-    override fun add(element: IrElement) {
+    override fun add(element: IrStatement) {
         val blockBuilder = currentBlockBuilder ?: createBlockBuilder(connectorBuilderMap[element])
         blockBuilder.shiftTo(element)
     }
 
-    override fun move(to: IrElement) {
+    override fun move(to: IrStatement) {
         val blockBuilder = blockBuilderMap[to]
                            ?: connectorBuilderMap[to]?.let { createBlockBuilder(it) }
                            ?: throw AssertionError("Function generator may move to an element only to the end of a block or to connector")
         currentBlockBuilder = blockBuilder
     }
 
-    override fun jump(to: IrElement) {
+    override fun jump(to: IrStatement) {
         val blockBuilder = currentBlockBuilder
                            ?: throw AssertionError("Function generator: no default block builder for jump")
         val block = blockBuilder.build()
@@ -74,7 +74,7 @@ class FunctionBuilder(val function: IrFunction)  : ControlFlowGraphBuilder {
         move(to)
     }
 
-    override fun jump(to: IrElement, from: IrElement) {
+    override fun jump(to: IrStatement, from: IrStatement) {
         currentBlockBuilder = blockBuilderMap[from]
         if (currentBlockBuilder == null) {
             val blockBuilder = connectorBuilderMap[from]?.let { createBlockBuilder(it) }

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.ir2cfg.graph
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 
 interface BlockConnector : CfgNode {
 
     val previousBlocks: List<BasicBlock>
 
-    val element: IrElement
+    val element: IrStatement
 
     val nextBlocks: List<BasicBlock>
 

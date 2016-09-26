@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.ir2cfg.builders
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.graph.BasicBlock
 
 interface BasicBlockBuilder {
 
     val incoming: BlockConnectorBuilder?
 
-    fun add(element: IrElement)
+    fun add(element: IrStatement)
 
-    val last: IrElement?
+    val last: IrStatement?
 
     fun build(): BasicBlock
 }
