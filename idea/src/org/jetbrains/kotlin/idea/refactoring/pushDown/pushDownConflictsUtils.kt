@@ -24,6 +24,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -50,7 +51,7 @@ fun analyzePushDownConflicts(context: KotlinPushDownContext,
     val membersToKeepAbstract = ArrayList<KtNamedDeclaration>()
     for (info in context.membersToMove) {
         val member = info.member
-        if (!info.isChecked || (member is KtClassOrObject && info.overrides != null)) continue
+        if (!info.isChecked || ((member is KtClassOrObject || member is KtPsiClassWrapper) && info.overrides != null)) continue
 
         membersToPush += member
         if ((member is KtNamedFunction || member is KtProperty)

@@ -31,10 +31,12 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -62,7 +64,12 @@ class KotlinPushDownContext(
 
     val memberDescriptors = membersToMove
             .map { it.member }
-            .keysToMap { sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!! }
+            .keysToMap {
+                when (it) {
+                    is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
+                    else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
+                }
+            }
 }
 
 class KotlinPushDownProcessor(
@@ -161,7 +168,7 @@ class KotlinPushDownProcessor(
                     }
                 }
 
-                is KtClassOrObject -> {
+                is KtClassOrObject, is KtPsiClassWrapper -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getSuperTypeEntryByDescriptor(
                                 memberDescriptor as ClassDescriptor,
@@ -202,7 +209,7 @@ class KotlinPushDownProcessor(
                         member.delete()
                     }
                 }
-                is KtClassOrObject -> {
+                is KtClassOrObject, is KtPsiClassWrapper -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getSuperTypeEntryByDescriptor(
                                 memberDescriptor as ClassDescriptor,

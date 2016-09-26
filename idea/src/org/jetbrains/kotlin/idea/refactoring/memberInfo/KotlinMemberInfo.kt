@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -49,11 +49,11 @@ class KotlinMemberInfo @JvmOverloads constructor(
     }
 
     init {
-        val memberDescriptor = member.resolveToDescriptor()
+        val memberDescriptor = member.resolveToDescriptorWrapperAware()
         isStatic = member.parent is KtFile
 
-        if (member is KtClass && isSuperClass) {
-            if (member.isInterface()) {
+        if ((member is KtClass || member is KtPsiClassWrapper) && isSuperClass) {
+            if (member.isInterfaceClass()) {
                 displayName = RefactoringBundle.message("member.info.implements.0", member.name)
                 overrides = false
             }
@@ -86,6 +86,7 @@ fun lightElementForMemberInfo(declaration: KtNamedDeclaration?): PsiMember? {
             it.firstIsInstanceOrNull<PsiMethod>() ?: it.firstIsInstanceOrNull<PsiField>()
         } as PsiMember?
         is KtClassOrObject -> declaration.toLightClass()
+        is KtPsiClassWrapper -> declaration.psiClass
         else -> null
     }
 }

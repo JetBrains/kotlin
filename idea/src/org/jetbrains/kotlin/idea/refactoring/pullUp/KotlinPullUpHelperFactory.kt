@@ -23,13 +23,13 @@ import com.intellij.refactoring.memberPullUp.JavaPullUpHelper
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.memberPullUp.PullUpHelperFactory
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.createJavaClass
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.toKtDeclarationWrapperAware
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -38,7 +38,7 @@ class KotlinPullUpHelperFactory : PullUpHelperFactory {
         val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
         val membersToMove = membersToMove
-                .mapNotNull { it.namedUnwrappedElement as? KtNamedDeclaration }
+                .mapNotNull { it.toKtDeclarationWrapperAware() }
                 .sortedBy { it.startOffset }
         return KotlinPullUpData(sourceClass, targetClass, membersToMove)
     }
@@ -56,7 +56,7 @@ class KotlinPullUpHelperFactory : PullUpHelperFactory {
 }
 
 class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
-    private fun createJavaToKotlinPullUpHelper(data: PullUpData): JavaToKotlinPreconversionPullUpHelper? {
+    private fun createJavaToKotlinPullUpHelper(data: PullUpData): PullUpHelper<*>? {
         if (!data.sourceClass.isInheritor(data.targetClass, true)) return null
         val dummyTargetClass = createDummyTargetClass(data) ?: return null
         val dataForDelegate = object : PullUpData by data {
@@ -96,6 +96,8 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
     }
 
     override fun createPullUpHelper(data: PullUpData): PullUpHelper<*> {
+        if (data.sourceClass is KtLightClass) return KotlinPullUpHelperFactory().createPullUpHelper(data)
+
         createJavaToKotlinPullUpHelper(data)?.let { return it }
 
         return PullUpHelper.INSTANCE

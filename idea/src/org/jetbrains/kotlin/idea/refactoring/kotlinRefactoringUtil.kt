@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntenti
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
@@ -714,7 +715,12 @@ fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinName
 
 fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
 
-fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
+fun PsiNamedElement.isInterfaceClass(): Boolean = when (this) {
+    is KtClass -> isInterface()
+    is PsiClass -> isInterface
+    is KtPsiClassWrapper -> psiClass.isInterface
+    else -> false
+}
 
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
         originalList: ListType,
