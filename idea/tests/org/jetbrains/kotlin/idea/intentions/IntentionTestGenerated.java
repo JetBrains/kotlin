@@ -3140,9 +3140,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("simpleStringLiteral.kt")
+            public void testSimpleStringLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/simpleStringLiteral.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("super.kt")
             public void testSuper() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/super.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("twoArgsContainsFromJava.kt")
+            public void testTwoArgsContainsFromJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/twoArgsContainsFromJava.kt");
                 doTest(fileName);
             }
 
