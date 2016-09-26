@@ -148,6 +148,12 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kotlinAndJavaChecker/javaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("InnerClassWithoutName.kt")
+        public void testInnerClassWithoutName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaWithKotlin/InnerClassWithoutName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoNotNullOnParameterInOverride.kt")
         public void testNoNotNullOnParameterInOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaWithKotlin/NoNotNullOnParameterInOverride.kt");
