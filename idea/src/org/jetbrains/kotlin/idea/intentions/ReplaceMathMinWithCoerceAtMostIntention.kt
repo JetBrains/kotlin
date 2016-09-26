@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class ReplaceMathMinWithCoerceAtMostInspection : IntentionBasedInspection<KtCallExpression>(ReplaceMathMinWithCoerceAtMostIntention::class)
-
 class ReplaceMathMinWithCoerceAtMostIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
         KtCallExpression::class.java, "Replace Math.min with coerceAtMost") {
 

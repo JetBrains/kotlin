@@ -1802,22 +1802,6 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceMathMaxWithCoerceAtLeastInspection"
-                     displayName="Replace Math.max with coerceAtLeast"
-                     groupName="Kotlin"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceMathMinWithCoerceAtMostInspection"
-                     displayName="Replace Math.min with coerceAtMost"
-                     groupName="Kotlin"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

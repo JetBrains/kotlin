@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class ReplaceMathMaxWithCoerceAtLeastInspection : IntentionBasedInspection<KtCallExpression>(ReplaceMathMaxWithCoerceAtLeastIntention::class)
-
 class ReplaceMathMaxWithCoerceAtLeastIntention() : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
         KtCallExpression::class.java, "Replace Math.max with coerceAtLeast") {
 
