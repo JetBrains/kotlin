@@ -42,9 +42,4 @@ class ReplaceMathMinWithCoerceAtMostIntention : SelfTargetingOffsetIndependentIn
     private fun isMinMethod(element: KtCallExpression) =
             element.calleeExpression?.text == "min" && element.valueArguments.size == 2 && element.isMethodCall("java.lang.Math.min")
 
-    private fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
-        val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
-        return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
-    }
-
 }

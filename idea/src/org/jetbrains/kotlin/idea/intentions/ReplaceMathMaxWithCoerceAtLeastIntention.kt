@@ -41,10 +41,4 @@ class ReplaceMathMaxWithCoerceAtLeastIntention() : SelfTargetingOffsetIndependen
 
     private fun isMaxMethod(element: KtCallExpression) =
             element.calleeExpression?.text == "max" && element.valueArguments.size == 2 && element.isMethodCall("java.lang.Math.max")
-
-    private fun KtCallExpression.isMethodCall(fqMethodName: String): Boolean {
-        val resolvedCall = this.getResolvedCall(this.analyze()) ?: return false
-        return resolvedCall.resultingDescriptor.fqNameUnsafe.asString() == fqMethodName
-    }
-
 }
