@@ -70,7 +70,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
     override fun isSoft(): Boolean = false
 
     private fun resolveToPsiElements(): Collection<PsiElement> {
-        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         return resolveToPsiElements(bindingContext, getTargetDescriptors(bindingContext))
     }
 

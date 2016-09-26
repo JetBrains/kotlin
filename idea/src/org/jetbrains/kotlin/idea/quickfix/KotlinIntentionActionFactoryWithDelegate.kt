@@ -76,7 +76,7 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> 
                 if (!diagnosticElement.isValid || !element.isValid) return@factory null
 
                 val currentDiagnostic =
-                        element.analyze(BodyResolveMode.PARTIAL)
+                        element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
                                 .diagnostics
                                 .forElement(diagnosticElement)
                                 .firstOrNull { DefaultErrorMessages.render(it) == diagnosticMessage } ?: return@factory null

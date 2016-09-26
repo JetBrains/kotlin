@@ -784,7 +784,7 @@ fun getQualifiedTypeArgumentList(initializer: KtExpression): KtTypeArgumentList?
 }
 
 fun addTypeArgumentsIfNeeded(expression: KtExpression, typeArgumentList: KtTypeArgumentList) {
-    val context = expression.analyze(BodyResolveMode.PARTIAL)
+    val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
     val call = expression.getCallWithAssert(context)
     val callElement = call.callElement as? KtCallExpression ?: return
     if (call.typeArgumentList != null) return

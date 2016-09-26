@@ -82,6 +82,11 @@ public class PseudocodeUtil {
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
             }
+
+            @Override
+            public boolean wantsDiagnostics() {
+                return false;
+            }
         };
         return new ControlFlowProcessor(mockTrace).generatePseudocode(declaration);
     }

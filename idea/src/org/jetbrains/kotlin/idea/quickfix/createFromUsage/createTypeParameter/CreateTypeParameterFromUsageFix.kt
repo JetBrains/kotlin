@@ -111,7 +111,7 @@ class CreateTypeParameterFromUsageFix(
                         }
                     }
                     is KtCallElement -> {
-                        if (it.analyze(BodyResolveMode.PARTIAL).diagnostics.forElement(it.calleeExpression!!).any {
+                        if (it.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS).diagnostics.forElement(it.calleeExpression!!).any {
                             it.factory in Errors.TYPE_INFERENCE_ERRORS
                         }) {
                             callsToExplicateArguments += it

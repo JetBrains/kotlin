@@ -99,7 +99,8 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     context.bindingContext,
                     files.toMutableList(),
                     CompilerConfiguration.EMPTY,
-                    generateClassFilter
+                    generateClassFilter,
+                    wantsDiagnostics = false
             )
             state.beforeCompile()
 

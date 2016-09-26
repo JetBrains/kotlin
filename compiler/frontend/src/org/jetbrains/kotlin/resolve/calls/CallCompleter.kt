@@ -94,9 +94,11 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
-            for (callChecker in callCheckers) {
-                callChecker.check(resolvedCall, reportOn, callCheckerContext)
+            if (context.trace.wantsDiagnostics()) {
+                val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+                for (callChecker in callCheckers) {
+                    callChecker.check(resolvedCall, reportOn, callCheckerContext)
+                }
             }
 
             resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)

@@ -37,14 +37,15 @@ public class BindingTraceContext implements BindingTrace {
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
-    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
+    @Nullable private final MutableDiagnosticsWithSuppression mutableDiagnostics;
+    @NotNull private final BindingTraceFilter filter;
 
     private final BindingContext bindingContext = new BindingContext() {
 
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
-            return mutableDiagnostics;
+            return mutableDiagnostics != null ? mutableDiagnostics : Diagnostics.Companion.getEMPTY();
         }
 
         @Override
@@ -78,28 +79,45 @@ public class BindingTraceContext implements BindingTrace {
     };
 
     public BindingTraceContext() {
+        this(BindingTraceFilter.Companion.getACCEPT_ALL());
+    }
+
+    public BindingTraceContext(BindingTraceFilter filter) {
         //noinspection ConstantConditions
-        this(TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create());
+        this(TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create(), filter);
     }
 
 
-    private BindingTraceContext(@NotNull MutableSlicedMap map) {
+    private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter) {
         this.map = map;
-        this.mutableDiagnostics = new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.Companion.getEMPTY());
+        this.mutableDiagnostics = !filter.getIgnoreDiagnostics()
+                                  ? new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.Companion.getEMPTY())
+                                  : null;
+        this.filter = filter;
     }
 
     @TestOnly
     public static BindingTraceContext createTraceableBindingTrace() {
-        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES));
+        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES), BindingTraceFilter.Companion.getACCEPT_ALL());
     }
 
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
+        if (mutableDiagnostics == null) {
+            return;
+        }
         mutableDiagnostics.report(diagnostic);
     }
 
     public void clearDiagnostics() {
-        mutableDiagnostics.clear();
+        if (mutableDiagnostics != null) {
+            mutableDiagnostics.clear();
+        }
+    }
+
+    @Override
+    public boolean wantsDiagnostics() {
+        return mutableDiagnostics != null;
     }
 
     @NotNull

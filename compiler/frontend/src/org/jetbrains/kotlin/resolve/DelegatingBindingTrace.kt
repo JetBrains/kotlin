@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.util.slicedMap.*
 
 open class DelegatingBindingTrace(private val parentContext: BindingContext,
                                   private val name: String,
-                                  withParentDiagnostics: Boolean = true) : BindingTrace {
+                                  withParentDiagnostics: Boolean = true,
+                                  private val filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL) : BindingTrace {
     private val map = if (BindingTraceContext.TRACK_REWRITES) TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) else SlicedMapImpl.create()
-    private val mutableDiagnostics: MutableDiagnosticsWithSuppression
+    private val mutableDiagnostics: MutableDiagnosticsWithSuppression?
 
     private inner class MyBindingContext : BindingContext {
-        override fun getDiagnostics(): Diagnostics = mutableDiagnostics
+        override fun getDiagnostics(): Diagnostics = mutableDiagnostics ?: Diagnostics.EMPTY
 
         override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
             return this@DelegatingBindingTrace.get(slice, key)
@@ -60,7 +61,9 @@ open class DelegatingBindingTrace(private val parentContext: BindingContext,
     private val bindingContext = MyBindingContext()
 
     init {
-        this.mutableDiagnostics = if (withParentDiagnostics)
+        this.mutableDiagnostics = if (filter.ignoreDiagnostics)
+            null
+        else if (withParentDiagnostics)
             MutableDiagnosticsWithSuppression(bindingContext, parentContext.diagnostics)
         else
             MutableDiagnosticsWithSuppression(bindingContext)
@@ -68,7 +71,11 @@ open class DelegatingBindingTrace(private val parentContext: BindingContext,
 
     constructor(parentContext: BindingContext,
                 debugName: String,
-                resolutionSubjectForMessage: Any?) : this(parentContext, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage)) {
+                resolutionSubjectForMessage: Any?,
+                filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL)
+        : this(parentContext,
+               AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage),
+               filter = filter) {
     }
 
     override fun getBindingContext(): BindingContext = bindingContext
@@ -130,12 +137,17 @@ open class DelegatingBindingTrace(private val parentContext: BindingContext,
 
     fun clear() {
         map.clear()
-        mutableDiagnostics.clear()
+        mutableDiagnostics?.clear()
     }
 
     override fun report(diagnostic: Diagnostic) {
+        if (mutableDiagnostics == null) {
+            return
+        }
         mutableDiagnostics.report(diagnostic)
     }
+
+    override fun wantsDiagnostics(): Boolean = mutableDiagnostics != null
 
     override fun toString(): String = name
 }

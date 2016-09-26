@@ -303,7 +303,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             resolutionFacade: ResolutionFacade
     ): Boolean {
         val functionLiteral = lambdaExpression.functionLiteral
-        val context = resolutionFacade.analyze(lambdaExpression, BodyResolveMode.PARTIAL)
+        val context = resolutionFacade.analyze(lambdaExpression, BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         return context.diagnostics.any { diagnostic ->
             val factory = diagnostic.factory
             val element = diagnostic.psiElement

@@ -609,9 +609,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
-        for (CallChecker checker : components.callCheckers) {
-            checker.check(resolvedCall, expression, callCheckerContext);
+        if (context.trace.wantsDiagnostics()) {
+            CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
+            for (CallChecker checker : components.callCheckers) {
+                checker.check(resolvedCall, expression, callCheckerContext);
+            }
         }
     }
 
@@ -910,7 +912,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (KtTokens.AUGMENTED_ASSIGNMENTS.contains(operationType)
                     || operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
                 ResolvedCall<?> resolvedCall = ignoreReportsTrace.get(INDEXED_LVALUE_SET, expression);
-                if (resolvedCall != null) {
+                if (resolvedCall != null && trace.wantsDiagnostics()) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
                     CallCheckerContext callCheckerContext = new CallCheckerContext(context, trace, components.languageVersionSettings);
@@ -979,9 +981,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
         resolvedCall.markCallAsCompleted();
 
-        CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
-        for (CallChecker checker : components.callCheckers) {
-            checker.check(resolvedCall, expression, callCheckerContext);
+        if (context.trace.wantsDiagnostics()) {
+            CallCheckerContext callCheckerContext = new CallCheckerContext(context, components.languageVersionSettings);
+            for (CallChecker checker : components.callCheckers) {
+                checker.check(resolvedCall, expression, callCheckerContext);
+            }
         }
     }
 

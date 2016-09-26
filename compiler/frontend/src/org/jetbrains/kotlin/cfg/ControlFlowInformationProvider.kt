@@ -86,13 +86,17 @@ class ControlFlowInformationProvider private constructor(
 
         markUninitializedVariables()
 
-        markUnusedVariables()
+        if (trace.wantsDiagnostics()) {
+            markUnusedVariables()
+        }
 
         markStatements()
 
         markUnusedExpressions()
 
-        checkIfExpressions()
+        if (trace.wantsDiagnostics()) {
+            checkIfExpressions()
+        }
 
         checkWhenExpressions()
 
