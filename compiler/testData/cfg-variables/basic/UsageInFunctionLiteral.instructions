@@ -16,9 +16,9 @@ L0:
     v(val f = { x: Int -> val y = x + a use(a) })                     INIT: in: {a=ID} out: {a=ID, f=D}
     mark({ x: Int -> val y = x + a use(a) })                          INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     jmp?(L2)
-    d({ x: Int -> val y = x + a use(a) })                                                                        USE: in: {a=READ} out: {a=READ}
+    d({ x: Int -> val y = x + a use(a) })                             INIT: in: {a=I?, f=-} out: {a=I?, f=-}     USE: in: {a=READ} out: {a=READ}
 L2 [after local declaration]:
-    r({ x: Int -> val y = x + a use(a) }) -> <v1>
+    r({ x: Int -> val y = x + a use(a) }) -> <v1>                     INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     w(f|<v1>)                                                         INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
 L1:
   1 <END>                                                             INIT: in: {} out: {}
@@ -54,7 +54,7 @@ L4:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}                USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=I?, f=-, x=I?} out: {a=I?, f=-, x=I?}                USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a
@@ -71,5 +71,5 @@ L1:
 error:
     <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================

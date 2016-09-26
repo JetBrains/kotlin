@@ -27,7 +27,7 @@ L0:
     r(x|<v2>) -> <v3>
     w(a|<v3>)                                                                                        INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
   2 jmp?(L3)                                                                                         INIT: in: {x=ID} out: {x=ID}
-    d(fun foo() { val b = x })                                                                                                                  USE: in: {x=READ} out: {x=READ}
+    d(fun foo() { val b = x })                                                                       INIT: in: {x=I?} out: {x=I?}               USE: in: {x=READ} out: {x=READ}
 L2 [after local class]:
 L3 [after local declaration]:
     mark("after")
@@ -56,5 +56,5 @@ L5:
 error:
     <ERROR>                                INIT: in: {} out: {}
 sink:
-    <SINK>                                 INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
+    <SINK>                                 INIT: in: {x=I?} out: {x=I?}               USE: in: {} out: {}
 =====================

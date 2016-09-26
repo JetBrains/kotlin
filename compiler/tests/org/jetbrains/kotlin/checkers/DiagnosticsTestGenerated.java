@@ -3153,6 +3153,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("doWhileNotDefined.kt")
+            public void testDoWhileNotDefined() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/doWhileNotDefined.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("elvisNotProcessed.kt")
             public void testElvisNotProcessed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/elvisNotProcessed.kt");

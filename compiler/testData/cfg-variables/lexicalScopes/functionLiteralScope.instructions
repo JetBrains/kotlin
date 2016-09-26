@@ -19,9 +19,9 @@ L0:
     v(val f = { x: Int -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
     mark({ x: Int -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
-    d({ x: Int -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
+    d({ x: Int -> val a = x + b })                                              INIT: in: {b=I?, f=-} out: {b=I?, f=-}      USE: in: {b=READ} out: {b=READ}
 L2 [after local declaration]:
-    r({ x: Int -> val a = x + b }) -> <v2>
+    r({ x: Int -> val a = x + b }) -> <v2>                                      INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     w(f|<v2>)                                                                   INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
     mark("after")                                                               INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
     r("after") -> <v3>
@@ -54,5 +54,5 @@ L4:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}               USE: in: {} out: {}
+    <SINK>                                     INIT: in: {b=I?, f=-, x=I?} out: {b=I?, f=-, x=I?}               USE: in: {} out: {}
 =====================

@@ -22,7 +22,7 @@ L1:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID} out: {EAST=ID, NORTH=ID, SOUTH=ID, WEST=ID}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {EAST=I?, NORTH=I?, SOUTH=I?, WEST=I?} out: {EAST=I?, NORTH=I?, SOUTH=I?, WEST=I?}    USE: in: {} out: {}
 =====================
 == foo ==
 fun foo(dir: Direction): Int {
@@ -99,5 +99,5 @@ L1:
 error:
     <ERROR>                                                                                                                                                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                                                                                                                                                     INIT: in: {dir=ID} out: {dir=ID}                    USE: in: {} out: {}
+    <SINK>                                                                                                                                                                     INIT: in: {dir=I?} out: {dir=I?}                    USE: in: {} out: {}
 =====================

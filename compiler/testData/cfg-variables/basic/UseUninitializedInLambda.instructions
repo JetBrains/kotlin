@@ -15,7 +15,7 @@ L1:
 error:
     <ERROR>                                           INIT: in: {} out: {}
 sink:
-    <SINK>                                            INIT: in: {f=ID} out: {f=ID}    USE: in: {} out: {}
+    <SINK>                                            INIT: in: {f=I?} out: {f=I?}    USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -29,9 +29,9 @@ L0:
     v(var v: Any)                                   INIT: in: {} out: {v=D}
     mark({ v.hashCode() })                          INIT: in: {v=D} out: {v=D}
     jmp?(L2)
-    d({ v.hashCode() })                                                           USE: in: {v=READ} out: {v=READ}
+    d({ v.hashCode() })                             INIT: in: {v=-} out: {v=-}    USE: in: {v=READ} out: {v=READ}
 L2 [after local declaration]:
-    r({ v.hashCode() }) -> <v0>
+    r({ v.hashCode() }) -> <v0>                     INIT: in: {v=D} out: {v=D}
     mark(bar { v.hashCode() })
     call(bar { v.hashCode() }, bar|<v0>) -> <v1>
 L1:
@@ -56,5 +56,5 @@ L4:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {v=D} out: {v=D}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {v=-} out: {v=-}    USE: in: {} out: {}
 =====================

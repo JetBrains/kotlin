@@ -59,7 +59,7 @@ L1:
 error:
     <ERROR>                                                                                                       INIT: in: {} out: {}
 sink:
-    <SINK>                                                                                                        INIT: in: {numbers=ID} out: {numbers=ID}                            USE: in: {} out: {}
+    <SINK>                                                                                                        INIT: in: {numbers=I?} out: {numbers=I?}                            USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a
@@ -76,5 +76,5 @@ L1:
 error:
     <ERROR>                                            INIT: in: {} out: {}
 sink:
-    <SINK>                                             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                             INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================

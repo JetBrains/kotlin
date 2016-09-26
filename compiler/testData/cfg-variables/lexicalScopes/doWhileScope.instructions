@@ -15,9 +15,9 @@ L0:
   3 mark(do { var a = 2 } while (a > 0))
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({ var a = 2 })                                          INIT: in: {a=ID} out: {a=ID}
-    v(var a = 2)
-    r(2) -> <v1>
+    mark({ var a = 2 })                                          INIT: in: {a=I?} out: {a=I?}
+    v(var a = 2)                                                 INIT: in: {a=I?} out: {a=ID}
+    r(2) -> <v1>                                                 INIT: in: {a=ID} out: {a=ID}
     w(a|<v1>)
 L5 [body exit point]:
 L6 [condition entry point]:
