@@ -18,18 +18,24 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.indexing.IdFilter
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
@@ -59,6 +65,7 @@ class KotlinIndicesHelper(
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
     private val project = resolutionFacade.project
+    private val scopeWithoutKotlin = scope.excludeKotlinSources() as GlobalSearchScope
 
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
         if (it.isHiddenInResolution()) return@filter false
@@ -202,9 +209,10 @@ class KotlinIndicesHelper(
     }
 
     fun getJvmCallablesByName(name: String): Collection<CallableDescriptor> {
-        val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scope).asSequence() +
-                           PsiShortNamesCache.getInstance(project).getMethodsByName(name, scope).asSequence()
+        val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scopeWithoutKotlin).asSequence() +
+                               PsiShortNamesCache.getInstance(project).getMethodsByName(name, scopeWithoutKotlin).asSequence()
         return javaDeclarations
+                .filterNot { it is KtLightElement<*,*> }
                 .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) as? CallableDescriptor }
                 .filter(descriptorFilter)
                 .toSet()
@@ -298,11 +306,11 @@ class KotlinIndicesHelper(
         val shortNamesCache = PsiShortNamesCache.getInstance(project)
 
         val allMethodNames = hashSetOf<String>()
-        shortNamesCache.processAllMethodNames({ name -> if (nameFilter(name)) allMethodNames.add(name); true }, scope, idFilter)
+        shortNamesCache.processAllMethodNames({ name -> if (nameFilter(name)) allMethodNames.add(name); true }, scopeWithoutKotlin, idFilter)
         for (name in allMethodNames) {
             ProgressManager.checkCanceled()
 
-            for (method in shortNamesCache.getMethodsByName(name, scope)) {
+            for (method in shortNamesCache.getMethodsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 if (method.containingClass?.parent !is PsiFile) continue // only top-level classes
@@ -321,11 +329,11 @@ class KotlinIndicesHelper(
         }
 
         val allFieldNames = hashSetOf<String>()
-        shortNamesCache.processAllFieldNames({ name -> if (nameFilter(name)) allFieldNames.add(name); true }, scope, idFilter)
+        shortNamesCache.processAllFieldNames({ name -> if (nameFilter(name)) allFieldNames.add(name); true }, scopeWithoutKotlin, idFilter)
         for (name in allFieldNames) {
             ProgressManager.checkCanceled()
 
-            for (field in shortNamesCache.getFieldsByName(name, scope)) {
+            for (field in shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 val descriptor = field.getJavaFieldDescriptor() ?: continue

@@ -167,6 +167,78 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("importKotlinCompanionPropertyAsFieldFromJava.test")
+        public void testImportKotlinCompanionPropertyAsFieldFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionPropertyAsFieldFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinCompanionStaticFunctionFromJava.test")
+        public void testImportKotlinCompanionStaticFunctionFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionStaticFunctionFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinCompanionStaticPropertyDefaultGetterFromJava.test")
+        public void testImportKotlinCompanionStaticPropertyDefaultGetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionStaticPropertyDefaultGetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinCompanionStaticPropertyDefaultSetterFromJava.test")
+        public void testImportKotlinCompanionStaticPropertyDefaultSetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionStaticPropertyDefaultSetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinCompanionStaticPropertyOverloadedGetterFromJava.test")
+        public void testImportKotlinCompanionStaticPropertyOverloadedGetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionStaticPropertyOverloadedGetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinCompanionStaticPropertyOverloadedSetterFromJava.test")
+        public void testImportKotlinCompanionStaticPropertyOverloadedSetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinCompanionStaticPropertyOverloadedSetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinPropertyAsFieldFromJava.test")
+        public void testImportKotlinPropertyAsFieldFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinPropertyAsFieldFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinStaticFunctionFromJava.test")
+        public void testImportKotlinStaticFunctionFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticFunctionFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinStaticPropertyDefaultGetterFromJava.test")
+        public void testImportKotlinStaticPropertyDefaultGetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticPropertyDefaultGetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinStaticPropertyDefaultSetterFromJava.test")
+        public void testImportKotlinStaticPropertyDefaultSetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticPropertyDefaultSetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinStaticPropertyOverloadedGetterFromJava.test")
+        public void testImportKotlinStaticPropertyOverloadedGetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticPropertyOverloadedGetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("importKotlinStaticPropertyOverloadedSetterFromJava.test")
+        public void testImportKotlinStaticPropertyOverloadedSetterFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importKotlinStaticPropertyOverloadedSetterFromJava.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("importTrait.before.Main.kt")
         public void testImportTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/importTrait.before.Main.kt");
