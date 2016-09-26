@@ -3713,6 +3713,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("lateinitRecursiveInLambda.kt")
+                public void testLateinitRecursiveInLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit/lateinitRecursiveInLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("lateinitWithConstructor.kt")
                 public void testLateinitWithConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit/lateinitWithConstructor.kt");

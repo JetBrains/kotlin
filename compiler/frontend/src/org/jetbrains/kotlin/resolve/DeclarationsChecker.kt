@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.BindingContext.TYPE
-import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.types.IntersectionTypeConstructor
@@ -595,7 +594,10 @@ class DeclarationsChecker(
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
             if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized) {
-                trace.report(UNNECESSARY_LATEINIT.on(property))
+                if (trace[MUST_BE_LATEINIT, propertyDescriptor] ?: false) {}
+                else {
+                    trace.report(UNNECESSARY_LATEINIT.on(property))
+                }
             }
         }
     }
