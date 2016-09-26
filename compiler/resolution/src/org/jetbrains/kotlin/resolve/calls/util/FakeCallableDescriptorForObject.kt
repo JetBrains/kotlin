@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 class FakeCallableDescriptorForObject(
@@ -67,4 +68,7 @@ class FakeCallableDescriptorForObject(
     override fun equals(other: Any?) = other is FakeCallableDescriptorForObject && classDescriptor == other.classDescriptor
 
     override fun hashCode() = classDescriptor.hashCode()
+
+    override fun getContainingDeclaration() = classDescriptor.getClassObjectReferenceTarget().containingDeclaration
+    override fun substitute(substitutor: TypeSubstitutor) = TODO("Substitution of FakeCallableDescriptorForObject is not supported")
 }
