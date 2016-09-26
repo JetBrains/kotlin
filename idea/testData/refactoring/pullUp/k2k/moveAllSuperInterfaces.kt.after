@@ -1,4 +1,4 @@
-open class A: Z, X, Y {
+open class A: Z, X, Y, J {
 
 }
 

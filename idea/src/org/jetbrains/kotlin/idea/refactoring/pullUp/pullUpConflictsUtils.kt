@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.resolveToDescriptorWrapperAware
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -57,7 +58,7 @@ fun checkConflicts(project: Project,
     with(pullUpData) {
         for (memberInfo in memberInfos) {
             val member = memberInfo.member
-            val memberDescriptor = resolutionFacade.resolveToDescriptor(member)
+            val memberDescriptor = member.resolveToDescriptorWrapperAware(resolutionFacade)
 
             checkClashWithSuperDeclaration(member, memberDescriptor, conflicts)
             checkAccidentalOverrides(member, memberDescriptor, conflicts)
@@ -131,7 +132,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
                     .filterNot { it.isSourceOrTarget(this) }
                     .mapNotNull { it.unwrapped as? KtClassOrObject }
                     .forEach {
-                        val subClassDescriptor = resolutionFacade.resolveToDescriptor(it) as ClassDescriptor
+                        val subClassDescriptor = it.resolveToDescriptorWrapperAware(resolutionFacade) as ClassDescriptor
                         val substitutor = getTypeSubstitutor(targetClassDescriptor.defaultType,
                                                              subClassDescriptor.defaultType) ?: TypeSubstitutor.EMPTY
                         val memberDescriptorInSubClass =
@@ -142,7 +143,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
 
                         val message = memberDescriptor.renderForConflicts() +
                                       " in super class would clash with existing member of " +
-                                      resolutionFacade.resolveToDescriptor(it).renderForConflicts()
+                                      it.resolveToDescriptorWrapperAware(resolutionFacade).renderForConflicts()
                         conflicts.putValue(clashingMember, message.capitalize())
                     }
         }

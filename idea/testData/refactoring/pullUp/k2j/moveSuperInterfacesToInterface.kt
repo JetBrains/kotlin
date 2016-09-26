@@ -7,4 +7,4 @@ interface Y
 // INFO: {"checked": "true"}
 interface Z
 
-class <caret>B: I, X, Y, Z
+class <caret>B: I, X, Y, Z, J

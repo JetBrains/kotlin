@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -38,8 +38,8 @@ class KotlinMemberInfoStorage(
         filter: (KtNamedDeclaration) -> Boolean = { true }
 ): AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
     override fun memberConflict(member1: KtNamedDeclaration, member: KtNamedDeclaration): Boolean {
-        val descriptor1 = member1.resolveToDescriptor()
-        val descriptor = member.resolveToDescriptor()
+        val descriptor1 = member1.resolveToDescriptorWrapperAware()
+        val descriptor = member.resolveToDescriptorWrapperAware()
         if (descriptor1.name != descriptor.name) return false
 
         return when {
@@ -108,9 +108,14 @@ fun extractClassMembers(
                     val typeReference = it.typeReference ?: return@mapNotNull null
                     val type = typeReference.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
                     val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
-                    classDescriptor?.source?.getPsi() as? KtClass
+                    val classPsi = classDescriptor?.source?.getPsi()
+                    when (classPsi) {
+                        is KtClass -> classPsi
+                        is PsiClass -> KtPsiClassWrapper(classPsi)
+                        else -> null
+                    }
                 }
-        .filter { it.isInterface() }
+        .filter { it.isInterfaceClass() }
         .mapTo(result) { KotlinMemberInfo(it, true) }
     }
 

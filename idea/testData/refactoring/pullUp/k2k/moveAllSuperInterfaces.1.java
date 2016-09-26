@@ -1,7 +1,3 @@
-class A implements Z, X, J {
-
-}
-
 // INFO: {"checked": "true"}
 interface J {
 

@@ -25,6 +25,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -64,6 +65,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
 
         try {
             markMembersInfo(file)
+            extraFilesToPsi.keys.forEach(::markMembersInfo)
 
             action(file)
 
@@ -105,7 +107,8 @@ internal var PsiElement.elementInfo: ElementInfo by NotNullableUserDataProperty(
 
 internal fun <T : MemberInfoBase<*>> chooseMembers(members: List<T>): List<T> {
     members.forEach {
-        val info = it.member.elementInfo
+        val memberPsi = it.member.let { if (it is KtPsiClassWrapper) it.psiClass else it }
+        val info = memberPsi.elementInfo
         it.isChecked = info.checked
         it.isToAbstract = info.toAbstract
     }

@@ -29,10 +29,7 @@ import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
 import org.jetbrains.kotlin.psi.*
 
 class KotlinPullUpDialog(

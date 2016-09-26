@@ -20,7 +20,9 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getClassDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -45,11 +47,10 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
     val sourceClassDescriptor = sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, sourceClass] as ClassDescriptor
 
     val memberDescriptors = membersToMove.keysToMap {
-        if (it is KtParameter) {
-            sourceClassContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!!
-        }
-        else {
-            sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
+        when (it) {
+            is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
+            is KtParameter -> sourceClassContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!!
+            else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
         }
     }
 

@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -59,4 +63,14 @@ fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
         }
     }
     return childrenToCheck
+}
+
+internal fun KtNamedDeclaration.resolveToDescriptorWrapperAware(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor {
+    if (this is KtPsiClassWrapper) return psiClass.getJavaClassDescriptor(resolutionFacade)!!
+    return (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this)
+}
+
+internal fun PsiMember.toKtDeclarationWrapperAware(): KtNamedDeclaration? {
+    if (this is PsiClass && this !is KtLightClass) return KtPsiClassWrapper(this)
+    return namedUnwrappedElement as? KtNamedDeclaration
 }
