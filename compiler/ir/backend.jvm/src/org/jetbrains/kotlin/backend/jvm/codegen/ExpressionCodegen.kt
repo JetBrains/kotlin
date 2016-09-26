@@ -21,16 +21,16 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
@@ -415,6 +415,12 @@ class ExpressionCodegen(
         return super.visitDoWhileLoop(loop, data)
     }
 
+    override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
+        gen(expression.value, JAVA_THROWABLE_TYPE, data)
+        mv.athrow()
+        return expression.onStack
+    }
+
     private fun coerceNotToUnit(fromType: Type, toType: Type) {
         if (toType != AsmTypes.UNIT_TYPE) {
             coerce(fromType, toType, mv)
@@ -433,7 +439,12 @@ class ExpressionCodegen(
             return intrinsic.toCallable(irCall, typeMapper.mapSignatureSkipGeneric(irCall.descriptor as FunctionDescriptor), classCodegen.context)
         }
 
-        return typeMapper.mapToCallableMethod(irCall.descriptor as FunctionDescriptor, isSuper)
+        var descriptor = irCall.descriptor
+        if (descriptor is TypeAliasConstructorDescriptor) {
+            //TODO where is best to unwrap?
+            descriptor = descriptor.underlyingConstructorDescriptor
+        }
+        return typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, isSuper)
     }
 
     private val KotlinType.asmType: Type
