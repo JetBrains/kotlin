@@ -149,6 +149,27 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/anonymousClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnonymousClass extends AbstractJavaToKotlinConverterSingleFileTest {
+        public void testAllFilesPresentInAnonymousClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/anonymousClass"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("kt-13146.java")
+        public void testKt_13146() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousClass/kt-13146.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localSelfReference.java")
+        public void testLocalSelfReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousClass/localSelfReference.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/arrayAccessExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
