@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
+import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -71,13 +74,25 @@ fun match(loop: KtForExpression): MatchResult? {
     val loopContainsEmbeddedBreakOrContinue = loop.containsEmbeddedBreakOrContinue()
 
     val sequenceTransformations = ArrayList<SequenceTransformation>()
+
+    val pseudocodeProvider: () -> Pseudocode = object : () -> Pseudocode {
+        val pseudocode: Pseudocode by lazy {
+            val declaration = loop.containingDeclarationForPseudocode!!
+            val bindingContext = loop.analyze(BodyResolveMode.FULL)
+            PseudocodeUtil.generatePseudocode(declaration, bindingContext)
+        }
+
+        override fun invoke() = pseudocode
+    }
+
     var state = MatchingState(
             outerLoop = loop,
             innerLoop = loop,
             statements = listOf(loop.body ?: return null),
             inputVariable = inputVariable,
             indexVariable = indexVariable,
-            previousTransformations = sequenceTransformations
+            previousTransformations = sequenceTransformations,
+            pseudocodeProvider = pseudocodeProvider
     )
 
     MatchLoop@

@@ -16,28 +16,37 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
 
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtContinueExpression
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import java.util.*
 
 object IntroduceIndexMatcher : TransformationMatcher {
     override val indexVariableAllowed: Boolean
         get() = false // old index variable is still needed - cannot introduce another one
 
     override fun match(state: MatchingState): TransformationMatch.Sequence? {
-        if (state.statements.size < 2) return null
-        val operand = state.statements.last().isPlusPlusOf() ?: return null
-        val restStatements = state.statements.dropLast(1)
-
-        fun isContinueOfThisLoopOrOuter(continueExpression: KtContinueExpression): Boolean {
-            val targetLoop = continueExpression.targetLoop() ?: return true
-            return targetLoop.isAncestor(state.innerLoop, strict = false)
+        for (statement in state.statements) {
+            val unaryExpressions = statement.collectDescendantsOfType<KtUnaryExpression>(
+                    canGoInside = { it !is KtBlockExpression && it !is KtFunction }
+            )
+            for (unaryExpression in unaryExpressions) {
+                checkIndexCandidate(unaryExpression, state)?.let { return it }
+            }
         }
+        return null
+    }
 
-        // there should be no continuation of the loop in statements before index increment
-        if (restStatements.any { statement -> statement.anyDescendantOfType<KtContinueExpression>(::isContinueOfThisLoopOrOuter) }) return null
+    private fun checkIndexCandidate(incrementExpression: KtUnaryExpression, state: MatchingState): TransformationMatch.Sequence? {
+        val operand = incrementExpression.isPlusPlusOf() ?: return null
 
         val variableInitialization = operand.isVariableInitializedBeforeLoop(state.outerLoop, checkNoOtherUsagesInLoop = false)
                                      ?: return null
@@ -51,9 +60,51 @@ object IntroduceIndexMatcher : TransformationMatcher {
         //TODO: preform more precise analysis when variable can be used earlier or used later but value overwritten before that
         if (variable.countUsages() != variable.countUsages(state.statements + variableInitialization.initializationStatement)) return null
 
+        val pseudocode = state.pseudocodeProvider()
+        val firstStatement = state.statements.first()
+        val firstInstruction = pseudocode.instructionForElement(firstStatement)!!
+        val incrementInstruction = pseudocode.instructionForElement(incrementExpression)!!
+        if (!isAlwaysReachedOrExitedLoop(firstInstruction, incrementInstruction, state.outerLoop, state.innerLoop)) return null
+
+        val variableDescriptor = variable.resolveToDescriptor() as VariableDescriptor
+        if (isAccessedAfter(variableDescriptor, incrementInstruction, state.innerLoop)) return null // index accessed inside loop after increment
+
+        val restStatements = state.statements - incrementExpression // if it is among statements then drop it, otherwise "index++" will be replaced with "index" by generateLambda()
         val newState = state.copy(statements = restStatements,
                                   indexVariable = variable,
                                   initializationStatementsToDelete = state.initializationStatementsToDelete + variableInitialization.initializationStatement)
         return TransformationMatch.Sequence(emptyList(), newState)
+    }
+
+    private fun isAlwaysReachedOrExitedLoop(
+            from: Instruction,
+            to: Instruction,
+            outerLoop: KtForExpression,
+            innerLoop: KtForExpression
+    ): Boolean {
+        val visited = HashSet<Instruction>()
+        return traverseFollowingInstructions(from, visited) { instruction ->
+            val nextInstructionScope = instruction.blockScope.block
+            when {
+                instruction == to -> TraverseInstructionResult.SKIP
+                !outerLoop.isAncestor(nextInstructionScope, strict = false) -> TraverseInstructionResult.SKIP // we are out of the outer loop - it's ok
+                !innerLoop.isAncestor(nextInstructionScope, strict = true) -> TraverseInstructionResult.HALT // we exited or continued inner loop
+                else -> TraverseInstructionResult.CONTINUE
+            }
+        } && visited.contains(to)
+    }
+
+    private fun isAccessedAfter(variableDescriptor: VariableDescriptor, instruction: Instruction, loop: KtForExpression): Boolean {
+        return !traverseFollowingInstructions(instruction) { instruction ->
+            when {
+                !loop.isAncestor(instruction.blockScope.block, strict = true) -> TraverseInstructionResult.SKIP // we are outside the loop or going to the next iteration
+                instruction.isReadOfVariable(variableDescriptor) -> TraverseInstructionResult.HALT
+                else -> TraverseInstructionResult.CONTINUE
+            }
+        }
+    }
+
+    private fun Instruction.isReadOfVariable(descriptor: VariableDescriptor): Boolean {
+        return ((this as? ReadValueInstruction)?.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor
     }
 }

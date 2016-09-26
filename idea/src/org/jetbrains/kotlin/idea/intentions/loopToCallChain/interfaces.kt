@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -102,7 +103,8 @@ data class MatchingState(
          */
         val indexVariable: KtCallableDeclaration?,
         val initializationStatementsToDelete: Collection<KtExpression> = emptyList(),
-        val previousTransformations: List<SequenceTransformation>
+        val previousTransformations: List<SequenceTransformation>,
+        val pseudocodeProvider: () -> Pseudocode
 )
 
 interface TransformationMatcher {

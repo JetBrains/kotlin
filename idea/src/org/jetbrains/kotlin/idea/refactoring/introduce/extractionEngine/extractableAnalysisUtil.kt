@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
@@ -106,7 +106,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
     val visitedInstructions = HashSet<Instruction>()
 
     fun doTraversal(instruction: Instruction) {
-        traverseFollowingInstructions(instruction, visitedInstructions, TraversalOrder.FORWARD) {
+        traverseFollowingInstructions(instruction, visitedInstructions) {
             when {
                 it is AccessValueInstruction && it !in this ->
                     PseudocodeUtil.extractVariableDescriptorIfAny(it, bindingContext)?.let { accessedAfterwards.add(it) }

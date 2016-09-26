@@ -166,8 +166,8 @@ enum class TraverseInstructionResult {
 // returns false when interrupted by handler
 fun traverseFollowingInstructions(
         rootInstruction: Instruction,
-        visited: MutableSet<Instruction>,
-        order: TraversalOrder,
+        visited: MutableSet<Instruction> = HashSet(),
+        order: TraversalOrder = FORWARD,
         // true to continue traversal
         handler: ((Instruction) -> TraverseInstructionResult)?
 ): Boolean {

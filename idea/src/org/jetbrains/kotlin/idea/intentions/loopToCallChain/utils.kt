@@ -53,13 +53,7 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
 
     if (isItUsedInside) return lambdaExpression
 
-    val resolutionScope = inputVariable.getResolutionScope(inputVariable.analyze(BodyResolveMode.FULL), inputVariable.getResolutionFacade())
-    val bindingContext = lambdaExpression.analyzeInContext(resolutionScope, contextExpression = inputVariable)
-    val lambdaParam = lambdaExpression.valueParameters.single()
-    val lambdaParamDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, lambdaParam]
-    val usages = lambdaExpression.collectDescendantsOfType<KtNameReferenceExpression> {
-        it.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == lambdaParamDescriptor
-    }
+    val usages = lambdaExpression.findParameterUsages(lambdaExpression.valueParameters.single(), inputVariable)
 
     val itExpr = psiFactory.createSimpleName("it")
     for (usage in usages) {
@@ -70,6 +64,34 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
     }
 
     return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!) as KtLambdaExpression
+}
+
+fun generateLambda(expression: KtExpression, indexVariable: KtCallableDeclaration, inputVariable: KtCallableDeclaration): KtLambdaExpression {
+    val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable, inputVariable))
+
+    // replace "index++" with "index" or "index + 1" (see IntroduceIndexMatcher)
+    val indexPlusPlus = lambdaExpression.findDescendantOfType<KtUnaryExpression> { unaryExpression ->
+        val operand = unaryExpression.isPlusPlusOf() as? KtNameReferenceExpression
+        if (operand != null && operand.getReferencedName() == indexVariable.name) {
+            val bindingContext = lambdaExpression.analyzeInContext(inputVariable)
+            val parameter = lambdaExpression.valueParameters[0]
+            val parameterDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parameter]
+            operand.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == parameterDescriptor
+        }
+        else {
+            false
+        }
+    }
+    if (indexPlusPlus != null) {
+        val operand = indexPlusPlus.baseExpression!!
+        val replacement = if (indexPlusPlus is KtPostfixExpression) // index++
+            operand
+        else // ++index
+            KtPsiFactory(operand).createExpressionByPattern("$0 + 1", operand)
+        indexPlusPlus.replace(replacement)
+    }
+
+    return lambdaExpression
 }
 
 fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDeclaration): KtLambdaExpression {
@@ -89,6 +111,19 @@ fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDe
 
         appendFixedText("}")
     } as KtLambdaExpression
+}
+
+private fun KtLambdaExpression.findParameterUsages(lambdaParam: KtParameter, context: KtExpression): Collection<KtNameReferenceExpression> {
+    val bindingContext = analyzeInContext(context)
+    val lambdaParamDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, lambdaParam]
+    return collectDescendantsOfType<KtNameReferenceExpression> {
+        it.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == lambdaParamDescriptor
+    }
+}
+
+private fun KtLambdaExpression.analyzeInContext(context: KtExpression): BindingContext {
+    val resolutionScope = context.getResolutionScope(context.analyze(BodyResolveMode.FULL), context.getResolutionFacade())
+    return analyzeInContext(resolutionScope, contextExpression = context)
 }
 
 data class VariableInitialization(

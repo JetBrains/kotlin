@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterNot{}.mapIndexed{}.firstOrNull{}'"
+fun foo(list: List<String>): Int? {
+    <caret>return list
+            .filterNot { it.isBlank() }
+            .mapIndexed { index, s -> s.length * (index + 1) }
+            .firstOrNull { it > 0 }
+}
