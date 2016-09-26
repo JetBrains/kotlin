@@ -302,7 +302,6 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun PropertyDescriptor.isDefinitelyInitialized(): Boolean {
-        if (isLateInit) return true
         if (trace.get(BACKING_FIELD_REQUIRED, this) ?: false) return false
         val property = DescriptorToSourceUtils.descriptorToDeclaration(this)
         if (property is KtProperty && property.hasDelegate()) return false
@@ -324,6 +323,10 @@ class ControlFlowInformationProvider private constructor(
         if (!isDefinitelyInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             if (variableDescriptor !is PropertyDescriptor) {
                 variableDescriptor?.let { varWithUninitializedErrorGenerated.add(it) }
+            }
+            else if (variableDescriptor.isLateInit) {
+                trace.record(MUST_BE_LATEINIT, variableDescriptor)
+                return
             }
             when (variableDescriptor) {
                 is ValueParameterDescriptor ->
