@@ -26,8 +26,8 @@ fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     val enclosingDeclaration = getStrictParentOfType<KtDeclaration>()
     val bodyElement = when (enclosingDeclaration) {
         is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-        is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
-        is KtDestructuringDeclaration -> enclosingDeclaration.getInitializer()
+        is KtDeclarationWithInitializer -> enclosingDeclaration.initializer
+        is KtDestructuringDeclaration -> enclosingDeclaration.initializer
         is KtParameter -> enclosingDeclaration.getDefaultValue()
         is KtAnonymousInitializer -> enclosingDeclaration.body
         is KtClass -> {

@@ -231,8 +231,8 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessCallableUsagesTask(declaration, processMethod))
     }
 
-    private val HAS_OUR_TYPE = this::processReferenceToCallableOfOurType
-    private val PROCESS_LAMBDAS = this::processLambdasByCallableReference
+    private val HAS_OUR_TYPE: (PsiReference) -> Boolean = { processReferenceToCallableOfOurType(it) }
+    private val PROCESS_LAMBDAS: (PsiReference) -> Boolean = { processLambdasByCallableReference(it) }
 
     /**
      * Process reference to declaration whose type is our class (or our class used anywhere inside that type)
