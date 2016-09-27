@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.debugger.stepping;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl;
 import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class DebuggerSteppingHelper {
                                 kotlinSourcePosition
                         );
 
-                        DebugProcessImpl.ResumeCommand command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
+                        SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
 
                         if (command != null) {
                             createStepRequest(
@@ -77,6 +79,9 @@ public class DebuggerSteppingHelper {
                     debugProcess.createStepOutCommand(suspendContext).contextAction();
                 }
                 catch (EvaluateException ignored) {
+                }
+                catch (Exception e) {
+                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
         };
@@ -102,7 +107,7 @@ public class DebuggerSteppingHelper {
                                 inlineArgument
                         );
 
-                        DebugProcessImpl.ResumeCommand command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
+                        SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
 
                         if (command != null) {
                             createStepRequest(
@@ -119,6 +124,9 @@ public class DebuggerSteppingHelper {
                 }
                 catch (EvaluateException ignored) {
 
+                }
+                catch (Exception e) {
+                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
         };
