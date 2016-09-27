@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.frontend.java.di.InjectionKt;
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -290,12 +292,17 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
         );
 
-        DslKt.getService(container, LazyTopDownAnalyzerForTopLevel.class).analyzeFiles(
-                TopDownAnalysisMode.TopLevelDeclarations, files,
-                Collections.singletonList(DslKt.getService(container, JavaDescriptorResolver.class).getPackageFragmentProvider())
+        ModuleDescriptorImpl moduleDescriptor = (ModuleDescriptorImpl) moduleContext.getModule();
+        moduleDescriptor.initialize(new CompositePackageFragmentProvider(Arrays.asList(
+                DslKt.getService(container, KotlinCodeAnalyzer.class).getPackageFragmentProvider(),
+                DslKt.getService(container, JavaDescriptorResolver.class).getPackageFragmentProvider()
+        )));
+
+        DslKt.getService(container, LazyTopDownAnalyzerForTopLevel.class).analyzeDeclarations(
+                TopDownAnalysisMode.TopLevelDeclarations, files
         );
 
-        return AnalysisResult.success(moduleTrace.getBindingContext(), moduleContext.getModule());
+        return AnalysisResult.success(moduleTrace.getBindingContext(), moduleDescriptor);
     }
 
     private void validateAndCompareDescriptorWithFile(

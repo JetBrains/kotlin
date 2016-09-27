@@ -56,7 +56,7 @@ object TopDownAnalyzerFacadeForJS {
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, allFiles),
                 config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
         )
-        analyzerForJs.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, emptyList())
+        analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)
     }
 

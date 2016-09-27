@@ -17,25 +17,18 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.PsiElement;
-import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ImportResolver;
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class LazyTopDownAnalyzerForTopLevel {
-
-    @NotNull private final KotlinCodeAnalyzer codeAnalyzer;
-    @NotNull private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
+    private final KotlinCodeAnalyzer codeAnalyzer;
+    private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
 
     public LazyTopDownAnalyzerForTopLevel(
             @NotNull LazyTopDownAnalyzer lazyTopDownAnalyzer,
@@ -43,27 +36,6 @@ public class LazyTopDownAnalyzerForTopLevel {
     ) {
         this.lazyTopDownAnalyzer = lazyTopDownAnalyzer;
         this.codeAnalyzer = codeAnalyzer;
-    }
-
-    @NotNull
-    public TopDownAnalysisContext analyzeFiles(
-            @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @NotNull Collection<KtFile> files,
-            @NotNull List<? extends PackageFragmentProvider> additionalProviders
-    ) {
-        PackageFragmentProvider provider;
-        if (additionalProviders.isEmpty()) {
-            provider = codeAnalyzer.getPackageFragmentProvider();
-        }
-        else {
-            provider = new CompositePackageFragmentProvider(CollectionsKt.plus(
-                    Arrays.asList(codeAnalyzer.getPackageFragmentProvider()),
-                    additionalProviders));
-        }
-
-        ((ModuleDescriptorImpl) codeAnalyzer.getModuleDescriptor()).initialize(provider);
-
-        return analyzeDeclarations(topDownAnalysisMode, files);
     }
 
     @NotNull

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import java.util.*
 
@@ -103,7 +105,12 @@ object TopDownAnalyzerFacadeForJVM {
             extension.getPackageFragmentProvider(project, module, storageManager, trace, null)
         }
 
-        container.get<LazyTopDownAnalyzerForTopLevel>().analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, additionalProviders)
+        module.initialize(CompositePackageFragmentProvider(
+                listOf(container.get<KotlinCodeAnalyzer>().packageFragmentProvider) +
+                additionalProviders
+        ))
+
+        container.get<LazyTopDownAnalyzerForTopLevel>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
             val result = extension.analysisCompleted(project, module, trace, files)
