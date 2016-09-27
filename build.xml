@@ -756,6 +756,29 @@
             <fileset dir="${basedir}/plugins/android-extensions/android-extensions-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
+
+    <target name="allopen-compiler-plugin">
+        <cleandir dir="${output}/classes/allopen-compiler-plugin"/>
+        <javac2 destdir="${output}/classes/allopen-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <withKotlin modulename="allopen">
+                <compilerarg value="-version"/>
+            </withKotlin>
+            <skip pattern="kotlin/Metadata"/>
+            <src>
+                <pathelement path="plugins/allopen/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+        </javac2>
+
+        <jar destfile="${kotlin-home}/lib/allopen-compiler-plugin.jar">
+            <fileset dir="${output}/classes/allopen-compiler-plugin"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <fileset dir="${basedir}/plugins/allopen/src" includes="META-INF/services/**"/>
+        </jar>
+    </target>
     
     <target name="annotation-processing-under-jdk8">
         <property environment="env"/>
@@ -1137,11 +1160,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,annotation-processing-under-jdk8"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
