@@ -630,16 +630,7 @@ public class JsAstMapper {
 
         // Create the "if" statement we're mapping to.
         //
-        JsIf toIf = new JsIf();
-
-        // Map the test expression.
-        //
-        JsExpression toTestExpr = mapExpression(fromTestExpr);
-        toIf.setIfExpression(toTestExpr);
-
-        // Map the "then" block.
-        //
-        toIf.setThenStatement(mapStatement(fromThenBlock));
+        JsIf toIf = new JsIf(mapExpression(fromTestExpr), mapStatement(fromThenBlock));
 
         // Map the "else" block.
         //

@@ -108,6 +108,11 @@ abstract class BasicOptimizerTest(private var basePath: String) {
                     }
                     super.visitIf(x)
                 }
+
+                override fun visitLabel(x: JsLabel) {
+                    x.synthetic = isSyntheticId(x.name.ident)
+                    super.visitLabel(x)
+                }
             }.accept(stmt)
         }
     }
@@ -118,7 +123,6 @@ abstract class BasicOptimizerTest(private var basePath: String) {
     }
 
     private fun isSyntheticId(id: String) = id.startsWith("$")
-
 
     private fun astToString(ast: List<JsStatement>): String {
         val output = TextOutputImpl()
