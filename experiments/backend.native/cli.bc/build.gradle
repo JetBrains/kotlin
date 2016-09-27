@@ -1,0 +1,57 @@
+buildscript {
+   ext.kotlin_version = '1.0.3'
+   repositories {
+       mavenCentral()
+   }
+
+   dependencies {
+       classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+   }
+
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+
+dependencies {
+        compile files('../../kotlin-ir/dist//kotlin-build-common-sources.jar',
+        '../../kotlin-ir/dist//kotlin-compiler-before-shrink.jar',
+        '../../kotlin-ir/dist//kotlin-compiler-for-maven.jar',
+        '../../kotlin-ir/dist//kotlin-compiler-javadoc.jar',
+        '../../kotlin-ir/dist//kotlin-compiler-sources.jar',
+        '../../kotlin-ir/dist//kotlin-mock-runtime-for-test.jar',
+        '../../kotlin-ir/dist//kotlin-reflect-before-jarjar.jar',
+        '../../kotlin-ir/dist//kotlin-reflect-jarjar.jar',
+        '../../kotlin-ir/dist//kotlin-reflect-sources-for-maven.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/android-extensions-compiler.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-annotation-processing.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-ant.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-build-common-test.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-build-common.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-compiler.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-daemon-client.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-jslib-sources.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-jslib.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-preloader.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-reflect-internal-bootstrap.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-reflect.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-runner.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-runtime-internal-bootstrap.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-runtime-sources.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-runtime.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-test-internal-bootstrap.jar',
+        '../../kotlin-ir/dist//kotlinc/lib/kotlin-test.jar')
+}
+
+sourceSets {
+    main.java.srcDirs += 'src'
+    main.kotlin.srcDirs += 'src'
+}
+
+task jars {
+    project.buildscript.configurations.classpath.each {
+      String jarName = it.getName();
+      print jarName + ":"
+    }
+}

@@ -1,0 +1,12 @@
+diff --git a/compiler/frontend/frontend.iml b/compiler/frontend/frontend.iml
+index 15545cc..00b8bed 100644
+--- a/compiler/frontend/frontend.iml
++++ b/compiler/frontend/frontend.iml
+@@ -15,5 +15,6 @@
+     <orderEntry type="module" module-name="container" exported="" />
+     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+     <orderEntry type="module" module-name="resolution" exported="" />
++    <orderEntry type="module" module-name="runtime.jvm" />
+   </component>
+ </module>
+\ No newline at end of file

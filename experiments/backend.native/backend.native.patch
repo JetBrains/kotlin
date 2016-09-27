@@ -1,0 +1,34 @@
+diff --git a/compiler/backend/backend.iml b/compiler/backend/backend.iml
+index 35bbf20..cfbb3dc 100644
+--- a/compiler/backend/backend.iml
++++ b/compiler/backend/backend.iml
+@@ -15,5 +15,6 @@
+     <orderEntry type="module" module-name="util" />
+     <orderEntry type="module" module-name="backend.jvm" />
+     <orderEntry type="module" module-name="ir.tree" />
++    <orderEntry type="module" module-name="backend.native" />
+   </component>
+ </module>
+\ No newline at end of file
+diff --git a/compiler/backend/src/org/jetbrains/kotlin/codegen/state/GenerationState.kt b/compiler/backend/src/org/jetbrains/kotlin/codegen/state/GenerationState.kt
+index 39077d2..f0cbb87 100644
+--- a/compiler/backend/src/org/jetbrains/kotlin/codegen/state/GenerationState.kt
++++ b/compiler/backend/src/org/jetbrains/kotlin/codegen/state/GenerationState.kt
+@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
+ import com.intellij.openapi.util.ModificationTracker
+ import com.intellij.psi.PsiElement
+ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
++import org.jetbrains.kotlin.backend.native.NativeIrCodegenFactory
+ import org.jetbrains.kotlin.builtins.ReflectionTypes
+ import org.jetbrains.kotlin.codegen.*
+ import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
+@@ -69,7 +70,8 @@ class GenerationState @JvmOverloads constructor(
+         // TODO: get rid of it with the proper module infrastructure
+         val outDirectory: File? = null,
+         private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
+-        val codegenFactory: CodegenFactory = if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
++        //val codegenFactory: CodegenFactory = if (configuration.getBoolean(JVMConfigurationKeys.IR)) NativeIrCodegenFactory else DefaultCodegenFactory
++        val codegenFactory: CodegenFactory = NativeIrCodegenFactory
+ ) {
+     abstract class GenerateClassFilter {
+         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean

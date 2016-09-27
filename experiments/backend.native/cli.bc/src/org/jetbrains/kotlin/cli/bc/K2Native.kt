@@ -21,10 +21,6 @@ import java.lang.System.out
 import java.util.Collections.emptyList
 import kotlin.reflect.jvm.internal.impl.load.java.JvmAbi
 
-/**
- * Created by minamoto on 14/09/16.
- */
-
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun doExecute(arguments: K2NativeCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable): ExitCode {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)

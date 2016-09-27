@@ -1,0 +1,13 @@
+diff --git a/update_dependencies.xml b/update_dependencies.xml
+index cbfcb42..b5c029f 100644
+--- a/update_dependencies.xml
++++ b/update_dependencies.xml
+@@ -74,7 +74,7 @@
+ 
+     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
+         <execute_update_with_idea_maven_artifacts
+-            base.url="http://jetbrains-com-mirror.labs.intellij.net/intellij-repository/releases/com/jetbrains/intellij/idea"
++            base.url="http://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
+             idea.maven.version="${ideaVersion}"/>
+     </target>
+ 
