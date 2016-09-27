@@ -1275,6 +1275,21 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static fun values ()[Lkotlin/reflect/KVisibility;
 }
 
+public abstract class kotlin/script/ScriptTemplateWithArgsAndBindings {
+	public fun <init> ([Ljava/lang/String;Ljava/util/Map;)V
+	public final fun getArgs ()[Ljava/lang/String;
+	public final fun getBindings ()Ljava/util/Map;
+}
+
+public abstract class kotlin/script/ScriptTemplateWithBindings {
+	public fun <init> (Ljava/util/Map;)V
+	public final fun getBindings ()Ljava/util/Map;
+}
+
+public abstract class kotlin/script/SimpleScriptTemplate {
+	public fun <init> ()V
+}
+
 public abstract class kotlin/script/StandardScriptTemplate {
 	public fun <init> ([Ljava/lang/String;)V
 	public final fun getArgs ()[Ljava/lang/String;
