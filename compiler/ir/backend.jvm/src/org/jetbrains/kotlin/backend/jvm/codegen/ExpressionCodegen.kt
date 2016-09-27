@@ -55,6 +55,8 @@ class ExpressionCodegen(
 
     val typeMapper = classCodegen.typeMapper
 
+    val returnType = typeMapper.mapReturnType(irFunction.descriptor)
+
     fun generate() {
         mv.visitCode()
         val info = BlockInfo()
@@ -329,9 +331,9 @@ class ExpressionCodegen(
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
         val value = expression.value?.apply {
-            gen(this, this.asmType, data)
+            gen(this, returnType, data)
         }
-        mv.areturn((expression.value ?: expression).asmType)
+        mv.areturn(returnType)
         return expression.onStack
     }
 
