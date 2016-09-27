@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
-import java.util.ArrayList
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import java.util.*
 import kotlin.properties.Delegates
 
-class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
-: CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
-
+class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
     private val perfCounter = PerformanceCounter.create("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
+    private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
 
     fun initIndex(packagesCache: JvmDependenciesIndex) {
         this.index = packagesCache
@@ -47,8 +47,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
         return perfCounter.time {
             val classNameWithInnerClasses = classId.relativeClassName.asString()
             index.findClass(classId) { dir, type ->
-                findClassGivenPackage(searchScope, dir, classNameWithInnerClasses, type)
-            }
+                findClassGivenPackage(allScope, dir, classNameWithInnerClasses, type)
+            }?.check { it.containingFile.virtualFile in searchScope }
         }
     }
 

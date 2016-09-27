@@ -260,13 +260,16 @@ class KotlinCoreEnvironment private constructor(
 
     private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
         val path = root.file
-        val localFile = applicationEnvironment.localFileSystem.findFileByPath(path.absolutePath)
+        val localFile = findLocalDirectory(path.absolutePath)
         if (localFile == null) {
             report(WARNING, "Classpath entry points to a non-existent location: $path")
             return null
         }
         return localFile
     }
+
+    internal fun findLocalDirectory(absolutePath: String): VirtualFile? =
+            applicationEnvironment.localFileSystem.findFileByPath(absolutePath)
 
     private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? {
         val path = root.file

@@ -1,0 +1,4 @@
+package
+
+public fun foo1(/*0*/ p: kotlin.Pair<kotlin.Int?, kotlin.Int>): kotlin.Int
+public fun foo2(/*0*/ p: kotlin.Pair<kotlin.Int?, kotlin.Int>): kotlin.Int

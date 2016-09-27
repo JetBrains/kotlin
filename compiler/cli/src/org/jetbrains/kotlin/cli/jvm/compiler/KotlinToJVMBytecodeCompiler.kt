@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.JarUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
@@ -402,14 +407,24 @@ object KotlinToJVMBytecodeCompiler {
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult =
-                    TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                            environment.project,
-                            environment.getSourceFiles(),
-                            CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                            environment.configuration,
-                            { scope -> JvmPackagePartProvider(environment, scope) }
-                    )
+            override fun analyze(): AnalysisResult {
+                val project = environment.project
+                val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNull { module ->
+                    environment.findLocalDirectory(module.getOutputDirectory())
+                }.orEmpty()
+                val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, environment.getSourceFiles())
+                // To support partial and incremental compilation, we add the scope which contains binaries from output directories
+                // of the compiled modules (.class) to the list of scopes of the source module
+                val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
+                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                        project,
+                        environment.getSourceFiles(),
+                        CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                        environment.configuration,
+                        { scope -> JvmPackagePartProvider(environment, scope) },
+                        scope
+                )
+            }
 
             override fun reportEnvironmentErrors() {
                 reportRuntimeConflicts(collector, environment.configuration.jvmClasspathRoots)
@@ -434,6 +449,16 @@ object KotlinToJVMBytecodeCompiler {
             analysisResult
         else
             null
+    }
+
+    class DirectoriesScope(
+            project: Project, private val directories: List<VirtualFile>
+    ) : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+        // TODO: optimize somehow?
+        override fun contains(file: VirtualFile) =
+                directories.any { directory -> VfsUtilCore.isAncestor(directory, file, false) }
+
+        override fun toString() = "All files under: $directories"
     }
 
     private fun generate(

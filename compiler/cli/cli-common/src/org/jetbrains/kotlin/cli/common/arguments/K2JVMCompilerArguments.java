@@ -95,6 +95,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xload-script-configs", description = "Load script configuration files from project directory tree")
     public boolean loadScriptConfigs;
 
+    @Argument(value = "Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
+    public boolean singleModule;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

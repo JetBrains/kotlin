@@ -118,9 +118,7 @@ fun createContainerForTopDownAnalyzerForJvm(
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
         CompilerEnvironment, lookupTracker, packagePartProvider, languageVersionSettings, useLazyResolve = false
-).apply {
-    initJvmBuiltInsForTopDownAnalysis(moduleContext.module, languageVersionSettings)
-}
+)
 
 
 fun createContainerForTopDownSingleModuleAnalyzerForJvm(
@@ -134,6 +132,7 @@ fun createContainerForTopDownSingleModuleAnalyzerForJvm(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope,
         LookupTracker.DO_NOTHING, packagePartProvider, languageVersionSettings, SingleModuleClassResolver()
 ).apply {
+    initJvmBuiltInsForTopDownAnalysis(moduleContext.module, languageVersionSettings)
     get<SingleModuleClassResolver>().resolver = get<JavaDescriptorResolver>()
 }
 
