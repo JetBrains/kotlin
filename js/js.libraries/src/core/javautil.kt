@@ -43,9 +43,6 @@ public typealias LinkedHashMap<K, V> = kotlin.collections.LinkedHashMap<K, V>
 @Deprecated("Use AbstractCollection or AbstractMutableCollection from kotlin.collections", ReplaceWith("kotlin.collections.AbstractMutableCollection<E>"))
 public abstract class AbstractCollection<E> : kotlin.collections.AbstractMutableCollection<E>() {
     override fun add(element: E): Boolean = throw UnsupportedOperationException()
-    override fun equals(other: Any?): Boolean = this === other
-    private val hashCode_ by lazy { (Math.random() * ((1 shl 31) - 1)).toInt() }
-    override fun hashCode(): Int = hashCode_
 }
 
 @Deprecated("Use AbstractList or AbstractMutableList from kotlin.collections", ReplaceWith("kotlin.collections.AbstractMutableList<E>"))

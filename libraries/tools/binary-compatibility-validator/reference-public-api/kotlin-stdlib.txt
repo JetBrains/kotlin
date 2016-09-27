@@ -73,9 +73,7 @@ public abstract class kotlin/collections/AbstractCollection : java/util/Collecti
 	public fun clear ()V
 	public fun contains (Ljava/lang/Object;)Z
 	public fun containsAll (Ljava/util/Collection;)Z
-	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun getSize ()I
-	public abstract fun hashCode ()I
 	public fun isEmpty ()Z
 	public abstract fun iterator ()Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z

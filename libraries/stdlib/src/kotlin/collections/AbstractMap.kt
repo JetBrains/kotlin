@@ -103,15 +103,6 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
                 }
 
                 override val size: Int get() = this@AbstractMap.size
-
-                // TODO: should we implement them this way? Currently it's unspecified in JVM
-                override fun equals(other: Any?): Boolean {
-                    if (this === other) return true
-                    if (other !is Collection<*>) return false
-                    return AbstractList.orderedEquals(this, other)
-                }
-
-                override fun hashCode(): Int = AbstractList.orderedHashCode(this)
             }
         }
         return _values!!

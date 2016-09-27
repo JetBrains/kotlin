@@ -26,10 +26,6 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
 
     override fun isEmpty(): Boolean = size == 0
 
-    abstract override fun hashCode(): Int
-
-    abstract override fun equals(other: Any?): Boolean
-
     override fun toString(): String = joinToString(", ", "[", "]") {
         if (it === this) "(this Collection)" else it.toString()
     }
