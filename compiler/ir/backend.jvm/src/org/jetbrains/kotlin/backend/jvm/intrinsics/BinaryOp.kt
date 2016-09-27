@@ -28,7 +28,6 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
     private fun shift(): Boolean =
             opcode == ISHL || opcode == ISHR || opcode == IUSHR
 
-    /*TODO new return type*/
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         val owner = context.state.typeMapper.mapOwner(expression.descriptor)
         val returnType = signature.returnType

@@ -26,18 +26,12 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 
 class IteratorNext : IntrinsicMethod() {
 
-    /*TODO new return type*/
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         val type = AsmUtil.unboxType(signature.returnType)
-        val newMethod = with(signature.asmMethod) {
-            Method(name, type, argumentTypes)
-        }
-
-        val newSignature = JvmMethodSignature(newMethod, signature.valueParameters)
+        val newSignature = signature.newReturnType(type)
         return IrIntrinsicFunction.create(expression, newSignature, context, AsmTypes.OBJECT_TYPE) {
             val primitiveClassName = getKotlinPrimitiveClassName(type)
             it.invokevirtual(

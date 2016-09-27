@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 abstract class IntrinsicMethod {
 
@@ -46,6 +48,13 @@ abstract class IntrinsicMethod {
 
         fun expressionType(expression: IrExpression, context: JvmBackendContext): Type {
             return context.state.typeMapper.mapType(expression.type)
+        }
+
+        fun JvmMethodSignature.newReturnType(type: Type): JvmMethodSignature {
+            val newMethod = with(asmMethod) {
+                Method(name, type, argumentTypes)
+            }
+            return JvmMethodSignature(newMethod, valueParameters)
         }
     }
 }

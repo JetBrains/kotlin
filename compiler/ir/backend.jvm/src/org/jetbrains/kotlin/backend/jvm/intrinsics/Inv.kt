@@ -27,7 +27,7 @@ class Inv : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         val returnType = signature.returnType
         val type = numberFunctionOperandType(returnType)
-        return IrIntrinsicFunction.create(expression, signature, context) {
+        return IrIntrinsicFunction.create(expression, signature, context, type) {
             if (returnType == Type.LONG_TYPE) {
                 it.lconst(-1)
             }
