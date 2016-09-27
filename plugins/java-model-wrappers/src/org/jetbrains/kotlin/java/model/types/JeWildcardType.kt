@@ -24,17 +24,14 @@ import javax.lang.model.type.TypeVisitor
 import javax.lang.model.type.WildcardType
 
 class JeWildcardType(
-        override val psiType: PsiWildcardType, 
+        psiType: PsiWildcardType,
         private val isRaw: Boolean
-) : JePsiType(), JeTypeWithManager, WildcardType {
+) : JePsiTypeBase<PsiWildcardType>(psiType, psiType.manager), WildcardType {
     override fun getKind() = TypeKind.WILDCARD
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitWildcard(this, p)
     
     override fun getSuperBound() = psiType.superBound.toJeType(psiManager, isRaw = isRaw)
     override fun getExtendsBound() = psiType.extendsBound.toJeType(psiManager, isRaw = isRaw)
-
-    override val psiManager: PsiManager
-        get() = psiType.manager
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -61,10 +58,10 @@ class JeWildcardType(
 }
 
 class JeCapturedWildcardType(
-        override val psiType: PsiCapturedWildcardType, 
-        override val psiManager: PsiManager,
+        psiType: PsiCapturedWildcardType,
+        psiManager: PsiManager,
         private val isRaw: Boolean
-) : JePsiType(), JeTypeWithManager, WildcardType {
+) : JePsiTypeBase<PsiCapturedWildcardType>(psiType, psiManager), WildcardType {
     override fun getKind() = TypeKind.WILDCARD
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitWildcard(this, p)
 

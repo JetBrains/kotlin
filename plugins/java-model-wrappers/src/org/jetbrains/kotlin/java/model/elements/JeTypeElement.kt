@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnnotationOwner, JeModifierListOwner {
+class JeTypeElement(psi: PsiClass) : JeAbstractElement<PsiClass>(psi), TypeElement, JeAnnotationOwner, JeModifierListOwner {
     override fun getEnclosingElement(): Element? {
         psi.containingClass?.let { return JeTypeElement(it) }
         val javaFile = psi.containingFile as? PsiJavaFile ?: return null

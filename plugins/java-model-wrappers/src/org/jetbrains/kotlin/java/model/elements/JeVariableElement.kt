@@ -26,10 +26,12 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ElementVisitor
 import javax.lang.model.element.VariableElement
 
-class JeVariableElement(override val psi: PsiVariable) : JeElement, VariableElement, JeModifierListOwner, JeAnnotationOwner {
+class JeVariableElement(psi: PsiVariable) : JeAbstractElement<PsiVariable>(psi), VariableElement, JeModifierListOwner, JeAnnotationOwner {
     override fun getSimpleName() = JeName(psi.name)
 
     override fun getEnclosingElement(): JeElement? {
+        val psi = psi
+
         if (psi is PsiParameter) {
             (psi.declarationScope as? PsiMethod)?.let { return JeMethodExecutableElement(it) }
         }

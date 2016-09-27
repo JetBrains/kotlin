@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
@@ -127,6 +128,8 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput, 
                 incrementalDataFile, sourceRetentionAnnotationHandler)
+
+        project.registerService(JeElementRegistry::class.java, JeElementRegistry())
         
         AnalysisCompletedHandlerExtension.registerExtension(project, annotationProcessingExtension)
     }

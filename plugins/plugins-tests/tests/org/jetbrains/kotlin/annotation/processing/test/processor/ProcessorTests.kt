@@ -122,7 +122,7 @@ class ProcessorTests : AbstractProcessorTest() {
         fun AnnotationMirror.getParam(name: String) = elementValues.entries.first { it.key.simpleName.toString() == name }.value
         assertTrue(anno2.getParam("a") is JeAnnotationAnnotationValue)
         assertTrue((anno2.getParam("b") as JeArrayAnnotationValue).value.first() is JeAnnotationAnnotationValue)
-        assertTrue(anno2.getParam("c") is JePrimitiveAnnotationValue)
+        assertTrue(anno2.getParam("c") is JePrimitiveAnnotationValue<*>)
         assertTrue(anno2.getParam("d") is JeTypeAnnotationValue)
         assertTrue((anno2.getParam("e") as JeArrayAnnotationValue).value.first() is JeTypeAnnotationValue)
     }

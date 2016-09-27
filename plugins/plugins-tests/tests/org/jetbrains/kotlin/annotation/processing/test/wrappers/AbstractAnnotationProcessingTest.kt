@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.annotation.processing.test.wrappers
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.java.model.elements.DefaultJeElementRenderer
+import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.java.model.toJeElement
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -38,6 +40,8 @@ abstract class AbstractAnnotationProcessingTest : AbstractBytecodeTextTest() {
 
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, javaFilesDir)
+        myEnvironment.project.registerServiceInstance(JeElementRegistry::class.java, JeElementRegistry())
+
         loadMultiFiles(files)
 
         val text = FileUtil.loadFile(wholeFile, true)

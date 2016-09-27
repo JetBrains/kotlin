@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.java.model.types
 
 import org.jetbrains.kotlin.java.model.elements.JeTypeParameterElement
 import com.intellij.psi.*
+import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
 import org.jetbrains.kotlin.java.model.toJeElement
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
@@ -25,9 +26,20 @@ import javax.lang.model.type.TypeVariable
 import javax.lang.model.type.TypeVisitor
 
 class JeTypeVariableType(
-        override val psiType: PsiClassType, 
-        val parameter: PsiTypeParameter
-) : JePsiType(), JeTypeWithManager, TypeVariable {
+        psiType: PsiClassType,
+        parameter: PsiTypeParameter
+) : JePsiTypeBase<PsiClassType>(psiType, parameter.manager), TypeVariable {
+    private val disposableParameter = parameter.toDisposable()
+
+    val parameter: PsiTypeParameter
+        get() = disposableParameter()
+
+    // JeElementRegistry registration is done in JeDisposablePsiElementOwner
+    override fun dispose() {
+        super.dispose()
+        disposableParameter.dispose()
+    }
+
     override fun getKind() = TypeKind.TYPEVAR
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitTypeVariable(this, p)

@@ -16,9 +16,37 @@
 
 package org.jetbrains.kotlin.java.model
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
+import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import javax.lang.model.element.Element
 
-interface JeElement : Element {
+interface JePsiElementOwner {
     val psi: PsiElement
 }
+
+interface JeElement : Element, JePsiElementOwner
+
+abstract class JeDisposablePsiElementOwner<out T : PsiElement>(element: T) : JePsiElementOwner, Disposable {
+    private val disposablePsi = element.toDisposable()
+
+    init {
+        @Suppress("LeakingThis")
+        ServiceManager.getService(element.project, JeElementRegistry::class.java).register(this)
+    }
+
+    override fun dispose() {
+        disposablePsi.dispose()
+    }
+
+    override val psi: T
+        get() = disposablePsi()
+
+    val psiManager: PsiManager
+        get() = disposablePsi().manager
+}
+
+abstract class JeAbstractElement<out T : PsiElement>(element: T) : JeDisposablePsiElementOwner<T>(element), JeElement, Disposable

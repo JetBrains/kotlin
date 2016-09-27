@@ -17,17 +17,16 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiClassInitializer
-import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.java.model.JeDisposablePsiElementOwner
 import org.jetbrains.kotlin.java.model.internal.isStatic
 import javax.lang.model.type.*
 
-class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitializer) : JeTypeMirror, JeTypeWithManager, ExecutableType {
+class JeClassInitializerExecutableTypeMirror(
+        psi: PsiClassInitializer
+) : JeDisposablePsiElementOwner<PsiClassInitializer>(psi), JeTypeMirror, JeTypeWithManager, ExecutableType {
     override fun getKind() = TypeKind.EXECUTABLE
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitExecutable(this, p)
-
-    override val psiManager: PsiManager
-        get() = initializer.manager
 
     override fun getReturnType() = JeVoidType
 
@@ -39,15 +38,15 @@ class JeClassInitializerExecutableTypeMirror(val initializer: PsiClassInitialize
 
     override fun getTypeVariables() = emptyList<TypeVariable>()
 
-    override fun toString() = (initializer.containingClass?.qualifiedName?.let { it + "." } ?: "") +
-                              (if (initializer.isStatic) "<clinit>" else "<instinit>")
+    override fun toString() = (psi.containingClass?.qualifiedName?.let { it + "." } ?: "") +
+                              (if (psi.isStatic) "<clinit>" else "<instinit>")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
         other as? JeClassInitializerExecutableTypeMirror ?: return false
-        return initializer == other.initializer
+        return psi == other.psi
     }
 
-    override fun hashCode() = initializer.hashCode()
+    override fun hashCode() = psi.hashCode()
 }

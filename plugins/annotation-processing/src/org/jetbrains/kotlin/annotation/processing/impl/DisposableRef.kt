@@ -31,6 +31,6 @@ class DisposableRef<out T : Any>(initialValue: T): Disposable {
 
 fun <T : Any> T.toDisposable() = DisposableRef(this)
 
-fun dispose(vararg refs: DisposableRef<*>) {
-    refs.forEach { it.dispose() }
+fun dispose(vararg refs: DisposableRef<*>?) {
+    refs.forEach { it?.dispose() }
 }
