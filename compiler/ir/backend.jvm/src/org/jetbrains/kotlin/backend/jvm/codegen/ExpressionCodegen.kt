@@ -156,7 +156,7 @@ class ExpressionCodegen(
         } else {
             val receiver = expression.dispatchReceiver
             receiver?.apply {
-                gen(receiver, callable.owner, data)
+                gen(receiver, callable.dispatchReceiverType!!, data)
             }
 
             val args = (listOf(expression.extensionReceiver).filterNotNull() +

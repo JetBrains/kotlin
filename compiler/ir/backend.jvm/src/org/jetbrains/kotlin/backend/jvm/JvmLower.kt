@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.lower.FileClassLowering
-import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
-import org.jetbrains.kotlin.backend.jvm.lower.PropertiesLowering
+import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -28,6 +26,8 @@ class JvmLower(val context: JvmBackendContext) {
         FileClassLowering(context.jvmFileClassProvider).lower(irFile)
         PropertiesLowering().lower(irFile)
         InitializersLowering().runOnNormalizedFile(irFile)
+        InterfaceLowering(context.state).runOnNormalizedFile(irFile)
+        InterfaceDelegationLowering(context.state).runOnNormalizedFile(irFile)
     }
 }
 

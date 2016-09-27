@@ -16,8 +16,15 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-object JvmDeclarationOrigins {
+interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
+    object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPL")
+}
+
+interface JvmLoweredStatementOrigin : IrStatementOrigin {
+    object DEFAULT_IMPLS_DELEGATION : IrStatementOrigin.IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
 }

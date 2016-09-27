@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
-import org.jetbrains.kotlin.backend.jvm.JvmDeclarationOrigins
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.getMemberOwnerKind
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.*
@@ -127,7 +127,7 @@ class InitializersLowering : ClassLoweringPass {
                     Modality.FINAL, Visibilities.PUBLIC
             )
             irClass.declarations.add(
-                    IrFunctionImpl(irClass.startOffset, irClass.endOffset, JvmDeclarationOrigins.CLASS_STATIC_INITIALIZER,
+                    IrFunctionImpl(irClass.startOffset, irClass.endOffset, JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER,
                                    staticInitializerDescriptor,
                                    IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
                                                    staticInitializerStatements.map { it.copy() }))

@@ -16,23 +16,43 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.FunctionCodegen.createFrameMap
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen) {
-    fun generate() {
-        val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
-        val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), irFunction.descriptor)
-        val frameMap = createFrameMap(classCodegen.state, irFunction.descriptor, signature, isStatic)
 
+    val state = classCodegen.state
+
+    val descriptor = irFunction.descriptor
+
+    fun generate() {
+        val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
+        val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), descriptor) || DescriptorUtils.isStaticDeclaration(descriptor)
+        val frameMap = createFrameMap(classCodegen.state, descriptor, signature, isStatic)
+
+        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0)
+        val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
+        if (interfaceClInit) {
+            //reset abstract flag
+            flags = flags.xor(Opcodes.ACC_ABSTRACT)
+        }
         val methodVisitor = classCodegen.visitor.newMethod(irFunction.OtherOrigin,
-                                                           irFunction.descriptor.calculateCommonFlags().or(if (isStatic) ACC_STATIC else 0),
+                                                           flags,
                                                            signature.asmMethod.name, signature.asmMethod.descriptor,
                                                            signature.genericsSignature, null/*TODO support exception*/)
+
+        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0) {
+            methodVisitor.visitEnd()
+            return
+        }
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
     }

@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
-import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.SuperClassInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
@@ -99,6 +96,9 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
             is IrAnonymousInitializer -> {
                 // skip
             }
+            is IrClass -> {
+                ClassCodegen(declaration, context).generate()
+            }
             else -> throw RuntimeException("Unsupported declaration $declaration")
         }
     }
@@ -118,9 +118,8 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 }
 
 fun ClassDescriptor.calculateClassFlags(): Int {
-    return (if (!DescriptorUtils.isInterface(this)) Opcodes.ACC_SUPER else 0).
-            or(calculateCommonFlags()).
-            or(if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else 0)
+    return (if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER).
+            or(calcModalityFlag()).or(AsmUtil.getVisibilityAccessFlagForClass(this))
 }
 
 fun MemberDescriptor.calculateCommonFlags(): Int {
@@ -138,6 +137,11 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
         throw RuntimeException("Unsupported visibility $visibility for descriptor $this")
     }
 
+    return flags.or(calcModalityFlag())
+}
+
+private fun MemberDescriptor.calcModalityFlag(): Int {
+    var flags = 0
     when (modality) {
         Modality.ABSTRACT -> {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
@@ -150,7 +154,7 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
         Modality.OPEN -> {
             assert(!Visibilities.isPrivate(visibility))
         }
-        else -> throw RuntimeException("Unsupported modality $modality for descriptor $this")
+        else -> throw RuntimeException("Unsupported modality $modality for descriptor ${this}")
     }
 
     if (this is CallableMemberDescriptor) {
@@ -158,7 +162,6 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
             flags = flags or Opcodes.ACC_STATIC
         }
     }
-
     return flags
 }
 
