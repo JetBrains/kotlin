@@ -99,7 +99,7 @@ private object NoDefaultAndVarargsCheck : Check {
             functionDescriptor.valueParameters.all { !it.hasDefaultValue() && it.varargElementType == null }
 }
 
-private object FirstNoDefaultAndDefaultParameters : Check {
+private object FirstNoDefaultAndDefaultParametersCheck : Check {
     override val description = "should not have first parameter with default values. " +
                                "and should have remaining parameters with default value"
     override fun check(functionDescriptor: FunctionDescriptor): Boolean {
@@ -110,7 +110,7 @@ private object FirstNoDefaultAndDefaultParameters : Check {
     }
 }
 
-private object NoVarargParameters : Check {
+private object NoVarargParametersCheck : Check {
     override val description = "should not have varargs"
     override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.all { it.varargElementType == null }
 }
@@ -202,7 +202,7 @@ object OperatorChecks : AbstractModifierChecks() {
             Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),
             Checks(SET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(3), IsKPropertyCheck),
             Checks(INVOKE, MemberOrExtension),
-            Checks(CONTAINS, MemberOrExtension, ValueParameterCountCheck.AtLeast(1) , FirstNoDefaultAndDefaultParameters, NoVarargParameters, ReturnsBoolean),
+            Checks(CONTAINS, MemberOrExtension, ValueParameterCountCheck.AtLeast(1), FirstNoDefaultAndDefaultParametersCheck, NoVarargParametersCheck, ReturnsBoolean),
             Checks(ITERATOR, MemberOrExtension, NoValueParameters),
             Checks(NEXT, MemberOrExtension, NoValueParameters),
             Checks(HAS_NEXT, MemberOrExtension, NoValueParameters, ReturnsBoolean),
