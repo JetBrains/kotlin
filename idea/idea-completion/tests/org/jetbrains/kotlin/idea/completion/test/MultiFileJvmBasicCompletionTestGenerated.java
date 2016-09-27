@@ -89,6 +89,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("ExactMatchPreferImported")
+    public void testExactMatchPreferImported() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExactMatchPreferImported/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExcludedClass")
     public void testExcludedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExcludedClass/");
