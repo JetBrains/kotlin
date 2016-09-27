@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.INC
 import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
 import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.PROPERTY_DELEGATED
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
@@ -194,7 +195,8 @@ object OperatorChecks : AbstractModifierChecks() {
                 }
             },
             Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
+            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters),
+            Checks(PROPERTY_DELEGATED, Member, ValueParameterCountCheck.SingleValueParameter) //TODO: more checks required!
     )
 }
 

@@ -39,13 +39,11 @@ import org.jetbrains.kotlin.idea.search.unionSafe
 import org.jetbrains.kotlin.idea.search.usagesSearch.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
-import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 data class KotlinReferencesSearchOptions(val acceptCallableOverrides: Boolean = false,
@@ -94,9 +92,6 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
             val unwrappedElement = element.namedUnwrappedElement ?: return
 
-            val specialSymbols = unwrappedElement.getSpecialNamesToSearch(kotlinOptions)
-            val words = (specialSymbols?.first ?: emptyList()) + unwrappedElement.getClassNameForCompanionObject().singletonOrEmptyList()
-
             val elements = if (unwrappedElement is KtDeclaration) unwrappedElement.toLightElements() else listOf(unwrappedElement)
             val effectiveSearchScope = elements.fold(queryParameters.effectiveSearchScope) { scope, e ->
                 scope.unionSafe(queryParameters.effectiveSearchScope(e))
@@ -104,7 +99,6 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
             val refFilter: (PsiReference) -> Boolean = when {
                 unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
-                specialSymbols != null -> { ref -> ref.javaClass == specialSymbols.second }
                 else -> ({true})
             }
 
@@ -117,9 +111,12 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                             name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor)
                 }
             }
-            words.forEach { word ->
+
+
+            val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
+            if (classNameForCompanionObject != null) {
                 queryParameters.optimizer.searchWord(
-                        word, effectiveSearchScope, UsageSearchContext.ANY, true, unwrappedElement, resultProcessor)
+                        classNameForCompanionObject, effectiveSearchScope, UsageSearchContext.ANY, true, unwrappedElement, resultProcessor)
             }
 
             if (unwrappedElement is KtParameter && kotlinOptions.searchNamedArguments) {

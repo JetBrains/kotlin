@@ -31,11 +31,9 @@ import com.intellij.util.Processor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -53,9 +51,7 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -207,11 +203,6 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processMethod: (PsiReference) -> Boolean) {
-        if (declaration.isOperatorExpensiveToSearch()) { // cancel all tasks and use plain search
-            downShiftToPlainSearch()
-            return
-        }
-
         data class ProcessCallableUsagesTask(val declaration: PsiElement, val processMethod: (PsiReference) -> Boolean) : Task {
             override fun perform() {
                 testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
@@ -662,25 +653,6 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun PsiModifierListOwner.isLocal() = parents.any { it is PsiCodeBlock }
-
-    private fun PsiElement.isOperatorExpensiveToSearch(): Boolean {
-        when (this) {
-            is KtFunction -> {
-                val isOperator = hasModifier(KtTokens.OPERATOR_KEYWORD)
-                                  || hasModifier(KtTokens.OVERRIDE_KEYWORD) && (resolveToDescriptorIfAny() as? FunctionDescriptor)?.isOperator == true
-                val name = name
-                return isOperator && name != null && Name.isValidIdentifier(name) && Name.identifier(name).getOperationSymbolsToSearch() != null
-            }
-
-            is KtLightMethod -> {
-                return kotlinOrigin?.isOperatorExpensiveToSearch() == true
-            }
-
-            else -> {
-                return false
-            }
-        }
-    }
 
     private fun KotlinType.containsTypeOrDerivedInside(type: FuzzyType): Boolean {
         return type.checkIsSuperTypeOf(this) != null || arguments.any { it.type.containsTypeOrDerivedInside(type) }

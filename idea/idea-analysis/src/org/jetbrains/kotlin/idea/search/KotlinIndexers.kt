@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search
 
+import com.google.common.collect.ImmutableSet
 import com.intellij.lexer.Lexer
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.cache.impl.BaseFilterLexer
@@ -26,13 +27,26 @@ import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
 val KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT: Short = 0x20
+
+private val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
+        .builder<KtToken>()
+        .addAll(OperatorConventions.UNARY_OPERATION_NAMES.keys)
+        .addAll(OperatorConventions.BINARY_OPERATION_NAMES.keys)
+        .addAll(OperatorConventions.ASSIGNMENT_OPERATIONS.keys)
+        .addAll(OperatorConventions.COMPARISON_OPERATIONS)
+        .addAll(OperatorConventions.EQUALS_OPERATIONS)
+        .addAll(OperatorConventions.IN_OPERATIONS)
+        .add(KtTokens.LBRACKET)
+        .add(KtTokens.BY_KEYWORD)
+        .build()
 
 class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): BaseFilterLexer(KotlinLexer(), occurrenceConsumer) {
     private val codeTokens = TokenSet.orSet(

@@ -57,6 +57,8 @@ object OperatorNameConventions {
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
 
+    @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
+
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField

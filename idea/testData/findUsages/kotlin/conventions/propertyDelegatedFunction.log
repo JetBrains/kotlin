@@ -1,0 +1,4 @@
+Resolved by Delegate()
+Searched references to Delegate
+Used plain search of Delegate.propertyDelegated(property: KProperty<*>) in LocalSearchScope:
+    CLASS:Delegate

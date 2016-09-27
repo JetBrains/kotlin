@@ -58,9 +58,8 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
+//TODO: check for 'operator' modifier!
 public class DelegatedPropertyResolver {
-    public static final Name PROPERTY_DELEGATED_FUNCTION_NAME = Name.identifier("propertyDelegated");
-
     private final KotlinBuiltIns builtIns;
     private final FakeCallResolver fakeCallResolver;
     private final ExpressionTypingServices expressionTypingServices;
@@ -150,7 +149,7 @@ public class DelegatedPropertyResolver {
         ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
-                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, PROPERTY_DELEGATED_FUNCTION_NAME, delegateExpression);
+                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, OperatorNameConventions.PROPERTY_DELEGATED, delegateExpression);
 
         Call call = resolutionResult.getFirst();
         OverloadResolutionResults<FunctionDescriptor> functionResults = resolutionResult.getSecond();

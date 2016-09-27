@@ -184,7 +184,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 name == OperatorNameConventions.ITERATOR ->
                     return IteratorOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options)
 
-                name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE ->
+                name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE || name == OperatorNameConventions.PROPERTY_DELEGATED ->
                     return PropertyDelegationOperatorReferenceSearcher(declaration, searchScope, consumer, optimizer, options)
 
                 else ->

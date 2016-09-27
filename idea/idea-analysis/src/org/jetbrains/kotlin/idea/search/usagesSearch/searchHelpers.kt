@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -60,18 +57,6 @@ fun PsiNamedElement.getClassNameForCompanionObject(): String? {
         getNonStrictParentOfType<KtClass>()?.name
     } else {
         null
-    }
-}
-
-fun PsiNamedElement.getSpecialNamesToSearch(options: KotlinReferencesSearchOptions): Pair<List<String>, Class<*>>? {
-    val name = name
-    when {
-        name == null || !Name.isValidIdentifier(name) -> return null
-
-        else -> {
-            val operationSymbolsToSearch = Name.identifier(name).getOperationSymbolsToSearch() ?: return null
-            return operationSymbolsToSearch.first.map { (it as KtSingleValueToken).value } to operationSymbolsToSearch.second
-        }
     }
 }
 
