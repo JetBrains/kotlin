@@ -23,10 +23,10 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
 class JeIntersectionType(
-        override val psiType: PsiIntersectionType, 
-        override val psiManager: PsiManager,
+        psiType: PsiIntersectionType,
+        psiManager: PsiManager,
         private val isRaw: Boolean
-) : JePsiType(), JeTypeWithManager, IntersectionType {
+) : JePsiTypeBase<PsiIntersectionType>(psiType, psiManager), IntersectionType {
     override fun getKind() = TypeKind.INTERSECTION
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitIntersection(this, p)
 

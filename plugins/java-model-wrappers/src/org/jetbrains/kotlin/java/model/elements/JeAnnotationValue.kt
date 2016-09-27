@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.java.model.elements
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.java.model.JeDisposablePsiElementOwner
 import org.jetbrains.kotlin.java.model.internal.calcConstantValue
 import org.jetbrains.kotlin.java.model.types.toJeType
 import java.util.*
@@ -48,22 +49,22 @@ fun JeAnnotationValue(psi: PsiAnnotationMemberValue): AnnotationValue {
     return annotationValue
 }
 
-class JeAnnotationAnnotationValue(val psi: PsiAnnotation) : AnnotationValue {
+class JeAnnotationAnnotationValue(psi: PsiAnnotation) : JeDisposablePsiElementOwner<PsiAnnotation>(psi), AnnotationValue {
     override fun getValue() = JeAnnotationMirror(psi)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitAnnotation(value, p)
 }
 
-class JeEnumValueAnnotationValue(val psi: PsiEnumConstant) : AnnotationValue {
+class JeEnumValueAnnotationValue(psi: PsiEnumConstant) : JeDisposablePsiElementOwner<PsiEnumConstant>(psi), AnnotationValue {
     override fun getValue() = JeVariableElement(psi)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitEnumConstant(value, p) 
 }
 
-class JeTypeAnnotationValue(val psi: PsiClassObjectAccessExpression) : AnnotationValue {
+class JeTypeAnnotationValue(psi: PsiClassObjectAccessExpression) : JeDisposablePsiElementOwner<PsiClassObjectAccessExpression>(psi), AnnotationValue {
     override fun getValue() = psi.operand.type.toJeType(psi.manager)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitType(value, p)
 }
 
-abstract class JePrimitiveAnnotationValue : AnnotationValue {
+abstract class JePrimitiveAnnotationValue<out T : PsiElement>(psi: T) : JeDisposablePsiElementOwner<T>(psi), AnnotationValue {
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P): R {
         val value = this.value
         return when (value) {
@@ -81,25 +82,25 @@ abstract class JePrimitiveAnnotationValue : AnnotationValue {
     }
 }
 
-class JeLiteralAnnotationValue(val psi: PsiLiteral) : JePrimitiveAnnotationValue() {
+class JeLiteralAnnotationValue(psi: PsiLiteral) : JePrimitiveAnnotationValue<PsiLiteral>(psi) {
     override fun getValue() = psi.value
 }
 
-class JeExpressionAnnotationValue(val psi: PsiExpression) : JePrimitiveAnnotationValue() {
+class JeExpressionAnnotationValue(psi: PsiExpression) : JePrimitiveAnnotationValue<PsiExpression>(psi) {
     override fun getValue() = psi.calcConstantValue()
 }
 
-class JeArrayAnnotationValue(val psi: PsiArrayInitializerMemberValue) : AnnotationValue {
+class JeArrayAnnotationValue(psi: PsiArrayInitializerMemberValue) : JeDisposablePsiElementOwner<PsiArrayInitializerMemberValue>(psi), AnnotationValue {
     override fun getValue() = psi.initializers.map(::JeAnnotationValue)
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
 }
 
-class JeSingletonArrayAnnotationValue(val psi: PsiAnnotationMemberValue) : AnnotationValue {
+class JeSingletonArrayAnnotationValue(psi: PsiAnnotationMemberValue) : JeDisposablePsiElementOwner<PsiAnnotationMemberValue>(psi), AnnotationValue {
     override fun getValue(): List<AnnotationValue> = Collections.singletonList(JeAnnotationValue(psi))
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitArray(value, p)
 }
 
-class JeErrorAnnotationValue(val psi: PsiElement) : AnnotationValue {
+class JeErrorAnnotationValue(psi: PsiElement) : JeDisposablePsiElementOwner<PsiElement>(psi), AnnotationValue {
     override fun <R : Any?, P : Any?> accept(v: AnnotationValueVisitor<R, P>, p: P) = v.visitString(psi.text, p)
     override fun getValue() = null
 }

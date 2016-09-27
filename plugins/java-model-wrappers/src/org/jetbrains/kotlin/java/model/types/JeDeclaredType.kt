@@ -21,6 +21,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.impl.source.PsiImmediateClassType
+import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.internal.getTypeWithTypeParameters
 import org.jetbrains.kotlin.java.model.internal.isStatic
@@ -39,11 +40,22 @@ fun createImmediateClassType(psiClass: PsiClass, typeArgs: List<PsiType>): PsiIm
 }
 
 class JeDeclaredType(
-        override val psiType: PsiClassType,
-        val psiClass: PsiClass,
+        psiType: PsiClassType,
+        psiClass: PsiClass,
         val enclosingDeclaredType: DeclaredType? = null,
         val isRaw: Boolean = false
-) : JePsiType(), JeTypeWithManager, DeclaredType {
+) : JePsiTypeBase<PsiClassType>(psiType, psiClass.manager), DeclaredType {
+    private val disposablePsiClass = psiClass.toDisposable()
+
+    val psiClass: PsiClass
+        get() = disposablePsiClass()
+
+    // JeElementRegistry registration is done in JePsiType
+    override fun dispose() {
+        super.dispose()
+        disposablePsiClass.dispose()
+    }
+
     override fun getKind() = TypeKind.DECLARED
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitDeclared(this, p)

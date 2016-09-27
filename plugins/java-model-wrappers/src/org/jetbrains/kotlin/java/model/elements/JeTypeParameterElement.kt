@@ -26,9 +26,9 @@ import javax.lang.model.element.ElementVisitor
 import javax.lang.model.element.TypeParameterElement
 
 class JeTypeParameterElement(
-        override val psi: PsiTypeParameter,
+        psi: PsiTypeParameter,
         val parent: JeElement?
-) : JeElement, TypeParameterElement, JeAnnotationOwner, JeModifierListOwner {
+) : JeAbstractElement<PsiTypeParameter>(psi), TypeParameterElement, JeAnnotationOwner, JeModifierListOwner {
     override fun getSimpleName() = JeName(psi.name)
 
     override fun getEnclosingElement() = parent

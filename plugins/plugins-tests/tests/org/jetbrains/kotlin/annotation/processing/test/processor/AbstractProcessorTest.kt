@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessingExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.elements.JeVariableElement
+import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -66,6 +68,8 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
         
         val apExtension = AnnotationProcessingExtensionForTests(processors)
         AnalysisCompletedHandlerExtension.registerExtension(project, apExtension)
+
+        project.registerServiceInstance(JeElementRegistry::class.java, JeElementRegistry())
 
         return environment
     }

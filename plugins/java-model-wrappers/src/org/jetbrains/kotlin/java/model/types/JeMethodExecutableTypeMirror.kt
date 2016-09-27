@@ -21,6 +21,9 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.PsiTypesUtil
+import org.jetbrains.kotlin.annotation.processing.impl.toDisposable
+import org.jetbrains.kotlin.annotation.processing.impl.dispose
+import org.jetbrains.kotlin.java.model.JeDisposablePsiElementOwner
 import org.jetbrains.kotlin.java.model.elements.getReceiverTypeMirror
 import javax.lang.model.type.ExecutableType
 import javax.lang.model.type.TypeKind
@@ -28,11 +31,26 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVisitor
 
 class JeMethodExecutableTypeMirror(
-        val psi: PsiMethod,
-        val signature: MethodSignature? = null,
-        val returnType: PsiType? = null,
+        psi: PsiMethod,
+        signature: MethodSignature? = null,
+        returnType: PsiType? = null,
         val isRaw: Boolean = false
-) : JeTypeMirror, JeTypeWithManager, ExecutableType {
+) : JeDisposablePsiElementOwner<PsiMethod>(psi), JeTypeMirror, JeTypeWithManager, ExecutableType {
+    private val disposableSignature = signature?.toDisposable()
+    private val disposableReturnType = returnType?.toDisposable()
+
+    val signature: MethodSignature?
+        get() = disposableSignature?.invoke()
+
+    val returnType: PsiType?
+        get() = disposableReturnType?.invoke()
+
+    // JeElementRegistry registration is done in JeDisposablePsiElementOwner
+    override fun dispose() {
+        super.dispose()
+        dispose(disposableSignature, disposableReturnType)
+    }
+
     override fun getKind() = TypeKind.EXECUTABLE
     
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitExecutable(this, p)
@@ -42,9 +60,6 @@ class JeMethodExecutableTypeMirror(
     override fun getReceiverType() = psi.getReceiverTypeMirror()
 
     override fun getThrownTypes() = psi.throwsList.referencedTypes.map { it.toJeType(psi.manager, isRaw = isRaw) }
-
-    override val psiManager: PsiManager
-        get() = psi.manager
 
     override fun getParameterTypes(): List<TypeMirror> {
         signature?.parameterTypes?.let { types -> return types.map { it.toJeType(psi.manager, isRaw = isRaw) } }

@@ -23,10 +23,10 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVisitor
 
 class JeArrayType(
-        override val psiType: PsiArrayType, 
-        override val psiManager: PsiManager,
+        psiType: PsiArrayType,
+        psiManager: PsiManager,
         private val isRaw: Boolean
-) : JePsiType(), JeTypeWithManager, ArrayType {
+) : JePsiTypeBase<PsiArrayType>(psiType, psiManager), ArrayType {
     override fun getKind() = TypeKind.ARRAY
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitArray(this, p)
     override fun getComponentType() = psiType.componentType.toJeType(psiManager, isRaw = isRaw)

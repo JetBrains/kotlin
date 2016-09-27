@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.java.model.types.toJeType
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-class JeMethodExecutableElement(override val psi: PsiMethod) : JeElement, ExecutableElement, JeModifierListOwner, JeAnnotationOwner {
+class JeMethodExecutableElement(psi: PsiMethod) : JeAbstractElement<PsiMethod>(psi), ExecutableElement, JeModifierListOwner, JeAnnotationOwner {
     override fun getEnclosingElement() = psi.containingClass?.let(::JeTypeElement)
 
     override fun getSimpleName(): JeName {

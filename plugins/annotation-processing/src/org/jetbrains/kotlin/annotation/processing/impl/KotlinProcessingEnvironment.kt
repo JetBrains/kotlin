@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.annotation.processing.impl
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 import java.util.*
@@ -55,13 +57,15 @@ class KotlinProcessingEnvironment(
     internal val javaPsiFacade = javaPsiFacade.toDisposable()
     internal val projectScope = projectScope.toDisposable()
     internal val bindingContext = bindingContext.toDisposable()
-    
+
+    private val registry = ServiceManager.getService(project, JeElementRegistry::class.java).toDisposable()
     internal val appendJavaSourceRootsHandler = appendJavaSourceRootsHandler.toDisposable()
     private val options = Collections.unmodifiableMap(options).toDisposable()
 
     override fun dispose() {
-        types.dispose()
-        elements.dispose()
+        types().dispose()
+        elements().dispose()
+        registry().dispose()
         dispose(elements, types, messager, filer, processors,
                 project, psiManager, javaPsiFacade, projectScope, bindingContext,
                 appendJavaSourceRootsHandler, options)

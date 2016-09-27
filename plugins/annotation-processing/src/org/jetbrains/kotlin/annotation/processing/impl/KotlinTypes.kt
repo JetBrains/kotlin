@@ -272,8 +272,8 @@ class KotlinTypes(
     }
 
     override fun isSubsignature(t1: ExecutableType, t2: ExecutableType): Boolean {
-        val m1 = (t1 as JeClassInitializerExecutableTypeMirror).initializer
-        val m2 = (t2 as JeClassInitializerExecutableTypeMirror).initializer
+        val m1 = (t1 as JeClassInitializerExecutableTypeMirror).psi
+        val m2 = (t2 as JeClassInitializerExecutableTypeMirror).psi
         
         // No parameters
         if (m1 is PsiClassInitializer && m2 is PsiClassInitializer) return true
