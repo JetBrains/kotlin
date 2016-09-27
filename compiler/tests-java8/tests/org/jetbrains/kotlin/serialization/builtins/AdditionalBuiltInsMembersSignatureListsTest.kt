@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.serialization.builtins
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -54,10 +52,9 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val moduleContext = ModuleContext(emptyModule, environment.project)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
-                GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
-                LanguageVersionSettingsImpl.DEFAULT
+                GlobalSearchScope.allScope(environment.project), PackagePartProvider.EMPTY
         )
 
         emptyModule.initialize(container.get<JavaDescriptorResolver>().packageFragmentProvider)

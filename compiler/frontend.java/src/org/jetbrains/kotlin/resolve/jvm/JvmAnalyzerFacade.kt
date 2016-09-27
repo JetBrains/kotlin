@@ -21,7 +21,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -85,7 +84,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 trace,
                 declarationProviderFactory,
                 moduleContentScope,
-                { useInstance(moduleClassResolver) },
+                moduleClassResolver,
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,

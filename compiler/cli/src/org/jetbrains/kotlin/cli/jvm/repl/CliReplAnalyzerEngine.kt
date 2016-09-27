@@ -20,14 +20,12 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -54,16 +52,14 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.configuration)
         this.module = moduleContext.module
 
-        scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
+        this.scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(environment.project),
-                LookupTracker.DO_NOTHING,
-                JvmPackagePartProvider(environment),
-                LanguageVersionSettingsImpl.DEFAULT
+                JvmPackagePartProvider(environment)
         )
 
         this.resolveSession = container.get<ResolveSession>()

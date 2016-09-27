@@ -20,12 +20,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -62,10 +60,9 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         val moduleContext = ModuleContext(emptyModule, environment.project)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
-                GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
-                LanguageVersionSettingsImpl.DEFAULT
+                GlobalSearchScope.allScope(environment.project), PackagePartProvider.EMPTY
         )
 
         emptyModule.initialize(container.get<JavaDescriptorResolver>().packageFragmentProvider)

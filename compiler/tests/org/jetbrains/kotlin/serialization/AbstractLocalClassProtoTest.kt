@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -61,10 +59,9 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, configuration)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                providerFactory, GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.EMPTY,
-                LanguageVersionSettingsImpl.DEFAULT
+                providerFactory, GlobalSearchScope.allScope(environment.project), PackagePartProvider.EMPTY
         )
         moduleContext.initializeModuleContents(container.get<JavaDescriptorResolver>().packageFragmentProvider)
 
