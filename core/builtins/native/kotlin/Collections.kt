@@ -21,7 +21,7 @@ import kotlin.internal.PlatformDependent
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
- * @param T the type of element being iterated over.
+ * @param T the type of element being iterated over. The iterator is covariant on its element type.
  */
 public interface Iterable<out T> {
     /**
@@ -33,10 +33,11 @@ public interface Iterable<out T> {
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over and that supports removing elements during iteration.
+ * @param T the type of element being iterated over. The mutable iterator is invariant on its element type.
  */
 public interface MutableIterable<out T> : Iterable<T> {
     /**
-     * Returns an iterator over the elementrs of this sequence that supports removing elements during iteration.
+     * Returns an iterator over the elements of this sequence that supports removing elements during iteration.
      */
     override fun iterator(): MutableIterator<T>
 }
@@ -44,7 +45,7 @@ public interface MutableIterable<out T> : Iterable<T> {
 /**
  * A generic collection of elements. Methods in this interface support only read-only access to the collection;
  * read/write access is supported through the [MutableCollection] interface.
- * @param E the type of elements contained in the collection.
+ * @param E the type of elements contained in the collection. The collection is covariant on its element type.
  */
 public interface Collection<out E> : Iterable<E> {
     // Query Operations
@@ -62,6 +63,7 @@ public interface Collection<out E> : Iterable<E> {
      * Checks if the specified element is contained in this collection.
      */
     public operator fun contains(element: @UnsafeVariance E): Boolean
+
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
@@ -73,6 +75,8 @@ public interface Collection<out E> : Iterable<E> {
 
 /**
  * A generic collection of elements that supports adding and removing elements.
+ *
+ * @param E the type of elements contained in the collection. The mutable collection is invariant on its element type.
  */
 public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     // Query Operations
@@ -126,11 +130,12 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
 /**
  * A generic ordered collection of elements. Methods in this interface support only read-only access to the list;
  * read/write access is supported through the [MutableList] interface.
- * @param E the type of elements contained in the list.
+ * @param E the type of elements contained in the list. The list is covariant on its element type.
  */
 public interface List<out E> : Collection<E> {
     // Query Operations
     override val size: Int
+
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
@@ -172,17 +177,20 @@ public interface List<out E> : Collection<E> {
     /**
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
      * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list, and vice-versa.
+     *
+     * Structural changes in the base list make the behavior of the view undefined.
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 }
 
 /**
  * A generic ordered collection of elements that supports adding and removing elements.
- * @param E the type of elements contained in the list.
+ * @param E the type of elements contained in the list. The mutable list is invariant on its element type.
  */
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     override fun add(element: E): Boolean
+
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -194,6 +202,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return `true` if the list was changed as the result of the operation.
      */
     public fun addAll(index: Int, elements: Collection<E>): Boolean
+
     override fun removeAll(elements: Collection<E>): Boolean
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
@@ -220,6 +229,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 
     // List Iterators
     override fun listIterator(): MutableListIterator<E>
+
     override fun listIterator(index: Int): MutableListIterator<E>
 
     // View
@@ -230,11 +240,12 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  * A generic unordered collection of elements that does not support duplicate elements.
  * Methods in this interface support only read-only access to the set;
  * read/write access is supported through the [MutableSet] interface.
- * @param E the type of elements contained in the set.
+ * @param E the type of elements contained in the set. The set is covariant on its element type.
  */
 public interface Set<out E> : Collection<E> {
     // Query Operations
     override val size: Int
+
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
@@ -246,7 +257,7 @@ public interface Set<out E> : Collection<E> {
 /**
  * A generic unordered collection of elements that does not support duplicate elements, and supports
  * adding and removing elements.
- * @param E the type of elements contained in the set.
+ * @param E the type of elements contained in the set. The mutable set is invariant on its element type.
  */
 public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
@@ -254,10 +265,12 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     // Modification Operations
     override fun add(element: E): Boolean
+
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
     override fun addAll(elements: Collection<E>): Boolean
+
     override fun removeAll(elements: Collection<E>): Boolean
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
@@ -268,8 +281,9 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
  * Methods in this interface support only read-only access to the map; read-write access is supported through
  * the [MutableMap] interface.
- * @param K the type of map keys.
- * @param V the type of map values.
+ * @param K the type of map keys. The map is invariant on its key type, as it
+ *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
+ * @param V the type of map values. The map is covariant on its value type.
  */
 public interface Map<K, out V> {
     // Query Operations
@@ -312,17 +326,17 @@ public interface Map<K, out V> {
 
     // Views
     /**
-     * Returns a [Set] of all keys in this map.
+     * Returns a read-only [Set] of all keys in this map.
      */
     public val keys: Set<K>
 
     /**
-     * Returns a [Collection] of all values in this map. Note that this collection may contain duplicate values.
+     * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
     public val values: Collection<V>
 
     /**
-     * Returns a [Set] of all key/value pairs in this map.
+     * Returns a read-only [Set] of all key/value pairs in this map.
      */
     public val entries: Set<Map.Entry<K, V>>
 
@@ -345,8 +359,8 @@ public interface Map<K, out V> {
 /**
  * A modifiable collection that holds pairs of objects (keys and values) and supports efficiently retrieving
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
- * @param K the type of map keys.
- * @param V the type of map values.
+ * @param K the type of map keys. The map is invariant on its key type.
+ * @param V the type of map values. The mutable map is invariant on its value type.
  */
 public interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
@@ -388,19 +402,30 @@ public interface MutableMap<K, V> : Map<K, V> {
     public fun clear(): Unit
 
     // Views
+    /**
+     * Returns a mutable [Set] of all keys in this map.
+     */
     override val keys: MutableSet<K>
-    override val values: MutableCollection<V>
+
+    /**
+     * Returns a mutable [Collection] of all values in this map. Note that this collection may contain duplicate values.
+     */
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+
+    /**
+     * Returns a mutable [Set] of all key/value pairs in this map.
+     */
+    override val values: MutableCollection<V>
 
     /**
      * Represents a key/value pair held by a [MutableMap].
      */
-    public interface MutableEntry<K,V>: Map.Entry<K, V> {
+    public interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**
          * Changes the value associated with the key of this entry.
          *
          * @return the previous value corresponding to the key.
          */
-         public fun setValue(newValue: V): V
+        public fun setValue(newValue: V): V
     }
 }
