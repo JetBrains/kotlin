@@ -49,9 +49,27 @@ sourceSets {
     main.kotlin.srcDirs += 'compiler/ir/backend.native/src/'
 }
 
+sourceSets {
+    main.java.srcDirs += 'cli.bc/src'
+    main.kotlin.srcDirs += 'cli.bc/src'
+}
+
+
+sourceSets {
+    main.java.srcDirs += 'bc.frontend/src'
+    main.kotlin.srcDirs += 'bc.frontend/src'
+}
+
+task run(type: JavaExec) {
+   main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+   classpath = sourceSets.main.runtimeClasspath.add(files(['build/classes/main']))
+   args '../translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
+}
+
 task jars {
     project.buildscript.configurations.classpath.each {
       String jarName = it.getName();
       print jarName + ":"
     }
 }
+
