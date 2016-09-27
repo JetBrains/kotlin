@@ -2659,6 +2659,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("DoNotPreferDynamic.kt")
+        public void testDoNotPreferDynamic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/js/DoNotPreferDynamic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DynamicKeyword.kt")
         public void testDynamicKeyword() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/js/DynamicKeyword.kt");

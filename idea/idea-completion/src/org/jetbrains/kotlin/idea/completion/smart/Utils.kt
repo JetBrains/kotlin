@@ -35,8 +35,10 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -291,8 +293,14 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
 
     if (this is CallableDescriptor) {
         val returnType = fuzzyReturnType() ?: return emptyList()
-        // skip declarations of type Nothing or of generic parameter type which has no real bounds
-        if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
+
+        // skip declarations of types Nothing, Nothing?, dynamic or of generic parameter type which has no real bounds
+        if (returnType.type.isNothing() ||
+            returnType.type.isNullableNothing() ||
+            returnType.type.isDynamic() ||
+            returnType.isAlmostEverything()) {
+            return emptyList()
+        }
 
         if (this is VariableDescriptor) { //TODO: generic properties!
             return smartCastCalculator.types(this).map { it.toFuzzyType(emptyList()) }
