@@ -2,6 +2,6 @@
 
 enum class E {
     A {
-        fun foo(): String?? = null
+        fun foo(): String??<caret> = null
     }
 }
