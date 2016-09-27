@@ -150,7 +150,7 @@ class SmartCompletionSession(
                     }
                 }
 
-                if (staticMembersCompletion != null && configuration.completeStaticMembers) {
+                if (staticMembersCompletion != null && configuration.staticMembers) {
                     val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
                     staticMembersCompletion.processMembersFromIndices(indicesHelper(false)) {
                         filter(it, decoratedFactory).forEach {

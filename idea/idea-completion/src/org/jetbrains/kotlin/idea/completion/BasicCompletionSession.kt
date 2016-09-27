@@ -276,7 +276,7 @@ class BasicCompletionSession(
                     }
                 }
 
-                if (configuration.completeStaticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
+                if (configuration.staticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
                     staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
                 }
             }
@@ -594,7 +594,7 @@ class BasicCompletionSession(
             collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true)
         }
         AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade,
-                             kindFilter, includeTypeAliases, configuration.completeJavaClassesNotToBeUsed
+                             kindFilter, includeTypeAliases, configuration.javaClassesNotToBeUsed
         ).collect(classifierDescriptorCollector, javaClassCollector)
     }
 

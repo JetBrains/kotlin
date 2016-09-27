@@ -301,10 +301,10 @@ class KotlinCompletionContributor : CompletionContributor() {
                 // Rerun completion if nothing was found
                 val newConfiguration = CompletionSessionConfiguration(
                         useBetterPrefixMatcherForNonImportedClasses = false,
-                        completeNonAccessibleDeclarations = false,
-                        filterOutJavaGettersAndSetters = false,
-                        completeJavaClassesNotToBeUsed = false,
-                        completeStaticMembers = parameters.invocationCount > 0,
+                        nonAccessibleDeclarations = false,
+                        javaGettersAndSetters = true,
+                        javaClassesNotToBeUsed = false,
+                        staticMembers = parameters.invocationCount > 0,
                         dataClassComponentFunctions = true
                 )
 
