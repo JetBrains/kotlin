@@ -133,10 +133,10 @@
         <attribute name="folderName"/>
         <sequential>
             <!-- todo: temporary hack for unavailable archive.apache.org -->
-            <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-bin.tar.gz"
+            <get src="http://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-bin.tar.gz"
                  dest="${dependencies}/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
 
-            <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-src.zip"
+            <get src="http://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-src.zip"
                  dest="${dependencies}/apache-ant-@{version}-src.zip" usetimestamp="true"/>
 
             <delete dir="${dependencies}/@{folderName}" failonerror="false"/>
