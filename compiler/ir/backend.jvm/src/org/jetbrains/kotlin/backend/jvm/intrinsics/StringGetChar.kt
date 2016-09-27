@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class StringGetChar : IntrinsicMethod() {
-    override fun toCallable(method: CallableMethod): Callable =
-            createIntrinsicCallable(method) {
-                it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
-            }
+    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
+        return IrIntrinsicFunction.create(expression, signature, context) {
+            it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
+        }
+    }
 }
