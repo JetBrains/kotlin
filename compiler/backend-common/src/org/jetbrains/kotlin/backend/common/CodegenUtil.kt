@@ -73,8 +73,7 @@ object CodegenUtil {
     }
 
     private fun doesOverride(overrideCandidate: CallableMemberDescriptor, overriddenDescriptor: CallableMemberDescriptor) =
-        (listOf(overrideCandidate) + DescriptorUtils.getAllOverriddenDescriptors(overrideCandidate))
-                .map(CallableMemberDescriptor::getOriginal)
+        (listOf(overrideCandidate.original) + DescriptorUtils.getAllOverriddenDescriptors(overrideCandidate))
                 .contains(overriddenDescriptor.original)
 
     @JvmStatic
