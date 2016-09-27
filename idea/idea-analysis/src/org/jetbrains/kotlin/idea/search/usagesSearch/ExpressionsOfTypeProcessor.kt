@@ -220,8 +220,10 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessCallableUsagesTask(declaration, processMethod))
     }
 
+    private val PROCESS_REFERENCE_TO_CALLABLE_OF_OUR_TYPE: (PsiReference) -> Boolean = { processReferenceToCallableOfOurType(it) }
+
     private fun addCallableDeclarationOfOurType(declaration: PsiElement) {
-        addCallableDeclarationToProcess(declaration, searchScope.restrictToKotlinSources(), { processReferenceToCallableOfOurType(it) })
+        addCallableDeclarationToProcess(declaration, searchScope.restrictToKotlinSources(), PROCESS_REFERENCE_TO_CALLABLE_OF_OUR_TYPE)
     }
 
     /**
