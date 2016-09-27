@@ -1,0 +1,16 @@
+// modules
+include 'core:builtins'
+include 'custom-dependencies:protobuf-lite'
+include 'core'
+include 'libraries:stdlib'
+
+rootProject.name = 'kotlin'
+
+def setBuildFile(ProjectDescriptor project) {
+    if (project.projectDir.listFiles().any { file -> file.name == 'build.gradle.kts'}) {
+        project.buildFileName = "build.gradle.kts"
+    }
+    project.children.each { p -> setBuildFile(p) }
+}
+
+setBuildFile(rootProject)
