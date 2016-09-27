@@ -194,11 +194,12 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
         else {
             try {
-                dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
+                dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters[chooseFromList - 1]))
             }
             catch(e: IndexOutOfBoundsException) {
                 throw AssertionError("Couldn't find smart step into command at: \n" +
-                                     runReadAction { debuggerContext.sourcePosition.elementAt.getElementTextWithContext() })
+                                     runReadAction { debuggerContext.sourcePosition.elementAt.getElementTextWithContext() },
+                                     e)
             }
         }
     }
