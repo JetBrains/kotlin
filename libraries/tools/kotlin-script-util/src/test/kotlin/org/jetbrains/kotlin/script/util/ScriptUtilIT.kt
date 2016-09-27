@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
 import java.io.ByteArrayOutputStream
@@ -121,6 +122,10 @@ done
                 addJvmClasspathRoot(File(rtJar))
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
+                getResourcePathForClass(DependsOn::class.java).let {
+                    if (it.exists())
+                        addJvmClasspathRoot(it)
+                }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
                 add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
