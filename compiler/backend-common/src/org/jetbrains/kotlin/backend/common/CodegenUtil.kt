@@ -53,28 +53,27 @@ object CodegenUtil {
                 .sortedWith(MemberComparator.INSTANCE)
                 .keysToMapExceptNulls { delegatingMember ->
                     val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
-                            .mapNotNull { overriddenDescriptor ->
-                                if (overriddenDescriptor.containingDeclaration == toInterface) {
-                                    val scope = (delegateExpressionType ?: toInterface.defaultType).memberScope
-                                    val name = overriddenDescriptor.name
+                            .filter { it.containingDeclaration == toInterface }
+                            .map { overriddenDescriptor ->
+                                val scope = (delegateExpressionType ?: toInterface.defaultType).memberScope
+                                val name = overriddenDescriptor.name
 
-                                    // this is the actual member of delegateExpressionType that we are delegating to
-                                    (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) +
-                                     scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
-                                            .firstOrNull {
-                                                (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it))
-                                                        .map(CallableMemberDescriptor::getOriginal)
-                                                        .contains(overriddenDescriptor.original)
-                                            }
-                                }
-                                else null
-                            }
+                                // this is the actual member of delegateExpressionType that we are delegating to
+                                (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) +
+                                 scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
+                                        .firstOrNull { doesOverride(it, overriddenDescriptor) }
+                             }
 
                     assert(actualDelegates.size <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
 
                     actualDelegates.firstOrNull()
                 }
     }
+
+    private fun doesOverride(overrideCandidate: CallableMemberDescriptor, overriddenDescriptor: CallableMemberDescriptor) =
+        (listOf(overrideCandidate) + DescriptorUtils.getAllOverriddenDescriptors(overrideCandidate))
+                .map(CallableMemberDescriptor::getOriginal)
+                .contains(overriddenDescriptor.original)
 
     @JvmStatic
     fun getDelegatePropertyIfAny(
