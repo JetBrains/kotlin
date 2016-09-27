@@ -275,7 +275,7 @@ class BasicCompletionSession(
                     }
                 }
 
-                if (configuration.completeStaticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
+                if (configuration.staticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
                     staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
                 }
             }
@@ -579,8 +579,9 @@ class BasicCompletionSession(
         val javaClassCollector = { javaClass: PsiClass ->
             collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true)
         }
-        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter, configuration.completeJavaClassesNotToBeUsed)
-                .collect(classDescriptorCollector, javaClassCollector)
+        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade,
+                             kindFilter, configuration.javaClassesNotToBeUsed
+        ).collect(classDescriptorCollector, javaClassCollector)
     }
 
 }
