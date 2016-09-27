@@ -58,7 +58,7 @@ public class DebuggerSteppingHelper {
                 try {
                     StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
                     if (frameProxy != null) {
-                        Action action = KotlinSteppingCommandProviderKt.getStepOverPosition(
+                        Action action = KotlinSteppingCommandProviderKt.getStepOverAction(
                                 frameProxy.location(),
                                 kotlinSourcePosition
                         );
