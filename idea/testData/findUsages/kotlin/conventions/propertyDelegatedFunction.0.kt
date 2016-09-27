@@ -9,7 +9,7 @@ class Delegate() {
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
     }
 
-    fun <caret>propertyDelegated(property: KProperty<*>) {
+    operator fun <caret>propertyDelegated(property: KProperty<*>) {
     }
 }
 

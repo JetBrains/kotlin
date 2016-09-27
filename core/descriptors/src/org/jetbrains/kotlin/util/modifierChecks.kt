@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.INC
 import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
 import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.PROPERTY_DELEGATED
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
@@ -215,7 +216,8 @@ object OperatorChecks : AbstractModifierChecks() {
                 ?: ensure(valueParameters[0].type.isThrowable()) {
                     "First parameter should be 'Throwable'"
                 }
-            }
+            },
+            Checks(PROPERTY_DELEGATED, Member, ValueParameterCountCheck.Equals(1)) //TODO: more checks required!
     )
 
     private fun FunctionDescriptor.checkHandleSecondParameter(): String? {

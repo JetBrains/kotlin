@@ -59,6 +59,8 @@ object OperatorNameConventions {
     @JvmField val COROUTINE_HANDLE_RESULT = Name.identifier("handleResult")
     @JvmField val COROUTINE_HANDLE_EXCEPTION = Name.identifier("handleException")
 
+    @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
+
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField
