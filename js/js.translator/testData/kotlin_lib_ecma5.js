@@ -225,6 +225,7 @@
     Kotlin.createClass = function (basesFun, constructor, properties, staticProperties) {
         function $o() {
             var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
+            klass.$metadata$.simpleName = $o.className;
             Object.defineProperty(this, $o.className, {value: klass});
             if (staticProperties && staticProperties.object_initializer$) {
                 staticProperties.object_initializer$(klass);
@@ -265,7 +266,7 @@
                     else {
                         entryObject = entryFactory();
                     }
-                    
+
                     entryObject.ordinal$ = i++;
                     entryObject.name$ = entryName;
                     cls[entryName] = entryObject;
@@ -302,6 +303,7 @@
         function $o() {
             var klass = Kotlin.createTraitNow(getBases(basesFun), properties, staticProperties);
             klass.name = $o.className;
+            klass.$metadata$.simpleName = $o.className;
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
@@ -325,6 +327,7 @@
             var obj = Object.create(klass.prototype);
             var metadata = klass.$metadata$;
             metadata.type = Kotlin.TYPE.OBJECT;
+            metadata.simpleName = $o.className;
             Object.defineProperty(this, $o.className, {value: obj});
             defineNestedTypes(obj, klass.$metadata$.types);
             copyProperties(obj, metadata.staticMembers);
