@@ -6,50 +6,55 @@ package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a JavaScript if statement.
  */
 public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
+    @NotNull
     private JsExpression ifExpression;
+
+    @NotNull
     private JsStatement thenStatement;
+
+    @Nullable
     private JsStatement elseStatement;
 
-    public JsIf() {
-    }
-
-    public JsIf(JsExpression ifExpression, JsStatement thenStatement, JsStatement elseStatement) {
+    public JsIf(@NotNull JsExpression ifExpression, @NotNull JsStatement thenStatement, @Nullable JsStatement elseStatement) {
         this.ifExpression = ifExpression;
         this.thenStatement = thenStatement;
         this.elseStatement = elseStatement;
     }
 
-    public JsIf(JsExpression ifExpression, JsStatement thenStatement) {
-        this.ifExpression = ifExpression;
-        this.thenStatement = thenStatement;
+    public JsIf(@NotNull JsExpression ifExpression, @NotNull JsStatement thenStatement) {
+        this(ifExpression, thenStatement, null);
     }
 
+    @Nullable
     public JsStatement getElseStatement() {
         return elseStatement;
     }
 
+    @NotNull
     public JsExpression getIfExpression() {
         return ifExpression;
     }
 
+    @NotNull
     public JsStatement getThenStatement() {
         return thenStatement;
     }
 
-    public void setElseStatement(JsStatement elseStatement) {
+    public void setElseStatement(@Nullable JsStatement elseStatement) {
         this.elseStatement = elseStatement;
     }
 
-    public void setIfExpression(JsExpression ifExpression) {
+    public void setIfExpression(@NotNull JsExpression ifExpression) {
         this.ifExpression = ifExpression;
     }
 
-    public void setThenStatement(JsStatement thenStatement) {
+    public void setThenStatement(@NotNull JsStatement thenStatement) {
         this.thenStatement = thenStatement;
     }
 
