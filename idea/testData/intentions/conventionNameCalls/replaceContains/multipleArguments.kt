@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: 'operator' modifier is inapplicable on this function: should not have first parameter with default values. and should have remaining parameters with default value
+// ERROR: 'operator' modifier is inapplicable on this function: must have a single value parameter
 fun test() {
     class Test{
         operator fun contains(a: Int, b: Int) : Boolean = true
