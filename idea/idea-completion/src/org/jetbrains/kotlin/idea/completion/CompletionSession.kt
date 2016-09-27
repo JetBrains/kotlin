@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -58,7 +59,8 @@ class CompletionSessionConfiguration(
         val completeNonAccessibleDeclarations: Boolean,
         val filterOutJavaGettersAndSetters: Boolean,
         val completeJavaClassesNotToBeUsed: Boolean,
-        val completeStaticMembers: Boolean
+        val completeStaticMembers: Boolean,
+        val dataClassComponentFunctions: Boolean
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
@@ -66,7 +68,8 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
         completeNonAccessibleDeclarations = parameters.invocationCount >= 2,
         filterOutJavaGettersAndSetters = parameters.invocationCount < 2,
         completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2,
-        completeStaticMembers = parameters.invocationCount >= 2
+        completeStaticMembers = parameters.invocationCount >= 2,
+        dataClassComponentFunctions = parameters.invocationCount >= 2
 )
 
 abstract class CompletionSession(
@@ -344,7 +347,18 @@ abstract class CompletionSession(
             variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
         }
 
+        if (!configuration.dataClassComponentFunctions) {
+            variants = variants.filter { !isDataClassComponentFunction(it) }
+        }
+
         return ReferenceVariants(variants, notImportedExtensions)
+    }
+
+    private fun isDataClassComponentFunction(descriptor: DeclarationDescriptor): Boolean {
+        return descriptor is FunctionDescriptor &&
+               descriptor.isOperator &&
+               DataClassDescriptorResolver.isComponentLike(descriptor.name) &&
+               descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
     }
 
     protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
