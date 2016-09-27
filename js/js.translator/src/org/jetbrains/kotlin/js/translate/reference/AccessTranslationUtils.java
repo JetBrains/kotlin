@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -47,8 +46,10 @@ public final class AccessTranslationUtils {
         if (referenceExpression instanceof KtSimpleNameExpression) {
             return ReferenceTranslator.getAccessTranslator((KtSimpleNameExpression) referenceExpression, context);
         }
-        assert referenceExpression instanceof KtArrayAccessExpression;
-        return getArrayAccessTranslator((KtArrayAccessExpression) referenceExpression, context, forceOrderOfEvaluation);
+        if (referenceExpression instanceof KtArrayAccessExpression) {
+            return getArrayAccessTranslator((KtArrayAccessExpression) referenceExpression, context, forceOrderOfEvaluation);
+        }
+        return new DefaultAccessTranslator(referenceExpression, context);
     }
 
     @NotNull
