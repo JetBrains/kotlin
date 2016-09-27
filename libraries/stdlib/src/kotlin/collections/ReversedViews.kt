@@ -22,7 +22,6 @@ package kotlin.collections
 private open class ReversedListReadOnly<out T>(private val delegate: List<T>) : AbstractList<T>() {
     override val size: Int get() = delegate.size
     override fun get(index: Int): T = delegate[reverseElementIndex(index)]
-
 }
 
 private class ReversedList<T>(private val delegate: MutableList<T>) : AbstractMutableList<T>() {
@@ -37,11 +36,11 @@ private class ReversedList<T>(private val delegate: MutableList<T>) : AbstractMu
         delegate.add(reversePositionIndex(index), element)
     }
 }
-private fun List<*>.reverseElementIndex(index: Int) = // TODO: Use AbstractList.checkElementIndex: run { AbstractList.checkElementIndex(index, size); lastIndex - index }
-        if (index in 0..size - 1) size - index - 1 else throw IndexOutOfBoundsException("Index $index should be in range [${0..size - 1}].")
+private fun List<*>.reverseElementIndex(index: Int) =
+        if (index in 0..lastIndex) lastIndex - index else throw IndexOutOfBoundsException("Element index $index must be in range [${0..lastIndex}].")
 
 private fun List<*>.reversePositionIndex(index: Int) =
-        if (index in 0..size) size - index else throw IndexOutOfBoundsException("Index $index should be in range [${0..size}].")
+        if (index in 0..size) size - index else throw IndexOutOfBoundsException("Position index $index must be in range [${0..size}].")
 
 
 /**

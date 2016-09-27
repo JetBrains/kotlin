@@ -125,12 +125,12 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             }
         }
 
-        internal fun checkRangeIndexes(start: Int, end: Int, size: Int) {
-            if (start < 0 || end > size) {
-                throw IndexOutOfBoundsException("fromIndex: $start, toIndex: $end, size: $size")
+        internal fun checkRangeIndexes(fromIndex: Int, toIndex: Int, size: Int) {
+            if (fromIndex < 0 || toIndex > size) {
+                throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex, size: $size")
             }
-            if (start > end) {
-                throw IllegalArgumentException("fromIndex: $start > toIndex: $end")
+            if (fromIndex > toIndex) {
+                throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
             }
         }
 
