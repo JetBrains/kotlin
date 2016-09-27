@@ -5797,6 +5797,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/operatorOverloading"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
+        @TestMetadata("augmentedAssignmentLhs.kt")
+        public void testAugmentedAssignmentLhs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/operatorOverloading/augmentedAssignmentLhs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryDivOverload.kt")
         public void testBinaryDivOverload() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/operatorOverloading/binaryDivOverload.kt");
