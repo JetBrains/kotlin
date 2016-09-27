@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtWithExpressionInitializer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SuggestVariableNameMacro : Macro() {
@@ -60,7 +60,7 @@ class SuggestVariableNameMacro : Macro() {
 
         val nameValidator: (String) -> Boolean = { true }
 
-        val initializer = (declaration as? KtWithExpressionInitializer)?.initializer
+        val initializer = (declaration as? KtDeclarationWithInitializer)?.initializer
         if (initializer != null) {
             val bindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
             return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer, null, bindingContext, nameValidator, null)
