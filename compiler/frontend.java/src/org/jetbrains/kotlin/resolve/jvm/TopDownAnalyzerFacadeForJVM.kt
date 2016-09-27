@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
-import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -53,14 +52,14 @@ import java.util.*
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
     fun analyzeFilesWithJavaIntegration(
-            moduleContext: ModuleContext,
+            project: Project,
             files: Collection<KtFile>,
             trace: BindingTrace,
             configuration: CompilerConfiguration,
             packagePartProvider: PackagePartProvider
     ): AnalysisResult {
+        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, configuration)
         val storageManager = moduleContext.storageManager
-        val project = moduleContext.project
         val module = moduleContext.module
 
         val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
@@ -114,7 +113,6 @@ object TopDownAnalyzerFacadeForJVM {
         return AnalysisResult.success(trace.bindingContext, module)
     }
 
-    @JvmStatic
     fun createContextWithSealedModule(project: Project, configuration: CompilerConfiguration): MutableModuleContext {
         val projectContext = ProjectContext(project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)

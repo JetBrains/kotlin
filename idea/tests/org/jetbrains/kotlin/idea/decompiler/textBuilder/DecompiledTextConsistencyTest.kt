@@ -47,13 +47,11 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledTextForClassFile(packageFile, it) } ?: buildDecompiledTextForClassFile(packageFile)).text
 
-    override fun getModuleDescriptor(): ModuleDescriptor {
-        val configuration = KotlinTestUtils.newConfiguration()
-        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, configuration), listOf(), BindingTraceContext(),
-                configuration, IDEPackagePartProvider(GlobalSearchScope.allScope(project))
-        ).moduleDescriptor
-    }
+    override fun getModuleDescriptor(): ModuleDescriptor =
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                    project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(),
+                    IDEPackagePartProvider(GlobalSearchScope.allScope(project))
+            ).moduleDescriptor
 
     override fun getProjectDescriptor() =
             object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {

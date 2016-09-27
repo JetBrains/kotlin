@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.util.io.JarUtil
-import org.jetbrains.annotations.TestOnly
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
@@ -29,15 +29,11 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
-import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -406,19 +402,14 @@ object KotlinToJVMBytecodeCompiler {
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult {
-                val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-                val moduleContext =
-                        TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.configuration)
-
-                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                        moduleContext,
-                        environment.getSourceFiles(),
-                        sharedTrace,
-                        environment.configuration,
-                        JvmPackagePartProvider(environment)
-                )
-            }
+            override fun analyze(): AnalysisResult =
+                    TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                            environment.project,
+                            environment.getSourceFiles(),
+                            CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                            environment.configuration,
+                            JvmPackagePartProvider(environment)
+                    )
 
             override fun reportEnvironmentErrors() {
                 reportRuntimeConflicts(collector, environment.configuration.jvmClasspathRoots)

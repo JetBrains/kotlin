@@ -128,10 +128,11 @@ fun createContainerForTopDownSingleModuleAnalyzerForJvm(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
-        packagePartProvider: PackagePartProvider
+        packagePartProvider: PackagePartProvider,
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
 ): ComponentProvider = createContainerForTopDownAnalyzerForJvm(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope,
-        LookupTracker.DO_NOTHING, packagePartProvider, LanguageVersionSettingsImpl.DEFAULT, SingleModuleClassResolver()
+        LookupTracker.DO_NOTHING, packagePartProvider, languageVersionSettings, SingleModuleClassResolver()
 ).apply {
     get<SingleModuleClassResolver>().resolver = get<JavaDescriptorResolver>()
 }
