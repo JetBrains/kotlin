@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Kotlin.iml" filepath="$PROJECT_DIR$/Kotlin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/allopen/allopen.iml" filepath="$PROJECT_DIR$/plugins/allopen/allopen.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" filepath="$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" group="plugins/android-extensions" />
