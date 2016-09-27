@@ -267,6 +267,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 return new JsConditional(testExpression, jsThenExpression, jsElseExpression).source(expression);
             }
         }
+        if (thenStatement == null) {
+            thenStatement = JsEmpty.INSTANCE;
+        }
         JsIf ifStatement = new JsIf(testExpression, thenStatement, elseStatement);
         return ifStatement.source(expression);
     }
