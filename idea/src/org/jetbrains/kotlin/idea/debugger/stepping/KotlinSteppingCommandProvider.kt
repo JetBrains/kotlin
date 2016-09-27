@@ -345,7 +345,7 @@ sealed class Action(val position: XSourcePositionImpl?) {
     }
 }
 
-fun getStepOverPosition(
+fun getStepOverAction(
         location: Location,
         kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition
 ): Action {
@@ -356,10 +356,10 @@ fun getStepOverPosition(
         Pair(inlineArgumentsToSkip, additionalElementsToSkip)
     }
 
-    return getStepOverPosition(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange, inlineArgumentsToSkip, additionalElementsToSkip)
+    return getStepOverAction(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange, inlineArgumentsToSkip, additionalElementsToSkip)
 }
 
-fun getStepOverPosition(
+fun getStepOverAction(
         location: Location,
         file: KtFile,
         range: IntRange,
