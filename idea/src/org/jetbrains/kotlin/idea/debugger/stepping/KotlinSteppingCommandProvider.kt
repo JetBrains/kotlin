@@ -20,6 +20,7 @@ import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.psi.PsiElement
@@ -331,7 +332,7 @@ sealed class Action(val position: XSourcePositionImpl?) {
             debugProcess: DebugProcessImpl,
             suspendContext: SuspendContextImpl,
             ignoreBreakpoints: Boolean
-    ): DebugProcessImpl.ResumeCommand? {
+    ): SuspendContextCommandImpl? {
         return when (this) {
             is Action.RUN_TO_CURSOR -> {
                 runReadAction {
