@@ -178,28 +178,24 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             return dependenciesDescriptors
         }
 
+        fun computeModulesWhoseInternalsAreVisible(module: M): Set<ModuleDescriptorImpl> {
+            return module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) { resolverForProject.descriptorForModule(it as M) }
+        }
+
         fun setupModuleDependencies() {
             modules.forEach {
                 module ->
                 resolverForProject.descriptorForModule(module).setDependencies(
-                        LazyModuleDependencies(storageManager) { computeDependencyDescriptors(module) }
+                        LazyModuleDependencies(
+                                storageManager,
+                                { computeDependencyDescriptors(module) },
+                                { computeModulesWhoseInternalsAreVisible(module) }
+                        )
                 )
             }
         }
 
         setupModuleDependencies()
-
-        fun addFriends() {
-            modules.forEach {
-                module ->
-                val descriptor = resolverForProject.descriptorForModule(module)
-                module.modulesWhoseInternalsAreVisible().forEach {
-                    resolverForProject.descriptorForModule(it as M).addFriend(descriptor)
-                }
-            }
-        }
-
-        addFriends()
 
         fun initializeResolverForProject() {
             modules.forEach {

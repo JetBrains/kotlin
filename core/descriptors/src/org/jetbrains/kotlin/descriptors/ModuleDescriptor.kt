@@ -28,7 +28,7 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 
     val builtIns: KotlinBuiltIns
 
-    fun isFriend(other: ModuleDescriptor): Boolean
+    fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
         return this
