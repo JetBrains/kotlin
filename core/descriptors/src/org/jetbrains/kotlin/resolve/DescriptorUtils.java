@@ -469,6 +469,9 @@ public class DescriptorUtils {
         return classDescriptor.getModality() != Modality.FINAL || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
     }
 
+    /**
+     * @return original (not substituted) descriptors without any duplicates
+     */
     @NotNull
     @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> Set<D> getAllOverriddenDescriptors(@NotNull D f) {
@@ -481,7 +484,7 @@ public class DescriptorUtils {
         if (result.contains(current)) return;
         for (CallableDescriptor callableDescriptor : current.getOriginal().getOverriddenDescriptors()) {
             @SuppressWarnings("unchecked")
-            D descriptor = (D) callableDescriptor;
+            D descriptor = (D) callableDescriptor.getOriginal();
             collectAllOverriddenDescriptors(descriptor, result);
             result.add(descriptor);
         }
