@@ -55,3 +55,10 @@ task jars {
       print jarName + ":"
     }
 }
+
+
+task run(type: JavaExec) {
+   main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+   classpath = sourceSets.main.runtimeClasspath.add(files(['build/classes/main']))
+   args '../../translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
+}
