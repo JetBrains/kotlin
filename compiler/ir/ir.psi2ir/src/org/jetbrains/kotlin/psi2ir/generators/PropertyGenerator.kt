@@ -110,7 +110,6 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val getter = property.getter ?: return null
 
         val ktGetter = ktProperty.getter
-        if (DescriptorUtils.isInterface(property.containingDeclaration) && ktGetter == null) return null
 
         val irGetter = ktGetter?.let {
             IrFunctionImpl(it.startOffset, it.endOffset, IrDeclarationOrigin.DEFINED, getter)
@@ -128,7 +127,6 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val setter = property.setter ?: return null
 
         val ktSetter = ktProperty.setter
-        if (DescriptorUtils.isInterface(property.containingDeclaration) && ktSetter == null) return null
 
         val irSetter = ktSetter?.let {
             IrFunctionImpl(it.startOffset, it.endOffset, IrDeclarationOrigin.DEFINED, setter)

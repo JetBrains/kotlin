@@ -16,29 +16,21 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.isDefinitelyNotDefaultImplsMethod
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -53,7 +45,6 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             return
         }
 
-
         val interfaceDescriptor = irClass.descriptor
         val defaultImplsDescriptor = createDefaultImplsClassDescriptor(interfaceDescriptor)
         val defaultImplsIrClass = IrClassImpl(irClass.startOffset, irClass.endOffset, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS, defaultImplsDescriptor)
@@ -64,7 +55,7 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         irClass.declarations.filterIsInstance<IrFunction>().mapNotNull {
             val descriptor = it.descriptor
             if (descriptor.modality != Modality.ABSTRACT) {
-                val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor)
+                val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
 
                 members.add(IrFunctionImpl(it.startOffset, it.endOffset, it.origin, functionDescriptorImpl, it.body))
                 it.body = null
@@ -87,11 +78,13 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         fun createDefaultImplFunDescriptor(
                 defaultImplsDescriptor: DefaultImplsClassDescriptorImpl,
                 descriptor: FunctionDescriptor,
-                interfaceDescriptor: ClassDescriptor
+                interfaceDescriptor: ClassDescriptor, typeMapper: KotlinTypeMapper
         ): SimpleFunctionDescriptorImpl {
 
             val newFunction = SimpleFunctionDescriptorImpl.create(
-                    defaultImplsDescriptor, AnnotationsImpl(emptyList()), descriptor.name, descriptor.kind, descriptor.source
+                    defaultImplsDescriptor, AnnotationsImpl(emptyList()),
+                    Name.identifier(typeMapper.mapAsmMethod(descriptor).name),
+                    descriptor.kind, descriptor.source
             )
 
             val valueParameters =
