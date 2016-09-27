@@ -140,7 +140,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         ): OperatorReferenceSearcher<*>? {
             if (isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
-                val componentIndex = DataClassDescriptorResolver.getComponentIndex(name.asString())
+                val componentIndex = getComponentIndex(name.asString())
                 return DestructuringDeclarationReferenceSearcher(declaration, componentIndex, searchScope, consumer, optimizer, options)
             }
 
