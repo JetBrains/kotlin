@@ -96,6 +96,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
                 /* checkPropertyAccessors = */ true,
                 /* includeMethodsOfKotlinAny = */ false,
+                /* renderDeclarationsFromOtherModules = */ true,
                 // Skip Java annotation constructors because order of their parameters is not retained at runtime
                 { descriptor -> !descriptor!!.isJavaAnnotationConstructor() },
                 errorTypesForbidden(), renderer
