@@ -55,6 +55,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, disableParamAssertions);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        myFiles = null;
     }
 
     private void loadSource(@NotNull String fileName) {
