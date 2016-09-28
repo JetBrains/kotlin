@@ -113,6 +113,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("parAssignment.kt")
+    public void testParAssignment() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/parAssignment.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("return.kt")
     public void testReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/return.kt");

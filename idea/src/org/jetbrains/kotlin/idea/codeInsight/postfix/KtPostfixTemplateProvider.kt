@@ -140,7 +140,7 @@ private class KtExpressionPostfixTemplateSelector(
                 it !is KtBlockExpression &&
                 it !is KtDeclarationWithBody &&
                 !it.isEffectivelyDeclaration()
-            }.filter { !it.isSelector && it.parent !is KtUserType && !it.isOperationReference }
+            }.filter { !it.isSelector && it.parent !is KtUserType && !it.isOperationReference && !KtPsiUtil.isAssignment(it) }
             .toList()
 }
 
