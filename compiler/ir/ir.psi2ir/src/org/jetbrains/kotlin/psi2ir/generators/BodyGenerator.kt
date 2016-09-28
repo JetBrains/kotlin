@@ -235,7 +235,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     private fun generateEnumEntrySuperConstructorCall(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
-        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, null)
+        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor)
     }
 
     fun generateAnonymousInitializerBody(ktAnonymousInitializer: KtAnonymousInitializer): IrBlockBody {
@@ -256,13 +256,12 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
             return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumEntryConstructor)
         }
 
-        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, enumEntryDescriptor)
+        return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor)
     }
 
     private fun generateEnumConstructorCallOrSuperCall(
             ktEnumEntry: KtEnumEntry,
-            enumClassDescriptor: ClassDescriptor,
-            enumEntryOrNull: ClassDescriptor?
+            enumClassDescriptor: ClassDescriptor
     ): IrExpression {
         val statementGenerator = createStatementGenerator()
 
@@ -271,12 +270,12 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
             val enumConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperCallElement)!!)
             return CallGenerator(statementGenerator).generateEnumConstructorSuperCall(
                     ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                    enumConstructorCall, enumEntryOrNull)
+                    enumConstructorCall)
 
         }
 
         // No-argument enum entry constructor
-        val enumClassConstructor = enumClassDescriptor.unsubstitutedPrimaryConstructor!!
+        val enumClassConstructor = enumClassDescriptor.constructors.find { it.valueParameters.isEmpty() }!!
         return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumClassConstructor)
     }
 

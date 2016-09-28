@@ -4,13 +4,14 @@ fun <T> assertEquals(actual: T, expected: T) {
     }
 }
 
-enum class Test {
-    OK
+enum class TestEnumClass {
+    ZERO {
+        override fun describe() = "nothing"
+    };
+    abstract fun describe(): String
 }
 
 fun box(): String {
-    assertEquals(Test.OK.ordinal, 0)
-    assertEquals(Test.OK.name, "OK")
-    
+    assertEquals(TestEnumClass.ZERO.describe(), "nothing")
     return "OK"
 }

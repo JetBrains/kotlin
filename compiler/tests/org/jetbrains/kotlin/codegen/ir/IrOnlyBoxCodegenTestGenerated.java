@@ -47,6 +47,18 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
         doTest(fileName);
     }
 
+    @TestMetadata("enumClass2.kt")
+    public void testEnumClass2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("enumClass3.kt")
+    public void testEnumClass3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass3.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("fileClassInitializers.kt")
     public void testFileClassInitializers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/fileClassInitializers.kt");

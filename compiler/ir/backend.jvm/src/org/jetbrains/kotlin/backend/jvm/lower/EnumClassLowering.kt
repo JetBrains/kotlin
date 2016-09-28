@@ -56,6 +56,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     private interface EnumConstructorCallTransformer {
         fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression
+        fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression
     }
 
     private val unsubstitutedArrayOfFun = context.builtIns.findSingleFunction(Name.identifier("arrayOf"))
@@ -286,6 +287,28 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
                 return result
             }
+
+            override fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression {
+                val descriptor = delegatingConstructorCall.descriptor
+                val startOffset = delegatingConstructorCall.startOffset
+                val endOffset = delegatingConstructorCall.endOffset
+
+                val loweredDelegatedConstructor = loweredEnumConstructors.getOrElse(descriptor) {
+                    throw AssertionError("Constructor called in enum entry initializer should've been lowered: $descriptor")
+                }
+
+                val result = IrDelegatingConstructorCallImpl(startOffset, endOffset, loweredDelegatedConstructor)
+
+                result.putValueArgument(0, IrGetVariableImpl(startOffset, endOffset, enumClassConstructor.valueParameters[0]))
+                result.putValueArgument(1, IrGetVariableImpl(startOffset, endOffset, enumClassConstructor.valueParameters[1]))
+
+                descriptor.valueParameters.forEach { valueParameter ->
+                    val i = valueParameter.index
+                    result.putValueArgument(i + 2, delegatingConstructorCall.getValueArgument(i))
+                }
+
+                return result
+            }
         }
 
         private abstract inner class InEnumEntry(private val enumEntry: ClassDescriptor) : EnumConstructorCallTransformer {
@@ -314,6 +337,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 return result
             }
 
+            override fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression {
+                throw AssertionError("Unexpected delegating constructor call within enum entry: $enumEntry")
+            }
+
             abstract fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: ClassConstructorDescriptor): IrMemberAccessExpression
         }
 
@@ -331,8 +358,11 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             private var enumConstructorCallTransformer: EnumConstructorCallTransformer? = null
 
             override fun visitField(declaration: IrField): IrStatement {
-                val enumEntry = enumEntriesByField[declaration.descriptor] ?:
-                                return declaration
+                val enumEntry = enumEntriesByField[declaration.descriptor]
+                if (enumEntry == null) {
+                    declaration.transformChildrenVoid(this)
+                    return declaration
+                }
 
                 assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}"}
 
@@ -378,10 +408,29 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 return callTransformer.transform(expression)
             }
 
-            override fun visitGetVariable(expression: IrGetVariable): IrExpression =
-                    loweredEnumConstructorParameters[expression.descriptor]?.let { loweredParameter ->
-                        IrGetVariableImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
-                    } ?: expression
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                if (expression.descriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
+                    val callTransformer = enumConstructorCallTransformer ?:
+                                          throw AssertionError("Enum constructor call outside of enum entry initialization or enum class constructor:\n" +
+                                                               irClass.dump())
+
+                    return callTransformer.transform(expression)
+                }
+
+                return expression
+            }
+
+            override fun visitGetVariable(expression: IrGetVariable): IrExpression {
+                val loweredParameter = loweredEnumConstructorParameters[expression.descriptor]
+                if (loweredParameter != null) {
+                    return IrGetVariableImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
+                }
+                else {
+                    return expression
+                }
+            }
 
             override fun visitSyntheticBody(body: IrSyntheticBody): IrBody {
                 return when (body.kind) {

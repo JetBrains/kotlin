@@ -154,7 +154,7 @@ private fun MemberDescriptor.calcModalityFlag(): Int {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
         }
         Modality.FINAL -> {
-            if (this !is ConstructorDescriptor) {
+            if (this !is ConstructorDescriptor && !DescriptorUtils.isEnumClass(this)) {
                 flags = flags.or(Opcodes.ACC_FINAL)
             }
         }
@@ -171,6 +171,11 @@ private fun MemberDescriptor.calcModalityFlag(): Int {
     }
     return flags
 }
+
+//val MemberDescriptor.effectiveModality: Modality
+//    get() {
+//
+//    }
 
 val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi

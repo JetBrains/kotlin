@@ -68,8 +68,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         }
     }
 
-    fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder,
-                                         enumEntryDescriptor: ClassDescriptor?) : IrExpression {
+    fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val constructorDescriptor = call.descriptor
         if (constructorDescriptor !is ClassConstructorDescriptor) throw AssertionError("Constructor expected: $constructorDescriptor")
         val classDescriptor = constructorDescriptor.containingDeclaration

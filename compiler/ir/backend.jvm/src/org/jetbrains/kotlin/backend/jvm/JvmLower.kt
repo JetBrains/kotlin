@@ -34,7 +34,7 @@ class JvmLower(val context: JvmBackendContext) {
         InterfaceDelegationLowering(context.state).runOnFile(irFile)
         EnumClassLowering(context).runOnFile(irFile)
         ObjectClassLowering(context).runOnFile(irFile)
-        InitializersLowering().runOnFile(irFile)
+        InitializersLowering(context).runOnFile(irFile)
         SingletonReferencesLowering(context).runOnFile(irFile)
     }
 }

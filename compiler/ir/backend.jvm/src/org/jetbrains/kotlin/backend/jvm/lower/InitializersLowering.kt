@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.getMemberOwnerKind
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -35,15 +36,18 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
 
-class InitializersLowering : ClassLoweringPass {
+class InitializersLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val classInitializersBuilder = ClassInitializersBuilder(irClass)
         irClass.acceptChildrenVoid(classInitializersBuilder)
@@ -53,9 +57,7 @@ class InitializersLowering : ClassLoweringPass {
         classInitializersBuilder.createStaticInitializationMethod(irClass)
     }
 
-    private class ClassInitializersBuilder(val irClass: IrClass) : IrElementVisitorVoid {
-        val classMemberOwnerKind = irClass.descriptor.getMemberOwnerKind()
-
+    private inner class ClassInitializersBuilder(val irClass: IrClass) : IrElementVisitorVoid {
         val staticInitializerStatements = ArrayList<IrStatement>()
 
         val instanceInitializerStatements = ArrayList<IrStatement>()
@@ -65,7 +67,7 @@ class InitializersLowering : ClassLoweringPass {
         }
 
         override fun visitField(declaration: IrField) {
-            val irFieldInitializer = declaration.initializer?.let { it.expression } ?: return
+            val irFieldInitializer = declaration.initializer?.expression ?: return
 
             val receiver =
                     if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
@@ -93,23 +95,12 @@ class InitializersLowering : ClassLoweringPass {
         }
 
         fun transformInstanceInitializerCallsInConstructors(irClass: IrClass) {
-            for (irDeclaration in irClass.declarations) {
-                if (irDeclaration !is IrConstructor) continue
-                val irBody = irDeclaration.body as IrBlockBody
-                if (irBody.statements.any { it is IrInstanceInitializerCall }) {
-                    val newStatements = irBody.statements.map { irStatement ->
-                        if (irStatement is IrInstanceInitializerCall) {
-                            IrBlockImpl(irClass.startOffset, irClass.endOffset, irDeclaration.descriptor.builtIns.unitType, null,
-                                        instanceInitializerStatements.map { it.copy() })
-                        }
-                        else {
-                            irStatement
-                        }
-                    }
-                    irBody.statements.clear()
-                    irBody.statements.addAll(newStatements)
+            irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
+                    return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.builtIns.unitType, null,
+                                       instanceInitializerStatements.map { it.copy() })
                 }
-            }
+            })
         }
 
         fun createStaticInitializationMethod(irClass: IrClass) {

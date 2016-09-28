@@ -4,13 +4,18 @@ fun <T> assertEquals(actual: T, expected: T) {
     }
 }
 
-enum class Test {
-    OK
+enum class TestEnumClass(val x: Int) {
+    ZERO
+//    {
+//        init {
+//        }
+//    }
+    ;
+    constructor(): this(0)
 }
 
 fun box(): String {
-    assertEquals(Test.OK.ordinal, 0)
-    assertEquals(Test.OK.name, "OK")
-    
+    assertEquals(TestEnumClass.ZERO.x, 0)
+
     return "OK"
 }
