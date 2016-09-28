@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionInformation
+import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
@@ -53,7 +55,23 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val newDataFlowInfo = conditionInfo.and(typeInfo.dataFlowInfo)
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
         }
-        return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(components.builtIns.booleanType), expression, contextWithExpectedType)
+
+        val resultTypeInfo = components.dataFlowAnalyzer.checkType(typeInfo.replaceType(components.builtIns.booleanType), expression, contextWithExpectedType)
+
+        if (typeReference != null) {
+            val rhsType = context.trace[BindingContext.TYPE, typeReference]
+            val rttiInformation = RttiExpressionInformation(
+                    subject = leftHandSide,
+                    sourceType = knownType,
+                    targetType = rhsType,
+                    operation = RttiOperation.IS
+            )
+            components.rttiExpressionCheckers.forEach {
+                it.check(rttiInformation, expression, context.trace)
+            }
+        }
+
+        return resultTypeInfo
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression, context: ExpressionTypingContext) =
@@ -313,6 +331,18 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     }
                     else {
                         newDataFlowInfo = result
+                    }
+                    val rhsType = context.trace[BindingContext.TYPE, typeReference]
+                    if (subjectExpression != null) {
+                        val rttiInformation = RttiExpressionInformation(
+                                subject = subjectExpression,
+                                sourceType = subjectType,
+                                targetType = rhsType,
+                                operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
+                        )
+                        components.rttiExpressionCheckers.forEach {
+                            it.check(rttiInformation, condition, context.trace)
+                        }
                     }
                 }
             }

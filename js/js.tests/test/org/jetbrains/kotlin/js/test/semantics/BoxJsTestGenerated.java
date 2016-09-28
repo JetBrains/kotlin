@@ -5492,6 +5492,24 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("castToNativeClassChecked.kt")
+        public void testCastToNativeClassChecked() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToNativeClassChecked.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("castToNativeInterface.kt")
+        public void testCastToNativeInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToNativeInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("castToTypeParamBoundedByNativeInterface.kt")
+        public void testCastToTypeParamBoundedByNativeInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToTypeParamBoundedByNativeInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/class.kt");

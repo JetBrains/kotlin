@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
 
 private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     with(DiagnosticFactoryToRendererMap("JS")) {
 
         put(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
-            "Annotation ''{0}'' is allowed only on member functions of declaration annotated as ''kotlin.js.native'' or on toplevel extension functions", Renderers.RENDER_TYPE)
+            "Annotation ''{0}'' is allowed only on member functions of declaration annotated as ''kotlin.js.native'' or on toplevel extension functions", RENDER_TYPE)
         put(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER, "Native {0}''s first parameter type should be ''kotlin.String'' or subtype of ''kotlin.Number''", Renderers.STRING)
         put(ErrorsJs.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS, "Native {0}''s parameter can not have default value", Renderers.STRING)
         put(ErrorsJs.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, "Native getter's return type should be nullable")
@@ -47,6 +48,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
+        put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
+        put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
 
         this
     }

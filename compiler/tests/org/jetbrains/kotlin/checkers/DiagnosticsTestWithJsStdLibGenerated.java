@@ -719,6 +719,33 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Rtti extends AbstractDiagnosticsTestWithJsStdLib {
+            public void testAllFilesPresentInRtti() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("castToNativeInterface.kt")
+            public void testCastToNativeInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/castToNativeInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("checkForNativeInterface.kt")
+            public void testCheckForNativeInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/checkForNativeInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenIsNativeInterface.kt")
+            public void testWhenIsNativeInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/whenIsNativeInterface.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

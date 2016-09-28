@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 
 import javax.inject.Inject;
@@ -58,6 +59,7 @@ public class ExpressionTypingComponents {
     /*package*/ LookupTracker lookupTracker;
     /*package*/ OverloadChecker overloadChecker;
     /*package*/ LanguageVersionSettings languageVersionSettings;
+    /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -192,5 +194,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setLanguageVersionSettings(@NotNull LanguageVersionSettings languageVersionSettings) {
         this.languageVersionSettings = languageVersionSettings;
+    }
+
+    @Inject
+    public void setRttiExpressionCheckers(@NotNull Iterable<RttiExpressionChecker> rttiExpressionCheckers) {
+        this.rttiExpressionCheckers = rttiExpressionCheckers;
     }
 }

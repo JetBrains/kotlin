@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
@@ -124,6 +125,10 @@ public final class PatternTranslator extends AbstractTranslator {
         if (sourceType != null && !DynamicTypesKt.isDynamic(sourceType) && TypeUtilsKt.isSubtypeOf(sourceType, targetType)) return null;
 
         JsExpression checkFunReference = doGetIsTypeCheckCallable(targetType);
+        if (checkFunReference == null) {
+            return null;
+        }
+
         boolean isReifiedType = isReifiedTypeParameter(targetType);
         if (!isReifiedType && isNullableType(targetType) ||
             isReifiedType && findChildByType(targetTypeReference, KtNodeTypes.NULLABLE_TYPE) != null
@@ -137,6 +142,9 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression getIsTypeCheckCallable(@NotNull KotlinType type) {
         JsExpression callable = doGetIsTypeCheckCallable(type);
+        assert callable != null : "This method should be called only to translate reified type parameters. " +
+                                  "`callable` should never be null for reified type parameters. " +
+                                  "Actual type: " + type;
 
         // If the type is reified, rely on the corresponding is type callable.
         // Otherwise make sure that passing null yields true
@@ -147,8 +155,13 @@ public final class PatternTranslator extends AbstractTranslator {
         return callable;
     }
 
-    @NotNull
+    @Nullable
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
+        ClassifierDescriptor targetDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if (targetDescriptor != null && AnnotationsUtils.isNativeInterface(targetDescriptor)) {
+            return null;
+        }
+
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
@@ -164,12 +177,12 @@ public final class PatternTranslator extends AbstractTranslator {
             JsExpression result = null;
             for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
                 JsExpression next = doGetIsTypeCheckCallable(upperBound);
-                result = result != null ? namer().andPredicate(result, next) : next;
+                if (next != null) {
+                    result = result != null ? namer().andPredicate(result, next) : next;
+                }
             }
-            assert result != null : "KotlinType is expected to return at least one upper bound: " + type;
             return result;
         }
-
 
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
         JsExpression typeName = ReferenceTranslator.translateAsTypeReference(referencedClass, context());

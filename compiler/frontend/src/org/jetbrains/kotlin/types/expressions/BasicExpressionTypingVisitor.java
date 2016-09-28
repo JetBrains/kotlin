@@ -42,8 +42,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
+import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
@@ -315,7 +314,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         KotlinType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
-        return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(result), expression, context);
+        KotlinTypeInfo resultTypeInfo = components.dataFlowAnalyzer.checkType(typeInfo.replaceType(result), expression, context);
+
+        RttiExpressionInformation rttiInformation = new RttiExpressionInformation(
+                expression.getLeft(),
+                subjectType,
+                result,
+                operationType == AS_SAFE ? RttiOperation.SAFE_AS : RttiOperation.AS
+        );
+        for (RttiExpressionChecker checker : components.rttiExpressionCheckers) {
+            checker.check(rttiInformation, expression, context.trace);
+        }
+
+        return resultTypeInfo;
     }
 
     private void checkBinaryWithTypeRHS(
