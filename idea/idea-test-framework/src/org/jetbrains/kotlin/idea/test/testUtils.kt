@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
-import java.lang.IllegalArgumentException
 import java.util.*
 
 enum class ModuleKind {
@@ -48,16 +47,18 @@ enum class ModuleKind {
 
 fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
     val module = this
-    updateModel(module, Consumer<ModifiableRootModel> { model ->
-        if (descriptor.sdk != null) {
-            model.sdk = descriptor.sdk
-        }
-        val entries = model.contentEntries
-        if (entries.isEmpty()) {
-            descriptor.configureModule(module, model)
-        }
-        else {
-            descriptor.configureModule(module, model, entries[0])
+    updateModel(module, object : Consumer<ModifiableRootModel> {
+        override fun consume(model: ModifiableRootModel) {
+            if (descriptor.sdk != null) {
+                model.sdk = descriptor.sdk
+            }
+            val entries = model.contentEntries
+            if (entries.isEmpty()) {
+                descriptor.configureModule(module, model)
+            }
+            else {
+                descriptor.configureModule(module, model, entries[0])
+            }
         }
     })
 }
@@ -75,29 +76,17 @@ fun Module.configureAs(kind: ModuleKind) {
 }
 
 fun KtFile.dumpTextWithErrors(): String {
-    val diagnostics = analyzeFullyAndGetResult().bindingContext.diagnostics
-    val errors = diagnostics.filter { it.severity == Severity.ERROR }
+    val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
+    val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
     if (errors.isEmpty()) return text
     val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
     return header + text
 }
 
 fun closeAndDeleteProject(): Unit =
-        ApplicationManager.getApplication().runWriteAction { LightPlatformTestCase.closeAndDeleteProject() }
+    ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
-fun doKotlinTearDown(project: Project, runnable: RunnableWithException) {
-    doKotlinTearDown(project) { runnable.run() }
-}
-
-fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
-    unInvalidateBuiltinsAndStdLib(project) {
-        patchThreadTracker {
-            runnable()
-        }
-    }
-}
-
-fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
+fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
     val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
     for ((file, viewProvider) in vFileToViewProviderMap) {
@@ -106,7 +95,7 @@ fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
         }
     }
 
-    runnable()
+    runnable.run()
 
     // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
     fun unInvalidateFile(file: PsiFileImpl) {
@@ -117,11 +106,15 @@ fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
 
     stdLibViewProviders.forEach {
         it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
-        vFileToViewProviderMap[it.virtualFile] = it
+        vFileToViewProviderMap.set(it.virtualFile, it)
     }
 }
 
 private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
+
+fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
+    unInvalidateBuiltinsAndStdLib(project, RunnableWithException { runnable() })
+}
 
 fun invalidateLibraryCache(project: Project) {
     LibraryModificationTracker.getInstance(project).incModificationCount()
@@ -135,7 +128,7 @@ fun Document.extractMultipleMarkerOffsets(project: Project, caretMarker: String 
     val offsets = ArrayList<Int>()
 
     runWriteAction {
-        val text = StringBuilder(text)
+        val text = StringBuilder(getText())
         while (true) {
             val offset = text.indexOf(caretMarker)
             if (offset >= 0) {
