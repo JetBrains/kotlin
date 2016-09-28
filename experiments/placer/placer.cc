@@ -41,14 +41,14 @@ void ReturnByValue(ObjRef<List> value) {
   value.at<int, data_offset>().set(239);
 }
 
-ObjRef<List> ReturnByRef(Container* container) {
+ObjRef<List> ReturnByRef(ArenaContainer* container) {
   auto result = ObjRef<List>::Alloc(container);
   result.at<int, data_offset>().set(30);
   return result;
 }
 
 void test_placer() {
-  Container heap(1024);
+  ArenaContainer heap(1024);
   {
     ObjRef<List> head = ObjRef<List>::Alloc(&heap);
     head.at<int, data_offset>().set(1);
