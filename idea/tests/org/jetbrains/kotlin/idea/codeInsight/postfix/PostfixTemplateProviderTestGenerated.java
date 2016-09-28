@@ -41,6 +41,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("doNotProposeWrappingIncrement.kt")
+    public void testDoNotProposeWrappingIncrement() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/doNotProposeWrappingIncrement.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("else.kt")
     public void testElse() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/else.kt");
