@@ -722,7 +722,7 @@
         <attribute name="idea.maven.version"/>
         <attribute name="base.repository.url"/>
 
-        <attribute name="download.dir" default="${dependencies}/idea"/>
+        <attribute name="download.dir" default="${dependencies}/idea${ideaVersion}"/>
 
         <sequential>
             <delete dir="@{download.dir}"/>
