@@ -17,8 +17,15 @@
 package org.jetbrains.kotlin.idea.rename
 
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.idea.test.patchThreadTracker
 import org.jetbrains.kotlin.tests.ULTIMATE_TEST_DATA_DIR
 
 abstract class AbstractUltimateRenameTest : AbstractRenameTest() {
     override fun getTestDataPath() = ULTIMATE_TEST_DATA_DIR
+
+    override fun tearDown() {
+        patchThreadTracker {
+            super.tearDown()
+        }
+    }
 }
