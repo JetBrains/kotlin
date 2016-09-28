@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.CacheVersion
 import java.io.File
 
-internal const val GRADLE_CACHE_VERSION = 1
+internal const val GRADLE_CACHE_VERSION = 2
 internal const val GRADLE_CACHE_VERSION_FILE_NAME = "gradle-format-version.txt"
 
 internal fun gradleCacheVersion(dataRoot: File): CacheVersion =

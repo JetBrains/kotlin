@@ -82,7 +82,6 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         logger.kotlinDebug("Creating kotlin compile task $name")
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
-        kotlinCompile.moduleName = "${project.name}-$name"
         kotlinCompile.mapClasspath { sourceSet.compileClasspath }
         kotlinCompile.destinationDir = defaultKotlinDestinationDir
         return kotlinCompile
@@ -109,7 +108,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         get() = File(project.buildDir, "kotlin-classes/$sourceSetName")
 
     override fun doCreateTask(project: Project, taskName: String): KotlinCompile =
-            tasksProvider.createKotlinJVMTask(project, taskName)
+            tasksProvider.createKotlinJVMTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
         val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
@@ -185,7 +184,7 @@ internal class Kotlin2JsSourceSetProcessor(
     private val build = project.tasks.findByName("build")
 
     override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
-            tasksProvider.createKotlinJSTask(project, taskName)
+            tasksProvider.createKotlinJSTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
         val taskName = kotlinTask.name
@@ -332,7 +331,7 @@ internal open class KotlinAndroidPlugin(
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             // todo: Investigate possibility of creating and configuring kotlinTask before evaluation
-            val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
+            val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName, variantData.name)
             kotlinTask.parentKotlinOptionsImpl = rootKotlinOptions
 
             // store kotlin classes in separate directory. They will serve as class-path to java compiler

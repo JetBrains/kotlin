@@ -36,6 +36,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
+            assertFileExists("build/classes/main/META-INF/kotlinProject_main.kotlin_module")
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin")
         }
