@@ -379,8 +379,6 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
 
     override fun getFamilyName() = "Safe delete"
 
-    override fun startInWriteAction(): Boolean = false
-
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val declaration = descriptor.psiElement.getStrictParentOfType<KtDeclaration>() ?: return
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
