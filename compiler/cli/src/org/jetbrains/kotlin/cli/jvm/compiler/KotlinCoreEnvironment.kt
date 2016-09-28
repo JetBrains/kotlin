@@ -47,7 +47,6 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.augment.PsiAugmentProvider
-import com.intellij.psi.augment.TypeAnnotationModifier
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
@@ -414,8 +413,6 @@ class KotlinCoreEnvironment private constructor(
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, ContainerProvider::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
