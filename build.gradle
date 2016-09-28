@@ -1,5 +1,7 @@
 ant.importBuild 'backend.native/kotlin-ir/build.xml'
 
-Properties props = new Properties()
-props.load(new FileInputStream("$project.rootDir/local.properties"))
-props.each {prop -> project.ext.set(prop.key, prop.value)}
+if (new File("$project.rootDir/local.properties").exists()) {
+  Properties props = new Properties()
+  props.load(new FileInputStream("$project.rootDir/local.properties"))
+  props.each {prop -> project.ext.set(prop.key, prop.value)}
+}
