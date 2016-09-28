@@ -162,16 +162,19 @@ class ExpressionCodegen(
                 gen(receiver, callable.dispatchReceiverType!!, data)
             }
 
-            val args = (listOf(expression.extensionReceiver).filterNotNull() +
-                       expression.descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
+            expression.extensionReceiver?.apply {
+                gen(this, callable.extensionReceiverType!!, data)
+            }
+
+            val args = expression.descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
                            expression.getValueArgument(i) ?: DefaultArg(i)
-                       })
+                       }
 
             val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
             args.forEachIndexed { i, expression ->
                 when (expression) {
                     is IrExpression -> {
-                        gen(expression, callable.parameterTypes[i], data)
+                        gen(expression, callable.valueParameterTypes[i], data)
                     }
                     is DefaultArg -> {
                         pushDefaultValueOnStack(callable.parameterTypes[i], mv)

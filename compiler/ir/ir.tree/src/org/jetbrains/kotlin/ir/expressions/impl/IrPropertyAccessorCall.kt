@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
@@ -115,4 +116,9 @@ class IrSetterCallImpl(
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?) =
             IrSetterCallImpl(startOffset, endOffset, newCallee, typeArguments, newOrigin, newSuperQualifier)
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        super.transformChildren(transformer, data)
+        argumentImpl = argumentImpl?.transform(transformer, data)
+    }
 }

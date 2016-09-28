@@ -20,17 +20,21 @@ import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetVariable
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetVariableImpl
+import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -39,6 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 
 class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
+
 
     override fun lower(irClass: IrClass) {
         if (!DescriptorUtils.isInterface(irClass.descriptor)) {
@@ -57,8 +62,13 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             if (descriptor.modality != Modality.ABSTRACT) {
                 val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
 
-                members.add(IrFunctionImpl(it.startOffset, it.endOffset, it.origin, functionDescriptorImpl, it.body))
+                val newFunction = IrFunctionImpl(it.startOffset, it.endOffset, it.origin, functionDescriptorImpl, it.body)
+                members.add(newFunction)
                 it.body = null
+
+                val mapping: Map<DeclarationDescriptor, ValueParameterDescriptor> = (listOf(it.descriptor.containingDeclaration) + it.descriptor.valueParameters).zip(functionDescriptorImpl.valueParameters).toMap()
+
+                newFunction.body?.transform(VariableRemapper(mapping), null)
             }
         }
 
@@ -66,6 +76,9 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         irClass.transformChildrenVoid(this)
     }
 
+    override fun visitGetVariable(expression: IrGetVariable): IrExpression {
+        return super.visitGetVariable(expression)
+    }
 
     companion object {
 
@@ -84,7 +97,7 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             val newFunction = SimpleFunctionDescriptorImpl.create(
                     defaultImplsDescriptor, AnnotationsImpl(emptyList()),
                     Name.identifier(typeMapper.mapAsmMethod(descriptor).name),
-                    descriptor.kind, descriptor.source
+                    CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
             )
 
             val valueParameters =
@@ -101,4 +114,12 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         }
     }
 
+}
+
+class VariableRemapper(val mapping: Map<DeclarationDescriptor, VariableDescriptor>): IrElementTransformerVoid() {
+
+    override fun visitGetVariable(expression: IrGetVariable): IrExpression =
+            mapping[expression.descriptor]?.let { loweredParameter ->
+                IrGetVariableImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
+            } ?: expression
 }
