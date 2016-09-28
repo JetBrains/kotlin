@@ -115,7 +115,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
-    private static final DescriptorPredicate INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr");
+    private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = Predicates.or(
+            pattern("Int.or|and|xor|shl|shr|ushr"),
+            pattern("Short|Byte.or|and|xor")
+    );
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
 
