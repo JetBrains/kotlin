@@ -1,5 +1,5 @@
 buildscript {
-   ext.kotlin_version = '1.0.3'
+   ext.kotlin_ir_path = "$projectDir/kotlin-ir/dist"
    repositories {
        mavenCentral()
    }
@@ -15,33 +15,33 @@ apply plugin: 'kotlin'
 
 
 dependencies {
-        compile files('../kotlin-ir/dist//kotlin-build-common-sources.jar',
-        '../kotlin-ir/dist//kotlin-compiler-before-shrink.jar',
-        '../kotlin-ir/dist//kotlin-compiler-for-maven.jar',
-        '../kotlin-ir/dist//kotlin-compiler-javadoc.jar',
-        '../kotlin-ir/dist//kotlin-compiler-sources.jar',
-        '../kotlin-ir/dist//kotlin-mock-runtime-for-test.jar',
-        '../kotlin-ir/dist//kotlin-reflect-before-jarjar.jar',
-        '../kotlin-ir/dist//kotlin-reflect-jarjar.jar',
-        '../kotlin-ir/dist//kotlin-reflect-sources-for-maven.jar',
-        '../kotlin-ir/dist//kotlinc/lib/android-extensions-compiler.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-annotation-processing.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-ant.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-build-common-test.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-build-common.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-compiler.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-daemon-client.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-jslib-sources.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-jslib.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-preloader.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-reflect-internal-bootstrap.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-reflect.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-runner.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-runtime-internal-bootstrap.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-runtime-sources.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-runtime.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-test-internal-bootstrap.jar',
-        '../kotlin-ir/dist//kotlinc/lib/kotlin-test.jar')
+        compile files("$kotlin_ir_path/kotlin-build-common-sources.jar",
+        "$kotlin_ir_path/kotlin-compiler-before-shrink.jar",
+        "$kotlin_ir_path/kotlin-compiler-for-maven.jar",
+        "$kotlin_ir_path/kotlin-compiler-javadoc.jar",
+        "$kotlin_ir_path/kotlin-compiler-sources.jar",
+        "$kotlin_ir_path/kotlin-mock-runtime-for-test.jar",
+        "$kotlin_ir_path/kotlin-reflect-before-jarjar.jar",
+        "$kotlin_ir_path/kotlin-reflect-jarjar.jar",
+        "$kotlin_ir_path/kotlin-reflect-sources-for-maven.jar",
+        "$kotlin_ir_path/kotlinc/lib/android-extensions-compiler.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-annotation-processing.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-ant.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-build-common-test.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-build-common.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-daemon-client.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-jslib-sources.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-jslib.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-preloader.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-reflect-internal-bootstrap.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-runner.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime-internal-bootstrap.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime-sources.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-test-internal-bootstrap.jar",
+        "$kotlin_ir_path/kotlinc/lib/kotlin-test.jar")
 }
 
 sourceSets {
@@ -63,10 +63,11 @@ sourceSets {
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
    classpath = sourceSets.main.runtimeClasspath.add(files(['build/classes/main']))
-   args '../translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
+   args '../experiments/translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
 }
 
 task jars {
+    println "kotlin-ir: $kotlin_ir_path"
     project.buildscript.configurations.classpath.each {
       String jarName = it.getName();
       print jarName + ":"
