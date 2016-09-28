@@ -223,11 +223,6 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
       return true;
     }
 
-    @Override
-    public boolean isSuppressAll() {
-      return false;
-    }
-
     @NotNull
     @Override
     public String getName() {
