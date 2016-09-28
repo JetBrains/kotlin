@@ -58,7 +58,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val descriptor = call.descriptor
-        if (descriptor !is ConstructorDescriptor) throw AssertionError("Constructor expected: $descriptor")
+        if (descriptor !is ClassConstructorDescriptor) throw AssertionError("Class constructor expected: $descriptor")
 
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor, getTypeArguments(call.original))
@@ -78,7 +78,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
-            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorDescriptor, enumEntryDescriptor)
+            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorDescriptor)
             addParametersToCall(startOffset, endOffset, call, irCall, constructorDescriptor.returnType)
         }
     }

@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -25,8 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 class IrEnumConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
-        override val descriptor: ConstructorDescriptor,
-        override val enumEntryDescriptor: ClassDescriptor? = null
+        override val descriptor: ClassConstructorDescriptor
 ) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, descriptor.builtIns.unitType, descriptor.valueParameters.size, null),
         IrEnumConstructorCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

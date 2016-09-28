@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.lower.JvmFileClassProvider
+import org.jetbrains.kotlin.backend.jvm.descriptors.SpecialDescriptorsFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmBackendContext(
         val state: GenerationState,
-        val jvmFileClassProvider: JvmFileClassProvider,
+        val psiSourceManager: PsiSourceManager,
         val irBuiltIns: IrBuiltIns
-        )
+) {
+    val builtIns = state.module.builtIns
+    val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager)
+}
+

@@ -24,11 +24,12 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 class Clone : IntrinsicMethod() {
 
-    /*TODO return type*/
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         return IrIntrinsicFunction.create(expression, signature, context) {
+            val resultType = context.state.typeMapper.mapType(expression.type)
             val opcode = if (expression is IrCall && expression.superQualifier != null) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
             it.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
+            it.checkcast(resultType)
         }
     }
 

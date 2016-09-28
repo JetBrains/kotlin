@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import java.lang.AssertionError
 import java.util.*
 
-class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext): GeneratorWithScope {
+class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context: GeneratorContext) : GeneratorWithScope {
     override val scope = Scope(scopeOwner)
     private val loopTable = HashMap<KtLoopExpression, IrLoop>()
 
@@ -63,7 +63,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpressionBody =
             IrExpressionBodyImpl(ktInitializer.startOffset, ktInitializer.endOffset,
-                                                                     createStatementGenerator().generateExpression(ktInitializer))
+                                 createStatementGenerator().generateExpression(ktInitializer))
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
         val statementGenerator = createStatementGenerator()
@@ -231,7 +231,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
     private fun generateEnumSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
         val enumConstructor = context.builtIns.enum.constructors.single()
-        irBlockBody.statements.add(IrEnumConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, enumConstructor, null))
+        irBlockBody.statements.add(IrEnumConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, enumConstructor))
     }
 
     private fun generateEnumEntrySuperConstructorCall(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
@@ -253,8 +253,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     fun generateEnumEntryInitializer(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
         if (ktEnumEntry.declarations.isNotEmpty()) {
             val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
-            return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                                                                                 enumEntryConstructor, enumEntryDescriptor)
+            return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumEntryConstructor)
         }
 
         return generateEnumConstructorCallOrSuperCall(ktEnumEntry, enumEntryDescriptor.containingDeclaration as ClassDescriptor, enumEntryDescriptor)
@@ -278,8 +277,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
         // No-argument enum entry constructor
         val enumClassConstructor = enumClassDescriptor.unsubstitutedPrimaryConstructor!!
-        return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                                                                             enumClassConstructor, enumEntryOrNull)
+        return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumClassConstructor)
     }
 
 }

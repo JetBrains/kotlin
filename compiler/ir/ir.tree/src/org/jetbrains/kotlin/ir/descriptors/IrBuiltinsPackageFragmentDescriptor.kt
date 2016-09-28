@@ -25,9 +25,13 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface IrBuiltinsPackageFragmentDescriptor : PackageFragmentDescriptor
 
-class IrBuiltinsPackageFragmentDescriptorImpl(val containingModule: ModuleDescriptor) : IrBuiltinsPackageFragmentDescriptor {
-    override val fqName: FqName get() = FqName("kotlin.internal.ir")
-    override fun getName(): Name = Name.identifier("ir")
+class IrBuiltinsPackageFragmentDescriptorImpl(
+        val containingModule: ModuleDescriptor,
+        override val fqName: FqName
+) : IrBuiltinsPackageFragmentDescriptor {
+    private val shortName = fqName.shortName()
+
+    override fun getName(): Name = shortName
 
     override fun getContainingDeclaration(): ModuleDescriptor = containingModule
 

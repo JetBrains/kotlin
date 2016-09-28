@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -88,7 +89,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         if (ktConstructor.isConstructorDelegatingToSuper(context.bindingContext)) {
             return generateSecondaryConstructorWithNestedInitializers(ktConstructor)
         }
-        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
+        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
         val bodyGenerator = createBodyGenerator(constructorDescriptor)
         bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)
@@ -98,7 +99,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
 
     private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrFunction {
-        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor)
+        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
         val bodyGenerator = createBodyGenerator(constructorDescriptor)
         bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)

@@ -38,7 +38,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapClassDeclaration(descriptor: ClassDescriptor) = descriptor
     protected open fun mapTypeAliasDeclaration(descriptor: TypeAliasDescriptor) = descriptor
     protected open fun mapFunctionDeclaration(descriptor: FunctionDescriptor) = descriptor
-    protected open fun mapConstructorDeclaration(descriptor: ConstructorDescriptor) = descriptor
+    protected open fun mapConstructorDeclaration(descriptor: ClassConstructorDescriptor) = descriptor
     protected open fun mapPropertyDeclaration(descriptor: PropertyDescriptor) = descriptor
     protected open fun mapLocalPropertyDeclaration(descriptor: VariableDescriptorWithAccessors) = descriptor
     protected open fun mapEnumEntryDeclaration(descriptor: ClassDescriptor) = descriptor
@@ -52,9 +52,8 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapPropertyReference(descriptor: PropertyDescriptor) = descriptor
     protected open fun mapReceiverParameterReference(descriptor: ReceiverParameterDescriptor) = descriptor
     protected open fun mapCallee(descriptor: CallableDescriptor) = descriptor
-    protected open fun mapDelegatedConstructorCallee(descriptor: ConstructorDescriptor) = descriptor
-    protected open fun mapEnumConstructorCallee(descriptor: ConstructorDescriptor) = descriptor
-    protected open fun mapEnumEntryInConstructor(descriptor: ClassDescriptor?) = descriptor
+    protected open fun mapDelegatedConstructorCallee(descriptor: ClassConstructorDescriptor) = descriptor
+    protected open fun mapEnumConstructorCallee(descriptor: ClassConstructorDescriptor) = descriptor
     protected open fun mapCallableReference(descriptor: CallableDescriptor) = descriptor
     protected open fun mapClassifierReference(descriptor: ClassifierDescriptor) = descriptor
     protected open fun mapReturnTarget(descriptor: CallableDescriptor) = mapCallee(descriptor)
@@ -346,8 +345,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall =
             IrEnumConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
-                    mapEnumConstructorCallee(expression.descriptor),
-                    mapEnumEntryInConstructor(expression.enumEntryDescriptor)
+                    mapEnumConstructorCallee(expression.descriptor)
             ).transformValueArguments(expression)
 
     override fun visitGetClass(expression: IrGetClass): IrGetClass =

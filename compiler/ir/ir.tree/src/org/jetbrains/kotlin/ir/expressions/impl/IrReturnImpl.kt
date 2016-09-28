@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrReturnImpl(
@@ -30,6 +31,9 @@ class IrReturnImpl(
         override val returnTarget: CallableDescriptor,
         override var value: IrExpression
 ) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
+    constructor(startOffset: Int, endOffset: Int, returnTarget: CallableDescriptor, value: IrExpression) :
+            this(startOffset, endOffset, returnTarget.builtIns.nothingType, returnTarget, value)
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturn(this, data)
 

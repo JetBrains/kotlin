@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.lower.JvmFileClassProvider
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 object JvmBackendFacade {
     fun compileCorrectFiles(state: GenerationState, errorHandler: CompilationErrorHandler) {
@@ -38,11 +35,10 @@ object JvmBackendFacade {
 
         val psi2ir = Psi2IrTranslator()
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
-        val jvmBackendContext = createJvmBackendContext(psi2ir, state, psi2irContext.irBuiltIns)
-
-        val jvmBackend = JvmBackend(jvmBackendContext)
-
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
+
+        val jvmBackendContext = JvmBackendContext(state, psi2irContext.sourceManager, psi2irContext.irBuiltIns)
+        val jvmBackend = JvmBackend(jvmBackendContext)
 
         for (irFile in irModuleFragment.files) {
             try {
@@ -55,12 +51,4 @@ object JvmBackendFacade {
         }
     }
 
-    fun createJvmBackendContext(psi2ir: Psi2IrTranslator, state: GenerationState, irBuiltIns: IrBuiltIns): JvmBackendContext {
-        val jvmFileClassProvider = JvmFileClassProvider()
-        psi2ir.add(jvmFileClassProvider)
-
-        val jvmBackendContext = JvmBackendContext(state, jvmFileClassProvider, irBuiltIns)
-
-        return jvmBackendContext
-    }
 }

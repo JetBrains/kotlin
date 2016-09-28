@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.ir.declarations
+package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 
-
-interface IrConstructor : IrFunction {
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.CONSTRUCTOR
-
-    override val descriptor: ClassConstructorDescriptor
+interface IrStatementContainer {
+    val statements: MutableList<IrStatement>
 }
-

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
@@ -79,7 +80,7 @@ class InitializersLowering : ClassLoweringPass {
                     null, null
             )
 
-            if (declaration.descriptor.isStatic()) {
+            if (DescriptorUtils.isStaticDeclaration(declaration.descriptor)) {
                 staticInitializerStatements.add(irSetField)
             }
             else {
@@ -90,10 +91,6 @@ class InitializersLowering : ClassLoweringPass {
         override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
             instanceInitializerStatements.addAll(declaration.body.statements)
         }
-
-        private fun CallableMemberDescriptor.isStatic() =
-                AsmUtil.isStaticMethod(classMemberOwnerKind, this) // TODO what about properties?
-
 
         fun transformInstanceInitializerCallsInConstructors(irClass: IrClass) {
             for (irDeclaration in irClass.declarations) {

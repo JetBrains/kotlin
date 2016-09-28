@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -35,6 +36,13 @@ class IrCallImpl(
         override val origin: IrStatementOrigin? = null,
         override val superQualifier: ClassDescriptor? = null
 ) : IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, descriptor.valueParameters.size, typeArguments), IrCallWithShallowCopy {
+    constructor(
+            startOffset: Int, endOffset: Int, descriptor: CallableDescriptor,
+            typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
+            origin: IrStatementOrigin? = null,
+            superQualifier: ClassDescriptor? = null
+    ) : this(startOffset, endOffset, descriptor.returnType!!, descriptor, typeArguments, origin, superQualifier)
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitCall(this, data)
 

@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 
 
 interface IrEnumConstructorCall : IrMemberAccessExpression {
-    override val descriptor: ConstructorDescriptor
-    val enumEntryDescriptor: ClassDescriptor?
+    override val descriptor: ClassConstructorDescriptor
 }
-
-val IrEnumConstructorCall.isSuper: Boolean
-    get() = enumEntryDescriptor == null
-

@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
@@ -34,29 +33,23 @@ class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
-        transformDeclarations(declaration.declarations)
+        declaration.declarations.transformFlat { lowerProperty(it) }
         return declaration
     }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
-        transformDeclarations(declaration.declarations)
+        declaration.declarations.transformFlat { lowerProperty(it) }
         return declaration
     }
 
-    private fun transformDeclarations(declarations: MutableList<IrDeclaration>) {
-        val newDeclarations = ArrayList<IrDeclaration>()
-        for (declaration in declarations) {
-            if (declaration is IrProperty) {
-                newDeclarations.addIfNotNull(declaration.backingField)
-                newDeclarations.addIfNotNull(declaration.getter)
-                newDeclarations.addIfNotNull(declaration.setter)
-            }
-            else {
-                newDeclarations.add(declaration)
-            }
-        }
-        declarations.clear()
-        declarations.addAll(newDeclarations)
-    }
+    private fun lowerProperty(declaration: IrDeclaration): List<IrDeclaration>? =
+            if (declaration is IrProperty)
+                ArrayList<IrDeclaration>(3).apply {
+                    addIfNotNull(declaration.backingField)
+                    addIfNotNull(declaration.getter)
+                    addIfNotNull(declaration.setter)
+                }
+            else
+                null
 }

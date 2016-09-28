@@ -97,6 +97,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("enumWithSecondaryCtor.kt")
+        public void testEnumWithSecondaryCtor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/initBlock.kt");

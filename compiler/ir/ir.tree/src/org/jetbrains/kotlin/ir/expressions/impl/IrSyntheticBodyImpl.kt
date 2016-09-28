@@ -34,4 +34,7 @@ class IrSyntheticBodyImpl(startOffset: Int, endOffset: Int, override val kind: I
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // no children
     }
+
+    override fun toString(): String =
+            "IrSyntheticBodyImpl($kind)"
 }

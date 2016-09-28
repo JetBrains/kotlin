@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class ArrayOf : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, context) {
+        return IrIntrinsicFunction.create(expression, signature, context, signature.returnType) {
             //do nothing all generated as vararg
         }
     }

@@ -23,8 +23,11 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPL")
+    object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
+    object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
     object DEFAULT_IMPLS_DELEGATION : IrStatementOrigin.IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
+
 }

@@ -17,32 +17,27 @@
 package org.jetbrains.kotlin.ir.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeSubstitution
+import org.jetbrains.kotlin.types.Variance
 
-class IrBuiltIns(val builtIns: KotlinBuiltIns) {
-    val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule)
-
+class BuiltinsOperatorsBuilder(val packageFragment: PackageFragmentDescriptor, val builtIns: KotlinBuiltIns) {
     val bool = builtIns.booleanType
     val any = builtIns.anyType
     val anyN = builtIns.nullableAnyType
     val int = builtIns.intType
     val nothing = builtIns.nothingType
 
-    val eqeqeq: FunctionDescriptor = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
-    val eqeq: FunctionDescriptor = defineOperator("EQEQ", bool, listOf(anyN, anyN))
-    val lt0: FunctionDescriptor = defineOperator("LT0", bool, listOf(int))
-    val lteq0: FunctionDescriptor = defineOperator("LTEQ0", bool, listOf(int))
-    val gt0: FunctionDescriptor = defineOperator("GT0", bool, listOf(int))
-    val gteq0: FunctionDescriptor = defineOperator("GTEQ0", bool, listOf(int))
-    val throwNpe: FunctionDescriptor = defineOperator("THROW_NPE", nothing, listOf())
-    val booleanNot: FunctionDescriptor = defineOperator("NOT", bool, listOf(bool))
-
-    private fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrBuiltinOperatorDescriptor {
+    fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrBuiltinOperatorDescriptor {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
         for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
             operatorDescriptor.addValueParameter(
@@ -50,7 +45,44 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
         }
         return operatorDescriptor
     }
+}
 
-    private fun ClassDescriptor.findSingleFunction(name: String): FunctionDescriptor =
-            getMemberScope(TypeSubstitution.EMPTY).getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS).single()
+class IrBuiltIns(val builtIns: KotlinBuiltIns) {
+    private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
+    private val builder = BuiltinsOperatorsBuilder(packageFragment, builtIns)
+
+    val eqeqeq: FunctionDescriptor = builder.run { defineOperator("EQEQEQ", bool, listOf(anyN, anyN)) }
+    val eqeq: FunctionDescriptor = builder.run { defineOperator("EQEQ", bool, listOf(anyN, anyN)) }
+    val lt0: FunctionDescriptor = builder.run { defineOperator("LT0", bool, listOf(int)) }
+    val lteq0: FunctionDescriptor = builder.run { defineOperator("LTEQ0", bool, listOf(int)) }
+    val gt0: FunctionDescriptor = builder.run { defineOperator("GT0", bool, listOf(int)) }
+    val gteq0: FunctionDescriptor = builder.run { defineOperator("GTEQ0", bool, listOf(int)) }
+    val throwNpe: FunctionDescriptor = builder.run { defineOperator("THROW_NPE", nothing, listOf()) }
+    val booleanNot: FunctionDescriptor = builder.run { defineOperator("NOT", bool, listOf(bool)) }
+
+    val enumValueOf: FunctionDescriptor =
+            SimpleFunctionDescriptorImpl.create(
+                    packageFragment,
+                    Annotations.EMPTY,
+                    Name.identifier("enumValueOf"),
+                    CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+            ).apply {
+                val typeParameterT = TypeParameterDescriptorImpl.createWithDefaultBound(
+                        this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T"), 0
+                )
+
+                val valueParameterName = ValueParameterDescriptorImpl(
+                        this, null, 0, Annotations.EMPTY, Name.identifier("name"), builtIns.stringType,
+                        false, false, false, false, null, org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+                )
+
+                val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)
+
+                initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
+            }
+
+    companion object {
+        val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
+    }
 }

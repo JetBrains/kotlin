@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.util.transformFlat
+
 interface IrDeclarationContainer {
     val declarations: MutableList<IrDeclaration>
 }

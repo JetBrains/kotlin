@@ -36,12 +36,13 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
         irMapping.put(irBuiltIns.lteq0, compare)
         irMapping.put(irBuiltIns.gt0, compare)
         irMapping.put(irBuiltIns.gteq0, compare)
+        irMapping.put(irBuiltIns.enumValueOf, IrEnumValueOf())
     }
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {
         return intrinsics.getIntrinsic(descriptor) ?:
                (if (descriptor is PropertyAccessorDescriptor) intrinsics.getIntrinsic(descriptor.correspondingProperty) else null) ?:
-               irMapping[descriptor]
+               irMapping[descriptor.original]
     }
 
 }

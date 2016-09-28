@@ -1246,7 +1246,8 @@ public class KotlinTypeMapper {
         }
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
+        if (descriptor.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED &&
+            (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY)) {
             writeParameter(
                     sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getStringType(), descriptor);
             writeParameter(

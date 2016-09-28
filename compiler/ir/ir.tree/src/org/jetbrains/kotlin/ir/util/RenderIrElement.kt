@@ -119,11 +119,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "DELEGATING_CONSTRUCTOR_CALL '${expression.descriptor.ref()}'"
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-            "ENUM_CONSTRUCTOR_CALL '${expression.descriptor.ref()}' " +
-            expression.enumEntryDescriptor.let { enumEntryDescriptor ->
-                if (enumEntryDescriptor == null) "super"
-                else enumEntryDescriptor.ref()
-            }
+            "ENUM_CONSTRUCTOR_CALL '${expression.descriptor.ref()}'"
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
             "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classDescriptor.ref()}'"

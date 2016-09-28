@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -70,3 +72,9 @@ inline fun ClassDescriptor.findFirstFunction(name: String, predicate: (CallableM
 
 inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
         getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
+
+fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
+        getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
+
+fun KotlinBuiltIns.findSingleFunction(name: Name): FunctionDescriptor =
+        builtInsPackageScope.findSingleFunction(name)

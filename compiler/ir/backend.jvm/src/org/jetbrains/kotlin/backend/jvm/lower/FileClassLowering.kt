@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.FileLoweringPass
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import java.util.*
 
-class FileClassLowering(val jvmFileClassProvider: JvmFileClassProvider) : FileLoweringPass {
+class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()
         val fileClassMembers = ArrayList<IrDeclaration>()
@@ -38,7 +39,7 @@ class FileClassLowering(val jvmFileClassProvider: JvmFileClassProvider) : FileLo
 
         if (fileClassMembers.isEmpty()) return
 
-        val fileClassDescriptor = jvmFileClassProvider.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
+        val fileClassDescriptor = context.specialDescriptorsFactory.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
         val irFileClass = IrClassImpl(0, irFile.fileEntry.maxOffset, IrDeclarationOrigin.DEFINED, fileClassDescriptor, fileClassMembers)
         classes.add(irFileClass)
 

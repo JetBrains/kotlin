@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrBody : IrElement {
@@ -27,10 +26,6 @@ interface IrBody : IrElement {
 
 interface IrExpressionBody : IrBody {
     var expression: IrExpression
-}
-
-interface IrStatementContainer {
-    val statements: MutableList<IrStatement>
 }
 
 interface IrBlockBody : IrBody, IrStatementContainer

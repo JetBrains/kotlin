@@ -14,7 +14,7 @@ FILE /classes.kt
   CLASS ENUM_CLASS TestEnumClass
     CONSTRUCTOR private constructor TestEnumClass()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnumClass'
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnumClass>
       SYNTHETIC_BODY kind=ENUM_VALUES

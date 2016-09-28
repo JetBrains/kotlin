@@ -2,12 +2,12 @@ FILE /enum.kt
   CLASS ENUM_CLASS TestEnum1
     CONSTRUCTOR private constructor TestEnum1()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum1'
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()'
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()' TEST2
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()'
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum1
@@ -15,7 +15,7 @@ FILE /enum.kt
   CLASS ENUM_CLASS TestEnum2
     CONSTRUCTOR private constructor TestEnum2(x: kotlin.Int)
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -27,13 +27,13 @@ FILE /enum.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'TestEnum2' type=TestEnum2
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)'
         x: CONST Int type=kotlin.Int value='1'
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST2
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)'
         x: CONST Int type=kotlin.Int value='2'
     ENUM_ENTRY enum entry TEST3
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)' TEST3
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum2(Int)'
         x: CONST Int type=kotlin.Int value='3'
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum2>
       SYNTHETIC_BODY kind=ENUM_VALUES
@@ -42,14 +42,14 @@ FILE /enum.kt
   CLASS ENUM_CLASS TestEnum3
     CONSTRUCTOR private constructor TestEnum3()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum3'
     ENUM_ENTRY enum entry TEST
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()' TEST
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()'
       class: CLASS ENUM_ENTRY TEST
         CONSTRUCTOR private constructor TEST()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()' super
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST'
         FUN public open override fun foo(): kotlin.Unit
           BLOCK_BODY
@@ -63,7 +63,7 @@ FILE /enum.kt
   CLASS ENUM_CLASS TestEnum4
     CONSTRUCTOR private constructor TestEnum4(x: kotlin.Int)
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -75,11 +75,11 @@ FILE /enum.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: THIS of 'TestEnum4' type=TestEnum4
     ENUM_ENTRY enum entry TEST1
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()' TEST1
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST1()'
       class: CLASS ENUM_ENTRY TEST1
         CONSTRUCTOR private constructor TEST1()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)' super
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value='1'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST1'
         FUN public open override fun foo(): kotlin.Unit
@@ -87,11 +87,11 @@ FILE /enum.kt
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: GET_ENUM 'TEST1' type=TestEnum4
     ENUM_ENTRY enum entry TEST2
-      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST2()' TEST2
+      init: ENUM_CONSTRUCTOR_CALL 'constructor TEST2()'
       class: CLASS ENUM_ENTRY TEST2
         CONSTRUCTOR private constructor TEST2()
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)' super
+            ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value='2'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST2'
         PROPERTY public final val z: kotlin.Int

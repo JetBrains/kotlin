@@ -2,10 +2,10 @@ FILE /values.kt
   CLASS ENUM_CLASS Enum
     CONSTRUCTOR private constructor Enum()
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)' super
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='Enum'
     ENUM_ENTRY enum entry A
-      init: ENUM_CONSTRUCTOR_CALL 'constructor Enum()' A
+      init: ENUM_CONSTRUCTOR_CALL 'constructor Enum()'
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Enum>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Enum

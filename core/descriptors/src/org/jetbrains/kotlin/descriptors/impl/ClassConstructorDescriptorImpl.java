@@ -55,6 +55,16 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
         return new ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION, source);
     }
 
+    @NotNull
+    public static ClassConstructorDescriptorImpl createSynthesized(
+            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            boolean isPrimary,
+            @NotNull SourceElement source
+    ) {
+        return new ClassConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.SYNTHESIZED, source);
+    }
+
     public ClassConstructorDescriptorImpl initialize(
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility,

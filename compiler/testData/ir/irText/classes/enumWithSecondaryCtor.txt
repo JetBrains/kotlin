@@ -1,0 +1,74 @@
+FILE /enumWithSecondaryCtor.kt
+  CLASS ENUM_CLASS Test1
+    CONSTRUCTOR private constructor Test1(x: kotlin.Int)
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+    PROPERTY public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_FIELD 'x: Int' type=kotlin.Int origin=null
+              receiver: THIS of 'Test1' type=Test1
+    ENUM_ENTRY enum entry ZERO
+      init: ENUM_CONSTRUCTOR_CALL 'constructor Test1(Int)'
+    ENUM_ENTRY enum entry ONE
+      init: ENUM_CONSTRUCTOR_CALL 'constructor Test1(Int)'
+        x: CONST Int type=kotlin.Int value='1'
+    CONSTRUCTOR private constructor Test1()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Test1(Int)'
+          x: CONST Int type=kotlin.Int value='0'
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test1>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+  CLASS ENUM_CLASS Test2
+    CONSTRUCTOR private constructor Test2(x: kotlin.Int)
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
+    PROPERTY public final val x: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_FIELD 'x: Int' type=kotlin.Int origin=null
+              receiver: THIS of 'Test2' type=Test2
+    ENUM_ENTRY enum entry ZERO
+      init: ENUM_CONSTRUCTOR_CALL 'constructor ZERO()'
+      class: CLASS ENUM_ENTRY ZERO
+        CONSTRUCTOR private constructor ZERO()
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'
+            INSTANCE_INITIALIZER_CALL classDescriptor='ZERO'
+        FUN public open override fun foo(): kotlin.Unit
+          BLOCK_BODY
+            CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
+              message: CONST String type=kotlin.String value='ZERO'
+    ENUM_ENTRY enum entry ONE
+      init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
+      class: CLASS ENUM_ENTRY ONE
+        CONSTRUCTOR private constructor ONE()
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'
+              x: CONST Int type=kotlin.Int value='1'
+            INSTANCE_INITIALIZER_CALL classDescriptor='ONE'
+        FUN public open override fun foo(): kotlin.Unit
+          BLOCK_BODY
+            CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
+              message: CONST String type=kotlin.String value='ONE'
+    CONSTRUCTOR private constructor Test2()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Test2(Int)'
+          x: CONST Int type=kotlin.Int value='0'
+    FUN public abstract fun foo(): kotlin.Unit
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test2>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test2
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
