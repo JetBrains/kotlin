@@ -5,6 +5,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
+import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -68,7 +70,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal var anyClassesCompiled: Boolean = false
     internal var friendTaskName: String? = null
     internal var javaOutputDir: File? = null
-    internal var moduleName: String = "${project.name}-${this.name}"
+    internal var sourceSetName: String by Delegates.notNull()
+    protected val moduleName: String
+            get() = "${project.name}_$sourceSetName"
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })

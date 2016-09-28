@@ -106,17 +106,14 @@ private fun Project.createKotlinAfterJavaTask(
         kotlinOptions: KotlinJvmOptionsImpl?,
         tasksProvider: KotlinTasksProvider
 ): KotlinCompile {
-    val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
+    val kotlinAfterJavaTask = with (tasksProvider.createKotlinJVMTask(this, kotlinTask.name + KOTLIN_AFTER_JAVA_TASK_SUFFIX, kotlinTask.sourceSetName)) {
         mapClasspath { kotlinTask.classpath }
         this
     }
 
     kotlinAfterJavaTask.dependsOn(javaTask)
     javaTask.finalizedByIfNotFailed(kotlinAfterJavaTask)
-
-    kotlinAfterJavaTask.moduleName = kotlinTask.moduleName
     kotlinAfterJavaTask.parentKotlinOptionsImpl = kotlinOptions
-
     return kotlinAfterJavaTask
 }
 
