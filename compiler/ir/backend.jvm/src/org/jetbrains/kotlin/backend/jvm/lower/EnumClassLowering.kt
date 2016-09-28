@@ -246,7 +246,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                         })
 
         private fun createSyntheticValuesFieldDescriptor(valuesArrayType: SimpleType): PropertyDescriptorImpl {
-            return JvmPropertyDescriptorImpl.createVal(
+            return JvmPropertyDescriptorImpl.createStaticVal(
                     Name.identifier("\$VALUES"),
                     valuesArrayType,
                     irClass.descriptor,

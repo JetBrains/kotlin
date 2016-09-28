@@ -25,6 +25,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPL")
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
+    object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {

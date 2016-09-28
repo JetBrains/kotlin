@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -34,6 +33,7 @@ class JvmLower(val context: JvmBackendContext) {
         InterfaceLowering(context.state).runOnFile(irFile)
         InterfaceDelegationLowering(context.state).runOnFile(irFile)
         EnumClassLowering(context).runOnFile(irFile)
+        ObjectClassLowering(context).runOnFile(irFile)
         InitializersLowering().runOnFile(irFile)
         SingletonReferencesLowering(context).runOnFile(irFile)
     }

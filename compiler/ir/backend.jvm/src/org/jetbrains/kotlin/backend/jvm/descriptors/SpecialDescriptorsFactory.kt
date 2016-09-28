@@ -16,22 +16,24 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmPropertyDescriptorImpl
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
 class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
-    private val enumEntryFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
+    private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
 
     fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
-            enumEntryFieldDescriptors.getOrPut(enumEntryDescriptor) {
+            singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
                 createEnumEntryFieldDescriptor(enumEntryDescriptor)
             }
 
@@ -49,7 +51,7 @@ class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
         val enumClassDescriptor = enumEntryDescriptor.containingDeclaration as ClassDescriptor
         assert(enumClassDescriptor.kind == ClassKind.ENUM_CLASS) { "Should be enum class: $enumClassDescriptor"}
 
-        return JvmPropertyDescriptorImpl.createVal(
+        return JvmPropertyDescriptorImpl.createStaticVal(
                 enumEntryDescriptor.name,
                 enumClassDescriptor.defaultType,
                 enumClassDescriptor,
@@ -59,5 +61,24 @@ class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
                 Opcodes.ACC_ENUM,
                 enumEntryDescriptor.source
         )
+    }
+
+    fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
+            singletonFieldDescriptors.getOrPut(objectDescriptor) {
+                createObjectInstanceFieldDescriptor(objectDescriptor)
+            }
+
+    private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
+        assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
+
+        val instanceFieldDescriptor = PropertyDescriptorImpl.create(
+                objectDescriptor,
+                Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
+                Name.identifier("INSTANCE"),
+                CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, false, false
+        )
+        instanceFieldDescriptor.setType(objectDescriptor.defaultType, listOf(), null as ReceiverParameterDescriptor?, null as ReceiverParameterDescriptor?)
+
+        return instanceFieldDescriptor
     }
 }

@@ -50,7 +50,7 @@ class JvmPropertyDescriptorImpl(
             )
 
     companion object {
-        fun createVal(
+        fun createStaticVal(
                 name: Name,
                 type: KotlinType,
                 containingDeclaration: DeclarationDescriptor,

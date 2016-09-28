@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSpecialDescriptor
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
@@ -137,7 +138,13 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
         throw RuntimeException("Unsupported visibility $visibility for descriptor $this")
     }
 
-    return flags.or(calcModalityFlag())
+    flags =  flags.or(calcModalityFlag())
+
+    if (this is JvmSpecialDescriptor) {
+        flags = flags or extraFlags
+    }
+
+    return flags
 }
 
 private fun MemberDescriptor.calcModalityFlag(): Int {
