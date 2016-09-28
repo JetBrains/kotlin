@@ -724,6 +724,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("bitwiseOp.kt")
+        public void testBitwiseOp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/bitwiseOp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bitwiseOpAny.kt")
+        public void testBitwiseOpAny() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/bitwiseOpAny.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bitwiseOpNullable.kt")
+        public void testBitwiseOpNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/bitwiseOpNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("call.kt")
         public void testCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/call.kt");

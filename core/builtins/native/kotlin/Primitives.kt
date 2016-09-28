@@ -160,6 +160,19 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
+    /** Performs a bitwise AND operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun and(other: Byte): Byte
+    /** Performs a bitwise OR operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun or(other: Byte): Byte
+    /** Performs a bitwise XOR operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun xor(other: Byte): Byte
+    /** Inverts the bits in this value/ */
+    @SinceKotlin("1.1")
+    public fun inv(): Byte
+
     public override fun toByte(): Byte
     public override fun toChar(): Char
     public override fun toShort(): Short
@@ -310,6 +323,19 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
+
+    /** Performs a bitwise AND operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun and(other: Short): Short
+    /** Performs a bitwise OR operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun or(other: Short): Short
+    /** Performs a bitwise XOR operation between the two values. */
+    @SinceKotlin("1.1")
+    public infix fun xor(other: Short): Short
+    /** Inverts the bits in this value/ */
+    @SinceKotlin("1.1")
+    public fun inv(): Short
 
     public override fun toByte(): Byte
     public override fun toChar(): Char
