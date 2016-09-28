@@ -75,7 +75,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        doKotlinTearDown(project) {
+        unInvalidateBuiltinsAndStdLib(project) {
             super.tearDown()
         }
 
