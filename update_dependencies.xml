@@ -2,7 +2,7 @@
     <import file="common.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="162-SNAPSHOT"/>
+    <property name="ideaVersion" value="2016.1.2"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -48,7 +48,7 @@
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
         <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
 
@@ -671,7 +671,7 @@
                         <file file="@{idea.dir}/lib/xstream-1.4.8.jar"/>
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
-                        <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
+                        <file file="@{idea.dir}/lib/snappy-in-java-0.3.1.jar"/>
 
                         <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                         <file file="@{idea.dir}/lib/util.jar"/>
