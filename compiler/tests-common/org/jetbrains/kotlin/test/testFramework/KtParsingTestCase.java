@@ -332,8 +332,7 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
     public static void ensureCorrectReparse(@NotNull PsiFile file) {
         String psiToStringDefault = DebugUtil.psiToString(file, false, false);
         String fileText = file.getText();
-        DiffLog diffLog = (new BlockSupportImpl(file.getProject())).reparseRange(
-                file, file.getNode(), TextRange.allOf(fileText), fileText, new EmptyProgressIndicator(), fileText);
+        DiffLog diffLog = (new BlockSupportImpl(file.getProject())).reparseRange(file, TextRange.allOf(fileText), fileText, new EmptyProgressIndicator(), fileText);
         diffLog.performActualPsiChange(file);
 
         TestCase.assertEquals(psiToStringDefault, DebugUtil.psiToString(file, false, false));
