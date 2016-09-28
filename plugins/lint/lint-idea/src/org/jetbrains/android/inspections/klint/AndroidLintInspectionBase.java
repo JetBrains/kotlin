@@ -203,6 +203,34 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     }
   }
 
+  private static class SuppressLintQuickFix implements SuppressQuickFix {
+    private Issue myIssue;
+
+    private SuppressLintQuickFix(Issue issue) {
+      myIssue = issue;
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, @NotNull PsiElement context) {
+      return true;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return "Suppress with @SuppressLint (Java) or tools:ignore (XML)";
+    }
+
+    @NotNull
+    @Override
+    public String getFamilyName() {
+      return "Suppress";
+    }
+
+    @Override
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {}
+  }
+
   @TestOnly
   public static void invalidateInspectionShortName2IssueMap() {
     ourIssue2InspectionShortName = null;
