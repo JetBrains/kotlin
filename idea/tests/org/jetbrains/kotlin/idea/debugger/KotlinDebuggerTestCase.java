@@ -246,7 +246,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             IS_TINY_APP_COMPILED = true;
         }
 
-        CompilerUtil.refreshOutputRoots(Lists.newArrayList(outputDirPath));
+        CompilerUtil.refreshOutputDirectories(Lists.newArrayList(outDir), false);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
