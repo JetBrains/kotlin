@@ -63,7 +63,7 @@ internal object KtAssertPostfixTemplate : ConstantStringBasedPostfixTemplate(
         "assert",
         "assert(expr) { \"\" }",
         "assert(\$expr$) { \"\$END$\" }",
-        createExpressionSelector(statementsOnly = false, predicate = KotlinType::isBoolean)
+        createExpressionSelector(statementsOnly = true, predicate = KotlinType::isBoolean)
 )
 
 internal object KtParenthesizedPostfixTemplate : ConstantStringBasedPostfixTemplate(
@@ -83,7 +83,7 @@ internal object KtReturnPostfixTemplate : ConstantStringBasedPostfixTemplate(
         "return",
         "return expr",
         "return \$expr$\$END$",
-        createExpressionSelector(statementsOnly = false)
+        createExpressionSelector(statementsOnly = true)
 )
 
 internal object KtWhilePostfixTemplate : ConstantStringBasedPostfixTemplate(

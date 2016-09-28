@@ -71,6 +71,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("noReturnForNonStatement.kt")
+    public void testNoReturnForNonStatement() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/noReturnForNonStatement.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("notBoolean.kt")
     public void testNotBoolean() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notBoolean.kt");
