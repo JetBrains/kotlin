@@ -119,6 +119,12 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         }
     }
 
+    fun registerUnresolvedError(offset: Int) {
+        if (myFirstErrorOffset > offset) {
+            myFirstErrorOffset = offset
+        }
+    }
+
     private fun PsiElement.isKotlinStatement() = when {
         parent is KtBlockExpression && node?.elementType !in BRACES -> true
         parent?.node?.elementType in BRANCH_CONTAINERS && this !is KtBlockExpression -> true
