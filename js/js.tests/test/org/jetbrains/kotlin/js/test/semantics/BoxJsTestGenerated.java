@@ -7261,97 +7261,94 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/rtti"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
-        @TestMetadata("js/js.translator/testData/box/rtti/cases")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Cases extends AbstractBoxJsTest {
-            public void testAllFilesPresentInCases() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/rtti/cases"), Pattern.compile("^([^_](.+))\\.kt$"), true);
-            }
+        @TestMetadata("collectionClassesIsCheck.kt")
+        public void testCollectionClassesIsCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/collectionClassesIsCheck.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("collectionClassesIsCheck.kt")
-            public void testCollectionClassesIsCheck() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/collectionClassesIsCheck.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("isComparable.kt")
+        public void testIsComparable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/isComparable.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("isComparable.kt")
-            public void testIsComparable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/isComparable.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("isJsPrimitiveType.kt")
+        public void testIsJsPrimitiveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/isJsPrimitiveType.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("isJsPrimitiveType.kt")
-            public void testIsJsPrimitiveType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/isJsPrimitiveType.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("isObject.kt")
+        public void testIsObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/isObject.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("isObject.kt")
-            public void testIsObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/isObject.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("isReifiedObject.kt")
+        public void testIsReifiedObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/isReifiedObject.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("isSameClass.kt")
-            public void testIsSameClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/isSameClass.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("isSameClass.kt")
+        public void testIsSameClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/isSameClass.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("notIsOtherClass.kt")
-            public void testNotIsOtherClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/notIsOtherClass.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("notIsOtherClass.kt")
+        public void testNotIsOtherClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/notIsOtherClass.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("objectExpression.kt")
-            public void testObjectExpression() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/objectExpression.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("objectExpression.kt")
+        public void testObjectExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/objectExpression.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("onNativeObject.kt")
-            public void testOnNativeObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/onNativeObject.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("onNativeObject.kt")
+        public void testOnNativeObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/onNativeObject.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("rttiForClass.kt")
-            public void testRttiForClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/rttiForClass.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("rttiForClass.kt")
+        public void testRttiForClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/rttiForClass.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("rttiForTrait.kt")
-            public void testRttiForTrait() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/rttiForTrait.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("rttiForTrait.kt")
+        public void testRttiForTrait() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/rttiForTrait.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("rttiForTrait2.kt")
-            public void testRttiForTrait2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/rttiForTrait2.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("rttiForTrait2.kt")
+        public void testRttiForTrait2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/rttiForTrait2.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("sideEffectMethod.kt")
-            public void testSideEffectMethod() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/sideEffectMethod.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("sideEffectMethod.kt")
+        public void testSideEffectMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/sideEffectMethod.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("sideEffectProperty.kt")
-            public void testSideEffectProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/sideEffectProperty.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("sideEffectProperty.kt")
+        public void testSideEffectProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/sideEffectProperty.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("stdlibEmptyListClass.kt")
-            public void testStdlibEmptyListClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/cases/stdlibEmptyListClass.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("stdlibEmptyListClass.kt")
+        public void testStdlibEmptyListClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/rtti/stdlibEmptyListClass.kt");
+            doTest(fileName);
         }
     }
 
