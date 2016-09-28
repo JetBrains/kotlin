@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.codeInsight.postfix
 
 import com.intellij.codeInsight.template.postfix.templates.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -62,6 +64,15 @@ class KtPostfixTemplateProvider : PostfixTemplateProvider {
     override fun preCheck(copyFile: PsiFile, realEditor: Editor, currentOffset: Int) = copyFile
 
     override fun preExpand(file: PsiFile, editor: Editor) {
+    }
+
+    companion object {
+        /**
+         * In tests only one expression should be suggested, so in case there are many of them, save relevant items
+         */
+        @TestOnly
+        @Volatile
+        var previouslySuggestedExpressions = emptyList<String>()
     }
 }
 
@@ -108,6 +119,16 @@ private fun PsiElement.isStatement() = parent is KtBlockExpression
 private class KtExpressionPostfixTemplateSelector(
         filter: PsiElement.() -> Boolean
 ) : PostfixTemplateExpressionSelectorBase(Condition(filter)) {
+    override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
+        val expressions = super.getExpressions(context, document, offset)
+
+        if (ApplicationManager.getApplication().isUnitTestMode && expressions.size > 1) {
+            KtPostfixTemplateProvider.previouslySuggestedExpressions = expressions.map { it.text }
+        }
+
+        return expressions
+    }
+
     override fun getNonFilteredExpressions(
             context: PsiElement,
             document: Document,
