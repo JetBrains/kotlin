@@ -8,6 +8,7 @@ tmp
 workspace.xml
 *.versionsBackup
 
+local.properties
 .gradle
 build
 translator/.gradle/2.9/taskArtifacts
