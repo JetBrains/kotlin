@@ -175,6 +175,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/superCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/java8/box/jvm8/noDelegation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

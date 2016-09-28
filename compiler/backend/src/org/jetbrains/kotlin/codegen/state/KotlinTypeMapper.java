@@ -659,12 +659,12 @@ public class KotlinTypeMapper {
             baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
             ownerForDefaultImpl =
-                    isJvmInterface(ownerForDefault) && (state == null || !isJvm8Interface(ownerForDefault, state)) ?
+                    isJvmInterface(ownerForDefault) && !isJvm8Interface(ownerForDefault) ?
                     mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
-                if (declarationOwner instanceof JavaClassDescriptor) {
+                if (declarationOwner instanceof JavaClassDescriptor || isJvm8Interface(declarationOwner)) {
                     invokeOpcode = INVOKESPECIAL;
                     signature = mapSignatureSkipGeneric(functionDescriptor);
                     owner = thisClass;
@@ -741,6 +741,10 @@ public class KotlinTypeMapper {
         return new CallableMethod(
                 owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
                 thisClass, receiverParameterType, calleeType);
+    }
+
+    private boolean isJvm8Interface(@NotNull ClassDescriptor ownerForDefault) {
+        return isJvmInterface(ownerForDefault) && (state != null && JvmCodegenUtil.isJvm8Interface(ownerForDefault, state));
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
