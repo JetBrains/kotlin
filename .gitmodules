@@ -1,4 +1,4 @@
 [submodule "experiments/kotlin-ir"]
-	path = experiments/kotlin-ir
+	path = backend.native/kotlin-ir
 	url = git@github.com:JetBrains/kotlin.git
 	branch = rr/pdn_ir_prototype
