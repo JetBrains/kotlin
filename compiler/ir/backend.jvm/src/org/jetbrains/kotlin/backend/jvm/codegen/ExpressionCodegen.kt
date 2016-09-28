@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -298,6 +299,11 @@ class ExpressionCodegen(
 
     override fun visitElement(element: IrElement, data: BlockInfo): StackValue {
         TODO("not implemented for $element") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun visitClass(declaration: IrClass, data: BlockInfo): StackValue {
+        ClassCodegen.generateAnonymous(declaration, classCodegen.context)
+        return none()
     }
 
     override fun visitVararg(expression: IrVararg, data: BlockInfo): StackValue {

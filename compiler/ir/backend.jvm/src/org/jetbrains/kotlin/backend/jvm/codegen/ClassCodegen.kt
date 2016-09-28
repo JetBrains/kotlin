@@ -22,13 +22,16 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSpecialDescriptor
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -42,7 +45,9 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     val descriptor = irClass.descriptor
 
-    val type: Type = typeMapper.mapType(descriptor)
+    val isAnonymous = DescriptorUtils.isAnonymousObject(irClass.descriptor)
+
+    val type: Type = if (isAnonymous) CodegenBinding.asmTypeForAnonymousClass(state.bindingContext, descriptor.source.getPsi() as KtElement) else typeMapper.mapType(descriptor)
 
     val psiElement = irClass.descriptor.psiElement!!
 
@@ -83,6 +88,10 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
                 badDescriptor(descriptor, state.classBuilderMode)
             }
 
+            ClassCodegen(irClass, context).generate()
+        }
+
+        fun generateAnonymous(irClass: IrClass, context: JvmBackendContext) {
             ClassCodegen(irClass, context).generate()
         }
     }
