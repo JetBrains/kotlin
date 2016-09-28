@@ -1,21 +1,22 @@
 // FILE: 1.kt
 interface Test {
-    fun test() {
+    fun test(): String {
+        return "OK"
     }
 }
 
 // FILE: 2.kt
 // JVM_TARGET: 1.8
 interface Test2 : Test {
+    override fun test(): String {
+        return super.test()
+    }
+}
+
+class TestClass : Test2 {
 
 }
 
 fun box(): String {
-    try {
-        Test2::class.java.getDeclaredMethod("test")
-    }
-    catch (e: NoSuchMethodException) {
-        return "fail"
-    }
-    return "OK"
+    return TestClass().test()
 }

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -1302,13 +1304,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (isAnnotationOrJvm6Interface(descriptor, state)) return;
 
+        List<FunctionDescriptor> restrictedInheritance = new ArrayList<FunctionDescriptor>();
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
             if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !isJvm8InterfaceMember(interfaceFun, state)) {
-                generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
+                if (state.isJvm8Target() && !JvmCodegenUtil.isJvm8Interface(interfaceFun.getContainingDeclaration(), state)) {
+                    restrictedInheritance.add(interfaceFun);
+                }
+                else {
+                    generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
+                }
             }
         }
+
+        CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass, restrictedInheritance, state);
     }
 
     private void generateDelegationToDefaultImpl(@NotNull final FunctionDescriptor traitFun, @NotNull final FunctionDescriptor inheritedFun) {

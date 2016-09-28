@@ -70,6 +70,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             doTest(fileName);
         }
 
+        @TestMetadata("simpleProp.kt")
+        public void testSimpleProp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleProp.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

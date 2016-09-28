@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -36,13 +39,13 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -212,5 +215,24 @@ fun ClassBuilder.generateMethod(
         iv.generate()
         iv.areturn(method.returnType)
         FunctionCodegen.endVisit(mv, debugString, element)
+    }
+}
+
+
+fun reportTarget6InheritanceErrorIfNeeded(
+        classDescriptor: ClassDescriptor, classElement: KtClassOrObject, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
+) {
+    if (!restrictedInheritance.isEmpty()) {
+        val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
+
+        for ((key, value) in groupBy) {
+            state.diagnostics.report(
+                    ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
+                            classElement, classDescriptor, key,
+                            value.map { Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty) }.
+                                    joinToString(separator = "\n", prefix = "\n")
+                    )
+            )
+        }
     }
 }

@@ -9,7 +9,9 @@ interface Test {
 // FILE: 2.kt
 // JVM_TARGET: 1.8
 class TestClass : Test {
-
+    override fun test(): String {
+        return super.test()
+    }
 }
 
 fun box(): String {
