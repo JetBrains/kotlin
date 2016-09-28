@@ -109,9 +109,10 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     public void testLocalObjectInLambdaInlinedIntoObject() throws Exception {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
-
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineObject");
+    }
 
+    public void testLocalObjectInLambdaInlinedIntoObject2() throws Exception {
         OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "run", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
                      objectInLambda, "inlineObject");
@@ -134,9 +135,10 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     public void testLambdaInLambdaInlinedIntoObject() throws Exception {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
-
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineLambda");
+    }
 
+    public void testLambdaInLambdaInlinedIntoObject2() throws Exception {
         OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "invoke", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
                      objectInLambda, "inlineLambda");

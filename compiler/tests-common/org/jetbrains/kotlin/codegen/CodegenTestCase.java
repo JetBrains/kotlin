@@ -252,6 +252,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         try {
             File file = new File(fullPath);
             String content = FileUtil.loadFile(file, Charsets.UTF_8.name(), true);
+            assert myFiles == null : "Should not initialize myFiles twice";
             myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {

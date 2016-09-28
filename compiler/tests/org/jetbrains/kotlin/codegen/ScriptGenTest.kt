@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
-import org.jetbrains.kotlin.script.ScriptTemplateDefinition
 import org.jetbrains.kotlin.scripts.ScriptWithIntParam
-import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -107,8 +105,6 @@ class ScriptGenTest : CodegenTestCase() {
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        for (path in sourcePaths) {
-            loadFile(path)
-        }
+        loadFiles(*sourcePaths.toTypedArray())
     }
 }
