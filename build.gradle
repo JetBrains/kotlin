@@ -1,4 +1,4 @@
-ant.importBuild 'backend.native/kotlin-ir/build.xml'
+//ant.importBuild 'backend.native/kotlin-ir/build.xml'
 
 if (new File("$project.rootDir/local.properties").exists()) {
   Properties props = new Properties()
