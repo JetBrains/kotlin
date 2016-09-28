@@ -99,7 +99,15 @@ class JavaToKotlinPreconversionPullUpHelper(
 
         val superInterfaceCount = getCurrentSuperInterfaceCount()
 
-        javaHelper.move(info, substitutor)
+        val adjustedSubstitutor = substitutor.substitutionMap.entries.fold(substitutor) { subst, (typeParameter, type) ->
+            if (type == null) {
+                val substitutedUpperBound = substitutor.substitute(PsiIntersectionType.createIntersection(*typeParameter.superTypes))
+                subst.put(typeParameter, substitutedUpperBound)
+            }
+            else subst
+        }
+
+        javaHelper.move(info, adjustedSubstitutor)
 
         if (info.isStatic) {
             member.removeOverrideModifier()
