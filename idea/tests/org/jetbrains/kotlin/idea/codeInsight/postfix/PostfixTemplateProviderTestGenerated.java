@@ -161,6 +161,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("whenExpression.kt")
+    public void testWhenExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/whenExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("while.kt")
     public void testWhile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/while.kt");

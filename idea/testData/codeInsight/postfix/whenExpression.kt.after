@@ -1,0 +1,8 @@
+fun foo(x: String) {
+    val y = when (x) {
+         -> {
+        }
+        else -> {
+        }
+    }
+}
