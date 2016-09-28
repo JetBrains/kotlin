@@ -116,7 +116,6 @@ class ArenaContainer : public Container {
     }
   }
 
-
   // Allocation function.
   void* Place(int size) {
     ArenaContainerHeader* header = reinterpret_cast<ArenaContainerHeader*>(header_);
@@ -132,7 +131,8 @@ class ArenaContainer : public Container {
   ObjHeader* PlaceObject(const TypeInfo* type_info);
 
   // Places an array of certain type in this container. Note that array_type_info
-  // is type infor for an array, not for an individual element.
+  // is type info for an array, not for an individual element. Also note that exactly
+  // same operation could be used to place strings.
   ArrayHeader* PlaceArray(const TypeInfo* array_type_info, int count);
 
   // Dispose whole container ignoring non-zero refcount. Use with care.
@@ -246,10 +246,6 @@ class ObjRef : public AnyObjRef {
   // Assigns reference, compile time type-safe.
   ObjRef(const ObjRef& other) : AnyObjRef(nullptr) {
     Assign(other);
-  }
-  ObjRef& operator=(const ObjRef& other) {
-    Assign(other);
-    return *this;
   }
   void Assign(const ObjRef<T>& other) {
     AnyObjRef::Assign(other);

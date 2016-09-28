@@ -42,7 +42,7 @@ void ReturnByValue(ObjRef<List> value) {
 }
 
 ObjRef<List> ReturnByRef(ArenaContainer* container) {
-  auto result = ObjRef<List>::Alloc(container);
+  ObjRef<List> result(ObjRef<List>::Alloc(container));
   result.at<int, data_offset>().set(30);
   return result;
 }
@@ -88,18 +88,18 @@ void test_placer() {
     // Pass by reference.
     while (!cur.null()) {
       UpdateElement(cur);
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
      // Pass by value.
     while (!cur.null()) {
       // We could place clone on stack as well.
       DoNotUpdateElement(cur.Clone(&heap));
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
     cur = head;
     while (!cur.null()) {
       printf("next is %d\n", cur.at<int, data_offset>().get());
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
   }
   heap.Dispose();
