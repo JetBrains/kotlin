@@ -196,7 +196,7 @@ class ExpressionCodegen(
 
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
-        throw AssertionError("IrInstanceInitializerCall should've been lowered before code generation: ${expression.render()}")
+        throw AssertionError("Instruction should've been lowered before code generation: ${expression.render()}")
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BlockInfo): StackValue {
@@ -267,8 +267,11 @@ class ExpressionCodegen(
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: BlockInfo): StackValue {
-        StackValue.singleton(expression.descriptor, typeMapper).put(expression.asmType, mv)
-        return expression.onStack
+        throw AssertionError("Instruction should've been lowered before code generation: ${expression.render()}")
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: BlockInfo): StackValue {
+        throw AssertionError("Instruction should've been lowered before code generation: ${expression.render()}")
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
