@@ -75,8 +75,6 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
         override fun getName() = "Rename"
         override fun getFamilyName() = name
 
-        override fun startInWriteAction(): Boolean = false
-
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement ?: return
             val file = element.containingFile ?: return
