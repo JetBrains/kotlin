@@ -99,9 +99,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
         PackageViewDescriptor packageView = analyzeFileToPackageView(extraClassPath);
 
-        RecursiveDescriptorComparator.Configuration comparator =
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
-                        DescriptorValidator.ValidationVisitor.errorTypesAllowed());
+        RecursiveDescriptorComparator.Configuration comparator = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION
+                .withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed());
         validateAndCompareDescriptorWithFile(packageView, comparator, getTestDataFileWithExtension("txt"));
     }
 

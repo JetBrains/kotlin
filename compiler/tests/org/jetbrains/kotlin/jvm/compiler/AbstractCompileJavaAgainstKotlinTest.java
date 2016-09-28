@@ -40,28 +40,28 @@ import java.lang.annotation.Retention;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
-import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
 public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
     // Do not render parameter names because there are test cases where classes inherit from JDK collections,
     // and some versions of JDK have debug information in the class files (including parameter names), and some don't
-    private static final RecursiveDescriptorComparator.Configuration CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.withRenderer(
-            DescriptorRenderer.Companion.withOptions(
-                    new Function1<DescriptorRendererOptions, Unit>() {
-                        @Override
-                        public Unit invoke(DescriptorRendererOptions options) {
-                            options.setWithDefinedIn(false);
-                            options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
-                            options.setVerbose(true);
-                            options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
-                            options.setModifiers(DescriptorRendererModifier.ALL);
-                            return Unit.INSTANCE;
-                        }
-                    }
-            )
-    );
+    private static final RecursiveDescriptorComparator.Configuration CONFIGURATION =
+            AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
+                    DescriptorRenderer.Companion.withOptions(
+                            new Function1<DescriptorRendererOptions, Unit>() {
+                                @Override
+                                public Unit invoke(DescriptorRendererOptions options) {
+                                    options.setWithDefinedIn(false);
+                                    options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
+                                    options.setVerbose(true);
+                                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
+                                    options.setModifiers(DescriptorRendererModifier.ALL);
+                                    return Unit.INSTANCE;
+                                }
+                            }
+                    )
+            );
 
     protected void doTest(String ktFilePath) throws IOException {
         Assert.assertTrue(ktFilePath.endsWith(".kt"));

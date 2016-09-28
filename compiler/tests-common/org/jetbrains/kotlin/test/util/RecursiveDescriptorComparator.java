@@ -62,14 +62,14 @@ public class RecursiveDescriptorComparator {
             }
     );
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false,
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, false,
                                                                                          Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                                          errorTypesForbidden(), DEFAULT_RENDERER);
-    public static final Configuration RECURSIVE = new Configuration(false, false, true,
+    public static final Configuration RECURSIVE = new Configuration(false, false, true, false,
                                                                     Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                     errorTypesForbidden(), DEFAULT_RENDERER);
 
-    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true,
+    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, false,
                                                                         Predicates.<DeclarationDescriptor>alwaysTrue(),
                                                                         errorTypesForbidden(), DEFAULT_RENDERER);
 
@@ -189,7 +189,7 @@ public class RecursiveDescriptorComparator {
             @NotNull Collection<? extends DeclarationDescriptor> extraSubDescriptors,
             @NotNull Printer printer
     ) {
-        if (!module.equals(DescriptorUtils.getContainingModule(descriptor))) {
+        if (!conf.renderDeclarationsFromOtherModules && !module.equals(DescriptorUtils.getContainingModule(descriptor))) {
             printer.println(String.format("// -- Module: %s --", DescriptorUtils.getContainingModule(descriptor).getName()));
             return;
         }
@@ -274,15 +274,16 @@ public class RecursiveDescriptorComparator {
         private final boolean checkPrimaryConstructors;
         private final boolean checkPropertyAccessors;
         private final boolean includeMethodsOfKotlinAny;
+        private final boolean renderDeclarationsFromOtherModules;
         private final Predicate<DeclarationDescriptor> recursiveFilter;
         private final DescriptorRenderer renderer;
-
         private final DescriptorValidator.ValidationVisitor validationStrategy;
 
         public Configuration(
                 boolean checkPrimaryConstructors,
                 boolean checkPropertyAccessors,
                 boolean includeMethodsOfKotlinAny,
+                boolean renderDeclarationsFromOtherModules,
                 Predicate<DeclarationDescriptor> recursiveFilter,
                 DescriptorValidator.ValidationVisitor validationStrategy,
                 DescriptorRenderer renderer
@@ -290,39 +291,46 @@ public class RecursiveDescriptorComparator {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.checkPropertyAccessors = checkPropertyAccessors;
             this.includeMethodsOfKotlinAny = includeMethodsOfKotlinAny;
+            this.renderDeclarationsFromOtherModules = renderDeclarationsFromOtherModules;
             this.recursiveFilter = recursiveFilter;
             this.validationStrategy = validationStrategy;
             this.renderer = renderer;
         }
 
         public Configuration filterRecursion(@NotNull Predicate<DeclarationDescriptor> stepIntoFilter) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, stepIntoFilter,
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, stepIntoFilter,
                                      validationStrategy.withStepIntoFilter(stepIntoFilter), renderer);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
-                                     validationStrategy, renderer);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
         }
 
         public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
-                                     validationStrategy, renderer);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
         }
 
         public Configuration includeMethodsOfKotlinAny(boolean includeMethodsOfKotlinAny) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
-                                     validationStrategy, renderer);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
+        }
+
+        public Configuration renderDeclarationsFromOtherModules(boolean renderDeclarationsFromOtherModules) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
         }
 
         public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
-                                     validationStrategy, renderer);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
         }
 
         public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, recursiveFilter,
-                                     validationStrategy, renderer);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                                     renderDeclarationsFromOtherModules, recursiveFilter, validationStrategy, renderer);
         }
     }
 }

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -65,8 +64,11 @@ import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.*;
     The generated test compares package descriptors loaded from kotlin sources and read from compiled java.
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
+    // There are two modules in each test case (sources and dependencies), so we should render declarations from both of them
+    public static final Configuration COMPARATOR_CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.renderDeclarationsFromOtherModules(true);
+
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
-        doTestCompiledJava(javaFileName, DONT_INCLUDE_METHODS_OF_OBJECT);
+        doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
     }
 
     // Java-Kotlin dependencies are not supported in this method for simplicity
@@ -84,11 +86,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 javaSources, tmpdir, ConfigurationKind.JDK_ONLY
         );
 
-        checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT);
+        checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, COMPARATOR_CONFIGURATION);
     }
 
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
-        doTestCompiledJava(javaFileName, RECURSIVE);
+        doTestCompiledJava(javaFileName, RECURSIVE.renderDeclarationsFromOtherModules(true));
     }
 
     protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
@@ -132,9 +134,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
-        Configuration comparatorConfiguration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                .checkPrimaryConstructors(true)
-                .checkPropertyAccessors(true);
+        Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true);
         compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
     }
 
@@ -168,7 +168,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         );
 
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        checkJavaPackage(expectedFile, packageView, result.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
+        checkJavaPackage(expectedFile, packageView, result.getBindingContext(), COMPARATOR_CONFIGURATION);
     }
 
     // TODO: add more tests on inherited parameter names, but currently impossible because of KT-4509
@@ -198,7 +198,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assertFalse(packageView.isEmpty());
 
-        validateAndCompareDescriptorWithFile(packageView, DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
+        validateAndCompareDescriptorWithFile(packageView, COMPARATOR_CONFIGURATION.withValidationStrategy(
                 new DeserializedScopeValidationVisitor()
         ), expectedFile);
     }
@@ -220,8 +220,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false
         );
 
-        checkJavaPackage(expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
-                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(errorTypesAllowed()));
+        checkJavaPackage(
+                expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
+                COMPARATOR_CONFIGURATION.withValidationStrategy(errorTypesAllowed())
+        );
     }
 
     private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {
