@@ -50,32 +50,32 @@ ObjRef<List> ReturnByRef(ArenaContainer* container) {
 void test_placer() {
   ArenaContainer heap(1024);
   {
-    ObjRef<List> head = ObjRef<List>::Alloc(&heap);
+    ObjRef<List> head(ObjRef<List>::Alloc(&heap));
     head.at<int, data_offset>().set(1);
-    ObjRef<List> cur = head;
+    ObjRef<List> cur(head);
     for (int i = 0; i < 10; ++i) {
       cur.at<ObjRef<List>, next_offset>().set(ObjRef<List>::Alloc(&heap));
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
       cur.at<int, data_offset>().set(i + 2);
     }
 
     // Pass by reference.
-    cur = head;
+    cur.Assign(head);
     while (!cur.null()) {
       UpdateElement(cur);
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
 
     // Pass by value.
-    cur = head;
+    cur.Assign(head);
     while (!cur.null()) {
       // We could place clone on stack as well.
       DoNotUpdateElement(cur.Clone(&heap));
-      cur = cur.at<ObjRef<List>, next_offset>().get();
+      cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
 
     // Return by value is trivial in this system. CopyTo() into provided container.
-    auto value = ObjRef<List>::Alloc(&heap);
+    ObjRef<List> value(ObjRef<List>::Alloc(&heap));
     ReturnByValue(value);
     printf("By value is %d\n", value.at<int, data_offset>().get());
 
@@ -84,7 +84,7 @@ void test_placer() {
     printf("By ref is %d\n", value.at<int, data_offset>().get());
 
     // Dump results.
-    cur = head;
+    cur.Assign(head);
     // Pass by reference.
     while (!cur.null()) {
       UpdateElement(cur);
@@ -96,7 +96,7 @@ void test_placer() {
       DoNotUpdateElement(cur.Clone(&heap));
       cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
     }
-    cur = head;
+    cur.Assign(head);
     while (!cur.null()) {
       printf("next is %d\n", cur.at<int, data_offset>().get());
       cur.Assign(cur.at<ObjRef<List>, next_offset>().get());
