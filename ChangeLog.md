@@ -102,8 +102,8 @@
 - [`KT-13242`](https://youtrack.jetbrains.com/issue/KT-13242) Suggest 'typealias' keyword in completion
 - [`KT-13244`](https://youtrack.jetbrains.com/issue/KT-13244) Override/Implement Members: Do not expand type aliases in the generated members
 - [`KT-13611`](https://youtrack.jetbrains.com/issue/KT-13611) Go to Class: Fix presentation of type aliases
-- [`KT-13759`](https://youtrack.jetbrains.com/issue/KT-13759) Fix renaming of type alias referencing an object
-- [`KT-13955`](https://youtrack.jetbrains.com/issue/KT-13955) Add usage type "type alias"
+- [`KT-13759`](https://youtrack.jetbrains.com/issue/KT-13759) Rename: Process object-wrapping alias references
+- [`KT-13955`](https://youtrack.jetbrains.com/issue/KT-13955) Find Usages: Add special type for usages inside of type aliases
 - [`KT-13479`](https://youtrack.jetbrains.com/issue/KT-13479) Support navigation to type aliases from binaries
 
 ## 1.1-M01 (EAP-1)
@@ -232,6 +232,10 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
 - [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Superclass" refactoring
 - [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Interface" refactoring
+Pull Up: Support properties declared in the primary constructor
+Pull Up: Support members declared in the companion object of the original class
+Pull Up: Show member dependencies in the refactoring dialog
+- [`KT-9485`](https://youtrack.jetbrains.com/issue/KT-9485) Push Down: Support moving members from Java to Kotlin class
 
 #### Android Lint
 
