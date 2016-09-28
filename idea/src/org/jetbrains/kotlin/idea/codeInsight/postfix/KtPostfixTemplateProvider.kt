@@ -24,6 +24,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -139,9 +140,12 @@ private class KtExpressionPostfixTemplateSelector(
                 it !is KtBlockExpression &&
                 it !is KtDeclarationWithBody &&
                 !it.isEffectivelyDeclaration()
-            }.filter { !it.isSelector && it.parent !is KtUserType }
+            }.filter { !it.isSelector && it.parent !is KtUserType && !it.isOperationReference }
             .toList()
 }
+
+private val KtExpression.isOperationReference: Boolean
+    get() = this.node.elementType == KtNodeTypes.OPERATION_REFERENCE
 
 private fun KtElement.isEffectivelyDeclaration() =
         this is KtNamedDeclaration &&
