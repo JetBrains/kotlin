@@ -25,31 +25,39 @@ struct ArrayHeader : public ObjHeader {
   uint32_t count_;
 };
 
-// Header of all container objects.
+// Header of all container objects. Contains reference counter.
 struct ContainerHeader {
-   // Reference counter of container.
-  int ref_count_;
+  // Reference counter of container. Maybe use some upper bit of counter for
+  // container type (for polymorphism in ::Release()).
+  uint32_t ref_count_;
 };
 
+struct ArenaContainerHeader : public ContainerHeader {
+  // Current allocation limit.
+  uint8_t* current_;
+  // Allocation end. Maybe consider having chunked backing storage
+  // at cost of smarter ::Release() polymorphic on container type.
+  uint8_t* end_;
+};
+
+
+// Thos two opeations are implemented by translator when storing references
+// to objects.
 inline void AddRef(ContainerHeader* header) {
+  // Looking at container type we may want to skip AddRef() totally
+  // (non-escaping stack objects).
   header->ref_count_++;
 }
 
 inline void Release(ContainerHeader* header) {
+  // Looking at container type we may want to skip Release() totally
+  // (non-escaping stack objects).
   if (--header->ref_count_ == 0) {
     free(header);
   }
 }
 
-struct ArenaContainerHeader : public ContainerHeader {
-  // Current allocation limit. As objects never freed, we can have rather simple
-  // allocation algorithm.
-  uint8_t* current_;
-  // Total size of the container.
-  uint8_t* end_;
-};
-
-// Class representing placement container for single object.
+// Class representing arbitrary placement container.
 class Container {
  protected:
   // Data where everything is being stored.
@@ -85,10 +93,7 @@ class ObjectContainer : public Container {
     header_->ref_count_ = 1;
   }
 
-  ~ObjectContainer() {
-    assert(header_->ref_count_ == 0);
-    free(header_);
-  }
+  // Object container shalln't have any dtor, as it's being freed by ::Release().
 
   void* GetPlace() const {
     return reinterpret_cast<uint8_t*>(header_) + sizeof(ContainerHeader);
@@ -102,10 +107,10 @@ class ObjectContainer : public Container {
 class ArenaContainer : public Container {
  public:
   explicit ArenaContainer(int size) {
-    header_ = reinterpret_cast<ArenaContainerHeader*>(
+    ArenaContainerHeader* header = reinterpret_cast<ArenaContainerHeader*>(
         calloc(size + sizeof(ArenaContainerHeader), 1));
-    header_->ref_count_ = 1;
-    ArenaContainerHeader* header = static_cast<ArenaContainerHeader*>(header_);
+    header_ = header;
+    header->ref_count_ = 1;
     header->current_ = reinterpret_cast<uint8_t*>(header_) + sizeof(ArenaContainerHeader);
     header->end_ = header->current_ + size;
   }
@@ -113,7 +118,7 @@ class ArenaContainer : public Container {
   ~ArenaContainer() {
     if (header_) {
       assert(header_->ref_count_ == 0);
-      free(header_);
+      Dispose();
     }
   }
 
@@ -139,7 +144,6 @@ class ArenaContainer : public Container {
   // Dispose whole container ignoring non-zero refcount. Use with care.
   void Dispose() {
     if (header_) {
-      header_->ref_count_ = 0;
       free(header_);
       header_ = nullptr;
     }
