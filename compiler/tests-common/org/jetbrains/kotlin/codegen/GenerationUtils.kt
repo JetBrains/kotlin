@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -51,6 +52,9 @@ object GenerationUtils {
                 files, configuration
         )
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+
+        // For JVM-specific errors
+        AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
         return state
     }
 }
