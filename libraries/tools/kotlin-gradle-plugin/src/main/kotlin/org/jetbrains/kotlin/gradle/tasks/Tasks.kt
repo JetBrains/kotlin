@@ -182,11 +182,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
-        fun projectRelativePath(file: File) =
-                file.toRelativeString(project.rootProject.projectDir)
+        fun relativePathOrCanonical(file: File): String =
+                file.relativeToOrNull(project.rootProject.projectDir)?.path
+                        ?: file.canonicalPath
 
         fun filesToString(files: Iterable<File>) =
-                "[" + files.map(::projectRelativePath).sorted().joinToString(separator = ", \n") + "]"
+                "[" + files.map(::relativePathOrCanonical).sorted().joinToString(separator = ", \n") + "]"
 
         val targetType = "java-production"
         val moduleName = args.moduleName
@@ -280,13 +281,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             lookupSymbols.addAll(classpathChanges.lookupSymbols)
 
             if (lookupSymbols.any()) {
-                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, logAction, ::projectRelativePath)
+                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, logAction, ::relativePathOrCanonical)
                 dirtyFiles.addAll(dirtyFilesFromLookups)
             }
 
             val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, listOf(caches.incrementalCache)) }
             if (dirtyClassesFqNames.any()) {
-                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, logAction, ::projectRelativePath)
+                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, logAction, ::relativePathOrCanonical)
                 dirtyFiles.addAll(dirtyFilesFromFqNames)
             }
 
@@ -362,11 +363,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
             // can be empty if only removed sources are present
             if (sourcesToCompile.isNotEmpty()) {
-                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString(transform = ::projectRelativePath)}")
+                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString(transform = ::relativePathOrCanonical)}")
             }
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
-            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(::projectRelativePath)}" }
+            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(::relativePathOrCanonical)}" }
 
             val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
@@ -407,13 +408,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                     sources.toSet()
                 }
                 is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile)
+                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile)
                 }
                 else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
             }
             sourcesToCompile = dirtyKotlinFilesFromJava +
-                               mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile) +
-                               mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, ::projectRelativePath, excludes = sourcesToCompile)
+                               mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile) +
+                               mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile)
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
             buildDirtyFqNames.addAll(dirtyClassFqNames)
