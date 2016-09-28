@@ -25,20 +25,21 @@ struct ArrayHeader : public ObjHeader {
   uint32_t count_;
 };
 
+// Header of all container objects.
 struct ContainerHeader {
    // Reference counter of container.
   int ref_count_;
-
-  void AddRef() {
-    ref_count_++;
-  }
-
-  void Release() {
-    if (--ref_count_ == 0) {
-      free(this);
-    }
-  }
 };
+
+inline void AddRef(ContainerHeader* header) {
+  header->ref_count_++;
+}
+
+inline void Release(ContainerHeader* header) {
+  if (--header->ref_count_ == 0) {
+    free(header);
+  }
+}
 
 struct ArenaContainerHeader : public ContainerHeader {
   // Current allocation limit. As objects never freed, we can have rather simple
@@ -63,7 +64,7 @@ class Container {
  public:
   // Increment reference counter associated with container.
   void AddRef() {
-    if (header_) header_->AddRef();
+    if (header_) ::AddRef(header_);
   }
 
   // Decrement reference counter associated with container.
@@ -71,7 +72,7 @@ class Container {
   // individual container per object (ObjectContainer) shall be created.
   // As an alternative, such objects could be evacuated from short-lived containers.
   void Release() {
-    if (header_) header_->Release();
+    if (header_) ::Release(header_);
   }
 };
 
@@ -163,14 +164,14 @@ class AnyObjRef {
 
   explicit AnyObjRef(ObjHeader* ptr) : ptr_(ptr) {
     if (ptr_) {
-      container_header()->AddRef();
+      AddRef(container_header());
     }
   }
 
  public:
   ~AnyObjRef() {
     if (ptr_) {
-      container_header()->Release();
+      Release(container_header());
     }
   }
 
@@ -196,11 +197,11 @@ class AnyObjRef {
   void Assign(const AnyObjRef& other) {
     // TODO: optimize for an important case where containers match?
     if (ptr_) {
-      container_header()->Release();
+      Release(container_header());
     }
     ptr_ = other.ptr_;
     if (ptr_) {
-      container_header()->AddRef();
+      AddRef(container_header());
     }
   }
 
@@ -379,7 +380,7 @@ inline void ObjRef<T>::CopyTo(ObjRef<T> other) const {
     for (int i = 0; i < obj_offsets_count; ++i) {
       AnyObjRef any = other.any_obj_at(obj_offsets[i]);
       if (!any.null()) {
-        any.container_header()->AddRef();
+        AddRef(any.container_header());
       }
     }
   } else {
