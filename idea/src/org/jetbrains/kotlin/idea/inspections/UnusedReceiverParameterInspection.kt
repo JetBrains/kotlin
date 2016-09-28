@@ -122,7 +122,5 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         }
 
         override fun getFamilyName(): String = name
-
-        override fun startInWriteAction() = false
     }
 }

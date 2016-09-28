@@ -350,8 +350,6 @@ class SafeDeleteFix(val declaration: KtDeclaration) : LocalQuickFix {
 
     override fun getFamilyName() = "Safe delete"
 
-    override fun startInWriteAction(): Boolean = false
-
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
         SwingUtilities.invokeLater {
