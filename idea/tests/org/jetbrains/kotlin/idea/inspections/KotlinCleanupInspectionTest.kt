@@ -40,7 +40,7 @@ class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
         val globalContext = managerEx.createNewGlobalContext(false) as GlobalInspectionContextBase
         val analysisScope = AnalysisScope(myFixture.file)
         val profile = InspectionProjectProfileManager.getInstance(project).inspectionProfile
-        globalContext.codeCleanup(analysisScope, profile, "Cleanup", null, true)
+        globalContext.codeCleanup(project, analysisScope, profile, "Cleanup", null, true)
 
         myFixture.checkResultByFile(result)
     }
