@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.junit.Test
+import java.io.File
+import kotlin.test.assertTrue
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
@@ -97,6 +100,48 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("destinationDirReferencedDuringEvaluation", GRADLE_VERSION).build("build") {
             assertSuccessful()
             assertContains("GreeterTest PASSED")
+        }
+    }
+
+    @Test
+    fun testAllOpenPlugin() {
+        Project("allOpenSimple", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, "build/classes/main")
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(openClass,
+                    "public class test/OpenClass {",
+                    "public method()V")
+
+            checkBytecodeContains(closedClass,
+                    "public final class test/ClosedClass {",
+                    "public final method()V")
+        }
+    }
+
+    @Test
+    fun testKotlinSpringPlugin() {
+        Project("allOpenSpring", GRADLE_VERSION).build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, "build/classes/main")
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(openClass,
+                    "public class test/OpenClass {",
+                    "public method()V")
+
+            checkBytecodeContains(closedClass,
+                    "public final class test/ClosedClass {",
+                    "public final method()V")
         }
     }
 }
