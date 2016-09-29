@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class AbstractClassTypeConstructor extends AbstractTypeConstructor implements TypeConstructor {
-    private boolean hashCodeComputed;
-    private int hashCode;
+    private int hashCode = 0;
 
     public AbstractClassTypeConstructor(@NotNull StorageManager storageManager) {
         super(storageManager);
@@ -39,17 +38,18 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
 
     @Override
     public final int hashCode() {
-        if (!hashCodeComputed) {
-            hashCodeComputed = true;
-            ClassifierDescriptor descriptor = getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
-                hashCode = DescriptorUtils.getFqName(descriptor).hashCode();
-            }
-            else {
-                hashCode = System.identityHashCode(this);
-            }
+        int currentHashCode = hashCode;
+        if (currentHashCode != 0) return currentHashCode;
+
+        ClassifierDescriptor descriptor = getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor && hasMeaningfulFqName(descriptor)) {
+            currentHashCode = DescriptorUtils.getFqName(descriptor).hashCode();
         }
-        return hashCode;
+        else {
+            currentHashCode = System.identityHashCode(this);
+        }
+        hashCode = currentHashCode;
+        return currentHashCode;
     }
 
     @NotNull
