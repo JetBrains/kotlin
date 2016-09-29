@@ -21,42 +21,28 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.move.moveInner.MoveInnerClassUsagesHandler
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.references.matchesTarget
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import java.util.*
+import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
         val innerCall = usage.element?.parent as? KtCallExpression ?: return
-
-        val receiver = (innerCall.parent as? KtQualifiedExpression)?.receiverExpression ?: return
-        val outerClassRefExpr = when (receiver) {
-            is KtCallExpression -> receiver.calleeExpression
-            is KtQualifiedExpression -> receiver.getQualifiedElementSelector()
-            else -> null
-        } as? KtSimpleNameExpression
-        val outerClassRef = outerClassRefExpr?.mainReference ?: return
-        if (!outerClassRef.matchesTarget(outerClass)) return
+        val receiverExpression = innerCall.getQualifiedExpressionForSelector()?.receiverExpression
 
         val psiFactory = KtPsiFactory(usage.project)
 
-        val argumentList = innerCall.valueArgumentList
-        if (argumentList != null) {
-            val newArguments = ArrayList<String>()
-            newArguments.add(receiver.text!!)
-            argumentList.arguments.mapTo(newArguments) { it.text!! }
-            argumentList.replace(psiFactory.createCallArguments(newArguments.joinToString(prefix = "(", postfix = ")")))
-        }
-        else {
-            innerCall.lambdaArguments.firstOrNull()?.let { lambdaArg ->
-                val anchor = PsiTreeUtil.skipSiblingsBackward(lambdaArg, PsiWhiteSpace::class.java)
-                innerCall.addAfter(psiFactory.createCallArguments("(${receiver.text})"), anchor)
-            }
-        }
+        val argumentToAdd = psiFactory.createArgument(receiverExpression ?: psiFactory.createExpression("this"))
+
+        val argumentList =
+                innerCall.valueArgumentList
+                ?: (innerCall.lambdaArguments.firstOrNull()?.let { lambdaArg ->
+                    val anchor = PsiTreeUtil.skipSiblingsBackward(lambdaArg, PsiWhiteSpace::class.java)
+                    innerCall.addAfter(psiFactory.createCallArguments("()"), anchor)
+                } as KtValueArgumentList?)
+                ?: return
+
+        argumentList.addArgumentAfter(argumentToAdd, null)
     }
 }

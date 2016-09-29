@@ -61,16 +61,18 @@ class KotlinImplicitThisUsage(
         callElement: KtElement,
         val targetDescriptor: DeclarationDescriptor
 ): KotlinImplicitReceiverUsage(callElement) {
-    override fun getNewReceiverText(): String {
-        val name = targetDescriptor.name
-        return when {
-            name.isSpecial -> "this"
-            DescriptorUtils.isCompanionObject(targetDescriptor) -> IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(targetDescriptor as ClassifierDescriptor)
-            else -> "this@${name.asString()}"
-        }
-    }
+    override fun getNewReceiverText() = explicateReceiverOf(targetDescriptor)
 
     override fun processReplacedElement(element: KtElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true, removeThis = true))
+    }
+}
+
+fun explicateReceiverOf(descriptor: DeclarationDescriptor): String {
+    val name = descriptor.name
+    return when {
+        name.isSpecial -> "this"
+        DescriptorUtils.isCompanionObject(descriptor) -> IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor as ClassifierDescriptor)
+        else -> "this@${name.asString()}"
     }
 }
