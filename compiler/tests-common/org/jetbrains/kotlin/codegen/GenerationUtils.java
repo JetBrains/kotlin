@@ -59,7 +59,7 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<KtFile> files) {
-        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.Companion.getEMPTY(), null);
+        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.Empty.INSTANCE, null);
     }
 
     @NotNull

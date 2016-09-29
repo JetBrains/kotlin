@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
@@ -39,8 +38,7 @@ fun createResolveSessionForFiles(
             "test",
             projectContext, listOf(testModule),
             { ModuleContent(syntheticFiles, GlobalSearchScope.allScope(project)) },
-            JvmPlatformParameters { testModule },
-            CompilerEnvironment
+            JvmPlatformParameters { testModule }
     )
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }

@@ -35,7 +35,7 @@ import java.util.Collections;
 public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull KtFile file) {
-        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.Companion.getEMPTY());
+        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.Empty.INSTANCE);
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public class JvmResolveUtil {
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file) {
-        return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.Companion.getEMPTY());
+        return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.Empty.INSTANCE);
     }
 
     @NotNull
@@ -69,7 +69,7 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<KtFile> files
     ) {
-        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.Companion.getEMPTY());
+        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.Empty.INSTANCE);
     }
 
     @NotNull
