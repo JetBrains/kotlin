@@ -1,0 +1,58 @@
+// TODO: consider using some Gradle plugins to build and test
+
+def srcDir = 'src/main/cpp'
+def objDir = "$buildDir/bitcode"
+def outFile = "$buildDir/runtime.bc"
+
+task compile(type: Exec) {
+    doFirst {
+         new File(objDir).mkdirs()
+    }
+
+    inputs.dir srcDir
+    outputs.dir objDir
+
+    workingDir objDir
+
+    executable "$llvmInstallPath/bin/clang"
+    args '-std=c++11'
+
+    args '-c', '-emit-llvm'
+
+    args fileTree(srcDir).include('**/*.cpp')
+}
+
+task build(type: Exec) {
+    dependsOn compile
+
+    inputs.dir objDir
+    outputs.file outFile
+
+    executable "$llvmInstallPath/bin/llvm-link"
+    args '-o', outFile
+
+    doFirst {
+        args fileTree(objDir).include('**/*.bc')
+    }
+}
+
+task test {
+    dependsOn build
+
+    doLast {
+        exec {
+	    commandLine "$llvmInstallPath/bin/clang", 'src/test/c/main.c', '-c', '-emit-llvm', '-o', "$buildDir/main.bc"
+	}
+        exec {
+	    commandLine "$llvmInstallPath/bin/clang++", outFile, "$buildDir/main.bc", '-o', "$buildDir/main"
+	}
+	exec {
+	    workingDir buildDir
+	    commandLine './main'
+	}
+    }
+}
+
+task clean << {
+    delete buildDir
+}
