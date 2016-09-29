@@ -13,5 +13,5 @@ class A : I {
 // ABSENT: abstractFun
 // ABSENT: abstractVal
 // EXIST: { itemText: "nonAbstractFun", attributes: "bold" }
-// EXIST: { itemText: "equals", attributes: "bold" }
-// EXIST: { itemText: "hashCode", attributes: "bold" }
+// EXIST: { itemText: "equals", attributes: "" }
+// EXIST: { itemText: "hashCode", attributes: "" }
