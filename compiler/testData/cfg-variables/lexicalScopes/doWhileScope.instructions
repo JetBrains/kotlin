@@ -11,21 +11,21 @@ L0:
   1 <START>                                                      INIT: in: {} out: {}
   2 mark({ "before" do { var a = 2 } while (a > 0) "after" })
     mark("before")
-    r("before") -> <v0>                                                                          USE: in: {} out: {}
+    r("before") -> <v0>                                                                            USE: in: {} out: {}
   3 mark(do { var a = 2 } while (a > 0))
 L2 [loop entry point]:
 L4 [body entry point]:
     mark({ var a = 2 })                                          INIT: in: {a=I?} out: {a=I?}
-    v(var a = 2)                                                 INIT: in: {a=I?} out: {a=ID}
-    r(2) -> <v1>                                                 INIT: in: {a=ID} out: {a=ID}
-    w(a|<v1>)
+    v(var a = 2)                                                 INIT: in: {a=I?} out: {a=I?D}
+    r(2) -> <v1>                                                 INIT: in: {a=I?D} out: {a=I?D}
+    w(a|<v1>)                                                    INIT: in: {a=I?D} out: {a=ID}
 L5 [body exit point]:
 L6 [condition entry point]:
-    r(a) -> <v2>
+    r(a) -> <v2>                                                 INIT: in: {a=ID} out: {a=ID}
     r(0) -> <v3>
     mark(a > 0)
     call(a > 0, compareTo|<v2>, <v3>) -> <v4>
-    jt(L2|<v4>)                                                                                  USE: in: {a=READ} out: {a=READ}
+    jt(L2|<v4>)                                                                                    USE: in: {a=READ} out: {a=READ}
 L3 [loop exit point]:
     read (Unit)
   2 mark("after")                                                INIT: in: {} out: {}
@@ -35,5 +35,5 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                       USE: in: {} out: {}
+    <SINK>                                                                                         USE: in: {} out: {}
 =====================
