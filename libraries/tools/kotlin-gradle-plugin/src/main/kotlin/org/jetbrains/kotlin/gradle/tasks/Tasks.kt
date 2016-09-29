@@ -92,7 +92,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         logger.kotlinDebug("removed ${removed.joinToString { it.path }}")
         val sources = getKotlinSources()
         if (sources.isEmpty()) {
-            logger.warn("No Kotlin files found, skipping Kotlin compiler task")
+            logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
             return
         }
 
