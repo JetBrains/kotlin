@@ -8,8 +8,6 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
-        // TODO: handle other source sets
-        def srcDir = prj.file("src/main/kotlin")
         def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs/kotlin")
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
 
@@ -27,16 +25,24 @@ class NativeInteropPlugin implements Plugin<Project> {
         prj.task(genStubsTaskName, type: JavaExec) {
             classpath = prj.configurations.interopStubGenerator
             main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-            args = [srcDir, generatedSrcDir, nativeLibsDir]
+            args = [generatedSrcDir, nativeLibsDir]
             systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
             systemProperties "llvmInstallPath" : prj.llvmInstallPath
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
             environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
 
-            inputs.files prj.fileTree(srcDir.path).include('**/*.def')
-
             outputs.dir generatedSrcDir
             outputs.dir nativeLibsDir
+        }
+
+        prj.afterEvaluate {
+            prj.tasks.getByName(genStubsTaskName) {
+                // TODO: handle other source sets
+                prj.sourceSets.main.kotlin.srcDirs.each { srcDir ->
+                    inputs.files prj.fileTree(srcDir.path).include('**/*.def')
+                    args srcDir
+                }
+            }
         }
 
         prj.sourceSets {
