@@ -17,6 +17,7 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 ext.deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
                  "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
 		 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar",
+		 "build/classes",
 		 "${project(':Interop:Runtime').buildDir}/classes/main")
 
 sourceSets {
