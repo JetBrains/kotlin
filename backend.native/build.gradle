@@ -16,18 +16,23 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
 ext.deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
                  "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
-		 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar")
+		 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar",
+		 "${project(':Interop:Runtime').buildDir}/classes/main")
 
 sourceSets {
+    llvm {
+      kotlin.srcDirs += 'build/nativeInteropStubs/kotlin'
+      compileClasspath = deps
+    }
     compiler {
       java.srcDirs += 'compiler/ir/backend.native/src/'
       kotlin.srcDirs += 'compiler/ir/backend.native/src/'
-      compileClasspath = deps
+      compileClasspath = deps.plus(llvm.output)
     }
     cli_bc {
       java.srcDirs += 'cli.bc/src'
       kotlin.srcDirs += 'cli.bc/src'
-      compileClasspath = deps
+      compileClasspath = deps.plus(compiler.output)
     }
     bc_frontend {
      java.srcDirs += 'bc.frontend/src'
@@ -36,17 +41,21 @@ sourceSets {
    }
 }
 
+compilerClasses.dependsOn 'llvmClasses'
+build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
+compilerClasses.dependsOn 'genInteropStubs'
+
 def runtime = []
 
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
    project.sourceSets.each{runtime.add(it.output.classesDir)}
    deps.each{runtime.add(it)}
-   println(runtime)
    classpath = files(runtime)
    args '../experiments/translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
    args '-output', "$buildDir/out.bc"
 
+   dependsOn ':backend.native:build'
    dependsOn ':runtime:build'
 
    doFirst {
