@@ -189,11 +189,17 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 
+    annotation class WorkingDir(val name: String)
+
     override fun setUp() {
         super.setUp()
-        val sourceFilesRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+        val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
+        val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
+        val sourceFilesRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + (workingDirFromAnnotation ?: getTestName(false)))
         workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(sourceFilesRoot)
         orCreateProjectDir
+
+        JpsUtils.resetCaches()
     }
 
     override fun tearDown() {
@@ -274,6 +280,15 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
         checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME))
         checkWhen(arrayOf(touch("src/test1.kt"), touch("module2/src/module2.kt")), null, k2jsOutput(PROJECT_NAME, ADDITIONAL_MODULE_NAME))
+    }
+
+    @WorkingDir("KotlinJavaScriptProjectWithTwoModules")
+    fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
+        initProject()
+        createKotlinJavaScriptLibraryArchive()
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        addKotlinJavaScriptStdlibDependency()
+        makeAll().assertSuccessful()
     }
 
     fun testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
@@ -839,7 +854,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     private fun assertCanceled(buildResult: BuildResult) {
         val list = buildResult.getMessages(BuildMessage.Kind.INFO)
-        assertTrue("The build has been canceled".equals(list.last().messageText))
+        assertTrue("The build has been canceled" == list.last().messageText)
     }
 
     private fun generateLongKotlinFile(filePath: String, packagename: String, className: String)  {
