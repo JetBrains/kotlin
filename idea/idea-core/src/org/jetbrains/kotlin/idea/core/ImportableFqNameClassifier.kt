@@ -51,8 +51,8 @@ class ImportableFqNameClassifier(private val file: KtFile) {
     enum class Classification {
         fromCurrentPackage,
         topLevelPackage,
-        defaultImport,
         preciseImport,
+        defaultImport,
         allUnderImport,
         siblingImported,
         notImported,

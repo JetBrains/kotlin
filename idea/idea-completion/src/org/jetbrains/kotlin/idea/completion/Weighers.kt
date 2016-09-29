@@ -75,8 +75,8 @@ class NotImportedStaticMemberWeigher(private val classifier: ImportableFqNameCla
 class ImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.imported") {
     private enum class Weight {
         currentPackage,
-        defaultImport,
         preciseImport,
+        defaultImport,
         allUnderImport
     }
 

@@ -2761,6 +2761,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("StandardKotlinTypeAliasAfterExplicitlyImported.kt")
+        public void testStandardKotlinTypeAliasAfterExplicitlyImported() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/StandardKotlinTypeAliasAfterExplicitlyImported.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("StandardKotlinTypeAliasFirst.kt")
         public void testStandardKotlinTypeAliasFirst() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/StandardKotlinTypeAliasFirst.kt");
