@@ -3448,61 +3448,58 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final KtExpression deparenthesized = KtPsiUtil.deparenthesize(rangeExpression);
 
         assert deparenthesized != null : "For with empty range expression";
-
+        final boolean isInverted = operationReference.getReferencedNameElementType() == KtTokens.NOT_IN;
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
                 if (isIntRangeExpr(deparenthesized) && AsmUtil.isIntPrimitive(leftValue.type)) {
-                    genInIntRange(leftValue, (KtBinaryExpression) deparenthesized);
+                    genInIntRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
                 }
                 else {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
                             .getResolvedCallWithAssert(operationReference, bindingContext);
                     StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, StackValue.none());
                     result.put(result.type, v);
-                }
-                if (operationReference.getReferencedNameElementType() == KtTokens.NOT_IN) {
-                    genInvertBoolean(v);
+                    if (isInverted) {
+                        genInvertBoolean(v);
+                    }
                 }
                 return null;
             }
         });
     }
 
-    private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression) {
-        v.iconst(1);
-        // 1
-        leftValue.put(Type.INT_TYPE, v);
-        // 1 l
-        v.dup2();
-        // 1 l 1 l
+    /*
+     * Translates x in a..b (for int and char ranges only) to a <= x && x <= b
+     * and x !in a..b to a > x || x > b
+     */
+    private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression, boolean isInverted) {
+        int localVarIndex = myFrameMap.enterTemp(Type.INT_TYPE);
 
-        //noinspection ConstantConditions
+        // Load left bound
         gen(rangeExpression.getLeft(), Type.INT_TYPE);
-        // 1 l 1 l r
-        Label lok = new Label();
-        v.ificmpge(lok);
-        // 1 l 1
-        v.pop();
-        v.iconst(0);
-        v.mark(lok);
-        // 1 l c
-        v.dupX2();
-        // c 1 l c
-        v.pop();
-        // c 1 l
+        // Load x into local variable to avoid StackValue#put side-effects
+        leftValue.put(Type.INT_TYPE, v);
+        v.store(localVarIndex, Type.INT_TYPE);
+        v.load(localVarIndex, Type.INT_TYPE);
 
+        // If (x < left) goto L1
+        Label l1 = new Label();
+        v.ificmpgt(l1);
+
+        // If (x > right) goto L1
+        v.load(localVarIndex, Type.INT_TYPE);
         gen(rangeExpression.getRight(), Type.INT_TYPE);
-        // c 1 l r
-        Label rok = new Label();
-        v.ificmple(rok);
-        // c 1
-        v.pop();
-        v.iconst(0);
-        v.mark(rok);
-        // c c
+        v.ificmpgt(l1);
 
-        v.and(Type.INT_TYPE);
+        Label l2 = new Label();
+        v.iconst(isInverted ? 0 : 1);
+        v.goTo(l2);
+
+        v.mark(l1);
+        v.iconst(isInverted? 1 : 0);
+        v.mark(l2);
+        myFrameMap.leaveTemp(Type.INT_TYPE);
     }
 
     private StackValue generateBooleanAnd(KtBinaryExpression expression) {

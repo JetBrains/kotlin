@@ -11128,6 +11128,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inIntRange.kt")
+        public void testInIntRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/inIntRange.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multiAssignmentIterationOverIntRange.kt")
         public void testMultiAssignmentIterationOverIntRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/multiAssignmentIterationOverIntRange.kt");
