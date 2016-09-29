@@ -940,30 +940,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/delegateProperty"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
-        @TestMetadata("capturedLocalVal.kt")
-        public void testCapturedLocalVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/capturedLocalVal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalValNoInline.kt")
-        public void testCapturedLocalValNoInline() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/capturedLocalValNoInline.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalVar.kt")
-        public void testCapturedLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/capturedLocalVar.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("capturedLocalVarNoInline.kt")
-        public void testCapturedLocalVarNoInline() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/capturedLocalVarNoInline.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("delegateByExtensionProperty.kt")
         public void testDelegateByExtensionProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/delegateByExtensionProperty.kt");
@@ -991,30 +967,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("getAsExtensionFun.kt")
         public void testGetAsExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/getAsExtensionFun.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localVal.kt")
-        public void testLocalVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/localVal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localVar.kt")
-        public void testLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/localVar.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localVarInc.kt")
-        public void testLocalVarInc() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/localVarInc.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localVarPlusAssign.kt")
-        public void testLocalVarPlusAssign() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/delegateProperty/localVarPlusAssign.kt");
             doTest(fileName);
         }
 
@@ -4359,12 +4311,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/simple.kt");
             doTest(fileName);
         }
-
-        @TestMetadata("typealiases.kt")
-        public void testTypealiases() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/typealiases.kt");
-            doTest(fileName);
-        }
     }
 
     @TestMetadata("js/js.translator/testData/box/inlineSizeReduction")
@@ -6220,321 +6166,315 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/reservedWords"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
-        @TestMetadata("dataClassValTypeof.kt")
-        public void testDataClassValTypeof() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValTypeof.kt");
+        @TestMetadata("dataClassValInfinity.kt")
+        public void testDataClassValInfinity() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValInfinity.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassValVar.kt")
-        public void testDataClassValVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValVar.kt");
+        @TestMetadata("dataClassValKotlin.kt")
+        public void testDataClassValKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValKotlin.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassValWith.kt")
-        public void testDataClassValWith() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValWith.kt");
+        @TestMetadata("dataClassValTrue.kt")
+        public void testDataClassValTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValTrue.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassValYield.kt")
-        public void testDataClassValYield() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValYield.kt");
+        @TestMetadata("dataClassValTry.kt")
+        public void testDataClassValTry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassValTry.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassVarBreak.kt")
-        public void testDataClassVarBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarBreak.kt");
+        @TestMetadata("dataClassVarArguments.kt")
+        public void testDataClassVarArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarArguments.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassVarInfinity.kt")
-        public void testDataClassVarInfinity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarInfinity.kt");
+        @TestMetadata("dataClassVarNaN.kt")
+        public void testDataClassVarNaN() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarNaN.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassVarKotlin.kt")
-        public void testDataClassVarKotlin() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarKotlin.kt");
+        @TestMetadata("dataClassVarTypeof.kt")
+        public void testDataClassVarTypeof() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarTypeof.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("dataClassVarWhile.kt")
-        public void testDataClassVarWhile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarWhile.kt");
+        @TestMetadata("dataClassVarVar.kt")
+        public void testDataClassVarVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/dataClassVarVar.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunDebugger.kt")
-        public void testDelegatedFunDebugger() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunDebugger.kt");
+        @TestMetadata("delegatedFunDelete.kt")
+        public void testDelegatedFunDelete() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunDelete.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunDefault.kt")
-        public void testDelegatedFunDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunDefault.kt");
+        @TestMetadata("delegatedFunElse.kt")
+        public void testDelegatedFunElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunElse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunIf.kt")
-        public void testDelegatedFunIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunIf.kt");
+        @TestMetadata("delegatedFunEnum.kt")
+        public void testDelegatedFunEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunEnum.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunIn.kt")
-        public void testDelegatedFunIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunIn.kt");
+        @TestMetadata("delegatedFunFalse.kt")
+        public void testDelegatedFunFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunFalse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunParamDelete.kt")
-        public void testDelegatedFunParamDelete() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamDelete.kt");
+        @TestMetadata("delegatedFunParamEval.kt")
+        public void testDelegatedFunParamEval() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamEval.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunParamEnum.kt")
-        public void testDelegatedFunParamEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamEnum.kt");
+        @TestMetadata("delegatedFunParamExport.kt")
+        public void testDelegatedFunParamExport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamExport.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunParamInterface.kt")
-        public void testDelegatedFunParamInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamInterface.kt");
+        @TestMetadata("delegatedFunParamFor.kt")
+        public void testDelegatedFunParamFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamFor.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedFunParamNull.kt")
-        public void testDelegatedFunParamNull() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamNull.kt");
+        @TestMetadata("delegatedFunParamIf.kt")
+        public void testDelegatedFunParamIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedFunParamIf.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedLabelEval.kt")
-        public void testDelegatedLabelEval() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelEval.kt");
+        @TestMetadata("delegatedLabelExtends.kt")
+        public void testDelegatedLabelExtends() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelExtends.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedLabelExport.kt")
-        public void testDelegatedLabelExport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelExport.kt");
+        @TestMetadata("delegatedLabelFinally.kt")
+        public void testDelegatedLabelFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelFinally.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedLabelPackage.kt")
-        public void testDelegatedLabelPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelPackage.kt");
+        @TestMetadata("delegatedLabelIn.kt")
+        public void testDelegatedLabelIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelIn.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedLabelReturn.kt")
-        public void testDelegatedLabelReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelReturn.kt");
+        @TestMetadata("delegatedLabelInterface.kt")
+        public void testDelegatedLabelInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedLabelInterface.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedValAwait.kt")
-        public void testDelegatedValAwait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValAwait.kt");
+        @TestMetadata("delegatedValBreak.kt")
+        public void testDelegatedValBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValBreak.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedValCase.kt")
-        public void testDelegatedValCase() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValCase.kt");
+        @TestMetadata("delegatedValCatch.kt")
+        public void testDelegatedValCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValCatch.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedValDo.kt")
-        public void testDelegatedValDo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValDo.kt");
+        @TestMetadata("delegatedValClass.kt")
+        public void testDelegatedValClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValClass.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedValElse.kt")
-        public void testDelegatedValElse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValElse.kt");
+        @TestMetadata("delegatedValConst.kt")
+        public void testDelegatedValConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedValConst.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedVarCatch.kt")
-        public void testDelegatedVarCatch() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarCatch.kt");
+        @TestMetadata("delegatedVarContinue.kt")
+        public void testDelegatedVarContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarContinue.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedVarConst.kt")
-        public void testDelegatedVarConst() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarConst.kt");
+        @TestMetadata("delegatedVarDebugger.kt")
+        public void testDelegatedVarDebugger() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarDebugger.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedVarFalse.kt")
-        public void testDelegatedVarFalse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarFalse.kt");
+        @TestMetadata("delegatedVarDefault.kt")
+        public void testDelegatedVarDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarDefault.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("delegatedVarFor.kt")
-        public void testDelegatedVarFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarFor.kt");
+        @TestMetadata("delegatedVarDo.kt")
+        public void testDelegatedVarDo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/delegatedVarDo.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumEntryContinue.kt")
-        public void testEnumEntryContinue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryContinue.kt");
+        @TestMetadata("enumEntrySwitch.kt")
+        public void testEnumEntrySwitch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntrySwitch.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumEntryDo.kt")
-        public void testEnumEntryDo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryDo.kt");
+        @TestMetadata("enumEntryUndefined.kt")
+        public void testEnumEntryUndefined() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryUndefined.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumEntryPublic.kt")
-        public void testEnumEntryPublic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryPublic.kt");
+        @TestMetadata("enumEntryWhile.kt")
+        public void testEnumEntryWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryWhile.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumEntryStatic.kt")
-        public void testEnumEntryStatic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryStatic.kt");
+        @TestMetadata("enumEntryYield.kt")
+        public void testEnumEntryYield() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumEntryYield.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunImport.kt")
-        public void testEnumFunImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunImport.kt");
+        @TestMetadata("enumFunLet.kt")
+        public void testEnumFunLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunLet.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunInstanceof.kt")
-        public void testEnumFunInstanceof() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunInstanceof.kt");
+        @TestMetadata("enumFunNew.kt")
+        public void testEnumFunNew() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunNew.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunParamLet.kt")
-        public void testEnumFunParamLet() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamLet.kt");
+        @TestMetadata("enumFunParamPrivate.kt")
+        public void testEnumFunParamPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamPrivate.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunParamNew.kt")
-        public void testEnumFunParamNew() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamNew.kt");
+        @TestMetadata("enumFunParamProtected.kt")
+        public void testEnumFunParamProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamProtected.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunParamVar.kt")
-        public void testEnumFunParamVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamVar.kt");
+        @TestMetadata("enumFunParamTrue.kt")
+        public void testEnumFunParamTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamTrue.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunParamWhile.kt")
-        public void testEnumFunParamWhile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamWhile.kt");
+        @TestMetadata("enumFunParamTry.kt")
+        public void testEnumFunParamTry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunParamTry.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunTry.kt")
-        public void testEnumFunTry() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunTry.kt");
+        @TestMetadata("enumFunThis.kt")
+        public void testEnumFunThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunThis.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumFunTypeof.kt")
-        public void testEnumFunTypeof() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunTypeof.kt");
+        @TestMetadata("enumFunThrow.kt")
+        public void testEnumFunThrow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumFunThrow.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumLabelBreak.kt")
-        public void testEnumLabelBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelBreak.kt");
+        @TestMetadata("enumLabelPublic.kt")
+        public void testEnumLabelPublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelPublic.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumLabelClass.kt")
-        public void testEnumLabelClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelClass.kt");
+        @TestMetadata("enumLabelStatic.kt")
+        public void testEnumLabelStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelStatic.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumLabelPrivate.kt")
-        public void testEnumLabelPrivate() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelPrivate.kt");
+        @TestMetadata("enumLabelTypeof.kt")
+        public void testEnumLabelTypeof() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelTypeof.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumLabelProtected.kt")
-        public void testEnumLabelProtected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelProtected.kt");
+        @TestMetadata("enumLabelVar.kt")
+        public void testEnumLabelVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumLabelVar.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumValExtends.kt")
-        public void testEnumValExtends() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValExtends.kt");
+        @TestMetadata("enumValFunction.kt")
+        public void testEnumValFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValFunction.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumValFinally.kt")
-        public void testEnumValFinally() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValFinally.kt");
+        @TestMetadata("enumValImplements.kt")
+        public void testEnumValImplements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValImplements.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumValSuper.kt")
-        public void testEnumValSuper() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValSuper.kt");
+        @TestMetadata("enumValNull.kt")
+        public void testEnumValNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValNull.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumValThis.kt")
-        public void testEnumValThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValThis.kt");
+        @TestMetadata("enumValPackage.kt")
+        public void testEnumValPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumValPackage.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumVarFunction.kt")
-        public void testEnumVarFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarFunction.kt");
+        @TestMetadata("enumVarImport.kt")
+        public void testEnumVarImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarImport.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumVarImplements.kt")
-        public void testEnumVarImplements() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarImplements.kt");
+        @TestMetadata("enumVarInstanceof.kt")
+        public void testEnumVarInstanceof() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarInstanceof.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumVarThrow.kt")
-        public void testEnumVarThrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarThrow.kt");
+        @TestMetadata("enumVarReturn.kt")
+        public void testEnumVarReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarReturn.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("enumVarTrue.kt")
-        public void testEnumVarTrue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarTrue.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassFunArguments.kt")
-        public void testInsideClassFunArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunArguments.kt");
+        @TestMetadata("enumVarSuper.kt")
+        public void testEnumVarSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/enumVarSuper.kt");
             doTest(fileName);
         }
 
@@ -6544,9 +6484,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassFunParamCase.kt")
-        public void testInsideClassFunParamCase() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunParamCase.kt");
+        @TestMetadata("insideClassFunCase.kt")
+        public void testInsideClassFunCase() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunCase.kt");
             doTest(fileName);
         }
 
@@ -6556,15 +6496,27 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideClassFunParamConst.kt")
+        public void testInsideClassFunParamConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunParamConst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassFunParamThis.kt")
+        public void testInsideClassFunParamThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunParamThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("insideClassFunParamThrow.kt")
         public void testInsideClassFunParamThrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunParamThrow.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassFunParamTrue.kt")
-        public void testInsideClassFunParamTrue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunParamTrue.kt");
+        @TestMetadata("insideClassFunReturn.kt")
+        public void testInsideClassFunReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunReturn.kt");
             doTest(fileName);
         }
 
@@ -6574,21 +6526,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassFunThis.kt")
-        public void testInsideClassFunThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassFunThis.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassLabelConst.kt")
-        public void testInsideClassLabelConst() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassLabelConst.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("insideClassLabelDebugger.kt")
         public void testInsideClassLabelDebugger() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassLabelDebugger.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassLabelDefault.kt")
+        public void testInsideClassLabelDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassLabelDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassLabelTrue.kt")
+        public void testInsideClassLabelTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassLabelTrue.kt");
             doTest(fileName);
         }
 
@@ -6598,27 +6550,15 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassLabelTypeof.kt")
-        public void testInsideClassLabelTypeof() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassLabelTypeof.kt");
+        @TestMetadata("insideClassObjectFunBreak.kt")
+        public void testInsideClassObjectFunBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunBreak.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectFunContinue.kt")
-        public void testInsideClassObjectFunContinue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunContinue.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassObjectFunDo.kt")
-        public void testInsideClassObjectFunDo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunDo.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassObjectFunExport.kt")
-        public void testInsideClassObjectFunExport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunExport.kt");
+        @TestMetadata("insideClassObjectFunClass.kt")
+        public void testInsideClassObjectFunClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunClass.kt");
             doTest(fileName);
         }
 
@@ -6628,21 +6568,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectFunParamElse.kt")
-        public void testInsideClassObjectFunParamElse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamElse.kt");
+        @TestMetadata("insideClassObjectFunFinally.kt")
+        public void testInsideClassObjectFunFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunFinally.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectFunParamFalse.kt")
-        public void testInsideClassObjectFunParamFalse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamFalse.kt");
+        @TestMetadata("insideClassObjectFunParamContinue.kt")
+        public void testInsideClassObjectFunParamContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamContinue.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectFunParamFinally.kt")
-        public void testInsideClassObjectFunParamFinally() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamFinally.kt");
+        @TestMetadata("insideClassObjectFunParamDo.kt")
+        public void testInsideClassObjectFunParamDo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamDo.kt");
             doTest(fileName);
         }
 
@@ -6652,21 +6592,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectLabelFor.kt")
-        public void testInsideClassObjectLabelFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelFor.kt");
+        @TestMetadata("insideClassObjectFunParamImplements.kt")
+        public void testInsideClassObjectFunParamImplements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectFunParamImplements.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectLabelIf.kt")
-        public void testInsideClassObjectLabelIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelIf.kt");
+        @TestMetadata("insideClassObjectLabelElse.kt")
+        public void testInsideClassObjectLabelElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelElse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectLabelImplements.kt")
-        public void testInsideClassObjectLabelImplements() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelImplements.kt");
+        @TestMetadata("insideClassObjectLabelFalse.kt")
+        public void testInsideClassObjectLabelFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelFalse.kt");
             doTest(fileName);
         }
 
@@ -6676,9 +6616,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectValDefault.kt")
-        public void testInsideClassObjectValDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectValDefault.kt");
+        @TestMetadata("insideClassObjectLabelInstanceof.kt")
+        public void testInsideClassObjectLabelInstanceof() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectLabelInstanceof.kt");
             doTest(fileName);
         }
 
@@ -6688,39 +6628,51 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideClassObjectValEnum.kt")
+        public void testInsideClassObjectValEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectValEnum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassObjectValTypeof.kt")
+        public void testInsideClassObjectValTypeof() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectValTypeof.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("insideClassObjectValVar.kt")
         public void testInsideClassObjectValVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectValVar.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassObjectValWhile.kt")
-        public void testInsideClassObjectValWhile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectValWhile.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassObjectVarBreak.kt")
-        public void testInsideClassObjectVarBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarBreak.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassObjectVarClass.kt")
-        public void testInsideClassObjectVarClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassObjectVarEnum.kt")
-        public void testInsideClassObjectVarEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarEnum.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("insideClassObjectVarEval.kt")
         public void testInsideClassObjectVarEval() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarEval.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassObjectVarExport.kt")
+        public void testInsideClassObjectVarExport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarExport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassObjectVarWhile.kt")
+        public void testInsideClassObjectVarWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarWhile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassObjectVarYield.kt")
+        public void testInsideClassObjectVarYield() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassObjectVarYield.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideClassValIn.kt")
+        public void testInsideClassValIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassValIn.kt");
             doTest(fileName);
         }
 
@@ -6736,21 +6688,15 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassValNull.kt")
-        public void testInsideClassValNull() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassValNull.kt");
+        @TestMetadata("insideClassValKotlin.kt")
+        public void testInsideClassValKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassValKotlin.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassValYield.kt")
-        public void testInsideClassValYield() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassValYield.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideClassVarKotlin.kt")
-        public void testInsideClassVarKotlin() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassVarKotlin.kt");
+        @TestMetadata("insideClassVarArguments.kt")
+        public void testInsideClassVarArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassVarArguments.kt");
             doTest(fileName);
         }
 
@@ -6760,21 +6706,39 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideClassVarNull.kt")
+        public void testInsideClassVarNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassVarNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("insideClassVarPackage.kt")
         public void testInsideClassVarPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassVarPackage.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideClassVarReturn.kt")
-        public void testInsideClassVarReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideClassVarReturn.kt");
+        @TestMetadata("insideObjectFunNull.kt")
+        public void testInsideObjectFunNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunNull.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectFunParamStatic.kt")
-        public void testInsideObjectFunParamStatic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamStatic.kt");
+        @TestMetadata("insideObjectFunPackage.kt")
+        public void testInsideObjectFunPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideObjectFunParamReturn.kt")
+        public void testInsideObjectFunParamReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideObjectFunParamSuper.kt")
+        public void testInsideObjectFunParamSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamSuper.kt");
             doTest(fileName);
         }
 
@@ -6784,21 +6748,9 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectFunParamThis.kt")
-        public void testInsideObjectFunParamThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamThis.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideObjectFunParamThrow.kt")
-        public void testInsideObjectFunParamThrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamThrow.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideObjectFunProtected.kt")
-        public void testInsideObjectFunProtected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunProtected.kt");
+        @TestMetadata("insideObjectFunParamUndefined.kt")
+        public void testInsideObjectFunParamUndefined() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunParamUndefined.kt");
             doTest(fileName);
         }
 
@@ -6808,33 +6760,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectFunReturn.kt")
-        public void testInsideObjectFunReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunReturn.kt");
+        @TestMetadata("insideObjectFunStatic.kt")
+        public void testInsideObjectFunStatic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunStatic.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectFunSuper.kt")
-        public void testInsideObjectFunSuper() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectFunSuper.kt");
+        @TestMetadata("insideObjectLabelThis.kt")
+        public void testInsideObjectLabelThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelThis.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectLabelTrue.kt")
-        public void testInsideObjectLabelTrue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelTrue.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideObjectLabelTry.kt")
-        public void testInsideObjectLabelTry() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelTry.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("insideObjectLabelUndefined.kt")
-        public void testInsideObjectLabelUndefined() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelUndefined.kt");
+        @TestMetadata("insideObjectLabelThrow.kt")
+        public void testInsideObjectLabelThrow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelThrow.kt");
             doTest(fileName);
         }
 
@@ -6844,21 +6784,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectValIn.kt")
-        public void testInsideObjectValIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValIn.kt");
+        @TestMetadata("insideObjectLabelWith.kt")
+        public void testInsideObjectLabelWith() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectLabelWith.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectValInstanceof.kt")
-        public void testInsideObjectValInstanceof() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValInstanceof.kt");
+        @TestMetadata("insideObjectValFor.kt")
+        public void testInsideObjectValFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValFor.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectValInterface.kt")
-        public void testInsideObjectValInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValInterface.kt");
+        @TestMetadata("insideObjectValIf.kt")
+        public void testInsideObjectValIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValIf.kt");
             doTest(fileName);
         }
 
@@ -6868,21 +6808,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectVarNew.kt")
-        public void testInsideObjectVarNew() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarNew.kt");
+        @TestMetadata("insideObjectValNew.kt")
+        public void testInsideObjectValNew() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectValNew.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectVarNull.kt")
-        public void testInsideObjectVarNull() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarNull.kt");
+        @TestMetadata("insideObjectVarIn.kt")
+        public void testInsideObjectVarIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarIn.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("insideObjectVarPackage.kt")
-        public void testInsideObjectVarPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarPackage.kt");
+        @TestMetadata("insideObjectVarInterface.kt")
+        public void testInsideObjectVarInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarInterface.kt");
             doTest(fileName);
         }
 
@@ -6892,15 +6832,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localCatchIf.kt")
-        public void testLocalCatchIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localCatchIf.kt");
+        @TestMetadata("insideObjectVarProtected.kt")
+        public void testInsideObjectVarProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/insideObjectVarProtected.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("localCatchIn.kt")
-        public void testLocalCatchIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localCatchIn.kt");
+        @TestMetadata("localCatchFor.kt")
+        public void testLocalCatchFor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localCatchFor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localCatchIf.kt")
+        public void testLocalCatchIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localCatchIf.kt");
             doTest(fileName);
         }
 
@@ -6916,27 +6862,27 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localFunBreak.kt")
+        public void testLocalFunBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunBreak.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFunClass.kt")
         public void testLocalFunClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunClass.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("localFunContinue.kt")
-        public void testLocalFunContinue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunContinue.kt");
+        @TestMetadata("localFunParamContinue.kt")
+        public void testLocalFunParamContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunParamContinue.kt");
             doTest(fileName);
         }
 
         @TestMetadata("localFunParamDo.kt")
         public void testLocalFunParamDo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunParamDo.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("localFunParamElse.kt")
-        public void testLocalFunParamElse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localFunParamElse.kt");
             doTest(fileName);
         }
 
@@ -6964,15 +6910,15 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localLabelFalse.kt")
-        public void testLocalLabelFalse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localLabelFalse.kt");
+        @TestMetadata("localLabelElse.kt")
+        public void testLocalLabelElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localLabelElse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("localLabelFor.kt")
-        public void testLocalLabelFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localLabelFor.kt");
+        @TestMetadata("localLabelFalse.kt")
+        public void testLocalLabelFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localLabelFalse.kt");
             doTest(fileName);
         }
 
@@ -7012,12 +6958,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("localVarBreak.kt")
-        public void testLocalVarBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localVarBreak.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("localVarLet.kt")
         public void testLocalVarLet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localVarLet.kt");
@@ -7033,6 +6973,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("localVarWhile.kt")
         public void testLocalVarWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localVarWhile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localVarYield.kt")
+        public void testLocalVarYield() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reservedWords/localVarYield.kt");
             doTest(fileName);
         }
 
