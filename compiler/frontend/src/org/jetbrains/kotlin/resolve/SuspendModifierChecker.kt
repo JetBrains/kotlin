@@ -80,6 +80,10 @@ object SuspendModifierChecker : SimpleDeclarationChecker {
         if (continuationParameterType?.arguments?.firstOrNull()?.isStarProjection == true) {
             report("Continuation<*> is prohibited as a last parameter of suspend function")
         }
+
+        if (functionDescriptor.returnType?.isUnit() != true) {
+            report("return type of suspension function must be a kotlin.Unit, but ${functionDescriptor.returnType} was found")
+        }
     }
 }
 

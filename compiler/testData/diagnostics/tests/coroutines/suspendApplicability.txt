@@ -10,6 +10,8 @@ public suspend fun kotlin.String.wrongExtension(/*0*/ x: kotlin.coroutines.Conti
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final inline suspend fun inlineFun(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
     public final suspend fun noParams(): kotlin.Unit
+    public final suspend fun returnsNotUnit(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Int
+    public final suspend fun returnsUnit(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
     public final suspend fun starProjection(/*0*/ x: kotlin.coroutines.Continuation<*>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final suspend fun valid(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit

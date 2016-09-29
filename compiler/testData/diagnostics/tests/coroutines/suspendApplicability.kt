@@ -38,4 +38,7 @@ class Controller {
     suspend fun String.memberExtension(x: Continuation<Int>) {
 
     }
+
+    suspend fun returnsUnit(x: Continuation<Int>) = Unit
+    <!INAPPLICABLE_MODIFIER!>suspend<!> fun returnsNotUnit(x: Continuation<Int>) = 1
 }

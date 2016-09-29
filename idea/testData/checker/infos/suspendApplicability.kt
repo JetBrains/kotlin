@@ -38,4 +38,6 @@ class Controller {
     <info descr="null">suspend</info> fun String.memberExtension(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) {
 
     }
+
+    <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that return type of suspension function must be a kotlin.Unit, but Int was found"><info descr="null">suspend</info></error> fun returnsNotUnit(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Int>) = 1
 }
