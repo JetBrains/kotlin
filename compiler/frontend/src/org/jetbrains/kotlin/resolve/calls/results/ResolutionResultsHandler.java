@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
@@ -147,7 +148,9 @@ public class ResolutionResultsHandler {
             }
             if (!thisLevel.isEmpty()) {
                 if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
-                    return recordFailedInfo(tracing, trace, thisLevel);
+                    @SuppressWarnings("unchecked")
+                    OverloadingConflictResolver<MutableResolvedCall<D>> myResolver = (OverloadingConflictResolver) overloadingConflictResolver;
+                    return recordFailedInfo(tracing, trace, myResolver.filterOutEquivalentCalls(new LinkedHashSet<MutableResolvedCall<D>>(thisLevel)));
                 }
                 OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, false, checkArgumentsMode);
                 return recordFailedInfo(tracing, trace, results.getResultingCalls());

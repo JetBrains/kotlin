@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.AssertionError
 import java.util.*
 
 class OverloadingConflictResolver<C : Any>(
@@ -94,8 +93,7 @@ class OverloadingConflictResolver<C : Any>(
     // Sometimes we should compare "copies" from sources and from binary files.
     // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
     // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
-    private fun filterOutEquivalentCalls(
-            candidates: Set<C>): Set<C> {
+    fun filterOutEquivalentCalls(candidates: Set<C>): Set<C> {
         if (candidates.size <= 1) return candidates
 
         val fromSourcesGoesFirst = candidates.sortedBy { if (isFromSources(it.resultingDescriptor)) 0 else 1 }

@@ -12311,6 +12311,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("incompleteCodeNoNoneApplicable.kt")
+                public void testIncompleteCodeNoNoneApplicable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/incompleteCodeNoNoneApplicable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("noGenericsInParams.kt")
                 public void testNoGenericsInParams() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/noGenericsInParams.kt");
