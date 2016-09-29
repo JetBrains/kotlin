@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.ComparisonFailure;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -29,10 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -155,12 +154,17 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
         JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);
 
-        KotlinCoreEnvironment environment =
+        final KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 environment.getProject(), environment.getSourceFiles(), new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                configuration, new JvmPackagePartProvider(environment)
+                configuration, new Function1<GlobalSearchScope, PackagePartProvider>() {
+                    @Override
+                    public PackagePartProvider invoke(GlobalSearchScope scope) {
+                        return new JvmPackagePartProvider(environment, scope);
+                    }
+                }
         );
 
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);

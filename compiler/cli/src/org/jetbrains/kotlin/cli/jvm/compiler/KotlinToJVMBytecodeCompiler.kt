@@ -408,7 +408,7 @@ object KotlinToJVMBytecodeCompiler {
                             environment.getSourceFiles(),
                             CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                             environment.configuration,
-                            JvmPackagePartProvider(environment)
+                            { scope -> JvmPackagePartProvider(environment, scope) }
                     )
 
             override fun reportEnvironmentErrors() {

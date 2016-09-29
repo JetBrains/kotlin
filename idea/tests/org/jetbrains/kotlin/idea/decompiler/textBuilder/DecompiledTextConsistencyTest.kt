@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -49,8 +48,7 @@ class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                    project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(),
-                    IDEPackagePartProvider(GlobalSearchScope.allScope(project))
+                    project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(), ::IDEPackagePartProvider
             ).moduleDescriptor
 
     override fun getProjectDescriptor() =

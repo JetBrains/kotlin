@@ -58,7 +58,7 @@ object TopDownAnalyzerFacadeForJVM {
             files: Collection<KtFile>,
             trace: BindingTrace,
             configuration: CompilerConfiguration,
-            packagePartProvider: PackagePartProvider
+            packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider
     ): AnalysisResult {
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, configuration)
         val storageManager = moduleContext.storageManager
@@ -76,13 +76,16 @@ object TopDownAnalyzerFacadeForJVM {
             }
         }
 
+        val sourceScope = GlobalSearchScope.allScope(project)
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 FileBasedDeclarationProviderFactory(storageManager, files),
-                GlobalSearchScope.allScope(project),
+                sourceScope,
                 lookupTracker,
-                IncrementalPackagePartProvider.create(packagePartProvider, targetIds, incrementalComponents, storageManager),
+                IncrementalPackagePartProvider.create(
+                        packagePartProviderFactory(sourceScope), targetIds, incrementalComponents, storageManager
+                ),
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT),
                 ModuleClassResolverImpl(resolverByClass)
         )

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -23,12 +24,15 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import java.io.EOFException
 
-class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
+class JvmPackagePartProvider(
+        private val env: KotlinCoreEnvironment,
+        private val scope: GlobalSearchScope
+) : PackagePartProvider {
     private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
         env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)
                 .filterIsInstance<JvmClasspathRoot>()
                 .mapNotNull { env.contentRootToVirtualFile(it) }
-                .filter { it.findChild("META-INF") != null }
+                .filter { it in scope && it.findChild("META-INF") != null }
                 .toMutableList()
     }
 

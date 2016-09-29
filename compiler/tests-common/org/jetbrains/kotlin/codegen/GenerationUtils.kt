@@ -39,10 +39,11 @@ object GenerationUtils {
 
     @JvmStatic
     fun compileFiles(files: List<KtFile>, environment: KotlinCoreEnvironment?): GenerationState {
-        val packagePartProvider = if (environment == null) PackagePartProvider.Empty else JvmPackagePartProvider(environment)
         val configuration = environment?.configuration ?: KotlinTestUtils.newConfiguration()
 
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
+        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration) { scope ->
+            if (environment == null) PackagePartProvider.Empty else JvmPackagePartProvider(environment, scope)
+        }
         analysisResult.throwIfError()
 
         val state = GenerationState(

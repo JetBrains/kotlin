@@ -54,12 +54,13 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
 
         this.scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
 
+        val moduleContentScope = ProjectScope.getAllScope(environment.project)
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
-                ProjectScope.getAllScope(environment.project),
-                JvmPackagePartProvider(environment)
+                moduleContentScope,
+                JvmPackagePartProvider(environment, moduleContentScope)
         )
 
         this.resolveSession = container.get<ResolveSession>()

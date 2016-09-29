@@ -283,12 +283,13 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         // See TopDownAnalyzerFacadeForJVM#analyzeFilesWithJavaIntegration
+        GlobalSearchScope moduleContentScope = GlobalSearchScope.allScope(moduleContext.getProject());
         ComponentProvider container = InjectionKt.createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext,
                 moduleTrace,
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
-                GlobalSearchScope.allScope(moduleContext.getProject()),
-                new JvmPackagePartProvider(getEnvironment()),
+                moduleContentScope,
+                new JvmPackagePartProvider(getEnvironment(), moduleContentScope),
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
         );
 

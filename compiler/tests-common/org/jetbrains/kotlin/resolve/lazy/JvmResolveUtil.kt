@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
@@ -34,14 +35,16 @@ object JvmResolveUtil {
 
     @JvmStatic
     fun analyzeAndCheckForErrors(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-            analyzeAndCheckForErrors(environment.project, files, environment.configuration, JvmPackagePartProvider(environment))
+            analyzeAndCheckForErrors(environment.project, files, environment.configuration) { scope ->
+                JvmPackagePartProvider(environment, scope)
+            }
 
     @JvmStatic
     fun analyzeAndCheckForErrors(
             project: Project,
             files: Collection<KtFile>,
             configuration: CompilerConfiguration,
-            packagePartProvider: PackagePartProvider
+            packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): AnalysisResult {
         for (file in files) {
             AnalyzingUtils.checkForSyntacticErrors(file)
@@ -62,16 +65,18 @@ object JvmResolveUtil {
 
     @JvmStatic
     fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-            analyze(environment.project, files, environment.configuration, JvmPackagePartProvider(environment))
+            analyze(environment.project, files, environment.configuration) { scope ->
+                JvmPackagePartProvider(environment, scope)
+            }
 
     private fun analyze(
             project: Project,
             files: Collection<KtFile>,
             configuration: CompilerConfiguration,
-            packagePartProvider: PackagePartProvider
+            packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider
     ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, files, CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProvider
+                project, files, CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProviderFactory
         )
     }
 }
