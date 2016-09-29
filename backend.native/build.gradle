@@ -14,56 +14,36 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
-
-dependencies {
-        compile files("$kotlin_ir_path/kotlin-build-common-sources.jar",
-        "$kotlin_ir_path/kotlin-compiler-before-shrink.jar",
-        "$kotlin_ir_path/kotlin-compiler-for-maven.jar",
-        "$kotlin_ir_path/kotlin-compiler-javadoc.jar",
-        "$kotlin_ir_path/kotlin-compiler-sources.jar",
-        "$kotlin_ir_path/kotlin-mock-runtime-for-test.jar",
-        "$kotlin_ir_path/kotlin-reflect-before-jarjar.jar",
-        "$kotlin_ir_path/kotlin-reflect-jarjar.jar",
-        "$kotlin_ir_path/kotlin-reflect-sources-for-maven.jar",
-        "$kotlin_ir_path/kotlinc/lib/android-extensions-compiler.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-annotation-processing.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-ant.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-build-common-test.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-build-common.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-daemon-client.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-jslib-sources.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-jslib.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-preloader.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-reflect-internal-bootstrap.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-runner.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime-internal-bootstrap.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime-sources.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-test-internal-bootstrap.jar",
-        "$kotlin_ir_path/kotlinc/lib/kotlin-test.jar")
-}
+ext.deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
+                 "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
+		 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar")
 
 sourceSets {
-    main.java.srcDirs += 'compiler/ir/backend.native/src/'
-    main.kotlin.srcDirs += 'compiler/ir/backend.native/src/'
+    compiler {
+      java.srcDirs += 'compiler/ir/backend.native/src/'
+      kotlin.srcDirs += 'compiler/ir/backend.native/src/'
+      compileClasspath = deps
+    }
+    cli_bc {
+      java.srcDirs += 'cli.bc/src'
+      kotlin.srcDirs += 'cli.bc/src'
+      compileClasspath = deps
+    }
+    bc_frontend {
+     java.srcDirs += 'bc.frontend/src'
+     kotlin.srcDirs += 'bc.frontend/src'
+     compileClasspath = deps
+   }
 }
 
-sourceSets {
-    main.java.srcDirs += 'cli.bc/src'
-    main.kotlin.srcDirs += 'cli.bc/src'
-}
-
-
-sourceSets {
-    main.java.srcDirs += 'bc.frontend/src'
-    main.kotlin.srcDirs += 'bc.frontend/src'
-}
+def runtime = []
 
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-   classpath = sourceSets.main.runtimeClasspath.add(files(['build/classes/main']))
+   project.sourceSets.each{runtime.add(it.output.classesDir)}
+   deps.each{runtime.add(it)}
+   println(runtime)
+   classpath = files(runtime)
    args '../experiments/translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
    args '-output', "$buildDir/out.bc"
 
@@ -74,6 +54,8 @@ task run(type: JavaExec) {
        println(args)
    }
 }
+
+
 
 task jars {
     println "kotlin-ir: $kotlin_ir_path"
