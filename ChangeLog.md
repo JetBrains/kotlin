@@ -195,6 +195,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Show "Variables and values captured in a closure" highlighting only for usages
 - [`KT-13838`](https://youtrack.jetbrains.com/issue/KT-13838) Add file name to the presentation of private top-level declaration (Go to symbol, etc.)
 - [`KT-14096`](https://youtrack.jetbrains.com/issue/KT-14096) Rename: When renaming Kotlin file outside of source root do not rename its namesake in a source root
+- [`KT-13928`](https://youtrack.jetbrains.com/issue/KT-13928) Move Inner Class to Upper Level: Fix replacement of outer class instances used in inner class constructor calls
 
 #### Intention actions, inspections and quickfixes
 
