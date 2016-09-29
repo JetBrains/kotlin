@@ -20,20 +20,21 @@ import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 
-class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
-
+class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>, private val debugName: String) {
     fun findPackageParts(packageFqName: String): PackageParts? {
         return packageFqName2Parts[packageFqName]
     }
+
+    override fun toString() = debugName
 
     companion object {
         @JvmField
         val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
-        val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
+        val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), "EMPTY")
 
-        fun create(proto: ByteArray? = null): ModuleMapping {
+        fun create(proto: ByteArray?, debugName: String?): ModuleMapping {
             if (proto == null) {
                 return EMPTY
             }
@@ -52,7 +53,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
                             packageParts.parts.add(it)
                         }
                     }
-                    return ModuleMapping(packageFqNameParts)
+                    return ModuleMapping(packageFqNameParts, debugName ?: "<unknown>")
                 }
             }
             else {
