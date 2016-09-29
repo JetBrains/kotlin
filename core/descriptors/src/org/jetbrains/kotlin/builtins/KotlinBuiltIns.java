@@ -76,11 +76,12 @@ public abstract class KotlinBuiltIns {
     private final StorageManager storageManager;
 
     public static final FqNames FQ_NAMES = new FqNames();
+    public static final Name BUILTINS_MODULE_NAME = Name.special("<built-ins module>");
 
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, this
+                BUILTINS_MODULE_NAME, storageManager, ModuleParameters.Empty.INSTANCE, this
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
