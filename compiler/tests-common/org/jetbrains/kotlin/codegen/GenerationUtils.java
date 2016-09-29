@@ -53,7 +53,7 @@ public class GenerationUtils {
     @NotNull
     public static GenerationState compileFiles(@NotNull List<KtFile> files, @Nullable KotlinCoreEnvironment environment) {
         PackagePartProvider packagePartProvider =
-                environment == null ? PackagePartProvider.Companion.getEMPTY() : new JvmPackagePartProvider(environment);
+                environment == null ? PackagePartProvider.Empty.INSTANCE : new JvmPackagePartProvider(environment);
         CompilerConfiguration configuration =
                 environment == null ? KotlinTestUtils.newConfiguration() : environment.getConfiguration();
 

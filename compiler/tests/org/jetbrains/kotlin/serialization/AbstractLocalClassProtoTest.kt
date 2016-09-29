@@ -61,7 +61,7 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                providerFactory, GlobalSearchScope.allScope(environment.project), PackagePartProvider.EMPTY
+                providerFactory, GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
         )
         moduleContext.initializeModuleContents(container.get<JavaDescriptorResolver>().packageFragmentProvider)
 

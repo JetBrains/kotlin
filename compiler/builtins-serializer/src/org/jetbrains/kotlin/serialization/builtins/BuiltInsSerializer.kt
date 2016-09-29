@@ -23,11 +23,9 @@ import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -91,10 +88,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 "builtIns source",
                 ProjectContext(environment.project), listOf(builtInModule),
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
-                JvmPlatformParameters { throw IllegalStateException() },
-                CompilerEnvironment,
-                builtIns = DefaultBuiltIns.Instance,
-                packagePartProviderFactory = { module, content -> JvmPackagePartProvider(environment) }
+                JvmPlatformParameters { throw IllegalStateException() }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(builtInModule)

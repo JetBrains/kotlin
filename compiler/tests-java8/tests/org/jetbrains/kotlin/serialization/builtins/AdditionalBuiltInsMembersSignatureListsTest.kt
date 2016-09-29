@@ -54,7 +54,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
-                GlobalSearchScope.allScope(environment.project), PackagePartProvider.EMPTY
+                GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
         )
 
         emptyModule.initialize(container.get<JavaDescriptorResolver>().packageFragmentProvider)

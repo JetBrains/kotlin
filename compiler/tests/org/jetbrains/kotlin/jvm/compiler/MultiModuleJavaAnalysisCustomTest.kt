@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
@@ -69,15 +67,13 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
                 "test",
                 projectContext, modules,
-                { m -> ModuleContent(m.kotlinFiles, m.javaFilesScope) },
+                { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
                 JvmPlatformParameters {
                     javaClass ->
                     val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
                 },
-                CompilerEnvironment,
-                builtIns,
-                packagePartProviderFactory = { a, b -> JvmPackagePartProvider(environment) }
+                builtIns = builtIns
         )
 
         builtIns.initialize(
@@ -113,7 +109,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     "a" -> listOf(this)
                     "b" -> listOf(this, modules["a"]!!)
                     "c" -> listOf(this, modules["b"]!!, modules["a"]!!)
-                    else -> throw IllegalStateException("$_name")
+                    else -> throw IllegalStateException(_name)
                 }
             }
         }
@@ -190,7 +186,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         assert(!ErrorUtils.isError(referencedDescriptor)) { "Error descriptor: $referencedDescriptor" }
 
         val descriptorName = referencedDescriptor.name.asString()
-        val expectedModuleName = "<${descriptorName.toLowerCase().first().toString()}>"
+        val expectedModuleName = "<${descriptorName.toLowerCase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
                 "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
