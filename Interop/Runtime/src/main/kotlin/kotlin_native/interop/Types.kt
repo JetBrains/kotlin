@@ -196,3 +196,7 @@ class Arena : Placement, Closeable {
     override fun close() = clear()
 
 }
+
+fun <T : NativeRef> Placement.alloc(type: NativeRef.TypeWithSize<T>): T {
+    return type.byPtr(this.alloc(type.size))
+}
