@@ -10,4 +10,8 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String outputFile;
 
+    @Argument(value = "runtime", description = "Runtime file path")
+    @ValueDescription("<path>")
+    public String runtimeFile;
+
 }
