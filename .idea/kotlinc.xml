@@ -4,6 +4,6 @@
     <option name="moduleKind" value="plain" />
   </component>
   <component name="KotlinCompilerSettings">
-    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check -language-version 1.0" />
+    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
 </project>

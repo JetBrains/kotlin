@@ -19,6 +19,7 @@
 package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
+import java.lang.IllegalArgumentException
 
 /**
  * A progression of values of type `Char`.
