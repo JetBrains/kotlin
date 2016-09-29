@@ -27,7 +27,11 @@ class Controller {
 
     }
 
-    <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that last parameter of suspend function should have a type of Continuation<T>"><info descr="null">suspend</info></error> fun starProjection(<info descr="null">vararg</info> <warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Any>) {
+    <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that Continuation<*> is prohibited as a last parameter of suspend function"><info descr="null">suspend</info></error> fun starProjection(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<*>) {
+
+    }
+
+    <error descr="[INAPPLICABLE_MODIFIER] 'suspend' modifier is inapplicable. The reason is that last parameter of suspend function should have a type of Continuation<T>"><info descr="null">suspend</info></error> fun varargs(<info descr="null">vararg</info> <warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning>: Continuation<Any>) {
 
     }
 

@@ -46,7 +46,7 @@ object SuspendModifierChecker : SimpleDeclarationChecker {
         val functionDescriptor = descriptor as? FunctionDescriptor ?: return
         if (!functionDescriptor.isSuspend) return
 
-        val suspendModifierElement = declaration.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD).sure { "${declaration.text}" }
+        val suspendModifierElement = declaration.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD).sure { declaration.text }
         fun report(message: String) {
             diagnosticHolder.report(Errors.INAPPLICABLE_MODIFIER.on(suspendModifierElement, KtTokens.SUSPEND_KEYWORD, message))
         }
@@ -70,10 +70,15 @@ object SuspendModifierChecker : SimpleDeclarationChecker {
             }
         }
 
-        val isValidContinuation = functionDescriptor.valueParameters.lastOrNull()?.type?.isValidContinuation() ?: false
+        val continuationParameterType = functionDescriptor.valueParameters.lastOrNull()?.type
+        val isValidContinuation = continuationParameterType?.isValidContinuation() ?: false
         if (!isValidContinuation) {
             report("last parameter of suspend function should have a type of Continuation<T>")
             return
+        }
+
+        if (continuationParameterType?.arguments?.firstOrNull()?.isStarProjection == true) {
+            report("Continuation<*> is prohibited as a last parameter of suspend function")
         }
     }
 }

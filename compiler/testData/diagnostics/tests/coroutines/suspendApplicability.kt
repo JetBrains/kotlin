@@ -27,7 +27,11 @@ class Controller {
 
     }
 
-    <!INAPPLICABLE_MODIFIER!>suspend<!> fun starProjection(vararg x: Continuation<Any>) {
+    <!INAPPLICABLE_MODIFIER!>suspend<!> fun starProjection(x: Continuation<*>) {
+
+    }
+
+    <!INAPPLICABLE_MODIFIER!>suspend<!> fun varargs(vararg x: Continuation<Any>) {
 
     }
 
