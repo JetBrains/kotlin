@@ -138,10 +138,15 @@ private class KtExpressionPostfixTemplateSelector(
             .filterIsInstance<KtExpression>()
             .takeWhile {
                 it !is KtBlockExpression &&
-                it !is KtDeclarationWithBody &&
                 !it.isEffectivelyDeclaration()
-            }.filter { !it.isSelector && it.parent !is KtUserType && !it.isOperationReference && !KtPsiUtil.isAssignment(it) }
-            .toList()
+            }.filter {
+                !it.isSelector &&
+                it.parent !is KtUserType &&
+                !it.isOperationReference &&
+                !KtPsiUtil.isAssignment(it) &&
+                // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
+                it !is KtFunctionLiteral
+            }.toList()
 }
 
 private val KtExpression.isOperationReference: Boolean
