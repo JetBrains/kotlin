@@ -1,0 +1,50 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@kotlin.Metadata
+public class BaseImpl {
+    public method <init>(): void
+    public method baseImplMethod_ShouldBeOpen(): void
+}
+
+@kotlin.Metadata
+public class BaseImpl2_ShouldBeOpen {
+    private final @org.jetbrains.annotations.NotNull field baseImpl2Property_ShouldBeOpen: java.lang.String
+    public method <init>(): void
+    public method baseImpl2Method_ShouldBeOpen(): void
+    public @org.jetbrains.annotations.NotNull method getBaseImpl2Property_ShouldBeOpen(): java.lang.String
+}
+
+@AllOpen
+@kotlin.Metadata
+public abstract class Base_ShouldBeOpen {
+    public method <init>(): void
+    public method baseMethod(): void
+}
+
+@kotlin.Metadata
+public final class Intf$DefaultImpls {
+    inner class Intf$DefaultImpls
+    public static method intfMethod(p0: Intf): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public interface Intf {
+    inner class Intf$DefaultImpls
+    public abstract method intfMethod(): void
+}
+
+@kotlin.Metadata
+public class IntfImpl {
+    public method <init>(): void
+    public final method intfImplMethod_ShouldBeFinal(): void
+    public method intfMethod(): void
+}
+
+@kotlin.Metadata
+public final class IntfImpl2_ShouldBeFinalBecauseIntfIsAnInterface {
+    public method <init>(): void
+    public final method intfImpl2Method_ShouldBeFinal(): void
+}

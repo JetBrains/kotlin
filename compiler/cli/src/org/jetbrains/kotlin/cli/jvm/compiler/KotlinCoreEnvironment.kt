@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
@@ -170,6 +171,7 @@ class KotlinCoreEnvironment private constructor(
         AnalysisHandlerExtension.registerExtensionPoint(project)
         PackageFragmentProviderExtension.registerExtensionPoint(project)
         StorageComponentContainerContributor.registerExtensionPoint(project)
+        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration)

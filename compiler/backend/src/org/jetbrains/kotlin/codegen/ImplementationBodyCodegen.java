@@ -131,38 +131,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isAnnotation = false;
         boolean isEnum = false;
 
-        if (myClass instanceof KtClass) {
-            KtClass ktClass = (KtClass) myClass;
-            if (ktClass.hasModifier(KtTokens.ABSTRACT_KEYWORD) || ktClass.isSealed()) {
+        ClassKind kind = descriptor.getKind();
+
+        if (kind == ClassKind.OBJECT) {
+            isStatic = isCompanionObject(descriptor);
+            isFinal = true;
+        }
+        else {
+            Modality modality = descriptor.getModality();
+
+            if (modality == Modality.ABSTRACT || modality == Modality.SEALED) {
                 isAbstract = true;
             }
-            if (ktClass.isInterface()) {
+
+            if (kind == ClassKind.INTERFACE) {
                 isAbstract = true;
                 isInterface = true;
             }
-            else if (descriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+            else if (kind == ClassKind.ANNOTATION_CLASS) {
                 isAbstract = true;
                 isInterface = true;
                 isAnnotation = true;
             }
-            else if (ktClass.isEnum()) {
+            else if (kind == ClassKind.ENUM_CLASS) {
                 isAbstract = hasAbstractMembers(descriptor);
                 isEnum = true;
             }
 
-            if (isObject(descriptor)) {
-                isFinal = true;
+            if (modality != Modality.OPEN && !isAbstract) {
+                // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
+                isFinal = !(kind == ClassKind.ENUM_CLASS && !state.getClassBuilderMode().generateBodies);
             }
 
-            if (!ktClass.hasModifier(KtTokens.OPEN_KEYWORD) && !isAbstract) {
-                // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
-                isFinal = !(ktClass.isEnum() && !state.getClassBuilderMode().generateBodies);
-            }
-            isStatic = !ktClass.isInner();
-        }
-        else {
-            isStatic = isCompanionObject(descriptor);
-            isFinal = true;
+            isStatic = !descriptor.isInner();
         }
 
         int access = 0;
