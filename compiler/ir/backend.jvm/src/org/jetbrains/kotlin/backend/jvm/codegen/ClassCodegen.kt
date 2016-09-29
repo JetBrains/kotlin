@@ -128,8 +128,12 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 }
 
 fun ClassDescriptor.calculateClassFlags(): Int {
-    return (if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER).
-            or(calcModalityFlag()).or(AsmUtil.getVisibilityAccessFlagForClass(this))
+    var flags = 0
+    flags = flags or if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
+    flags = flags or calcModalityFlag()
+    flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
+    flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0
+    return flags
 }
 
 fun MemberDescriptor.calculateCommonFlags(): Int {
@@ -158,7 +162,7 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
 
 private fun MemberDescriptor.calcModalityFlag(): Int {
     var flags = 0
-    when (modality) {
+    when (effectiveModality) {
         Modality.ABSTRACT -> {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
         }
@@ -181,10 +185,16 @@ private fun MemberDescriptor.calcModalityFlag(): Int {
     return flags
 }
 
-//val MemberDescriptor.effectiveModality: Modality
-//    get() {
-//
-//    }
+val MemberDescriptor.effectiveModality: Modality
+    get() {
+        if (this is ClassDescriptor && kind == ClassKind.ENUM_CLASS) {
+            if (JvmCodegenUtil.hasAbstractMembers(this)) {
+                return Modality.ABSTRACT
+            }
+        }
+
+        return modality
+    }
 
 val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
