@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.codeInsight.postfix
 
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 
 abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -27,11 +29,12 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     protected fun doTest(fileName: String) {
+
         myFixture.configureByFile(fileName)
         myFixture.type("\t")
 
         val previouslySuggestedExpressions = KtPostfixTemplateProvider.previouslySuggestedExpressions
-        if (previouslySuggestedExpressions.size > 1) {
+        if (previouslySuggestedExpressions.size > 1 && !InTextDirectivesUtils.isDirectiveDefined(File(fileName).readText(), "ALLOW_MULTIPLE_EXPRESSIONS")) {
             fail("Only one expression should be suggested, but $previouslySuggestedExpressions were found")
         }
 
