@@ -15,9 +15,9 @@ fun foo(x: X) {
     val fun1 = A::f
 
     val fun2 = ::f1
-    val fun3 = x::f2
+    val fun3 = X::f2
     val (a1, b1) = fun2()
-    val (a2, b2) = fun3()
+    val (a2, b2) = fun3(x)
 
     val constructor = ::A
     val (a3, b3) = constructor(1, 2)

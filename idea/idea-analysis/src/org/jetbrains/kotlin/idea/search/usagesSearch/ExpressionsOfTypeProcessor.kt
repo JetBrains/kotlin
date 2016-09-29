@@ -438,6 +438,19 @@ class ExpressionsOfTypeProcessor(
                 processSuspiciousExpression(typeRefParent)
                 return true
             }
+
+            is KtCallableReferenceExpression -> {
+                if (typeRef == typeRefParent.typeReference) { // usage in receiver of callable reference (before "::") - ignore it
+                    return true
+                }
+            }
+
+            is KtClassLiteralExpression -> {
+                if (typeRef == typeRefParent.typeReference) { // <class name>::class
+                    processSuspiciousExpression(typeRefParent)
+                    return true
+                }
+            }
         }
 
         return false // unsupported case
