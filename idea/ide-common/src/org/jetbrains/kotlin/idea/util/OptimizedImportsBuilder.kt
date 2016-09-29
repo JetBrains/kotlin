@@ -70,23 +70,36 @@ class OptimizedImportsBuilder(
 
     private val importInsertHelper = ImportInsertHelper.getInstance(file.project)
 
-    private val lockedImports = HashSet<ImportPath>()
+    private sealed class LockedImport {
+        // force presence of this import
+        data class Positive(val importPath: ImportPath) : LockedImport() {
+            override fun toString() = importPath.toString()
+        }
+
+        // force absence of this import
+        data class Negative(val importPath: ImportPath) : LockedImport() {
+            override fun toString() = "-" + importPath.toString()
+        }
+    }
+
+    private val lockedImports = HashSet<LockedImport>()
 
     fun buildOptimizedImports(): List<ImportPath>? {
         // TODO: should we drop unused aliases?
         // keep all non-trivial aliases
         file.importDirectives
                 .mapNotNull { it.importPath }
-                .filterTo(lockedImports) {
+                .filter {
                     val aliasName = it.alias
                     aliasName != null && aliasName != it.fqnPart().shortName()
                 }
+                .mapTo(lockedImports) { LockedImport.Positive(it) }
 
         while (true) {
             val lockedImportsBefore = lockedImports.size
             val result = tryBuildOptimizedImports()
             if (lockedImports.size == lockedImportsBefore) return result
-            testLog?.append("Trying to build import list again with locked imports: ${lockedImports.joinToString { it.pathStr }}\n")
+            testLog?.append("Trying to build import list again with locked imports: ${lockedImports.joinToString()}\n")
         }
     }
 
@@ -95,6 +108,7 @@ class OptimizedImportsBuilder(
         return when {
             parent is KtQualifiedExpression && element == parent.selectorExpression -> parent
             parent is KtCallExpression && element == parent.calleeExpression -> getExpressionToAnalyze(parent)
+            parent is KtOperationExpression && element == parent.operationReference -> parent
             parent is KtUserType -> null //TODO: is it always correct?
             else -> element as? KtExpression //TODO: what if not expression? Example: KtPropertyDelegationMethodsReference
         }
@@ -102,17 +116,21 @@ class OptimizedImportsBuilder(
 
     private fun tryBuildOptimizedImports(): List<ImportPath>? {
         val importsToGenerate = HashSet<ImportPath>()
-        importsToGenerate.addAll(lockedImports)
+        lockedImports
+                .filterIsInstance<LockedImport.Positive>()
+                .mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
         for (descriptor in data.descriptorsToImport) {
             val fqName = descriptor.importableFqName!!
 
             val explicitImportPath = ImportPath(fqName, false)
-            if (explicitImportPath in lockedImports) continue
+            if (explicitImportPath in importsToGenerate) continue
 
-            if (canUseStarImport(descriptor, fqName)) {
-                descriptorsByParentFqName.getOrPut(fqName.parent()) { HashSet() }.add(descriptor)
+            val parentFqName = fqName.parent()
+            val starImportPath = ImportPath(parentFqName, true)
+            if (canUseStarImport(descriptor, fqName) && !starImportPath.isNegativeLocked()) {
+                descriptorsByParentFqName.getOrPut(parentFqName) { HashSet() }.add(descriptor)
             }
             else {
                 importsToGenerate.add(explicitImportPath)
@@ -123,12 +141,13 @@ class OptimizedImportsBuilder(
 
         for (parentFqName in descriptorsByParentFqName.keys) {
             val starImportPath = ImportPath(parentFqName, true)
-            if (starImportPath in lockedImports) continue
+            if (starImportPath in importsToGenerate) continue
 
             val descriptors = descriptorsByParentFqName[parentFqName]!!
             val fqNames = descriptors.map { it.importableFqName!! }.toSet()
             val nameCountToUseStar = descriptors.first().nameCountToUseStar()
             val useExplicitImports = fqNames.size < nameCountToUseStar && !options.isInPackagesToUseStarImport(parentFqName)
+                                     || starImportPath.isNegativeLocked()
             if (useExplicitImports) {
                 fqNames
                         .filter { !isImportedByDefault(it) }
@@ -190,11 +209,15 @@ class OptimizedImportsBuilder(
         val fqName = descriptor.importableFqName ?: return
         val explicitImportPath = ImportPath(fqName, false)
         val starImportPath = ImportPath(fqName.parent(), true)
-        if (file.importDirectives.any { it.importPath == explicitImportPath }) {
-            lockedImports.add(explicitImportPath)
+        val importPaths = file.importDirectives.map { it.importPath }
+        if (explicitImportPath in importPaths) {
+            lockedImports.add(LockedImport.Positive(explicitImportPath))
         }
-        else if (file.importDirectives.any { it.importPath == starImportPath }) {
-            lockedImports.add(starImportPath)
+        else if (starImportPath in importPaths) {
+            lockedImports.add(LockedImport.Positive(starImportPath))
+        }
+        else { // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
+            lockedImports.add(LockedImport.Negative(starImportPath))
         }
     }
 
@@ -298,4 +321,6 @@ class OptimizedImportsBuilder(
         return descriptors1.size == descriptors2.size &&
                descriptors1.zip(descriptors2).all { it.first.importableFqName == it.second.importableFqName } //TODO: can have different order?
     }
+
+    private fun ImportPath.isNegativeLocked(): Boolean = lockedImports.any { it is LockedImport.Negative && it.importPath == this }
 }

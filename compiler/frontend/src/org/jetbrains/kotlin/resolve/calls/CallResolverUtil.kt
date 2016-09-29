@@ -120,13 +120,13 @@ fun isConventionCall(call: Call): Boolean {
     val callElement = call.callElement
     if (callElement is KtArrayAccessExpression || callElement is KtDestructuringDeclarationEntry) return true
     val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
-    return calleeExpression.getNameForConventionalOperation() != null
+    return calleeExpression.operationSignTokenType != null
 }
 
 fun isInfixCall(call: Call): Boolean {
     val operationRefExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
     val binaryExpression = operationRefExpression.parent as? KtBinaryExpression ?: return false
-    return binaryExpression.operationReference === operationRefExpression && !operationRefExpression.isPredefinedOperator()
+    return binaryExpression.operationReference === operationRefExpression && operationRefExpression.operationSignTokenType == null
 }
 
 fun isInvokeCallOnVariable(call: Call): Boolean {

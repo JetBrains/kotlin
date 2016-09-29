@@ -221,9 +221,21 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Operators.kt")
+    public void testOperators() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/Operators.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Overloads.kt")
     public void testOverloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/Overloads.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PlusAndPlusAssign.kt")
+    public void testPlusAndPlusAssign() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/PlusAndPlusAssign.kt");
         doTest(fileName);
     }
 

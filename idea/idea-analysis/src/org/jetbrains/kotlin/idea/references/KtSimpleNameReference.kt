@@ -207,5 +207,27 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     override fun getCanonicalText(): String = expression.text
 
     override val resolvesByNames: Collection<String>
-        get() = listOf(element.getReferencedName())
+        get() {
+            val element = element
+
+            if (element is KtOperationReferenceExpression) {
+                val tokenType = element.operationSignTokenType
+                if (tokenType != null) {
+                    val name = OperatorConventions.getNameForOperationSymbol(
+                            tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression)?.asString()
+                    if (name != null) { // can it be null ever?
+                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
+                        if (counterpart != null) {
+                            val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!.asString()
+                            return listOf(name, counterpartName)
+                        }
+                        else {
+                            return listOf(name)
+                        }
+                    }
+                }
+            }
+
+            return listOf(element.getReferencedName())
+        }
 }

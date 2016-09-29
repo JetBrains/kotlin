@@ -1,0 +1,3 @@
+Additional checking of reference KtSimpleNameReference: +=
+Changed resolve of KtSimpleNameReference: +=
+Trying to build import list again with locked imports: -p2.*, p1.plus
