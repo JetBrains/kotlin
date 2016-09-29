@@ -97,7 +97,7 @@ class KotlinImportOptimizer() : ImportOptimizer {
                 val targets = reference.targets(bindingContext)
                 for (target in targets) {
                     val importableDescriptor = target.getImportableDescriptor()
-                    if (importableDescriptor.name.asString() !in names) continue // resolved via alias
+                    if (importableDescriptor.name !in names) continue // resolved via alias
 
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
@@ -153,10 +153,10 @@ class KotlinImportOptimizer() : ImportOptimizer {
                     if (reference is KtInvokeFunctionReference) {
                         val additionalNames = (reference.element.calleeExpression as? KtNameReferenceExpression)?.mainReference?.resolvesByNames
                         if (additionalNames != null) {
-                            return (resolvesByNames + additionalNames).map { Name.identifier(it) }
+                            return resolvesByNames + additionalNames
                         }
                     }
-                    return resolvesByNames.map { Name.identifier(it) }
+                    return resolvesByNames
                 }
 
             override fun resolve(bindingContext: BindingContext) = reference.resolveToDescriptors(bindingContext)
