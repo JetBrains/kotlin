@@ -386,6 +386,10 @@ class KtPsiFactory(private val project: Project) {
         return createClass("class A()").getPrimaryConstructor()!!
     }
 
+    fun createPrimaryConstructor(modifiers: String?): KtPrimaryConstructor {
+        return modifiers?.let { createClass("class A $modifiers constructor()").getPrimaryConstructor() } ?: createPrimaryConstructor()
+    }
+
     fun createConstructorKeyword(): PsiElement =
             createClass("class A constructor()").getPrimaryConstructor()!!.getConstructorKeyword()!!
 

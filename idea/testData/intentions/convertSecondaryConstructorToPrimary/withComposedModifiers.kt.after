@@ -1,0 +1,8 @@
+annotation class AnnParam
+
+annotation class AnnProperty
+
+abstract class WithComposedModifiers(@AnnParam vararg @AnnProperty
+open val x: String) {
+
+}

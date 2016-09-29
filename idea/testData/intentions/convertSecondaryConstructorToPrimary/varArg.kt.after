@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+class WithVarArg(vararg zz: String) {
+
+    val x: List<String>
+
+    init {
+        x = listOf(*zz)
+    }
+
+}

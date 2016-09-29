@@ -1,0 +1,9 @@
+interface Interface
+
+interface Another
+
+abstract class Base
+
+class Derived(val x: String) : Interface, Base(), Another {
+
+}
