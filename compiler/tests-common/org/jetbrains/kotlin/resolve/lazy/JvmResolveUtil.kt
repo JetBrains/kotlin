@@ -14,81 +14,64 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.lazy;
+package org.jetbrains.kotlin.resolve.lazy
 
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.descriptors.PackagePartProvider;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 
-import java.util.Collection;
-import java.util.Collections;
+object JvmResolveUtil {
+    @JvmStatic
+    fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
+            analyzeAndCheckForErrors(setOf(file), environment)
 
-public class JvmResolveUtil {
-    @NotNull
-    public static AnalysisResult analyzeAndCheckForErrors(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
-        return analyzeAndCheckForErrors(Collections.singleton(file), environment);
-    }
+    @JvmStatic
+    fun analyzeAndCheckForErrors(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
+            analyzeAndCheckForErrors(environment.project, files, environment.configuration, JvmPackagePartProvider(environment))
 
-    @NotNull
-    public static AnalysisResult analyzeAndCheckForErrors(
-            @NotNull Collection<KtFile> files,
-            @NotNull KotlinCoreEnvironment environment
-    ) {
-        return analyzeAndCheckForErrors(
-                environment.getProject(), files, environment.getConfiguration(), new JvmPackagePartProvider(environment)
-        );
-    }
-
-    @NotNull
-    public static AnalysisResult analyzeAndCheckForErrors(
-            @NotNull Project project,
-            @NotNull Collection<KtFile> files,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull PackagePartProvider packagePartProvider
-    ) {
-        for (KtFile file : files) {
-            AnalyzingUtils.checkForSyntacticErrors(file);
+    @JvmStatic
+    fun analyzeAndCheckForErrors(
+            project: Project,
+            files: Collection<KtFile>,
+            configuration: CompilerConfiguration,
+            packagePartProvider: PackagePartProvider
+    ): AnalysisResult {
+        for (file in files) {
+            AnalyzingUtils.checkForSyntacticErrors(file)
         }
 
-        AnalysisResult analysisResult = analyze(project, files, configuration, packagePartProvider);
-
-        AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
-
-        return analysisResult;
+        return analyze(project, files, configuration, packagePartProvider).apply {
+            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+        }
     }
 
-    @NotNull
-    public static AnalysisResult analyze(@NotNull KotlinCoreEnvironment environment) {
-        return analyze(Collections.<KtFile>emptySet(), environment);
-    }
+    @JvmStatic
+    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult =
+            analyze(emptySet(), environment)
 
-    @NotNull
-    public static AnalysisResult analyze(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
-        return analyze(Collections.singleton(file), environment);
-    }
+    @JvmStatic
+    fun analyze(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
+            analyze(setOf(file), environment)
 
-    @NotNull
-    public static AnalysisResult analyze(@NotNull Collection<KtFile> files, @NotNull KotlinCoreEnvironment environment) {
-        return analyze(environment.getProject(), files, environment.getConfiguration(), new JvmPackagePartProvider(environment));
-    }
+    @JvmStatic
+    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
+            analyze(environment.project, files, environment.configuration, JvmPackagePartProvider(environment))
 
-    @NotNull
-    private static AnalysisResult analyze(
-            @NotNull Project project,
-            @NotNull Collection<KtFile> files,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull PackagePartProvider packagePartProvider
-    ) {
+    private fun analyze(
+            project: Project,
+            files: Collection<KtFile>,
+            configuration: CompilerConfiguration,
+            packagePartProvider: PackagePartProvider
+    ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, files, new CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProvider
-        );
+                project, files, CliLightClassGenerationSupport.CliBindingTrace(), configuration, packagePartProvider
+        )
     }
 }
