@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
@@ -303,6 +304,10 @@ class ExpressionCodegen(
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): StackValue {
         ClassCodegen.generateAnonymous(declaration, classCodegen.context)
+        return none()
+    }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: BlockInfo): StackValue {
         return none()
     }
 

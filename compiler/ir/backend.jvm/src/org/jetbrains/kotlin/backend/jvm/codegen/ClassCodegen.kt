@@ -106,6 +106,9 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
             is IrAnonymousInitializer -> {
                 // skip
             }
+            is IrTypeAlias -> {
+                // skip
+            }
             is IrClass -> {
                 ClassCodegen(declaration, context).generate()
             }
