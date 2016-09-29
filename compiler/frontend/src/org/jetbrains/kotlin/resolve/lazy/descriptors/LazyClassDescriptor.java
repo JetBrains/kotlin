@@ -83,7 +83,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final ClassMemberDeclarationProvider declarationProvider;
 
     private final LazyClassTypeConstructor typeConstructor;
-    private final Modality modality;
+    private final NotNullLazyValue<Modality> modality;
     private final Visibility visibility;
     private final ClassKind kind;
     private final boolean isInner;
@@ -116,7 +116,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         );
         this.c = c;
 
-        KtClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
+        final KtClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
         if (classOrObject != null) {
             this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
         }
@@ -134,13 +134,26 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isCompanionObject = classLikeInfo instanceof KtObjectInfo && ((KtObjectInfo) classLikeInfo).isCompanionObject();
 
-        KtModifierList modifierList = classLikeInfo.getModifierList();
+        final KtModifierList modifierList = classLikeInfo.getModifierList();
         if (kind.isSingleton()) {
-            this.modality = Modality.FINAL;
+            this.modality = storageManager.createLazyValue(new Function0<Modality>() {
+                @Override
+                public Modality invoke() {
+                    return Modality.FINAL;
+                }
+            });
         }
         else {
-            Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
-            this.modality = resolveModalityFromModifiers(modifierList, defaultModality, /* allowSealed = */ true);
+            final Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
+            this.modality = storageManager.createLazyValue(new Function0<Modality>() {
+                @Override
+                public Modality invoke() {
+                    return resolveModalityFromModifiers(classOrObject, defaultModality,
+                                                        c.getTrace().getBindingContext(),
+                                                        null,
+                                                        /* allowSealed = */ true);
+                }
+            });
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
@@ -466,7 +479,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public Modality getModality() {
-        return modality;
+        return modality.invoke();
     }
 
     @NotNull

@@ -681,7 +681,8 @@ public class DescriptorResolver {
         boolean hasBody = hasBody(property);
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
         Modality modality = containingDeclaration instanceof ClassDescriptor
-                            ? resolveMemberModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
+                            ? resolveMemberModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody),
+                                                                 trace.getBindingContext(), containingDeclaration)
                             : Modality.FINAL;
 
         final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
@@ -810,7 +811,7 @@ public class DescriptorResolver {
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
-            BindingTrace trace
+            @NotNull BindingTrace trace
     ) {
         KtPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
@@ -822,7 +823,8 @@ public class DescriptorResolver {
 
             setterDescriptor = new PropertySetterDescriptorImpl(
                     propertyDescriptor, annotations,
-                    resolveMemberModalityFromModifiers(setter, propertyDescriptor.getModality()),
+                    resolveMemberModalityFromModifiers(setter, propertyDescriptor.getModality(),
+                                                       trace.getBindingContext(), propertyDescriptor.getContainingDeclaration()),
                     resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, setter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(setter)
@@ -891,7 +893,7 @@ public class DescriptorResolver {
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
-            BindingTrace trace
+            @NotNull BindingTrace trace
     ) {
         PropertyGetterDescriptorImpl getterDescriptor;
         KtPropertyAccessor getter = property.getGetter();
@@ -902,7 +904,8 @@ public class DescriptorResolver {
 
             getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, getterAnnotations,
-                    resolveMemberModalityFromModifiers(getter, propertyDescriptor.getModality()),
+                    resolveMemberModalityFromModifiers(getter, propertyDescriptor.getModality(),
+                                                       trace.getBindingContext(), propertyDescriptor.getContainingDeclaration()),
                     resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                     /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
@@ -1010,7 +1013,7 @@ public class DescriptorResolver {
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 classDescriptor,
                 propertyAnnotations,
-                resolveMemberModalityFromModifiers(parameter, Modality.FINAL),
+                resolveMemberModalityFromModifiers(parameter, Modality.FINAL, trace.getBindingContext(), classDescriptor),
                 resolveVisibilityFromModifiers(parameter, getDefaultVisibility(parameter, classDescriptor)),
                 isMutable,
                 name,

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 
 object AllOpenConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -53,6 +54,6 @@ class AllOpenComponentRegistrar : ComponentRegistrar {
         val annotations = configuration.get(AllOpenConfigurationKeys.ANNOTATION) ?: return
         if (annotations.isEmpty()) return
 
-        //TODO
+        DeclarationAttributeAltererExtension.registerExtension(project, AllOpenDeclarationAttributeAltererExtension(annotations))
     }
 }

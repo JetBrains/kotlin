@@ -1,0 +1,35 @@
+@AllOpen
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen
+
+@AllOpen
+@kotlin.Metadata
+public enum class Enum {
+    private synthetic final static field $VALUES: Enum[]
+    static method <clinit>(): void
+    protected method <init>(p0: java.lang.String, p1: int): void
+    public static method valueOf(p0: java.lang.String): Enum
+    public static method values(): Enum[]
+}
+
+@AllOpen
+@kotlin.Metadata
+public interface Intf
+
+@kotlin.Metadata
+public final class MyClass {
+    private @AllOpen @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    public method <init>(): void
+    public final @AllOpen @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public final @AllOpen method method(): void
+    public final @AllOpen method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public final class Obj {
+    public final static field INSTANCE: Obj
+    static method <clinit>(): void
+    private method <init>(): void
+}

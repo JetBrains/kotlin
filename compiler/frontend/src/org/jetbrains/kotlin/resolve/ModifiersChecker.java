@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -98,15 +99,50 @@ public class ModifiersChecker {
 
     @NotNull
     public static Modality resolveMemberModalityFromModifiers(
-            @NotNull KtModifierListOwner modifierListOwner,
-            @NotNull Modality defaultModality
+            @Nullable KtModifierListOwner modifierListOwner,
+            @NotNull Modality defaultModality,
+            @NotNull BindingContext bindingContext,
+            @Nullable DeclarationDescriptor containingDescriptor
     ) {
-        return resolveModalityFromModifiers(modifierListOwner.getModifierList(), defaultModality, /* allowSealed = */ false);
+        return resolveModalityFromModifiers(modifierListOwner, defaultModality,
+                                            bindingContext, containingDescriptor, /* allowSealed = */ false);
     }
 
     @NotNull
     public static Modality resolveModalityFromModifiers(
-            @Nullable KtModifierList modifierList, @NotNull Modality defaultModality, boolean allowSealed
+            @Nullable KtModifierListOwner modifierListOwner,
+            @NotNull Modality defaultModality,
+            @NotNull BindingContext bindingContext,
+            @Nullable DeclarationDescriptor containingDescriptor,
+            boolean allowSealed
+    ) {
+        KtModifierList modifierList = (modifierListOwner != null) ? modifierListOwner.getModifierList() : null;
+        Modality modality = resolveModalityFromModifiers(modifierList, defaultModality, allowSealed);
+
+        if (modifierListOwner != null) {
+            Collection<DeclarationAttributeAltererExtension> extensions =
+                    DeclarationAttributeAltererExtension.Companion.getInstances(modifierListOwner.getProject());
+
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, modifierListOwner);
+            for (DeclarationAttributeAltererExtension extension : extensions) {
+                Modality newModality = extension.refineDeclarationModality(
+                        modifierListOwner, descriptor, containingDescriptor, modality, bindingContext);
+
+                if (newModality != null) {
+                    modality = newModality;
+                    break;
+                }
+            }
+        }
+
+        return modality;
+    }
+
+    @NotNull
+    private static Modality resolveModalityFromModifiers(
+            @Nullable KtModifierList modifierList,
+            @NotNull Modality defaultModality,
+            boolean allowSealed
     ) {
         if (modifierList == null) return defaultModality;
         boolean hasAbstractModifier = modifierList.hasModifier(ABSTRACT_KEYWORD);
