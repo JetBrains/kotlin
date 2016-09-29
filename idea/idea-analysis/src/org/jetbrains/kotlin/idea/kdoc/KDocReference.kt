@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.KtMultiReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -54,5 +55,5 @@ class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
 
     override fun getCanonicalText(): String = element.getNameText()
 
-    override val resolvesByNames: Collection<String> get() = listOf(element.getNameText())
+    override val resolvesByNames: Collection<Name> get() = listOf(Name.identifier(element.getNameText()))
 }

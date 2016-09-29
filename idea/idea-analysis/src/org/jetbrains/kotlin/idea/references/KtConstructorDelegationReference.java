@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.references;
 
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression;
 
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class KtConstructorDelegationReference extends KtSimpleReference<KtConstr
 
     @NotNull
     @Override
-    public Collection<String> getResolvesByNames() {
+    public Collection<Name> getResolvesByNames() {
         return Collections.emptyList();
     }
 }

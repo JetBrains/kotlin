@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -42,9 +43,9 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
         } + listOfNotNull(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.candidateDescriptor))
     }
 
-    override val resolvesByNames: Collection<String> get() = NAMES
+    override val resolvesByNames: Collection<Name> get() = NAMES
 
     companion object {
-        private val NAMES = listOf(OperatorNameConventions.GET_VALUE.identifier, OperatorNameConventions.SET_VALUE.identifier)
+        private val NAMES = listOf(OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE)
     }
 }

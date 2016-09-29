@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -115,11 +116,11 @@ public class KtInvokeFunctionReference extends KtSimpleReference<KtCallExpressio
         return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
     }
 
-    private static final List<String> NAMES = Lists.newArrayList(OperatorNameConventions.INVOKE.getIdentifier());
+    private static final List<Name> NAMES = Lists.newArrayList(OperatorNameConventions.INVOKE);
 
     @NotNull
     @Override
-    public Collection<String> getResolvesByNames() {
+    public Collection<Name> getResolvesByNames() {
         return NAMES;
     }
 }

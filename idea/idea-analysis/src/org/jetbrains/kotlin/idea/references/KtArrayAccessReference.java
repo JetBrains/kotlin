@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression;
 import org.jetbrains.kotlin.psi.KtContainerNode;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -100,11 +101,11 @@ public class KtArrayAccessReference extends KtSimpleReference<KtArrayAccessExpre
         return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
     }
 
-    private static final List<String> NAMES = Lists.newArrayList(OperatorNameConventions.GET.getIdentifier(), OperatorNameConventions.SET.getIdentifier());
+    private static final List<Name> NAMES = Lists.newArrayList(OperatorNameConventions.GET, OperatorNameConventions.SET);
 
     @NotNull
     @Override
-    public Collection<String> getResolvesByNames() {
+    public Collection<Name> getResolvesByNames() {
         return NAMES;
     }
 }
