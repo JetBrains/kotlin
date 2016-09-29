@@ -21,31 +21,24 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class IncrementalPackagePartProvider private constructor(
         private val parent: PackagePartProvider,
-        sourceFiles: Collection<KtFile>,
         incrementalCaches: List<IncrementalCache>,
         storageManager: StorageManager
 ) : PackagePartProvider {
     private val moduleMappings = storageManager.createLazyValue { incrementalCaches.map { ModuleMapping.create(it.getModuleMappingData()) } }
-    private val fqNamesToIgnore =
-            incrementalCaches.flatMap { IncrementalPackageFragmentProvider.fqNamesToLoad(it.getObsoletePackageParts(), sourceFiles).map { it.asString() } }
 
     override fun findPackageParts(packageFqName: String): List<String> {
-        val packagePartsFromParent = parent.findPackageParts(packageFqName)
-        if (packageFqName in fqNamesToIgnore) return packagePartsFromParent
-
-        val packagePartsFromCompiled = moduleMappings().mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }
-        return (packagePartsFromCompiled + packagePartsFromParent).distinct()
+        return (moduleMappings().mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts } +
+                parent.findPackageParts(packageFqName)).distinct()
     }
 
     companion object {
-        @JvmStatic fun create(
+        @JvmStatic
+        fun create(
                 parent: PackagePartProvider,
-                sourceFiles: Collection<KtFile>,
                 targets: List<TargetId>?,
                 incrementalCompilationComponents: IncrementalCompilationComponents?,
                 storageManager: StorageManager
@@ -53,7 +46,7 @@ internal class IncrementalPackagePartProvider private constructor(
             if (targets == null || incrementalCompilationComponents == null) return parent
 
             val incrementalCaches = targets.map { incrementalCompilationComponents.getIncrementalCache(it) }
-            return IncrementalPackagePartProvider(parent, sourceFiles, incrementalCaches, storageManager)
+            return IncrementalPackagePartProvider(parent, incrementalCaches, storageManager)
         }
     }
 }

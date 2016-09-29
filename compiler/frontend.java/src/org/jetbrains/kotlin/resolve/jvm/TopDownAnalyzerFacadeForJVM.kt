@@ -82,7 +82,7 @@ object TopDownAnalyzerFacadeForJVM {
                 FileBasedDeclarationProviderFactory(storageManager, files),
                 GlobalSearchScope.allScope(project),
                 lookupTracker,
-                IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalComponents, storageManager),
+                IncrementalPackagePartProvider.create(packagePartProvider, targetIds, incrementalComponents, storageManager),
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT),
                 ModuleClassResolverImpl(resolverByClass)
         )
