@@ -220,7 +220,9 @@ public class TypeCheckingProcedure {
 
     private boolean checkSubtypeForTheSameConstructor(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
-        assert constraints.assertEqualTypeConstructors(constructor, supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
+
+        // this assert was moved to checker/utils.kt
+        //assert constraints.assertEqualTypeConstructors(constructor, supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
 
         List<TypeProjection> subArguments = subtype.getArguments();
         List<TypeProjection> superArguments = supertype.getArguments();

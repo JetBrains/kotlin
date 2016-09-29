@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.types.checker
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeConstructorSubstitution
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
@@ -66,11 +64,12 @@ fun findCorrespondingSupertype(
                 currentPathNode = currentPathNode.previous
             }
 
-            if (!typeCheckingProcedureCallbacks.assertEqualTypeConstructors(substituted.constructor, supertypeConstructor)) {
-                throw AssertionError("Type constructors should be equals!" +
-                                     "substitutedSuperType: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(substituted)}, " +
-                                     "foundSupertype: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(currentSubtype)}, " +
-                                     "supertype: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(supertype)}")
+            val substitutedConstructor = substituted.constructor
+            if (!typeCheckingProcedureCallbacks.assertEqualTypeConstructors(substitutedConstructor, supertypeConstructor)) {
+                throw AssertionError("Type constructors should be equals!\n" +
+                                     "substitutedSuperType: ${substitutedConstructor.debugInfo()}, \n\n" +
+                                     "supertype: ${supertypeConstructor.debugInfo()} \n" +
+                                     typeCheckingProcedureCallbacks.assertEqualTypeConstructors(substitutedConstructor, supertypeConstructor))
             }
 
             return TypeUtils.makeNullableAsSpecified(substituted, isAnyMarkedNullable)
@@ -85,3 +84,19 @@ fun findCorrespondingSupertype(
 }
 
 private fun KotlinType.approximate() = approximateCapturedTypes(this).upper
+
+private fun TypeConstructor.debugInfo() = buildString {
+    operator fun String.unaryPlus() = appendln(this)
+
+    + "type: ${this@debugInfo}"
+    + "hashCode: ${this@debugInfo.hashCode()}"
+    + "javaClass: ${this@debugInfo.javaClass.canonicalName}"
+    var declarationDescriptor: DeclarationDescriptor? = declarationDescriptor
+    while (declarationDescriptor != null) {
+
+        + "fqName: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.render(declarationDescriptor)}"
+        + "javaClass: ${declarationDescriptor.javaClass.canonicalName}"
+
+        declarationDescriptor = declarationDescriptor.containingDeclaration
+    }
+}
