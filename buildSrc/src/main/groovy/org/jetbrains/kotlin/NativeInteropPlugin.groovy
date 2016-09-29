@@ -38,9 +38,11 @@ class NativeInteropPlugin implements Plugin<Project> {
         prj.afterEvaluate {
             prj.tasks.getByName(genStubsTaskName) {
                 // TODO: handle other source sets
-                prj.sourceSets.main.kotlin.srcDirs.each { srcDir ->
-                    inputs.files prj.fileTree(srcDir.path).include('**/*.def')
-                    args srcDir
+                prj.sourceSets.each {
+                    it.kotlin.srcDirs.each { srcDir ->
+                      inputs.files prj.fileTree(srcDir.path).include('**/*.def')
+                      args srcDir
+                    }
                 }
             }
         }
