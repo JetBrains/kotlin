@@ -38,7 +38,7 @@ private fun List<PackageParts>.addCompiledParts(state: GenerationState): List<Pa
     val incrementalCache = state.incrementalCompilationComponents.getIncrementalCache(state.targetId)
     val moduleMappingData = incrementalCache.getModuleMappingData() ?: return this
 
-    val mapping = ModuleMapping.create(moduleMappingData)
+    val mapping = ModuleMapping.create(moduleMappingData, "<incremental>")
 
     incrementalCache.getObsoletePackageParts().forEach {
         val i = it.lastIndexOf('/')

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -61,13 +60,13 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
         loadedModules.addAll(relevantRoots.mapNotNull {
             it.findChild("META-INF")
         }.flatMap {
-            it.children.filter<VirtualFile> { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
-        }.map {
+            it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
+        }.map { file ->
             try {
-                ModuleMapping.create(it.contentsToByteArray())
+                ModuleMapping.create(file.contentsToByteArray(), file.toString())
             }
             catch (e: EOFException) {
-                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $notLoadedRoots", e)
+                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$file', roots: $notLoadedRoots", e)
             }
         })
     }

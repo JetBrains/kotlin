@@ -97,7 +97,7 @@ class IncrementalPackageFragmentProvider(
                 MemberScope.Empty
             }
             else {
-                val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
+                val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it, "<incremental>") }
 
                 val actualPackagePartFiles =
                         moduleMapping?.findPackageParts(fqName.asString())?.let {
