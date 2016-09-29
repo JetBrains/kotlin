@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cli.common.modules
 
-import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.JavaRootPath
+import org.jetbrains.kotlin.modules.Module
 import java.util.*
 
 class ModuleBuilder(
@@ -53,4 +53,6 @@ class ModuleBuilder(
     override fun getClasspathRoots(): List<String> = classpathRoots
     override fun getModuleName(): String = name
     override fun getModuleType(): String = type
+
+    override fun toString() = "$name ($type)"
 }
