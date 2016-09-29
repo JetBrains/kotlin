@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
@@ -49,7 +52,19 @@ fun findDecompiledDeclaration(
 
     val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor)
 
+    val referencedModule = referencedDescriptor.module
     return decompiledFiles.asSequence().mapNotNull { file ->
+        val moduleInfo = file.getNullableModuleInfo()
+        val libraryInfo = when (moduleInfo) {
+            is LibraryInfo -> moduleInfo
+            is LibrarySourceInfo -> LibraryInfo(project, moduleInfo.library)
+            else -> null
+        }
+        val libraryModule = libraryInfo?.let { file.getResolutionFacade().findModuleDescriptor(it) }
+        if (libraryModule != null
+            && referencedModule.name != KotlinBuiltIns.BUILTINS_MODULE_NAME
+            && referencedModule.name != libraryModule.name) return@mapNotNull null
+
         ByDescriptorIndexer.getDeclarationForDescriptor(referencedDescriptor, file)
     }.firstOrNull()
 }

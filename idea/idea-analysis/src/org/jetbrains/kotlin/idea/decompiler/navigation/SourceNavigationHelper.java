@@ -35,6 +35,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -201,6 +203,8 @@ public class SourceNavigationHelper {
             return null;
         }
 
+        candidates = filterByOrderEntries(declaration, candidates);
+
         if (!forceResolve) {
             candidates = filterByReceiverPresenceAndParametersCount(declaration, candidates);
 
@@ -330,6 +334,26 @@ public class SourceNavigationHelper {
                 return name.equals(declaration.getNameAsSafeName());
             }
         });
+    }
+
+    @NotNull
+    private static List<KtNamedDeclaration> filterByOrderEntries(
+            @NotNull KtNamedDeclaration declaration,
+            @NotNull Collection<KtNamedDeclaration> candidates
+    ) {
+        final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(declaration.getProject()).getFileIndex();
+        final List<OrderEntry> orderEntries = fileIndex.getOrderEntriesForFile(declaration.getContainingFile().getVirtualFile());
+
+        return CollectionsKt.filter(
+                candidates,
+                new Function1<KtNamedDeclaration, Boolean>() {
+                    @Override
+                    public Boolean invoke(KtNamedDeclaration candidate) {
+                        List<OrderEntry> candidateOrderEntries = fileIndex.getOrderEntriesForFile(candidate.getContainingFile().getVirtualFile());
+                        return ContainerUtil.intersects(orderEntries, candidateOrderEntries);
+                    }
+                }
+        );
     }
 
     @NotNull
