@@ -192,7 +192,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun setUp() {
         super.setUp()
-        val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
+        val currentTestMethod = KotlinJpsBuildTest::class.members.firstOrNull { it.name == "test" + getTestName(false) }
         val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
         val sourceFilesRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + (workingDirFromAnnotation ?: getTestName(false)))
         workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(sourceFilesRoot)
