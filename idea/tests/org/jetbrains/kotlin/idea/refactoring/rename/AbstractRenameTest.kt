@@ -100,6 +100,8 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
+        isMultiModule = renameObject["isMultiModule"]?.asBoolean ?: false
+
         val libraryInfos = renameObject.getAsJsonArray("libraries")?.map { it.asString!! } ?: emptyList()
         ConfigLibraryUtil.configureLibraries(myModule, PlatformTestUtil.getCommunityPath(), libraryInfos)
 
@@ -281,7 +283,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val newName = renameParamsObject.getString("newName")
 
         doTestCommittingDocuments { rootDir, rootAfter ->
-            val mainFile = rootDir.findChild(file)!!
+            val mainFile = rootDir.findFileByRelativePath(file)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)
 
             runRenameProcessor(context, newName, psiFile, renameParamsObject, true, true)

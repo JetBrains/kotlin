@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
 
 class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is KtFile
+    override fun canProcessElement(element: PsiElement) = element is KtFile && ProjectRootsUtil.isInProjectSource(element)
 
     override fun prepareRenaming(element: PsiElement?,
                                  newName: String,
@@ -39,11 +41,13 @@ class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
             return
         }
 
+        val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return
+
         val fileInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile)
         if (!fileInfo.withJvmName) {
             val facadeFqName = fileInfo.facadeClassFqName
             val project = jetFile.project
-            val facadeClass = JavaPsiFacade.getInstance(project).findClass(facadeFqName.asString(), project.allScope())
+            val facadeClass = JavaPsiFacade.getInstance(project).findClass(facadeFqName.asString(), GlobalSearchScope.moduleScope(module))
             if (facadeClass != null) {
                 allRenames[facadeClass] = PackagePartClassUtils.getFilePartShortName(newName)
             }
