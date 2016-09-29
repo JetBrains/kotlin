@@ -451,6 +451,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 supertype = components.typeResolver.resolveType(context.scope, superTypeQualifier, context.trace, true);
             }
 
+            if (classifierCandidate instanceof TypeAliasDescriptor) {
+                classifierCandidate = ((TypeAliasDescriptor) classifierCandidate).getClassDescriptor();
+            }
+
             if (supertype != null) {
                 if (supertypes.contains(supertype)) {
                     result = supertype;
