@@ -16,14 +16,44 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.ide.highlighter.ModuleFileType
+import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
+    protected var isMultiModule = false
+
     override fun setUp() {
         super.setUp()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
+
+    override fun prepareProject(rootDir: VirtualFile) {
+        if (isMultiModule) {
+            VfsUtilCore.visitChildrenRecursively(
+                    rootDir,
+                    object : VirtualFileVisitor<Any>() {
+                        override fun visitFile(file: VirtualFile): Boolean {
+                            if (!file.isDirectory && file.name.endsWith(ModuleFileType.DOT_DEFAULT_EXTENSION)) {
+                                createModule(File(file.path), StdModuleTypes.JAVA)
+                                return false
+                            }
+
+                            return true
+                        }
+                    }
+            )
+        }
+        else {
+            PsiTestUtil.addSourceContentToRoots(myModule, rootDir)
+        }
     }
 
     override fun tearDown() {

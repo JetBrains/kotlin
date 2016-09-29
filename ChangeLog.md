@@ -194,6 +194,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-13474`](https://youtrack.jetbrains.com/issue/KT-13474) Fix performance of typing super call lambda
 - Show "Variables and values captured in a closure" highlighting only for usages
 - [`KT-13838`](https://youtrack.jetbrains.com/issue/KT-13838) Add file name to the presentation of private top-level declaration (Go to symbol, etc.)
+- [`KT-14096`](https://youtrack.jetbrains.com/issue/KT-14096) Rename: When renaming Kotlin file outside of source root do not rename its namesake in a source root
 
 #### Intention actions, inspections and quickfixes
 

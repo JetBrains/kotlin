@@ -185,6 +185,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test")
+    public void testFileNotUnderSourceRootWithNamesakeUnderSourceRoot_FileNotUnderSourceRootWithNamesakeUnderSourceRoot() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaParameterRedeclaration/lambdaParameterRedeclaration.test")
     public void testLambdaParameterRedeclaration_LambdaParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/lambdaParameterRedeclaration/lambdaParameterRedeclaration.test");
