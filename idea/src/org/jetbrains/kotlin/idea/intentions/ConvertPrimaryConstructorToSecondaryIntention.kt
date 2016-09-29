@@ -17,12 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens.THIS_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.CONSTRUCTOR
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 
 class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtPrimaryConstructor>(
         KtPrimaryConstructor::class.java,
@@ -31,15 +38,33 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int) =
             element.containingClassOrObject is KtClass && element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
 
+    private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean {
+        val referencedDescriptor = context[BindingContext.REFERENCE_TARGET, this] ?: return false
+        return when (referencedDescriptor) {
+            is ValueParameterDescriptor ->
+                (referencedDescriptor.containingDeclaration as? ConstructorDescriptor)?.containingDeclaration != classDescriptor
+            else ->
+                classDescriptor !in referencedDescriptor.parents
+        }
+    }
+
+    private fun KtProperty.isIndependent(klass: KtClass, context: BindingContext): Boolean {
+        val propertyInitializer = initializer ?: return true
+        val classDescriptor = context[BindingContext.CLASS, klass] ?: return false
+        return !propertyInitializer.anyDescendantOfType<KtReferenceExpression> { !it.isIndependent(classDescriptor, context) }
+    }
+
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) {
         val klass = element.containingClassOrObject as? KtClass ?: return
+        val context = klass.analyze()
         val factory = KtPsiFactory(klass)
         val initializerMap = mutableMapOf<KtProperty, String>()
         for (property in klass.getProperties()) {
             if (property.typeReference == null) {
                 SpecifyTypeExplicitlyIntention().applyTo(property, editor)
             }
-            val initializer = property.initializer ?: continue
+            if (property.isIndependent(klass, context)) continue
+            val initializer = property.initializer!!
             initializerMap[property] = initializer.text
             initializer.delete()
             property.equalsToken!!.delete()
