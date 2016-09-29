@@ -4688,6 +4688,129 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertSecondaryConstructorToPrimary extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertSecondaryConstructorToPrimary() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertSecondaryConstructorToPrimary"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("defaultValueChain.kt")
+        public void testDefaultValueChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/defaultValueChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("init.kt")
+        public void testInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/init.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("initAndParams.kt")
+        public void testInitAndParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/initAndParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonReachable.kt")
+        public void testNonReachable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/nonReachable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonReachableLoop.kt")
+        public void testNonReachableLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/nonReachableLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protectedConstructor.kt")
+        public void testProtectedConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/protectedConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useParam.kt")
+        public void testUseParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/useParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varArg.kt")
+        public void testVarArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/varArg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargVal.kt")
+        public void testVarargVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/varargVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withBaseClass.kt")
+        public void testWithBaseClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withBaseClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withBaseClassNoArgs.kt")
+        public void testWithBaseClassNoArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withBaseClassNoArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withComposedModifiers.kt")
+        public void testWithComposedModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withComposedModifiers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDelegation.kt")
+        public void testWithDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withDelegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDifferentTypeProperty.kt")
+        public void testWithDifferentTypeProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withDifferentTypeProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withModifiers.kt")
+        public void testWithModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withModifiers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withParameters.kt")
+        public void testWithParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withPrimary.kt")
+        public void testWithPrimary() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withPrimary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withProperties.kt")
+        public void testWithProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withProperties.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertToBlockBody")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

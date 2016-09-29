@@ -1,0 +1,11 @@
+class ConvertToInit() {
+    fun foo() {}
+
+    fun bar() {}
+
+    init {
+        foo()
+        bar()
+    }
+
+}
