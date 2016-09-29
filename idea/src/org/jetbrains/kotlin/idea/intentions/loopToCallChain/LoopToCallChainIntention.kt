@@ -20,11 +20,17 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.AsSequenceTransformation
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+
+class LoopToCallChainInspection : IntentionBasedInspection<KtForExpression>(
+        listOf(IntentionData(LoopToCallChainIntention::class), IntentionData(LoopToLazyCallChainIntention::class)),
+        problemText = "Loop can be replaced with stdlib operations"
+)
 
 class LoopToCallChainIntention : AbstractLoopToCallChainIntention(lazy = false, text = "Replace with stdlib operations")
 
