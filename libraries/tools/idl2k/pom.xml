@@ -4,12 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jetbrains.kotlin</groupId>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
     <artifactId>idl2k</artifactId>
     <version>1.1-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.1-SNAPSHOT</kotlin.version>
+        <kotlin.version>${project.version}</kotlin.version>
         <antlr.version>4.5</antlr.version>
     </properties>
 
