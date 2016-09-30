@@ -90,20 +90,16 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         return rightDescriptor to leftDescriptor
     }
 
-    override fun applyTo(element: KtSecondaryConstructor, editor: Editor?) {
-        val klass = element.containingClassOrObject as? KtClass ?: return
-        val context = klass.analyzeFully()
-        val constructorDescriptor = context[BindingContext.CONSTRUCTOR, element] ?: return
-        val factory = KtPsiFactory(klass)
-        val constructorCommentSaver = CommentSaver(element)
-        val constructorInClass = klass.createPrimaryConstructorIfAbsent()
-        val constructor = factory.createPrimaryConstructor(element.modifierList?.text?.replace("\n", " "))
-        val parameterList = constructor.valueParameterList!!
-        val parameterToPropertyMap = mutableMapOf<ValueParameterDescriptor, PropertyDescriptor>()
+    private fun KtSecondaryConstructor.extractInitializer(
+            parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
+            context: BindingContext,
+            factory: KtPsiFactory
+    ): KtClassInitializer? {
+        val constructorDescriptor = context[BindingContext.CONSTRUCTOR, this] ?: return null
         val initializer = factory.createAnonymousInitializer() as? KtClassInitializer
-        for (statement in element.bodyExpression?.statements ?: emptyList()) {
+        for (statement in bodyExpression?.statements ?: emptyList()) {
             val (rightDescriptor, leftDescriptor) = statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context)
-                                                    ?: with (initializer) {
+                                                    ?: with(initializer) {
                 (initializer?.body as? KtBlockExpression)?.let {
                     it.addBefore(statement.copy(), it.rBrace)
                     it.addBefore(factory.createNewLine(), it.rBrace)
@@ -113,8 +109,17 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             if (rightDescriptor == null || leftDescriptor == null) continue
             parameterToPropertyMap[rightDescriptor] = leftDescriptor
         }
+        return initializer
+    }
 
-        for (parameter in element.valueParameters) {
+    private fun KtSecondaryConstructor.moveParametersToPrimaryConstructorAndInitializers(
+            primaryConstructor: KtPrimaryConstructor,
+            parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
+            context: BindingContext,
+            factory: KtPsiFactory
+    ) {
+        val parameterList = primaryConstructor.valueParameterList!!
+        for (parameter in valueParameters) {
             val newParameter = factory.createParameter(parameter.text)
             val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, parameter]
             val propertyDescriptor = parameterToPropertyMap[parameterDescriptor]
@@ -138,10 +143,24 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                     }
                 }
             }
-            with (parameterList.addParameter(newParameter)) {
-                propertyCommentSaver?.restore(this)
+            with(parameterList.addParameter(newParameter)) {
+                propertyCommentSaver?.restore(this@with)
             }
         }
+    }
+
+    override fun applyTo(element: KtSecondaryConstructor, editor: Editor?) {
+        val klass = element.containingClassOrObject as? KtClass ?: return
+        val context = klass.analyzeFully()
+        val factory = KtPsiFactory(klass)
+        val constructorCommentSaver = CommentSaver(element)
+        val constructorInClass = klass.createPrimaryConstructorIfAbsent()
+        val constructor = factory.createPrimaryConstructor(element.modifierList?.text?.replace("\n", " "))
+
+        val parameterToPropertyMap = mutableMapOf<ValueParameterDescriptor, PropertyDescriptor>()
+        val initializer = element.extractInitializer(parameterToPropertyMap, context, factory) ?: return
+
+        element.moveParametersToPrimaryConstructorAndInitializers(constructor, parameterToPropertyMap, context, factory)
 
         val delegationCall = element.getDelegationCall()
         val argumentList = delegationCall.valueArgumentList
@@ -161,8 +180,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             constructorCommentSaver.restore(this)
         }
         element.delete()
-        if ((initializer?.body as? KtBlockExpression)?.statements?.isNotEmpty() ?: false) {
-            initializer?.let { klass.addDeclaration(it) }
+
+        if ((initializer.body as? KtBlockExpression)?.statements?.isNotEmpty() ?: false) {
+            klass.addDeclaration(initializer)
         }
     }
 }
