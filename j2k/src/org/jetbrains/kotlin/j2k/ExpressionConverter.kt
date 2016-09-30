@@ -242,7 +242,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
         else {
             val type = converter.convertTypeElement(operand, Nullability.NotNull)
-            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype("java"))
+            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype("java"), null)
             return
         }
 
@@ -253,7 +253,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         else
             wrapperTypeName.shortName().asString()
         result = QualifiedExpression(Identifier(classNameToUse, false).assignPrototype(operand),
-                                     Identifier.withNoPrototype("TYPE", isNullable = false))
+                                     Identifier.withNoPrototype("TYPE", isNullable = false),
+                                     null)
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -322,6 +323,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
         val methodExpr = expression.methodExpression
         val arguments = expression.argumentList.expressions
+        val qualifier = methodExpr.qualifierExpression
         val target = methodExpr.resolve()
         val isNullable = if (target is PsiMethod) typeConverter.methodNullability(target).isNullable(codeConverter.settings) else false
         val typeArguments = convertTypeArguments(expression)
@@ -340,12 +342,15 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
-                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull(), true), propertyName).assignNoPrototype()
+                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull(), true), propertyName, null).assignNoPrototype()
                         else
                             propertyName
                     }
+                    else if (qualifier != null) {
+                        QualifiedExpression(codeConverter.convertExpression(qualifier), propertyName, methodExpr.dot()).assignNoPrototype()
+                    }
                     else {
-                        QualifiedExpression(codeConverter.convertExpression(methodExpr.qualifierExpression), propertyName).assignNoPrototype()
+                        propertyName
                     }
 
                     when(if (isExtension) parameterCount - 1 else parameterCount) {
@@ -408,7 +413,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         if (target is PsiMethod) {
             val specialMethod = SpecialMethod.match(target, arguments.size, converter.services)
             if (specialMethod != null) {
-                val converted = specialMethod.convertCall(methodExpr.qualifierExpression, arguments, typeArguments, codeConverter)
+                val converted = specialMethod.convertCall(qualifier, arguments, typeArguments, codeConverter)
                 if (converted != null) {
                     result = converted
                     return
@@ -542,7 +547,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         expression.getContainingClass()?.getParentOfType<PsiVariable>(false)?.let {
             if (it == expression.qualifierExpression?.reference?.resolve()) {
-                result = QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier)
+                result = QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier, null)
                 return
             }
         }
@@ -583,7 +588,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
         }
 
-        result = if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
+        result = if (qualifier != null)
+            QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, expression.dot())
+        else
+            identifier
     }
 
     private fun isNullable(target: PsiVariable): Boolean {

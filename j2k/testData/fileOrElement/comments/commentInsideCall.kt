@@ -4,8 +4,11 @@ object Test {
     @JvmStatic fun main(args: Array<String>) {
         println()// Comment
 
-        Test.foo()// Comment1
-                .indexOf("s")// Comment2
+        Test
+                // Comment1
+                .foo()
+                // Comment2
+                .indexOf("s")
     }
 
     fun foo(): String {

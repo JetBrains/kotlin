@@ -132,7 +132,8 @@ class AnnotationConverter(private val converter: Converter) {
                 val name = it.name
                 null to converter.deferredElement<Expression> {
                     QualifiedExpression(Identifier.withNoPrototype("AnnotationTarget", isNullable = false),
-                                        Identifier.withNoPrototype(name, isNullable = false))
+                                        Identifier.withNoPrototype(name, isNullable = false),
+                                        null)
                 }
             }
             return Identifier.withNoPrototype("Target") to deferredExpressionList

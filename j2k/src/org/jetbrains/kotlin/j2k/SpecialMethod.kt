@@ -197,7 +197,10 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     OBJECT_GET_CLASS(JAVA_LANG_OBJECT, "getClass", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression {
             val identifier = Identifier.withNoPrototype("javaClass", isNullable = false)
-            return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
+            return if (qualifier != null)
+                QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, null)
+            else
+                identifier
         }
     },
 
@@ -436,7 +439,10 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     protected fun convertMethodCallToPropertyUse(codeConverter: CodeConverter, qualifier: PsiExpression?, propertyName: String = methodName): Expression {
         val identifier = Identifier.withNoPrototype(propertyName, isNullable = false)
-        return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
+        return if (qualifier != null)
+            QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, null)
+        else
+            identifier
     }
 
     protected fun Array<PsiExpression>.notNull() = map { it to Nullability.NotNull }
