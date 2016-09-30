@@ -40,9 +40,13 @@ public fun Node.on(name: String, capture: Boolean, handler: (Event) -> Unit): Cl
  * Registers an [EventListener] on the named event
  */
 public fun Node?.on(name: String, capture: Boolean, listener: EventListener): Closeable? {
-    return if (this is EventTarget) {
-        addEventListener(name, listener, capture)
-        CloseableEventListener(this, listener, name, capture)
+    // TODO: instanceof EventTarget is a very bad idea!
+    // TODO: nullable target is a very bad idea!
+    // TODO: receiver should be EventTarget
+    val target = this as? EventTarget
+    return if (target != null) {
+        target.addEventListener(name, listener, capture)
+        CloseableEventListener(target, listener, name, capture)
     } else {
         null
     }
