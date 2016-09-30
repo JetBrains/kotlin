@@ -103,23 +103,43 @@ internal object KtPostfixTemplatePsiInfo : PostfixTemplatePsiInfo() {
 }
 
 internal fun createExpressionSelector(
+        // Do not suggest expressions like 'val a = 1'/'for ...'
+        checkCanBeUsedAsValue: Boolean = true,
         statementsOnly: Boolean = false,
-        predicate: ((KotlinType) -> Boolean)? = null
-): PostfixTemplateExpressionSelectorBase =
-        KtExpressionPostfixTemplateSelector {
-            if (this !is KtExpression) return@KtExpressionPostfixTemplateSelector false
-            if (statementsOnly && !isStatement()) return@KtExpressionPostfixTemplateSelector false
-
-            if (predicate == null) return@KtExpressionPostfixTemplateSelector true
-
-            getType(analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION))?.let { predicate(it) } ?: false
-        }
-
-private fun PsiElement.isStatement() = parent is KtBlockExpression
+        typePredicate: ((KotlinType) -> Boolean)? = null
+): PostfixTemplateExpressionSelectorBase = KtExpressionPostfixTemplateSelector(statementsOnly, checkCanBeUsedAsValue, typePredicate)
 
 private class KtExpressionPostfixTemplateSelector(
-        filter: PsiElement.() -> Boolean
-) : PostfixTemplateExpressionSelectorBase(Condition(filter)) {
+        statementsOnly: Boolean,
+        checkCanBeUsedAsValue: Boolean,
+        typePredicate: ((KotlinType) -> Boolean)?
+) : PostfixTemplateExpressionSelectorBase(createFilter(statementsOnly, checkCanBeUsedAsValue, typePredicate)) {
+    companion object {
+        private fun createFilter(
+                statementsOnly: Boolean,
+                checkCanBeUsedAsValue: Boolean,
+                typePredicate: ((KotlinType) -> Boolean)?
+        ): Condition<PsiElement> = Condition {
+            if (it !is KtExpression) return@Condition false
+
+            // Can't be independent expressions
+            if (it.isSelector || it.parent is KtUserType || it.isOperationReference || it is KtBlockExpression) return@Condition false
+
+            // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
+            if (it is KtFunctionLiteral) return@Condition false
+
+            if (statementsOnly && it.parent !is KtBlockExpression) return@Condition false
+            if (checkCanBeUsedAsValue && !it.canBeUsedAsValue()) return@Condition false
+
+            typePredicate == null || it.getType(it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION))?.let { typePredicate(it) } ?: false
+        }
+
+        private fun KtExpression.canBeUsedAsValue() =
+                !KtPsiUtil.isAssignment(this) &&
+                !this.isNamedDeclaration &&
+                this !is KtLoopExpression
+    }
+
     override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
         val expressions = super.getExpressions(context, document, offset)
 
@@ -137,27 +157,24 @@ private class KtExpressionPostfixTemplateSelector(
     ) = context.parentsWithSelf
             .filterIsInstance<KtExpression>()
             .takeWhile {
-                it !is KtBlockExpression &&
-                !it.isEffectivelyDeclaration()
-            }.filter {
-                !it.isSelector &&
-                it.parent !is KtUserType &&
-                !it.isOperationReference &&
-                !KtPsiUtil.isAssignment(it) &&
-                // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
-                it !is KtFunctionLiteral
+                !it.isBlockBodyInDeclaration
             }.toList()
 }
 
 private val KtExpression.isOperationReference: Boolean
     get() = this.node.elementType == KtNodeTypes.OPERATION_REFERENCE
 
-private fun KtElement.isEffectivelyDeclaration() =
-        this is KtNamedDeclaration &&
-        // function literal is an expression while it's also a subtype of KtNamedDeclaration
-        this !is KtFunctionLiteral &&
-        // !(fun (a) = 1)
-        (this !is KtNamedFunction || this.name == null)
+private val KtElement.isBlockBodyInDeclaration: Boolean
+    get() = this is KtBlockExpression && (parent as? KtElement)?.isNamedDeclarationWithBody == true
+
+private val KtElement.isNamedDeclaration: Boolean
+    get() = this is KtNamedDeclaration && !isAnonymousFunction
+
+private val KtElement.isNamedDeclarationWithBody: Boolean
+    get() = this is KtDeclarationWithBody && !isAnonymousFunction
+
+private val KtDeclaration.isAnonymousFunction: Boolean
+    get() = this is KtFunctionLiteral || (this is KtNamedFunction && this.name == null)
 
 private val KtExpression.isSelector: Boolean
     get() = parent is KtQualifiedExpression && (parent as KtQualifiedExpression).selectorExpression == this

@@ -46,7 +46,7 @@ internal class KtForEachPostfixTemplate(
         name,
         "for (item in expr)",
         "for (\$name$ in \$expr$) {\n    \$END$\n}",
-        createExpressionSelector(statementsOnly = true, predicate = KotlinType::containsIteratorMethod)
+        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::containsIteratorMethod)
 ) {
     override fun setVariables(template: Template, element: PsiElement) {
         val name = MacroCallNode(SuggestVariableNameMacro())
@@ -63,13 +63,13 @@ internal object KtAssertPostfixTemplate : ConstantStringBasedPostfixTemplate(
         "assert",
         "assert(expr) { \"\" }",
         "assert(\$expr$) { \"\$END$\" }",
-        createExpressionSelector(statementsOnly = true, predicate = KotlinType::isBoolean)
+        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
 )
 
 internal object KtParenthesizedPostfixTemplate : ConstantStringBasedPostfixTemplate(
         "par", "(expr)",
         "(\$expr$)\$END$",
-        createExpressionSelector(statementsOnly = false)
+        createExpressionSelector()
 )
 
 internal object KtSoutPostfixTemplate : ConstantStringBasedPostfixTemplate(
@@ -90,5 +90,5 @@ internal object KtWhilePostfixTemplate : ConstantStringBasedPostfixTemplate(
         "while",
         "while (expr) {}",
         "while (\$expr$) {\n\$END$\n}",
-        createExpressionSelector(statementsOnly = true, predicate = KotlinType::isBoolean)
+        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
 )
