@@ -192,6 +192,11 @@ class ExpressionCodegen(
             } else {
                 (callable as CallableMethod).genInvokeDefaultInstruction(mv)
             }
+            val returnType = expression.descriptor.returnType
+            if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+                mv.aconst(null)
+                mv.athrow()
+            }
             return StackValue.onStack(callable.returnType)
         }
     }
