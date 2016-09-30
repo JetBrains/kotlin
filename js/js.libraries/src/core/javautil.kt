@@ -26,6 +26,8 @@ public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Compara
 }
 
 
+// TODO: Not supported
+// typealias Date = kotlin.js.Date
 
 @native
 public class Date() {

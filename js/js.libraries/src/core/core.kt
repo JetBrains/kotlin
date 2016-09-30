@@ -1,7 +1,5 @@
 package kotlin.js
 
-import java.util.*
-
 @native
 public val noImpl: Nothing
     get() = throw Exception()

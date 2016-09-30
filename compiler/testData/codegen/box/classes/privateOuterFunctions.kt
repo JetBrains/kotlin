@@ -28,4 +28,8 @@ class C {
     }
 }
 
+interface Runnable {
+    fun run(): Unit
+}
+
 fun box() = C().foo()

@@ -24,4 +24,8 @@ class C{
     }
 }
 
+interface Runnable {
+    fun run(): Unit
+}
+
 fun box() = if (C().foo() == 3) "OK" else "NOT OK"

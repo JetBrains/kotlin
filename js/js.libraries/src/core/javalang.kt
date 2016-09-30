@@ -16,14 +16,6 @@
 
 package java.lang
 
-@library
-public interface Runnable {
-    public fun run(): Unit
-}
-
-public fun Runnable(action: () -> Unit): Runnable = object : Runnable {
-    override fun run() = action()
-}
 
 @library
 public interface Appendable {
