@@ -27,175 +27,144 @@ import java.util.*
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int?) {
     CHAR_SEQUENCE_LENGTH(CharSequence::class.java.name, "length", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier)
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse()
     },
 
     COLLECTION_SIZE(Collection::class.java.name, "size", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier)
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse()
     },
 
     COLLECTION_TO_ARRAY(Collection::class.java.name, "toArray", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toTypedArray", qualifier,  arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toTypedArray", argumentsNotNull())
     },
 
     COLLECTION_TO_ARRAY_WITH_ARG(Collection::class.java.name, "toArray", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toTypedArray", qualifier,  emptyList(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = copy(arguments = emptyArray()).convertWithChangedName("toTypedArray", emptyList())
     },
 
     MAP_SIZE(Map::class.java.name, "size", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier)
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse()
     },
 
     MAP_KEY_SET(Map::class.java.name, "keySet", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "keys")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("keys")
     },
 
     MAP_PUT_IF_ABSENT(Map::class.java.name, "putIfAbsent", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_REMOVE(Map::class.java.name, "remove", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_REPLACE(Map::class.java.name, "replace", 3) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_REPLACE_ALL(Map::class.java.name, "replaceAll", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_COMPUTE(Map::class.java.name, "compute", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_COMPUTE_IF_ABSENT(Map::class.java.name, "computeIfAbsent", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_COMPUTE_IF_PRESENT(Map::class.java.name, "computeIfPresent", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_MERGE(Map::class.java.name, "merge", 3) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_GET_OR_DEFAULT(Map::class.java.name, "getOrDefault", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithReceiverCast()
     },
 
     MAP_VALUES(Map::class.java.name, "values", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier)
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse()
     },
 
     MAP_ENTRY_SET(Map::class.java.name, "entrySet", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "entries")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("entries")
     },
 
     ENUM_NAME(Enum::class.java.name, "name", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "name")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("name")
     },
 
     ENUM_ORDINAL(Enum::class.java.name, "ordinal", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier)
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse()
     },
 
     CHAR_AT(CharSequence::class.java.name, "charAt", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("get", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("get", argumentsNotNull())
     },
 
     NUMBER_BYTE_VALUE(Number::class.java.name, "byteValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toByte", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toByte", argumentsNotNull())
     },
 
     NUMBER_SHORT_VALUE(Number::class.java.name, "shortValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toShort", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toShort", argumentsNotNull())
     },
 
     NUMBER_INT_VALUE(Number::class.java.name, "intValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toInt", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toInt", argumentsNotNull())
     },
 
     NUMBER_LONG_VALUE(Number::class.java.name, "longValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toLong", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toLong", argumentsNotNull())
     },
 
     NUMBER_FLOAT_VALUE(Number::class.java.name, "floatValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toFloat", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toFloat", argumentsNotNull())
     },
 
     NUMBER_DOUBLE_VALUE(Number::class.java.name, "doubleValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("toDouble", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("toDouble", argumentsNotNull())
     },
 
     LIST_REMOVE(List::class.java.name, "remove", 1) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher)
                 = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.single().type.canonicalText == "int"
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertWithChangedName("removeAt", qualifier, arguments.notNull(), typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithChangedName("removeAt", argumentsNotNull())
     },
 
     THROWABLE_GET_MESSAGE(Throwable::class.java.name, "getMessage", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "message")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("message")
     },
 
     THROWABLE_GET_CAUSE(Throwable::class.java.name, "getCause", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "cause")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("cause")
     },
 
     MAP_ENTRY_GET_KEY(Map::class.java.name + ".Entry", "getKey", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "key")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("key")
     },
 
     MAP_ENTRY_GET_VALUE(Map::class.java.name + ".Entry", "getValue", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertMethodCallToPropertyUse(codeConverter, qualifier, "value")
+        override fun ConvertCallData.convertCall() = convertMethodCallToPropertyUse("value")
     },
 
     OBJECT_EQUALS(null, "equals", 1) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
                 = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.single().type.canonicalText == JAVA_LANG_OBJECT
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+        override fun ConvertCallData.convertCall(): Expression? {
             if (qualifier == null || qualifier is PsiSuperExpression) return null
             return BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), Operator.EQEQ)
         }
     },
 
     OBJECT_GET_CLASS(JAVA_LANG_OBJECT, "getClass", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression {
+        override fun ConvertCallData.convertCall(): Expression {
             val identifier = Identifier.withNoPrototype("javaClass", isNullable = false)
             return if (qualifier != null)
                 QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, null)
@@ -205,41 +174,41 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     OBJECTS_EQUALS("java.util.Objects", "equals", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = BinaryExpression(codeConverter.convertExpression(arguments[0]), codeConverter.convertExpression(arguments[1]), Operator.EQEQ)
     },
 
     COLLECTIONS_EMPTY_LIST(Collections::class.java.name, "emptyList", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = MethodCallExpression.buildNonNull(null, "emptyList", ArgumentList.withNoPrototype(), typeArgumentsConverted)
     },
 
     COLLECTIONS_EMPTY_SET(Collections::class.java.name, "emptySet", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = MethodCallExpression.buildNonNull(null, "emptySet", ArgumentList.withNoPrototype(), typeArgumentsConverted)
     },
 
     COLLECTIONS_EMPTY_MAP(Collections::class.java.name, "emptyMap", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = MethodCallExpression.buildNonNull(null, "emptyMap", ArgumentList.withNoPrototype(), typeArgumentsConverted)
     },
 
     COLLECTIONS_SINGLETON_LIST(Collections::class.java.name, "singletonList", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpression(arguments.single()))
             return MethodCallExpression.buildNonNull(null, "listOf", argumentList, typeArgumentsConverted)
         }
     },
 
     COLLECTIONS_SINGLETON(Collections::class.java.name, "singleton", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpression(arguments.single()))
             return MethodCallExpression.buildNonNull(null, "setOf", argumentList, typeArgumentsConverted)
         }
     },
 
     STRING_TRIM(JAVA_LANG_STRING, "trim", 0) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+        override fun ConvertCallData.convertCall(): Expression? {
             val comparison = BinaryExpression(Identifier.withNoPrototype("it", isNullable = false), LiteralExpression("' '").assignNoPrototype(), Operator(JavaTokenType.LE).assignNoPrototype()).assignNoPrototype()
             val argumentList = ArgumentList.withNoPrototype(LambdaExpression(null, Block.of(comparison).assignNoPrototype()))
             return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "trim", argumentList)
@@ -247,7 +216,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_REPLACE_ALL(JAVA_LANG_STRING, "replaceAll", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             val argumentList = ArgumentList.withNoPrototype(
                     codeConverter.convertToRegex(arguments[0]),
                     codeConverter.convertExpression(arguments[1])
@@ -257,7 +226,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_REPLACE_FIRST(JAVA_LANG_STRING, "replaceFirst", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             return MethodCallExpression.buildNonNull(
                     codeConverter.convertExpression(qualifier), "replaceFirst",
                     ArgumentList.withNoPrototype(
@@ -269,14 +238,14 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_MATCHES(JAVA_LANG_STRING, "matches", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertToRegex(arguments.single()))
             return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "matches", argumentList)
         }
     },
 
     STRING_SPLIT(JAVA_LANG_STRING, "split", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+        override fun ConvertCallData.convertCall(): Expression? {
             val splitCall = MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "split",
                                                               ArgumentList.withNoPrototype(codeConverter.convertToRegex(arguments.single()))
             ).assignNoPrototype()
@@ -289,7 +258,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_SPLIT_LIMIT(JAVA_LANG_STRING, "split", 2) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?  {
+        override fun ConvertCallData.convertCall(): Expression?  {
             val patternArgument = codeConverter.convertToRegex(arguments[0])
             val limitArgument = codeConverter.convertExpression(arguments[1])
             val evaluator = PsiExpressionEvaluator()
@@ -299,8 +268,10 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                         listOf(patternArgument, MethodCallExpression.buildNonNull(limitArgument, "coerceAtLeast", ArgumentList.withNoPrototype(LiteralExpression("0").assignNoPrototype())).assignNoPrototype())
                     limit < 0 ->      // negative, same behavior as split(regex) in kotlin
                         listOf(patternArgument)
-                    limit == 0 ->     // zero, same replacement as for split without limit
-                        return STRING_SPLIT.convertCall(qualifier, arrayOf(arguments[0]), typeArgumentsConverted, codeConverter)
+                    limit == 0 -> { // zero, same replacement as for split without limit
+                        val newCallData = copy(arguments = arrayOf(arguments[0]))
+                        return STRING_SPLIT.convertCall(newCallData)
+                    }
                     else ->           // positive, same behavior as split(regex, limit) in kotlin
                         listOf(patternArgument, limitArgument)
             }
@@ -314,7 +285,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
                 = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.last().type.canonicalText == "java.lang.Iterable<? extends java.lang.CharSequence>"
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+        override fun ConvertCallData.convertCall(): Expression? {
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.take(1)))
             return MethodCallExpression.buildNonNull(codeConverter.convertExpression(arguments[1]), "joinToString", argumentList)
         }
@@ -324,9 +295,9 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
                 = super.matches(method, superMethodsSearcher) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+        override fun ConvertCallData.convertCall(): Expression? {
             if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
-                return STRING_JOIN.convertCall(qualifier, arguments, typeArgumentsConverted, codeConverter)
+                return STRING_JOIN.convertCall(this)
             }
             else {
                 return MethodCallExpression.buildNonNull(
@@ -344,27 +315,25 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_CONCAT(JAVA_LANG_STRING, "concat", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), Operator(JavaTokenType.PLUS).assignNoPrototype())
     },
 
     STRING_COMPARE_TO_IGNORE_CASE(JAVA_LANG_STRING, "compareToIgnoreCase", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = addIgnoreCaseArgument(qualifier, "compareTo", arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithIgnoreCaseArgument("compareTo")
     },
 
     STRING_EQUALS_IGNORE_CASE(JAVA_LANG_STRING, "equalsIgnoreCase", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = addIgnoreCaseArgument(qualifier, "equals", arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertWithIgnoreCaseArgument("equals")
     },
 
     STRING_REGION_MATCHES(JAVA_LANG_STRING, "regionMatches", 5) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = addIgnoreCaseArgument(qualifier, "regionMatches", arguments.drop(1).toTypedArray(), typeArgumentsConverted, codeConverter, arguments.first())
+        override fun ConvertCallData.convertCall()
+                = copy(arguments = arguments.drop(1).toTypedArray()).convertWithIgnoreCaseArgument("regionMatches", ignoreCaseArgument = arguments.first())
     },
 
     STRING_GET_BYTES(JAVA_LANG_STRING, "getBytes", null) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             val charsetArg = arguments.lastOrNull()?.check { it.type?.canonicalText == JAVA_LANG_STRING }
             val convertedArguments = codeConverter.convertExpressions(arguments).map {
                 if (charsetArg != null && it.prototypes?.singleOrNull()?.element == charsetArg)
@@ -377,7 +346,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_GET_CHARS(JAVA_LANG_STRING, "getChars", 4) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+        override fun ConvertCallData.convertCall(): MethodCallExpression {
             // reorder parameters: srcBegin(0), srcEnd(1), dst(2), dstOffset(3) -> destination(2), destinationOffset(3), startIndex(0), endIndex(1)
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.slice(listOf(2, 3, 0, 1))))
             return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "toCharArray", argumentList)
@@ -391,7 +360,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     && method.parameterList.parameters.first().type.canonicalText == "char[]"
         }
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = MethodCallExpression.buildNonNull(null, "String", ArgumentList.withNoPrototype(codeConverter.convertExpressions (arguments)))
     },
 
@@ -402,23 +371,21 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     && method.parameterList.parameters.first().type.canonicalText == "char[]"
         }
 
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = STRING_VALUE_OF_CHAR_ARRAY.convertCall(qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall()
+                = STRING_VALUE_OF_CHAR_ARRAY.convertCall(this)
     },
 
     STRING_VALUE_OF(JAVA_LANG_STRING, "valueOf", 1) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+        override fun ConvertCallData.convertCall()
                 = MethodCallExpression.buildNonNull(codeConverter.convertExpression(arguments.single(), true), "toString")
     },
 
     SYSTEM_OUT_PRINTLN(PrintStream::class.java.name, "println", null) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertSystemOutMethodCall(methodName)
     },
 
     SYSTEM_OUT_PRINT(PrintStream::class.java.name, "print", null) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
+        override fun ConvertCallData.convertCall() = convertSystemOutMethodCall(methodName)
     };
 
     open fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
@@ -435,9 +402,19 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     protected fun matchesParameterCount(method: PsiMethod) = parameterCount == null || parameterCount == method.parameterList.parametersCount
 
-    abstract fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?
+    data class ConvertCallData(
+            val qualifier: PsiExpression?,
+            @Suppress("ArrayInDataClass") val arguments: Array<PsiExpression>,
+            val typeArgumentsConverted: List<Type>,
+            val codeConverter: CodeConverter
+    )
 
-    protected fun convertMethodCallToPropertyUse(codeConverter: CodeConverter, qualifier: PsiExpression?, propertyName: String = methodName): Expression {
+    @JvmName("convertCallPublic")
+    fun convertCall(data: ConvertCallData): Expression? = data.convertCall()
+
+    protected abstract fun ConvertCallData.convertCall(): Expression?
+
+    protected fun ConvertCallData.convertMethodCallToPropertyUse(propertyName: String = methodName): Expression {
         val identifier = Identifier.withNoPrototype(propertyName, isNullable = false)
         return if (qualifier != null)
             QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, null)
@@ -445,14 +422,17 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
             identifier
     }
 
-    protected fun Array<PsiExpression>.notNull() = map { it to Nullability.NotNull }
+    protected fun ConvertCallData.argumentsNotNull() = arguments.map { Nullability.NotNull }
 
-    protected fun convertWithChangedName(name: String, qualifier: PsiExpression?, arguments: List<Pair<PsiExpression, Nullability>>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
-        val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it.first, null, it.second) })
+    protected fun ConvertCallData.convertWithChangedName(name: String, argumentNullabilities: List<Nullability>): MethodCallExpression {
+        assert(argumentNullabilities.size == arguments.size)
+        val argumentList = ArgumentList.withNoPrototype(
+                arguments.zip(argumentNullabilities).map { codeConverter.convertExpression(it.first, null, it.second) }
+        )
         return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), name, argumentList, typeArgumentsConverted)
     }
 
-    protected fun convertMethodCallWithReceiverCast(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression? {
+    protected fun ConvertCallData.convertWithReceiverCast(): MethodCallExpression? {
         val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
         val qualifierWithCast = castQualifierToType(codeConverter, qualifier!!, qualifiedClassName!!)
         if (qualifierWithCast != null) {
@@ -470,6 +450,31 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         return TypeCastExpression(newType, convertedQualifier).assignNoPrototype()
     }
 
+    protected fun ConvertCallData.convertWithIgnoreCaseArgument(methodName: String, ignoreCaseArgument: PsiExpression? = null): Expression {
+        val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) }
+                                   ?: LiteralExpression("true").assignNoPrototype()
+        val ignoreCaseArgumentExpression = AssignmentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
+        val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) } + ignoreCaseArgumentExpression)
+        return MethodCallExpression.buildNonNull(
+                codeConverter.convertExpression(qualifier),
+                methodName,
+                argumentList,
+                typeArgumentsConverted)
+    }
+
+    protected fun ConvertCallData.convertSystemOutMethodCall(methodName: String): Expression? {
+        if (qualifier !is PsiReferenceExpression) return null
+        val qqualifier = qualifier.qualifierExpression as? PsiReferenceExpression ?: return null
+        if (qqualifier.canonicalText != "java.lang.System") return null
+        if (qualifier.referenceName != "out") return null
+        if (typeArgumentsConverted.isNotEmpty()) return null
+        val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it) })
+        return MethodCallExpression.buildNonNull(null, methodName, argumentList)
+    }
+
+    protected fun CodeConverter.convertToRegex(expression: PsiExpression?): Expression
+            = MethodCallExpression.buildNonNull(convertExpression(expression, true), "toRegex").assignNoPrototype()
+
     companion object {
         private val valuesByName = values().groupBy { it.methodName }
 
@@ -480,41 +485,5 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     ?.check { it.parameterCount == null || it.parameterCount == argumentCount } // if parameterCount is specified we should make sure that argument count is correct
         }
     }
-}
-
-private fun convertSystemOutMethodCall(
-        methodName: String,
-        qualifier: PsiExpression?,
-        arguments: Array<PsiExpression>,
-        typeArgumentsConverted: List<Type>,
-        codeConverter: CodeConverter
-): Expression? {
-    if (qualifier !is PsiReferenceExpression) return null
-    val qqualifier = qualifier.qualifierExpression as? PsiReferenceExpression ?: return null
-    if (qqualifier.canonicalText != "java.lang.System") return null
-    if (qualifier.referenceName != "out") return null
-    if (typeArgumentsConverted.isNotEmpty()) return null
-    val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it) })
-    return MethodCallExpression.buildNonNull(null, methodName, argumentList)
-}
-
-private fun CodeConverter.convertToRegex(expression: PsiExpression?): Expression
-        = MethodCallExpression.buildNonNull(convertExpression(expression, true), "toRegex").assignNoPrototype()
-
-private fun addIgnoreCaseArgument(
-        qualifier: PsiExpression?,
-        methodName: String,
-        arguments: Array<PsiExpression>,
-        typeArgumentsConverted: List<Type>,
-        codeConverter: CodeConverter,
-        ignoreCaseArgument: PsiExpression? = null
-): Expression {
-    val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) } ?: LiteralExpression("true").assignNoPrototype()
-    val ignoreCaseArgumentExpression = AssignmentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
-    val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) } + ignoreCaseArgumentExpression)
-    return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier),
-                                      methodName,
-                                      argumentList,
-                                      typeArgumentsConverted)
 }
 

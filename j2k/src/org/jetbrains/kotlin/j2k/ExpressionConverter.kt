@@ -413,7 +413,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         if (target is PsiMethod) {
             val specialMethod = SpecialMethod.match(target, arguments.size, converter.services)
             if (specialMethod != null) {
-                val converted = specialMethod.convertCall(qualifier, arguments, typeArguments, codeConverter)
+                val data = SpecialMethod.ConvertCallData(qualifier, arguments, typeArguments, codeConverter)
+                val converted = specialMethod.convertCall(data)
                 if (converted != null) {
                     result = converted
                     return
@@ -798,9 +799,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val callParams = if (needThis) parameters.drop(1) else parameters
 
         val specialMethod = method?.let { SpecialMethod.match(it, callParams.size, converter.services) }
-        val statement: Statement = if (expression.isConstructor) {
+        val statement: Statement
+        if (expression.isConstructor) {
             val argumentList = ArgumentList.withNoPrototype(callParams.map { it.first })
-            MethodCallExpression.buildNonNull(null, convertMethodReferenceQualifier(qualifier), argumentList)
+            statement = MethodCallExpression.buildNonNull(null, convertMethodReferenceQualifier(qualifier), argumentList)
         }
         else if (specialMethod != null) {
             val factory = PsiElementFactory.SERVICE.getInstance(converter.project)
@@ -824,12 +826,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 }
             })
 
-            specialMethod.convertCall(fakeReceiver, fakeParams.toTypedArray(), emptyList(), patchedConverter)!!
+            val callData = SpecialMethod.ConvertCallData(fakeReceiver, fakeParams.toTypedArray(), emptyList(), patchedConverter)
+            statement = specialMethod.convertCall(callData)!!
         }
         else {
             val referenceName = expression.referenceName!!
             val argumentList = ArgumentList.withNoPrototype(callParams.map { it.first })
-            MethodCallExpression.buildNonNull(receiver?.first, referenceName, argumentList)
+            statement = MethodCallExpression.buildNonNull(receiver?.first, referenceName, argumentList)
         }
 
         statement.assignNoPrototype()
