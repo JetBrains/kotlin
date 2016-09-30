@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens.THIS_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.psi.*
@@ -58,6 +59,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         val klass = element.containingClassOrObject as? KtClass ?: return
         val context = klass.analyze()
         val factory = KtPsiFactory(klass)
+        val commentSaver = CommentSaver(element)
         val initializerMap = mutableMapOf<KtProperty, String>()
         for (property in klass.getProperties()) {
             if (property.typeReference == null) {
@@ -116,7 +118,9 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                     }
                 }.asString()
         )
-        klass.addDeclarationBefore(constructor, null)
+        with (klass.addDeclarationBefore(constructor, null)) {
+            commentSaver.restore(this)
+        }
         for (valueParameter in element.valueParameters.reversed()) {
             if (!valueParameter.hasValOrVar()) continue
             val isVararg = valueParameter.hasModifier(VARARG_KEYWORD)
