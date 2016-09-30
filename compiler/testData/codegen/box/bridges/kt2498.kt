@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 open class BaseStringList: ArrayList<String>() {
 }
 

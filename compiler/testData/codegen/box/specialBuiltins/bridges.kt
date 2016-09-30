@@ -1,4 +1,3 @@
-import java.util.*;
 
 interface A0 {
     val size: Int get() = 56

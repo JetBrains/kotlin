@@ -2,7 +2,7 @@
 var globalResult = ""
 var wasCalled = false
 class Controller {
-    val postponedActions = java.util.ArrayList<() -> Unit>()
+    val postponedActions = ArrayList<() -> Unit>()
 
     suspend fun suspendWithValue(v: String, x: Continuation<String>) {
         postponedActions.add {

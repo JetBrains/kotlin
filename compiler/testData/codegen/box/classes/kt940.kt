@@ -1,4 +1,4 @@
-import java.util.*
+// WITH_RUNTIME
 
 fun box() : String {
     val w = object : Comparator<String?> {

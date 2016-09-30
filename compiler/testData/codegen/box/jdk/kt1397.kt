@@ -1,4 +1,3 @@
-import java.util.ArrayList
 
 class IntArrayList(): ArrayList<Int>() {
     override fun get(index: Int): Int = super.get(index)

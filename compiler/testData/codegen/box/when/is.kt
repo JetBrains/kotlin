@@ -1,11 +1,11 @@
 fun typeName(a: Any?) : String {
     return when(a) {
-        is java.util.ArrayList<*> -> "array list"
+        is ArrayList<*> -> "array list"
         else -> "no idea"
     }
 }
 
 fun box() : String {
-    if(typeName(java.util.ArrayList<Int> ()) != "array list") return "array list failed"
+    if(typeName(ArrayList<Int>()) != "array list") return "array list failed"
     return "OK"
 }

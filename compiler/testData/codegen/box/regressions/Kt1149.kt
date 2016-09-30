@@ -2,8 +2,6 @@
 
 package test.regressions.kt1149
 
-import java.util.ArrayList
-
 public interface SomeTrait {
     fun foo()
 }

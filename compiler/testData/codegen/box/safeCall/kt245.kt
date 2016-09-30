@@ -1,5 +1,5 @@
 fun foo() {
-    val l = java.util.ArrayList<Int>(2)
+    val l = ArrayList<Int>(2)
     l.add(1)
 
     for (el in l) {}

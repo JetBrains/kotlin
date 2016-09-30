@@ -1,4 +1,4 @@
-class A : java.util.ArrayList<String>() {
+class A : ArrayList<String>() {
     override val size: Int get() = super.size + 56
 }
 

@@ -1,5 +1,3 @@
-import java.util.HashMap
-
 class A : HashMap<String, Double>()
 
 fun box(): String {

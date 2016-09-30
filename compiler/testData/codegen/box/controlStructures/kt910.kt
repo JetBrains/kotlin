@@ -1,5 +1,3 @@
-import java.util.HashSet
-
 fun foo() : Int =
     try {
         2

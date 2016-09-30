@@ -6,7 +6,7 @@ fun box(): String {
 }
 
 class Cached<K, V>(private val generate: (K)->V): Function1<K, V> {
-    val store = java.util.HashMap<K, V>()
+    val store = HashMap<K, V>()
 
     // Everything works just fine if 'invoke' method is renamed to, for example, 'get'
     override fun invoke(p1: K) = store.getOrPut(p1) { generate(p1) }

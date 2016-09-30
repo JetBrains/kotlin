@@ -1,6 +1,5 @@
 //WITH_REFLECT
 
-import java.util.*
 import kotlin.properties.Delegates
 
 fun box(): String {

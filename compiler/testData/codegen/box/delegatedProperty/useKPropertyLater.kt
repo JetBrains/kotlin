@@ -1,7 +1,6 @@
 // WITH_REFLECT
 // TODO: replace with WITH_RUNTIME once KT-11316 is fixed
 
-import java.util.*
 import kotlin.reflect.*
 
 val properties = HashSet<KProperty<*>>()

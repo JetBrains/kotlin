@@ -1,7 +1,5 @@
 // WITH_RUNTIME
 
-import java.util.*
-
 fun <T> ArrayList<T>.findAll(predicate:  (T) -> Boolean): ArrayList<T> {
   val result = ArrayList<T>()
   for(t in this) {

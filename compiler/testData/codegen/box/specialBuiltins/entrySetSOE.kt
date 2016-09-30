@@ -1,4 +1,3 @@
-import java.util.*
 
 open class Map1 : HashMap<String, Any?>()
 class Map2 : Map1()

@@ -1,5 +1,3 @@
-import java.util.HashSet
-
 fun box() : String{
     val set = HashSet<String>()
     set.add("foo")

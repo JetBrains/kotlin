@@ -1,5 +1,3 @@
-import java.util.HashSet
-
 interface A : Set<String>
 
 class B : A, HashSet<String>()

@@ -1,7 +1,5 @@
 package whats.the.difference
 
-import java.util.HashSet
-
 fun iarray(vararg a : Int) = a // BUG
 val IntArray.indices: IntRange get() = IntRange(0, lastIndex())
 fun IntArray.lastIndex() = size - 1

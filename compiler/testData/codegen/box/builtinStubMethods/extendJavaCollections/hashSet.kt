@@ -1,5 +1,3 @@
-import java.util.HashSet
-
 class A : HashSet<Long>()
 
 fun box(): String {
