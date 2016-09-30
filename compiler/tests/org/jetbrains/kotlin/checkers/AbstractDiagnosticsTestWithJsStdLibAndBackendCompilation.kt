@@ -30,9 +30,10 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
             moduleContext: ModuleContext,
             ktFiles: MutableList<KtFile>,
             moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings?
+            languageVersionSettings: LanguageVersionSettings?,
+            separateModules: Boolean
     ): JsAnalysisResult {
-        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageVersionSettings)
+        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageVersionSettings, separateModules)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {

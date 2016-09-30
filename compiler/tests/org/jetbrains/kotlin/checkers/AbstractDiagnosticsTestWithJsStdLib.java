@@ -72,7 +72,8 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
             @NotNull ModuleContext moduleContext,
             @NotNull List<KtFile> ktFiles,
             @NotNull BindingTrace moduleTrace,
-            @Nullable LanguageVersionSettings languageVersionSettings
+            @Nullable LanguageVersionSettings languageVersionSettings,
+            boolean separateModules
     ) {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         assert languageVersionSettings == null

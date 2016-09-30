@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -142,7 +144,12 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
             LanguageVersionSettings languageVersionSettings = loadCustomLanguageVersionSettings(testFilesInModule);
             ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
-            analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageVersionSettings);
+
+            boolean separateModules = groupedByModule.size() == 1;
+            AnalysisResult result = analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageVersionSettings, separateModules);
+            if (separateModules) {
+                modules.put(testModule, (ModuleDescriptorImpl) result.getModuleDescriptor());
+            }
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
@@ -269,7 +276,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             @NotNull ModuleContext moduleContext,
             @NotNull List<KtFile> files,
             @NotNull BindingTrace moduleTrace,
-            @Nullable LanguageVersionSettings languageVersionSettings
+            @Nullable LanguageVersionSettings languageVersionSettings,
+            boolean separateModules
     ) {
         CompilerConfiguration configuration;
         if (languageVersionSettings != null) {
@@ -283,6 +291,25 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         // See TopDownAnalyzerFacadeForJVM#analyzeFilesWithJavaIntegration
+
+        // Temporary solution: only use separate module mode in single-module tests because analyzeFilesWithJavaIntegration
+        // only supports creating two modules, whereas there can be more than two in multi-module diagnostic tests
+        // TODO: always use separate module mode, once analyzeFilesWithJavaIntegration can create multiple modules
+        if (separateModules) {
+            return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                    moduleContext.getProject(),
+                    files,
+                    moduleTrace,
+                    configuration,
+                    new Function1<GlobalSearchScope, PackagePartProvider>() {
+                        @Override
+                        public PackagePartProvider invoke(GlobalSearchScope scope) {
+                            return new JvmPackagePartProvider(getEnvironment(), scope);
+                        }
+                    }
+            );
+        }
+
         GlobalSearchScope moduleContentScope = GlobalSearchScope.allScope(moduleContext.getProject());
         ComponentProvider container = InjectionKt.createContainerForTopDownSingleModuleAnalyzerForJvm(
                 moduleContext,
