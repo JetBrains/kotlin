@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 
@@ -34,20 +35,28 @@ class ParameterList(
 
     companion object {
         fun withNoPrototype(parameters: List<Parameter>): ParameterList {
-            return ParameterList(parameters, LPar().assignNoPrototype(), RPar().assignNoPrototype()).assignNoPrototype()
+            return ParameterList(parameters, LPar.withPrototype(null), RPar.withPrototype(null)).assignNoPrototype()
         }
     }
 }
 
 // we use LPar and RPar elements to better handle comments and line breaks around them
-class LPar : Element() {
+class LPar private constructor() : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("(")
     }
+
+    companion object {
+        fun withPrototype(element: PsiElement?) = LPar().assignPrototype(element, CommentsAndSpacesInheritance.LINE_BREAKS)
+    }
 }
 
-class RPar : Element() {
+class RPar private constructor() : Element() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(")")
+    }
+
+    companion object {
+        fun withPrototype(element: PsiElement?) = RPar().assignPrototype(element, CommentsAndSpacesInheritance.LINE_BREAKS)
     }
 }

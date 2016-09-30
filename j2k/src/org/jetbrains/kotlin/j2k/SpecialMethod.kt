@@ -211,7 +211,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun ConvertCallData.convertCall(): Expression? {
             val comparison = BinaryExpression(Identifier.withNoPrototype("it", isNullable = false), LiteralExpression("' '").assignNoPrototype(), Operator(JavaTokenType.LE).assignNoPrototype()).assignNoPrototype()
             val argumentList = ArgumentList.withNoPrototype(LambdaExpression(null, Block.of(comparison).assignNoPrototype()))
-            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "trim", argumentList)
+            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "trim", argumentList, dotPrototype = dot)
         }
     },
 
@@ -221,7 +221,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     codeConverter.convertToRegex(arguments[0]),
                     codeConverter.convertExpression(arguments[1])
             )
-            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "replace", argumentList)
+            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "replace", argumentList, dotPrototype = dot)
         }
     },
 
@@ -232,7 +232,8 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     ArgumentList.withNoPrototype(
                             codeConverter.convertToRegex(arguments[0]),
                             codeConverter.convertExpression(arguments[1])
-                    )
+                    ),
+                    dotPrototype = dot
             )
         }
     },
@@ -240,19 +241,25 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     STRING_MATCHES(JAVA_LANG_STRING, "matches", 1) {
         override fun ConvertCallData.convertCall(): MethodCallExpression {
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertToRegex(arguments.single()))
-            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "matches", argumentList)
+            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "matches", argumentList, dotPrototype = dot)
         }
     },
 
     STRING_SPLIT(JAVA_LANG_STRING, "split", 1) {
         override fun ConvertCallData.convertCall(): Expression? {
-            val splitCall = MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "split",
-                                                              ArgumentList.withNoPrototype(codeConverter.convertToRegex(arguments.single()))
+            val splitCall = MethodCallExpression.buildNonNull(
+                    codeConverter.convertExpression(qualifier),
+                    "split",
+                    ArgumentList.withNoPrototype(codeConverter.convertToRegex(arguments.single())),
+                    dotPrototype = dot
             ).assignNoPrototype()
             val isEmptyCall = MethodCallExpression.buildNonNull(Identifier.withNoPrototype("it", isNullable = false), "isEmpty").assignNoPrototype()
             val isEmptyCallBlock = Block.of(isEmptyCall).assignNoPrototype()
-            val dropLastCall = MethodCallExpression.buildNonNull(splitCall, "dropLastWhile",
-                                                                 ArgumentList.withNoPrototype(LambdaExpression(null, isEmptyCallBlock).assignNoPrototype())).assignNoPrototype()
+            val dropLastCall = MethodCallExpression.buildNonNull(
+                    splitCall,
+                    "dropLastWhile",
+                    ArgumentList.withNoPrototype(LambdaExpression(null, isEmptyCallBlock).assignNoPrototype())
+            ).assignNoPrototype()
             return MethodCallExpression.buildNonNull(dropLastCall, "toTypedArray")
         }
     },
@@ -276,7 +283,12 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                         listOf(patternArgument, limitArgument)
             }
 
-            val splitCall = MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "split", ArgumentList.withNoPrototype(splitArguments)).assignNoPrototype()
+            val splitCall = MethodCallExpression.buildNonNull(
+                    codeConverter.convertExpression(qualifier),
+                    "split",
+                    ArgumentList.withNoPrototype(splitArguments),
+                    dotPrototype = dot
+            ).assignNoPrototype()
             return MethodCallExpression.buildNonNull(splitCall, "toTypedArray")
         }
     },
@@ -341,7 +353,12 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 else
                     it
             }
-            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "toByteArray", ArgumentList.withNoPrototype(convertedArguments))
+            return MethodCallExpression.buildNonNull(
+                    codeConverter.convertExpression(qualifier),
+                    "toByteArray",
+                    ArgumentList.withNoPrototype(convertedArguments),
+                    dotPrototype = dot
+            )
         }
     },
 
@@ -349,7 +366,12 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun ConvertCallData.convertCall(): MethodCallExpression {
             // reorder parameters: srcBegin(0), srcEnd(1), dst(2), dstOffset(3) -> destination(2), destinationOffset(3), startIndex(0), endIndex(1)
             val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.slice(listOf(2, 3, 0, 1))))
-            return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), "toCharArray", argumentList)
+            return MethodCallExpression.buildNonNull(
+                    codeConverter.convertExpression(qualifier),
+                    "toCharArray",
+                    argumentList,
+                    dotPrototype = dot
+            )
         }
     },
 
@@ -406,6 +428,9 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
             val qualifier: PsiExpression?,
             @Suppress("ArrayInDataClass") val arguments: Array<PsiExpression>,
             val typeArgumentsConverted: List<Type>,
+            val dot: PsiElement?,
+            val lPar: PsiElement?,
+            val rPar: PsiElement?,
             val codeConverter: CodeConverter
     )
 
@@ -417,7 +442,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     protected fun ConvertCallData.convertMethodCallToPropertyUse(propertyName: String = methodName): Expression {
         val identifier = Identifier.withNoPrototype(propertyName, isNullable = false)
         return if (qualifier != null)
-            QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, null)
+            QualifiedExpression(codeConverter.convertExpression(qualifier), identifier, dot)
         else
             identifier
     }
@@ -426,19 +451,27 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     protected fun ConvertCallData.convertWithChangedName(name: String, argumentNullabilities: List<Nullability>): MethodCallExpression {
         assert(argumentNullabilities.size == arguments.size)
-        val argumentList = ArgumentList.withNoPrototype(
-                arguments.zip(argumentNullabilities).map { codeConverter.convertExpression(it.first, null, it.second) }
-        )
-        return MethodCallExpression.buildNonNull(codeConverter.convertExpression(qualifier), name, argumentList, typeArgumentsConverted)
+        val argumentsConverted = arguments.zip(argumentNullabilities).map {
+            codeConverter.convertExpression(it.first, null, it.second).assignPrototype(it.first, CommentsAndSpacesInheritance.LINE_BREAKS)
+        }
+        val argumentList = ArgumentList(argumentsConverted, LPar.withPrototype(lPar), RPar.withPrototype(rPar)).assignNoPrototype()
+        return MethodCallExpression.buildNonNull(
+                codeConverter.convertExpression(qualifier),
+                name,
+                argumentList,
+                typeArgumentsConverted,
+                dot)
     }
 
     protected fun ConvertCallData.convertWithReceiverCast(): MethodCallExpression? {
         val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
-        val qualifierWithCast = castQualifierToType(codeConverter, qualifier!!, qualifiedClassName!!)
-        if (qualifierWithCast != null) {
-            return MethodCallExpression.buildNonNull(qualifierWithCast, methodName, ArgumentList.withNoPrototype(convertedArguments), typeArgumentsConverted)
-        }
-        return null
+        val qualifierWithCast = castQualifierToType(codeConverter, qualifier!!, qualifiedClassName!!) ?: return null
+        return MethodCallExpression.buildNonNull(
+                qualifierWithCast,
+                methodName,
+                ArgumentList.withNoPrototype(convertedArguments),
+                typeArgumentsConverted,
+                dot)
     }
 
     private fun castQualifierToType(codeConverter: CodeConverter, qualifier: PsiExpression, type: String): TypeCastExpression? {
@@ -454,12 +487,16 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) }
                                    ?: LiteralExpression("true").assignNoPrototype()
         val ignoreCaseArgumentExpression = AssignmentExpression(Identifier.withNoPrototype("ignoreCase"), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
-        val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) } + ignoreCaseArgumentExpression)
+        val convertedArguments = arguments.map {
+            codeConverter.convertExpression(it, null, Nullability.NotNull).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
+        } + ignoreCaseArgumentExpression
+        val argumentList = ArgumentList(convertedArguments, LPar.withPrototype(lPar), RPar.withPrototype(rPar)).assignNoPrototype()
         return MethodCallExpression.buildNonNull(
                 codeConverter.convertExpression(qualifier),
                 methodName,
                 argumentList,
-                typeArgumentsConverted)
+                typeArgumentsConverted,
+                dot)
     }
 
     protected fun ConvertCallData.convertSystemOutMethodCall(methodName: String): Expression? {
@@ -468,7 +505,11 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         if (qqualifier.canonicalText != "java.lang.System") return null
         if (qualifier.referenceName != "out") return null
         if (typeArgumentsConverted.isNotEmpty()) return null
-        val argumentList = ArgumentList.withNoPrototype(arguments.map { codeConverter.convertExpression(it) })
+        val argumentList = ArgumentList(
+                arguments.map { codeConverter.convertExpression(it).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS) },
+                LPar.withPrototype(lPar),
+                RPar.withPrototype(rPar)
+        ).assignNoPrototype()
         return MethodCallExpression.buildNonNull(null, methodName, argumentList)
     }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 
@@ -36,28 +37,32 @@ class MethodCallExpression(
                 receiver: Expression?,
                 methodName: String,
                 argumentList: ArgumentList = ArgumentList.withNoPrototype(),
-                typeArguments: List<Type> = emptyList()
-        ): MethodCallExpression = build(receiver, methodName, argumentList, typeArguments, false)
+                typeArguments: List<Type> = emptyList(),
+                dotPrototype: PsiElement? = null
+        ): MethodCallExpression = build(receiver, methodName, argumentList, typeArguments, false, dotPrototype)
 
         fun buildNullable(
                 receiver: Expression?,
                 methodName: String,
                 argumentList: ArgumentList = ArgumentList.withNoPrototype(),
-                typeArguments: List<Type> = emptyList()
-        ): MethodCallExpression = build(receiver, methodName, argumentList, typeArguments, true)
+                typeArguments: List<Type> = emptyList(),
+                dotPrototype: PsiElement? = null
+        ): MethodCallExpression = build(receiver, methodName, argumentList, typeArguments, true, dotPrototype)
 
         fun build(
                 receiver: Expression?,
                 methodName: String,
                 argumentList: ArgumentList,
                 typeArguments: List<Type>,
-                isNullable: Boolean
+                isNullable: Boolean,
+                dotPrototype: PsiElement? = null
         ): MethodCallExpression {
             val identifier = Identifier.withNoPrototype(methodName, isNullable = false)
-            return MethodCallExpression(if (receiver != null) QualifiedExpression(receiver, identifier, null).assignNoPrototype() else identifier,
-                                        argumentList,
-                                        typeArguments,
-                                        isNullable)
+            val methodExpression = if (receiver != null)
+                QualifiedExpression(receiver, identifier, dotPrototype).assignNoPrototype()
+            else
+                identifier
+            return MethodCallExpression(methodExpression, argumentList, typeArguments, isNullable)
         }
     }
 }

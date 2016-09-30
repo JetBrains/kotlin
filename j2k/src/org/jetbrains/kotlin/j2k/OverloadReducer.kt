@@ -193,7 +193,7 @@ fun Converter.convertParameterList(
                     null
                 convertParameter(parameter, defaultValueConverted)
             },
-            LPar().assignPrototype(lParen, CommentsAndSpacesInheritance.LINE_BREAKS),
-            RPar().assignPrototype(rParen, CommentsAndSpacesInheritance.LINE_BREAKS)
+            LPar.withPrototype(lParen),
+            RPar.withPrototype(rParen)
     ).assignPrototype(parameterList)
 }

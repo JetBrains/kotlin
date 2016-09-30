@@ -64,13 +64,21 @@ class A {
     void specialMethods() throws Exception {
         String s = "test string";
         s.equals("test");
-        s.equalsIgnoreCase("tesT");
+        s.equalsIgnoreCase(
+                "tesT"
+        );
         s.compareToIgnoreCase("Test");
-        s.regionMatches(true, 0, "TE", 0, 2);
+        s.regionMatches(
+                true,
+                0,
+                "TE",
+                0,
+                2
+        );
         s.regionMatches(0, "st", 1, 2);
         s.matches("\\w+");
-        s.replaceAll("\\w+", "---");
-        s.replaceFirst("([s-t])", "A$1");
+        s.replaceAll("\\w+", "---")
+              .replaceFirst("([s-t])", "A$1");
         useSplit(s.split("\\s+"));
         useSplit(s.split("\\s+", 0));
         useSplit(s.split("\\s+", -1));
@@ -97,7 +105,11 @@ class A {
         String.valueOf(3.14);
         String.valueOf(new Object());
 
-        String.format(Locale.FRENCH, "Je ne mange pas %d jours", 6);
+        String.format(
+                Locale.FRENCH,
+                "Je ne mange pas %d jours",
+                6
+        );
         String.format("Operation completed with %s", "success");
 
         char[] chars = {'a', 'b', 'c'};
