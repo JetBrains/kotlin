@@ -13,7 +13,7 @@ public abstract class A : kotlin.collections.Map<kotlin.Int, kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.Int!, in kotlin.String!>!): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Int): kotlin.String?
-    @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.Int, /*1*/ defaultValue: kotlin.String): kotlin.String
+    @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.Int, /*1*/ defaultValue: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

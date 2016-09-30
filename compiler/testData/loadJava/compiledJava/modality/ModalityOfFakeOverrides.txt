@@ -11,7 +11,7 @@ public open class ModalityOfFakeOverrides : java.util.AbstractList<kotlin.String
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    @org.jetbrains.annotations.NotNull() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    @org.jetbrains.annotations.NotNull public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<kotlin.String!>

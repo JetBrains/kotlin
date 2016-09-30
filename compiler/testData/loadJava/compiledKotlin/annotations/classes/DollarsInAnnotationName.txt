@@ -4,7 +4,7 @@ public final annotation class `$$$$$$` : kotlin.Annotation {
     /*primary*/ public constructor `$$$$$$`()
 }
 
-@test.`$$$$$$`() public final class A {
+@test.`$$$$$$` public final class A {
     /*primary*/ public constructor A()
 }
 
@@ -12,6 +12,6 @@ public final annotation class `Anno$tation` : kotlin.Annotation {
     /*primary*/ public constructor `Anno$tation`()
 }
 
-@test.`Anno$tation`() public final class `Cla$s` {
+@test.`Anno$tation` public final class `Cla$s` {
     /*primary*/ public constructor `Cla$s`()
 }

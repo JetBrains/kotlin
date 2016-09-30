@@ -1,9 +1,9 @@
 package
 
-public val </*0*/ T> @x() kotlin.collections.List<@x() T>.f: kotlin.Int
-public fun </*0*/ T, /*1*/ U : T> kotlin.collections.List<@x() T>.firstTyped(): U
-public fun @x() A.foo(/*0*/ a: @x() kotlin.Int): kotlin.Unit
-public fun </*0*/ T> @x() kotlin.collections.List<@x() T>.foo(/*0*/ l: kotlin.collections.List<@x() T>): @x() kotlin.collections.List<@x() T>
+public val </*0*/ T> @x kotlin.collections.List<@x T>.f: kotlin.Int
+public fun </*0*/ T, /*1*/ U : T> kotlin.collections.List<@x T>.firstTyped(): U
+public fun @x A.foo(/*0*/ a: @x kotlin.Int): kotlin.Unit
+public fun </*0*/ T> @x kotlin.collections.List<@x T>.foo(/*0*/ l: kotlin.collections.List<@x T>): @x kotlin.collections.List<@x T>
 
 public final class A {
     public constructor A()

@@ -1,8 +1,8 @@
 package
 
-public val x: kotlin.collections.List<@base() kotlin.String>? = null
-public val y: kotlin.collections.List<@base() kotlin.String>? = null
-public fun foo(/*0*/ list: kotlin.collections.List<@typeAnn() kotlin.Int>): kotlin.collections.List<@typeAnn() kotlin.Int>
+public val x: kotlin.collections.List<@base kotlin.String>? = null
+public val y: kotlin.collections.List<@base kotlin.String>? = null
+public fun foo(/*0*/ list: kotlin.collections.List<@typeAnn kotlin.Int>): kotlin.collections.List<@typeAnn kotlin.Int>
 
 public final annotation class base : kotlin.Annotation {
     public constructor base()

@@ -9,6 +9,6 @@ public interface TypeParamOfClassSubstituted {
 
     public interface Super</*0*/ T : kotlin.Any!> {
         public abstract fun dummy(): kotlin.Unit
-        @org.jetbrains.annotations.NotNull() public abstract fun foo(): T
+        @org.jetbrains.annotations.NotNull public abstract fun foo(): T
     }
 }

@@ -6,5 +6,5 @@ package test
 
 public final class SimpleTypeAnnotation {
     /*primary*/ public constructor SimpleTypeAnnotation()
-    public final fun foo(/*0*/ x: @test.A() kotlin.ranges.IntRange): @test.A() kotlin.Int
+    public final fun foo(/*0*/ x: @test.A kotlin.ranges.IntRange): @test.A kotlin.Int
 }

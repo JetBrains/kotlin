@@ -9,6 +9,6 @@ public interface InheritNullabilitySameJavaType {
 
     public interface Super {
         public abstract fun dummy(): kotlin.Unit
-        @org.jetbrains.annotations.NotNull() public abstract fun foo(): kotlin.CharSequence
+        @org.jetbrains.annotations.NotNull public abstract fun foo(): kotlin.CharSequence
     }
 }

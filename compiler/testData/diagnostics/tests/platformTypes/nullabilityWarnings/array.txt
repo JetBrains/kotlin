@@ -10,6 +10,6 @@ public open class J {
 
     // Static members
     public final var staticJ: kotlin.Array<(out) kotlin.Int!>!
-    @org.jetbrains.annotations.Nullable() public final var staticN: kotlin.Array<(out) kotlin.Int!>?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: kotlin.Array<(out) kotlin.Int!>
+    @org.jetbrains.annotations.Nullable public final var staticN: kotlin.Array<(out) kotlin.Int!>?
+    @org.jetbrains.annotations.NotNull public final var staticNN: kotlin.Array<(out) kotlin.Int!>
 }

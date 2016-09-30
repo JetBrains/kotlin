@@ -55,6 +55,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                                     options.setWithDefinedIn(false);
                                     options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
                                     options.setVerbose(true);
+                                    options.setIncludeAnnotationArguments(true);
                                     options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
                                     options.setModifiers(DescriptorRendererModifier.ALL);
                                     return Unit.INSTANCE;

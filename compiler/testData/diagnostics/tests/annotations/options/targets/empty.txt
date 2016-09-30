@@ -1,14 +1,14 @@
 package
 
-@empty() public val z: kotlin.Int
-@empty() public fun foo(/*0*/ @empty() y: @empty() kotlin.Int): kotlin.Int
+@empty public val z: kotlin.Int
+@empty public fun foo(/*0*/ @empty y: @empty kotlin.Int): kotlin.Int
 
-@empty() public final enum class My : kotlin.Enum<My> {
-    @empty() enum entry FIRST
+@empty public final enum class My : kotlin.Enum<My> {
+    @empty enum entry FIRST
 
-    @empty() enum entry SECOND
+    @empty enum entry SECOND
 
-    @empty() private constructor My()
+    @empty private constructor My()
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -24,16 +24,16 @@ package
     public final /*synthesized*/ fun values(): kotlin.Array<My>
 }
 
-@empty() public final class correct {
-    @empty() public constructor correct()
-    public constructor correct(/*0*/ x: kotlin.Int, /*1*/ @empty() w: @empty() kotlin.Int)
-    @empty() public final val x: kotlin.Int
+@empty public final class correct {
+    @empty public constructor correct()
+    public constructor correct(/*0*/ x: kotlin.Int, /*1*/ @empty w: @empty kotlin.Int)
+    @empty public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@empty() public final annotation class derived : kotlin.Annotation {
+@empty public final annotation class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

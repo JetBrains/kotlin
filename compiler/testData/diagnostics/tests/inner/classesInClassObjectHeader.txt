@@ -6,7 +6,7 @@ public final class Test {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @Test.InnerAnnotation() @Test.InnerAnnotation() public companion object Companion : Test.StaticClass, Test.InnerClass {
+    @Test.InnerAnnotation @Test.InnerAnnotation public companion object Companion : Test.StaticClass, Test.InnerClass {
         private constructor Companion()
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int

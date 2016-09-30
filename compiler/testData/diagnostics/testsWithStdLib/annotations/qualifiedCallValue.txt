@@ -5,7 +5,7 @@ package a {
     package a.b {
 
         package a.b.c {
-            @kotlin.Deprecated(message = "aaa") @a.b.c.ann1(p = kotlin.Deprecated(message = "aaa")) @a.b.c.ann1() @a.b.c.ann2(p = a.b.c.ann1()) @a.b.c.A.IAnn() @a.b.c.ann3(p = a.b.c.A.IAnn()) @a.b.c.A.IAnn() @a.b.c.ann3(p = a.b.c.A.IAnn()) @a.b.c.annArray(p = {"a"}) public fun test(): kotlin.Int
+            @kotlin.Deprecated(message = "aaa") @a.b.c.ann1(p = kotlin.Deprecated(message = "aaa")) @a.b.c.ann1 @a.b.c.ann2(p = a.b.c.ann1) @a.b.c.A.IAnn @a.b.c.ann3(p = a.b.c.A.IAnn) @a.b.c.A.IAnn @a.b.c.ann3(p = a.b.c.A.IAnn) @a.b.c.annArray(p = {"a"}) public fun test(): kotlin.Int
 
             public final class A {
                 public constructor A()

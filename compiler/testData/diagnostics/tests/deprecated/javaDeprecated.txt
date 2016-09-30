@@ -10,7 +10,7 @@ package
 
 public final class B : A {
     public constructor B(/*0*/ foo: kotlin.String)
-    @property:kotlin.Deprecated() private final val foo: kotlin.String
+    @property:kotlin.Deprecated private final val foo: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun getFoo(/*0*/ text: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

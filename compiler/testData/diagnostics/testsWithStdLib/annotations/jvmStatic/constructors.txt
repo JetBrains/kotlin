@@ -1,13 +1,13 @@
 package
 
 public final class A {
-    @kotlin.jvm.JvmStatic() public constructor A()
+    @kotlin.jvm.JvmStatic public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final inner class B {
-        @kotlin.jvm.JvmStatic() public constructor B()
+        @kotlin.jvm.JvmStatic public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -15,7 +15,7 @@ public final class A {
 }
 
 public final class C {
-    @kotlin.jvm.JvmStatic() public constructor C()
+    @kotlin.jvm.JvmStatic public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

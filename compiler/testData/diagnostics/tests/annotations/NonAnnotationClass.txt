@@ -1,6 +1,6 @@
 package
 
-@Foo() public final class Bar {
+@Foo public final class Bar {
     public constructor Bar()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -11,6 +11,6 @@ package p {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        @org.jetbrains.annotations.Nullable() public/*package*/ open fun create(): kotlin.String?
+        @org.jetbrains.annotations.Nullable public/*package*/ open fun create(): kotlin.String?
     }
 }

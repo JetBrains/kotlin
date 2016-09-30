@@ -15,7 +15,7 @@ public open class Base {
         protected final fun bar(): kotlin.Unit
         protected final override /*1*/ /*fake_override*/ fun baz(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @kotlin.jvm.JvmStatic() protected final fun gav(): kotlin.Unit
+        @kotlin.jvm.JvmStatic protected final fun gav(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 

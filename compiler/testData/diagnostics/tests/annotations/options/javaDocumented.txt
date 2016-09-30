@@ -6,7 +6,7 @@ public open class DocumentedAnnotations {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @kotlin.annotation.MustBeDocumented() public final annotation class DocAnn : kotlin.Annotation {
+    @kotlin.annotation.MustBeDocumented public final annotation class DocAnn : kotlin.Annotation {
         public constructor DocAnn()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -20,7 +20,7 @@ public open class DocumentedAnnotations {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.MustBeDocumented() @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class RunDocAnn : kotlin.Annotation {
+    @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class RunDocAnn : kotlin.Annotation {
         public constructor RunDocAnn()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -28,21 +28,21 @@ public open class DocumentedAnnotations {
     }
 }
 
-@DocumentedAnnotations.RunDocAnn() public final class His {
+@DocumentedAnnotations.RunDocAnn public final class His {
     public constructor His()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@DocumentedAnnotations.DocAnn() public final class My {
+@DocumentedAnnotations.DocAnn public final class My {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@DocumentedAnnotations.NotDocAnn() public final class Your {
+@DocumentedAnnotations.NotDocAnn public final class Your {
     public constructor Your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,13 +1,13 @@
 package
 
-@kotlin.js.nativeInvoke() public fun kotlin.String.bar(): kotlin.Int
-@kotlin.js.nativeInvoke() public fun kotlin.String.foo(): kotlin.Int
+@kotlin.js.nativeInvoke public fun kotlin.String.bar(): kotlin.Int
+@kotlin.js.nativeInvoke public fun kotlin.String.foo(): kotlin.Int
 
-@kotlin.js.native() public object O {
+@kotlin.js.native public object O {
     private constructor O()
-    @kotlin.js.nativeInvoke() public final fun bar(): kotlin.Unit
+    @kotlin.js.nativeInvoke public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.js.nativeInvoke() public final fun foo(): kotlin.Unit
+    @kotlin.js.nativeInvoke public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

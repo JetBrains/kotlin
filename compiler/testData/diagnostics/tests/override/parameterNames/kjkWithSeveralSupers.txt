@@ -29,21 +29,21 @@ public interface KSuper {
 
 public/*package*/ interface Sub1 : KSuper, JSuper1, JSuper2 {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
+    @java.lang.Override public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public/*package*/ interface Sub2 : JSuper1, KSuper, JSuper2 {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
+    @java.lang.Override public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public/*package*/ interface Sub3 : JSuper1, JSuper2, KSuper {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
+    @java.lang.Override public abstract override /*3*/ fun foo(/*0*/ ksuperName: kotlin.Int): kotlin.Unit
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }

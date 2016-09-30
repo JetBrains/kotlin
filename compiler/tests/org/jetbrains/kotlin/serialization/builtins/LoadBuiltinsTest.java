@@ -73,6 +73,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                                         options.setWithDefinedIn(false);
                                         options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                                         options.setVerbose(true);
+                                        options.setIncludeAnnotationArguments(true);
                                         options.setModifiers(DescriptorRendererModifier.ALL);
                                         return Unit.INSTANCE;
                                     }

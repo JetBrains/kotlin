@@ -4,7 +4,7 @@ public interface NullableToNotNull {
 
     public interface Sub : test.NullableToNotNull.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull() p0: kotlin.String): kotlin.Unit
+        public abstract override /*1*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull p0: kotlin.String): kotlin.Unit
     }
 
     public interface Super {

@@ -1,7 +1,7 @@
 package
 
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes() T> assertEquals1(/*0*/ t1: T, /*1*/ t2: T): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes() T> expect1(/*0*/ expected: T, /*1*/ block: () -> T): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> assertEquals1(/*0*/ t1: T, /*1*/ t2: T): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> expect1(/*0*/ expected: T, /*1*/ block: () -> T): kotlin.Unit
 public fun test(): kotlin.Unit
 public fun test1(/*0*/ a: A, /*1*/ b: B, /*2*/ c: C): kotlin.Unit
 

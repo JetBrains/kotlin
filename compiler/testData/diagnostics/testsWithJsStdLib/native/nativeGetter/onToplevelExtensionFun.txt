@@ -1,9 +1,9 @@
 package
 
-@kotlin.js.nativeGetter() public fun kotlin.Int.baz(/*0*/ a: kotlin.Int = ...): kotlin.String?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get(/*0*/ a: kotlin.Any): kotlin.Int?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get(/*0*/ a: kotlin.String): kotlin.Int?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get2(): kotlin.String?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get2(/*0*/ a: kotlin.Number): kotlin.String?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get3(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Any?): kotlin.String?
-@kotlin.js.nativeGetter() public fun kotlin.Int.get3(/*0*/ a: kotlin.Int): kotlin.String?
+@kotlin.js.nativeGetter public fun kotlin.Int.baz(/*0*/ a: kotlin.Int = ...): kotlin.String?
+@kotlin.js.nativeGetter public fun kotlin.Int.get(/*0*/ a: kotlin.Any): kotlin.Int?
+@kotlin.js.nativeGetter public fun kotlin.Int.get(/*0*/ a: kotlin.String): kotlin.Int?
+@kotlin.js.nativeGetter public fun kotlin.Int.get2(): kotlin.String?
+@kotlin.js.nativeGetter public fun kotlin.Int.get2(/*0*/ a: kotlin.Number): kotlin.String?
+@kotlin.js.nativeGetter public fun kotlin.Int.get3(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Any?): kotlin.String?
+@kotlin.js.nativeGetter public fun kotlin.Int.get3(/*0*/ a: kotlin.Int): kotlin.String?

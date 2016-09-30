@@ -52,6 +52,7 @@ object IdeDescriptorRenderers {
         unitReturnType = false
         modifiers = DescriptorRendererModifier.ALL
         renderUnabbreviatedType = false
+        includeAnnotationArguments = true
     }
 
     @JvmField val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {

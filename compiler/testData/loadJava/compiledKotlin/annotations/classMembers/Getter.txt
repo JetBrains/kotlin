@@ -7,5 +7,5 @@ public final annotation class Anno : kotlin.Annotation {
 public final class Class {
     /*primary*/ public constructor Class()
     public final val property: kotlin.Int
-        @test.Anno() public final fun <get-property>(): kotlin.Int
+        @test.Anno public final fun <get-property>(): kotlin.Int
 }

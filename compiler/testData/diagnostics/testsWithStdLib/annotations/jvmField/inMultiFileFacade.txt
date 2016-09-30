@@ -1,11 +1,11 @@
 package
 
-@kotlin.jvm.JvmField() public val c: kotlin.Int = 4
-@kotlin.jvm.JvmField() public var g: kotlin.Int
+@kotlin.jvm.JvmField public val c: kotlin.Int = 4
+@kotlin.jvm.JvmField public var g: kotlin.Int
 
 public final class C {
     public constructor C()
-    @kotlin.jvm.JvmField() public final var g: kotlin.Int
+    @kotlin.jvm.JvmField public final var g: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

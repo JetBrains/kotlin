@@ -2,8 +2,8 @@ package
 
 package a {
     public fun test(/*0*/ a: a.A): kotlin.Unit
-    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers() public fun a.A.forEach(): kotlin.String
-    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers() public fun a.A.forEach(/*0*/ s: kotlin.String): kotlin.Unit
+    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers public fun a.A.forEach(): kotlin.String
+    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers public fun a.A.forEach(/*0*/ s: kotlin.String): kotlin.Unit
 
     public final class A {
         public constructor A()
@@ -17,6 +17,6 @@ package a {
 }
 
 package b {
-    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers() public fun a.A.forEach(/*0*/ i: kotlin.Int): kotlin.Int
-    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers() public fun a.A.forEach(/*0*/ s: kotlin.String): kotlin.Unit
+    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers public fun a.A.forEach(/*0*/ i: kotlin.Int): kotlin.Int
+    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.HidesMembers public fun a.A.forEach(/*0*/ s: kotlin.String): kotlin.Unit
 }

@@ -24,8 +24,8 @@ public abstract class CharIterator : kotlin.collections.Iterator<kotlin.Char> {
 public interface Collection</*0*/ out E> : kotlin.collections.Iterable<E> {
     public abstract val size: kotlin.Int
         public abstract fun <get-size>(): kotlin.Int
-    public abstract operator fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
 }
@@ -63,13 +63,13 @@ public interface Iterator</*0*/ out T> {
 public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
-    public abstract fun indexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun indexOf(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
-    public abstract fun lastIndexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun lastIndexOf(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Int
     public abstract fun listIterator(): kotlin.collections.ListIterator<E>
     public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<E>
     public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<E>
@@ -101,9 +101,9 @@ public interface Map</*0*/ K, /*1*/ out V> {
     public abstract val values: kotlin.collections.Collection<V>
         public abstract fun <get-values>(): kotlin.collections.Collection<V>
     public abstract fun containsKey(/*0*/ key: K): kotlin.Boolean
-    public abstract fun containsValue(/*0*/ value: @kotlin.UnsafeVariance() V): kotlin.Boolean
+    public abstract fun containsValue(/*0*/ value: @kotlin.UnsafeVariance V): kotlin.Boolean
     public abstract operator fun get(/*0*/ key: K): V?
-    @kotlin.internal.PlatformDependent() public open fun getOrDefault(/*0*/ key: K, /*1*/ defaultValue: @kotlin.UnsafeVariance() V): V
+    @kotlin.internal.PlatformDependent public open fun getOrDefault(/*0*/ key: K, /*1*/ defaultValue: @kotlin.UnsafeVariance V): V
     public abstract fun isEmpty(): kotlin.Boolean
 
     public interface Entry</*0*/ out K, /*1*/ out V> {
@@ -189,12 +189,12 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.collections.Map<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K): V?
-    @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K, /*1*/ defaultValue: V): V
+    @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K, /*1*/ defaultValue: V): V
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
     public abstract fun putAll(/*0*/ from: kotlin.collections.Map<out K, V>): kotlin.Unit
     public abstract fun remove(/*0*/ key: K): V?
-    @kotlin.internal.PlatformDependent() public open fun remove(/*0*/ key: K, /*1*/ value: V): kotlin.Boolean
+    @kotlin.internal.PlatformDependent public open fun remove(/*0*/ key: K, /*1*/ value: V): kotlin.Boolean
 
     public interface MutableEntry</*0*/ K, /*1*/ V> : kotlin.collections.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ val key: K
@@ -223,8 +223,8 @@ public interface MutableSet</*0*/ E> : kotlin.collections.Set<E>, kotlin.collect
 public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
 }

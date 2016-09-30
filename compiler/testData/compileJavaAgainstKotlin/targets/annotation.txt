@@ -1,6 +1,6 @@
 package test
 
-@test.meta() public/*package*/ final annotation class MyAnn : kotlin.Annotation {
+@test.meta public/*package*/ final annotation class MyAnn : kotlin.Annotation {
     public/*package*/ constructor MyAnn()
 }
 

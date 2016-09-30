@@ -66,6 +66,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             includePropertyConstant = false
             verbose = true
+            includeAnnotationArguments = true
             renderDefaultAnnotationArguments = true
             modifiers = DescriptorRendererModifier.ALL
         }

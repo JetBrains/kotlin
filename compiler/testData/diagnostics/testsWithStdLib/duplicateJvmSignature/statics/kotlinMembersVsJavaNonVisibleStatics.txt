@@ -8,9 +8,9 @@ public open class K : foo.A {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() public final fun bar(/*0*/ d: kotlin.Double): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun bar(/*0*/ d: kotlin.Double): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @kotlin.jvm.JvmStatic() public final fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

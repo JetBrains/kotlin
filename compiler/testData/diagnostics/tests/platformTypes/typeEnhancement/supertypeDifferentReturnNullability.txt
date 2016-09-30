@@ -5,14 +5,14 @@ public /*synthesized*/ fun B(/*0*/ function: () -> kotlin.String): B
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jetbrains.annotations.Nullable() public abstract fun foo(): kotlin.String?
+    @org.jetbrains.annotations.Nullable public abstract fun foo(): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jetbrains.annotations.NotNull() public abstract fun foo(): kotlin.String
+    @org.jetbrains.annotations.NotNull public abstract fun foo(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -51,7 +51,7 @@ public final class C4 : I {
 
 public interface I : A, B {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jetbrains.annotations.NotNull() public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String
+    @org.jetbrains.annotations.NotNull public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

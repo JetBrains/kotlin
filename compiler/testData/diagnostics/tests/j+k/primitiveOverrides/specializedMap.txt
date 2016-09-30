@@ -32,19 +32,19 @@ public open class SpecializedMap : AbstractSpecializedMap {
     public open override /*1*/ val keys: kotlin.collections.MutableSet<kotlin.Int!>
     public open override /*1*/ val size: kotlin.Int
     public open override /*1*/ val values: kotlin.collections.MutableCollection<kotlin.Double!>
-    @java.lang.Override() public open override /*1*/ fun clear(): kotlin.Unit
+    @java.lang.Override public open override /*1*/ fun clear(): kotlin.Unit
     public open override /*1*/ fun containsKey(/*0*/ k: kotlin.Int): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ x: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ fun containsValue(/*0*/ v: kotlin.Double): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ x: kotlin.Double!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun get(/*0*/ k: kotlin.Int): kotlin.Double
-    @java.lang.Override() public open override /*1*/ fun get(/*0*/ key: kotlin.Int!): kotlin.Double?
+    @java.lang.Override public open override /*1*/ fun get(/*0*/ key: kotlin.Int!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @java.lang.Override() public open override /*1*/ fun isEmpty(): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun put(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Double): kotlin.Double
-    @java.lang.Override() public open override /*1*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
-    @java.lang.Override() public open override /*1*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
+    @java.lang.Override public open override /*1*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
+    @java.lang.Override public open override /*1*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
     public open override /*1*/ fun remove(/*0*/ k: kotlin.Int): kotlin.Double
     public open override /*1*/ fun remove(/*0*/ ok: kotlin.Int!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

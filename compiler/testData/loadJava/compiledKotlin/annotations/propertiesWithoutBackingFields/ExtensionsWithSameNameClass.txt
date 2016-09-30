@@ -2,11 +2,11 @@ package test
 
 public final class Class {
     /*primary*/ public constructor Class()
-    @test.DoubleAnno() public final val kotlin.Double.extension: kotlin.Int
+    @test.DoubleAnno public final val kotlin.Double.extension: kotlin.Int
         public final fun kotlin.Double.<get-extension>(): kotlin.Int
-    @test.IntAnno() public final val kotlin.Int.extension: kotlin.Int
+    @test.IntAnno public final val kotlin.Int.extension: kotlin.Int
         public final fun kotlin.Int.<get-extension>(): kotlin.Int
-    @test.StringAnno() public final val kotlin.String.extension: kotlin.String
+    @test.StringAnno public final val kotlin.String.extension: kotlin.String
         public final fun kotlin.String.<get-extension>(): kotlin.String
 }
 

@@ -1,15 +1,15 @@
 package
 
-@kotlin.js.native() public val baz: kotlin.Int
-@kotlin.js.native() public val boo: kotlin.Int
-@kotlin.js.native() public val kotlin.Int.baz: kotlin.Int
-@kotlin.js.native() public fun bar(): kotlin.Unit
-@kotlin.js.native() public fun foo(): kotlin.Unit
+@kotlin.js.native public val baz: kotlin.Int
+@kotlin.js.native public val boo: kotlin.Int
+@kotlin.js.native public val kotlin.Int.baz: kotlin.Int
+@kotlin.js.native public fun bar(): kotlin.Unit
+@kotlin.js.native public fun foo(): kotlin.Unit
 public fun test(): kotlin.Unit
-@kotlin.js.native() public fun kotlin.String.bar(): kotlin.Int
-@kotlin.js.native() public fun kotlin.String.foo(): kotlin.Int
+@kotlin.js.native public fun kotlin.String.bar(): kotlin.Int
+@kotlin.js.native public fun kotlin.String.foo(): kotlin.Int
 
-@kotlin.js.native() public final class C {
+@kotlin.js.native public final class C {
     public constructor C()
     public final val baz: kotlin.Int
     public final val boo: kotlin.Int
@@ -31,7 +31,7 @@ public fun test(): kotlin.Unit
     }
 }
 
-@kotlin.js.native() public object O {
+@kotlin.js.native public object O {
     private constructor O()
     public final val baz: kotlin.Int
     public final val boo: kotlin.Int
@@ -42,7 +42,7 @@ public fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.js.native() public interface T {
+@kotlin.js.native public interface T {
     public abstract val baz: kotlin.Int
     public open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A()
-    @kotlin.jvm.JvmStatic() public final fun a4(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final fun a4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun test(): kotlin.Unit
@@ -10,7 +10,7 @@ public final class A {
 
     public object A {
         private constructor A()
-        @kotlin.jvm.JvmStatic() public final fun a2(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun a2(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -18,7 +18,7 @@ public final class A {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() public final fun a1(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun a1(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -26,7 +26,7 @@ public final class A {
 }
 
 public interface B {
-    @kotlin.jvm.JvmStatic() public open fun a4(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public open fun a4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open fun test(): kotlin.Unit
@@ -34,7 +34,7 @@ public interface B {
 
     public object A {
         private constructor A()
-        @kotlin.jvm.JvmStatic() public final fun a2(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun a2(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -42,7 +42,7 @@ public interface B {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() public final fun a1(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final fun a1(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

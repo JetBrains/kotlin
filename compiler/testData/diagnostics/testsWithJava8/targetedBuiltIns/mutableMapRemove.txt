@@ -20,7 +20,7 @@ public final class KotlinMap1</*0*/ K, /*1*/ V> : java.util.AbstractMap<K, V> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K!, in V!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
-    @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
+    @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K!, /*1*/ p1: V!, /*2*/ p2: java.util.function.BiFunction<in V!, in V!, out V!>!): V!
@@ -53,7 +53,7 @@ public final class KotlinMap2 : java.util.AbstractMap<kotlin.String, kotlin.Int>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
-    @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+    @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!

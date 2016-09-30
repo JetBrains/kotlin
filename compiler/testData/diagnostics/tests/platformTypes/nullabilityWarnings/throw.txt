@@ -12,6 +12,6 @@ public open class J {
 
     // Static members
     public final var staticJ: java.lang.Exception!
-    @org.jetbrains.annotations.Nullable() public final var staticN: java.lang.Exception?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: java.lang.Exception
+    @org.jetbrains.annotations.Nullable public final var staticN: java.lang.Exception?
+    @org.jetbrains.annotations.NotNull public final var staticNN: java.lang.Exception
 }

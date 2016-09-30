@@ -97,6 +97,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
             ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
                     + ExcludedTypeAnnotations.internalAnnotationsForResolve)
 
+    override var includeAnnotationArguments: Boolean by property(false)
+
     override var alwaysRenderModifiers by property(false)
 
     override var renderConstructorKeyword by property(true)

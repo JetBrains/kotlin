@@ -107,6 +107,12 @@ public class DescriptorRendererTestGenerated extends AbstractDescriptorRendererT
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAnnotations.kt")
+    public void testTypeAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderer/TypeAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnitType.kt")
     public void testUnitType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderer/UnitType.kt");

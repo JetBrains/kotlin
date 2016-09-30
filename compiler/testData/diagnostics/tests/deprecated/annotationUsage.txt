@@ -1,6 +1,6 @@
 package
 
-@obsolete() public final class Obsolete {
+@obsolete public final class Obsolete {
     public constructor Obsolete()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

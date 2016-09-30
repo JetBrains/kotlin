@@ -18,6 +18,6 @@ public open class J {
 
     // Static members
     public final var staticJ: J.Multi!
-    @org.jetbrains.annotations.Nullable() public final var staticN: J.Multi?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J.Multi
+    @org.jetbrains.annotations.Nullable public final var staticN: J.Multi?
+    @org.jetbrains.annotations.NotNull public final var staticNN: J.Multi
 }

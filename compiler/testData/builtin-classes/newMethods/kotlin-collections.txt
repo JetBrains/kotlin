@@ -24,11 +24,11 @@ public abstract class CharIterator : kotlin.collections.Iterator<kotlin.Char> {
 public interface Collection</*0*/ out E> : kotlin.collections.Iterable<E> {
     public abstract val size: kotlin.Int
         public abstract fun <get-size>(): kotlin.Int
-    public abstract operator fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract fun nonExistingMethod(/*0*/ p0: @kotlin.UnsafeVariance() E!): kotlin.String!
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract fun nonExistingMethod(/*0*/ p0: @kotlin.UnsafeVariance E!): kotlin.String!
 }
 
 public abstract class DoubleIterator : kotlin.collections.Iterator<kotlin.Double> {
@@ -64,13 +64,13 @@ public interface Iterator</*0*/ out T> {
 public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
-    public abstract fun indexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun indexOf(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
-    public abstract fun lastIndexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun lastIndexOf(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Int
     public abstract fun listIterator(): kotlin.collections.ListIterator<E>
     public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<E>
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract override /*1*/ /*fake_override*/ fun nonExistingMethod(/*0*/ p0: E!): kotlin.String!
@@ -103,7 +103,7 @@ public interface Map</*0*/ K, /*1*/ out V> {
     public abstract val values: kotlin.collections.Collection<V>
         public abstract fun <get-values>(): kotlin.collections.Collection<V>
     public abstract fun containsKey(/*0*/ key: K): kotlin.Boolean
-    public abstract fun containsValue(/*0*/ value: @kotlin.UnsafeVariance() V): kotlin.Boolean
+    public abstract fun containsValue(/*0*/ value: @kotlin.UnsafeVariance V): kotlin.Boolean
     public abstract operator fun get(/*0*/ key: K): V?
     public abstract fun isEmpty(): kotlin.Boolean
 
@@ -225,8 +225,8 @@ public interface MutableSet</*0*/ E> : kotlin.collections.Set<E>, kotlin.collect
 public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<@kotlin.UnsafeVariance E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract override /*1*/ /*fake_override*/ fun nonExistingMethod(/*0*/ p0: E!): kotlin.String!

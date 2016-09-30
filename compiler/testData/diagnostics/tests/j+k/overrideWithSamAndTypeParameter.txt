@@ -14,7 +14,7 @@ public interface A</*0*/ K : kotlin.Any!> {
 public open class B</*0*/ E : kotlin.Any!> : A<E!> {
     public constructor B</*0*/ E : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun foo(/*0*/ key: E!, /*1*/ f: MyFunc!): E!
+    @java.lang.Override public open override /*1*/ fun foo(/*0*/ key: E!, /*1*/ f: MyFunc!): E!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

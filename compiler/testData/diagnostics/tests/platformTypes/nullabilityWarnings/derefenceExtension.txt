@@ -12,6 +12,6 @@ public open class J {
 
     // Static members
     public final var staticJ: J!
-    @org.jetbrains.annotations.Nullable() public final var staticN: J?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J
+    @org.jetbrains.annotations.Nullable public final var staticN: J?
+    @org.jetbrains.annotations.NotNull public final var staticNN: J
 }

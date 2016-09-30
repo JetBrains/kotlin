@@ -20,6 +20,6 @@ public final class A {
     }
 }
 
-@test.A.Companion.Anno1() @test.A.Companion.B.Anno2() public final class C {
+@test.A.Companion.Anno1 @test.A.Companion.B.Anno2 public final class C {
     /*primary*/ public constructor C()
 }

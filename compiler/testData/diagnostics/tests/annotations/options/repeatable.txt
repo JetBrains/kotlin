@@ -1,15 +1,15 @@
 package
 
-@repann() @repann() public fun foo(/*0*/ @repann() @repann() x: kotlin.Int): kotlin.Int
+@repann @repann public fun foo(/*0*/ @repann @repann x: kotlin.Int): kotlin.Int
 
-@binrepann() @binrepann() public final class BinaryAnnotated {
+@binrepann @binrepann public final class BinaryAnnotated {
     public constructor BinaryAnnotated()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@repann() @repann() public final class DoubleAnnotated {
+@repann @repann public final class DoubleAnnotated {
     public constructor DoubleAnnotated()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -30,21 +30,21 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Repeatable() public final annotation class binrepann : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Repeatable public final annotation class binrepann : kotlin.Annotation {
     public constructor binrepann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Repeatable() public final annotation class repann : kotlin.Annotation {
+@kotlin.annotation.Repeatable public final annotation class repann : kotlin.Annotation {
     public constructor repann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class repann1 : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class repann1 : kotlin.Annotation {
     public constructor repann1(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -52,7 +52,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class repann2 : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class repann2 : kotlin.Annotation {
     public constructor repann2(/*0*/ f: kotlin.Boolean)
     public final val f: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -60,7 +60,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Repeatable() public final annotation class repexpr : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Repeatable public final annotation class repexpr : kotlin.Annotation {
     public constructor repexpr()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

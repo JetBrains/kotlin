@@ -1,6 +1,6 @@
 package
 
-@base() @special() public fun foo(/*0*/ i: kotlin.Int): kotlin.Int
+@base @special public fun foo(/*0*/ i: kotlin.Int): kotlin.Int
 public fun transform(/*0*/ i: kotlin.Int, /*1*/ tr: (kotlin.Int) -> kotlin.Int): kotlin.Int
 
 public final annotation class base : kotlin.Annotation {

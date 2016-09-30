@@ -7,7 +7,7 @@ public final annotation class Anno : kotlin.Annotation {
 public final class Class {
     /*primary*/ public constructor Class()
 
-    @test.Anno() public companion object Companion {
+    @test.Anno public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 }

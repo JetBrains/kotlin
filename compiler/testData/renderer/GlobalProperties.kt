@@ -23,7 +23,7 @@ get() {}
 //private var private: kotlin.Int defined in rendererTest
 //public val kotlin.Int.ext: kotlin.Int defined in rendererTest
 //public fun kotlin.Int.<get-ext>(): kotlin.Int defined in rendererTest
-//@kotlin.Deprecated public val deprecatedVal: kotlin.Int defined in rendererTest
+//@kotlin.Deprecated(message = "") public val deprecatedVal: kotlin.Int defined in rendererTest
 //public val <T : kotlin.CharSequence> T.extWithTwoUpperBounds: kotlin.Int where T : kotlin.Number defined in rendererTest
 //<T : kotlin.CharSequence & kotlin.Number> defined in rendererTest.extWithTwoUpperBounds
 //public fun T.<get-extWithTwoUpperBounds>(): kotlin.Int defined in rendererTest

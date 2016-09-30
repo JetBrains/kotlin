@@ -17,7 +17,7 @@ public open class A {
 public open class B : A {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun f(): kotlin.Unit
+    @java.lang.Override public open override /*1*/ fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 

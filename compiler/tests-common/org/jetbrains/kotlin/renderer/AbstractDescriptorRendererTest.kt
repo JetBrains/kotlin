@@ -143,6 +143,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
         val renderer = DescriptorRenderer.withOptions {
             classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
+            includeAnnotationArguments = true
         }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 

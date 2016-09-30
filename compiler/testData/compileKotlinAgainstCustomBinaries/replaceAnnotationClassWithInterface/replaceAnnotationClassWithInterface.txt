@@ -1,11 +1,11 @@
 package test
 
-public fun bar(): @test.Ann() kotlin.String
+public fun bar(): @test.Ann kotlin.String
 
 public interface Ann {
 }
 
-@test.Ann() public final class Test {
+@test.Ann public final class Test {
     public constructor Test()
-    @test.Ann() public final fun foo(/*0*/ @test.Ann() s: @test.Ann() kotlin.String): @test.Ann() kotlin.String
+    @test.Ann public final fun foo(/*0*/ @test.Ann s: @test.Ann kotlin.String): @test.Ann kotlin.String
 }

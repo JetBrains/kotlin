@@ -3,8 +3,8 @@ package
 @A(value = {"1", "2", "3"}) public fun test1(): kotlin.Unit
 @A(value = {"4"}) public fun test2(): kotlin.Unit
 @A(value = {{"5", "6"}, "7"}) public fun test3(): kotlin.Unit
-@A() public fun test4(): kotlin.Unit
-@A() public fun test5(): kotlin.Unit
+@A public fun test4(): kotlin.Unit
+@A public fun test5(): kotlin.Unit
 
 public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)

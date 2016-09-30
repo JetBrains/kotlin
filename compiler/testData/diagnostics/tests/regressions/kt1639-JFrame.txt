@@ -293,10 +293,10 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Set<(raw) kotlin.Any?>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): java.awt.FocusTraversalPolicy!
         public open override /*1*/ /*fake_override*/ fun getFocusableWindowState(): kotlin.Boolean
-        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getFont(): java.awt.Font!
+        @java.beans.Transient /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getFont(): java.awt.Font!
         public open override /*1*/ /*fake_override*/ fun getFontMetrics(/*0*/ p0: java.awt.Font!): java.awt.FontMetrics!
         invisible_fake final override /*1*/ /*fake_override*/ fun getFont_NoClientCode(): java.awt.Font!
-        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getForeground(): java.awt.Color!
+        @java.beans.Transient /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun getForeground(): java.awt.Color!
         public open override /*1*/ /*fake_override*/ fun getGlassPane(): java.awt.Component!
         public open override /*1*/ /*fake_override*/ fun getGraphics(): java.awt.Graphics!
         public open override /*1*/ /*fake_override*/ fun getGraphicsConfiguration(): java.awt.GraphicsConfiguration!
@@ -450,7 +450,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun isUndecorated(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun isValid(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun isValidateRoot(): kotlin.Boolean
-        @java.beans.Transient() /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun isVisible(): kotlin.Boolean
+        @java.beans.Transient /* annotation class not found */ public open override /*1*/ /*fake_override*/ fun isVisible(): kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ fun isVisible_NoClientCode(): kotlin.Boolean
         @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun keyDown(/*0*/ p0: java.awt.Event!, /*1*/ p1: kotlin.Int): kotlin.Boolean
         @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun keyUp(/*0*/ p0: java.awt.Event!, /*1*/ p1: kotlin.Int): kotlin.Boolean

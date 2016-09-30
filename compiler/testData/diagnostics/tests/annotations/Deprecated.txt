@@ -1,4 +1,4 @@
 package
 
-@java.lang.Deprecated() public fun foo(): kotlin.Unit
-@java.lang.Deprecated() public fun foo1(): kotlin.Unit
+@java.lang.Deprecated public fun foo(): kotlin.Unit
+@java.lang.Deprecated public fun foo1(): kotlin.Unit

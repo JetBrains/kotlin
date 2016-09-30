@@ -6,7 +6,7 @@ public val i3: kotlin.Int
 public val iAnn: Ann
 public fun foo(): kotlin.Int
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class Ann : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ vararg i: kotlin.Int /*kotlin.IntArray*/)
     public final val i: kotlin.IntArray
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -14,7 +14,7 @@ public fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class AnnAnn : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class AnnAnn : kotlin.Annotation {
     public constructor AnnAnn(/*0*/ vararg i: Ann /*kotlin.Array<out Ann>*/)
     public final val i: kotlin.Array<out Ann>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

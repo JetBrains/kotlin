@@ -1,10 +1,10 @@
 package
 
-@my() public fun foo(): kotlin.Unit
-@my1() public fun foo2(): kotlin.Unit
+@my public fun foo(): kotlin.Unit
+@my1 public fun foo2(): kotlin.Unit
 @my1(i = 2) public fun foo3(): kotlin.Unit
-@my2() public fun foo4(): kotlin.Unit
-@my2() public fun foo41(): kotlin.Unit
+@my2 public fun foo4(): kotlin.Unit
+@my2 public fun foo41(): kotlin.Unit
 @my2(i = 2) public fun foo42(): kotlin.Unit
 
 public final annotation class my : kotlin.Annotation {

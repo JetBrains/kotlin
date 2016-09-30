@@ -2,12 +2,12 @@ package test
 
 public final class A {
     /*primary*/ public constructor A()
-    public final val @receiver:test.Ann() kotlin.String.myLength2: kotlin.Int
-        public final fun @receiver:test.Ann() kotlin.String.<get-myLength2>(): kotlin.Int
-    public final var @receiver:test.Ann() kotlin.String.myLength3: kotlin.Int
-        public final fun @receiver:test.Ann() kotlin.String.<get-myLength3>(): kotlin.Int
-        public final fun @receiver:test.Ann() kotlin.String.<set-myLength3>(/*0*/ v: kotlin.Int): kotlin.Unit
-    public final fun @receiver:test.Ann() kotlin.String.myLength(/*0*/ @test.Ann() q: kotlin.String): kotlin.Int
+    public final val @receiver:test.Ann kotlin.String.myLength2: kotlin.Int
+        public final fun @receiver:test.Ann kotlin.String.<get-myLength2>(): kotlin.Int
+    public final var @receiver:test.Ann kotlin.String.myLength3: kotlin.Int
+        public final fun @receiver:test.Ann kotlin.String.<get-myLength3>(): kotlin.Int
+        public final fun @receiver:test.Ann kotlin.String.<set-myLength3>(/*0*/ v: kotlin.Int): kotlin.Unit
+    public final fun @receiver:test.Ann kotlin.String.myLength(/*0*/ @test.Ann q: kotlin.String): kotlin.Int
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) public final annotation class Ann : kotlin.Annotation {

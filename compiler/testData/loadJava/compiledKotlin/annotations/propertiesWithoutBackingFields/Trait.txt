@@ -5,6 +5,6 @@ public final annotation class Anno : kotlin.Annotation {
 }
 
 public interface Trait {
-    @test.Anno() public abstract val property: kotlin.Int
+    @test.Anno public abstract val property: kotlin.Int
         public abstract fun <get-property>(): kotlin.Int
 }

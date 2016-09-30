@@ -72,18 +72,18 @@ package test {
         }
     }
 
-    @test.AnnotationTargets.base() @test.AnnotationTargets.meta() @test.AnnotationTargets.type() @test.AnnotationTargets.method() @test.AnnotationTargets.multiple() public final class KClass {
-        @test.AnnotationTargets.base() @test.AnnotationTargets.method() @test.AnnotationTargets.konstructor() public constructor KClass()
-        public constructor KClass(/*0*/ @test.AnnotationTargets.base() @test.AnnotationTargets.parameter() y: @test.AnnotationTargets.base() @test.AnnotationTargets.type() kotlin.Int)
-        @test.AnnotationTargets.base() @test.AnnotationTargets.multiple() @test.AnnotationTargets.fieldann() @test.AnnotationTargets.local() public final val x: kotlin.Int = 0
-        @test.AnnotationTargets.fieldann() public final val y: @test.AnnotationTargets.base() @test.AnnotationTargets.type() kotlin.Int
+    @test.AnnotationTargets.base @test.AnnotationTargets.meta @test.AnnotationTargets.type @test.AnnotationTargets.method @test.AnnotationTargets.multiple public final class KClass {
+        @test.AnnotationTargets.base @test.AnnotationTargets.method @test.AnnotationTargets.konstructor public constructor KClass()
+        public constructor KClass(/*0*/ @test.AnnotationTargets.base @test.AnnotationTargets.parameter y: @test.AnnotationTargets.base @test.AnnotationTargets.type kotlin.Int)
+        @test.AnnotationTargets.base @test.AnnotationTargets.multiple @test.AnnotationTargets.fieldann @test.AnnotationTargets.local public final val x: kotlin.Int = 0
+        @test.AnnotationTargets.fieldann public final val y: @test.AnnotationTargets.base @test.AnnotationTargets.type kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @test.AnnotationTargets.base() @test.AnnotationTargets.method() @test.AnnotationTargets.multiple() @test.AnnotationTargets.konstructor() public final fun foo(/*0*/ @test.AnnotationTargets.parameter() @test.AnnotationTargets.type() i: @test.AnnotationTargets.base() @test.AnnotationTargets.multiple() kotlin.Int): @test.AnnotationTargets.fieldann() @test.AnnotationTargets.parameter() kotlin.Int
+        @test.AnnotationTargets.base @test.AnnotationTargets.method @test.AnnotationTargets.multiple @test.AnnotationTargets.konstructor public final fun foo(/*0*/ @test.AnnotationTargets.parameter @test.AnnotationTargets.type i: @test.AnnotationTargets.base @test.AnnotationTargets.multiple kotlin.Int): @test.AnnotationTargets.fieldann @test.AnnotationTargets.parameter kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @test.AnnotationTargets.base() @test.AnnotationTargets.meta() @test.AnnotationTargets.type() @test.AnnotationTargets.konstructor() public final annotation class KMeta : kotlin.Annotation {
+    @test.AnnotationTargets.base @test.AnnotationTargets.meta @test.AnnotationTargets.type @test.AnnotationTargets.konstructor public final annotation class KMeta : kotlin.Annotation {
         public constructor KMeta()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

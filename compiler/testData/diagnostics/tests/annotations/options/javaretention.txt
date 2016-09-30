@@ -35,28 +35,28 @@ public open class AnnotationRetentions {
     }
 }
 
-@AnnotationRetentions.BaseAnnotation() public final class BaseClass {
+@AnnotationRetentions.BaseAnnotation public final class BaseClass {
     public constructor BaseClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnotationRetentions.BinaryAnnotation() public final class BinaryClass {
+@AnnotationRetentions.BinaryAnnotation public final class BinaryClass {
     public constructor BinaryClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnotationRetentions.RuntimeAnnotation() public final class RuntimeClass {
+@AnnotationRetentions.RuntimeAnnotation public final class RuntimeClass {
     public constructor RuntimeClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnotationRetentions.SourceAnnotation() public final class SourceClass {
+@AnnotationRetentions.SourceAnnotation public final class SourceClass {
     public constructor SourceClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

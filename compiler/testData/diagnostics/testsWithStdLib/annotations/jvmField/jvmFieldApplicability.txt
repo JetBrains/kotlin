@@ -1,27 +1,27 @@
 package
 
-@kotlin.jvm.JvmField() public const val Const: kotlin.Int = 4
-@kotlin.jvm.JvmField() public var i: kotlin.Int
-@kotlin.jvm.JvmField() private val private: kotlin.Int = 3
-@kotlin.jvm.JvmField() public fun foo(): kotlin.Unit
+@kotlin.jvm.JvmField public const val Const: kotlin.Int = 4
+@kotlin.jvm.JvmField public var i: kotlin.Int
+@kotlin.jvm.JvmField private val private: kotlin.Int = 3
+@kotlin.jvm.JvmField public fun foo(): kotlin.Unit
 
-@kotlin.jvm.JvmField() public abstract class C : I {
-    @kotlin.jvm.JvmField() public constructor C(/*0*/ s: kotlin.String)
-    @kotlin.jvm.JvmField() public final val a: kotlin.String
-    @kotlin.jvm.JvmField() public final override /*1*/ val ai: kotlin.Int = 3
-    @kotlin.jvm.JvmField() public open val b: kotlin.Int = 3
-    @kotlin.jvm.JvmField() public open override /*1*/ /*fake_override*/ val bi: kotlin.Int
-    @kotlin.jvm.JvmField() public abstract val c: kotlin.Int
-    @kotlin.jvm.JvmField() public final val customGetter: kotlin.String = ""
-    @kotlin.jvm.JvmField() public final var customSetter: kotlin.String
-    @kotlin.jvm.JvmField() public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
-    @kotlin.jvm.JvmField() public final var explicitDefaultAnnotatedSetter: kotlin.String
-    @kotlin.jvm.JvmField() public final val explicitDefaultGetter: kotlin.String = ""
-    @kotlin.jvm.JvmField() public final var explicitDefaultSetter: kotlin.String
-    @kotlin.jvm.JvmField() public final val noBackingField: kotlin.String
-    @kotlin.jvm.JvmField() private final val private: kotlin.Int = 3
+@kotlin.jvm.JvmField public abstract class C : I {
+    @kotlin.jvm.JvmField public constructor C(/*0*/ s: kotlin.String)
+    @kotlin.jvm.JvmField public final val a: kotlin.String
+    @kotlin.jvm.JvmField public final override /*1*/ val ai: kotlin.Int = 3
+    @kotlin.jvm.JvmField public open val b: kotlin.Int = 3
+    @kotlin.jvm.JvmField public open override /*1*/ /*fake_override*/ val bi: kotlin.Int
+    @kotlin.jvm.JvmField public abstract val c: kotlin.Int
+    @kotlin.jvm.JvmField public final val customGetter: kotlin.String = ""
+    @kotlin.jvm.JvmField public final var customSetter: kotlin.String
+    @kotlin.jvm.JvmField public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
+    @kotlin.jvm.JvmField public final var explicitDefaultAnnotatedSetter: kotlin.String
+    @kotlin.jvm.JvmField public final val explicitDefaultGetter: kotlin.String = ""
+    @kotlin.jvm.JvmField public final var explicitDefaultSetter: kotlin.String
+    @kotlin.jvm.JvmField public final val noBackingField: kotlin.String
+    @kotlin.jvm.JvmField private final val private: kotlin.Int = 3
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmField() private final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmField private final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -35,8 +35,8 @@ public final annotation class DemoAnnotation : kotlin.Annotation {
 
 public final class G {
     public constructor G()
-    @kotlin.jvm.JvmField() public final lateinit var lateInit: kotlin.String
-    @delegate:kotlin.jvm.JvmField() public final val s: kotlin.String
+    @kotlin.jvm.JvmField public final lateinit var lateInit: kotlin.String
+    @delegate:kotlin.jvm.JvmField public final val s: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -50,7 +50,7 @@ public final class H {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField() public final var c: kotlin.Int
+        @kotlin.jvm.JvmField public final var c: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -58,8 +58,8 @@ public final class H {
 }
 
 public interface I {
-    @kotlin.jvm.JvmField() public abstract val ai: kotlin.Int
-    @kotlin.jvm.JvmField() public open val bi: kotlin.Int
+    @kotlin.jvm.JvmField public abstract val ai: kotlin.Int
+    @kotlin.jvm.JvmField public open val bi: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -74,7 +74,7 @@ public interface K {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField() public final var c: kotlin.Int
+        @kotlin.jvm.JvmField public final var c: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -83,8 +83,8 @@ public interface K {
 
 public final class KK : K {
     public constructor KK()
-    @kotlin.jvm.JvmField() public open override /*1*/ val i: kotlin.Int = 0
-    @kotlin.jvm.JvmField() public final override /*1*/ val j: kotlin.Int = 0
+    @kotlin.jvm.JvmField public open override /*1*/ val i: kotlin.Int = 0
+    @kotlin.jvm.JvmField public final override /*1*/ val j: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -92,8 +92,8 @@ public final class KK : K {
 
 public open class KKK : K {
     public constructor KKK()
-    @kotlin.jvm.JvmField() public open override /*1*/ val i: kotlin.Int = 0
-    @kotlin.jvm.JvmField() public final override /*1*/ val j: kotlin.Int = 0
+    @kotlin.jvm.JvmField public open override /*1*/ val i: kotlin.Int = 0
+    @kotlin.jvm.JvmField public final override /*1*/ val j: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -101,7 +101,7 @@ public open class KKK : K {
 
 public object O {
     private constructor O()
-    @kotlin.jvm.JvmField() public final val c: kotlin.Int = 3
+    @kotlin.jvm.JvmField public final val c: kotlin.Int = 3
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

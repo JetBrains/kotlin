@@ -9,7 +9,7 @@ public final annotation class B : kotlin.Annotation {
 }
 
 public final class Class {
-    /*primary*/ public constructor Class(/*0*/ @test.A() x: kotlin.Int, /*1*/ @test.B() y: kotlin.String)
+    /*primary*/ public constructor Class(/*0*/ @test.A x: kotlin.Int, /*1*/ @test.B y: kotlin.String)
     public final val x: kotlin.Int
         public final fun <get-x>(): kotlin.Int
 }

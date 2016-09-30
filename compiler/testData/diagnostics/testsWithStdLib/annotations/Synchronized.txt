@@ -1,22 +1,22 @@
 package
 
-@kotlin.jvm.Synchronized() public fun gav(): kotlin.Int
+@kotlin.jvm.Synchronized public fun gav(): kotlin.Int
 
 public interface My {
-    @kotlin.jvm.Synchronized() public open fun bar(): kotlin.Int
-    @kotlin.jvm.Synchronized() public open fun baz(): kotlin.String
+    @kotlin.jvm.Synchronized public open fun bar(): kotlin.Int
+    @kotlin.jvm.Synchronized public open fun baz(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.Synchronized() public abstract fun foo(): kotlin.Unit
+    @kotlin.jvm.Synchronized public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public abstract class Your {
     public constructor Your()
-    @kotlin.jvm.Synchronized() public final fun bar(): kotlin.Int
-    @kotlin.jvm.Synchronized() public open fun baz(): kotlin.String
+    @kotlin.jvm.Synchronized public final fun bar(): kotlin.Int
+    @kotlin.jvm.Synchronized public open fun baz(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.Synchronized() public abstract fun foo(): kotlin.Unit
+    @kotlin.jvm.Synchronized public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -20,6 +20,6 @@ public open class J {
 
     // Static members
     public final var staticJ: J.DP!
-    @org.jetbrains.annotations.Nullable() public final var staticN: J.DP?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J.DP
+    @org.jetbrains.annotations.Nullable public final var staticN: J.DP?
+    @org.jetbrains.annotations.NotNull public final var staticNN: J.DP
 }

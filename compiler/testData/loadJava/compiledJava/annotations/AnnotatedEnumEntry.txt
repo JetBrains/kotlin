@@ -3,7 +3,7 @@ package test
 public final enum class AnnotatedEnumEntry : kotlin.Enum<test.AnnotatedEnumEntry!> {
     @test.AnnotatedEnumEntry.Anno(value = "a") enum entry E1
 
-    @test.AnnotatedEnumEntry.Anno(value = "b") @test.AnnotatedEnumEntry.Anno2() enum entry E2
+    @test.AnnotatedEnumEntry.Anno(value = "b") @test.AnnotatedEnumEntry.Anno2 enum entry E2
 
     enum entry E3
 

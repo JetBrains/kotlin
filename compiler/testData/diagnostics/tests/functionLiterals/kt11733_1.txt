@@ -7,6 +7,6 @@ public fun process(/*0*/ x: Predicate<kotlin.String>): kotlin.Unit
 public interface Predicate</*0*/ T : kotlin.CharSequence!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract operator fun invoke(/*0*/ @org.jetbrains.annotations.NotNull() t: T): kotlin.Boolean
+    public abstract operator fun invoke(/*0*/ @org.jetbrains.annotations.NotNull t: T): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

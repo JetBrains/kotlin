@@ -1,7 +1,7 @@
 package
 
 public fun foo(/*0*/ a: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-public fun foo(/*0*/ a: @kotlin.ExtensionFunctionType() A): kotlin.Unit
+public fun foo(/*0*/ a: A): kotlin.Unit
 
 public interface A : (kotlin.String) -> kotlin.Unit {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

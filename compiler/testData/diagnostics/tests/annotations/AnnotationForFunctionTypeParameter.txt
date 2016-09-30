@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ @A1() @A2(some = 3) @A2() @A1() @A2(some = "Test") T> topFun(): kotlin.Int
+public fun </*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> topFun(): kotlin.Int
 
 public final annotation class A1 : kotlin.Annotation {
     public constructor A1()
@@ -22,6 +22,6 @@ public final class SomeClass {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun </*0*/ @A1() @A2(some = 3) @A2() @A1() @A2(some = "Test") T> method(): kotlin.Int
+    public final fun </*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> method(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

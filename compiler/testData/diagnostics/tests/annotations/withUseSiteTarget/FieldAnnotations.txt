@@ -15,13 +15,13 @@ public final class CustomDelegate {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@field:Ann() public final class SomeClass {
-    @field:Ann() public constructor SomeClass()
-    @field:Ann() protected final val delegatedProperty: kotlin.String
-    @field:Ann() public final val propertyWithCustomGetter: kotlin.Int
-    @field:Ann() protected final val simpleProperty: kotlin.String = "text"
-    @field:Ann() protected final val simplePropertyWithAnnotationList: kotlin.String = "text"
-    @field:Ann() public final fun anotherFun(/*0*/ @field:Ann() s: kotlin.String): kotlin.Unit
+@field:Ann public final class SomeClass {
+    @field:Ann public constructor SomeClass()
+    @field:Ann protected final val delegatedProperty: kotlin.String
+    @field:Ann public final val propertyWithCustomGetter: kotlin.Int
+    @field:Ann protected final val simpleProperty: kotlin.String = "text"
+    @field:Ann protected final val simplePropertyWithAnnotationList: kotlin.String = "text"
+    @field:Ann public final fun anotherFun(/*0*/ @field:Ann s: kotlin.String): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -29,7 +29,7 @@ public final class CustomDelegate {
 
 public final class WithPrimaryConstructor {
     public constructor WithPrimaryConstructor(/*0*/ a: kotlin.String)
-    @field:Ann() public final val a: kotlin.String
+    @field:Ann public final val a: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

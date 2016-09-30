@@ -9,7 +9,7 @@ public final annotation class B : kotlin.Annotation {
 }
 
 public final enum class E : kotlin.Enum<test.E> {
-    /*primary*/ private constructor E(/*0*/ @test.A() x: kotlin.String, /*1*/ @test.B() y: kotlin.Int)
+    /*primary*/ private constructor E(/*0*/ @test.A x: kotlin.String, /*1*/ @test.B y: kotlin.Int)
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

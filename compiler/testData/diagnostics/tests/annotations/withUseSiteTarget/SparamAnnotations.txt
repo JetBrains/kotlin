@@ -16,14 +16,14 @@ public final class CustomDelegate {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@setparam:Ann() public final class SomeClass {
-    @setparam:Ann() public constructor SomeClass()
-    @setparam:Ann() protected final var delegatedProperty: kotlin.String
-    @setparam:Ann() protected final var mutableProperty: kotlin.String
-    @setparam:Ann() protected final var mutablePropertyWithAnnotationList: kotlin.String
-    @setparam:Ann() public final var propertyWithCustomSetter: kotlin.Int
-    @setparam:Ann() protected final val simpleProperty: kotlin.String = "text"
-    @setparam:Ann() public final fun anotherFun(): kotlin.Unit
+@setparam:Ann public final class SomeClass {
+    @setparam:Ann public constructor SomeClass()
+    @setparam:Ann protected final var delegatedProperty: kotlin.String
+    @setparam:Ann protected final var mutableProperty: kotlin.String
+    @setparam:Ann protected final var mutablePropertyWithAnnotationList: kotlin.String
+    @setparam:Ann public final var propertyWithCustomSetter: kotlin.Int
+    @setparam:Ann protected final val simpleProperty: kotlin.String = "text"
+    @setparam:Ann public final fun anotherFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

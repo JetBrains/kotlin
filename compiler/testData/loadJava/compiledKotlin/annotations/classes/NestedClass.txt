@@ -7,11 +7,11 @@ public final annotation class Anno : kotlin.Annotation {
 public final class Class {
     /*primary*/ public constructor Class()
 
-    @test.Anno() public final inner class Inner {
+    @test.Anno public final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    @test.Anno() public final class Nested {
+    @test.Anno public final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

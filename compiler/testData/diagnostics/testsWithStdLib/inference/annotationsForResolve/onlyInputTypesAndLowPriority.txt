@@ -1,7 +1,7 @@
 package
 
 public fun test(/*0*/ map: kotlin.collections.Map<kotlin.Int, kotlin.String>): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "containsAny") @kotlin.internal.LowPriorityInOverloadResolution() public fun </*0*/ T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Int
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes() T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Boolean
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "getAny") @kotlin.internal.LowPriorityInOverloadResolution() public fun </*0*/ K, /*1*/ V> kotlin.collections.Map<K, V>.get1(/*0*/ key: kotlin.Any?): kotlin.Int
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes() K, /*1*/ V> kotlin.collections.Map<out K, V>.get1(/*0*/ key: K): V?
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "containsAny") @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Int
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Boolean
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "getAny") @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ K, /*1*/ V> kotlin.collections.Map<K, V>.get1(/*0*/ key: kotlin.Any?): kotlin.Int
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K, /*1*/ V> kotlin.collections.Map<out K, V>.get1(/*0*/ key: K): V?

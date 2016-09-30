@@ -17,7 +17,7 @@ public open class MapRemove {
         public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K!, in V!>!): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
-        @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
+        @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
         public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K!, /*1*/ p1: V!, /*2*/ p2: java.util.function.BiFunction<in V!, in V!, out V!>!): V!
         public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
@@ -44,7 +44,7 @@ public open class MapRemove {
         public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
-        @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+        @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
         public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!
         public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
@@ -71,7 +71,7 @@ public open class MapRemove {
         public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
-        @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
+        @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String!, /*1*/ defaultValue: kotlin.Int!): kotlin.Int!
         public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!
         public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
@@ -79,7 +79,7 @@ public open class MapRemove {
         public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int!
         public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
         public open fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
-        @kotlin.internal.PlatformDependent() public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
+        @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int!
         public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Unit

@@ -1,6 +1,6 @@
 package test
 
-public fun @test.A() kotlin.String.foo(): kotlin.Unit
+public fun @test.A kotlin.String.foo(): kotlin.Unit
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A()

@@ -1,6 +1,6 @@
 package test
 
 public interface LoadIterableWithConflict</*0*/ T : kotlin.Any!> {
-    @org.jetbrains.annotations.ReadOnly() @org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.collections.(Mutable)Iterable<T!>!
-    public abstract fun setIterable(/*0*/ @org.jetbrains.annotations.ReadOnly() @org.jetbrains.annotations.Mutable() p0: kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+    @org.jetbrains.annotations.ReadOnly @org.jetbrains.annotations.Mutable public abstract fun getIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+    public abstract fun setIterable(/*0*/ @org.jetbrains.annotations.ReadOnly @org.jetbrains.annotations.Mutable p0: kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
 }

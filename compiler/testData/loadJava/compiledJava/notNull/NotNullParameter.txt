@@ -2,5 +2,5 @@ package test
 
 public open class NotNullParameter {
     public constructor NotNullParameter()
-    public open fun hi(/*0*/ @org.jetbrains.annotations.NotNull() p0: kotlin.String): kotlin.Unit
+    public open fun hi(/*0*/ @org.jetbrains.annotations.NotNull p0: kotlin.String): kotlin.Unit
 }

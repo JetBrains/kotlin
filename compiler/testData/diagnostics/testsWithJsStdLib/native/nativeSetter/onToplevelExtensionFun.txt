@@ -1,12 +1,12 @@
 package
 
-@kotlin.js.nativeSetter() public fun kotlin.Any.foo(/*0*/ a: kotlin.String = ..., /*1*/ v: kotlin.String = ...): kotlin.String
-@kotlin.js.nativeSetter() public fun kotlin.Int.set(/*0*/ a: [ERROR : A]): kotlin.Int?
-@kotlin.js.nativeSetter() public fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
-@kotlin.js.nativeSetter() public fun kotlin.Int.set2(): kotlin.String?
-@kotlin.js.nativeSetter() public fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.Any?
-@kotlin.js.nativeSetter() public fun kotlin.Int.set3(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Any?): kotlin.Unit
-@kotlin.js.nativeSetter() public fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.String
-@kotlin.js.nativeSetter() public fun kotlin.Int.set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
-@kotlin.js.nativeSetter() public fun kotlin.Int.set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
-@kotlin.js.nativeSetter() public fun kotlin.Int.set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number
+@kotlin.js.nativeSetter public fun kotlin.Any.foo(/*0*/ a: kotlin.String = ..., /*1*/ v: kotlin.String = ...): kotlin.String
+@kotlin.js.nativeSetter public fun kotlin.Int.set(/*0*/ a: [ERROR : A]): kotlin.Int?
+@kotlin.js.nativeSetter public fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
+@kotlin.js.nativeSetter public fun kotlin.Int.set2(): kotlin.String?
+@kotlin.js.nativeSetter public fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.Any?
+@kotlin.js.nativeSetter public fun kotlin.Int.set3(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Any?): kotlin.Unit
+@kotlin.js.nativeSetter public fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.String
+@kotlin.js.nativeSetter public fun kotlin.Int.set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+@kotlin.js.nativeSetter public fun kotlin.Int.set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
+@kotlin.js.nativeSetter public fun kotlin.Int.set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number

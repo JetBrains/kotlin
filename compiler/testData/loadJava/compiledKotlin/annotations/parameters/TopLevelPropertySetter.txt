@@ -2,7 +2,7 @@ package test
 
 public var foo: kotlin.Int
     public fun <get-foo>(): kotlin.Int
-    public fun <set-foo>(/*0*/ @test.A() @test.B() value: kotlin.Int): kotlin.Unit
+    public fun <set-foo>(/*0*/ @test.A @test.B value: kotlin.Int): kotlin.Unit
 
 public final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A()

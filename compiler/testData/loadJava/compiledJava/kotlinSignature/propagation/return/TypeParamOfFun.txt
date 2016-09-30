@@ -9,6 +9,6 @@ public interface TypeParamOfFun {
 
     public interface Super {
         public abstract fun dummy(): kotlin.Unit
-        @org.jetbrains.annotations.NotNull() public abstract fun </*0*/ T : kotlin.Any!> foo(): T
+        @org.jetbrains.annotations.NotNull public abstract fun </*0*/ T : kotlin.Any!> foo(): T
     }
 }

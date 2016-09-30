@@ -4,7 +4,7 @@ public fun test(/*0*/ a: A<*>): kotlin.Unit
 
 public interface A</*0*/ out K> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(/*0*/ x: @kotlin.UnsafeVariance() K): kotlin.Unit
+    public abstract fun foo(/*0*/ x: @kotlin.UnsafeVariance K): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

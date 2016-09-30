@@ -178,6 +178,7 @@ interface DescriptorRendererOptions {
     var textFormat: RenderingFormat
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
+    var includeAnnotationArguments: Boolean
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
@@ -223,7 +224,9 @@ object ExcludedTypeAnnotations {
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
             FqName("kotlin.internal.Exact"),
-            KotlinBuiltIns.FQ_NAMES.parameterName)
+            KotlinBuiltIns.FQ_NAMES.extensionFunctionType,
+            KotlinBuiltIns.FQ_NAMES.parameterName
+    )
 }
 
 enum class RenderingFormat {

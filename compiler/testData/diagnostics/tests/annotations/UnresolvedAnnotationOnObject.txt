@@ -3,7 +3,7 @@ package
 package test {
     public val some: test.SomeObject
 
-    @[ERROR : BadAnnotation]() /* annotation class not found */ public object SomeObject {
+    @[ERROR : BadAnnotation] /* annotation class not found */ public object SomeObject {
         private constructor SomeObject()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

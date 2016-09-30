@@ -7,7 +7,7 @@ public open class AnnotationRetentions {
         public constructor BaseAnnotation()
     }
 
-    @test.AnnotationRetentions.BaseAnnotation() public/*package*/ open inner class BaseClass {
+    @test.AnnotationRetentions.BaseAnnotation public/*package*/ open inner class BaseClass {
         public/*package*/ constructor BaseClass()
     }
 
@@ -15,7 +15,7 @@ public open class AnnotationRetentions {
         public constructor BinaryAnnotation()
     }
 
-    @test.AnnotationRetentions.BinaryAnnotation() public/*package*/ open inner class BinaryClass {
+    @test.AnnotationRetentions.BinaryAnnotation public/*package*/ open inner class BinaryClass {
         public/*package*/ constructor BinaryClass()
     }
 
@@ -23,7 +23,7 @@ public open class AnnotationRetentions {
         public constructor RuntimeAnnotation()
     }
 
-    @test.AnnotationRetentions.RuntimeAnnotation() public/*package*/ open inner class RuntimeClass {
+    @test.AnnotationRetentions.RuntimeAnnotation public/*package*/ open inner class RuntimeClass {
         public/*package*/ constructor RuntimeClass()
     }
 

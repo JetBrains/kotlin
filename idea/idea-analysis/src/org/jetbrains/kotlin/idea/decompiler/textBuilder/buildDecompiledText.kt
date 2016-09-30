@@ -39,7 +39,9 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     classWithPrimaryConstructor = true
     secondaryConstructorsAsPrimary = false
     modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = (ExcludedTypeAnnotations.annotationsForNullabilityAndMutability + KotlinBuiltIns.FQ_NAMES.parameterName).toSet()
+    excludedTypeAnnotationClasses = (ExcludedTypeAnnotations.annotationsForNullabilityAndMutability +
+                                     KotlinBuiltIns.FQ_NAMES.extensionFunctionType +
+                                     KotlinBuiltIns.FQ_NAMES.parameterName).toSet()
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
 }

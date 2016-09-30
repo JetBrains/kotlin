@@ -1,4 +1,4 @@
 package
 
-@kotlin.js.nativeInvoke() public fun kotlin.Int.ext(): kotlin.Int
-@kotlin.js.nativeInvoke() public fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
+@kotlin.js.nativeInvoke public fun kotlin.Int.ext(): kotlin.Int
+@kotlin.js.nativeInvoke public fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String

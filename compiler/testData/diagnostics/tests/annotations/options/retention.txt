@@ -1,6 +1,6 @@
 package
 
-@sourceann() public final class AnnotatedAtSource {
+@sourceann public final class AnnotatedAtSource {
     public constructor AnnotatedAtSource()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

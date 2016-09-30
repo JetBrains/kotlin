@@ -1,11 +1,11 @@
 package
 
-@base() public final class My {
-    public constructor My(/*0*/ x: @base() @typed() kotlin.Int, /*1*/ y: @base() @typed() kotlin.Int)
-    public final val x: @base() @typed() kotlin.Int
-    public final val z: @base() @typed() kotlin.Int
+@base public final class My {
+    public constructor My(/*0*/ x: @base @typed kotlin.Int, /*1*/ y: @base @typed kotlin.Int)
+    public final val x: @base @typed kotlin.Int
+    public final val z: @base @typed kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(): @base() @typed() kotlin.Int
+    public final fun foo(): @base @typed kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -15,7 +15,7 @@ public fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: T!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): T!
+    @java.lang.Override public open override /*1*/ fun get(/*0*/ index: kotlin.Int): T!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: T!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
