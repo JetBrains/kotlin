@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
@@ -57,11 +57,10 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
-        val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
         val container = createContainerForTopDownAnalyzerForJvm(
-                moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                providerFactory, GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.Empty,
+                moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), DeclarationProviderFactory.EMPTY,
+                GlobalSearchScope.allScope(environment.project), LookupTracker.DO_NOTHING, PackagePartProvider.Empty,
                 LanguageVersionSettingsImpl.DEFAULT
         )
         moduleContext.initializeModuleContents(container.javaDescriptorResolver.packageFragmentProvider)

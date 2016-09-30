@@ -21,8 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+
+import java.util.Collections;
 
 public interface DeclarationProviderFactory {
+    DeclarationProviderFactory EMPTY =
+            new FileBasedDeclarationProviderFactory(LockBasedStorageManager.NO_LOCKS, Collections.<KtFile>emptyList());
+
     @NotNull
     ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo);
 
