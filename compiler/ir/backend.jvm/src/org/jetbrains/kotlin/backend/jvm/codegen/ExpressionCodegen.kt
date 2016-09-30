@@ -194,11 +194,7 @@ class ExpressionCodegen(
             }
             return StackValue.onStack(callable.returnType)
         }
-
-        return expression.onStack
     }
-
-
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BlockInfo): StackValue {
         throw AssertionError("Instruction should've been lowered before code generation: ${expression.render()}")
@@ -253,13 +249,15 @@ class ExpressionCodegen(
     }
 
     override fun visitGetField(expression: IrGetField, data: BlockInfo): StackValue {
-        return generateFieldValue(expression, data)
+        val value = generateFieldValue(expression, data)
+        value.put(value.type, mv)
+        return onStack(value.type)
     }
 
     override fun visitSetField(expression: IrSetField, data: BlockInfo): StackValue {
         val fieldValue = generateFieldValue(expression, data)
         fieldValue.store(expression.value.accept(this, data), mv)
-        return expression.onStack
+        return none()
     }
 
     private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
@@ -278,8 +276,7 @@ class ExpressionCodegen(
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
         val value = expression.value.accept(this, data)
         StackValue.local(frame.getIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
-        //UNIT?
-        return expression.onStack
+        return none()
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): StackValue {
