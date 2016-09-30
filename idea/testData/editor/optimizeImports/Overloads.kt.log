@@ -2,7 +2,7 @@ Additional checking of reference Getter: foo
 Additional checking of reference KtSimpleNameReference: foo
 Changed resolve of KtSimpleNameReference: foo
 Additional checking of reference KtInvokeFunctionReference: foo("")
-Trying to build import list again with locked imports: pack1.foo, pack2.*
+Trying to build import list again with import rules: +pack1.foo, +pack2.*
 Additional checking of reference Getter: foo
 Additional checking of reference KtSimpleNameReference: foo
 Additional checking of reference KtInvokeFunctionReference: foo("")

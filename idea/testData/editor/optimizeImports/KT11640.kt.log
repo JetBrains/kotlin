@@ -3,4 +3,4 @@ Additional checking of reference KtInvokeFunctionReference: MyFunction()
 Additional checking of reference KtInvokeFunctionReference: foo()
 Changed resolve of KtInvokeFunctionReference: foo()
 Additional checking of reference KtInvokeFunctionReference: println("extension function")
-Trying to build import list again with locked imports: bug.a.invoke
+Trying to build import list again with import rules: +bug.a.invoke
