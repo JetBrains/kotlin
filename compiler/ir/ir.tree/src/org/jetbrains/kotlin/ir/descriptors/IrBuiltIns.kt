@@ -82,6 +82,19 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
                 initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
             }
 
+    val noWhenBranchMatchedException: FunctionDescriptor =
+            SimpleFunctionDescriptorImpl.create(
+                    packageFragment,
+                    Annotations.EMPTY,
+                    Name.identifier("noWhenBranchMatchedException"),
+                    CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+            ).apply {
+                val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, builtIns.unit.typeConstructor, listOf(), false)
+
+                initialize(null, null, listOf(), listOf(), returnType, Modality.FINAL, Visibilities.PUBLIC)
+            }
+
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
     }

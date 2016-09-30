@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -108,8 +109,23 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             val irBranchResult = statementGenerator.generateExpression(ktEntry.expression!!)
             irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
         }
+        addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
 
         return generateWhenBody(expression, irSubject, irWhen)
+    }
+
+    private fun addElseBranchForExhaustiveWhenIfNeeded(irWhen: IrWhen, whenExpression: KtWhenExpression) {
+        if (irWhen.branches.filterIsInstance<IrElseBranch>().isEmpty()) {
+            val bindingContext = context.bindingContext
+            //TODO: check condition: seems it's safe to always generate exception
+            val isExhaustive = java.lang.Boolean.TRUE == bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression) ||
+                               java.lang.Boolean.TRUE == bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
+
+            if (isExhaustive) {
+                val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.noWhenBranchMatchedException)
+                irWhen.branches.add(IrBranchImpl.elseBranch(call))
+            }
+        }
     }
 
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
