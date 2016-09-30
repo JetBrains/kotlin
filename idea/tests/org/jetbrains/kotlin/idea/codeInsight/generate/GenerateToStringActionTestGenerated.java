@@ -49,12 +49,6 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
             doTest(fileName);
         }
 
-        @TestMetadata("dataClass.kt")
-        public void testDataClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/common/dataClass.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("interface.kt")
         public void testInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/common/interface.kt");
@@ -85,6 +79,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         @TestMetadata("customAccessors.kt")
         public void testCustomAccessors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/customAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/dataClass.kt");
             doTest(fileName);
         }
 
@@ -136,6 +136,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         @TestMetadata("customAccessors.kt")
         public void testCustomAccessors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/customAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/dataClass.kt");
             doTest(fileName);
         }
 
