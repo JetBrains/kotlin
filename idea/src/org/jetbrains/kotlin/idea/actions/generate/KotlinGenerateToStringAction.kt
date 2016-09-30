@@ -126,7 +126,6 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         return targetClass is KtClass
                && !targetClass.isAnnotation()
                && !targetClass.isInterface()
-               && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
