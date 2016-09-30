@@ -127,7 +127,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
         return (javaCallers != null) ? ArrayUtil.mergeArrays(javaCallers, callers) : callers;
     }
 
-    private void processPsiMethodCallers(
+    private static void processPsiMethodCallers(
             Iterable<PsiMethod> lightMethods,
             HierarchyNodeDescriptor descriptor,
             Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
@@ -161,10 +161,10 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
         for (PsiMethod superMethod: methodsToFind) {
             ContainerUtil.addAll(references, MethodReferencesSearch.search(superMethod, searchScope, true));
         }
-        ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
+        ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly, false));
     }
 
-    private void processKtClassOrObjectCallers(
+    private static void processKtClassOrObjectCallers(
             final KtClassOrObject classOrObject,
             HierarchyNodeDescriptor descriptor,
             Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
@@ -177,20 +177,21 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                         return UtilsKt.isConstructorUsage(reference, classOrObject);
                     }
                 },
-                defaultQueryProcessor(descriptor, methodToDescriptorMap, false)
+                defaultQueryProcessor(descriptor, methodToDescriptorMap, false, false)
         );
         ReferencesSearch.search(classOrObject, searchScope, false).forEach(processor);
     }
 
-    private Processor<PsiReference> defaultQueryProcessor(
+    static Processor<PsiReference> defaultQueryProcessor(
             final HierarchyNodeDescriptor descriptor,
             final Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
-            boolean kotlinOnly
+            boolean kotlinOnly,
+            final boolean wrapAsLightElements
     ) {
         return new CalleeReferenceProcessor(kotlinOnly) {
             @Override
             protected void onAccept(@NotNull PsiReference ref, @NotNull PsiElement element) {
-                addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
+                addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor, wrapAsLightElements);
             }
         };
     }

@@ -596,6 +596,7 @@
     <callHierarchyProvider
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyProvider" />
+    <hierarchy.referenceProcessor implementation="org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallReferenceProcessor"/>
     <methodHierarchyProvider
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
