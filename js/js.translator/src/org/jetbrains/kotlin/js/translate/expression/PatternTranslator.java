@@ -159,7 +159,7 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
         ClassifierDescriptor targetDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (targetDescriptor != null && AnnotationsUtils.isNativeInterface(targetDescriptor)) {
-            return null;
+            return type.isMarkedNullable() ? null : namer().isAny();
         }
 
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);

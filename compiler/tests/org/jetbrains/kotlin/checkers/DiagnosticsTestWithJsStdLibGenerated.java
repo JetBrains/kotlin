@@ -724,7 +724,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Rtti extends AbstractDiagnosticsTestWithJsStdLib {
             public void testAllFilesPresentInRtti() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("castToNativeInterface.kt")

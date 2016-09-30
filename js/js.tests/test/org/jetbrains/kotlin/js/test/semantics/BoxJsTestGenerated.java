@@ -5504,6 +5504,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("castToNativeInterfaceChecked.kt")
+        public void testCastToNativeInterfaceChecked() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToNativeInterfaceChecked.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("castToNullableNativeInterface.kt")
+        public void testCastToNullableNativeInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToNullableNativeInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("castToTypeParamBoundedByNativeInterface.kt")
         public void testCastToTypeParamBoundedByNativeInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/castToTypeParamBoundedByNativeInterface.kt");
@@ -5645,6 +5657,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("print.kt")
         public void testPrint() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/print.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCastToNativeInterface.kt")
+        public void testSafeCastToNativeInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/safeCastToNativeInterface.kt");
             doTest(fileName);
         }
 
