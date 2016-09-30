@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -65,7 +67,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             if (!elementDescriptor.isReachableByDelegationFrom(constructorDescriptor, context)) return null
         }
 
-        return element.textRange
+        return TextRange(element.startOffset, element.valueParameterList?.endOffset ?: element.getConstructorKeyword().endOffset)
     }
 
     private fun KtExpression.tryConvertToPropertyByParameterInitialization(
