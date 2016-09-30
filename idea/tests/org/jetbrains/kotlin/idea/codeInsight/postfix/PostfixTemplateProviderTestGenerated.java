@@ -41,6 +41,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("assertNonTopLevel.kt")
+    public void testAssertNonTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/assertNonTopLevel.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("doNotProposeWrappingIncrement.kt")
     public void testDoNotProposeWrappingIncrement() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/doNotProposeWrappingIncrement.kt");
@@ -68,6 +74,12 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("iter.kt")
     public void testIter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/iter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noParOnLoop.kt")
+    public void testNoParOnLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/noParOnLoop.kt");
         doTest(fileName);
     }
 
@@ -134,6 +146,18 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     @TestMetadata("try.kt")
     public void testTry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/try.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("tryOnFor.kt")
+    public void testTryOnFor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnFor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("tryOnStatement.kt")
+    public void testTryOnStatement() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnStatement.kt");
         doTest(fileName);
     }
 
