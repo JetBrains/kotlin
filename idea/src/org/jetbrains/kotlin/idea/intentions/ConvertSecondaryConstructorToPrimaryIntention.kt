@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -83,6 +84,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtS
         val context = klass.analyzeFully()
         val constructorDescriptor = context[BindingContext.CONSTRUCTOR, element] ?: return
         val factory = KtPsiFactory(klass)
+        val constructorCommentSaver = CommentSaver(element)
         val constructorInClass = klass.createPrimaryConstructorIfAbsent()
         val constructor = factory.createPrimaryConstructor(element.modifierList?.text?.replace("\n", " "))
         val parameterList = constructor.valueParameterList!!
@@ -105,10 +107,12 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtS
             val newParameter = factory.createParameter(parameter.text)
             val parameterDescriptor = context[BindingContext.VALUE_PARAMETER, parameter]
             val propertyDescriptor = parameterToPropertyMap[parameterDescriptor]
+            var propertyCommentSaver: CommentSaver? = null
             if (parameterDescriptor != null && propertyDescriptor != null) {
                 val property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty
                 if (property != null) {
                     if (propertyDescriptor.name == parameterDescriptor.name && propertyDescriptor.type == parameterDescriptor.type) {
+                        propertyCommentSaver = CommentSaver(property)
                         val valOrVar = if (property.isVar) factory.createVarKeyword() else factory.createValKeyword()
                         newParameter.addBefore(valOrVar, newParameter.nameIdentifier)
                         val propertyModifiers = property.modifierList?.text
@@ -123,7 +127,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtS
                     }
                 }
             }
-            parameterList.addParameter(newParameter)
+            with (parameterList.addParameter(newParameter)) {
+                propertyCommentSaver?.restore(this)
+            }
         }
 
         val delegationCall = element.getDelegationCall()
@@ -140,7 +146,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtS
             }
         }
 
-        constructorInClass.replace(constructor)
+        with (constructorInClass.replace(constructor)) {
+            constructorCommentSaver.restore(this)
+        }
         element.delete()
         if ((initializer?.body as? KtBlockExpression)?.statements?.isNotEmpty() ?: false) {
             initializer?.let { klass.addDeclaration(it) }
