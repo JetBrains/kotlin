@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -49,12 +49,9 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         val jvmBuiltIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
         val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", JvmPlatform, jvmBuiltIns)
 
-        val moduleContext = ModuleContext(emptyModule, environment.project)
-        val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
-
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
-                moduleContext, CliLightClassGenerationSupport.CliBindingTrace(), providerFactory,
-                GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
+                ModuleContext(emptyModule, environment.project), CliLightClassGenerationSupport.CliBindingTrace(),
+                DeclarationProviderFactory.EMPTY, GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
         )
 
         emptyModule.initialize(container.get<JavaDescriptorResolver>().packageFragmentProvider)
