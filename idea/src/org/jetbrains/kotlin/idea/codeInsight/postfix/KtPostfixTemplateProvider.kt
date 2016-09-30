@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -128,16 +129,23 @@ private class KtExpressionPostfixTemplateSelector(
             // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
             if (it is KtFunctionLiteral) return@Condition false
 
-            if (statementsOnly && it.parent !is KtBlockExpression) return@Condition false
+            val context by lazy { it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION) }
+
+            if (statementsOnly && it.parent !is KtBlockExpression && !it.isUsedAsStatement(context)) return@Condition false
             if (checkCanBeUsedAsValue && !it.canBeUsedAsValue()) return@Condition false
 
-            typePredicate == null || it.getType(it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION))?.let { typePredicate(it) } ?: false
+            typePredicate == null || it.getType(context)?.let { typePredicate(it) } ?: false
         }
 
         private fun KtExpression.canBeUsedAsValue() =
                 !KtPsiUtil.isAssignment(this) &&
                 !this.isNamedDeclaration &&
-                this !is KtLoopExpression
+                this !is KtLoopExpression &&
+                // if's only with else may be treated as expressions
+                !isIfWithoutElse
+
+        private val KtExpression.isIfWithoutElse: Boolean
+            get() = (this is KtIfExpression && this.elseKeyword == null)
     }
 
     override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {

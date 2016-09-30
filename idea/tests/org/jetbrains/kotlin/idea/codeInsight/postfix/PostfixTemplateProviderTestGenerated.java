@@ -137,9 +137,27 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("returnFromLoop.kt")
+    public void testReturnFromLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/returnFromLoop.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("sout.kt")
     public void testSout() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/sout.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("soutInIf.kt")
+    public void testSoutInIf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/soutInIf.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("soutInLoop.kt")
+    public void testSoutInLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/soutInLoop.kt");
         doTest(fileName);
     }
 
