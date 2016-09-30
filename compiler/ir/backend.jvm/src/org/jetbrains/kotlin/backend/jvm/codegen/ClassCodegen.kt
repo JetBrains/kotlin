@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSpecialDescriptor
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.*
@@ -37,7 +38,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext) {
+class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext, val parentClassCodegen: ClassCodegen? = null) {
+
+    private val innerClasses = mutableListOf<ClassDescriptor>()
 
     val state = context.state
 
@@ -71,6 +74,8 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
             generateDeclaration(it)
         }
 
+        writeInnerClasses()
+
         visitor.done()
     }
 
@@ -90,10 +95,6 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
             ClassCodegen(irClass, context).generate()
         }
-
-        fun generateAnonymous(irClass: IrClass, context: JvmBackendContext) {
-            ClassCodegen(irClass, context).generate()
-        }
     }
 
     fun generateDeclaration(declaration: IrDeclaration) {
@@ -110,7 +111,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
                 // skip
             }
             is IrClass -> {
-                ClassCodegen(declaration, context).generate()
+                ClassCodegen(declaration, context, this).generate()
             }
             else -> throw RuntimeException("Unsupported declaration $declaration")
         }
@@ -126,6 +127,34 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     fun generateMethod(method: IrFunction) {
         FunctionCodegen(method, this).generate()
+    }
+
+    private fun writeInnerClasses() {
+        // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
+        // for each enclosing class and for each immediate member
+        val classDescriptor = classForInnerClassRecord()
+        if (classDescriptor != null) {
+            if (parentClassCodegen != null) {
+                parentClassCodegen.innerClasses.add(classDescriptor)
+            }
+
+            var codegen: ClassCodegen? = this
+            while (codegen != null) {
+                val outerClass = codegen.classForInnerClassRecord()
+                if (outerClass != null) {
+                    innerClasses.add(outerClass)
+                }
+                codegen = codegen.parentClassCodegen
+            }
+        }
+
+        for (innerClass in innerClasses) {
+            MemberCodegen.writeInnerClass(innerClass, typeMapper, visitor)
+        }
+    }
+
+    private fun classForInnerClassRecord(): ClassDescriptor? {
+        return if (parentClassCodegen != null) descriptor else null
     }
 
 }

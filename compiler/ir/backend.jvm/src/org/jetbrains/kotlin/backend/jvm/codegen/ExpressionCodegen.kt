@@ -296,7 +296,7 @@ class ExpressionCodegen(
     }
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): StackValue {
-        ClassCodegen.generateAnonymous(declaration, classCodegen.context)
+        classCodegen.generateDeclaration(declaration)
         return none()
     }
 
