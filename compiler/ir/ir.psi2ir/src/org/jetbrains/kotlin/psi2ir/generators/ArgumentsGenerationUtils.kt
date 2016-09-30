@@ -43,7 +43,7 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
 
     val receiverExpression = when (receiver) {
         is ImplicitClassReceiver ->
-            IrThisReferenceImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.type, receiver.classDescriptor)
+            IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.classDescriptor.thisAsReceiverParameter)
         is ThisClassReceiver ->
             generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
         is SuperCallReceiverValue ->
@@ -54,8 +54,8 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
             IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                                                      receiver.classQualifier.descriptor)
         is ExtensionReceiver ->
-            IrGetExtensionReceiverImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset,
-                                                                           receiver.declarationDescriptor.extensionReceiverParameter!!)
+            IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset,
+                           receiver.declarationDescriptor.extensionReceiverParameter!!)
         else ->
             TODO("Receiver: ${receiver.javaClass.simpleName}")
     }
@@ -70,7 +70,7 @@ private fun generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor
     val expressionReceiver = receiver as? ExpressionReceiver ?:
                              throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
-    return IrThisReferenceImpl(ktReceiver.startOffset, ktReceiver.endOffset, receiver.type, classDescriptor)
+    return IrGetValueImpl(ktReceiver.startOffset, ktReceiver.endOffset, classDescriptor.thisAsReceiverParameter)
 }
 
 fun StatementGenerator.generateCallReceiver(

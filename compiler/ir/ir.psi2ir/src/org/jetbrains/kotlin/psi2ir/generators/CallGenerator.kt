@@ -54,7 +54,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
                 IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
             else
-                IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
+                IrGetValueImpl(startOffset, endOffset, descriptor, origin)
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
         val descriptor = call.descriptor

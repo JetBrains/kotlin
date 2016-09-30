@@ -41,7 +41,7 @@ FILE /jvmStaticFieldReference.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test>(): Int'
             GET_FIELD 'test: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestClass' type=TestClass
+              receiver: GET_VAR '<receiver: TestClass>' type=TestClass origin=null
     ANONYMOUS_INITIALIZER TestClass
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null

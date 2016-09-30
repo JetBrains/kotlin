@@ -31,7 +31,7 @@ import java.util.*
 class Closure(
         val capturedThisReferences: List<ClassDescriptor>,
         val capturedReceiverParameters: List<ReceiverParameterDescriptor>,
-        val capturedVariables: List<VariableDescriptor>
+        val capturedValues: List<ValueDescriptor>
 )
 
 abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
@@ -41,18 +41,18 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     private class ClosureBuilder(val owner: DeclarationDescriptor) {
         val capturedThisReferences = mutableSetOf<ClassDescriptor>()
         val capturedReceiverParameters = mutableSetOf<ReceiverParameterDescriptor>()
-        val capturedVariables = mutableSetOf<VariableDescriptor>()
+        val capturedValues = mutableSetOf<ValueDescriptor>()
 
         fun buildClosure() = Closure(
                 capturedThisReferences.toList(),
                 capturedReceiverParameters.toList(),
-                capturedVariables.toList()
+                capturedValues.toList()
         )
 
         fun addNested(closure: Closure) {
             fillInCapturedThisReferences(closure)
             fillInNestedClosure(capturedReceiverParameters, closure.capturedReceiverParameters)
-            fillInNestedClosure(capturedVariables, closure.capturedVariables)
+            fillInNestedClosure(capturedValues, closure.capturedValues)
         }
 
         private fun fillInCapturedThisReferences(closure: Closure) {
@@ -126,25 +126,14 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
         declaration.delegate.initializer?.acceptVoid(this)
     }
 
-    override fun visitThisReference(expression: IrThisReference) {
-        closuresStack.peek().addCapturedThis(expression.classDescriptor)
-    }
-
-    override fun visitVariableAccess(expression: IrVariableAccessExpression) {
+    override fun visitVariableAccess(expression: IrValueAccessExpression) {
         val closureBuilder = closuresStack.peek()
         val variableDescriptor = expression.descriptor
         if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
-            closureBuilder.capturedVariables.add(variableDescriptor)
+            closureBuilder.capturedValues.add(variableDescriptor)
         }
 
         expression.acceptChildrenVoid(this)
     }
 
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) {
-        val closureBuilder = closuresStack.peek()
-        val receiverDescriptor = expression.descriptor
-        if (receiverDescriptor.containingDeclaration != closureBuilder.owner) {
-            closureBuilder.capturedReceiverParameters.add(receiverDescriptor)
-        }
-    }
 }

@@ -14,7 +14,7 @@ FILE /boundCallableReferences.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'A' type=A
+              receiver: GET_VAR '<receiver: A>' type=A origin=null
   FUN public fun A.qux(): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val test1: kotlin.reflect.KFunction0<kotlin.Unit>

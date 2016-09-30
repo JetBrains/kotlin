@@ -24,9 +24,9 @@ FILE /destructuring1.kt
           GET_OBJECT 'A' type=A
         VAR val x: kotlin.Int
           CALL 'component1() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $this: $RECEIVER of 'test() on B: Unit' type=B
+            $this: GET_VAR '<receiver: test() on B: Unit>' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null
         VAR val y: kotlin.Int
           CALL 'component2() on A: Int' type=kotlin.Int origin=COMPONENT_N(index=2)
-            $this: $RECEIVER of 'test() on B: Unit' type=B
+            $this: GET_VAR '<receiver: test() on B: Unit>' type=B origin=null
             $receiver: GET_VAR 'tmp0_container: A' type=A origin=null

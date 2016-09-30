@@ -24,7 +24,7 @@ FILE /arrayAugmentedAssignment1.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
             GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.IntArray

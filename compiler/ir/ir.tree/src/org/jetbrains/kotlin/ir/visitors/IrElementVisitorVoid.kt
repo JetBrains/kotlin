@@ -99,9 +99,6 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitStringConcatenation(expression: IrStringConcatenation) = visitExpression(expression)
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?) = visitStringConcatenation(expression)
 
-    fun visitThisReference(expression: IrThisReference) = visitExpression(expression)
-    override fun visitThisReference(expression: IrThisReference, data: Nothing?) = visitThisReference(expression)
-
     fun visitDeclarationReference(expression: IrDeclarationReference) = visitExpression(expression)
     override fun visitDeclarationReference(expression: IrDeclarationReference, data: Nothing?) = visitDeclarationReference(expression)
 
@@ -114,11 +111,11 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitGetEnumValue(expression: IrGetEnumValue) = visitSingletonReference(expression)
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?) = visitGetEnumValue(expression)
 
-    fun visitVariableAccess(expression: IrVariableAccessExpression) = visitDeclarationReference(expression)
-    override fun visitVariableAccess(expression: IrVariableAccessExpression, data: Nothing?) = visitVariableAccess(expression)
+    fun visitVariableAccess(expression: IrValueAccessExpression) = visitDeclarationReference(expression)
+    override fun visitValueAccess(expression: IrValueAccessExpression, data: Nothing?) = visitVariableAccess(expression)
 
-    fun visitGetVariable(expression: IrGetVariable) = visitVariableAccess(expression)
-    override fun visitGetVariable(expression: IrGetVariable, data: Nothing?) = visitGetVariable(expression)
+    fun visitGetVariable(expression: IrGetValue) = visitVariableAccess(expression)
+    override fun visitGetValue(expression: IrGetValue, data: Nothing?) = visitGetVariable(expression)
 
     fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
@@ -131,9 +128,6 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
     override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
-
-    fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)
 
     fun visitMemberAccess(expression: IrMemberAccessExpression) = visitDeclarationReference(expression)
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)

@@ -12,7 +12,7 @@ FILE /primaryCtorProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final var test2: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var test2: kotlin.Int
         EXPRESSION_BODY
@@ -21,9 +21,9 @@ FILE /primaryCtorProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             GET_FIELD 'test2: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-test2>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'test2: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'C' type=C
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null

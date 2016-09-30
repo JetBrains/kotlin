@@ -12,7 +12,7 @@ FILE /primaryConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test1' type=Test1
+              receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     PROPERTY public final val y: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val y: kotlin.Int
         EXPRESSION_BODY
@@ -21,7 +21,7 @@ FILE /primaryConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test1' type=Test1
+              receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.Int)
       BLOCK_BODY
@@ -35,7 +35,7 @@ FILE /primaryConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test2' type=Test2
+              receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
         EXPRESSION_BODY
@@ -44,7 +44,7 @@ FILE /primaryConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test2' type=Test2
+              receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
   CLASS CLASS Test3
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.Int)
       BLOCK_BODY
@@ -58,16 +58,16 @@ FILE /primaryConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test3' type=Test3
+              receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'Test3' type=Test3
+              receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
         SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-          receiver: THIS of 'Test3' type=Test3
+          receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
           value: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null

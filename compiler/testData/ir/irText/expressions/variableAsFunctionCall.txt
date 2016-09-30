@@ -6,7 +6,7 @@ FILE /variableAsFunctionCall.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.String
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): String'
-                $RECEIVER of 'k() on String: () -> String' type=kotlin.String
+                GET_VAR '<receiver: k() on String: () -> String>' type=kotlin.String origin=null
           CALLABLE_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
   FUN public fun test1(f: () -> kotlin.Unit): kotlin.Unit
     BLOCK_BODY

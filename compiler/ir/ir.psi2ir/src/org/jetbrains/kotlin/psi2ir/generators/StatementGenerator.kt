@@ -316,14 +316,10 @@ class StatementGenerator(
         val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
         return when (referenceTarget) {
             is ClassDescriptor ->
-                IrThisReferenceImpl(
-                        expression.startOffset, expression.endOffset,
-                        referenceTarget.defaultType, // TODO substituted type for 'this'?
-                        referenceTarget
-                )
+                IrGetValueImpl(expression.startOffset, expression.endOffset, referenceTarget.thisAsReceiverParameter)
             is CallableDescriptor -> {
                 val extensionReceiver = referenceTarget.extensionReceiverParameter ?: TODO("No extension receiver: $referenceTarget")
-                IrGetExtensionReceiverImpl(expression.startOffset, expression.endOffset, extensionReceiver)
+                IrGetValueImpl(expression.startOffset, expression.endOffset, extensionReceiver)
             }
             else ->
                 error("Expected this or receiver: $referenceTarget")

@@ -16,7 +16,7 @@ FILE /safeCallWithIncrementDecrement.kt
       RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int?
-            $RECEIVER of 'inc() on Int?: Int?' type=kotlin.Int?
+            GET_VAR '<receiver: inc() on Int?: Int?>' type=kotlin.Int? origin=null
           WHEN type=kotlin.Int? origin=SAFE_CALL
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ

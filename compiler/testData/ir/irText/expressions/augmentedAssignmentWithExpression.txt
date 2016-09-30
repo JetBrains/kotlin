@@ -9,7 +9,7 @@ FILE /augmentedAssignmentWithExpression.kt
     FUN public final fun test1(): kotlin.Unit
       BLOCK_BODY
         CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: THIS of 'Host' type=Host
+          $this: GET_VAR '<receiver: Host>' type=Host origin=null
           x: CONST Int type=kotlin.Int value='1'
   FUN public fun foo(): Host
     BLOCK_BODY
@@ -18,7 +18,7 @@ FILE /augmentedAssignmentWithExpression.kt
   FUN public fun Host.test2(): kotlin.Unit
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: $RECEIVER of 'test2() on Host: Unit' type=Host
+        $this: GET_VAR '<receiver: test2() on Host: Unit>' type=Host origin=null
         x: CONST Int type=kotlin.Int value='1'
   FUN public fun test3(): kotlin.Unit
     BLOCK_BODY

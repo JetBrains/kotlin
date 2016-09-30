@@ -9,4 +9,4 @@ FILE /suppressedNonPublicCall.kt
   FUN public inline fun C.foo(): kotlin.Unit
     BLOCK_BODY
       CALL 'bar(): Unit' type=kotlin.Unit origin=null
-        $this: $RECEIVER of 'foo() on C: Unit' type=C
+        $this: GET_VAR '<receiver: foo() on C: Unit>' type=C origin=null

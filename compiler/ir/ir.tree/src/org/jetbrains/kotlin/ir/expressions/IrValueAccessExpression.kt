@@ -16,14 +16,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
-interface IrThisReference : IrExpression, IrExpressionWithCopy {
-    val classDescriptor: ClassDescriptor
-    override fun copy(): IrThisReference
+interface IrValueAccessExpression : IrDeclarationReference {
+    override val descriptor: ValueDescriptor
+    val origin: IrStatementOrigin?
 }
 
-val IrThisReference.receiverParameter: ReceiverParameterDescriptor
-    get() = classDescriptor.thisAsReceiverParameter
+interface IrGetValue : IrValueAccessExpression, IrExpressionWithCopy {
+    override fun copy(): IrGetValue
+}
+
+interface IrSetVariable : IrValueAccessExpression {
+    override val descriptor: VariableDescriptor
+    var value: IrExpression
+}
 

@@ -14,7 +14,7 @@ FILE /classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final var z: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var z: kotlin.Int
         EXPRESSION_BODY
@@ -23,11 +23,11 @@ FILE /classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-z>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'z: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'C' type=C
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
@@ -43,7 +43,7 @@ FILE /classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-property>(): Int'
             GET_FIELD 'property: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final val propertyWithGet: kotlin.Int
       FUN public final fun <get-propertyWithGet>(): kotlin.Int
         BLOCK_BODY
@@ -54,11 +54,11 @@ FILE /classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-propertyWithGetAndSet>(): Int'
             CALL '<get-z>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: THIS of 'C' type=C
+              $this: GET_VAR '<receiver: C>' type=C origin=null
       FUN public final fun <set-propertyWithGetAndSet>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           CALL '<set-z>(Int): Unit' type=kotlin.Unit origin=EQ
-            $this: THIS of 'C' type=C
+            $this: GET_VAR '<receiver: C>' type=C origin=null
             <set-?>: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     FUN public final fun function(): kotlin.Unit
       BLOCK_BODY
@@ -87,7 +87,7 @@ FILE /classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='bar(): Unit'
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
-              $this: THIS of 'NestedInterface' type=C.NestedInterface
+              $this: GET_VAR '<receiver: NestedInterface>' type=C.NestedInterface origin=null
     CLASS OBJECT companion object of C
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY

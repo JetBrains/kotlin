@@ -12,7 +12,7 @@ FILE /initVal.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitValFromParameter' type=TestInitValFromParameter
+              receiver: GET_VAR '<receiver: TestInitValFromParameter>' type=TestInitValFromParameter origin=null
   CLASS CLASS TestInitValInClass
     CONSTRUCTOR public constructor TestInitValInClass()
       BLOCK_BODY
@@ -26,7 +26,7 @@ FILE /initVal.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitValInClass' type=TestInitValInClass
+              receiver: GET_VAR '<receiver: TestInitValInClass>' type=TestInitValInClass origin=null
   CLASS CLASS TestInitValInInitBlock
     CONSTRUCTOR public constructor TestInitValInInitBlock()
       BLOCK_BODY
@@ -38,9 +38,9 @@ FILE /initVal.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitValInInitBlock' type=TestInitValInInitBlock
+              receiver: GET_VAR '<receiver: TestInitValInInitBlock>' type=TestInitValInInitBlock origin=null
     ANONYMOUS_INITIALIZER TestInitValInInitBlock
       BLOCK_BODY
         SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-          receiver: THIS of 'TestInitValInInitBlock' type=TestInitValInInitBlock
+          receiver: GET_VAR '<receiver: TestInitValInInitBlock>' type=TestInitValInInitBlock origin=null
           value: CONST Int type=kotlin.Int value='0'

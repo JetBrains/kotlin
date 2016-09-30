@@ -48,6 +48,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
 
     protected open fun mapSuperQualifier(qualifier: ClassDescriptor?) = qualifier
     protected open fun mapClassReference(descriptor: ClassDescriptor) = descriptor
+    protected open fun mapValueReference(descriptor: ValueDescriptor) = descriptor
     protected open fun mapVariableReference(descriptor: VariableDescriptor) = descriptor
     protected open fun mapPropertyReference(descriptor: PropertyDescriptor) = descriptor
     protected open fun mapReceiverParameterReference(descriptor: ReceiverParameterDescriptor) = descriptor
@@ -234,13 +235,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     expression.arguments.map { it.transform(this, null) }
             )
 
-    override fun visitThisReference(expression: IrThisReference): IrThisReference =
-            IrThisReferenceImpl(
-                    expression.startOffset, expression.endOffset,
-                    expression.type,
-                    mapClassReference(expression.classDescriptor)
-            )
-
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrGetObjectValue =
             IrGetObjectValueImpl(
                     expression.startOffset, expression.endOffset,
@@ -255,10 +249,10 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapClassReference(expression.descriptor)
             )
 
-    override fun visitGetVariable(expression: IrGetVariable): IrGetVariable =
-            IrGetVariableImpl(
+    override fun visitGetValue(expression: IrGetValue): IrGetValue =
+            IrGetValueImpl(
                     expression.startOffset, expression.endOffset,
-                    mapVariableReference(expression.descriptor),
+                    mapValueReference(expression.descriptor),
                     mapStatementOrigin(expression.origin)
             )
 
@@ -287,12 +281,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     expression.value.transform(this, null),
                     mapStatementOrigin(expression.origin),
                     mapSuperQualifier(expression.superQualifier)
-            )
-
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver): IrGetExtensionReceiver =
-            IrGetExtensionReceiverImpl(
-                    expression.startOffset, expression.endOffset,
-                    mapReceiverParameterReference(expression.descriptor)
             )
 
     override fun visitCall(expression: IrCall): IrCall =

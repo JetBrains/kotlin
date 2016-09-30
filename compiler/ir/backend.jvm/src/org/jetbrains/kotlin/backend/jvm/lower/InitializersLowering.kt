@@ -19,24 +19,25 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.getMemberOwnerKind
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -71,8 +72,8 @@ class InitializersLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val receiver =
                     if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
-                        IrThisReferenceImpl(irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-                                            irClass.descriptor.defaultType, irClass.descriptor)
+                        IrGetValueImpl(irFieldInitializer.startOffset, irFieldInitializer.endOffset,
+                                       irClass.descriptor.thisAsReceiverParameter)
                     else null
             val irSetField = IrSetFieldImpl(
                     irFieldInitializer.startOffset, irFieldInitializer.endOffset,

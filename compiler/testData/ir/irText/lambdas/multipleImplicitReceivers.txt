@@ -48,10 +48,10 @@ FILE /multipleImplicitReceivers.kt
                                   BLOCK_BODY
                                     RETURN type=kotlin.Nothing from='<anonymous>() on IInvoke: Int'
                                       CALL 'invoke() on B: Int' type=kotlin.Int origin=INVOKE
-                                        $this: $RECEIVER of '<anonymous>() on IInvoke: Int' type=IInvoke
+                                        $this: GET_VAR '<receiver: <anonymous>() on IInvoke: Int>' type=IInvoke origin=null
                                         $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY
-                                          $this: $RECEIVER of '<anonymous>() on IFoo: Int' type=IFoo
-                                          $receiver: $RECEIVER of '<anonymous>() on A: Int' type=A
+                                          $this: GET_VAR '<receiver: <anonymous>() on IFoo: Int>' type=IFoo origin=null
+                                          $receiver: GET_VAR '<receiver: <anonymous>() on A: Int>' type=A origin=null
                                 CALLABLE_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
                       CALLABLE_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
             CALLABLE_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA

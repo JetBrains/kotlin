@@ -13,5 +13,5 @@ FILE /innerClass.kt
       CONSTRUCTOR public constructor DerivedInnerClass()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor TestInnerClass()'
-            $this: THIS of 'Outer' type=Outer
+            $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='DerivedInnerClass'

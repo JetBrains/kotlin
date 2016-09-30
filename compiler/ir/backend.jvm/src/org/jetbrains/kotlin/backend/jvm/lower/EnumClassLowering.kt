@@ -282,8 +282,8 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     throw AssertionError("No 'ordinal' parameter in enum constructor: $enumClassConstructor")
                 }
 
-                result.putValueArgument(0, IrGetVariableImpl(startOffset, endOffset, nameParameter, origin))
-                result.putValueArgument(1, IrGetVariableImpl(startOffset, endOffset, ordinalParameter, origin))
+                result.putValueArgument(0, IrGetValueImpl(startOffset, endOffset, nameParameter, origin))
+                result.putValueArgument(1, IrGetValueImpl(startOffset, endOffset, ordinalParameter, origin))
 
                 return result
             }
@@ -299,8 +299,8 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
                 val result = IrDelegatingConstructorCallImpl(startOffset, endOffset, loweredDelegatedConstructor)
 
-                result.putValueArgument(0, IrGetVariableImpl(startOffset, endOffset, enumClassConstructor.valueParameters[0]))
-                result.putValueArgument(1, IrGetVariableImpl(startOffset, endOffset, enumClassConstructor.valueParameters[1]))
+                result.putValueArgument(0, IrGetValueImpl(startOffset, endOffset, enumClassConstructor.valueParameters[0]))
+                result.putValueArgument(1, IrGetValueImpl(startOffset, endOffset, enumClassConstructor.valueParameters[1]))
 
                 descriptor.valueParameters.forEach { valueParameter ->
                     val i = valueParameter.index
@@ -422,10 +422,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 return expression
             }
 
-            override fun visitGetVariable(expression: IrGetVariable): IrExpression {
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val loweredParameter = loweredEnumConstructorParameters[expression.descriptor]
                 if (loweredParameter != null) {
-                    return IrGetVariableImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
+                    return IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
                 }
                 else {
                     return expression
@@ -452,7 +452,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
                 val irValueOfCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                 irValueOfCall.putValueArgument(
-                        0, IrGetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor.valueParameters[0]))
+                        0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor.valueParameters[0]))
 
                 return IrBlockBodyImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,

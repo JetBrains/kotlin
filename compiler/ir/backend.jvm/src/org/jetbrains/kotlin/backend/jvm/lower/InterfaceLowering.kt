@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetVariable
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -76,8 +76,8 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         irClass.transformChildrenVoid(this)
     }
 
-    override fun visitGetVariable(expression: IrGetVariable): IrExpression {
-        return super.visitGetVariable(expression)
+    override fun visitGetValue(expression: IrGetValue): IrExpression {
+        return super.visitGetValue(expression)
     }
 
     companion object {
@@ -118,8 +118,8 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
 
 class VariableRemapper(val mapping: Map<DeclarationDescriptor, VariableDescriptor>): IrElementTransformerVoid() {
 
-    override fun visitGetVariable(expression: IrGetVariable): IrExpression =
+    override fun visitGetValue(expression: IrGetValue): IrExpression =
             mapping[expression.descriptor]?.let { loweredParameter ->
-                IrGetVariableImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
+                IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
             } ?: expression
 }

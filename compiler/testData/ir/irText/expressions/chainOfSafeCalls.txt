@@ -7,11 +7,11 @@ FILE /chainOfSafeCalls.kt
     FUN public final fun foo(): C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='foo(): C'
-          THIS of 'C' type=C
+          GET_VAR '<receiver: C>' type=C origin=null
     FUN public final fun bar(): C?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): C?'
-          THIS of 'C' type=C
+          GET_VAR '<receiver: C>' type=C origin=null
   FUN public fun test(nc: C?): C?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(C?): C?'

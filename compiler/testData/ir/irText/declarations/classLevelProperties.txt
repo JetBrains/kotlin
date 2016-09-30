@@ -12,7 +12,7 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final val test2: kotlin.Int
       FUN public final fun <get-test2>(): kotlin.Int
         BLOCK_BODY
@@ -26,11 +26,11 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'C' type=C
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY public final var test4: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var test4: kotlin.Int
@@ -40,7 +40,7 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             GET_FIELD 'test4: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN public final fun <set-test4>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
@@ -53,11 +53,11 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test5>(): Int'
             GET_FIELD 'test5: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN private final fun <set-test5>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'test5: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'C' type=C
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY public final val test6: kotlin.Int = 1
       FIELD PROPERTY_BACKING_FIELD public final val test6: kotlin.Int = 1
@@ -67,7 +67,7 @@ FILE /classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test6>(): Int'
             GET_FIELD 'test6: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'C' type=C
+              receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final val test7: kotlin.Int
       FIELD DELEGATE val `test7$delegate`: kotlin.Lazy<kotlin.Int>
         EXPRESSION_BODY
@@ -85,8 +85,8 @@ FILE /classLevelProperties.kt
             CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
               <T>: Int
               $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
-                receiver: THIS of 'C' type=C
-              thisRef: THIS of 'C' type=C
+                receiver: GET_VAR '<receiver: C>' type=C origin=null
+              thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test7: Int' type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test8: kotlin.Int
       FIELD DELEGATE val `test8$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
@@ -100,8 +100,8 @@ FILE /classLevelProperties.kt
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
               <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
-                receiver: THIS of 'C' type=C
-              thisRef: THIS of 'C' type=C
+                receiver: GET_VAR '<receiver: C>' type=C origin=null
+              thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <set-test8>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
@@ -109,7 +109,7 @@ FILE /classLevelProperties.kt
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
               <V>: Int
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
-                receiver: THIS of 'C' type=C
-              thisRef: THIS of 'C' type=C
+                receiver: GET_VAR '<receiver: C>' type=C origin=null
+              thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null

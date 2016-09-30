@@ -72,7 +72,7 @@ abstract class AbstractClosureAnnotatorTestCase : AbstractIrGeneratorTestCase() 
                 closure.capturedReceiverParameters.forEach {
                     actualOut.println("  receiver for ${it.containingDeclaration.name}")
                 }
-                closure.capturedVariables.forEach {
+                closure.capturedValues.forEach {
                     actualOut.println("  variable ${it.name}")
                 }
             }

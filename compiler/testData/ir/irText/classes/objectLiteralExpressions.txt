@@ -51,7 +51,7 @@ FILE /objectLiteralExpressions.kt
               CONSTRUCTOR public constructor <no name provided>()
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
-                    $this: THIS of 'Outer' type=Outer
+                    $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
                   INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
               FUN public open override fun foo(): kotlin.Unit
                 BLOCK_BODY
@@ -66,7 +66,7 @@ FILE /objectLiteralExpressions.kt
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
-                  $this: $RECEIVER of 'test4() on Outer: Outer.Inner' type=Outer
+                  $this: GET_VAR '<receiver: test4() on Outer: Outer.Inner>' type=Outer origin=null
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             FUN public open override fun foo(): kotlin.Unit
               BLOCK_BODY

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -82,7 +82,7 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
     private fun createBackingFieldValueForDelegate(delegateDescriptor: IrPropertyDelegateDescriptor, ktDelegate: KtPropertyDelegate): IntermediateValue {
         val thisClass = delegateDescriptor.correspondingProperty.containingDeclaration as? ClassDescriptor
         val thisValue = thisClass?.let {
-            RematerializableValue(IrThisReferenceImpl(ktDelegate.startOffset, ktDelegate.endOffset, thisClass.defaultType, thisClass))
+            RematerializableValue(IrGetValueImpl(ktDelegate.startOffset, ktDelegate.endOffset, thisClass.thisAsReceiverParameter))
         }
         return BackingFieldLValue(ktDelegate.startOffset, ktDelegate.endOffset, delegateDescriptor, thisValue, null)
     }

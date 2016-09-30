@@ -5655,6 +5655,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegation/delegationToVal.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt8154.kt")
+        public void testKt8154() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegation/kt8154.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
@@ -13663,6 +13669,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt1202.kt")
         public void testKt1202() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt1202.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt13381.kt")
+        public void testKt13381() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt13381.kt");
             doTest(fileName);
         }
 

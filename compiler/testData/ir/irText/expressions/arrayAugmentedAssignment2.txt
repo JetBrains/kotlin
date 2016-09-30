@@ -11,7 +11,7 @@ FILE /arrayAugmentedAssignment2.kt
         VAR IR_TEMPORARY_VARIABLE val tmp1_index0: kotlin.String
           CONST String type=kotlin.String value=''
         CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: $RECEIVER of 'test(IA) on IB: Unit' type=IB
+          $this: GET_VAR '<receiver: test(IA) on IB: Unit>' type=IB origin=null
           $receiver: GET_VAR 'tmp0_array: IA' type=IA origin=null
           index: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ

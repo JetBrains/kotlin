@@ -70,4 +70,10 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/objectClass.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("simple.kt")
+    public void testSimple() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/simple.kt");
+        doTest(fileName);
+    }
 }

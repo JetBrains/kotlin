@@ -18,15 +18,19 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -164,13 +168,13 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
         val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
         val returnType = overridden.returnType!!
         val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden, null)
-        irCall.dispatchReceiver = IrGetVariableImpl(irDelegate.startOffset, irDelegate.endOffset, irDelegate.descriptor)
+        irCall.dispatchReceiver = IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, irDelegate.descriptor)
         irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetExtensionReceiverImpl(irDelegate.startOffset, irDelegate.endOffset, extensionReceiver)
+            IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, extensionReceiver)
         }
         irCall.mapValueParameters { overriddenValueParameter ->
             val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
-            IrGetVariableImpl(irDelegate.startOffset, irDelegate.endOffset, delegatedValueParameter)
+            IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, delegatedValueParameter)
         }
         if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
             irBlockBody.statements.add(irCall)

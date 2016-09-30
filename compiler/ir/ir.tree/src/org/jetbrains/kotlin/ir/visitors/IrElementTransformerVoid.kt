@@ -101,9 +101,6 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitStringConcatenation(expression: IrStringConcatenation) = visitExpression(expression)
     override final fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?) = visitStringConcatenation(expression)
 
-    open fun visitThisReference(expression: IrThisReference) = visitExpression(expression)
-    override final fun visitThisReference(expression: IrThisReference, data: Nothing?) = visitThisReference(expression)
-
     open fun visitDeclarationReference(expression: IrDeclarationReference) = visitExpression(expression)
     override final fun visitDeclarationReference(expression: IrDeclarationReference, data: Nothing?) = visitDeclarationReference(expression)
 
@@ -116,13 +113,13 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitGetEnumValue(expression: IrGetEnumValue) = visitSingletonReference(expression)
     override final fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?) = visitGetEnumValue(expression)
 
-    open fun visitVariableAccess(expression: IrVariableAccessExpression) = visitDeclarationReference(expression)
-    override final fun visitVariableAccess(expression: IrVariableAccessExpression, data: Nothing?) = visitVariableAccess(expression)
+    open fun visitValueAccess(expression: IrValueAccessExpression) = visitDeclarationReference(expression)
+    override final fun visitValueAccess(expression: IrValueAccessExpression, data: Nothing?) = visitValueAccess(expression)
 
-    open fun visitGetVariable(expression: IrGetVariable) = visitVariableAccess(expression)
-    override final fun visitGetVariable(expression: IrGetVariable, data: Nothing?) = visitGetVariable(expression)
+    open fun visitGetValue(expression: IrGetValue) = visitValueAccess(expression)
+    override final fun visitGetValue(expression: IrGetValue, data: Nothing?) = visitGetValue(expression)
 
-    open fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
+    open fun visitSetVariable(expression: IrSetVariable) = visitValueAccess(expression)
     override final fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
 
     open fun visitFieldAccess(expression: IrFieldAccessExpression) = visitDeclarationReference(expression)
@@ -133,9 +130,6 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
 
     open fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
     override final fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
-
-    open fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver) = visitDeclarationReference(expression)
-    override final fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?) = visitGetExtensionReceiver(expression)
 
     open fun visitMemberAccess(expression: IrMemberAccessExpression) = visitDeclarationReference(expression)
     override final fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)

@@ -20,17 +20,17 @@ FILE /calls.kt
   FUN public fun kotlin.Int.ext1(): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext1() on Int: Int'
-        $RECEIVER of 'ext1() on Int: Int' type=kotlin.Int
+        GET_VAR '<receiver: ext1() on Int: Int>' type=kotlin.Int origin=null
   FUN public fun kotlin.Int.ext2(x: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext2(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
-          x: $RECEIVER of 'ext2(Int) on Int: Int' type=kotlin.Int
+          x: GET_VAR '<receiver: ext2(Int) on Int: Int>' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
   FUN public fun kotlin.Int.ext3(x: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ext3(Int) on Int: Int'
         CALL 'foo(Int, Int): Int' type=kotlin.Int origin=null
           x: CALL 'ext1() on Int: Int' type=kotlin.Int origin=null
-            $receiver: $RECEIVER of 'ext3(Int) on Int: Int' type=kotlin.Int
+            $receiver: GET_VAR '<receiver: ext3(Int) on Int: Int>' type=kotlin.Int origin=null
           y: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null

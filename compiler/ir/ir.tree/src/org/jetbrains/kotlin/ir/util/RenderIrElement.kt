@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -102,12 +103,6 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
             "RETURN type=${expression.type.render()} from='${expression.returnTarget.ref()}'"
 
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: Nothing?): String =
-            "\$RECEIVER of '${expression.descriptor.containingDeclaration.ref()}' type=${expression.type.render()}"
-
-    override fun visitThisReference(expression: IrThisReference, data: Nothing?): String =
-            "THIS of '${expression.classDescriptor.ref()}' type=${expression.type.render()}"
-
     override fun visitCall(expression: IrCall, data: Nothing?): String =
             "CALL '${expression.descriptor.ref()}' ${expression.renderSuperQualifier()}" +
             "type=${expression.type.render()} origin=${expression.origin}"
@@ -124,7 +119,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
             "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classDescriptor.ref()}'"
 
-    override fun visitGetVariable(expression: IrGetVariable, data: Nothing?): String =
+    override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
             "GET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
@@ -212,7 +207,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 DECLARATION_RENDERER.render(this.descriptor)
         
         internal fun DeclarationDescriptor.ref(): String =
-                REFERENCE_RENDERER.render(this)
+                if (this is ReceiverParameterDescriptor)
+                    "<receiver: ${containingDeclaration.ref()}>"
+                else
+                    REFERENCE_RENDERER.render(this)
 
         internal fun KotlinType.render(): String =
                 DECLARATION_RENDERER.renderType(this)

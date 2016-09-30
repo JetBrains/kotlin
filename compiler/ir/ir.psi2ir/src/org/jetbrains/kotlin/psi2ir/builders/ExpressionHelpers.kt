@@ -74,11 +74,11 @@ fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
 
 fun IrBuilderWithScope.irThis() =
         scope.classOwner().let { classOwner ->
-            IrThisReferenceImpl(startOffset, endOffset, classOwner.defaultType, classOwner)
+            IrGetValueImpl(startOffset, endOffset, classOwner.thisAsReceiverParameter)
         }
 
 fun IrBuilderWithScope.irGet(variable: VariableDescriptor) =
-        IrGetVariableImpl(startOffset, endOffset, variable)
+        IrGetValueImpl(startOffset, endOffset, variable)
 
 fun IrBuilderWithScope.irSetVar(variable: VariableDescriptor, value: IrExpression) =
         IrSetVariableImpl(startOffset, endOffset, variable, value, IrStatementOrigin.EQ)

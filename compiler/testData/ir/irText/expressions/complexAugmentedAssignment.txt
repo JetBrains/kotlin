@@ -12,11 +12,11 @@ FILE /complexAugmentedAssignment.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x1>(): Int'
             GET_FIELD 'x1: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'X1' type=X1
+              receiver: GET_VAR '<receiver: X1>' type=X1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x1>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x1: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'X1' type=X1
+            receiver: GET_VAR '<receiver: X1>' type=X1 origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     CLASS OBJECT X2
       CONSTRUCTOR private constructor X2()
@@ -31,11 +31,11 @@ FILE /complexAugmentedAssignment.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x2>(): Int'
               GET_FIELD 'x2: Int' type=kotlin.Int origin=null
-                receiver: THIS of 'X2' type=X1.X2
+                receiver: GET_VAR '<receiver: X2>' type=X1.X2 origin=null
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x2>(<set-?>: kotlin.Int): kotlin.Unit
           BLOCK_BODY
             SET_FIELD 'x2: Int' type=kotlin.Unit origin=null
-              receiver: THIS of 'X2' type=X1.X2
+              receiver: GET_VAR '<receiver: X2>' type=X1.X2 origin=null
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
       CLASS OBJECT X3
         CONSTRUCTOR private constructor X3()
@@ -50,11 +50,11 @@ FILE /complexAugmentedAssignment.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-x3>(): Int'
                 GET_FIELD 'x3: Int' type=kotlin.Int origin=null
-                  receiver: THIS of 'X3' type=X1.X2.X3
+                  receiver: GET_VAR '<receiver: X3>' type=X1.X2.X3 origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x3>(<set-?>: kotlin.Int): kotlin.Unit
             BLOCK_BODY
               SET_FIELD 'x3: Int' type=kotlin.Unit origin=null
-                receiver: THIS of 'X3' type=X1.X2.X3
+                receiver: GET_VAR '<receiver: X3>' type=X1.X2.X3 origin=null
                 value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
     BLOCK_BODY
@@ -138,11 +138,11 @@ FILE /complexAugmentedAssignment.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-s>(): Int'
             GET_FIELD 's: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'B' type=B
+              receiver: GET_VAR '<receiver: B>' type=B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-s>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 's: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'B' type=B
+            receiver: GET_VAR '<receiver: B>' type=B origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS OBJECT Host
     CONSTRUCTOR private constructor Host()
@@ -153,7 +153,7 @@ FILE /complexAugmentedAssignment.kt
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=PLUSEQ
           VAR IR_TEMPORARY_VARIABLE val tmp0_this: B
-            $RECEIVER of 'plusAssign(B) on B: Unit' type=B
+            GET_VAR '<receiver: plusAssign(B) on B: Unit>' type=B origin=null
           CALL '<set-s>(Int): Unit' type=kotlin.Unit origin=PLUSEQ
             $this: GET_VAR 'tmp0_this: B' type=B origin=null
             <set-?>: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
@@ -164,7 +164,7 @@ FILE /complexAugmentedAssignment.kt
   FUN public fun Host.test3(v: B): kotlin.Unit
     BLOCK_BODY
       CALL 'plusAssign(B) on B: Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: $RECEIVER of 'test3(B) on Host: Unit' type=Host
+        $this: GET_VAR '<receiver: test3(B) on Host: Unit>' type=Host origin=null
         $receiver: GET_VAR 'value-parameter v: B' type=B origin=PLUSEQ
         b: CALL 'constructor B(Int = ...)' type=B origin=null
           s: CONST Int type=kotlin.Int value='1000'

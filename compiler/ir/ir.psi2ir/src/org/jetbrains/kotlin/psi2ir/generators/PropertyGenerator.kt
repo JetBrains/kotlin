@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
@@ -58,8 +58,8 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val irProperty = IrPropertyImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFINED, false, propertyDescriptor)
 
         val irField = IrFieldImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, propertyDescriptor)
-        val irGetParameter = IrGetVariableImpl(ktParameter.startOffset, ktParameter.endOffset,
-                                               valueParameterDescriptor, IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER)
+        val irGetParameter = IrGetValueImpl(ktParameter.startOffset, ktParameter.endOffset,
+                                            valueParameterDescriptor, IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER)
         irField.initializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
         irProperty.backingField = irField
 
@@ -160,16 +160,15 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
 
         val setterParameter = setter.valueParameters.single()
         irBody.statements.add(IrSetFieldImpl(ktProperty.startOffset, ktProperty.endOffset, property, receiver,
-                                             IrGetVariableImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)))
+                                             IrGetValueImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)))
         return irBody
     }
 
-    private fun generateReceiverExpressionForDefaultPropertyAccessor(ktProperty: KtElement, property: PropertyDescriptor): IrThisReferenceImpl? {
+    private fun generateReceiverExpressionForDefaultPropertyAccessor(ktProperty: KtElement, property: PropertyDescriptor): IrExpression? {
         val containingDeclaration = property.containingDeclaration
         val receiver =
                 if (containingDeclaration is ClassDescriptor)
-                    IrThisReferenceImpl(ktProperty.startOffset, ktProperty.endOffset, containingDeclaration.defaultType,
-                                        containingDeclaration)
+                    IrGetValueImpl(ktProperty.startOffset, ktProperty.endOffset, containingDeclaration.thisAsReceiverParameter)
                 else
                     null
         return receiver

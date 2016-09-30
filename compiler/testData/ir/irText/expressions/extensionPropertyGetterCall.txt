@@ -8,4 +8,4 @@ FILE /extensionPropertyGetterCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY
-          $receiver: $RECEIVER of 'test5() on String: String' type=kotlin.String
+          $receiver: GET_VAR '<receiver: test5() on String: String>' type=kotlin.String origin=null

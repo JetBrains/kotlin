@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrThisReference
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
-class IrThisReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val classDescriptor: ClassDescriptor
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrThisReference {
+class IrGetValueImpl(
+        startOffset: Int, endOffset: Int, descriptor: ValueDescriptor,
+        override val origin: IrStatementOrigin? = null
+) : IrTerminalDeclarationReferenceBase<ValueDescriptor>(startOffset, endOffset, descriptor.type, descriptor), IrGetValue {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitThisReference(this, data)
+            visitor.visitGetValue(this, data)
 
-    override fun copy(): IrThisReference =
-            IrThisReferenceImpl(startOffset, endOffset, type, classDescriptor)
+    override fun copy(): IrGetValue =
+            IrGetValueImpl(startOffset, endOffset, descriptor, origin)
 }

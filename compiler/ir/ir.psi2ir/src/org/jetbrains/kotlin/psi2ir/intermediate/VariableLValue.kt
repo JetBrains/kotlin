@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -36,7 +36,7 @@ class VariableLValue(
     override val type: KotlinType get() = descriptor.type
 
     override fun load(): IrExpression =
-            IrGetVariableImpl(startOffset, endOffset, descriptor, origin)
+            IrGetValueImpl(startOffset, endOffset, descriptor, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
             IrSetVariableImpl(startOffset, endOffset, descriptor, irExpression, origin)

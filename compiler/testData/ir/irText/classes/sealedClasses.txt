@@ -17,7 +17,7 @@ FILE /sealedClasses.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
               GET_FIELD 'number: Double' type=kotlin.Double origin=null
-                receiver: THIS of 'Const' type=Expr.Const
+                receiver: GET_VAR '<receiver: Const>' type=Expr.Const origin=null
     CLASS CLASS Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         BLOCK_BODY
@@ -31,7 +31,7 @@ FILE /sealedClasses.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e1>(): Expr'
               GET_FIELD 'e1: Expr' type=Expr origin=null
-                receiver: THIS of 'Sum' type=Expr.Sum
+                receiver: GET_VAR '<receiver: Sum>' type=Expr.Sum origin=null
       PROPERTY public final val e2: Expr
         FIELD PROPERTY_BACKING_FIELD public final val e2: Expr
           EXPRESSION_BODY
@@ -40,7 +40,7 @@ FILE /sealedClasses.kt
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
               GET_FIELD 'e2: Expr' type=Expr origin=null
-                receiver: THIS of 'Sum' type=Expr.Sum
+                receiver: GET_VAR '<receiver: Sum>' type=Expr.Sum origin=null
     CLASS OBJECT NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY

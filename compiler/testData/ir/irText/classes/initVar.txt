@@ -12,11 +12,11 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarFromParameter' type=TestInitVarFromParameter
+              receiver: GET_VAR '<receiver: TestInitVarFromParameter>' type=TestInitVarFromParameter origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'TestInitVarFromParameter' type=TestInitVarFromParameter
+            receiver: GET_VAR '<receiver: TestInitVarFromParameter>' type=TestInitVarFromParameter origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS CLASS TestInitVarInClass
     CONSTRUCTOR public constructor TestInitVarInClass()
@@ -31,11 +31,11 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarInClass' type=TestInitVarInClass
+              receiver: GET_VAR '<receiver: TestInitVarInClass>' type=TestInitVarInClass origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'TestInitVarInClass' type=TestInitVarInClass
+            receiver: GET_VAR '<receiver: TestInitVarInClass>' type=TestInitVarInClass origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS CLASS TestInitVarInInitBlock
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
@@ -48,16 +48,16 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
+              receiver: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
-            receiver: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
+            receiver: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER TestInitVarInInitBlock
       BLOCK_BODY
         CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
-          $this: THIS of 'TestInitVarInInitBlock' type=TestInitVarInInitBlock
+          $this: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
           <set-?>: CONST Int type=kotlin.Int value='0'
   CLASS CLASS TestInitVarWithCustomSetter
     CONSTRUCTOR public constructor TestInitVarWithCustomSetter()
@@ -72,7 +72,7 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarWithCustomSetter' type=TestInitVarWithCustomSetter
+              receiver: GET_VAR '<receiver: TestInitVarWithCustomSetter>' type=TestInitVarWithCustomSetter origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
@@ -84,7 +84,7 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarWithCustomSetterWithExplicitCtor' type=TestInitVarWithCustomSetterWithExplicitCtor
+              receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterWithExplicitCtor>' type=TestInitVarWithCustomSetterWithExplicitCtor origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
@@ -92,7 +92,7 @@ FILE /initVar.kt
     ANONYMOUS_INITIALIZER TestInitVarWithCustomSetterWithExplicitCtor
       BLOCK_BODY
         CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
-          $this: THIS of 'TestInitVarWithCustomSetterWithExplicitCtor' type=TestInitVarWithCustomSetterWithExplicitCtor
+          $this: GET_VAR '<receiver: TestInitVarWithCustomSetterWithExplicitCtor>' type=TestInitVarWithCustomSetterWithExplicitCtor origin=null
           value: CONST Int type=kotlin.Int value='0'
     CONSTRUCTOR public constructor TestInitVarWithCustomSetterWithExplicitCtor()
       BLOCK_BODY
@@ -105,7 +105,7 @@ FILE /initVar.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
-              receiver: THIS of 'TestInitVarWithCustomSetterInCtor' type=TestInitVarWithCustomSetterInCtor
+              receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
@@ -115,5 +115,5 @@ FILE /initVar.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterInCtor'
         CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
-          $this: THIS of 'TestInitVarWithCustomSetterInCtor' type=TestInitVarWithCustomSetterInCtor
+          $this: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null
           value: CONST Int type=kotlin.Int value='42'

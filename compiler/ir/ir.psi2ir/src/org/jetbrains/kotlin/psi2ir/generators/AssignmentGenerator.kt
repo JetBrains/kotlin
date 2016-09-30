@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrThisReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -139,7 +139,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): AssignmentReceiver {
         if (isValInitializationInConstructor(descriptor, resolvedCall)) {
             val thisClass = getThisClass()
-            val irThis = IrThisReferenceImpl(ktLeft.startOffset, ktLeft.endOffset, thisClass.defaultType, thisClass)
+            val irThis = IrGetValueImpl(ktLeft.startOffset, ktLeft.endOffset, thisClass.thisAsReceiverParameter)
             return BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor,
                                       RematerializableValue(irThis), null)
         }

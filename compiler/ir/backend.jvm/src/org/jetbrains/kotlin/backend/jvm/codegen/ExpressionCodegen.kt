@@ -238,11 +238,7 @@ class ExpressionCodegen(
         return expression.accept(this, data)
     }
 
-    override fun visitGetExtensionReceiver(expression: IrGetExtensionReceiver, data: BlockInfo): StackValue {
-        return generateLocal(expression.descriptor, expression.asmType)
-    }
-
-    override fun visitGetVariable(expression: IrGetVariable, data: BlockInfo): StackValue {
+    override fun visitGetValue(expression: IrGetValue, data: BlockInfo): StackValue {
         return generateLocal(expression.descriptor, expression.asmType)
     }
 
@@ -283,11 +279,6 @@ class ExpressionCodegen(
         val value = expression.value.accept(this, data)
         StackValue.local(frame.getIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
         //UNIT?
-        return expression.onStack
-    }
-
-    override fun visitThisReference(expression: IrThisReference, data: BlockInfo): StackValue {
-        StackValue.local(0, expression.asmType).put(expression.asmType, mv)
         return expression.onStack
     }
 
