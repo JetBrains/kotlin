@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -129,12 +130,19 @@ private class KtExpressionPostfixTemplateSelector(
             // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
             if (it is KtFunctionLiteral) return@Condition false
 
-            val context by lazy { it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION) }
+            // No local delegated properties in 1.0.5
+            var context: BindingContext? = null
+            fun getContext(): BindingContext {
+                if (context == null) {
+                    context = it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+                }
+                return context!!
+            }
 
-            if (statementsOnly && it.parent !is KtBlockExpression && !it.isUsedAsStatement(context)) return@Condition false
+            if (statementsOnly && it.parent !is KtBlockExpression && !it.isUsedAsStatement(getContext())) return@Condition false
             if (checkCanBeUsedAsValue && !it.canBeUsedAsValue()) return@Condition false
 
-            typePredicate == null || it.getType(context)?.let { typePredicate(it) } ?: false
+            typePredicate == null || it.getType(getContext())?.let { typePredicate(it) } ?: false
         }
 
         private fun KtExpression.canBeUsedAsValue() =
