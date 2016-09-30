@@ -70,19 +70,19 @@ class OptimizedImportsBuilder(
 
     private val importInsertHelper = ImportInsertHelper.getInstance(file.project)
 
-    private sealed class LockedImport {
+    private sealed class ImportRule {
         // force presence of this import
-        data class Positive(val importPath: ImportPath) : LockedImport() {
-            override fun toString() = importPath.toString()
+        data class Add(val importPath: ImportPath) : ImportRule() {
+            override fun toString() = "+" + importPath.toString()
         }
 
         // force absence of this import
-        data class Negative(val importPath: ImportPath) : LockedImport() {
+        data class DoNotAdd(val importPath: ImportPath) : ImportRule() {
             override fun toString() = "-" + importPath.toString()
         }
     }
 
-    private val lockedImports = HashSet<LockedImport>()
+    private val importRules = HashSet<ImportRule>()
 
     fun buildOptimizedImports(): List<ImportPath>? {
         // TODO: should we drop unused aliases?
@@ -93,13 +93,13 @@ class OptimizedImportsBuilder(
                     val aliasName = it.alias
                     aliasName != null && aliasName != it.fqnPart().shortName()
                 }
-                .mapTo(lockedImports) { LockedImport.Positive(it) }
+                .mapTo(importRules) { ImportRule.Add(it) }
 
         while (true) {
-            val lockedImportsBefore = lockedImports.size
+            val importRulesBefore = importRules.size
             val result = tryBuildOptimizedImports()
-            if (lockedImports.size == lockedImportsBefore) return result
-            testLog?.append("Trying to build import list again with locked imports: ${lockedImports.joinToString()}\n")
+            if (importRules.size == importRulesBefore) return result
+            testLog?.append("Trying to build import list again with import rules: ${importRules.joinToString()}\n")
         }
     }
 
@@ -116,8 +116,8 @@ class OptimizedImportsBuilder(
 
     private fun tryBuildOptimizedImports(): List<ImportPath>? {
         val importsToGenerate = HashSet<ImportPath>()
-        lockedImports
-                .filterIsInstance<LockedImport.Positive>()
+        importRules
+                .filterIsInstance<ImportRule.Add>()
                 .mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
@@ -129,7 +129,7 @@ class OptimizedImportsBuilder(
 
             val parentFqName = fqName.parent()
             val starImportPath = ImportPath(parentFqName, true)
-            if (canUseStarImport(descriptor, fqName) && !starImportPath.isNegativeLocked()) {
+            if (canUseStarImport(descriptor, fqName) && starImportPath.isAllowedByRules()) {
                 descriptorsByParentFqName.getOrPut(parentFqName) { HashSet() }.add(descriptor)
             }
             else {
@@ -147,7 +147,7 @@ class OptimizedImportsBuilder(
             val fqNames = descriptors.map { it.importableFqName!! }.toSet()
             val nameCountToUseStar = descriptors.first().nameCountToUseStar()
             val useExplicitImports = fqNames.size < nameCountToUseStar && !options.isInPackagesToUseStarImport(parentFqName)
-                                     || starImportPath.isNegativeLocked()
+                                     || !starImportPath.isAllowedByRules()
             if (useExplicitImports) {
                 fqNames
                         .filter { !isImportedByDefault(it) }
@@ -211,13 +211,13 @@ class OptimizedImportsBuilder(
         val starImportPath = ImportPath(fqName.parent(), true)
         val importPaths = file.importDirectives.map { it.importPath }
         if (explicitImportPath in importPaths) {
-            lockedImports.add(LockedImport.Positive(explicitImportPath))
+            importRules.add(ImportRule.Add(explicitImportPath))
         }
         else if (starImportPath in importPaths) {
-            lockedImports.add(LockedImport.Positive(starImportPath))
+            importRules.add(ImportRule.Add(starImportPath))
         }
         else { // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
-            lockedImports.add(LockedImport.Negative(starImportPath))
+            importRules.add(ImportRule.DoNotAdd(starImportPath))
         }
     }
 
@@ -322,5 +322,5 @@ class OptimizedImportsBuilder(
                descriptors1.zip(descriptors2).all { it.first.importableFqName == it.second.importableFqName } //TODO: can have different order?
     }
 
-    private fun ImportPath.isNegativeLocked(): Boolean = lockedImports.any { it is LockedImport.Negative && it.importPath == this }
+    private fun ImportPath.isAllowedByRules(): Boolean = importRules.none { it is ImportRule.DoNotAdd && it.importPath == this }
 }
