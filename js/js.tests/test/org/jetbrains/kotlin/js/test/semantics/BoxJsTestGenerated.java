@@ -2094,6 +2094,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forIteratesOverTypeParameter.kt")
+            public void testForIteratesOverTypeParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/forIteratesOverTypeParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forOnEmptyArray.kt")
             public void testForOnEmptyArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/for/forOnEmptyArray.kt");
