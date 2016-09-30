@@ -59,7 +59,8 @@ enum class NativeGetterOrSetter {
 
 enum class GenerateDefinitionKind {
     TRAIT,
-    CLASS
+    CLASS,
+    ABSTRACT_CLASS
 }
 
 data class GenerateFunctionCall(val name: String, val arguments: List<String>)
