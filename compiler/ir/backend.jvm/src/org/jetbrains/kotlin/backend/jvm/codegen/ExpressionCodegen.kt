@@ -179,7 +179,7 @@ class ExpressionCodegen(
                         gen(expression, callable.valueParameterTypes[i], data)
                     }
                     is DefaultArg -> {
-                        pushDefaultValueOnStack(callable.parameterTypes[i], mv)
+                        pushDefaultValueOnStack(callable.valueParameterTypes[i], mv)
                         defaultMask.mark(expression.index)
                     }
                     else -> TODO()
