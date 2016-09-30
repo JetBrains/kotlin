@@ -22,14 +22,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-public interface VariableDescriptor extends CallableDescriptor {
-    @NotNull
-    KotlinType getType();
-
-    @Override
-    @NotNull
-    DeclarationDescriptor getContainingDeclaration();
-
+public interface VariableDescriptor extends ValueDescriptor {
     @Override
     VariableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
