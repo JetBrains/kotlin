@@ -42,7 +42,7 @@ class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(Simplify
 
 class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         KtForExpression::class.java,
-        "Simplify 'for' using destructing declaration",
+        "Simplify 'for' using destructuring declaration",
         "Simplify 'for'"
 ) {
     override fun applyTo(element: KtForExpression, editor: Editor?) {
@@ -80,7 +80,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         return null
     }
 
-    // Note: list should contains properties in order to create destructing declaration
+    // Note: list should contains properties in order to create destructuring declaration
     private fun collectUsagesToRemove(element: KtForExpression): Pair<List<UsageData>, Boolean>? {
         val loopParameter = element.loopParameter ?: return null
 
