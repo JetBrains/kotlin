@@ -57,7 +57,7 @@ class OperatorCallChecker : CallChecker {
             return
         }
 
-        val isConventionOperator = element is KtOperationReferenceExpression && element.operationSignTokenType != null
+        val isConventionOperator = element is KtOperationReferenceExpression && element.isConventionOperator()
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)

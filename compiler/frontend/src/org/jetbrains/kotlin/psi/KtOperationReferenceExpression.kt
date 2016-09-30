@@ -20,10 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.lexer.KtToken
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
-import org.jetbrains.kotlin.resolve.constants.evaluate.binaryOperations
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
@@ -31,4 +28,9 @@ class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl
 
     val operationSignTokenType: KtSingleValueToken?
         get() = (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
+
+    fun isConventionOperator(): Boolean {
+        val tokenType = operationSignTokenType ?: return false
+        return OperatorConventions.getNameForOperationSymbol(tokenType) != null
+    }
 }

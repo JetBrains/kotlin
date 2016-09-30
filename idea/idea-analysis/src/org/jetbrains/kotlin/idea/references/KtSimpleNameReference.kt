@@ -214,16 +214,15 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
                 val tokenType = element.operationSignTokenType
                 if (tokenType != null) {
                     val name = OperatorConventions.getNameForOperationSymbol(
-                            tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression)
-                    if (name != null) { // can it be null ever?
-                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
-                        if (counterpart != null) {
-                            val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
-                            return listOf(name, counterpartName)
-                        }
-                        else {
-                            return listOf(name)
-                        }
+                            tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
+                    ) ?: return emptyList()
+                    val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
+                    if (counterpart != null) {
+                        val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
+                        return listOf(name, counterpartName)
+                    }
+                    else {
+                        return listOf(name)
                     }
                 }
             }

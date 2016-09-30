@@ -120,7 +120,7 @@ fun isConventionCall(call: Call): Boolean {
     val callElement = call.callElement
     if (callElement is KtArrayAccessExpression || callElement is KtDestructuringDeclarationEntry) return true
     val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
-    return calleeExpression.operationSignTokenType != null
+    return calleeExpression.isConventionOperator()
 }
 
 fun isInfixCall(call: Call): Boolean {
