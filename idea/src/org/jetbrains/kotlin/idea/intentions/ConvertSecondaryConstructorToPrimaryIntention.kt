@@ -17,17 +17,26 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtSecondaryConstructor>(
+class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
+        ConvertSecondaryConstructorToPrimaryIntention::class,
+        { constructor -> constructor.containingClass()?.getSecondaryConstructors()?.size == 1 }
+) {
+    override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
+}
+
+class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntention<KtSecondaryConstructor>(
         KtSecondaryConstructor::class.java,
         "Convert to primary constructor"
 ) {
@@ -41,22 +50,22 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingIntention<KtS
         return isReachableByDelegationFrom(delegationDescriptor, context, visited + constructor)
     }
 
-    override fun isApplicableTo(element: KtSecondaryConstructor, caretOffset: Int): Boolean {
+    override fun applicabilityRange(element: KtSecondaryConstructor): TextRange? {
         val delegationCall = element.getDelegationCall()
-        if (delegationCall.isCallToThis) return false
-        val klass = element.containingClassOrObject ?: return false
-        if (klass.hasPrimaryConstructor()) return false
+        if (delegationCall.isCallToThis) return null
+        val klass = element.containingClassOrObject ?: return null
+        if (klass.hasPrimaryConstructor()) return null
 
-        val context = klass.analyze()
-        val classDescriptor = context[BindingContext.CLASS, klass] ?: return false
-        val elementDescriptor = context[BindingContext.CONSTRUCTOR, element] ?: return false
+        val context = klass.analyzeFully()
+        val classDescriptor = context[BindingContext.CLASS, klass] ?: return null
+        val elementDescriptor = context[BindingContext.CONSTRUCTOR, element] ?: return null
 
         for (constructorDescriptor in classDescriptor.constructors) {
             if (constructorDescriptor == elementDescriptor) continue
-            if (!elementDescriptor.isReachableByDelegationFrom(constructorDescriptor, context)) return false
+            if (!elementDescriptor.isReachableByDelegationFrom(constructorDescriptor, context)) return null
         }
 
-        return true
+        return element.textRange
     }
 
     private fun KtExpression.tryConvertToPropertyByParameterInitialization(
