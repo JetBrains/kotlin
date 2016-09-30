@@ -240,7 +240,7 @@ class ForConverter(
                     val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
                     val qualifierType = qualifier.type
                     if (qualifierType != null && collectionType.isAssignableFrom(qualifierType)) {
-                        indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false))
+                        indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false), null)
                     }
                 }
             }
@@ -250,7 +250,7 @@ class ForConverter(
             && collectionSize.referenceName == "length") {
             val qualifier = collectionSize.qualifierExpression
             if (qualifier is PsiReferenceExpression && qualifier.type is PsiArrayType) {
-                indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false))
+                indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier.withNoPrototype("indices", isNullable = false), null)
             }
         }
 

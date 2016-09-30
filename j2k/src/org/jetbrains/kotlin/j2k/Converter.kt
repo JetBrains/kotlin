@@ -359,7 +359,7 @@ class Converter private constructor(
                 }
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
-                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
+                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier, null).assignNoPrototype()
                     val returnStatement = ReturnStatement(superAccess).assignNoPrototype()
                     val body = Block.of(returnStatement).assignNoPrototype()
                     val parameterList = ParameterList.withNoPrototype(emptyList())
@@ -396,7 +396,7 @@ class Converter private constructor(
                 }
                 else if (propertyInfo.modifiers.contains(Modifier.OVERRIDE) && !(propertyInfo.superInfo?.isAbstract() ?: false)) {
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
-                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
+                    val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier, null).assignNoPrototype()
                     val valueIdentifier = Identifier.withNoPrototype("value", isNullable = false)
                     val assignment = AssignmentExpression(superAccess, valueIdentifier, Operator.EQ).assignNoPrototype()
                     val body = Block.of(assignment).assignNoPrototype()

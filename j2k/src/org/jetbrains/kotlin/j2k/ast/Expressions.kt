@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.ast
 
 import com.intellij.psi.JavaTokenType
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
@@ -111,16 +112,25 @@ class SuperExpression(val identifier: Identifier) : Expression() {
     }
 }
 
-class QualifiedExpression(val qualifier: Expression, val identifier: Expression) : Expression() {
+class QualifiedExpression(val qualifier: Expression, val identifier: Expression, dotPrototype: PsiElement?) : Expression() {
+    private val dot = Dot().assignPrototype(dotPrototype, CommentsAndSpacesInheritance.LINE_BREAKS)
+
     override val isNullable: Boolean
         get() = identifier.isNullable
 
     override fun generateCode(builder: CodeBuilder) {
         if (!qualifier.isEmpty) {
-            builder.appendOperand(this, qualifier).append(if (qualifier.isNullable) "!!." else ".")
+            builder.appendOperand(this, qualifier).append(if (qualifier.isNullable) "!!" else "")
+            builder.append(dot)
         }
 
         builder.append(identifier)
+    }
+
+    private class Dot : Element() {
+        override fun generateCode(builder: CodeBuilder) {
+            builder.append(".")
+        }
     }
 }
 

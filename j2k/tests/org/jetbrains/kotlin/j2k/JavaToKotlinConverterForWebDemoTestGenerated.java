@@ -2317,6 +2317,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/formatting"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("chainedCall.java")
+        public void testChainedCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/chainedCall.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaksBetweenArguments.java")
         public void testLineBreaksBetweenArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/lineBreaksBetweenArguments.java");
