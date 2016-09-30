@@ -32,7 +32,7 @@ class ArgumentList(
 
     companion object {
         fun withNoPrototype(arguments: List<Expression>): ArgumentList {
-            return ArgumentList(arguments, LPar().assignNoPrototype(), RPar().assignNoPrototype()).assignNoPrototype()
+            return ArgumentList(arguments, LPar.withPrototype(null), RPar.withPrototype(null)).assignNoPrototype()
         }
 
         fun withNoPrototype(vararg arguments: Expression): ArgumentList = withNoPrototype(arguments.asList())

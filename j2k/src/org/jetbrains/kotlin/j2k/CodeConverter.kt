@@ -64,12 +64,10 @@ class CodeConverter(
             = expressions.map { convertExpression(it) }
 
     fun convertArgumentList(list: PsiExpressionList): ArgumentList {
-        val lPar = list.node.findChildByType(JavaTokenType.LPARENTH)?.psi
-        val rPar = list.node.findChildByType(JavaTokenType.RPARENTH)?.psi
         return ArgumentList(
                 convertExpressions(list.expressions),
-                LPar().assignPrototype(lPar, CommentsAndSpacesInheritance.LINE_BREAKS),
-                RPar().assignPrototype(rPar, CommentsAndSpacesInheritance.LINE_BREAKS)
+                LPar.withPrototype(list.lPar()),
+                RPar.withPrototype(list.rPar())
         ).assignPrototype(list)
     }
 

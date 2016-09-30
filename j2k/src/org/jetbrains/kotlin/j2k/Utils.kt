@@ -21,7 +21,6 @@ import com.intellij.psi.util.PsiMethodUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
@@ -111,7 +110,9 @@ fun PsiModifierListOwner.accessModifier(): String = when {
 
 fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
 
-fun PsiReferenceExpression.dot(): PsiElement? = allChildren.firstOrNull { it.node.elementType == JavaTokenType.DOT }
+fun PsiReferenceExpression.dot(): PsiElement? = node.findChildByType(JavaTokenType.DOT)?.psi
+fun PsiExpressionList.lPar(): PsiElement? = node.findChildByType(JavaTokenType.LPARENTH)?.psi
+fun PsiExpressionList.rPar(): PsiElement? = node.findChildByType(JavaTokenType.RPARENTH)?.psi
 
 fun PsiMember.isImported(file: PsiJavaFile): Boolean {
     if (this is PsiClass) {
