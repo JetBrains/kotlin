@@ -413,6 +413,21 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @TestMetadata("idea/testData/hierarchy/calls/callersJava")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallersJava extends AbstractHierarchyTest {
+        public void testAllFilesPresentInCallersJava() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), false);
+        }
+
+        @TestMetadata("javaMethod")
+        public void testJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callersJava/javaMethod/");
+            doCallerJavaHierarchyTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/hierarchy/calls/callees")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -45,7 +45,7 @@ fun KtFile.findFacadeClass(): KtLightClass? {
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
-fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
+fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is KtClassOrObject -> toLightClass().singletonOrEmptyList()
             is KtNamedFunction,
@@ -60,6 +60,7 @@ fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
                 elements
             }
             is KtTypeParameter -> toPsiTypeParameters()
+            is KtFile -> findFacadeClass().singletonOrEmptyList()
             else -> listOf()
         }
 

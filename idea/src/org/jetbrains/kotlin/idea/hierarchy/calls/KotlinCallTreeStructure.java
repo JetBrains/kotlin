@@ -26,10 +26,12 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashMap;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
@@ -41,7 +43,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     protected final String scopeType;
 
     public KotlinCallTreeStructure(@NotNull Project project, PsiElement element, String scopeType) {
-        super(project, createNodeDescriptor(project, element, null, false));
+        super(project, createNodeDescriptor(project, element, null, false, false));
         this.scopeType = scopeType;
     }
 
@@ -51,13 +53,19 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
                                    : null;
     }
 
-    protected static HierarchyNodeDescriptor createNodeDescriptor(
-            Project project, PsiElement element, HierarchyNodeDescriptor parent, boolean navigateToReference
+    @Nullable
+    private static HierarchyNodeDescriptor createNodeDescriptor(
+            Project project, PsiElement element, HierarchyNodeDescriptor parent, boolean navigateToReference, boolean wrapAsLightElements
     ) {
+        PsiElement nodeElement = element;
+        if (wrapAsLightElements && element instanceof KtElement) {
+            nodeElement = CollectionsKt.firstOrNull(LightClassUtilsKt.toLightElements((KtElement) element));
+        }
+        if (nodeElement == null) return null;
         boolean root = (parent == null);
-        return element instanceof KtElement
-               ? new KotlinCallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference)
-               : new CallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference);
+        return nodeElement instanceof KtElement
+               ? new KotlinCallHierarchyNodeDescriptor(project, parent, nodeElement, root, navigateToReference)
+               : new CallHierarchyNodeDescriptor(project, parent, nodeElement, root, navigateToReference);
     }
 
     protected static PsiElement getTargetElement(HierarchyNodeDescriptor descriptor) {
@@ -131,20 +139,22 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
 
             if (basePsiClass != null && !isInScope(basePsiClass, callee, scopeType)) continue;
 
-            addNodeDescriptorForElement(ref, callee, declarationToDescriptorMap, descriptor);
+            addNodeDescriptorForElement(ref, callee, declarationToDescriptorMap, descriptor, false);
         }
         return declarationToDescriptorMap.values().toArray(new Object[declarationToDescriptorMap.size()]);
     }
 
-    protected final void addNodeDescriptorForElement(
+    protected static void addNodeDescriptorForElement(
             PsiReference reference,
             PsiElement element,
             Map<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap,
-            HierarchyNodeDescriptor descriptor
+            HierarchyNodeDescriptor descriptor,
+            boolean wrapAsLightElements
     ) {
         HierarchyNodeDescriptor d = declarationToDescriptorMap.get(element);
         if (d == null) {
-            d = createNodeDescriptor(myProject, element, descriptor, true);
+            d = createNodeDescriptor(element.getProject(), element, descriptor, true, wrapAsLightElements);
+            if (d == null) return;
             declarationToDescriptorMap.put(element, d);
         }
         else if (d instanceof CallHierarchyNodeDescriptor) {

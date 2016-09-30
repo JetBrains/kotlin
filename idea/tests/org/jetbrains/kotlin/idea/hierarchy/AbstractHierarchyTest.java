@@ -18,19 +18,18 @@ package org.jetbrains.kotlin.idea.hierarchy;
 
 import com.intellij.ide.hierarchy.*;
 import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase;
+import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure;
 import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException;
 import com.intellij.testFramework.MapDataContext;
 import com.intellij.util.ArrayUtil;
@@ -74,6 +73,11 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
     protected void doCallerHierarchyTest(@NotNull String folderName) throws Exception {
         this.folderName = folderName;
         doHierarchyTest(getCallerHierarchyStructure(), getFilesToConfigure());
+    }
+
+    protected void doCallerJavaHierarchyTest(@NotNull String folderName) throws Exception {
+        this.folderName = folderName;
+        doHierarchyTest(getCallerJavaHierarchyStructure(), getFilesToConfigure());
     }
 
     protected void doCalleeHierarchyTest(@NotNull String folderName) throws Exception {
@@ -137,6 +141,19 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
         };
     }
 
+    private Computable<HierarchyTreeStructure> getCallerJavaHierarchyStructure() {
+        return new Computable<HierarchyTreeStructure>() {
+            @Override
+            public HierarchyTreeStructure compute() {
+                return new CallerMethodsTreeStructure(
+                        getProject(),
+                        (PsiMethod) getElementAtCaret(LanguageCallHierarchy.INSTANCE),
+                        HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
+            }
+        };
+    }
+
     private Computable<HierarchyTreeStructure> getCalleeHierarchyStructure() {
         return new Computable<HierarchyTreeStructure>() {
             @Override
@@ -171,9 +188,13 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
     }
 
     private DataContext getDataContext() {
+        Editor editor = getEditor();
+        PsiFile psiFile = getFile();
+
         MapDataContext context = new MapDataContext();
         context.put(CommonDataKeys.PROJECT, getProject());
-        context.put(CommonDataKeys.EDITOR, getEditor());
+        context.put(CommonDataKeys.EDITOR, editor);
+        context.put(CommonDataKeys.PSI_ELEMENT, psiFile.findElementAt(editor.getCaretModel().getOffset()));
         return context;
     }
 
