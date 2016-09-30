@@ -4462,6 +4462,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("withComments.kt")
+        public void testWithComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/withComments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withMultipleInheritance.kt")
         public void testWithMultipleInheritance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/withMultipleInheritance.kt");
