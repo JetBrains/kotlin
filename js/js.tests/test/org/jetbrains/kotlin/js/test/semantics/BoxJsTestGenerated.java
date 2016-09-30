@@ -5570,6 +5570,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nativeClassAsReifiedTypeArgument.kt")
+        public void testNativeClassAsReifiedTypeArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativeClassAsReifiedTypeArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nativeExtensionLikeMember.kt")
         public void testNativeExtensionLikeMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativeExtensionLikeMember.kt");

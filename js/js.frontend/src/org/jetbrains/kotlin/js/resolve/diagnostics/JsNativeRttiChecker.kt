@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionInformation
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
