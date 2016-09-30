@@ -77,10 +77,12 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
-        if (constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
-            GenerateDefinitionKind.CLASS
-        } else {
-            GenerateDefinitionKind.TRAIT
+        when {
+            constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS } -> {
+                GenerateDefinitionKind.CLASS
+            }
+            iface.callback -> GenerateDefinitionKind.TRAIT
+            else -> GenerateDefinitionKind.ABSTRACT_CLASS
         }
 
 private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
@@ -92,7 +94,13 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
     val superClasses = iface.superTypes
             .map { repository.interfaces[it] }
             .filterNotNull()
-            .filter { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }
+            .filter {
+                when (resolveDefinitionKind(repository, it)) {
+                    GenerateDefinitionKind.CLASS,
+                    GenerateDefinitionKind.ABSTRACT_CLASS -> true
+                    else -> false
+                }
+            }
 
     assert(superClasses.size <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
     val superClass = superClasses.singleOrNull()
@@ -104,7 +112,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
     val primaryConstructor = when {
         declaredConstructors.size == 1 -> declaredConstructors.single()
-        declaredConstructors.isEmpty() && entityKind == GenerateDefinitionKind.CLASS -> EMPTY_CONSTRUCTOR
+        declaredConstructors.isEmpty() && (entityKind == GenerateDefinitionKind.CLASS || entityKind == GenerateDefinitionKind.ABSTRACT_CLASS)  -> EMPTY_CONSTRUCTOR
         else -> declaredConstructors.firstOrNull { it.arguments.isEmpty() }
     }
     val secondaryConstructors = declaredConstructors.filter { it != primaryConstructor }

@@ -11,11 +11,17 @@ private fun <O : Appendable> O.indent(commented: Boolean = false, level: Int) {
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, omitDefaults: Boolean = false) {
-    when {
-        override -> append("override ")
-        open -> append("open ")
-        arg.vararg -> append("vararg ")
+private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, modality: MemberModality, omitDefaults: Boolean = false) {
+    if (arg.vararg) {
+        append("vararg ")
+    }
+    else {
+        when (modality) {
+            MemberModality.OVERRIDE -> append("override ")
+            MemberModality.ABSTRACT -> append("abstract ")
+            MemberModality.OPEN -> append("open ")
+            MemberModality.FINAL -> {}
+        }
     }
 
     append(when(arg.kind) {
@@ -32,10 +38,10 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
     }
 }
 
-private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int, omitDefaults: Boolean = false) {
+private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, modality: MemberModality, commented: Boolean, level: Int, omitDefaults: Boolean = false) {
     indent(commented, level)
 
-    renderAttributeDeclaration(arg, override, open, omitDefaults)
+    renderAttributeDeclaration(arg, modality, omitDefaults)
 
     appendln()
     if (arg.getterNoImpl) {
@@ -60,7 +66,7 @@ private fun String.replaceKeywords() = if (this in keywords) this + "_" else thi
 
 private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean = false) =
         args.joinTo(this, ", ", "(", ")") {
-            StringBuilder().apply { renderAttributeDeclaration(it, it.override, false, omitDefaults) }
+            StringBuilder().apply { renderAttributeDeclaration(it, if (it.override) MemberModality.OVERRIDE else MemberModality.FINAL, omitDefaults) }
         }
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.joinToString(separator = ", ", transform = String::replaceKeywords)})"
@@ -108,6 +114,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     }
     when (iface.kind) {
         GenerateDefinitionKind.CLASS -> append("open class ")
+        GenerateDefinitionKind.ABSTRACT_CLASS -> append("abstract class ")
         GenerateDefinitionKind.TRAIT -> append("interface ")
     }
 
@@ -154,9 +161,17 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
         .map { it.dynamicIfUnknownType(allTypes.keys) }
         .groupBy { it.signature }.reduceValues().values.forEach { arg ->
-        renderAttributeDeclarationAsProperty(arg,
-                override = arg.signature in superSignatures,
-                open = iface.kind == GenerateDefinitionKind.CLASS && arg.isVal,
+            val modality = when {
+                arg.signature in superSignatures -> MemberModality.OVERRIDE
+                iface.kind == GenerateDefinitionKind.CLASS && arg.isVal -> MemberModality.OPEN
+                iface.kind == GenerateDefinitionKind.ABSTRACT_CLASS -> when {
+                    arg.initializer != null || arg.getterSetterNoImpl -> MemberModality.OPEN
+                    else -> MemberModality.ABSTRACT
+                }
+                else -> MemberModality.FINAL
+            }
+            renderAttributeDeclarationAsProperty(arg,
+                modality = modality,
                 commented = arg.isCommented(iface.name),
                 omitDefaults = iface.kind == GenerateDefinitionKind.TRAIT,
                 level = 1
@@ -174,10 +189,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(false, 1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
+            renderAttributeDeclarationAsProperty(it, MemberModality.FINAL, level = 2, commented = it.isCommented(iface.name))
         }
         staticAttributes.forEach {
-            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
+            renderAttributeDeclarationAsProperty(it, MemberModality.FINAL, level = 2, commented = it.isCommented(iface.name))
         }
         staticFunctions.forEach {
             renderFunctionDeclaration(it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
@@ -252,3 +267,9 @@ fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, uni
     }
 }
 
+enum class MemberModality {
+    OPEN,
+    ABSTRACT,
+    OVERRIDE,
+    FINAL
+}
