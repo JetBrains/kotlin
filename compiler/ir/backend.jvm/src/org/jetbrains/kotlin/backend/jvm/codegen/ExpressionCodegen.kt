@@ -351,16 +351,17 @@ class ExpressionCodegen(
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
         val resultType = expression.asmType
-        genIfWithBranches(expression.branches[0].condition, expression.branches[0].result, data, resultType, expression.branches.drop(1))
+        genIfWithBranches(expression.branches[0], data, resultType, expression.branches.drop(1))
         return expression.onStack
     }
 
 
-    fun genIfWithBranches(condition: IrExpression, thenBranch: IrExpression, data: BlockInfo, type: Type, otherBranches: List<IrBranch>) {
+    fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>) {
         val elseLabel = Label()
-
+        val condition = branch.condition
+        val thenBranch = branch.result
         //TODO don't generate condition for else branch - java verifier fails with empty stack
-        val elseBranch = condition is IrConst<*> && true == condition.value
+        val elseBranch = branch is IrElseBranch
         if (!elseBranch) {
             gen(condition, data)
             BranchedValue.condJump(StackValue.onStack(condition.asmType), elseLabel, true, mv)
@@ -378,7 +379,7 @@ class ExpressionCodegen(
 
         if (!otherBranches.isEmpty()) {
             val nextBranch = otherBranches.first()
-            genIfWithBranches(nextBranch.condition, nextBranch.result, data, type, otherBranches.drop(1))
+            genIfWithBranches(nextBranch, data, type, otherBranches.drop(1))
         }
 
         mv.mark(end)

@@ -164,6 +164,9 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitBranch(branch: IrBranch) = branch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
     override final fun visitBranch(branch: IrBranch, data: Nothing?): IrBranch = visitBranch(branch)
 
+    open fun visitElseBranch(branch: IrElseBranch) = branch.apply { transformChildrenVoid(this@IrElementTransformerVoid) }
+    override final fun visitElseBranch(branch: IrElseBranch, data: Nothing?): IrElseBranch = visitElseBranch(branch)
+
     open fun visitLoop(loop: IrLoop) = visitExpression(loop)
     override final fun visitLoop(loop: IrLoop, data: Nothing?) = visitLoop(loop)
 

@@ -389,6 +389,13 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     branch.result.transform(this, null)
             )
 
+    override fun visitElseBranch(branch: IrElseBranch): IrElseBranch =
+            IrElseBranchImpl(
+                    branch.startOffset, branch.endOffset,
+                    branch.condition.transform(this, null),
+                    branch.result.transform(this, null)
+            )
+
     private val transformedLoops = HashMap<IrLoop, IrLoop>()
 
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =

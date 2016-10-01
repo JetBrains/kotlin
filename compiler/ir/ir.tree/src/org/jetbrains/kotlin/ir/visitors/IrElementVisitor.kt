@@ -77,6 +77,7 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitWhen(expression: IrWhen, data: D) = visitExpression(expression, data)
     fun visitBranch(branch: IrBranch, data: D) = visitElement(branch, data)
+    fun visitElseBranch(branch: IrElseBranch, data: D) = visitBranch(branch, data)
     fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
     fun visitWhileLoop(loop: IrWhileLoop, data: D) = visitLoop(loop, data)
     fun visitDoWhileLoop(loop: IrDoWhileLoop, data: D) = visitLoop(loop, data)

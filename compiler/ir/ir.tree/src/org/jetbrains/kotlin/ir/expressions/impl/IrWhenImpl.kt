@@ -56,7 +56,7 @@ class IrWhenImpl(
     override val branches: MutableList<IrBranch> = ArrayList()
 }
 
-class IrBranchImpl(startOffset: Int, endOffset: Int, override var condition: IrExpression, override var result: IrExpression) :
+open class IrBranchImpl(startOffset: Int, endOffset: Int, override var condition: IrExpression, override var result: IrExpression) :
         IrElementBase(startOffset, endOffset), IrBranch {
     constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
 
@@ -72,9 +72,14 @@ class IrBranchImpl(startOffset: Int, endOffset: Int, override var condition: IrE
 
     companion object {
         fun elseBranch(result: IrExpression) =
-                IrBranchImpl(
+                IrElseBranchImpl(
                         IrConstImpl.boolean(result.startOffset, result.endOffset, result.type.builtIns.booleanType, true),
                         result
                 )
     }
+}
+
+class IrElseBranchImpl(startOffset: Int, endOffset: Int, condition: IrExpression, result: IrExpression) :
+        IrBranchImpl(startOffset, endOffset, condition, result), IrElseBranch {
+    constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
 }

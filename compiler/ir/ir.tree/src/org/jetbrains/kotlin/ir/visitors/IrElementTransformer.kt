@@ -97,6 +97,12 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
                 result = result.transform(this@IrElementTransformer, data)
             }
 
+    override fun visitElseBranch(branch: IrElseBranch, data: D): IrElseBranch =
+            branch.apply {
+                condition = condition.transform(this@IrElementTransformer, data)
+                result = result.transform(this@IrElementTransformer, data)
+            }
+
     override fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
     override fun visitWhileLoop(loop: IrWhileLoop, data: D) = visitLoop(loop, data)
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: D) = visitLoop(loop, data)

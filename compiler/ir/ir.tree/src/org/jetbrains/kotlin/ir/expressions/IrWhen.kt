@@ -36,3 +36,12 @@ interface IrBranch : IrElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitBranch(this, data)
 }
+
+interface IrElseBranch : IrBranch {
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
+            transformer.visitElseBranch(this, data)
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitElseBranch(this, data)
+}
+
