@@ -17,19 +17,15 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 class ReplaceArrayEqualityOpWithArraysEqualsInspection :
         IntentionBasedInspection<KtBinaryExpression>(ReplaceArrayEqualityOpWithArraysEqualsIntention::class)
@@ -38,10 +34,6 @@ class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndep
         KtBinaryExpression::class.java,
         "Replace '==' with 'Arrays.equals'"
 ) {
-    private val arrayName = Name.identifier("Array")
-
-    private fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType() =
-            resultingDescriptor.returnType?.nameIfStandardType == arrayName
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val project = element.project
