@@ -29,6 +29,7 @@ class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
         // TODO run lowering passes as callbacks in bottom-up visitor
         FileClassLowering(context).lower(irFile)
+        ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
         InterfaceLowering(context.state).runOnFile(irFile)
         InterfaceDelegationLowering(context.state).runOnFile(irFile)
