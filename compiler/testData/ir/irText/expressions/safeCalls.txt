@@ -107,3 +107,23 @@ FILE /safeCalls.kt
               then: CALL 'extLength() on String: Int' type=kotlin.Int origin=null
                 $this: GET_VAR '<receiver: test5(String?) on IHost: Int?>' type=IHost origin=null
                 $receiver: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
+  FUN public fun kotlin.Int.foo(): kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo() on Int: Int'
+        CONST Int type=kotlin.Int value='239'
+  FUN public fun box(): kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int
+            CONST Int type=kotlin.Int value='42'
+          WHEN type=kotlin.Int? origin=SAFE_CALL
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_safe_receiver: Int' type=kotlin.Int origin=null
+                arg1: CONST Null type=kotlin.Nothing? value='null'
+              then: CONST Null type=kotlin.Nothing? value='null'
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value='true'
+              then: CALL 'foo() on Int: Int' type=kotlin.Int origin=null
+                $receiver: GET_VAR 'tmp0_safe_receiver: Int' type=kotlin.Int origin=null

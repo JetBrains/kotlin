@@ -13,3 +13,9 @@ fun test4(x: Ref?) {
 }
 
 fun IHost.test5(s: String?) = s?.extLength()
+
+fun Int.foo() = 239
+
+fun box() {
+    42?.foo()
+}

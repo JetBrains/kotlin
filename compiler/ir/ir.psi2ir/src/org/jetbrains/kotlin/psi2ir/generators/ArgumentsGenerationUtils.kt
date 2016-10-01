@@ -86,12 +86,9 @@ fun StatementGenerator.generateCallReceiver(
     return when {
         !isSafe ->
             SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
-        extensionReceiverValue != null ->
+        extensionReceiverValue != null  || dispatchReceiverValue != null->
             SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
-                             extensionReceiverValue.load(), dispatchReceiverValue, isAssignmentReceiver)
-        dispatchReceiverValue != null ->
-            SafeCallReceiver(this, ktDefaultElement.startOffset, ktDefaultElement.endOffset,
-                             dispatchReceiverValue.load(), null, isAssignmentReceiver)
+                             extensionReceiverValue, dispatchReceiverValue, isAssignmentReceiver)
         else ->
             throw AssertionError("Safe call should have an explicit receiver: ${ktDefaultElement.text}")
     }
