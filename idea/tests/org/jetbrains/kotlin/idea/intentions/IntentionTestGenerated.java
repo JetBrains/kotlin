@@ -11030,6 +11030,180 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSizeCheckWithIsNotEmpty extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSizeCheckWithIsNotEmpty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/array.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("array2.kt")
+        public void testArray2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/array2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gt.kt")
+        public void testGt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/gt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteq.kt")
+        public void testGteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/gteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/list.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list2.kt")
+        public void testList2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/list2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lt.kt")
+        public void testLt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/lt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteq.kt")
+        public void testLteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/lteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oppositeSign.kt")
+        public void testOppositeSign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/oppositeSign.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oppositeSign2.kt")
+        public void testOppositeSign2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/oppositeSign2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("set.kt")
+        public void testSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/set.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sizeCheck.kt")
+        public void testSizeCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/sizeCheck.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/string.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string2.kt")
+        public void testString2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeCheckWithIsNotEmpty/string2.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSizeZeroCheckWithIsEmpty extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSizeZeroCheckWithIsEmpty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/array.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("array2.kt")
+        public void testArray2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/array2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gt.kt")
+        public void testGt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/gt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteq.kt")
+        public void testGteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/gteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/list.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list2.kt")
+        public void testList2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/list2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lt.kt")
+        public void testLt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/lt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteq.kt")
+        public void testLteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/lteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("set.kt")
+        public void testSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/set.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sizeCheck.kt")
+        public void testSizeCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/sizeCheck.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/string.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string2.kt")
+        public void testString2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSizeZeroCheckWithIsEmpty/string2.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceSubstringWithDropLast")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
