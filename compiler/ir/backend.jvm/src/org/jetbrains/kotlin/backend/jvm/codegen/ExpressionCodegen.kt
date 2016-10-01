@@ -412,6 +412,14 @@ class ExpressionCodegen(
                 generateIsCheck(mv, expression.typeOperand, type)
             }
 
+            IrTypeOperator.IMPLICIT_NOTNULL -> {
+                gen(expression.argument, OBJECT_TYPE, data)
+                mv.dup()
+                mv.visitLdcInsn("TODO provide message") /*TODO*/
+                mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
+                               "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+            }
+
             else -> super.visitTypeOperator(expression, data)
         }
         return expression.onStack
