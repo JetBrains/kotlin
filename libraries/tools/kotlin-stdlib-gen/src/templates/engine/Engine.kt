@@ -257,14 +257,15 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     fun build(builder: Appendable, f: Family, primitive: PrimitiveType?) {
         val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
-        fun renderType(expression: String, receiver: String): String {
+        fun renderType(expression: String, receiver: String, self: String): String {
             val t = StringTokenizer(expression, " \t\n,:()<>?.", true)
             val answer = StringBuilder()
 
             while (t.hasMoreTokens()) {
                 val token = t.nextToken()
                 answer.append(when (token) {
-                                  "SELF" -> receiver
+                                  "RECEIVER" -> receiver
+                                  "SELF" -> self
                                   "PRIMITIVE" -> primitive?.name ?: token
                                   "SUM" -> {
                                       when (primitive) {
@@ -293,7 +294,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                                   "TCollection" -> {
                                       when (f) {
                                           CharSequences, Strings -> "Appendable"
-                                          else -> renderType("MutableCollection<in T>", receiver)
+                                          else -> renderType("MutableCollection<in T>", receiver, self)
                                       }
                                   }
                                   "T" -> {
@@ -324,7 +325,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         val isAsteriskOrT = if (receiverAsterisk[f] == true) "*" else "T"
-        val receiver = (customReceiver[f] ?: when (f) {
+        val self = (when (f) {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
             Lists -> "List<$isAsteriskOrT>"
@@ -341,12 +342,14 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
             Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
             Generic -> "T"
-        }).let { renderType(it, it) }
+        })
 
-        fun String.renderType(): String = renderType(this, receiver)
+        val receiver = (customReceiver[f] ?: self).let { renderType(it, it, self) }
+
+        fun String.renderType(): String = renderType(this, receiver, self)
 
         fun effectiveTypeParams(): List<TypeParameter> {
-            val parameters = typeParams.mapTo(mutableListOf()) { parseTypeParameter(it) }
+            val parameters = typeParams.mapTo(mutableListOf()) { parseTypeParameter(it.renderType()) }
 
             if (f == Generic) {
                 if (parameters.none { it.name == "T" })
@@ -364,9 +367,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
                 return parameters
             } else {
-                // remove T as parameter
-                // TODO: Substitute primitive or String instead of T in other parameters from effective types not from original typeParams
-                return parameters.filterNot { it.name == "T" }
+                // substituted T is no longer a parameter
+                val renderedT = "T".renderType()
+                return parameters.filterNot { it.name == renderedT }
             }
         }
 
@@ -418,7 +421,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
-            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ", transform = { it.original }).renderType())
+            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ", transform = { it.original }))
         }
 
         val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()
