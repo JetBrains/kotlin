@@ -193,6 +193,17 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     @Test
+    fun onEach() {
+        var count = 0
+        val newData = data.onEach { count += it.length }
+        assertEquals(6, count)
+        assertTrue(data === newData)
+
+        // static types test
+        val list: ArrayList<Int> = arrayListOf(1, 2, 3).onEach {  }
+    }
+
+    @Test
     fun contains() {
         assertTrue(data.contains("foo"))
         assertTrue("bar" in data)

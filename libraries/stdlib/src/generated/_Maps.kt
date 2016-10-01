@@ -179,6 +179,14 @@ public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Bool
 }
 
 /**
+ * Performs the given [action] on each entry and returns the map itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
  */
 @kotlin.internal.InlineOnly

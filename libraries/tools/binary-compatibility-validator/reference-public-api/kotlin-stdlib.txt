@@ -1512,6 +1512,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun mutableListOf ([Ljava/lang/Object;)Ljava/util/List;
 	public static final fun none (Ljava/lang/Iterable;)Z
 	public static final fun none (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun onEach (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Iterable;
 	public static final fun partition (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun plus (Ljava/lang/Iterable;Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun plus (Ljava/lang/Iterable;Ljava/lang/Object;)Ljava/util/List;
@@ -1647,6 +1648,7 @@ public final class kotlin/collections/MapsKt {
 	public static final fun mutableMapOf ([Lkotlin/Pair;)Ljava/util/Map;
 	public static final fun none (Ljava/util/Map;)Z
 	public static final fun none (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun onEach (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun plus (Ljava/util/Map;Ljava/lang/Iterable;)Ljava/util/Map;
 	public static final fun plus (Ljava/util/Map;Ljava/util/Map;)Ljava/util/Map;
 	public static final fun plus (Ljava/util/Map;Lkotlin/Pair;)Ljava/util/Map;
@@ -2056,6 +2058,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun minus (Lkotlin/sequences/Sequence;[Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun none (Lkotlin/sequences/Sequence;)Z
 	public static final fun none (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun onEach (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
 	public static final fun partition (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
 	public static final fun plus (Lkotlin/sequences/Sequence;Ljava/lang/Iterable;)Lkotlin/sequences/Sequence;
 	public static final fun plus (Lkotlin/sequences/Sequence;Ljava/lang/Object;)Lkotlin/sequences/Sequence;
@@ -2404,6 +2407,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun minWith (Ljava/lang/CharSequence;Ljava/util/Comparator;)Ljava/lang/Character;
 	public static final fun none (Ljava/lang/CharSequence;)Z
 	public static final fun none (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun onEach (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/CharSequence;
 	public static final fun padEnd (Ljava/lang/CharSequence;IC)Ljava/lang/CharSequence;
 	public static final fun padEnd (Ljava/lang/String;IC)Ljava/lang/String;
 	public static synthetic fun padEnd$default (Ljava/lang/CharSequence;ICILjava/lang/Object;)Ljava/lang/CharSequence;

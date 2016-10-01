@@ -970,6 +970,17 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass though it.
+ */
+@SinceKotlin("1.1")
+public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
+    return map {
+        action(it)
+        it
+    }
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {

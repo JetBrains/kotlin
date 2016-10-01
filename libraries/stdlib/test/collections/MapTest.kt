@@ -98,6 +98,19 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
+
+    @Test
+    fun onEach() {
+        val map = mutableMapOf("beverage" to "beer", "location" to "Mells")
+        val result = StringBuilder()
+        val newMap = map.onEach { result.append(it.key).append("=").append(it.value).append(";") }
+        assertEquals("beverage=beer;location=Mells;", result.toString())
+        assertTrue(map === newMap)
+
+        // static types test
+        val m: HashMap<String, String> = hashMapOf("a" to "b").onEach {  }
+    }
+
     @Test fun stream() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val named = map.asSequence().filter { it.key == "name" }.single()

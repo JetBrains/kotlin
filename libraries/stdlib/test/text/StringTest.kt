@@ -753,6 +753,18 @@ class StringTest {
         assertEquals(data.toString(), sb.toString())
     }
 
+    @Test
+    fun onEach() = withOneCharSequenceArg("abcd") { data ->
+        val result = StringBuilder()
+        val newData = data.onEach { result.append(it + 1) }
+        assertEquals("bcde", result.toString())
+        assertTrue(data === newData)
+
+        // static types test
+        val s: String = "x".onEach {  }
+        val sb: StringBuilder = result.onEach {  }
+    }
+
 
     @Test fun filter() {
         assertEquals("acdca", ("abcdcba").filter { !it.equals('b') })

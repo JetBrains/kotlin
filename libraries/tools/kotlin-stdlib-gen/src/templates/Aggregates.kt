@@ -719,27 +719,37 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("onEach(action: (T) -> Unit)") {
-        inline(true)
 
-        doc { f -> "Performs the given [action] on each ${f.element} and returns the receiver afterwards." }
-        returns("SELF")
+    templates addAll listOf(Iterables, Maps, CharSequences).map { f -> f("onEach(action: (T) -> Unit)") {
+        only(f)
+        since("1.1")
+        inline(true)
+        doc { f -> "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
+        val collectionType = when(f) {
+            Maps -> "M"
+            CharSequences -> "S"
+            else -> "C"
+        }
+        customReceiver(collectionType)
+        returns(collectionType)
+        typeParam("$collectionType : SELF")
+
         body {
             """
             return apply { for (element in this) action(element) }
             """
         }
-        include(Maps, CharSequences)
+    }}
 
-        exclude(Iterables)
-        typeParam(Generic) { "I: Iterable<E>" }
-        typeParam(Generic) { "E" }
-        customReceiver(Generic) { "I" }
-        returns(Generic) { "I" }
-
-        doc(Sequences) { f -> "Applies the supplied [action] on each ${f.element} of the Sequence as they pass through it." }
-        inline(false, Sequences)
-        returns(Sequences) { "Sequence<T>" }
+    templates add f("onEach(action: (T) -> Unit)") {
+        only(Sequences)
+        since("1.1")
+        returns("SELF")
+        doc { f ->
+            """
+            Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass though it.
+            """
+        }
         body(Sequences) {
             """
             return map {

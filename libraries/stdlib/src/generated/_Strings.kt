@@ -1011,6 +1011,14 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Performs the given [action] on each character and returns the char sequence itself afterwards.
+ */
+@SinceKotlin("1.1")
+public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
 public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
