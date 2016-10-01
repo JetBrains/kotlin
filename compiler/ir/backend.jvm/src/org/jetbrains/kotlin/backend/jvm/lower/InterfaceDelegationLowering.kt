@@ -79,7 +79,7 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
 
         var shift = 0
         if (inheritedFun.dispatchReceiverParameter != null) {
-            irCallImpl.putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.descriptor.thisAsReceiverParameter))
+            irCallImpl.putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, interfaceFun.dispatchReceiverParameter!!))
             shift = 1
         }
         inheritedFun.valueParameters.mapIndexed { i, valueParameterDescriptor ->

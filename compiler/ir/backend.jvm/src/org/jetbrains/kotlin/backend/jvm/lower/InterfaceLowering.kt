@@ -66,7 +66,8 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                 members.add(newFunction)
                 it.body = null
 
-                val mapping: Map<DeclarationDescriptor, ValueParameterDescriptor> = (listOf(it.descriptor.containingDeclaration) + it.descriptor.valueParameters).zip(functionDescriptorImpl.valueParameters).toMap()
+                val mapping: Map<DeclarationDescriptor, ValueParameterDescriptor> =
+                        (listOf(it.descriptor.dispatchReceiverParameter!!) + it.descriptor.valueParameters).zip(functionDescriptorImpl.valueParameters).toMap()
 
                 newFunction.body?.transform(VariableRemapper(mapping), null)
             }
@@ -100,12 +101,14 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                     CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
             )
 
-            val valueParameters =
-                    listOf(ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                            newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
-                            interfaceDescriptor.defaultType, false, false, false, false, null, interfaceDescriptor.source, null)
-                    ) +
-                    descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
+            val dispatchReceiver =
+                        ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                                newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
+                                interfaceDescriptor.defaultType, false, false, false, false, null, interfaceDescriptor.source, null)
+
+            val valueParameters = listOf(dispatchReceiver) +
+                                  descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
+
             newFunction.initialize(
                     null, null, emptyList()/*TODO: type parameters*/,
                     valueParameters, descriptor.returnType, Modality.FINAL, descriptor.visibility
