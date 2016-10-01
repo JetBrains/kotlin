@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -233,3 +235,42 @@ private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
     return listOf(then) + `else`?.ifBranchesOrThis().orEmpty()
 }
 
+private val arrayName = Name.identifier("Array")
+
+private val collectionName = Name.identifier("Collection")
+
+private val stringName = Name.identifier("String")
+
+fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType() =
+        resultingDescriptor.returnType?.nameIfStandardType == arrayName
+
+fun ResolvedCall<out CallableDescriptor>.resolvedToCollectionType() =
+        resultingDescriptor.returnType?.constructor?.supertypes?.firstOrNull {
+            it.nameIfStandardType == collectionName
+        } != null
+
+fun ResolvedCall<out CallableDescriptor>.resolvedToStringType() =
+        resultingDescriptor.returnType?.nameIfStandardType == stringName
+
+fun KtElement?.isZero() = this?.text == "0"
+
+fun KtElement?.isOne() = this?.text == "1"
+
+fun KtElement?.isSizeOrLength(): Boolean {
+    if (this !is KtDotQualifiedExpression) return false
+    return when (selectorExpression?.text) {
+        "size" -> receiverExpression.isArrayOrCollection()
+        "length" -> receiverExpression.isString()
+        else -> false
+    }
+}
+
+private fun KtExpression.isArrayOrCollection(): Boolean {
+    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    return resolvedCall.resolvedToArrayType() || resolvedCall.resolvedToCollectionType()
+}
+
+private fun KtExpression.isString(): Boolean {
+    val resolvedCall = getResolvedCall(analyze()) ?: return false
+    return resolvedCall.resolvedToStringType()
+}
