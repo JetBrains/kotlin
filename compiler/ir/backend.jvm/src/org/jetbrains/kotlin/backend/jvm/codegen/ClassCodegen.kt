@@ -161,10 +161,11 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
 fun ClassDescriptor.calculateClassFlags(): Int {
     var flags = 0
-    flags = flags or if (DescriptorUtils.isInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
+    flags = flags or if (DescriptorUtils.isInterface(this) || DescriptorUtils.isAnnotationClass(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
     flags = flags or calcModalityFlag()
     flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
     flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0
+    flags = flags or if (kind == ClassKind.ANNOTATION_CLASS) Opcodes.ACC_ANNOTATION else 0
     return flags
 }
 
@@ -223,6 +224,9 @@ val MemberDescriptor.effectiveModality: Modality
             if (JvmCodegenUtil.hasAbstractMembers(this)) {
                 return Modality.ABSTRACT
             }
+        }
+        if (DescriptorUtils.isAnnotationClass(this) || DescriptorUtils.isAnnotationClass(this.containingDeclaration)) {
+            return Modality.ABSTRACT
         }
 
         return modality

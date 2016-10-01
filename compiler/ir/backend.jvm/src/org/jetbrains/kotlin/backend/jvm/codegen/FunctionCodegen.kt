@@ -44,7 +44,11 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
         val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), descriptor) || DescriptorUtils.isStaticDeclaration(descriptor)
         val frameMap = createFrameMapWithReceivers(classCodegen.state, descriptor, signature, isStatic)
 
-        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0)
+
+        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
+                if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
+        )
+
         val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
         if (interfaceClInit) {
             //reset abstract flag
