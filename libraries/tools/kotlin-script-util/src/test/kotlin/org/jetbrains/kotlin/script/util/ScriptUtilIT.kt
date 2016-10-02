@@ -38,6 +38,8 @@ import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.net.URI
+import java.util.jar.Manifest
 import kotlin.reflect.KClass
 
 class ScriptUtilIT {
@@ -86,6 +88,10 @@ done
         Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardScript::class))
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptWithAnnotatedResolving::class)
+        if (scriptClass == null) {
+            val resolver = DefaultKotlinAnnotatedScriptDependenciesResolver()
+            System.err.println(resolver.baseClassPath)
+        }
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
@@ -123,8 +129,14 @@ done
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
                 getResourcePathForClass(DependsOn::class.java).let {
-                    if (it.exists())
+                    if (it.exists()) {
                         addJvmClasspathRoot(it)
+                    }
+                    else {
+                        // attempt to workaround some maven quirks
+                        addJvmClasspathRoots(
+                                Thread.currentThread().contextClassLoader.manifestClassPath().toList())
+                    }
                 }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
                 add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
@@ -152,6 +164,19 @@ done
         finally {
             Disposer.dispose(rootDisposable)
         }
+    }
+
+    private fun ClassLoader.manifestClassPath() =
+            getResources("META-INF/MANIFEST.MF")
+                    .asSequence()
+                    .mapNotNull { ifFailed(null) { it.openStream().use { Manifest().apply { read(it) } } } }
+                    .flatMap { it.mainAttributes?.getValue("Class-Path")?.splitToSequence(" ") ?: emptySequence() }
+                    .mapNotNull { ifFailed(null) { File(URI.create(it)) } }
+
+    private inline fun <R> ifFailed(default: R, block: () -> R) = try {
+        block()
+    } catch (t: Throwable) {
+        default
     }
 
     private fun captureOut(body: () -> Unit): String {
