@@ -624,6 +624,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else if (RangeCodegenUtil.isProgression(loopRangeType)) {
             generateForLoop(new ForInProgressionExpressionLoopGenerator(forExpression));
         }
+        else if (JAVA_STRING_TYPE.equals(asmLoopRangeType)) {
+            generateForLoop(new StringForLoopGenerator(forExpression));
+        }
         else {
             generateForLoop(new IteratorForLoopGenerator(forExpression));
         }
@@ -934,6 +937,61 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         protected void increment(@NotNull Label loopExit) {
+        }
+    }
+
+    private class StringForLoopGenerator extends AbstractForLoopGenerator {
+        private int indexVar;
+        private int stringVar;
+        private int lengthVar;
+
+        public StringForLoopGenerator(@NotNull KtForExpression forExpression) {
+            super(forExpression);
+        }
+
+        @Override
+        public void beforeLoop() {
+            super.beforeLoop();
+
+            indexVar = createLoopTempVariable(Type.INT_TYPE);
+            v.iconst(0);
+            v.store(indexVar, Type.INT_TYPE);
+
+            stringVar = createLoopTempVariable(JAVA_STRING_TYPE);
+            StackValue value = gen(forExpression.getLoopRange());
+            value.put(JAVA_STRING_TYPE, v);
+            v.store(stringVar, JAVA_STRING_TYPE);
+
+            lengthVar = createLoopTempVariable(Type.INT_TYPE);
+            v.load(stringVar, JAVA_STRING_TYPE);
+            v.invokevirtual("java/lang/String", "length", "()I", false);
+            StackValue.onStack(Type.INT_TYPE).put(Type.INT_TYPE, v);
+            v.store(lengthVar, Type.INT_TYPE);
+        }
+
+        @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+        }
+
+        @Override
+        public void checkPreCondition(@NotNull Label loopExit) {
+            v.load(indexVar, Type.INT_TYPE);
+            v.load(lengthVar, Type.INT_TYPE);
+            v.ificmpge(loopExit);
+        }
+
+        @Override
+        protected void assignToLoopParameter() {
+            v.load(stringVar, JAVA_STRING_TYPE);
+            v.load(indexVar, Type.INT_TYPE);
+            v.invokevirtual("java/lang/String", "charAt", "(I)C", false);
+            StackValue.onStack(Type.CHAR_TYPE).put(asmElementType, v);
+            v.store(loopParameterVar, asmElementType);
+        }
+
+        @Override
+        protected void increment(@NotNull Label loopExit) {
+            v.iinc(indexVar, 1);
         }
     }
 

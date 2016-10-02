@@ -14953,6 +14953,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInEmptyString.kt")
+        public void testForInEmptyString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/forInEmptyString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInNonConstantArgumentString.kt")
+        public void testForInNonConstantArgumentString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/forInNonConstantArgumentString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forInSmartCastString.kt")
+        public void testForInSmartCastString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/forInSmartCastString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInString.kt")
         public void testForInString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/forInString.kt");
