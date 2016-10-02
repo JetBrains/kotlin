@@ -151,27 +151,33 @@ class CompileServiceImpl(
 
     // RMI-exposed API
 
-    override fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive { daemonOptions }
+    override fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
+        CompileService.CallResult.Good(daemonOptions)
+    }
 
-    override fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive { daemonJVMOptions }
+    override fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive {
+        CompileService.CallResult.Good(daemonJVMOptions)
+    }
 
-    override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive_Nothing {
+    override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive {
         synchronized(state.clientProxies) {
             state.clientProxies.add(ClientOrSessionProxy(aliveFlagPath))
         }
+        CompileService.CallResult.Ok()
     }
 
     override fun getClients(): CompileService.CallResult<List<String>> = ifAlive {
         synchronized(state.clientProxies) {
-            state.clientProxies.mapNotNull { it.aliveFlagPath }
+            CompileService.CallResult.Good(state.clientProxies.mapNotNull { it.aliveFlagPath })
         }
     }
 
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
-        leaseSessionImpl(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
-            log.info("leased a new session $this, client alive file: $aliveFlagPath")
-        }
+        CompileService.CallResult.Good(
+                leaseSessionImpl(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
+                    log.info("leased a new session $this, client alive file: $aliveFlagPath")
+                })
     }
 
     private fun<T: Any> leaseSessionImpl(session: ClientOrSessionProxy<T>): Int {
@@ -192,7 +198,7 @@ class CompileServiceImpl(
         throw IllegalStateException("Invalid state or algorithm error")
     }
 
-    override fun releaseCompileSession(sessionId: Int) = ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
+    override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
         synchronized(state.sessions) {
             state.sessions[sessionId]?.dispose()
             state.sessions.remove(sessionId)
@@ -205,6 +211,7 @@ class CompileServiceImpl(
         timer.schedule(0) {
             periodicAndAfterSessionCheck()
         }
+        CompileService.CallResult.Ok()
     }
 
     override fun checkCompilerId(expectedCompilerId: CompilerId): Boolean =
@@ -212,27 +219,31 @@ class CompileServiceImpl(
             (compilerId.compilerClasspath.all { expectedCompilerId.compilerClasspath.contains(it) }) &&
             !classpathWatcher.isChanged
 
-    override fun getUsedMemory(): CompileService.CallResult<Long> = ifAlive { usedMemory(withGC = true) }
+    override fun getUsedMemory(): CompileService.CallResult<Long> =
+            ifAlive { CompileService.CallResult.Good(usedMemory(withGC = true)) }
 
-    override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive_Nothing(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+    override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
         shutdownImpl()
+        CompileService.CallResult.Ok()
     }
 
     override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (!graceful || state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
-            timer.schedule(0) {
-                ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
-                    if (!graceful || state.sessions.isEmpty()) {
-                        shutdownImpl()
+        CompileService.CallResult.Good(
+                if (!graceful || state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
+                    timer.schedule(0) {
+                        ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+                            if (!graceful || state.sessions.isEmpty()) {
+                                shutdownImpl()
+                            }
+                            else {
+                                log.info("Some sessions are active, waiting for them to finish")
+                            }
+                            CompileService.CallResult.Ok()
+                        }
                     }
-                    else {
-                        log.info("Some sessions are active, waiting for them to finish")
-                    }
+                    true
                 }
-            }
-            true
-        }
-        else false
+                else false)
     }
 
     override fun remoteCompile(sessionId: Int,
@@ -280,7 +291,7 @@ class CompileServiceImpl(
             evalErrorStream: RemoteOutputStream?,
             evalInputStream: RemoteInputStream?,
             operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> = ifAlive_Raw(minAliveness = Aliveness.Alive) {
+    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         if (targetPlatform != CompileService.TargetPlatform.JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
@@ -292,25 +303,18 @@ class CompileServiceImpl(
         }
     }
 
-    private fun<R> withValidRepl(sessionId: Int, body: KotlinJvmReplService.() -> R): CompileService.CallResult<R> =
-            state.sessions[sessionId]?.let {
-                (it.data as? KotlinJvmReplService?)?.let {
-                    CompileService.CallResult.Good(it.body())
-                }
-            } ?: CompileService.CallResult.Error("Unknown or invalid session $sessionId")
-
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
 
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine, history: List<ReplCodeLine>): CompileService.CallResult<ReplCheckResult> =
-            ifAlive_Raw(minAliveness = Aliveness.Alive) {
+            ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
                     check(codeLine, history)
                 }
             }
 
     override fun remoteReplLineCompile(sessionId: Int, codeLine: ReplCodeLine, history: List<ReplCodeLine>): CompileService.CallResult<ReplCompileResult> =
-            ifAlive_Raw(minAliveness = Aliveness.Alive) {
+            ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
                     compile(codeLine, history)
                 }
@@ -321,7 +325,7 @@ class CompileServiceImpl(
             codeLine: ReplCodeLine,
             history: List<ReplCodeLine>
     ): CompileService.CallResult<ReplEvalResult> =
-            ifAlive_Raw(minAliveness = Aliveness.Alive) {
+            ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
                     eval(codeLine, history)
                 }
@@ -373,7 +377,7 @@ class CompileServiceImpl(
 
     private fun periodicAndAfterSessionCheck() {
 
-        ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
+        ifAlive(minAliveness = Aliveness.LastSession) {
 
             // 1. check if unused for a timeout - shutdown
             if (shutdownCondition({ daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds },
@@ -427,13 +431,14 @@ class CompileServiceImpl(
                     clearJarCache()
                 }
             }
+            CompileService.CallResult.Ok()
         }
     }
 
 
     private fun initiateElections() {
 
-        ifAlive_Nothing {
+        ifAlive {
 
             val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, filter = { f, p -> p != port }, report = { lvl, msg -> log.info(msg) })
                     .map { Pair(it, it.getDaemonJVMOptions()) }
@@ -465,6 +470,7 @@ class CompileServiceImpl(
                 //   - shutdown/takeover smaller daemon
                 //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
             }
+            CompileService.CallResult.Ok()
         }
     }
 
@@ -507,25 +513,24 @@ class CompileServiceImpl(
                           operationsTracer: RemoteOperationsTracer?,
                           body: (PrintStream, EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
-
-                operationsTracer?.before("compile")
-                compilationsCounter.incrementAndGet()
-                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val eventManger = EventMangerImpl()
-                val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), REMOTE_STREAM_BUFFER_SIZE))
-                val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), REMOTE_STREAM_BUFFER_SIZE))
-                try {
-                    checkedCompile(args, serviceOutputStream, rpcProfiler) {
-                        val res = body(compilerMessagesStream, eventManger, rpcProfiler).code
-                        _lastUsedSeconds = nowSeconds()
-                        res
+                withValidClientOrSessionProxy(sessionId) { session ->
+                    operationsTracer?.before("compile")
+                    val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+                    val eventManger = EventMangerImpl()
+                    val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), REMOTE_STREAM_BUFFER_SIZE))
+                    val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), REMOTE_STREAM_BUFFER_SIZE))
+                    try {
+                        CompileService.CallResult.Good(
+                                checkedCompile(args, serviceOutputStream, rpcProfiler) {
+                                    body(compilerMessagesStream, eventManger, rpcProfiler).code
+                                })
                     }
-                }
-                finally {
-                    serviceOutputStream.flush()
-                    compilerMessagesStream.flush()
-                    eventManger.fireCompilationFinished()
-                    operationsTracer?.after("compile")
+                    finally {
+                        serviceOutputStream.flush()
+                        compilerMessagesStream.flush()
+                        eventManger.fireCompilationFinished()
+                        operationsTracer?.after("compile")
+                    }
                 }
             }
 
@@ -588,34 +593,21 @@ class CompileServiceImpl(
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
     }
 
-    private fun<R> ifAlive(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.read {
-        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
-    }
+    private fun<R> ifAlive(minAliveness: Aliveness = Aliveness.Alive,
+                           ignoreCompilerChanged: Boolean = false,
+                           body: () -> CompileService.CallResult<R>
+    ): CompileService.CallResult<R> =
+            rwlock.read {
+                ifAliveChecksImpl(minAliveness, ignoreCompilerChanged, body)
+            }
 
-    // TODO: find how to implement it without using unique name for this variant; making name deliberately ugly meanwhile
-    private fun ifAlive_Nothing(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<Nothing> = rwlock.read {
-        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) {
-            body()
-            CompileService.CallResult.Ok()
-        }
-    }
-
-    private fun<R> ifAlive_Raw(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> = rwlock.read {
-        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) { body() }
-    }
-
-    private fun<R> ifAliveExclusive(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.write {
-        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
-    }
-
-    // see comment to ifAliveNothing
-    private fun<R> ifAliveExclusive_Nothing(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<R> = rwlock.write {
-        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) {
-            body()
-            CompileService.CallResult.Ok()
-
-        }
-    }
+    private fun<R> ifAliveExclusive(minAliveness: Aliveness = Aliveness.Alive,
+                                    ignoreCompilerChanged: Boolean = false,
+                                    body: () -> CompileService.CallResult<R>
+    ): CompileService.CallResult<R> =
+            rwlock.write {
+                ifAliveChecksImpl(minAliveness, ignoreCompilerChanged, body)
+            }
 
     inline private fun<R> ifAliveChecksImpl(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> =
         when {
@@ -635,4 +627,27 @@ class CompileServiceImpl(
                 }
             }
         }
+
+    private inline fun<R> withValidClientOrSessionProxy(sessionId: Int,
+                                                        body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>
+    ): CompileService.CallResult<R> {
+        val session: ClientOrSessionProxy<Any>? =
+                if (sessionId == CompileService.NO_SESSION) null
+                else state.sessions[sessionId] ?: return CompileService.CallResult.Error("Unknown or invalid session $sessionId")
+        try {
+            compilationsCounter.incrementAndGet()
+            return body(session)
+        }
+        finally {
+            _lastUsedSeconds = nowSeconds()
+        }
+
+    }
+
+    private inline fun<R> withValidRepl(sessionId: Int, body: KotlinJvmReplService.() -> R): CompileService.CallResult<R> =
+            withValidClientOrSessionProxy(sessionId) { session ->
+                (session?.data as? KotlinJvmReplService?)?.let {
+                    CompileService.CallResult.Good(it.body())
+                } ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
+            }
 }

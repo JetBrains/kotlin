@@ -567,6 +567,48 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
+    fun testDaemonReplAutoshutdownOnIdle() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, autoshutdownUnusedSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val logFile = createTempFile("kotlin-daemon-test", ".log")
+            val daemonJVMOptions =
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+            assertNotNull("failed to connect daemon", daemon)
+
+            val disposable = Disposer.newDisposable()
+            val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                classpathFromClassloader(),
+                                                ScriptWithNoParam::class.qualifiedName!!,
+                                                System.err)
+
+            // use repl compiler for >> 1s, making sure that idle/unused timeouts are not firing
+            for (attempts in 1..10) {
+                val codeLine1 = ReplCodeLine(1, "3 + 5")
+                val res1 = repl.compile(codeLine1, emptyList())
+                val res1c = res1 as? ReplCompileResult.CompiledClasses
+                TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+                Thread.sleep(200)
+            }
+
+            // wait up to 4s (more than 1s idle timeout)
+            for (attempts in 1..20) {
+                if (logFile.isLogContainsSequence("Idle timeout exceeded 1s")) break
+                Thread.sleep(200)
+            }
+            Disposer.dispose(disposable)
+
+            Thread.sleep(200)
+            logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
+                                              "Shutdown complete")
+            logFile.delete()
+        }
+    }
+
     internal fun withDaemon(body: (CompileService) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)

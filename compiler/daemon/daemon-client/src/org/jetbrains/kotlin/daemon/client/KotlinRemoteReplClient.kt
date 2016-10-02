@@ -62,7 +62,12 @@ open class KotlinRemoteReplClientBase(
 
     init {
         Disposer.register(disposable, Disposable {
-            compileService.releaseReplSession(sessionId)
+            try {
+                compileService.releaseReplSession(sessionId)
+            }
+            catch (ex: java.rmi.RemoteException) {
+                // assuming that communication failed and daemon most likely is already down
+            }
         })
     }
 
