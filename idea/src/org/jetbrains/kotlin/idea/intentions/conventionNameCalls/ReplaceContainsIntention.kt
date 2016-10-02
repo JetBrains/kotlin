@@ -49,7 +49,7 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
 
         val functionDescriptor = getFunctionDescriptor(element) ?: return null
 
-        if (!functionDescriptor.isOperator) return null
+        if (!functionDescriptor.isOperator && !OperatorChecks.check(functionDescriptor).isSuccess) return null
 
         return element.callExpression!!.calleeExpression!!.textRange
     }

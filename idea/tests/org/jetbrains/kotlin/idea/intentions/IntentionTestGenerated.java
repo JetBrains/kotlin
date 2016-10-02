@@ -3134,6 +3134,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("twoArgsContainsFromJava.kt")
+            public void testTwoArgsContainsFromJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/twoArgsContainsFromJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeArguments.kt")
             public void testTypeArguments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/typeArguments.kt");
@@ -4780,15 +4786,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("withComposedModifiers.kt")
-        public void testWithComposedModifiers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withComposedModifiers.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("withComments.kt")
         public void testWithComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withComments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withComposedModifiers.kt")
+        public void testWithComposedModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withComposedModifiers.kt");
             doTest(fileName);
         }
 
