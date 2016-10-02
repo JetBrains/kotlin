@@ -957,10 +957,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.iconst(0);
             v.store(indexVar, Type.INT_TYPE);
 
-            stringVar = createLoopTempVariable(JAVA_STRING_TYPE);
             StackValue value = gen(forExpression.getLoopRange());
-            value.put(JAVA_STRING_TYPE, v);
-            v.store(stringVar, JAVA_STRING_TYPE);
+            if (value instanceof StackValue.Local && value.type.equals(JAVA_STRING_TYPE)) {
+                stringVar = ((StackValue.Local) value).index;
+            }
+            else {
+                stringVar = createLoopTempVariable(JAVA_STRING_TYPE);
+                value.put(JAVA_STRING_TYPE, v);
+                v.store(stringVar, JAVA_STRING_TYPE);
+            }
 
             lengthVar = createLoopTempVariable(Type.INT_TYPE);
             v.load(stringVar, JAVA_STRING_TYPE);
