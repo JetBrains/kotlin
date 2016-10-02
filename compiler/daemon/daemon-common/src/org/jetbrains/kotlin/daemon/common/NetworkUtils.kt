@@ -46,7 +46,7 @@ object LoopbackNetworkInterface {
     // TODO switch to InetAddress.getLoopbackAddress on java 7+
     val loopbackInetAddressName by lazy {
         try {
-            if (InetAddress.getLocalHost() is Inet6Address) IPV6_LOOPBACK_INET_ADDRESS else IPV4_LOOPBACK_INET_ADDRESS
+            if (InetAddress.getByName(null) is Inet6Address) IPV6_LOOPBACK_INET_ADDRESS else IPV4_LOOPBACK_INET_ADDRESS
         }
         catch (e: IOException) {
             // getLocalHost may fail for unknown reasons in some situations, the fallback is to assume IPv4 for now
@@ -63,7 +63,7 @@ object LoopbackNetworkInterface {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(loopbackInetAddressName))
+        override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
 
@@ -72,7 +72,7 @@ object LoopbackNetworkInterface {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        override fun createSocket(host: String, port: Int): Socket = Socket(InetAddress.getByName(loopbackInetAddressName), port)
+        override fun createSocket(host: String, port: Int): Socket = Socket(InetAddress.getByName(null), port)
     }
 }
 

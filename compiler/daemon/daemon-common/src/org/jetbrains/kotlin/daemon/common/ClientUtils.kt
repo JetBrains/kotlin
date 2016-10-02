@@ -67,7 +67,7 @@ fun walkDaemons(registryDir: File,
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
 
     try {
-        val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port)
+        val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port, LoopbackNetworkInterface.clientLoopbackSocketFactory)
                 ?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
             null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
