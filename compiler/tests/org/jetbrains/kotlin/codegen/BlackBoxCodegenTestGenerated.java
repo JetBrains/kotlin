@@ -14482,6 +14482,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callFromPrimaryWithNamedArgs.kt")
+        public void testCallFromPrimaryWithNamedArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromPrimaryWithNamedArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callFromPrimaryWithOptionalArgs.kt")
+        public void testCallFromPrimaryWithOptionalArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromPrimaryWithOptionalArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("callFromSubClass.kt")
         public void testCallFromSubClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromSubClass.kt");
