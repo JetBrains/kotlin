@@ -77,31 +77,29 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
-        logger.kotlinDebug("all sources ${getSource().joinToString { it.path }}")
-        logger.kotlinDebug("is incremental == ${inputs.isIncremental}")
-        val modified = arrayListOf<File>()
-        val removed = arrayListOf<File>()
-        if (inputs.isIncremental) {
-            inputs.outOfDate { modified.add(it.file) }
-            inputs.removed { removed.add(it.file) }
-        }
-        logger.kotlinDebug("modified ${modified.joinToString { it.path }}")
-        logger.kotlinDebug("removed ${removed.joinToString { it.path }}")
-        val sources = getKotlinSources()
-        if (sources.isEmpty()) {
+        val allKotlinSources = getKotlinSources()
+        logger.kotlinDebug { "all kotlin sources: ${filesToString(allKotlinSources)}" }
+
+        if (allKotlinSources.isEmpty()) {
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
             return
         }
 
         val args = populateCompilerArguments()
         compilerCalled = true
-        callCompiler(args, sources, inputs.isIncremental, modified, removed)
+        callCompiler(args, allKotlinSources, ChangedFiles(inputs))
     }
 
-    private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
+    private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter(File::isKotlinFile)
 
-    protected abstract fun callCompiler(args: T, allKotlinSources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>)
+    internal abstract fun callCompiler(args: T, allKotlinSources: List<File>, changedFiles: ChangedFiles)
 
+    internal fun relativePathOrCanonical(file: File): String =
+            file.relativeToOrNull(project.rootProject.projectDir)?.path
+                    ?: file.canonicalPath
+
+    internal fun filesToString(files: Iterable<File>) =
+            "[" + files.map { relativePathOrCanonical(it) }.sorted().joinToString(separator = ", \n") + "]"
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
@@ -175,9 +173,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         return args
     }
 
-    override fun callCompiler(args: K2JVMCompilerArguments, allKotlinSources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
+    override fun callCompiler(args: K2JVMCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
         val outputDir = destinationDir
-        var currentRemoved = removed.filter { it.isKotlinFile() }
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
         val relativePathOrCanonical = { file: File -> relativePathOrCanonical(file) }
 
@@ -221,7 +218,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             return ChangesEither.Known(symbols, fqNames)
         }
 
-        fun calculateSourcesToCompile(javaFilesProcessor: ChangedJavaFilesProcessor, caches: IncrementalCachesManager, lastBuildInfo: BuildInfo?): Pair<Set<File>, Boolean> {
+        fun calculateSourcesToCompile(javaFilesProcessor: ChangedJavaFilesProcessor, caches: IncrementalCachesManager, lastBuildInfo: BuildInfo?, changedFiles: ChangedFiles): Pair<Set<File>, Boolean> {
             fun rebuild(reason: String): Pair<Set<File>, Boolean> {
                 logger.kotlinInfo("Non-incremental compilation will be performed: $reason")
                 caches.clean()
@@ -230,15 +227,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             }
 
             if (!incremental) return rebuild("incremental compilation is not enabled")
-            if (!isIncrementalRequested) return rebuild("inputs' changes are unknown (first or clean build)")
+            if (changedFiles !is ChangedFiles.Known) return rebuild("inputs' changes are unknown (first or clean build)")
 
-            val removedClassFiles = removed.filter(File::isClassFile)
+            val removedClassFiles = changedFiles.removed.filter(File::isClassFile)
             if (removedClassFiles.any()) return rebuild("Removed class files: ${filesToString(removedClassFiles)}")
 
-            val modifiedClassFiles = modified.filter(File::isClassFile)
+            val modifiedClassFiles = changedFiles.modified.filter(File::isClassFile)
             if (modifiedClassFiles.any()) return rebuild("Modified class files: ${filesToString(modifiedClassFiles)}")
 
-            val modifiedClasspathEntries = modified.filter { it in classpath }
+            val modifiedClasspathEntries = changedFiles.modified.filter { it in classpath }
             val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo)
             if (classpathChanges is ChangesEither.Unknown) {
                 return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
@@ -247,15 +244,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 throw AssertionError("Unknown implementation of ChangesEither: ${classpathChanges.javaClass}")
             }
             val javaFilesDiff = FileCollectionDiff(
-                    newOrModified = modified.filter { it.isJavaFile() },
-                    removed = removed.filter { it.isJavaFile() })
+                    newOrModified = changedFiles.modified.filter(File::isJavaFile),
+                    removed = changedFiles.removed.filter(File::isJavaFile))
             val javaFilesChanges = javaFilesProcessor.process(javaFilesDiff)
             val affectedJavaSymbols = when (javaFilesChanges) {
                 is ChangesEither.Known -> javaFilesChanges.lookupSymbols
                 is ChangesEither.Unknown -> return rebuild("Could not get changes for java files")
             }
 
-            val dirtyFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
+            val dirtyFiles = changedFiles.modified.filter(File::isKotlinFile).toMutableSet()
             val lookupSymbols = HashSet<LookupSymbol>()
             lookupSymbols.addAll(affectedJavaSymbols)
             lookupSymbols.addAll(classpathChanges.lookupSymbols)
@@ -299,8 +296,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
 
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
-        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo)
-        compileIncrementally(allGeneratedFiles, args, caches, currentRemoved, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, sourcesToCompile, targetId)
+        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo, changedFiles)
+        val currentRemoved = (changedFiles as? ChangedFiles.Known)?.removed?.filter(File::isKotlinFile) ?: emptyList()
+        compileIncrementally(args, caches, currentRemoved, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, sourcesToCompile, targetId)
     }
 
     private fun compileIncrementally(
@@ -423,13 +421,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.kotlinDebug { "flushed incremental caches" }
         processCompilerExitCode(exitCode)
     }
-
-    private fun relativePathOrCanonical(file: File): String =
-            file.relativeToOrNull(project.rootProject.projectDir)?.path
-                    ?: file.canonicalPath
-
-    private fun filesToString(files: Iterable<File>) =
-            "[" + files.map { relativePathOrCanonical(it) }.sorted().joinToString(separator = ", \n") + "]"
 
     private fun cleanupOnError() {
         logger.kotlinInfo("deleting $destinationDir on error")
@@ -639,7 +630,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         return args
     }
 
-    override fun callCompiler(args: K2JSCompilerArguments, allKotlinSources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
+    override fun callCompiler(args: K2JSCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
         val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
