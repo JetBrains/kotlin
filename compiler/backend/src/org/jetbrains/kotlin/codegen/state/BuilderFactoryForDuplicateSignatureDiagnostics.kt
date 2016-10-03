@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
@@ -59,13 +58,13 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         bindingContext: BindingContext,
         private val diagnostics: DiagnosticSink,
         fileClassesProvider: JvmFileClassesProvider,
-        incrementalCache: IncrementalCache?,
         moduleName: String
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
     // Avoid errors when some classes are not loaded for some reason
-    private val typeMapper = KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache,
-                                              IncompatibleClassTracker.DoNothing, moduleName, false)
+    private val typeMapper = KotlinTypeMapper(
+            bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, IncompatibleClassTracker.DoNothing, moduleName, false
+    )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 
     fun reportDiagnostics() {

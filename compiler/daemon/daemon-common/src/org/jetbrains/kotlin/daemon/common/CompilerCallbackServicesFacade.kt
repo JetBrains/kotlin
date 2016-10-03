@@ -49,9 +49,6 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
-    fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String?
-
-    @Throws(RemoteException::class)
     fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto?
 
     @Throws(RemoteException::class)

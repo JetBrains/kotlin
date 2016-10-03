@@ -321,7 +321,7 @@ open class IncrementalCacheImpl<Target>(
     override fun getObsoletePackageParts(): Collection<String> {
         val obsoletePackageParts =
                 dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
-        debugLog("Obsolete package parts: ${obsoletePackageParts}")
+        debugLog("Obsolete package parts: $obsoletePackageParts")
         return obsoletePackageParts
     }
 
@@ -344,10 +344,6 @@ open class IncrementalCacheImpl<Target>(
     override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? {
         val partNames = multifileFacadeToParts.get(facadeInternalName) ?: return null
         return partNames.filter { !dirtyOutputClassesMap.isDirty(it) }
-    }
-
-    override fun getMultifileFacade(partInternalName: String): String? {
-        return partToMultifileFacade.get(partInternalName)
     }
 
     override fun getModuleMappingData(): ByteArray? {

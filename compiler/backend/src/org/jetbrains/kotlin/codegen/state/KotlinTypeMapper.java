@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.*;
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -81,7 +79,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
@@ -96,10 +94,10 @@ public class KotlinTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
     private final JvmFileClassesProvider fileClassesProvider;
-    private final IncrementalCache incrementalCache;
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
-    private boolean isJvm8Target;
+    private final boolean isJvm8Target;
+
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
         @Override
@@ -125,7 +123,6 @@ public class KotlinTypeMapper {
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull JvmFileClassesProvider fileClassesProvider,
-            @Nullable IncrementalCache incrementalCache,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
             boolean isJvm8Target
@@ -133,7 +130,6 @@ public class KotlinTypeMapper {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
         this.fileClassesProvider = fileClassesProvider;
-        this.incrementalCache = incrementalCache;
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
         this.isJvm8Target = isJvm8Target;
@@ -154,7 +150,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean publicFacade) {
+    private Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean publicFacade) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
@@ -214,45 +210,47 @@ public class KotlinTypeMapper {
         private final ClassId facadeClassId;
         private final ClassId implClassId;
 
-        public ContainingClassesInfo(ClassId facadeClassId, ClassId implClassId) {
+        public ContainingClassesInfo(@NotNull ClassId facadeClassId, @NotNull ClassId implClassId) {
             this.facadeClassId = facadeClassId;
             this.implClassId = implClassId;
         }
 
+        @NotNull
         public ClassId getFacadeClassId() {
             return facadeClassId;
         }
 
+        @NotNull
         public ClassId getImplClassId() {
             return implClassId;
         }
 
-        private static @Nullable ContainingClassesInfo forPackageMemberOrNull(
+        @Nullable
+        private static ContainingClassesInfo forPackageMember(
                 @NotNull FqName packageFqName,
-                @Nullable String facadeClassName,
-                @Nullable String implClassName
+                @NotNull String facadeClassName,
+                @NotNull String implClassName
         ) {
-            if (facadeClassName == null || implClassName == null) {
-                return null;
-            }
             return new ContainingClassesInfo(ClassId.topLevel(packageFqName.child(Name.identifier(facadeClassName))),
                                              ClassId.topLevel(packageFqName.child(Name.identifier(implClassName))));
         }
 
-        private static @Nullable ContainingClassesInfo forClassMemberOrNull(@Nullable ClassId classId) {
-            if (classId == null) {
-                return null;
-            }
+        @NotNull
+        private static ContainingClassesInfo forClassMemberOrNull(@NotNull ClassId classId) {
             return new ContainingClassesInfo(classId, classId);
         }
     }
 
-    public ContainingClassesInfo getContainingClassesForDeserializedCallable(DeserializedCallableMemberDescriptor deserializedDescriptor) {
+    @NotNull
+    public static ContainingClassesInfo getContainingClassesForDeserializedCallable(
+            @NotNull DeserializedCallableMemberDescriptor deserializedDescriptor
+    ) {
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
         ContainingClassesInfo containingClassesInfo;
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
             containingClassesInfo = getPackageMemberContainingClassesInfo(deserializedDescriptor);
-        } else {
+        }
+        else {
             ClassId classId = getContainerClassIdForClassDescriptor((ClassDescriptor) parentDeclaration);
             containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(classId);
         }
@@ -262,7 +260,8 @@ public class KotlinTypeMapper {
         return containingClassesInfo;
     }
 
-    private static ClassId getContainerClassIdForClassDescriptor(ClassDescriptor classDescriptor) {
+    @NotNull
+    private static ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
         if (isInterface(classDescriptor)) {
             FqName relativeClassName = classId.getRelativeClassName();
@@ -273,7 +272,7 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
+    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
@@ -290,50 +289,24 @@ public class KotlinTypeMapper {
     private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));
 
     @Nullable
-    private ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
-        // XXX This method is a dirty hack.
-        // We need some safe, concise way to identify multifile facade and multifile part
-        // from a deserialized package member descriptor.
+    private static ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        assert containingDeclaration instanceof PackageFragmentDescriptor
-                : "Package member expected, got " + descriptor + " in " + containingDeclaration;
-        PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
-
-        if (packageFragmentDescriptor instanceof BuiltInsPackageFragment) {
+        if (containingDeclaration instanceof BuiltInsPackageFragment) {
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 
+        assert containingDeclaration instanceof LazyJavaPackageFragment :
+                "Unexpected package fragment for " + descriptor + ": " + containingDeclaration +
+                " (" + containingDeclaration.getClass().getSimpleName() + ")";
+        LazyJavaPackageFragment packageFragment = (LazyJavaPackageFragment) containingDeclaration;
+
         Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
         assert implClassName != null : "No implClassName for " + descriptor;
-        String implSimpleName = implClassName.asString();
 
-        String facadeSimpleName;
+        String facadeSimpleName = packageFragment.getFacadeSimpleNameForPartSimpleName(implClassName.asString());
+        if (facadeSimpleName == null) return null;
 
-        if (packageFragmentDescriptor instanceof LazyJavaPackageFragment) {
-            facadeSimpleName = ((LazyJavaPackageFragment) packageFragmentDescriptor).getFacadeSimpleNameForPartSimpleName(
-                    implClassName.asString()
-            );
-        }
-        else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
-            assert incrementalCache != null
-                    : "IncrementalPackageFragment found outside of incremental compilation context " +
-                      "for " + descriptor + " in package " + packageFragmentDescriptor;
-
-            String implClassInternalName = internalNameByFqNameWithoutInnerClasses(
-                    packageFragmentDescriptor.getFqName().child(implClassName));
-            String facadeClassInternalName = incrementalCache.getMultifileFacade(implClassInternalName);
-            if (facadeClassInternalName == null) {
-                facadeSimpleName = implClassName.asString();
-            }
-            else {
-                facadeSimpleName = getSimpleInternalName(facadeClassInternalName);
-            }
-        }
-        else {
-            throw new AssertionError("Unexpected package fragment for " + descriptor + ": " +
-                                     packageFragmentDescriptor + " (" + packageFragmentDescriptor.getClass().getSimpleName() + ")");
-        }
-        return ContainingClassesInfo.forPackageMemberOrNull(packageFragmentDescriptor.getFqName(), facadeSimpleName, implSimpleName);
+        return ContainingClassesInfo.forPackageMember(packageFragment.getFqName(), facadeSimpleName, implClassName.asString());
     }
 
     @NotNull
@@ -692,7 +665,7 @@ public class KotlinTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinReflectingJvmDescriptor(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null && !superCall
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
