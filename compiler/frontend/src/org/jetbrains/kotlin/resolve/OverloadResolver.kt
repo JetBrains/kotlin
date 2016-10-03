@@ -115,7 +115,7 @@ class OverloadResolver(
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
 
                 if (!OverloadUtil.isOverloadable(member1, member2)) {
-                    val ktDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(member1) as KtDeclaration?
+                    val ktDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(member1) as? KtDeclaration
                     redeclarations.add(ktDeclaration to member1)
                 }
             }
