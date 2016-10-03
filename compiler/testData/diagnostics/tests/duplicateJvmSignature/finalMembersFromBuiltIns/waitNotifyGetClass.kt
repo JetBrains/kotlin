@@ -8,6 +8,7 @@ class A {
     <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait()<!> {}
     <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait(l: Long)<!> {}
     <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait(l: Long, i: Int)<!> {}
+    <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun getClass(): Class<Any><!> = null!!
 }
 
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun notify()<!> {}
@@ -15,3 +16,4 @@ class A {
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait()<!> {}
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait(l: Long)<!> {}
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun wait(l: Long, i: Int)<!> {}
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>fun getClass(): Class<Any><!> = null!!
