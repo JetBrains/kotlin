@@ -130,6 +130,8 @@ class MoveKotlinDeclarationsProcessor(
     fun getConflictsAsUsages(): List<UsageInfo> = conflicts.entrySet().map { ConflictUsageInfo(it.key, it.value) }
 
     public override fun findUsages(): Array<UsageInfo> {
+        if (elementsToMove.isEmpty()) return UsageInfo.EMPTY_ARRAY
+
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
 
         fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableList<UsageInfo>) {
