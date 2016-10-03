@@ -1,11 +1,9 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.apache.commons.io.FilenameUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
@@ -103,10 +100,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
-    protected fun File.isKotlinFile(): Boolean =
-            FilenameUtils.isExtension(name.toLowerCase(), listOf("kt", "kts"))
-
-    protected abstract fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>)
+    protected abstract fun callCompiler(args: T, allKotlinSources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>)
 
 }
 
@@ -181,18 +175,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         return args
     }
 
-    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
-        fun relativePathOrCanonical(file: File): String =
-                file.relativeToOrNull(project.rootProject.projectDir)?.path
-                        ?: file.canonicalPath
-
-        fun filesToString(files: Iterable<File>) =
-                "[" + files.map(::relativePathOrCanonical).sorted().joinToString(separator = ", \n") + "]"
-
+    override fun callCompiler(args: K2JVMCompilerArguments, allKotlinSources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>) {
         val outputDir = destinationDir
         var currentRemoved = removed.filter { it.isKotlinFile() }
-        val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
+        val relativePathOrCanonical = { file: File -> relativePathOrCanonical(file) }
 
         fun getClasspathChanges(modifiedClasspath: List<File>, lastBuildInfo: BuildInfo?): ChangesEither {
             if (modifiedClasspath.isEmpty()) {
@@ -239,16 +226,16 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 logger.kotlinInfo("Non-incremental compilation will be performed: $reason")
                 caches.clean()
                 dirtySourcesSinceLastTimeFile.delete()
-                return Pair(sources.toSet(), false)
+                return Pair(allKotlinSources.toSet(), false)
             }
 
             if (!incremental) return rebuild("incremental compilation is not enabled")
             if (!isIncrementalRequested) return rebuild("inputs' changes are unknown (first or clean build)")
 
-            val removedClassFiles = removed.filter(File::hasClassFileExtension)
+            val removedClassFiles = removed.filter(File::isClassFile)
             if (removedClassFiles.any()) return rebuild("Removed class files: ${filesToString(removedClassFiles)}")
 
-            val modifiedClassFiles = modified.filter(File::hasClassFileExtension)
+            val modifiedClassFiles = modified.filter(File::isClassFile)
             if (modifiedClassFiles.any()) return rebuild("Modified class files: ${filesToString(modifiedClassFiles)}")
 
             val modifiedClasspathEntries = modified.filter { it in classpath }
@@ -274,13 +261,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             lookupSymbols.addAll(classpathChanges.lookupSymbols)
 
             if (lookupSymbols.any()) {
-                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, logAction, ::relativePathOrCanonical)
+                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, logAction, relativePathOrCanonical)
                 dirtyFiles.addAll(dirtyFilesFromLookups)
             }
 
             val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, listOf(caches.incrementalCache)) }
             if (dirtyClassesFqNames.any()) {
-                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, logAction, ::relativePathOrCanonical)
+                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, logAction, relativePathOrCanonical)
                 dirtyFiles.addAll(dirtyFilesFromFqNames)
             }
 
@@ -296,31 +283,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             return Pair(dirtyFiles, true)
         }
 
-        fun cleanupOnError() {
-            logger.kotlinInfo("deleting $destinationDir on error")
-            destinationDir.deleteRecursively()
-        }
-
-        fun processCompilerExitCode(exitCode: ExitCode) {
-            if (exitCode != ExitCode.OK) {
-                cleanupOnError()
-            }
-
-            when (exitCode) {
-                ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-                ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-                ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
-                ExitCode.OK -> {
-                    sourceAnnotationsRegistry?.flush()
-                    cacheVersions.forEach { it.saveIfNeeded() }
-                    logger.kotlinInfo("Compilation succeeded")
-                }
-            }
-        }
-
         if (!incremental) {
             anyClassesCompiled = true
-            processCompilerExitCode(compileNotIncremental(sources, outputDir, args))
+            processCompilerExitCode(compileNotIncremental(allKotlinSources, outputDir, args))
             return
         }
 
@@ -335,11 +300,30 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo)
+        compileIncrementally(allGeneratedFiles, args, caches, currentRemoved, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, sourcesToCompile, targetId)
+    }
 
-        if (isIncrementalDecided) {
+    private fun compileIncrementally(
+            args: K2JVMCompilerArguments,
+            caches: IncrementalCachesManager,
+            currentRemoved: List<File>,
+            isIncrementalDecided: Boolean,
+            javaFilesProcessor: ChangedJavaFilesProcessor,
+            logAction: (String) -> Unit,
+            lookupTracker: LookupTrackerImpl,
+            outputDir: File,
+            relativePathOrCanonical: (File) -> String,
+            allKotlinSources: List<File>,
+            sourcesToCompile: Set<File>,
+            targetId: TargetId
+    ) {
+        val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
+        var currentRemoved1 = currentRemoved
+        var isIncrementalDecided1 = isIncrementalDecided
+        var sourcesToCompile1 = sourcesToCompile
+        if (isIncrementalDecided1) {
             additionalClasspath.add(destinationDir)
-        }
-        else {
+        } else {
             // there is no point in updating annotation file since all files will be compiled anyway
             kaptAnnotationsFileUpdater = null
         }
@@ -351,19 +335,19 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val buildDirtyFqNames = HashSet<FqName>()
 
         var exitCode = ExitCode.OK
-        while (sourcesToCompile.any() || currentRemoved.any()) {
-            val removedAndModified = (sourcesToCompile + currentRemoved).toList()
+        while (sourcesToCompile1.any() || currentRemoved1.any()) {
+            val removedAndModified = (sourcesToCompile1 + currentRemoved1).toList()
             val outdatedClasses = caches.incrementalCache.classesBySources(removedAndModified)
             caches.incrementalCache.markOutputClassesDirty(removedAndModified)
             caches.incrementalCache.removeClassfilesBySources(removedAndModified)
 
             // can be empty if only removed sources are present
-            if (sourcesToCompile.isNotEmpty()) {
-                logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString(transform = ::relativePathOrCanonical)}")
+            if (sourcesToCompile1.isNotEmpty()) {
+                logger.kotlinInfo("compile iteration: ${sourcesToCompile1.joinToString(transform = relativePathOrCanonical)}")
             }
 
-            val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
-            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(::relativePathOrCanonical)}" }
+            val (existingSource, nonExistingSource) = sourcesToCompile1.partition { it.isFile }
+            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(relativePathOrCanonical)}" }
 
             val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
@@ -374,23 +358,22 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
                 kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
-            }
-            else {
+            } else {
                 kaptAnnotationsFileUpdater?.revert()
                 break
             }
 
             allGeneratedFiles.addAll(compilerOutput.generatedFiles)
             val compilationResult = updateIncrementalCaches(listOf(targetId), compilerOutput.generatedFiles,
-                                                            compiledWithErrors = exitCode != ExitCode.OK,
-                                                            getIncrementalCache = { caches.incrementalCache })
+                    compiledWithErrors = exitCode != ExitCode.OK,
+                    getIncrementalCache = { caches.incrementalCache })
 
-            caches.lookupCache.update(lookupTracker, sourcesToCompile, currentRemoved)
+            caches.lookupCache.update(lookupTracker, sourcesToCompile1, currentRemoved1)
 
             val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
             val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
 
-            if (!isIncrementalDecided) {
+            if (!isIncrementalDecided1) {
                 artifactFile?.let { artifactDifferenceRegistry?.remove(it) }
                 break
             }
@@ -400,28 +383,28 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
                 is ChangesEither.Unknown -> {
                     logger.kotlinDebug { "Could not get changes for generated java files, recompiling all kotlin" }
-                    isIncrementalDecided = false
-                    sources.toSet()
+                    isIncrementalDecided1 = false
+                    allKotlinSources.toSet()
                 }
                 is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile)
+                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, relativePathOrCanonical, excludes = sourcesToCompile1)
                 }
                 else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
             }
-            sourcesToCompile = dirtyKotlinFilesFromJava +
-                               mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile) +
-                               mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, ::relativePathOrCanonical, excludes = sourcesToCompile)
+            sourcesToCompile1 = dirtyKotlinFilesFromJava +
+                    mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, relativePathOrCanonical, excludes = sourcesToCompile1) +
+                    mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, relativePathOrCanonical, excludes = sourcesToCompile1)
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
             buildDirtyFqNames.addAll(dirtyClassFqNames)
 
-            if (currentRemoved.any()) {
+            if (currentRemoved1.any()) {
                 anyClassesCompiled = true
-                currentRemoved = listOf()
+                currentRemoved1 = listOf()
             }
         }
 
-        if (exitCode == ExitCode.OK && isIncrementalDecided) {
+        if (exitCode == ExitCode.OK && isIncrementalDecided1) {
             buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
         }
         if (artifactFile != null && artifactDifferenceRegistry != null) {
@@ -439,6 +422,35 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         caches.close(flush = true)
         logger.kotlinDebug { "flushed incremental caches" }
         processCompilerExitCode(exitCode)
+    }
+
+    private fun relativePathOrCanonical(file: File): String =
+            file.relativeToOrNull(project.rootProject.projectDir)?.path
+                    ?: file.canonicalPath
+
+    private fun filesToString(files: Iterable<File>) =
+            "[" + files.map { relativePathOrCanonical(it) }.sorted().joinToString(separator = ", \n") + "]"
+
+    private fun cleanupOnError() {
+        logger.kotlinInfo("deleting $destinationDir on error")
+        destinationDir.deleteRecursively()
+    }
+
+    private fun processCompilerExitCode(exitCode: ExitCode) {
+        if (exitCode != ExitCode.OK) {
+            cleanupOnError()
+        }
+
+        when (exitCode) {
+            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
+            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
+            ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
+            ExitCode.OK -> {
+                sourceAnnotationsRegistry?.flush()
+                cacheVersions.forEach { it.saveIfNeeded() }
+                logger.kotlinInfo("Compilation succeeded")
+            }
+        }
     }
 
     private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
@@ -547,9 +559,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private fun getJavaSourceRoots(): Set<File> =
             findRootsForSources(getSource().filter { it.isJavaFile() })
 
-    private fun File.isJavaFile() =
-            extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
-
     private fun File.isKapt2GeneratedDirectory(): Boolean {
         if (!kapt2GeneratedSourcesDir.isDirectory) return false
         return FileUtil.isAncestor(kapt2GeneratedSourcesDir, this, /* strict = */ false)
@@ -630,11 +639,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         return args
     }
 
-    override fun callCompiler(args: K2JSCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
+    override fun callCompiler(args: K2JSCompilerArguments, allKotlinSources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>) {
         val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
-        args.freeArgs = args.freeArgs + sources.map { it.absolutePath }
+        args.freeArgs = args.freeArgs + allKotlinSources.map { it.absolutePath }
 
         if (args.outputFile == null) {
             throw GradleException("$name.kotlinOptions.outputFile should be specified.")
@@ -719,9 +728,3 @@ internal inline fun Logger.kotlinDebug(message: ()->String) {
         kotlinDebug(message())
     }
 }
-
-internal fun listClassFiles(path: String): Sequence<File> =
-        File(path).walk().filter { it.isFile && it.hasClassFileExtension() }
-
-private fun File.hasClassFileExtension(): Boolean =
-        extension.toLowerCase() == "class"
