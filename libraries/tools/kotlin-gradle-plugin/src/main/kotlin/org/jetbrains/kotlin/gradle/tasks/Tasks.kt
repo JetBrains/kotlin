@@ -178,112 +178,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
         val relativePathOrCanonical = { file: File -> relativePathOrCanonical(file) }
 
-        fun getClasspathChanges(modifiedClasspath: List<File>, lastBuildInfo: BuildInfo?): ChangesEither {
-            if (modifiedClasspath.isEmpty()) {
-                logger.kotlinDebug { "No classpath changes" }
-                return ChangesEither.Known()
-            }
-            if (artifactDifferenceRegistry == null) {
-                logger.kotlinDebug { "No artifact history provider" }
-                return ChangesEither.Unknown()
-            }
-
-            val lastBuildTS = lastBuildInfo?.startTS
-            if (lastBuildTS == null) {
-                logger.kotlinDebug { "Could not determine last build timestamp" }
-                return ChangesEither.Unknown()
-            }
-
-            val symbols = HashSet<LookupSymbol>()
-            val fqNames = HashSet<FqName>()
-            for (file in modifiedClasspath) {
-                val diffs = artifactDifferenceRegistry!![file]
-                if (diffs == null) {
-                    logger.kotlinDebug { "Could not get changes for file: $file" }
-                    return ChangesEither.Unknown()
-                }
-
-                val (beforeLastBuild, afterLastBuild) = diffs.partition { it.buildTS < lastBuildTS }
-                if (beforeLastBuild.isEmpty()) {
-                    logger.kotlinDebug { "No known build preceding timestamp $lastBuildTS for file $file" }
-                    return ChangesEither.Unknown()
-                }
-
-                afterLastBuild.forEach {
-                    symbols.addAll(it.dirtyData.dirtyLookupSymbols)
-                    fqNames.addAll(it.dirtyData.dirtyClassesFqNames)
-                }
-            }
-
-            return ChangesEither.Known(symbols, fqNames)
-        }
-
-        fun calculateSourcesToCompile(javaFilesProcessor: ChangedJavaFilesProcessor, caches: IncrementalCachesManager, lastBuildInfo: BuildInfo?, changedFiles: ChangedFiles): Pair<Set<File>, Boolean> {
-            fun rebuild(reason: String): Pair<Set<File>, Boolean> {
-                logger.kotlinInfo("Non-incremental compilation will be performed: $reason")
-                caches.clean()
-                dirtySourcesSinceLastTimeFile.delete()
-                return Pair(allKotlinSources.toSet(), false)
-            }
-
-            if (!incremental) return rebuild("incremental compilation is not enabled")
-            if (changedFiles !is ChangedFiles.Known) return rebuild("inputs' changes are unknown (first or clean build)")
-
-            val removedClassFiles = changedFiles.removed.filter(File::isClassFile)
-            if (removedClassFiles.any()) return rebuild("Removed class files: ${filesToString(removedClassFiles)}")
-
-            val modifiedClassFiles = changedFiles.modified.filter(File::isClassFile)
-            if (modifiedClassFiles.any()) return rebuild("Modified class files: ${filesToString(modifiedClassFiles)}")
-
-            val modifiedClasspathEntries = changedFiles.modified.filter { it in classpath }
-            val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo)
-            if (classpathChanges is ChangesEither.Unknown) {
-                return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
-            }
-            if (classpathChanges !is ChangesEither.Known) {
-                throw AssertionError("Unknown implementation of ChangesEither: ${classpathChanges.javaClass}")
-            }
-            val javaFilesDiff = FileCollectionDiff(
-                    newOrModified = changedFiles.modified.filter(File::isJavaFile),
-                    removed = changedFiles.removed.filter(File::isJavaFile))
-            val javaFilesChanges = javaFilesProcessor.process(javaFilesDiff)
-            val affectedJavaSymbols = when (javaFilesChanges) {
-                is ChangesEither.Known -> javaFilesChanges.lookupSymbols
-                is ChangesEither.Unknown -> return rebuild("Could not get changes for java files")
-            }
-
-            val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
-            with(changedFiles) {
-                modified.asSequence() + removed.asSequence()
-            }.forEach { if (it.isKotlinFile()) dirtyFiles.add(it) }
-
-            val lookupSymbols = HashSet<LookupSymbol>()
-            lookupSymbols.addAll(affectedJavaSymbols)
-            lookupSymbols.addAll(classpathChanges.lookupSymbols)
-
-            if (lookupSymbols.any()) {
-                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, logAction, relativePathOrCanonical)
-                dirtyFiles.addAll(dirtyFilesFromLookups)
-            }
-
-            val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, listOf(caches.incrementalCache)) }
-            if (dirtyClassesFqNames.any()) {
-                val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, logAction, relativePathOrCanonical)
-                dirtyFiles.addAll(dirtyFilesFromFqNames)
-            }
-
-            if (dirtySourcesSinceLastTimeFile.exists()) {
-                val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter(File::exists)
-                if (files.isNotEmpty()) {
-                    logger.kotlinDebug { "Source files added since last compilation: $files" }
-                }
-
-                dirtyFiles.addAll(files)
-            }
-
-            return Pair(dirtyFiles, true)
-        }
-
         if (!incremental) {
             anyClassesCompiled = true
             processCompilerExitCode(compileNotIncremental(allKotlinSources, outputDir, args))
@@ -299,32 +193,49 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
         val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
 
-        val (dirtyKotlinSources, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo, changedFiles)
-        compileIncrementally(args, caches, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, dirtyKotlinSources, targetId)
+        val compilationMode = calculateSourcesToCompile(javaFilesProcessor,
+                caches,
+                lastBuildInfo,
+                changedFiles,
+                logger,
+                classpath.toList(),
+                dirtySourcesSinceLastTimeFile,
+                { filesToString(it) },
+                logAction, { relativePathOrCanonical(it) },
+                artifactDifferenceRegistry)
+        compileIncrementally(args, caches, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, targetId, compilationMode)
     }
 
     private fun compileIncrementally(
             args: K2JVMCompilerArguments,
             caches: IncrementalCachesManager,
-            isIncrementalDecided: Boolean,
             javaFilesProcessor: ChangedJavaFilesProcessor,
             logAction: (String) -> Unit,
             lookupTracker: LookupTrackerImpl,
             outputDir: File,
             relativePathOrCanonical: (File) -> String,
             allKotlinSources: List<File>,
-            dirtyKotlinFiles: Set<File>,
-            targetId: TargetId
+            targetId: TargetId,
+            compilationMode: CompilationMode
     ) {
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
-        var isIncrementalDecided1 = isIncrementalDecided
-        val dirtySources: MutableList<File> = allKotlinSources.filterTo(ArrayList()) { it in dirtyKotlinFiles }
-        if (isIncrementalDecided1) {
-            additionalClasspath.add(destinationDir)
-        } else {
-            // there is no point in updating annotation file since all files will be compiled anyway
-            kaptAnnotationsFileUpdater = null
+        val dirtySources: MutableList<File>
+
+        when (compilationMode) {
+            is CompilationMode.Incremental -> {
+                dirtySources = allKotlinSources.filterTo(ArrayList()) { it in compilationMode.dirtyFiles }
+                additionalClasspath.add(destinationDir)
+            }
+            is CompilationMode.Rebuild -> {
+                dirtySources = allKotlinSources.toMutableList()
+                // there is no point in updating annotation file since all files will be compiled anyway
+                kaptAnnotationsFileUpdater = null
+            }
+            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode.javaClass}")
         }
+
+        @Suppress("NAME_SHADOWING")
+        var compilationMode = compilationMode
 
         logger.kotlinDebug { "Artifact to register difference for task $path: $artifactFile" }
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
@@ -368,7 +279,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
             val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
 
-            if (!isIncrementalDecided1) {
+            if (compilationMode is CompilationMode.Rebuild) {
                 artifactFile?.let { artifactDifferenceRegistry?.remove(it) }
                 break
             }
@@ -379,7 +290,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
                 is ChangesEither.Unknown -> {
                     logger.kotlinDebug { "Could not get changes for generated java files, recompiling all kotlin" }
-                    isIncrementalDecided1 = false
+                    compilationMode = CompilationMode.Rebuild()
                     allKotlinSources.toSet()
                 }
                 is ChangesEither.Known -> {
@@ -401,7 +312,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
         }
 
-        if (exitCode == ExitCode.OK && isIncrementalDecided1) {
+        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
         }
         if (artifactFile != null && artifactDifferenceRegistry != null) {
