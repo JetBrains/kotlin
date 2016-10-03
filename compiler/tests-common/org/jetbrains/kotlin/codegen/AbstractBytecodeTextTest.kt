@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.utils.*
-
+import org.jetbrains.kotlin.utils.rethrow
+import org.junit.Assert
 import java.io.File
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -54,8 +53,8 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         val generated = generateEachFileToText()
         for (expectedOutputFile in expectedOccurrencesByOutputFile.keys) {
             assertTextWasGenerated(expectedOutputFile, generated)
-            val generatedText = generated[expectedOutputFile]
-            val expectedOccurrences = expectedOccurrencesByOutputFile[expectedOutputFile]
+            val generatedText = generated[expectedOutputFile]!!
+            val expectedOccurrences = expectedOccurrencesByOutputFile[expectedOutputFile]!!
             checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences)
         }
     }
@@ -75,15 +74,14 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         return result
     }
 
-    protected class OccurrenceInfo private constructor(private val numberOfOccurrences: Int, private val needle: String) {
-
+    class OccurrenceInfo constructor(private val numberOfOccurrences: Int, private val needle: String) {
         fun getActualOccurrence(text: String): String? {
             val actualCount = StringUtil.findMatches(text, Pattern.compile("($needle)")).size
-            return actualCount + " " + needle
+            return "$actualCount $needle"
         }
 
         override fun toString(): String {
-            return numberOfOccurrences + " " + needle
+            return "$numberOfOccurrences $needle"
         }
     }
 
@@ -101,9 +99,8 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             return kotlinFiles > 1
         }
 
-        protected fun checkGeneratedTextAgainstExpectedOccurrences(
-                text: String,
-                expectedOccurrences: List<OccurrenceInfo>) {
+        fun checkGeneratedTextAgainstExpectedOccurrences(text: String,
+                                                         expectedOccurrences: List<OccurrenceInfo>) {
             val expected = StringBuilder()
             val actual = StringBuilder()
 
@@ -113,7 +110,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             }
 
             try {
-                TestCase.assertEquals(text, expected.toString(), actual.toString())
+                Assert.assertEquals(text, expected.toString(), actual.toString())
             }
             catch (e: Throwable) {
                 println(text)
@@ -129,7 +126,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
                 for (generatedFile in generated.keys) {
                     failMessage.append(generatedFile).append(" ")
                 }
-                TestCase.fail(failMessage.toString())
+                Assert.fail(failMessage.toString())
             }
         }
 
