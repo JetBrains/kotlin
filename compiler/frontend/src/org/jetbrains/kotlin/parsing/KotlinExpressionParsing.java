@@ -1599,12 +1599,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * IDENTIFIER "@"
      */
     private void parseLabelDefinition() {
-        if (at(AT)) {
-            // recovery for empty label identifier
-            errorAndAdvance("Label must be named"); // AT
-            return;
-        }
-
         PsiBuilder.Marker labelWrap = mark();
         PsiBuilder.Marker mark = mark();
 
