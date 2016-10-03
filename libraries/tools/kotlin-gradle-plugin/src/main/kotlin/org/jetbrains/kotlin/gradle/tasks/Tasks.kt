@@ -78,7 +78,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
         val allKotlinSources = getKotlinSources()
-        logger.kotlinDebug { "all kotlin sources: ${filesToString(allKotlinSources)}" }
+        logger.kotlinDebug { "all kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
 
         if (allKotlinSources.isEmpty()) {
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
@@ -93,13 +93,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter(File::isKotlinFile)
 
     internal abstract fun callCompiler(args: T, allKotlinSources: List<File>, changedFiles: ChangedFiles)
-
-    internal fun relativePathOrCanonical(file: File): String =
-            file.relativeToOrNull(project.rootProject.projectDir)?.path
-                    ?: file.canonicalPath
-
-    internal fun filesToString(files: Iterable<File>) =
-            "[" + files.map { relativePathOrCanonical(it) }.sorted().joinToString(separator = ", \n") + "]"
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
@@ -175,8 +168,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     override fun callCompiler(args: K2JVMCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
         val outputDir = destinationDir
-        val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
-        val relativePathOrCanonical = { file: File -> relativePathOrCanonical(file) }
 
         if (!incremental) {
             anyClassesCompiled = true
@@ -190,33 +181,31 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val targetId = TargetId(name = args.moduleName, type = "java-production")
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-        logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
         val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+        val reporter = GradleIncReporter(project.rootProject.projectDir)
+        reporter.report { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
 
         val compilationMode = calculateSourcesToCompile(javaFilesProcessor,
                 caches,
                 lastBuildInfo,
                 changedFiles,
-                logger,
                 classpath.toList(),
                 dirtySourcesSinceLastTimeFile,
-                { filesToString(it) },
-                logAction, { relativePathOrCanonical(it) },
-                artifactDifferenceRegistry)
-        compileIncrementally(args, caches, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, targetId, compilationMode)
+                artifactDifferenceRegistry,
+                reporter)
+        compileIncrementally(args, caches, javaFilesProcessor, lookupTracker, outputDir, allKotlinSources, targetId, compilationMode, reporter)
     }
 
     private fun compileIncrementally(
             args: K2JVMCompilerArguments,
             caches: IncrementalCachesManager,
             javaFilesProcessor: ChangedJavaFilesProcessor,
-            logAction: (String) -> Unit,
             lookupTracker: LookupTrackerImpl,
             outputDir: File,
-            relativePathOrCanonical: (File) -> String,
             allKotlinSources: List<File>,
             targetId: TargetId,
-            compilationMode: CompilationMode
+            compilationMode: CompilationMode,
+            reporter: IncReporter
     ) {
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val dirtySources: MutableList<File>
@@ -237,7 +226,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         @Suppress("NAME_SHADOWING")
         var compilationMode = compilationMode
 
-        logger.kotlinDebug { "Artifact to register difference for task $path: $artifactFile" }
+        reporter.report { "Artifact to register difference for task $path: $artifactFile" }
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
@@ -251,7 +240,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.isFile }
             if (sourcesToCompile.isNotEmpty()) {
-                logger.kotlinDebug { "compile iteration: ${sourcesToCompile.joinToString(transform = relativePathOrCanonical)}" }
+                reporter.report { "compile iteration: ${reporter.report { reporter.pathsAsString(sourcesToCompile) }}" }
             }
 
             val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
@@ -284,17 +273,17 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), logAction)
+            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), reporter)
             val generatedJavaFilesChanges = javaFilesProcessor.process(generatedJavaFilesDiff)
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
             val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
                 is ChangesEither.Unknown -> {
-                    logger.kotlinDebug { "Could not get changes for generated java files, recompiling all kotlin" }
+                    reporter.report { "Could not get changes for generated java files, recompiling all kotlin" }
                     compilationMode = CompilationMode.Rebuild()
                     allKotlinSources.toSet()
                 }
                 is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet)
+                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, reporter, excludes = compiledInThisIterationSet)
                 }
                 else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
             }
@@ -302,8 +291,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             with (dirtySources) {
                 clear()
                 addAll(dirtyKotlinFilesFromJava)
-                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet))
-                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet))
+                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
+                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
             }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
@@ -319,7 +308,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
             val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
             artifactDifferenceRegistry!!.add(artifactFile!!, artifactDifference)
-            logger.kotlinDebug {
+            reporter.report {
                 val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
                 "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
                         "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
@@ -327,7 +316,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         caches.close(flush = true)
-        logger.kotlinDebug { "flushed incremental caches" }
+        reporter.report { "flushed incremental caches" }
         processCompilerExitCode(exitCode)
     }
 

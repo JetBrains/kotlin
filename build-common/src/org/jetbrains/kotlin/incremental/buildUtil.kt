@@ -187,13 +187,13 @@ data class DirtyData(
 
 fun <Target> CompilationResult.getDirtyData(
         caches: Iterable<IncrementalCacheImpl<Target>>,
-        log: (String)->Unit
+        reporter: IncReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
 
     for (change in changes) {
-        log("Process $change")
+        reporter.report { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
@@ -225,15 +225,14 @@ fun <Target> CompilationResult.getDirtyData(
 fun mapLookupSymbolsToFiles(
         lookupStorage: LookupStorage,
         lookupSymbols: Iterable<LookupSymbol>,
-        log: (String)->Unit,
-        getLogFilePath: (File)->String = { it.canonicalPath },
+        reporter: IncReporter,
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
     for (lookup in lookupSymbols) {
         val affectedFiles = lookupStorage.get(lookup).map(::File).filter { it !in excludes }
-        log("${lookup.scope}#${lookup.name} caused recompilation of: ${affectedFiles.map(getLogFilePath)}")
+        reporter.report { "${lookup.scope}#${lookup.name} caused recompilation of: ${reporter.pathsAsString(affectedFiles)}" }
         dirtyFiles.addAll(affectedFiles)
     }
 
@@ -243,8 +242,7 @@ fun mapLookupSymbolsToFiles(
 fun <Target> mapClassesFqNamesToFiles(
         caches: Iterable<IncrementalCacheImpl<Target>>,
         classesFqNames: Iterable<FqName>,
-        log: (String)->Unit,
-        getLogFilePath: (File)->String = { it.canonicalPath },
+        reporter: IncReporter,
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
@@ -254,7 +252,7 @@ fun <Target> mapClassesFqNamesToFiles(
             val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
             if (srcFile == null || srcFile in excludes) continue
 
-            log("Class $dirtyClassFqName caused recompilation of: ${getLogFilePath(srcFile)}")
+            reporter.report { ("Class $dirtyClassFqName caused recompilation of: ${reporter.pathsAsString(srcFile)}") }
             dirtyFiles.add(srcFile)
         }
     }
