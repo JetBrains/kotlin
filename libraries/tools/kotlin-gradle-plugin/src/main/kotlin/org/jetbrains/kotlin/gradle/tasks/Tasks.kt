@@ -252,7 +252,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 is ChangesEither.Unknown -> return rebuild("Could not get changes for java files")
             }
 
-            val dirtyFiles = changedFiles.modified.filter(File::isKotlinFile).toMutableSet()
+            val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
+            with(changedFiles) {
+                modified.asSequence() + removed.asSequence()
+            }.forEach { if (it.isKotlinFile()) dirtyFiles.add(it) }
+
             val lookupSymbols = HashSet<LookupSymbol>()
             lookupSymbols.addAll(affectedJavaSymbols)
             lookupSymbols.addAll(classpathChanges.lookupSymbols)
@@ -295,16 +299,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
         val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
 
-        // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
-        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo, changedFiles)
-        val currentRemoved = (changedFiles as? ChangedFiles.Known)?.removed?.filter(File::isKotlinFile) ?: emptyList()
-        compileIncrementally(args, caches, currentRemoved, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, sourcesToCompile, targetId)
+        val (dirtyKotlinSources, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo, changedFiles)
+        compileIncrementally(args, caches, isIncrementalDecided, javaFilesProcessor, logAction, lookupTracker, outputDir, relativePathOrCanonical, allKotlinSources, dirtyKotlinSources, targetId)
     }
 
     private fun compileIncrementally(
             args: K2JVMCompilerArguments,
             caches: IncrementalCachesManager,
-            currentRemoved: List<File>,
             isIncrementalDecided: Boolean,
             javaFilesProcessor: ChangedJavaFilesProcessor,
             logAction: (String) -> Unit,
@@ -312,13 +313,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             outputDir: File,
             relativePathOrCanonical: (File) -> String,
             allKotlinSources: List<File>,
-            sourcesToCompile: Set<File>,
+            dirtyKotlinFiles: Set<File>,
             targetId: TargetId
     ) {
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
-        var currentRemoved1 = currentRemoved
         var isIncrementalDecided1 = isIncrementalDecided
-        var sourcesToCompile1 = sourcesToCompile
+        val dirtySources: MutableList<File> = allKotlinSources.filterTo(ArrayList()) { it in dirtyKotlinFiles }
         if (isIncrementalDecided1) {
             additionalClasspath.add(destinationDir)
         } else {
@@ -333,24 +333,20 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val buildDirtyFqNames = HashSet<FqName>()
 
         var exitCode = ExitCode.OK
-        while (sourcesToCompile1.any() || currentRemoved1.any()) {
-            val removedAndModified = (sourcesToCompile1 + currentRemoved1).toList()
-            val outdatedClasses = caches.incrementalCache.classesBySources(removedAndModified)
-            caches.incrementalCache.markOutputClassesDirty(removedAndModified)
-            caches.incrementalCache.removeClassfilesBySources(removedAndModified)
+        while (dirtySources.any()) {
+            val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
+            caches.incrementalCache.markOutputClassesDirty(dirtySources)
+            caches.incrementalCache.removeClassfilesBySources(dirtySources)
 
-            // can be empty if only removed sources are present
-            if (sourcesToCompile1.isNotEmpty()) {
-                logger.kotlinInfo("compile iteration: ${sourcesToCompile1.joinToString(transform = relativePathOrCanonical)}")
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.isFile }
+            if (sourcesToCompile.isNotEmpty()) {
+                logger.kotlinDebug { "compile iteration: ${sourcesToCompile.joinToString(transform = relativePathOrCanonical)}" }
             }
 
-            val (existingSource, nonExistingSource) = sourcesToCompile1.partition { it.isFile }
-            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(relativePathOrCanonical)}" }
-
-            val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
+            val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val compilerOutput = compileChanged(listOf(targetId), existingSource.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker)
+            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker)
             exitCode = compilerOutput.exitCode
 
             if (exitCode == ExitCode.OK) {
@@ -361,12 +357,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 break
             }
 
-            allGeneratedFiles.addAll(compilerOutput.generatedFiles)
-            val compilationResult = updateIncrementalCaches(listOf(targetId), compilerOutput.generatedFiles,
+            val generatedClassFiles = compilerOutput.generatedFiles
+            allGeneratedFiles.addAll(generatedClassFiles)
+            val compilationResult = updateIncrementalCaches(listOf(targetId), generatedClassFiles,
                     compiledWithErrors = exitCode != ExitCode.OK,
                     getIncrementalCache = { caches.incrementalCache })
 
-            caches.lookupCache.update(lookupTracker, sourcesToCompile1, currentRemoved1)
+            caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
             val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
             val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
@@ -378,6 +375,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), logAction)
             val generatedJavaFilesChanges = javaFilesProcessor.process(generatedJavaFilesDiff)
+            val compiledInThisIterationSet = sourcesToCompile.toHashSet()
             val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
                 is ChangesEither.Unknown -> {
                     logger.kotlinDebug { "Could not get changes for generated java files, recompiling all kotlin" }
@@ -385,21 +383,22 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                     allKotlinSources.toSet()
                 }
                 is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, relativePathOrCanonical, excludes = sourcesToCompile1)
+                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet)
                 }
                 else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
             }
-            sourcesToCompile1 = dirtyKotlinFilesFromJava +
-                    mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, relativePathOrCanonical, excludes = sourcesToCompile1) +
-                    mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, relativePathOrCanonical, excludes = sourcesToCompile1)
+
+            with (dirtySources) {
+                clear()
+                addAll(dirtyKotlinFilesFromJava)
+                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet))
+                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, logAction, relativePathOrCanonical, excludes = compiledInThisIterationSet))
+            }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
             buildDirtyFqNames.addAll(dirtyClassFqNames)
 
-            if (currentRemoved1.any()) {
-                anyClassesCompiled = true
-                currentRemoved1 = listOf()
-            }
+            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
         }
 
         if (exitCode == ExitCode.OK && isIncrementalDecided1) {
@@ -416,7 +415,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             }
         }
 
-        anyClassesCompiled = anyClassesCompiled || allGeneratedFiles.isNotEmpty()
         caches.close(flush = true)
         logger.kotlinDebug { "flushed incremental caches" }
         processCompilerExitCode(exitCode)
