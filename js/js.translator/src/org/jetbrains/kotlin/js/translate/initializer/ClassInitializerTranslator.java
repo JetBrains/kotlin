@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
@@ -206,6 +208,17 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                     addCallToSuperMethod(arguments, initializer);
                 }
                 else {
+                    int maxValueArgumentIndex = 0;
+                    for (ValueParameterDescriptor arg : superCall.getValueArguments().keySet()) {
+                        ResolvedValueArgument resolvedArg = superCall.getValueArguments().get(arg);
+                        if (!(resolvedArg instanceof DefaultValueArgument)) {
+                            maxValueArgumentIndex = Math.max(maxValueArgumentIndex, arg.getIndex() + 1);
+                        }
+                    }
+                    int padSize = superDescriptor.getValueParameters().size() - maxValueArgumentIndex;
+                    while (padSize-- > 0) {
+                        arguments.add(Namer.getUndefinedExpression());
+                    }
                     addCallToSuperSecondaryConstructor(arguments, superDescriptor);
                 }
             }
