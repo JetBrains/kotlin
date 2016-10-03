@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -146,6 +143,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull CompilerConfiguration configuration
     ) {
         List<String> kotlinConfigurationFlags = new ArrayList<String>(0);
+        LanguageVersion explicitLanguageVersion = null;
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
 
@@ -156,6 +154,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 assert jvmTarget != null : "Unknown target: " + targetString;
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget);
             }
+
+            String version = InTextDirectivesUtils.findStringWithPrefixes(testFile.content, "// LANGUAGE_VERSION:");
+            if (version != null) {
+                assert explicitLanguageVersion == null : "Should not specify LANGUAGE_VERSION twice";
+                explicitLanguageVersion = LanguageVersion.fromVersionString(version);
+            }
+        }
+
+        if (explicitLanguageVersion != null) {
+            // configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, new LanguageVersionSettingsImpl(explicitLanguageVersion));
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);

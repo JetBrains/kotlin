@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -36,4 +37,5 @@ interface LazyClassContext {
     val annotationResolver: AnnotationResolver
     val lookupTracker: LookupTracker
     val supertypeLoopChecker: SupertypeLoopChecker
+    val languageVersionSettings: LanguageVersionSettings
 }

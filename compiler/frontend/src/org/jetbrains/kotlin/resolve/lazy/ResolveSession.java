@@ -24,6 +24,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -48,7 +49,6 @@ import org.jetbrains.kotlin.storage.*;
 import org.jetbrains.kotlin.utils.SmartList;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -79,6 +79,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LookupTracker lookupTracker;
     private LocalDescriptorResolver localDescriptorResolver;
     private SupertypeLoopChecker supertypeLoopsResolver;
+    private LanguageVersionSettings languageVersionSettings;
 
     @Inject
     public void setJetImportFactory(KtImportsFactory jetImportFactory) {
@@ -123,6 +124,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setLookupTracker(@NotNull LookupTracker lookupTracker) {
         this.lookupTracker = lookupTracker;
+    }
+
+    @Inject
+    public void setLanguageVersionSettings(@NotNull LanguageVersionSettings languageVersionSettings) {
+        this.languageVersionSettings = languageVersionSettings;
     }
 
     // Only calls from injectors expected
@@ -426,5 +432,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setLocalDescriptorResolver(@NotNull LocalDescriptorResolver localDescriptorResolver) {
         this.localDescriptorResolver = localDescriptorResolver;
+    }
+
+    @NotNull
+    @Override
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return languageVersionSettings;
     }
 }
