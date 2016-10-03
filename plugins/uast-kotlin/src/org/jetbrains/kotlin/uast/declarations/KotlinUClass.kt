@@ -76,7 +76,7 @@ class KotlinUClass(
     override val internalName by lz {
         val descriptor = resolveToDescriptor() ?: return@lz null
         val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
-                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, null)
+                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false)
         typeMapper.mapClass(descriptor).internalName
     }
 

@@ -99,7 +99,7 @@ public class KotlinTypeMapper {
     private final IncrementalCache incrementalCache;
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
-    @Nullable private GenerationState state;
+    private boolean isJvm8Target;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
         @Override
@@ -128,7 +128,7 @@ public class KotlinTypeMapper {
             @Nullable IncrementalCache incrementalCache,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
-            @Nullable GenerationState state
+            boolean isJvm8Target
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
@@ -136,7 +136,7 @@ public class KotlinTypeMapper {
         this.incrementalCache = incrementalCache;
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
-        this.state = state;
+        this.isJvm8Target = isJvm8Target;
     }
 
     @NotNull
@@ -744,7 +744,7 @@ public class KotlinTypeMapper {
     }
 
     private boolean isJvm8Interface(@NotNull ClassDescriptor ownerForDefault) {
-        return isJvmInterface(ownerForDefault) && (state != null && JvmCodegenUtil.isJvm8Interface(ownerForDefault, state));
+        return isJvmInterface(ownerForDefault) && JvmCodegenUtil.isJvm8Interface(ownerForDefault, isJvm8Target);
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {

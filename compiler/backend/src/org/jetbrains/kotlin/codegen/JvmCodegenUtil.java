@@ -62,6 +62,10 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isAnnotationOrJvm6Interface(descriptor, state.isJvm8Target());
+    }
+
+    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
         if (!isJvmInterface(descriptor)) {
             return false;
         }
@@ -76,11 +80,15 @@ public class JvmCodegenUtil {
                 return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
             }
         }
-        return !state.isJvm8Target();
+        return !isJvm8Target;
     }
 
     public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, state);
+        return isJvm8Interface(descriptor, state.isJvm8Target());
+    }
+
+    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
+        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, isJvm8Target);
     }
 
     public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
