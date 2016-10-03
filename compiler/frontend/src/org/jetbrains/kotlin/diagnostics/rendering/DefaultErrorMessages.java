@@ -287,7 +287,6 @@ public class DefaultErrorMessages {
         MAP.put(VARIABLE_EXPECTED, "Variable expected");
 
         MAP.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is not allowed", TO_STRING);
-        MAP.put(VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER, "''{0}'' on loop multi parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);

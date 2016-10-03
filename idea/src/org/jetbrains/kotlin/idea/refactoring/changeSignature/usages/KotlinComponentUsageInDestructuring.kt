@@ -40,7 +40,8 @@ class KotlinComponentUsageInDestructuring(element: KtDestructuringDeclarationEnt
 
         val newDestructuring = KtPsiFactory(element).buildDestructuringDeclaration {
             val lastIndex = newParameterInfos.indexOfLast { it.oldIndex in currentEntries.indices }
-            val nameValidator = CollectingNameValidator(filter = NewDeclarationNameValidator(declaration.parent, null, Target.VARIABLES))
+            val nameValidator = CollectingNameValidator(
+                    filter = NewDeclarationNameValidator(declaration.parent.parent, null, Target.VARIABLES))
 
             appendFixedText("val (")
             for (i in 0..lastIndex) {

@@ -68,7 +68,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             names.add(name)
         }
         if (forLoop != null) {
-            element.replace(factory.createDestructuringParameter("(${names.joinToString()})"))
+            element.replace(factory.createDestructuringParameterForLoop("(${names.joinToString()})"))
 
             if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
                 loopRange.replace(loopRange.receiverExpression)

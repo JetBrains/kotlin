@@ -18,11 +18,12 @@ JetFile: ForWithMultiDecl.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
@@ -40,575 +41,121 @@ JetFile: ForWithMultiDecl.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiErrorElement:Expecting ')'
-            <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting a name
-            <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              PsiErrorElement:Type expected
-                <empty list>
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              PsiErrorElement:Type expected
-                <empty list>
-          PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting a name
-            <empty list>
-          PsiWhiteSpace(' ')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a name
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-            PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
@@ -626,15 +173,15 @@ JetFile: ForWithMultiDecl.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              PsiErrorElement:Type expected
-                <empty list>
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
         LOOP_RANGE
@@ -651,12 +198,487 @@ JetFile: ForWithMultiDecl.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a name
-            <empty list>
+        VALUE_PARAMETER
+          PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          PsiElement(RPAR)(')')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiErrorElement:Expecting ')'
+              <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting a name
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting a name
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            PsiErrorElement:Expecting a name
+              PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('b')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                PsiErrorElement:Type expected
+                  <empty list>
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            PsiErrorElement:Expecting a name
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(RPAR)(')')
         PsiErrorElement:Expecting 'in'
           <empty list>
         PsiWhiteSpace(' ')

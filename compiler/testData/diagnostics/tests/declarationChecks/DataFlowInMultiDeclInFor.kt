@@ -8,8 +8,8 @@ class A {
 }
 
 fun foo(list: List<A>) {
-    for (<!VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER!>var<!> (c1, c2, c3) in list) {
-        <!UNUSED_VALUE!>c1 =<!> 1
+    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>var<!> (c1, c2, c3) in list) {
+        <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>c1<!> =<!> 1
         c3 + 1
     }
 }

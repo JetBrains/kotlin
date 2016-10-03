@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getIteratorFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getNextFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -99,14 +98,13 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                getClassDescriptorForType(rangeType).name.asString() == "IntArray"
     }
 
-    val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter
 
-    val loopParameter = getLoopParameter(expression)
-    val parameterName = if (loopParameter != null) {
+    val loopParameter = expression.loopParameter!!
+    val destructuringParameter: KtDestructuringDeclaration? = loopParameter?.destructuringDeclaration
+    val parameterName = if (destructuringParameter == null) {
         context.getNameForElement(loopParameter)
     }
     else {
-        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
         context.scope().declareTemporary()
     }
 

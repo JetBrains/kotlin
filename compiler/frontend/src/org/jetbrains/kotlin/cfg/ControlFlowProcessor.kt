@@ -773,18 +773,19 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private fun declareLoopParameter(expression: KtForExpression) {
             val loopParameter = expression.loopParameter
-            val multiDeclaration = expression.destructuringParameter
             if (loopParameter != null) {
-                builder.declareParameter(loopParameter)
-            }
-            else if (multiDeclaration != null) {
-                visitDestructuringDeclaration(multiDeclaration, false)
+                val destructuringDeclaration = loopParameter.destructuringDeclaration
+                if (destructuringDeclaration != null) {
+                    visitDestructuringDeclaration(destructuringDeclaration, false)
+                }
+                else {
+                    builder.declareParameter(loopParameter)
+                }
             }
         }
 
         private fun writeLoopParameterAssignment(expression: KtForExpression) {
             val loopParameter = expression.loopParameter
-            val multiDeclaration = expression.destructuringParameter
             val loopRange = expression.loopRange
 
             val value = builder.magic(
@@ -795,11 +796,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             ).outputValue
 
             if (loopParameter != null) {
-                generateInitializer(loopParameter, value)
-            }
-            else if (multiDeclaration != null) {
-                for (entry in multiDeclaration.entries) {
-                    generateInitializer(entry, value)
+                val destructuringDeclaration = loopParameter.destructuringDeclaration
+                if (destructuringDeclaration != null) {
+                    for (entry in destructuringDeclaration.entries) {
+                        generateInitializer(entry, value)
+                    }
+                }
+                else {
+                    generateInitializer(loopParameter, value)
                 }
             }
         }

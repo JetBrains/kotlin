@@ -37,7 +37,7 @@ object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<Kt
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)
 
-        val variableExpr = element.loopParameter ?: element.destructuringParameter ?: return null
+        val variableExpr = element.loopParameter ?: element.destructuringDeclaration ?: return null
         val returnType = TypeInfo(variableExpr as KtExpression, Variance.OUT_VARIANCE)
         return FunctionInfo(OperatorNameConventions.NEXT.asString(), ownerType, returnType, isOperator = true)
     }

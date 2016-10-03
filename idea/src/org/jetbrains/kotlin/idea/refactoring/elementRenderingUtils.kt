@@ -198,7 +198,7 @@ fun KtElement.renderTrimmed(): String {
 
         override fun visitForExpression(expression: KtForExpression) {
             builder.append("for (")
-            (expression.loopParameter ?: expression.destructuringParameter)?.accept(this)
+            (expression.loopParameter ?: expression.destructuringDeclaration)?.accept(this)
             builder.append(" in ")
             expression.loopRange?.accept(this)
             builder.append(")")

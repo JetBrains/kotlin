@@ -111,11 +111,6 @@ public final class PsiUtils {
         return (binaryExpression.getOperationToken() == KtTokens.IN_KEYWORD);
     }
 
-    @Nullable
-    public static KtParameter getLoopParameter(@NotNull KtForExpression expression) {
-        return expression.getLoopParameter();
-    }
-
     @NotNull
     public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtClassOrObject classDeclaration) {
         if (classDeclaration instanceof KtClass) {

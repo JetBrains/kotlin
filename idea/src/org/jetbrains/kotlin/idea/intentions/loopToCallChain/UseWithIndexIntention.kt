@@ -45,7 +45,7 @@ class UseWithIndexIntention : SelfTargetingRangeIntention<KtForExpression>(
         val newLoopRange = factory.createExpressionByPattern("$0.withIndex()", loopRange)
         loopRange.replace(newLoopRange)
 
-        val multiParameter = (factory.createExpressionByPattern("for(($0, $1) in x){}", indexVariable.nameAsSafeName, loopParameter.text) as KtForExpression).destructuringParameter!!
+        val multiParameter = (factory.createExpressionByPattern("for(($0, $1) in x){}", indexVariable.nameAsSafeName, loopParameter.text) as KtForExpression).loopParameter!!
         loopParameter.replace(multiParameter)
 
         initializationStatement.delete()

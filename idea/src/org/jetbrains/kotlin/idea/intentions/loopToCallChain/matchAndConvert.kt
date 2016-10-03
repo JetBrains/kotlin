@@ -185,7 +185,7 @@ data class LoopData(
 private fun extractLoopData(loop: KtForExpression): LoopData? {
     val loopRange = loop.loopRange ?: return null
 
-    val destructuringParameter = loop.destructuringParameter
+    val destructuringParameter = loop.destructuringDeclaration
     if (destructuringParameter != null && destructuringParameter.entries.size == 2) {
         val qualifiedExpression = loopRange as? KtDotQualifiedExpression
         if (qualifiedExpression != null) {

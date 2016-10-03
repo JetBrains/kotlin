@@ -62,7 +62,7 @@ class DestructuringDeclarationReferenceSearcher(
 
             is KtContainerNode -> {
                 if (parent.node.elementType == KtNodeTypes.LOOP_RANGE) {
-                    (parent.parent as KtForExpression).destructuringParameter
+                    (parent.parent as KtForExpression).destructuringDeclaration
                 }
                 else {
                     null

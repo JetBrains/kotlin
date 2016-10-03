@@ -33,14 +33,16 @@ public class KtForExpression extends KtLoopExpression {
         return visitor.visitForExpression(this, data);
     }
 
-    @Nullable
+    @Nullable @IfNotParsed
     public KtParameter getLoopParameter() {
         return (KtParameter) findChildByType(KtNodeTypes.VALUE_PARAMETER);
     }
 
     @Nullable
-    public KtDestructuringDeclaration getDestructuringParameter() {
-        return (KtDestructuringDeclaration) findChildByType(KtNodeTypes.DESTRUCTURING_DECLARATION);
+    public KtDestructuringDeclaration getDestructuringDeclaration() {
+        KtParameter loopParameter = getLoopParameter();
+        if (loopParameter == null) return null;
+        return loopParameter.getDestructuringDeclaration();
     }
 
     @Nullable @IfNotParsed

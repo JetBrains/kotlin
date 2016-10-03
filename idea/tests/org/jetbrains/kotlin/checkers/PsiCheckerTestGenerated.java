@@ -502,6 +502,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DestructuringDeclarationInLambda.kt")
+        public void testDestructuringDeclarationInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DestructuringDeclarationInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DollarsInName.kt")
         public void testDollarsInName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DollarsInName.kt");

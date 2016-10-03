@@ -735,7 +735,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         public void beforeLoop() {
             KtParameter loopParameter = forExpression.getLoopParameter();
-            if (loopParameter != null) {
+            if (loopParameter == null) return;
+            KtDestructuringDeclaration multiParameter = loopParameter.getDestructuringDeclaration();
+            if (multiParameter != null) {
+                // E tmp<e> = tmp<iterator>.next()
+                loopParameterType = asmElementType;
+                loopParameterVar = createLoopTempVariable(asmElementType);
+            }
+            else {
                 // E e = tmp<iterator>.next()
                 final VariableDescriptor parameterDescriptor = bindingContext.get(VALUE_PARAMETER, loopParameter);
                 loopParameterType = asmType(parameterDescriptor.getType());
@@ -751,14 +758,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     }
                 });
             }
-            else {
-                KtDestructuringDeclaration multiParameter = forExpression.getDestructuringParameter();
-                assert multiParameter != null;
-
-                // E tmp<e> = tmp<iterator>.next()
-                loopParameterType = asmElementType;
-                loopParameterVar = createLoopTempVariable(asmElementType);
-            }
         }
 
         public abstract void checkEmptyLoop(@NotNull Label loopExit);
@@ -769,10 +768,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assignToLoopParameter();
             v.mark(loopParameterStartLabel);
 
-            if (forExpression.getLoopParameter() == null) {
-                KtDestructuringDeclaration multiParameter = forExpression.getDestructuringParameter();
-                assert multiParameter != null;
-
+            KtDestructuringDeclaration multiParameter = forExpression.getDestructuringDeclaration();
+            if (multiParameter != null) {
                 generateMultiVariables(multiParameter.getEntries());
             }
         }

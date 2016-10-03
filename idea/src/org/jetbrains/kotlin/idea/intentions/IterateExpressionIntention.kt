@@ -81,14 +81,14 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 }
 
                 val paramPattern = (names.singleOrNull()?.first()
-                                    ?: psiFactory.createDestructuringParameter(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
+                                    ?: psiFactory.createDestructuringParameterForLoop(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)
 
                 PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
 
                 val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
-                val parameters = forExpression.loopParameter?.singletonList() ?: forExpression.destructuringParameter!!.entries
+                val parameters = forExpression.destructuringDeclaration?.entries ?: forExpression.loopParameter!!.singletonList()
 
                 val templateBuilder = TemplateBuilderImpl(forExpression)
                 for ((parameter, parameterNames) in (parameters zip names)) {

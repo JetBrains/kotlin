@@ -543,7 +543,7 @@ class ExpressionsOfTypeProcessor(
                 is KtContainerNode -> {
                     if (parent.node.elementType == KtNodeTypes.LOOP_RANGE) { // "for (x in <expr>) ..."
                         val forExpression = parent.parent as KtForExpression
-                        (forExpression.destructuringParameter ?: forExpression.loopParameter as KtDeclaration?)?.let {
+                        (forExpression.destructuringDeclaration ?: forExpression.loopParameter as KtDeclaration?)?.let {
                             processSuspiciousDeclaration(it)
                         }
                         break@ParentsLoop

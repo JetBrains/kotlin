@@ -64,7 +64,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
 
         loopRange.replace(createWithIndexExpression(loopRange))
 
-        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as KtForExpression).destructuringParameter!!
+        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as KtForExpression).destructuringDeclaration!!
 
         multiParameter = loopParameter.replaced(multiParameter)
 

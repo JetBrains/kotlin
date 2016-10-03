@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.Variance
 object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtDestructuringDeclaration>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtDestructuringDeclaration? {
         QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java)?.let { return it }
-        return QuickFixUtil.getParentElementOfType(diagnostic, KtForExpression::class.java)?.destructuringParameter
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtForExpression::class.java)?.destructuringDeclaration
     }
 
     override fun createCallableInfo(element: KtDestructuringDeclaration, diagnostic: Diagnostic): CallableInfo? {

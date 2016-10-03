@@ -40,7 +40,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
     override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {
         val file = diagnostic.psiFile as? KtFile ?: return null
         val iterableExpr = element.loopRange ?: return null
-        val variableExpr: KtExpression = ((element.loopParameter ?: element.destructuringParameter) ?: return null) as KtExpression
+        val variableExpr: KtExpression = ((element.loopParameter ?: element.destructuringDeclaration) ?: return null) as KtExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
 
         val (bindingContext, moduleDescriptor) = file.analyzeFullyAndGetResult()

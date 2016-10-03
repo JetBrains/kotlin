@@ -18,15 +18,16 @@ JetFile: WithWithoutInAndMultideclaration.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('i')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('j')
-          PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('i')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('j')
+            PsiElement(RPAR)(')')
         PsiErrorElement:Expecting 'in'
           <empty list>
         PsiElement(RPAR)(')')

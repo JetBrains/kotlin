@@ -93,39 +93,40 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            MODIFIER_LIST
-              PsiElement(private)('private')
-              PsiWhiteSpace(' ')
-              PsiElement(data)('data')
-              PsiWhiteSpace(' ')
-              ANNOTATION_ENTRY
-                PsiElement(AT)('@')
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('ann')
-              PsiWhiteSpace(' ')
-              ANNOTATION
-                PsiElement(AT)('@')
-                PsiElement(LBRACKET)('[')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('x')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              MODIFIER_LIST
+                PsiElement(private)('private')
+                PsiWhiteSpace(' ')
+                PsiElement(data)('data')
+                PsiWhiteSpace(' ')
                 ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('ann')
-                PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('y')
-          PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                ANNOTATION
+                  PsiElement(AT)('@')
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('ann')
+                  PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('y')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
@@ -143,27 +144,28 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            MODIFIER_LIST
-              ANNOTATION
-                PsiElement(AT)('@')
-                PsiElement(LBRACKET)('[')
-                ANNOTATION_ENTRY
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('ann')
-                PsiElement(RBRACKET)(']')
-            PsiErrorElement:Expecting a name
-              <empty list>
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(RPAR)(')')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              MODIFIER_LIST
+                ANNOTATION
+                  PsiElement(AT)('@')
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('ann')
+                  PsiElement(RBRACKET)(']')
+              PsiErrorElement:Expecting a name
+                <empty list>
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('x')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
@@ -253,7 +255,7 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
+        VALUE_PARAMETER
           MODIFIER_LIST
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -266,23 +268,24 @@ JetFile: forParameters.kt
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            MODIFIER_LIST
-              ANNOTATION_ENTRY
-                PsiElement(AT)('@')
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Volatile')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('x')
+            PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('y')
-          PsiElement(RPAR)(')')
+            DESTRUCTURING_DECLARATION_ENTRY
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Volatile')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('y')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
@@ -377,7 +380,7 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION
+        VALUE_PARAMETER
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
@@ -391,23 +394,24 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            MODIFIER_LIST
-              ANNOTATION_ENTRY
-                PsiElement(AT)('@')
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Volatile')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('x')
+            PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('y')
-          PsiElement(RPAR)(')')
+            DESTRUCTURING_DECLARATION_ENTRY
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Volatile')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('y')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')

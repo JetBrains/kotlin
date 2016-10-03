@@ -396,7 +396,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
 
         private fun KtContainerNode.buildText(kind: TextKind): String {
             with (bodyOwner() as KtForExpression) {
-                val parameterText = loopParameter?.nameAsName?.render() ?: destructuringParameter?.text ?: return "for"
+                val parameterText = loopParameter?.nameAsName?.render() ?: destructuringDeclaration?.text ?: return "for"
                 val collectionText = loopRange?.text ?: ""
                 val text = (parameterText + " in " + collectionText).truncateEnd(kind)
                 return labelText() + "for($text)"
