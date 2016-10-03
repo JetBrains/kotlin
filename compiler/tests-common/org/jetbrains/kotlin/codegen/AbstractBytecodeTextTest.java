@@ -69,9 +69,8 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         StringBuilder actual = new StringBuilder();
 
         for (OccurrenceInfo info : expectedOccurrences) {
-            expected.append(info.numberOfOccurrences).append(" ").append(info.needle).append("\n");
-            int actualCount = StringUtil.findMatches(text, Pattern.compile("(" + info.needle + ")")).size();
-            actual.append(actualCount).append(" ").append(info.needle).append("\n");
+            expected.append(info).append("\n");
+            actual.append(info.getActualOccurrence(text)).append("\n");
         }
 
         try {
@@ -169,6 +168,17 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         private OccurrenceInfo(int numberOfOccurrences, @NotNull String needle) {
             this.numberOfOccurrences = numberOfOccurrences;
             this.needle = needle;
+        }
+
+        @Nullable
+        public String getActualOccurrence(String text) {
+            int actualCount = StringUtil.findMatches(text, Pattern.compile("(" + needle + ")")).size();
+            return actualCount + " " + needle;
+        }
+
+        @Override
+        public String toString() {
+            return numberOfOccurrences + " " + needle;
         }
     }
 }
