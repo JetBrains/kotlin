@@ -91,7 +91,7 @@ class MultifileClassCodegen(
             }
         }
         compiledPackageFragment?.let {
-            partInternalNamesSet.addAll(it.partsNames)
+            partInternalNamesSet.addAll(it.partsInternalNames)
         }
         partInternalNamesSet.sorted()
     }
@@ -382,8 +382,9 @@ class MultifileClassCodegen(
         private fun FqName.toAsmType() =
                 AsmUtil.asmTypeByFqNameWithoutInnerClasses(this)
 
-        private fun getCompiledPackageFragment(facadeFqName: FqName, state: GenerationState):
-                IncrementalPackageFragmentProvider.IncrementalPackageFragment.IncrementalMultifileClassPackageFragment? {
+        private fun getCompiledPackageFragment(
+                facadeFqName: FqName, state: GenerationState
+        ): IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment? {
             if (!IncrementalCompilation.isEnabled()) return null
 
             val packageFqName = facadeFqName.parent()
