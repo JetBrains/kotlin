@@ -38,18 +38,17 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention::class)
+class DestructureInspection : IntentionBasedInspection<KtParameter>(DestructureIntention::class)
 
-class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
-        KtForExpression::class.java,
-        "Simplify 'for' using destructuring declaration",
-        "Simplify 'for'"
+class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
+        KtParameter::class.java,
+        "Simplify using destructuring declaration"
 ) {
-    override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element) ?: return
+    override fun applyTo(element: KtParameter, editor: Editor?) {
+        val forLoop = element.parent as? KtForExpression
+        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element, forLoop) ?: return
 
-        val loopRange = element.loopRange ?: return
-        val loopParameter = element.loopParameter ?: return
+        val loopRange = forLoop?.loopRange
 
         val factory = KtPsiFactory(element)
         val validator = NewDeclarationNameValidator(element.parent, element, NewDeclarationNameValidator.Target.VARIABLES,
@@ -63,41 +62,38 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
             }
             names.add(name)
         }
-        loopParameter.replace(factory.createDestructuringDeclarationInFor("(${names.joinToString()})"))
+        element.replace(factory.createDestructuringDeclarationInFor("(${names.joinToString()})"))
 
         if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
             loopRange.replace(loopRange.receiverExpression)
         }
     }
 
-    override fun applicabilityRange(element: KtForExpression): TextRange? {
-        if (element.destructuringParameter != null) return null
-
-        val usagesToRemove = collectUsagesToRemove(element)
+    override fun applicabilityRange(element: KtParameter): TextRange? {
+        val forLoop = element.parent as? KtForExpression ?: return null
+        val usagesToRemove = collectUsagesToRemove(element, forLoop)
         if (usagesToRemove != null && usagesToRemove.first.isNotEmpty()) {
-            return element.loopParameter!!.textRange
+            return element.textRange
         }
         return null
     }
 
     // Note: list should contains properties in order to create destructuring declaration
-    private fun collectUsagesToRemove(element: KtForExpression): Pair<List<UsageData>, Boolean>? {
-        val loopParameter = element.loopParameter ?: return null
+    private fun collectUsagesToRemove(parameter: KtParameter, forLoop: KtForExpression?): Pair<List<UsageData>, Boolean>? {
+        val context = parameter.analyzeFullyAndGetResult().bindingContext
 
-        val context = element.analyzeFullyAndGetResult().bindingContext
-
-        val loopParameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, loopParameter) ?: return null
-        val loopParameterType = loopParameterDescriptor.type
-        if (loopParameterType.isMarkedNullable) return null
-        val classDescriptor = loopParameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        val parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter) ?: return null
+        val parameterType = parameterDescriptor.type
+        if (parameterType.isMarkedNullable) return null
+        val classDescriptor = parameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
         var otherUsages = false
         val usagesToRemove : Array<UsageData>
 
         val mapEntry = classDescriptor.builtIns.mapEntry
         val removeSelectorInLoopRange: Boolean
-        if (DescriptorUtils.isSubclass(classDescriptor, mapEntry)) {
-            val loopRangeDescriptorName = element.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
+        if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntry)) {
+            val loopRangeDescriptorName = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
             removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
 
             usagesToRemove = Array(2, {
@@ -105,7 +101,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
                                                                                     NoLookupLocation.FROM_BUILTINS).first())
             })
 
-            ReferencesSearch.search(loopParameter).iterateOverMapEntryPropertiesUsages(
+            ReferencesSearch.search(parameter).iterateOverMapEntryPropertiesUsages(
                     context,
                     { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
@@ -117,7 +113,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
             val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
             usagesToRemove = Array(valueParameters.size, { UsageData(valueParameters[it] )})
 
-            ReferencesSearch.search(loopParameter).iterateOverDataClassPropertiesUsagesWithIndex(
+            ReferencesSearch.search(parameter).iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
                     classDescriptor,
                     { index, usageData -> usagesToRemove[index] += usageData },
