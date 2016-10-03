@@ -220,6 +220,12 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             doTestCustom(fileName);
         }
 
+        @TestMetadata("noParametersArgumentCallInExpression.kt")
+        public void testNoParametersArgumentCallInExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
+            doTestCustom(fileName);
+        }
+
         @TestMetadata("smapInlineAsArgument.kt")
         public void testSmapInlineAsArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsArgument.kt");
