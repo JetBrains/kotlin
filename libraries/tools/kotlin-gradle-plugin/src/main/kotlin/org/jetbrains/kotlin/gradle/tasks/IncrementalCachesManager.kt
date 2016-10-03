@@ -15,13 +15,15 @@ internal class IncrementalCachesManager (
     private var lookupCacheOpen = false
 
     val incrementalCache: GradleIncrementalCacheImpl by lazy {
+        val cache = GradleIncrementalCacheImpl(targetDataRoot = incrementalCacheDir.apply { mkdirs() }, targetOutputDir = outputDir, target = targetId)
         incrementalCacheOpen = true
-        GradleIncrementalCacheImpl(targetDataRoot = incrementalCacheDir.apply { mkdirs() }, targetOutputDir = outputDir, target = targetId)
+        cache
     }
 
     val lookupCache: LookupStorage by lazy {
+        val cache = LookupStorage(lookupCacheDir.apply { mkdirs() })
         lookupCacheOpen = true
-        LookupStorage(lookupCacheDir.apply { mkdirs() })
+        cache
     }
 
     fun clean() {

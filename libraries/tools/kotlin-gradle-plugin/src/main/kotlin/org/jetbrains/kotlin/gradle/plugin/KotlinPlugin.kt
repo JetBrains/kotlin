@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.incremental.android.ArtifactDifferenceRegistryAndroidWrapper
+import org.jetbrains.kotlin.gradle.tasks.incremental.android.ArtifactDifferenceRegistryProviderAndroidWrapper
 import org.jetbrains.kotlin.gradle.tasks.incremental.configureMultiProjectIncrementalCompilation
 import java.io.File
 import java.net.URL
@@ -97,7 +97,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
         private val kotlinPluginVersion: String,
-        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
+        private val kotlinGradleBuildServices: KotlinGradleBuildServices
 ) : KotlinSourceSetProcessor<KotlinCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         dslExtensionName = KOTLIN_DSL_NAME,
@@ -143,7 +143,8 @@ internal class Kotlin2JvmSourceSetProcessor(
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
                 val artifactFile = project.tryGetSingleArtifact()
                 configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
-                        artifactDifferenceRegistry, artifactFile)
+                        kotlinGradleBuildServices.artifactDifferenceRegistryProvider,
+                        artifactFile)
             }
         }
     }
@@ -237,10 +238,10 @@ internal open class KotlinPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
         kotlinPluginVersion: String,
-        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
+        private val kotlinGradleBuildServices: KotlinGradleBuildServices
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
-            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, artifactDifferenceRegistry)
+            Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, kotlinGradleBuildServices)
 
     override fun apply(project: Project) {
         project.createKaptExtension()
@@ -262,7 +263,7 @@ internal open class KotlinAndroidPlugin(
         val tasksProvider: KotlinTasksProvider,
         private val kotlinSourceSetProvider: KotlinSourceSetProvider,
         private val kotlinPluginVersion: String,
-        private val artifactDifferenceRegistry: ArtifactDifferenceRegistry
+        private val kotlinGradleBuildServices: KotlinGradleBuildServices
 ) : Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
@@ -385,9 +386,9 @@ internal open class KotlinAndroidPlugin(
             if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
                 val jarToAarMapping = AndroidGradleWrapper.getJarToAarMapping(variantData)
                 val artifactFile = project.tryGetSingleArtifact(variantData)
-                val artifactDifferenceRegistryWrapper = ArtifactDifferenceRegistryAndroidWrapper(artifactDifferenceRegistry, jarToAarMapping)
+                val artifactDifferenceRegistryProvider = ArtifactDifferenceRegistryProviderAndroidWrapper(kotlinGradleBuildServices.artifactDifferenceRegistryProvider, jarToAarMapping)
                 configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
-                        artifactDifferenceRegistryWrapper, artifactFile)
+                        artifactDifferenceRegistryProvider, artifactFile)
             }
         }
     }

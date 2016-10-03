@@ -18,14 +18,31 @@ package org.jetbrains.kotlin.gradle.tasks.incremental.android
 
 import org.jetbrains.kotlin.gradle.tasks.ArtifactDifference
 import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistryProvider
 import java.io.File
+
+internal class ArtifactDifferenceRegistryProviderAndroidWrapper(
+        private val provider: ArtifactDifferenceRegistryProvider,
+        private val jarToAarMapping: Map<File, File>
+) : ArtifactDifferenceRegistryProvider {
+    override fun <T> withRegistry(report: (String)->Unit, fn: (ArtifactDifferenceRegistry)->T): T? {
+        return provider.withRegistry(report) { originalRegistry ->
+            val wrapped = ArtifactDifferenceRegistryAndroidWrapper(originalRegistry, jarToAarMapping)
+            fn(wrapped)
+        }
+    }
+
+    override fun clean() {
+        provider.clean()
+    }
+}
 
 // When lib is compiled, changes are associated with .aar files.
 // However when app is compiled, there is just .jar in classpath.
-internal class ArtifactDifferenceRegistryAndroidWrapper(
+private class ArtifactDifferenceRegistryAndroidWrapper(
         private val registry: ArtifactDifferenceRegistry,
         private val jarToAarMapping: Map<File, File>
-): ArtifactDifferenceRegistry by registry {
+) : ArtifactDifferenceRegistry by registry {
     override fun get(artifact: File): Iterable<ArtifactDifference>? {
         val mappedFile = jarToAarMapping[artifact] ?: return null
         return registry[mappedFile]

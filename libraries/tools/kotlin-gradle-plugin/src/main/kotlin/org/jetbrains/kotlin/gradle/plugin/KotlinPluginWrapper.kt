@@ -30,14 +30,12 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
 
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion,
-                    kotlinGradleBuildServices.artifactDifferenceRegistry)
+            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, kotlinGradleBuildServices)
 }
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion,
-                    kotlinGradleBuildServices.artifactDifferenceRegistry)
+            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, kotlinGradleBuildServices)
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
