@@ -16,21 +16,15 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import kotlin.text.Charsets;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.test.ConfigurationKind
+import java.io.File
+import java.util.*
+import java.util.List
+import java.util.Map
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     private static final Pattern AT_OUTPUT_FILE_PATTERN = Pattern.compile("^\\s*//\\s*@(.*):$");
