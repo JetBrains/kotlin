@@ -46,6 +46,8 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
 ) {
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val forLoop = element.parent as? KtForExpression
+        val functionLiteral = element.parent?.parent as? KtFunctionLiteral
+        if (forLoop == null && functionLiteral == null) return
         val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element, forLoop) ?: return
 
         val loopRange = forLoop?.loopRange
@@ -62,16 +64,23 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
             }
             names.add(name)
         }
-        element.replace(factory.createDestructuringDeclarationInFor("(${names.joinToString()})"))
+        if (forLoop != null) {
+            element.replace(factory.createDestructuringParameter("(${names.joinToString()})"))
 
-        if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
-            loopRange.replace(loopRange.receiverExpression)
+            if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
+                loopRange.replace(loopRange.receiverExpression)
+            }
+        }
+        else if (functionLiteral != null) {
+            element.replace(factory.createDestructuringParameterForLambda("(${names.joinToString()})"))
         }
     }
 
     override fun applicabilityRange(element: KtParameter): TextRange? {
-        val forLoop = element.parent as? KtForExpression ?: return null
-        val usagesToRemove = collectUsagesToRemove(element, forLoop)
+        val forLoopIfAny = element.parent as? KtForExpression
+        if (forLoopIfAny == null && element.parent?.parent !is KtFunctionLiteral) return null
+
+        val usagesToRemove = collectUsagesToRemove(element, forLoopIfAny)
         if (usagesToRemove != null && usagesToRemove.first.isNotEmpty()) {
             return element.textRange
         }

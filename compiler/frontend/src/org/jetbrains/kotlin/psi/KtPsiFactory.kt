@@ -244,13 +244,14 @@ class KtPsiFactory(private val project: Project) {
         return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
     }
 
-    fun createDestructuringDeclarationInFor(text: String): KtDestructuringDeclaration {
-        return ((createFunction("fun foo() {for ($text in foo) {} }").bodyExpression as KtBlockExpression).statements.first() as KtForExpression).destructuringParameter!!
-    }
-
     fun createDestructuringParameter(text: String): KtDestructuringDeclaration {
         val dummyFun = createFunction("fun foo() { for ($text in foo) {} }")
         return ((dummyFun.bodyExpression as KtBlockExpression).statements.first() as KtForExpression).destructuringParameter!!
+    }
+
+    fun createDestructuringParameterForLambda(text: String): KtParameter {
+        val dummyFun = createFunction("fun foo() = { $text -> }")
+        return (dummyFun.bodyExpression as KtLambdaExpression).functionLiteral.valueParameters.first()
     }
 
     fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {

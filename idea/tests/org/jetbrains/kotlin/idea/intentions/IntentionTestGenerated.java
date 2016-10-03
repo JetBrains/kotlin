@@ -6244,6 +6244,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     }
 
+    @TestMetadata("idea/testData/intentions/destructuringInLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DestructuringInLambda extends AbstractIntentionTest {
+        public void testAllFilesPresentInDestructuringInLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/destructuringInLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("dependentLocal.kt")
+        public void testDependentLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/dependentLocal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstProperties.kt")
+        public void testFirstProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/firstProperties.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fold.kt")
+        public void testFold() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/fold.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("last.kt")
+        public void testLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/last.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("list.kt")
+        public void testList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/list.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variables.kt")
+        public void testVariables() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/variables.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/ifNullToElvis")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
