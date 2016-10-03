@@ -66,12 +66,6 @@ abstract class AbstractClosureAnnotatorTestCase : AbstractIrGeneratorTestCase() 
             }
 
             private fun printClosure(closure: Closure) {
-                closure.capturedThisReferences.forEach {
-                    actualOut.println("  'this' for ${it.name}")
-                }
-                closure.capturedReceiverParameters.forEach {
-                    actualOut.println("  receiver for ${it.containingDeclaration.name}")
-                }
                 closure.capturedValues.forEach {
                     actualOut.println("  variable ${it.name}")
                 }

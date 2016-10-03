@@ -312,7 +312,10 @@ class ExpressionCodegen(
     }
 
     private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
-        StackValue.local(frame.getIndex(descriptor), type).put(type, mv)
+        val index = frame.getIndex(descriptor).apply {
+            if (this < 0) throw AssertionError("Non-mapped local variable descriptor: $descriptor")
+        }
+        StackValue.local(index, type).put(type, mv)
         return onStack(type)
     }
 

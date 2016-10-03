@@ -33,6 +33,7 @@ class JvmLower(val context: JvmBackendContext) {
         PropertiesLowering().lower(irFile)
         InterfaceLowering(context.state).runOnFile(irFile)
         InterfaceDelegationLowering(context.state).runOnFile(irFile)
+        LocalFunctionsLowering(context).runOnFile(irFile)
         EnumClassLowering(context).runOnFile(irFile)
         ObjectClassLowering(context).runOnFile(irFile)
         InitializersLowering(context).runOnFile(irFile)

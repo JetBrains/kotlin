@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="ir.psi2ir" />
+    <orderEntry type="module" module-name="backend.common" />
     <orderEntry type="module" module-name="frontend.java" />
   </component>
 </module>

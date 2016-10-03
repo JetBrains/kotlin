@@ -28,55 +28,24 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-class Closure(
-        val capturedThisReferences: List<ClassDescriptor>,
-        val capturedReceiverParameters: List<ReceiverParameterDescriptor>,
-        val capturedValues: List<ValueDescriptor>
-)
+class Closure(val capturedValues: List<ValueDescriptor>)
 
 abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     protected abstract fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure)
     protected abstract fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure)
 
     private class ClosureBuilder(val owner: DeclarationDescriptor) {
-        val capturedThisReferences = mutableSetOf<ClassDescriptor>()
-        val capturedReceiverParameters = mutableSetOf<ReceiverParameterDescriptor>()
         val capturedValues = mutableSetOf<ValueDescriptor>()
 
-        fun buildClosure() = Closure(
-                capturedThisReferences.toList(),
-                capturedReceiverParameters.toList(),
-                capturedValues.toList()
-        )
+        fun buildClosure() = Closure(capturedValues.toList())
 
         fun addNested(closure: Closure) {
-            fillInCapturedThisReferences(closure)
-            fillInNestedClosure(capturedReceiverParameters, closure.capturedReceiverParameters)
             fillInNestedClosure(capturedValues, closure.capturedValues)
-        }
-
-        private fun fillInCapturedThisReferences(closure: Closure) {
-            if (owner is ClassDescriptor) {
-                closure.capturedThisReferences.filterTo(capturedThisReferences) { it != owner }
-            }
-            else if (owner is CallableMemberDescriptor && owner.dispatchReceiverParameter != null) {
-                val ownerClass = owner.containingDeclaration as? ClassDescriptor
-                closure.capturedThisReferences.filterTo(capturedThisReferences) { it != ownerClass }
-            }
         }
 
         private fun <T : CallableDescriptor> fillInNestedClosure(destination: MutableSet<T>, nested: List<T>) {
             nested.filterTo(destination) {
                 it.containingDeclaration != owner
-            }
-        }
-
-        fun addCapturedThis(classDescriptor: ClassDescriptor) {
-            if (owner is ClassDescriptor && owner != classDescriptor) {
-                capturedThisReferences.add(classDescriptor)
-            }
-            else if (owner is CallableMemberDescriptor && owner.containingDeclaration != classDescriptor) {
-                capturedThisReferences.add(classDescriptor)
             }
         }
     }
@@ -127,7 +96,8 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     }
 
     override fun visitVariableAccess(expression: IrValueAccessExpression) {
-        val closureBuilder = closuresStack.peek()
+        val closureBuilder = closuresStack.peek() ?: return
+
         val variableDescriptor = expression.descriptor
         if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
             closureBuilder.capturedValues.add(variableDescriptor)

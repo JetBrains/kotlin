@@ -60,6 +60,9 @@
         <option name="WHILE_BRACE_FORCE" value="1" />
         <option name="FOR_BRACE_FORCE" value="1" />
         <option name="FIELD_ANNOTATION_WRAP" value="0" />
+        <MarkdownNavigatorCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

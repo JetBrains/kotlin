@@ -51,7 +51,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
     protected open fun mapValueReference(descriptor: ValueDescriptor) = descriptor
     protected open fun mapVariableReference(descriptor: VariableDescriptor) = descriptor
     protected open fun mapPropertyReference(descriptor: PropertyDescriptor) = descriptor
-    protected open fun mapReceiverParameterReference(descriptor: ReceiverParameterDescriptor) = descriptor
     protected open fun mapCallee(descriptor: CallableDescriptor) = descriptor
     protected open fun mapDelegatedConstructorCallee(descriptor: ClassConstructorDescriptor) = descriptor
     protected open fun mapEnumConstructorCallee(descriptor: ClassConstructorDescriptor) = descriptor

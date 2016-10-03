@@ -54,3 +54,10 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (Value
     return this
 }
 
+inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T {
+    descriptor.valueParameters.forEach {
+        putValueArgument(it.index, transform(it.index, it))
+    }
+    return this
+}
+
