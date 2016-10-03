@@ -788,6 +788,17 @@ private fun CompilationResult.doProcessChanges(
     }
 }
 
+private class JpsIncReporter : IncReporter() {
+    override fun report(message: ()->String) {
+        if (KotlinBuilder.LOG.isDebugEnabled) {
+            KotlinBuilder.LOG.debug(message())
+        }
+    }
+
+    override fun pathsAsString(files: Iterable<File>): String =
+            files.map { it.canonicalPath }.joinToString()
+}
+
 private fun CompilationResult.doProcessChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
@@ -796,16 +807,16 @@ private fun CompilationResult.doProcessChangesUsingLookups(
 ) {
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
-    val logAction = { logStr: String -> KotlinBuilder.LOG.debug(logStr) }
+    val reporter = JpsIncReporter()
 
-    logAction("Start processing changes")
+    reporter.report { "Start processing changes" }
 
-    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, logAction)
-    val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction) +
-                     mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, logAction)
+    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, reporter)
+    val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, reporter) +
+                     mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
     fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
-    logAction("End of processing changes")
+    reporter.report { "End of processing changes" }
 }
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
