@@ -1251,7 +1251,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.SimplifyForIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.DestructureIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1638,8 +1638,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyForInspection"
-                     displayName="'for' that can be simplified using destructing declaration"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DestructureInspection"
+                     displayName="Can be simplified using destructing declaration"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="false"
