@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.getSourceElement
 import org.jetbrains.kotlin.load.kotlin.isContainedByCompiledPartOfOurModule
-import org.jetbrains.kotlin.load.kotlin.isFromIncrementalPackageFragment
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -36,11 +35,11 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         // We should check accessibility of 'from' in current module (some set of source files, which are compiled together),
         // so we can assume that 'from' should have sources or is a LazyPackageDescriptor with some package files.
         val project: Project = if (fromSource is KotlinSourceElement) {
-                fromSource.psi.project
-            }
-            else {
-                (from as? LazyPackageDescriptor)?.declarationProvider?.getPackageFiles()?.firstOrNull()?.project ?: return true
-            }
+            fromSource.psi.project
+        }
+        else {
+            (from as? LazyPackageDescriptor)?.declarationProvider?.getPackageFiles()?.firstOrNull()?.project ?: return true
+        }
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
         moduleVisibilityManager.friendPaths.forEach {
@@ -60,10 +59,6 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
 
         if (modules.isEmpty()) return false
 
-        // Hack for incremental compilation (now there is no way to determine the module of descriptor in case of incremental package fragment)
-        // TODO Implement full check for access to internal for incremental compilation
-        if (what.isFromIncrementalPackageFragment) return true
-
         if (modules.size == 1 && isContainedByCompiledPartOfOurModule(what, File(modules.single().getOutputDirectory()))) return true
 
         return findModule(from, modules) === findModule(what, modules)
@@ -77,7 +72,7 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         else {
             return modules.firstOrNull { module ->
                 isContainedByCompiledPartOfOurModule(descriptor, File(module.getOutputDirectory())) ||
-                module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it))}
+                module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it)) }
             }
         }
     }

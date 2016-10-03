@@ -828,17 +828,6 @@ public class AsmUtil {
         return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
     }
 
-    @NotNull
-    public static String getSimpleInternalName(@NotNull String internalName) {
-        int lastSlash = internalName.lastIndexOf('/');
-        if (lastSlash >= 0) {
-            return internalName.substring(lastSlash + 1);
-        }
-        else {
-            return internalName;
-        }
-    }
-
     public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {
         if (isPrimitive(type)) {
             v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");

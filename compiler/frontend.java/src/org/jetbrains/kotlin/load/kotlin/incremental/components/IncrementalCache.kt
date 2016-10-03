@@ -27,8 +27,6 @@ interface IncrementalCache {
 
     fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
 
-    fun getMultifileFacade(partInternalName: String): String?
-
     fun getPackagePartData(partInternalName: String): JvmPackagePartProto?
 
     fun getModuleMappingData(): ByteArray?

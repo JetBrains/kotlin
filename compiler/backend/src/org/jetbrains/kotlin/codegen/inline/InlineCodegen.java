@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.FunctionImportedFromObject;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -256,8 +258,6 @@ public class InlineCodegen extends CallGenerator {
             @NotNull final GenerationState state,
             @NotNull Method asmMethod
     ) {
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
-
         if (isBuiltInArrayIntrinsic(functionDescriptor)) {
             ClassId classId = IntrinsicArrayConstructorsKt.getClassId();
             byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), classId, new Function0<byte[]>() {
@@ -273,7 +273,7 @@ public class InlineCodegen extends CallGenerator {
         assert functionDescriptor instanceof DeserializedSimpleFunctionDescriptor : "Not a deserialized function: " + functionDescriptor;
 
         KotlinTypeMapper.ContainingClassesInfo containingClasses =
-                typeMapper.getContainingClassesForDeserializedCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor);
+                KotlinTypeMapper.getContainingClassesForDeserializedCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
         final ClassId containerId = containingClasses.getImplClassId();
 

@@ -51,8 +51,6 @@ class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>? = incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
 
-    override fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String? = incrementalCompilationComponents!!.getIncrementalCache(target).getMultifileFacade(partInternalName)
-
     override fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto? = incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
 
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? = incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()

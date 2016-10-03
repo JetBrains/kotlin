@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.annotation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -189,7 +191,7 @@ abstract class AbstractAnnotationProcessingExtension(
     
     private fun KotlinProcessingEnvironment.createTypeMapper(): KotlinTypeMapper {
         return KotlinTypeMapper(bindingContext(), ClassBuilderMode.full(false), NoResolveFileClassesProvider,
-                         null, IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
+                                IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
     }
 
     private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {

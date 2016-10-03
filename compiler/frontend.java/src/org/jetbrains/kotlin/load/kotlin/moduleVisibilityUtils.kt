@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -40,16 +39,11 @@ interface ModuleVisibilityManager {
     }
 }
 
-val DeclarationDescriptor.isFromIncrementalPackageFragment: Boolean
-    get() =
-        DescriptorUtils.getParentOfType(this, PackageFragmentDescriptor::class.java, false) is IncrementalPackageFragmentProvider.IncrementalPackageFragment
-
 fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outDirectory: File?): Boolean {
+    if (outDirectory == null) return false
+
     val packageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)
-
-    if (packageFragment is IncrementalPackageFragmentProvider.IncrementalPackageFragment) return true
-
-    if (outDirectory == null || packageFragment !is LazyJavaPackageFragment) return false
+    if (packageFragment !is LazyJavaPackageFragment) return false
 
     val source = getSourceElement(descriptor)
 
