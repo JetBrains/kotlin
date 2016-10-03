@@ -45,6 +45,9 @@ sourceSets {
 compilerClasses.dependsOn 'llvmClasses'
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 compilerClasses.dependsOn 'genInteropStubs'
+cli_bcClasses.dependsOn 'llvmClasses'
+cli_bcClasses.dependsOn 'compilerClasses'
+
 
 def runtime = []
 
