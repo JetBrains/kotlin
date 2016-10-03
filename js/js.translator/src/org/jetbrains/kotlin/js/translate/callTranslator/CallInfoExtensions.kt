@@ -21,10 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -41,8 +38,6 @@ val CallInfo.callableDescriptor: CallableDescriptor
         val result = resolvedCall.resultingDescriptor.original
         return if (result is TypeAliasConstructorDescriptor) result.underlyingConstructorDescriptor else result
     }
-
-fun CallInfo.isExtension(): Boolean = extensionReceiver != null
 
 fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
 
@@ -65,11 +60,16 @@ val VariableAccessInfo.variableName: JsName
 
 fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 
-fun VariableAccessInfo.getAccessDescriptor(): DeclarationDescriptor {
-    val descriptor = variableDescriptor
-    if (descriptor is PropertyDescriptor && (descriptor.isExtension || TranslationUtils.shouldGenerateAccessors(descriptor))) {
-        val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getter else descriptor.setter
-        return propertyAccessorDescriptor!!
+fun VariableAccessInfo.getAccessDescriptor(): PropertyAccessorDescriptor {
+    val property = variableDescriptor as PropertyDescriptor
+    return if (isGetAccess()) property.getter!! else property.setter!!
+}
+
+fun VariableAccessInfo.getAccessDescriptorIfNeeded(): CallableDescriptor {
+    if (variableDescriptor is PropertyDescriptor &&
+        (variableDescriptor.isExtension || TranslationUtils.shouldAccessViaFunctions(variableDescriptor))
+    ) {
+        return getAccessDescriptor()
     }
     else {
         return variableDescriptor

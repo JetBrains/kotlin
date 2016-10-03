@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -66,7 +65,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.toStringLiteralList;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
@@ -81,9 +79,12 @@ public final class Translation {
     }
 
     @NotNull
-    public static FunctionTranslator functionTranslator(@NotNull KtDeclarationWithBody function,
-            @NotNull TranslationContext context) {
-        return FunctionTranslator.newInstance(function, context);
+    public static FunctionTranslator functionTranslator(
+            @NotNull KtDeclarationWithBody declaration,
+            @NotNull TranslationContext context,
+            @NotNull JsFunction function
+    ) {
+        return FunctionTranslator.newInstance(declaration, context, function);
     }
 
     @NotNull
@@ -252,17 +253,16 @@ public final class Translation {
     ) {
         StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
-
-        // Prohibit using "_" as a variable name
         program.getRootScope().declareName("_");
 
-        JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
+        JsFunction rootFunction = staticContext.getRootFunction();
         JsBlock rootBlock = rootFunction.getBody();
         List<JsStatement> statements = rootBlock.getStatements();
-        statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
+        PackageDeclarationTranslator.translateFiles(files, context);
+        staticContext.postProcess();
+        statements.add(0, program.getStringLiteral("use strict").makeStmt());
         defineModule(context, statements, config.getModuleId());
 
         mayBeGenerateTests(files, config, rootBlock, context);

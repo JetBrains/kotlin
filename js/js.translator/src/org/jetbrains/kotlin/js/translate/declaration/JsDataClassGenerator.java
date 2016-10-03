@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -37,12 +38,10 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.or;
 
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
-    private final List<? super JsPropertyInitializer> output;
 
-    JsDataClassGenerator(KtClassOrObject klass, TranslationContext context, List<? super JsPropertyInitializer> output) {
+    JsDataClassGenerator(KtClassOrObject klass, TranslationContext context) {
         super(klass, context.bindingContext());
         this.context = context;
-        this.output = output;
     }
 
     @Override
@@ -94,7 +93,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         ClassDescriptor classDescriptor = (ClassDescriptor) function.getContainingDeclaration();
         ClassConstructorDescriptor constructor = classDescriptor.getConstructors().iterator().next();
 
-        JsExpression constructorRef = context.getQualifiedReference(constructor);
+        JsExpression constructorRef = context.getInnerReference(constructor);
 
         JsExpression returnExpression = new JsNew(constructorRef, constructorArguments);
         if (context.shouldBeDeferred(constructor)) {
@@ -190,11 +189,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     }
 
     private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        JsName functionName = context.getNameForDescriptor(functionDescriptor);
-        JsScope enclosingScope = context.scope();
-        JsFunction functionObject = JsAstUtils.createFunctionWithEmptyBody(enclosingScope);
-        JsPropertyInitializer initializer = new JsPropertyInitializer(functionName.makeRef(), functionObject);
-        output.add(initializer);
+        JsFunction functionObject = context.createTopLevelAnonymousFunction(functionDescriptor);
+        ClassDescriptor containingClass = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
+        UtilsKt.addFunctionToPrototype(context, containingClass, functionDescriptor, functionObject);
         return functionObject;
     }
 }

@@ -54,7 +54,7 @@ public final class TranslationUtils {
             @NotNull TranslationContext context) {
         if (DescriptorUtils.isExtension(descriptor) ||
             descriptor instanceof PropertyAccessorDescriptor &&
-            shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
+            shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
         ) {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
@@ -146,19 +146,20 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
-            @NotNull PropertyDescriptor descriptor) {
-        JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        if(!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
+    public static JsNameRef backingFieldReference(@NotNull TranslationContext context, @NotNull PropertyDescriptor descriptor) {
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+        JsName backingFieldName = containingDescriptor instanceof PackageFragmentDescriptor ?
+                                  context.getInnerNameForDescriptor(descriptor) :
+                                  context.getNameForDescriptor(descriptor);
+
+        if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor)) {
             JsName backingFieldMangledName = context.getNameForBackingField(descriptor);
             backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName.getIdent(), false);
         }
 
-        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
         JsExpression receiver;
         if (containingDescriptor instanceof PackageFragmentDescriptor) {
-            // used inside package initializer
-            receiver = JsLiteral.THIS;
+            receiver = null;
         }
         else {
             receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
@@ -296,22 +297,22 @@ public final class TranslationUtils {
         return !(descriptor instanceof LocalVariableDescriptor) || !((LocalVariableDescriptor) descriptor).isDelegated();
     }
 
-    public static boolean shouldGenerateAccessors(@NotNull CallableDescriptor descriptor) {
+    public static boolean shouldAccessViaFunctions(@NotNull CallableDescriptor descriptor) {
         if (descriptor instanceof PropertyDescriptor) {
-            return shouldGenerateAccessors((PropertyDescriptor) descriptor);
+            return shouldAccessViaFunctions((PropertyDescriptor) descriptor);
         }
         else if (descriptor instanceof PropertyAccessorDescriptor) {
-            return shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+            return shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
         }
         else {
             return false;
         }
     }
 
-    private static boolean shouldGenerateAccessors(@NotNull PropertyDescriptor property) {
+    private static boolean shouldAccessViaFunctions(@NotNull PropertyDescriptor property) {
         if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
         for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
-            if (shouldGenerateAccessors(overriddenProperty)) return true;
+            if (shouldAccessViaFunctions(overriddenProperty)) return true;
         }
         return false;
     }

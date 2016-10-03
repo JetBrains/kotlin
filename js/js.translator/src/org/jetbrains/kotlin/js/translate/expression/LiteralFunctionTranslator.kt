@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
+import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
 import org.jetbrains.kotlin.js.translate.context.hasCapturedExceptContaining
@@ -58,18 +59,27 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val isRecursive = tracker.isCaptured(descriptor)
 
-        if (isRecursive) {
-            lambda.name = tracker.getNameForCapturedDescriptor(descriptor)
+        lambda.name = if (isRecursive) {
+            tracker.getNameForCapturedDescriptor(descriptor)
+        }
+        else {
+            context().getInnerNameForDescriptor(descriptor)
         }
 
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
+            lambdaCreator.name = context().getInnerNameForDescriptor(descriptor)
             lambdaCreator.isLocal = true
-            return lambdaCreator.withCapturedParameters(functionContext, invokingContext, descriptor)
+            if (!isRecursive) {
+                lambda.name = null
+            }
+            return lambdaCreator.withCapturedParameters(functionContext, invokingContext)
         }
 
         lambda.isLocal = true
-        return invokingContext.define(descriptor, lambda).apply { sideEffects = SideEffectKind.PURE }
+
+        context().addRootStatement(lambda.makeStmt())
+        return lambda.name.makeRef().apply { sideEffects = SideEffectKind.PURE }
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {
@@ -82,8 +92,12 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     }
 }
 
-fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
-    val ref = invokingContext.define(descriptor, this).apply { sideEffects = SideEffectKind.PURE }
+fun JsFunction.withCapturedParameters(
+        context: TranslationContext,
+        invokingContext: TranslationContext
+): JsExpression {
+    context.addRootStatement(makeStmt())
+    val ref = name.makeRef().apply { sideEffects = SideEffectKind.PURE }
     val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }
 
     val invocationArguments = invocation.arguments

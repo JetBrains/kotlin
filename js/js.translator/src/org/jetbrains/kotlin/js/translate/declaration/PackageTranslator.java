@@ -16,51 +16,32 @@
 
 package org.jetbrains.kotlin.js.translate.declaration;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.js.translate.context.DefinitionPlace;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
-
-import java.util.List;
-import java.util.Map;
 
 final class PackageTranslator extends AbstractTranslator {
     static PackageTranslator create(
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        JsScope scope = context.getScopeForDescriptor(descriptor);
-        JsNameRef reference = context.getQualifiedReference(descriptor);
-        SmartList<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
-
-        DefinitionPlace definitionPlace = new DefinitionPlace((JsObjectScope) scope, reference, properties);
-
-        TranslationContext newContext = context.newDeclaration(descriptor, definitionPlace);
-        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, scope, definitionPlace.getProperties());
-        return new PackageTranslator(descriptor, newContext, visitor);
+        TranslationContext newContext = context.newDeclaration(descriptor);
+        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext);
+        return new PackageTranslator(newContext, visitor);
     }
-
-    @NotNull
-    private final PackageFragmentDescriptor descriptor;
 
     private final FileDeclarationVisitor visitor;
 
     private PackageTranslator(
-            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull TranslationContext context,
             @NotNull FileDeclarationVisitor visitor
     ) {
         super(context);
-        this.descriptor = descriptor;
         this.visitor = visitor;
     }
     
@@ -71,69 +52,4 @@ final class PackageTranslator extends AbstractTranslator {
             }
         }
     }
-
-    private void createDefinitionPlace(
-            @Nullable JsExpression initializer,
-            Map<FqName, DefineInvocation> packageFqNameToDefineInvocation
-    ) {
-        FqName fqName = descriptor.getFqName();
-        DefineInvocation place = DefineInvocation.create(fqName, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
-        packageFqNameToDefineInvocation.put(fqName, place);
-        addToParent(fqName.parent(), getEntry(fqName, place), packageFqNameToDefineInvocation);
-    }
-
-    public void add(@NotNull Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
-        JsExpression initializer = visitor.computeInitializer();
-
-        DefineInvocation defineInvocation = packageFqNameToDefineInvocation.get(descriptor.getFqName());
-        if (defineInvocation == null) {
-            if (initializer != null || !visitor.getResult().isEmpty()) {
-                createDefinitionPlace(initializer, packageFqNameToDefineInvocation);
-            }
-        }
-        else {
-            if (initializer != null) {
-                assert defineInvocation.getInitializer() == JsLiteral.NULL;
-                defineInvocation.setInitializer(initializer);
-            }
-
-            List<JsPropertyInitializer> listFromPlace = defineInvocation.getMembers();
-            // if equals, so, inner functions was added
-            if (listFromPlace != visitor.getResult()) {
-                listFromPlace.addAll(visitor.getResult());
-            }
-        }
-    }
-
-    private JsPropertyInitializer getEntry(@NotNull FqName fqName, DefineInvocation defineInvocation) {
-        return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
-                                         new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
-    }
-
-    private static boolean addEntryIfParentExists(
-            FqName parentFqName,
-            JsPropertyInitializer entry,
-            Map<FqName, DefineInvocation> packageFqNameToDeclarationPlace
-    ) {
-        DefineInvocation parentDefineInvocation = packageFqNameToDeclarationPlace.get(parentFqName);
-        if (parentDefineInvocation != null) {
-            parentDefineInvocation.getMembers().add(entry);
-            return true;
-        }
-        return false;
-    }
-
-    private void addToParent(@NotNull FqName parentFqName,
-            JsPropertyInitializer entry,
-            Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
-        while (!addEntryIfParentExists(parentFqName, entry, packageFqNameToDefineInvocation)) {
-            JsObjectLiteral members = new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true);
-            DefineInvocation defineInvocation = DefineInvocation.create(parentFqName, null, members, context());
-            entry = getEntry(parentFqName, defineInvocation);
-
-            packageFqNameToDefineInvocation.put(parentFqName, defineInvocation);
-            parentFqName = parentFqName.parent();
-        }
-    }
-
 }

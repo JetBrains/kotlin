@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
@@ -29,12 +26,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 fun generateDelegateCall(
+        classDescriptor: ClassDescriptor,
         fromDescriptor: FunctionDescriptor,
         toDescriptor: FunctionDescriptor,
         thisObject: JsExpression,
         context: TranslationContext
-): JsPropertyInitializer {
-    val delegateMemberFunctionName = context.getNameForDescriptor(fromDescriptor)
+) {
     val overriddenMemberFunctionName = context.getNameForDescriptor(toDescriptor)
     val overriddenMemberFunctionRef = JsNameRef(overriddenMemberFunctionName, thisObject)
 
@@ -57,7 +54,8 @@ fun generateDelegateCall(
 
     val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), JsInvocation(overriddenMemberFunctionRef, args))
     functionObject.parameters.addAll(parameters)
-    return JsPropertyInitializer(delegateMemberFunctionName.makeRef(), functionObject)
+
+    context.addFunctionToPrototype(classDescriptor, fromDescriptor, functionObject)
 }
 
 fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
@@ -86,7 +84,7 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsName
     val classifierDescriptor = type.constructor.declarationDescriptor
 
     if (classifierDescriptor is ClassDescriptor) {
-        val reference = context.getQualifiedReference(classifierDescriptor)
+        val reference = context.getInnerReference(classifierDescriptor)
         if (classifierDescriptor.kind == ClassKind.OBJECT) {
             referenceToJsClass = JsAstUtils.pureFqn("constructor", JsInvocation(JsNameRef("getPrototypeOf", JsNameRef("Object")), reference))
         }
@@ -104,4 +102,21 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsName
     }
 
     return referenceToJsClass
+}
+
+fun TranslationContext.addFunctionToPrototype(classDescriptor: ClassDescriptor, descriptor: FunctionDescriptor, function: JsExpression) {
+    val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(classDescriptor))
+    val functionRef = JsNameRef(getNameForDescriptor(descriptor), prototypeRef)
+    addRootStatement(JsAstUtils.assignment(functionRef, function).makeStmt())
+}
+
+fun TranslationContext.addAccessorsToPrototype(
+        containingClass: ClassDescriptor,
+        propertyDescriptor: PropertyDescriptor,
+        literal: JsObjectLiteral
+) {
+    val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(containingClass))
+    val propertyName = getNameForDescriptor(propertyDescriptor)
+    val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal, program())
+    addRootStatement(defineProperty.makeStmt())
 }

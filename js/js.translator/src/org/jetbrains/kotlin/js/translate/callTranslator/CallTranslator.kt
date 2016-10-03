@@ -70,9 +70,11 @@ object CallTranslator {
         val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
         val hasSpreadOperator = false
         if (dispatchReceiver != null) {
-            return DefaultFunctionCallCase.buildDefaultCallWithDispatchReceiver(argumentsInfo, dispatchReceiver, functionName, isNative, hasSpreadOperator)
+            return DefaultFunctionCallCase.buildDefaultCallWithDispatchReceiver(argumentsInfo, dispatchReceiver, functionName, isNative,
+                                                                                hasSpreadOperator)
         } else {
-            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, isNative, hasSpreadOperator)
+            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, isNative,
+                                                                           hasSpreadOperator)
         }
     }
 }

@@ -132,8 +132,7 @@ public abstract class JsScope {
         return names.containsKey(name);
     }
 
-    @Nullable
-    public boolean hasName(@NotNull String name) {
+    private boolean hasName(@NotNull String name) {
         return hasOwnName(name) || (parent != null && parent.hasName(name));
     }
 

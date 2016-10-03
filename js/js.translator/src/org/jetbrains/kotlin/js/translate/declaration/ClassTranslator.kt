@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.declaration
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
@@ -30,21 +29,19 @@ import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
-import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -60,20 +57,13 @@ class ClassTranslator private constructor(
 ) : AbstractTranslator(context) {
 
     private val descriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
-    private val invocationArguments = mutableListOf<JsExpression>()
     private val secondaryConstructors = mutableListOf<ConstructorInfo>()
-    private val secondaryConstructorProperties = mutableListOf<JsPropertyInitializer>()
     private var primaryConstructor: ConstructorInfo? = null
-    private lateinit var definitionPlace: DefinitionPlace
+    private lateinit var cachedInstanceName: JsName
+    private val metadataLiteral = JsObjectLiteral(true)
 
-    private fun translate(): TranslationResult {
+    private fun translate() {
         generateClassCreateInvocationArguments()
-
-        val classNameRef = context().getNameForDescriptor(descriptor).makeRef()
-        val classCreation = JsInvocation(context().namer().classCreateInvocation(descriptor), invocationArguments)
-
-        val properties = listOf(JsPropertyInitializer(classNameRef, classCreation)) + secondaryConstructorProperties
-        return TranslationResult(properties, definitionPlace)
     }
 
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
@@ -81,35 +71,35 @@ class ClassTranslator private constructor(
     private fun isAnnotation(): Boolean = descriptor.kind == ClassKind.ANNOTATION_CLASS
 
     private fun generateClassCreateInvocationArguments() {
-        val properties = SmartList<JsPropertyInitializer>()
-        val staticProperties = SmartList<JsPropertyInitializer>()
-
-        val qualifiedReference = context().getQualifiedReference(descriptor)
         val scope = context().getScopeForDescriptor(descriptor)
-        val definitionPlace = DefinitionPlace(scope as JsObjectScope, qualifiedReference, staticProperties)
-        val context = context().newDeclaration(descriptor, definitionPlace)
+        val context = context().newDeclaration(descriptor)
 
-        invocationArguments += getSuperclassReferences(context)
+        val constructorFunction = context.defineTopLevelFunction(descriptor)
 
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
         nonConstructorContext.startDeclaration()
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
-        translatePropertiesAsConstructorParameters(nonConstructorContext, properties)
-        val bodyVisitor = DeclarationBodyVisitor(properties, staticProperties, scope)
+        translatePropertiesAsConstructorParameters(nonConstructorContext)
+        val bodyVisitor = DeclarationBodyVisitor(descriptor, nonConstructorContext)
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
-        delegationTranslator.generateDelegated(properties)
+        constructorFunction.body.statements += bodyVisitor.initializerStatements
+        delegationTranslator.generateDelegated()
 
-        translatePrimaryConstructor(context, delegationTranslator)
+        translatePrimaryConstructor(constructorFunction, context, delegationTranslator)
+        addMetadataObject()
+        addMetadataType()
+        context.addClass(descriptor)
+        addSuperclassReferences()
         classDeclaration.getSecondaryConstructors().forEach { generateSecondaryConstructor(context, it) }
-        generatedBridgeMethods(properties)
 
-        if (descriptor.isData) {
-            JsDataClassGenerator(classDeclaration, context, properties).generate()
+        if (descriptor.kind != ClassKind.INTERFACE) {
+            addInterfaceDefaultMembers()
         }
 
-        if (isEnumClass(descriptor)) {
-            val enumEntries = JsObjectLiteral(bodyVisitor.enumEntryList, true)
-            invocationArguments += simpleReturnFunction(nonConstructorContext.getScopeForDescriptor(descriptor), enumEntries)
+        generatedBridgeMethods()
+
+        if (descriptor.isData) {
+            JsDataClassGenerator(classDeclaration, context).generate()
         }
 
         emitConstructors(nonConstructorContext, nonConstructorContext.endDeclaration())
@@ -117,40 +107,63 @@ class ClassTranslator private constructor(
             addClosureParameters(constructor, nonConstructorContext)
         }
 
-        // ExpressionVisitor.visitObjectLiteralExpression uses DefinitionPlace of the translated class to generate call to
-        // super constructor. Sometimes, when generating super call, we may translate another anonymous class passed as an
-        // argument. This class will be declared in the DefinitionPlace and put it static properties. See full explanation
-        // in ExpressionVisitor.visitObjectLiteralExpression
-        // TODO: It's a hack, we should think how to generate staticProperties lazily, whenever somebody tries to put
-        // definition into DefinitionPlace.
-        val hasStaticProperties = !staticProperties.isEmpty() || DescriptorUtils.isAnonymousObject(descriptor)
-        if (!properties.isEmpty() || hasStaticProperties) {
-            if (properties.isEmpty()) {
-                invocationArguments += JsLiteral.NULL
-            }
-            else {
-                // about "prototype" - see http://code.google.com/p/jsdoc-toolkit/wiki/TagLends
-                invocationArguments += JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, JsNameRef("prototype", qualifiedReference))
-                invocationArguments += JsObjectLiteral(properties, true)
-            }
+        if (isObjectLike()) {
+            addObjectMethods()
         }
-        if (hasStaticProperties) {
-            invocationArguments += JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, qualifiedReference)
-            invocationArguments += JsObjectLiteral(staticProperties, true)
-        }
-
-        this.definitionPlace = definitionPlace
     }
 
-    private fun translatePrimaryConstructor(classContext: TranslationContext, delegationTranslator: DelegationTranslator) {
-        if (isTrait()) return
+    private fun translatePrimaryConstructor(
+            constructorFunction: JsFunction,
+            classContext: TranslationContext,
+            delegationTranslator: DelegationTranslator
+    ) {
+        if (!isTrait()) {
+            val constructorContext = classContext.innerWithUsageTracker(constructorFunction.scope, descriptor)
+            if (isObjectLike()) {
+                addObjectCache(constructorFunction.body.statements)
+            }
+            ClassInitializerTranslator(classDeclaration, constructorContext, constructorFunction)
+                    .generateInitializeMethod(delegationTranslator)
+            primaryConstructor = ConstructorInfo(constructorFunction, constructorContext, descriptor)
 
-        val scope = JsFunctionScope(classContext.scope(), "$descriptor: primary constructor")
-        val constructorContext = classContext.innerWithUsageTracker(scope, descriptor)
-        val initializer = ClassInitializerTranslator(classDeclaration, constructorContext).generateInitializeMethod(delegationTranslator)
-        invocationArguments += initializer
+            if (descriptor.kind == ClassKind.ENUM_CLASS) {
+                addEnumClassParameters(constructorFunction)
+            }
+        }
+    }
 
-        this.primaryConstructor = ConstructorInfo(initializer, constructorContext, descriptor)
+    private fun addEnumClassParameters(constructorFunction: JsFunction) {
+        val nameParamName = constructorFunction.scope.declareFreshName("name")
+        val ordinalParamName = constructorFunction.scope.declareFreshName("ordinal")
+        constructorFunction.parameters += listOf(JsParameter(nameParamName), JsParameter(ordinalParamName))
+
+        constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef())
+        constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef())
+    }
+
+    private fun isObjectLike() = when (descriptor.kind) {
+        ClassKind.OBJECT,
+        ClassKind.ENUM_ENTRY -> true
+        else -> false
+    }
+
+    private fun addMetadataObject() {
+        context().addRootStatement(JsAstUtils.assignment(createMetadataRef(), metadataLiteral).makeStmt())
+    }
+
+    private fun createMetadataRef() = JsNameRef(Namer.METADATA, context().getInnerReference(descriptor))
+
+    private fun addMetadataType() {
+        val kotlinType = JsNameRef("TYPE", Namer.KOTLIN_NAME)
+        val typeRef = when {
+            DescriptorUtils.isInterface(descriptor) -> JsNameRef("TRAIT", kotlinType)
+            DescriptorUtils.isObject(descriptor) -> JsNameRef("OBJECT", kotlinType)
+            else -> JsNameRef("CLASS", kotlinType)
+        }
+        val typeIndex = JsInvocation(JsNameRef("newClassIndex", Namer.KOTLIN_NAME))
+
+        metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("type"), typeRef)
+        metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("classIndex"), typeIndex)
     }
 
     private fun generateSecondaryConstructor(classContext: TranslationContext, constructor: KtSecondaryConstructor) {
@@ -177,12 +190,12 @@ class ClassTranslator private constructor(
         }
 
         // Translate constructor body
-        val constructorInitializer = FunctionTranslator.newInstance(constructor, context).translateAsMethod()
-        val constructorFunction = constructorInitializer.valueExpr as JsFunction
+        val constructorInitializer = context.defineTopLevelFunction(constructorDescriptor)
+        FunctionTranslator.newInstance(constructor, context, constructorInitializer).translateAsMethodWithoutMetadata()
 
         // Translate super/this call
         val superCallGenerators = mutableListOf<(MutableList<JsStatement>) -> Unit>()
-        val referenceToClass = context.getQualifiedReference(classDescriptor)
+        val referenceToClass = context.getInnerReference(classDescriptor)
 
         superCallGenerators += { it += FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, context) }
 
@@ -194,11 +207,11 @@ class ClassTranslator private constructor(
         val leadingArgs = mutableListOf<JsExpression>()
 
         if (outerClassName != null) {
-            constructorFunction.parameters.add(0, JsParameter(outerClassName))
+            constructorInitializer.parameters.add(0, JsParameter(outerClassName))
             leadingArgs += outerClassName.makeRef()
         }
 
-        constructorFunction.parameters += JsParameter(thisName)
+        constructorInitializer.parameters += JsParameter(thisName)
 
         // Generate super/this call to insert to beginning of the function
         val resolvedCall = BindingContextUtils.getDelegationConstructorCall(context.bindingContext(), constructorDescriptor)
@@ -223,18 +236,17 @@ class ClassTranslator private constructor(
             }
         }
 
-        constructorFunction.body.statements += JsReturn(thisNameRef)
+        constructorInitializer.body.statements += JsReturn(thisNameRef)
 
         val compositeSuperCallGenerator: () -> Unit = {
             val additionalStatements = mutableListOf<JsStatement>()
             for (partGenerator in superCallGenerators) {
                 partGenerator(additionalStatements)
             }
-            constructorFunction.body.statements.addAll(0, additionalStatements)
+            constructorInitializer.body.statements.addAll(0, additionalStatements)
         }
 
-        secondaryConstructors += ConstructorInfo(constructorFunction, context, constructorDescriptor, compositeSuperCallGenerator)
-        secondaryConstructorProperties += constructorInitializer
+        secondaryConstructors += ConstructorInfo(constructorInitializer, context, constructorDescriptor, compositeSuperCallGenerator)
     }
 
     private val allConstructors: Sequence<ConstructorInfo>
@@ -317,14 +329,9 @@ class ClassTranslator private constructor(
         function.body.statements.addAll(0, additionalStatements)
     }
 
-    private fun getSuperclassReferences(declarationContext: TranslationContext): JsExpression {
-        val superClassReferences = getSupertypesNameReferences()
-        if (superClassReferences.isEmpty()) {
-            return JsLiteral.NULL
-        }
-        else {
-            return simpleReturnFunction(declarationContext.scope(), JsArrayLiteral(superClassReferences))
-        }
+    private fun addSuperclassReferences() {
+        val supertypeReferences = JsArrayLiteral(getSupertypesNameReferences())
+        metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_SUPERTYPES), supertypeReferences)
     }
 
     private fun getSupertypesNameReferences(): List<JsExpression> {
@@ -336,7 +343,7 @@ class ClassTranslator private constructor(
         if (supertypes.size == 1) {
             val type = supertypes[0]
             val supertypeDescriptor = getClassDescriptorForType(type)
-            return listOf<JsExpression>(getClassReference(supertypeDescriptor))
+            return listOf(context().getInnerReference(supertypeDescriptor))
         }
 
         val supertypeConstructors = mutableSetOf<TypeConstructor>()
@@ -352,43 +359,111 @@ class ClassTranslator private constructor(
         for (typeConstructor in sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
                 val supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor)
-                supertypesRefs += getClassReference(supertypeDescriptor)
+                supertypesRefs += context().getInnerReference(supertypeDescriptor)
             }
         }
         return supertypesRefs
     }
 
-    private fun getClassReference(superClassDescriptor: ClassDescriptor): JsNameRef {
-        return context().getQualifiedReference(superClassDescriptor)
-    }
-
-    private fun translatePropertiesAsConstructorParameters(classDeclarationContext: TranslationContext,
-                                                           result: MutableList<JsPropertyInitializer>) {
+    private fun translatePropertiesAsConstructorParameters(classDeclarationContext: TranslationContext) {
         for (parameter in getPrimaryConstructorParameters(classDeclaration)) {
             val descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter)
             if (descriptor != null) {
-                translateAccessors(descriptor, result, classDeclarationContext)
+                val literal = JsObjectLiteral(true)
+                translateAccessors(descriptor, literal.propertyInitializers, classDeclarationContext)
+                if (literal.propertyInitializers.isNotEmpty()) {
+                    classDeclarationContext.addAccessorsToPrototype(this.descriptor, descriptor, literal)
+                }
             }
         }
     }
 
-    private fun generatedBridgeMethods(properties: MutableList<JsPropertyInitializer>) {
+    private fun addInterfaceDefaultMembers() {
+        val members = descriptor.unsubstitutedMemberScope
+                .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+                .mapNotNull { it as? CallableMemberDescriptor }
+        for (member in members) {
+            if (member.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
+            if (member.modality == Modality.ABSTRACT || member.overriddenDescriptors.size != 1) continue
+
+            val overriddenFunction = generateSequence(member) { it.overriddenDescriptors.firstOrNull() }
+                    .drop(1)
+                    .dropWhile { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                                 DescriptorUtils.isInterface(it.containingDeclaration) }
+                    .firstOrNull() ?: continue
+
+            val interfaceDescriptor = overriddenFunction.containingDeclaration as ClassDescriptor
+            if (interfaceDescriptor.kind != ClassKind.INTERFACE) continue
+
+            when (member) {
+                is FunctionDescriptor -> addDefaultMethodFromInterface(member, interfaceDescriptor)
+                is PropertyDescriptor -> addDefaultPropertyFromInterface(member, interfaceDescriptor)
+            }
+        }
+    }
+
+    private fun addDefaultMethodFromInterface(function: FunctionDescriptor, interfaceDescriptor: ClassDescriptor) {
+        val classPrototype = JsAstUtils.prototypeOf(context().getInnerReference(descriptor))
+        val interfacePrototype = JsAstUtils.prototypeOf(context().getInnerReference(interfaceDescriptor))
+        val functionName = context().getNameForDescriptor(function)
+        val classFunction = JsNameRef(functionName, classPrototype)
+        val interfaceFunction = JsNameRef(functionName, interfacePrototype)
+        context().addRootStatement(JsAstUtils.assignment(classFunction, interfaceFunction).makeStmt())
+    }
+
+    private fun addDefaultPropertyFromInterface(property: PropertyDescriptor, interfaceDescriptor: ClassDescriptor) {
+        val classPrototype = JsAstUtils.prototypeOf(context().getInnerReference(descriptor))
+        val interfacePrototype = JsAstUtils.prototypeOf(context().getInnerReference(interfaceDescriptor))
+        val functionName = context().getNameForDescriptor(property)
+        val nameLiteral = context().program().getStringLiteral(functionName.ident)
+
+        val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), interfacePrototype, nameLiteral)
+        val defineProperty = JsAstUtils.defineProperty(classPrototype, functionName.ident, getPropertyDescriptor, context().program())
+
+        context().addRootStatement(defineProperty.makeStmt())
+    }
+
+    private fun addObjectCache(statements: MutableList<JsStatement>) {
+        cachedInstanceName = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
+        statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).makeStmt()
+    }
+
+    private fun addObjectMethods() {
+        context().addRootStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
+
+        val instanceFun = JsFunction(context().rootFunction.scope, JsBlock(), "Instance function: " + descriptor)
+        instanceFun.name = context().getNameForObjectInstance(descriptor)
+
+        val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsLiteral.NULL)
+        val instanceCreationBlock = JsBlock()
+        val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
+        instanceFun.body.statements += instanceCreatedGuard
+
+        val objectRef = context().getInnerReference(descriptor)
+        instanceCreationBlock.statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsNew(objectRef)).makeStmt()
+
+        instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef())
+
+        context().addRootStatement(instanceFun.makeStmt())
+    }
+
+    private fun generatedBridgeMethods() {
         if (isAnnotation()) return
 
-        generateBridgesToTraitImpl(properties)
+        generateBridgesToTraitImpl()
 
-        generateOtherBridges(properties)
+        generateOtherBridges()
     }
 
-    private fun generateBridgesToTraitImpl(properties: MutableList<JsPropertyInitializer>) {
+    private fun generateBridgesToTraitImpl() {
         for ((key, value) in CodegenUtil.getNonPrivateTraitMethods(descriptor)) {
             if (!areNamesEqual(key, value)) {
-                properties += generateDelegateCall(value, key, JsLiteral.THIS, context())
+                generateDelegateCall(descriptor, value, key, JsLiteral.THIS, context())
             }
         }
     }
 
-    private fun generateOtherBridges(properties: MutableList<JsPropertyInitializer>) {
+    private fun generateOtherBridges() {
         for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor is FunctionDescriptor) {
                 val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity()) {
@@ -397,13 +472,13 @@ class ClassTranslator private constructor(
                 }
 
                 for (bridge in bridgesToGenerate) {
-                    generateBridge(bridge, properties)
+                    generateBridge(bridge)
                 }
             }
         }
     }
 
-    private fun generateBridge(bridge: Bridge<FunctionDescriptor>, properties: MutableList<JsPropertyInitializer>) {
+    private fun generateBridge(bridge: Bridge<FunctionDescriptor>) {
         val fromDescriptor = bridge.from
         val toDescriptor = bridge.to
         if (areNamesEqual(fromDescriptor, toDescriptor)) return
@@ -411,7 +486,7 @@ class ClassTranslator private constructor(
         if (fromDescriptor.kind.isReal && fromDescriptor.modality != Modality.ABSTRACT && !toDescriptor.kind.isReal)
             return
 
-        properties += generateDelegateCall(fromDescriptor, toDescriptor, JsLiteral.THIS, context())
+        generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS, context())
     }
 
     private fun areNamesEqual(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
@@ -421,12 +496,10 @@ class ClassTranslator private constructor(
     }
 
     companion object {
-        @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext): TranslationResult {
+        @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext) {
             return ClassTranslator(classDeclaration, context).translate()
         }
     }
-
-    class TranslationResult(val properties: List<JsPropertyInitializer>, val definitionPlace: DefinitionPlace)
 
     private class ConstructorInfo(
             val function: JsFunction,

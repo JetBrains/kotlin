@@ -169,7 +169,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
 
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
-        JsNameRef typeName = context().getQualifiedReference(referencedClass);
+        JsNameRef typeName = context().getInnerReference(referencedClass);
         return referencedClass.getKind() != ClassKind.OBJECT ? namer().isInstanceOf(typeName) : namer().isInstanceOfObject(typeName);
     }
 

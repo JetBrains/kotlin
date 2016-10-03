@@ -20,7 +20,7 @@ fun box(): String {
     if (foo + bar != OK) return "$foo + $bar != $OK"
 
     val actualAsString = funToString("actual_0")
-    val expectedAsString = funToString("expected_0")
+    val expectedAsString = funToString("expected_0").replace("expected", "actual")
     if (actualAsString != expectedAsString) return "$actualAsString != $expectedAsString"
     if (actual("asd", "12345") != "asd12345") return "${actual("asd", "12345")} != \"asd12345\""
 

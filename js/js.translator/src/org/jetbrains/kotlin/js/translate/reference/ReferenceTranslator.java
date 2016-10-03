@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
@@ -45,7 +46,20 @@ public final class ReferenceTranslator {
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
         JsExpression alias = context.getAliasForDescriptor(referencedDescriptor);
-        return alias != null ? alias : context.getQualifiedReference(referencedDescriptor);
+        if (alias != null) return alias;
+
+        if (isLocalVarOrFunction(referencedDescriptor) ||
+            AnnotationsUtils.isNativeObject(referencedDescriptor) ||
+            AnnotationsUtils.isLibraryObject(referencedDescriptor)
+        ) {
+            return context.getQualifiedReference(referencedDescriptor);
+        }
+
+        return context.getInnerReference(referencedDescriptor);
+    }
+
+    private static boolean isLocalVarOrFunction(DeclarationDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() instanceof FunctionDescriptor && !(descriptor instanceof ClassDescriptor);
     }
 
     @NotNull
@@ -57,7 +71,22 @@ public final class ReferenceTranslator {
                 return alias;
             }
         }
-        return context.getQualifiedReference(descriptor);
+        if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
+            if (AnnotationsUtils.isNativeObject(descriptor)) {
+                return context.getQualifiedReference(descriptor);
+            }
+            else if (!context.isFromCurrentModule(descriptor)) {
+                DeclarationDescriptor container = descriptor.getContainingDeclaration();
+                assert container != null : "Object must have containing declaration: " + descriptor;
+                JsExpression qualifier = context.getInnerReference(container);
+                return JsAstUtils.pureFqn(context.getNameForDescriptor(descriptor), qualifier);
+            }
+            else {
+                JsExpression functionRef = JsAstUtils.pureFqn(context.getNameForObjectInstance((ClassDescriptor) descriptor), null);
+                return new JsInvocation(functionRef);
+            }
+        }
+        return context.getInnerReference(descriptor);
     }
 
     @NotNull
