@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.util.io.PersistentEnumeratorBase
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
-import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -134,7 +134,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     internal val kaptOptions = KaptOptions()
     internal val pluginOptions = CompilerPluginOptions()
-    internal var artifactDifferenceRegistry: ArtifactDifferenceRegistry? = null
+    internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
     internal var artifactFile: File? = null
     // created only if kapt2 is active
     internal var sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null
@@ -177,30 +177,42 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         anyClassesCompiled = false
-        val javaFilesProcessor = ChangedJavaFilesProcessor()
         val targetId = TargetId(name = args.moduleName, type = "java-production")
-        val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-        val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
         val reporter = GradleIncReporter(project.rootProject.projectDir)
+        var caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+
         reporter.report { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
 
-        val compilationMode = calculateSourcesToCompile(javaFilesProcessor,
-                caches,
-                lastBuildInfo,
-                changedFiles,
-                classpath.toList(),
-                dirtySourcesSinceLastTimeFile,
-                artifactDifferenceRegistry,
-                reporter)
-        compileIncrementally(args, caches, javaFilesProcessor, lookupTracker, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+        try {
+            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            val compilationMode = calculateSourcesToCompile(javaFilesProcessor,
+                    caches,
+                    lastBuildInfo,
+                    changedFiles,
+                    classpath.toList(),
+                    dirtySourcesSinceLastTimeFile,
+                    artifactDifferenceRegistryProvider,
+                    reporter)
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+        }
+        catch (e: PersistentEnumeratorBase.CorruptedException) {
+            caches.clean()
+            artifactDifferenceRegistryProvider?.clean()
+
+            reporter.report { "Caches are corrupted. Rebuilding. $e" }
+            // try to rebuild
+            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+            val compilationMode = CompilationMode.Rebuild()
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+        }
     }
 
     private fun compileIncrementally(
             args: K2JVMCompilerArguments,
             caches: IncrementalCachesManager,
             javaFilesProcessor: ChangedJavaFilesProcessor,
-            lookupTracker: LookupTrackerImpl,
             outputDir: File,
             allKotlinSources: List<File>,
             targetId: TargetId,
@@ -234,6 +246,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         var exitCode = ExitCode.OK
         while (dirtySources.any()) {
+            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
             caches.incrementalCache.markOutputClassesDirty(dirtySources)
             caches.incrementalCache.removeClassfilesBySources(dirtySources)
@@ -269,7 +282,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
 
             if (compilationMode is CompilationMode.Rebuild) {
-                artifactFile?.let { artifactDifferenceRegistry?.remove(it) }
+                artifactFile?.let { artifactFile ->
+                    artifactDifferenceRegistryProvider?.withRegistry(reporter) { registry ->
+                        registry.remove(artifactFile)
+                    }
+                }
                 break
             }
 
@@ -304,10 +321,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
         }
-        if (artifactFile != null && artifactDifferenceRegistry != null) {
+        if (artifactFile != null && artifactDifferenceRegistryProvider != null) {
             val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
             val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
-            artifactDifferenceRegistry!!.add(artifactFile!!, artifactDifference)
+            artifactDifferenceRegistryProvider!!.withRegistry(reporter) {registry ->
+                registry.add(artifactFile!!, artifactDifference)
+            }
             reporter.report {
                 val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
                 "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
@@ -315,6 +334,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             }
         }
 
+        artifactDifferenceRegistryProvider?.withRegistry(reporter) {
+            it.flush(memoryCachesOnly = true)
+        }
         caches.close(flush = true)
         reporter.report { "flushed incremental caches" }
         processCompilerExitCode(exitCode)

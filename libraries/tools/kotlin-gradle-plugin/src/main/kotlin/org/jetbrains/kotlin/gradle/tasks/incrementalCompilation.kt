@@ -18,7 +18,7 @@ internal fun calculateSourcesToCompile(
         changedFiles: ChangedFiles,
         classpath: Iterable<File>,
         dirtySourcesSinceLastTimeFile: File,
-        artifactDifferenceRegistry: ArtifactDifferenceRegistry?,
+        artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
         reporter: IncReporter
 ): CompilationMode {
     fun rebuild(reason: ()->String): CompilationMode {
@@ -38,7 +38,7 @@ internal fun calculateSourcesToCompile(
 
     val classpathSet = classpath.toHashSet()
     val modifiedClasspathEntries = changedFiles.modified.filter { it in classpathSet }
-    val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo, artifactDifferenceRegistry, reporter)
+    val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo, artifactDifferenceRegistryProvider, reporter)
     if (classpathChanges is ChangesEither.Unknown) {
         return rebuild { "could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}" }
     }
@@ -89,14 +89,14 @@ internal fun calculateSourcesToCompile(
 private fun getClasspathChanges(
         modifiedClasspath: List<File>,
         lastBuildInfo: BuildInfo?,
-        artifactDifferenceRegistry: ArtifactDifferenceRegistry?,
+        artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
         reporter: IncReporter
 ): ChangesEither {
     if (modifiedClasspath.isEmpty()) {
         reporter.report { "No classpath changes" }
         return ChangesEither.Known()
     }
-    if (artifactDifferenceRegistry == null) {
+    if (artifactDifferenceRegistryProvider == null) {
         reporter.report { "No artifact history provider" }
         return ChangesEither.Unknown()
     }
@@ -110,7 +110,9 @@ private fun getClasspathChanges(
     val symbols = HashSet<LookupSymbol>()
     val fqNames = HashSet<FqName>()
     for (file in modifiedClasspath) {
-        val diffs = artifactDifferenceRegistry[file]
+        val diffs = artifactDifferenceRegistryProvider.withRegistry(reporter) { artifactDifferenceRegistry ->
+            artifactDifferenceRegistry[file]
+        }
         if (diffs == null) {
             reporter.report { "Could not get changes for file: $file" }
             return ChangesEither.Unknown()

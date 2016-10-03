@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.gradle.tasks.incremental.BuildCacheStorage
 import java.io.File
 
@@ -76,8 +77,8 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     private val workingDir = File(gradle.rootProject.buildDir, "kotlin-build").apply { mkdirs() }
     private val buildCacheStorage = BuildCacheStorage(workingDir)
 
-    internal val artifactDifferenceRegistry: ArtifactDifferenceRegistry
-            get() = buildCacheStorage.artifactDifferenceRegistry
+    internal val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider
+            get() = buildCacheStorage
 
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
