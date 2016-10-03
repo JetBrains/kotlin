@@ -17,3 +17,8 @@ internal fun File.isClassFile(): Boolean =
 internal fun listClassFiles(path: String): Sequence<File> =
         File(path).walk().filter { it.isFile && it.isClassFile() }
 
+internal fun File.relativeOrCanonical(base: File): String =
+        relativeToOrNull(base)?.path ?: canonicalPath
+
+internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
+        map { it.relativeOrCanonical(base) }.sorted().joinToString()
