@@ -32,9 +32,11 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -169,7 +171,8 @@ class ExpressionCodegen(
             }
 
             val args = expression.descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-                           expression.getValueArgument(i) ?: DefaultArg(i)
+                           expression.getValueArgument(i) ?:
+                           if (valueParameterDescriptor.hasDefaultValue()) DefaultArg(i) else Vararg(i)
                        }
 
             val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
@@ -181,6 +184,10 @@ class ExpressionCodegen(
                     is DefaultArg -> {
                         pushDefaultValueOnStack(callable.valueParameterTypes[i], mv)
                         defaultMask.mark(expression.index)
+                    }
+                    is Vararg -> {
+                        mv.aconst(null)
+                        //empty vararg
                     }
                     else -> TODO()
                 }
@@ -486,6 +493,15 @@ class ExpressionCodegen(
             //TODO where is best to unwrap?
             descriptor = descriptor.underlyingConstructorDescriptor
         }
+        if (descriptor is CallableMemberDescriptor && JvmCodegenUtil.getDirectMember(descriptor) is SyntheticJavaPropertyDescriptor) {
+            val propertyDescriptor = JvmCodegenUtil.getDirectMember(descriptor) as SyntheticJavaPropertyDescriptor
+            if (descriptor is PropertyGetterDescriptor) {
+                descriptor = propertyDescriptor.getMethod
+            }
+            else {
+                descriptor = propertyDescriptor.setMethod!!
+            }
+        }
         return typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, isSuper)
     }
 
@@ -497,3 +513,5 @@ class ExpressionCodegen(
 }
 
 private class DefaultArg(val index: Int)
+
+private class Vararg(val index: Int)
