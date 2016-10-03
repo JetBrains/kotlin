@@ -110,7 +110,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitExpressionListStatement(statement: PsiExpressionListStatement) {
-        result = ExpressionListStatement(codeConverter.convertExpressions(statement.expressionList.expressions))
+        result = ExpressionListStatement(codeConverter.convertExpressionsInList(statement.expressionList.expressions.asList()))
     }
 
     override fun visitForStatement(statement: PsiForStatement) {

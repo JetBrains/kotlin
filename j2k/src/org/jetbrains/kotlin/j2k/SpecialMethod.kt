@@ -39,7 +39,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     COLLECTION_TO_ARRAY_WITH_ARG(Collection::class.java.name, "toArray", 1) {
-        override fun ConvertCallData.convertCall() = copy(arguments = emptyArray()).convertWithChangedName("toTypedArray", emptyList())
+        override fun ConvertCallData.convertCall() = copy(arguments = emptyList()).convertWithChangedName("toTypedArray", emptyList())
     },
 
     MAP_SIZE(Map::class.java.name, "size", 0) {
@@ -276,7 +276,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                     limit < 0 ->      // negative, same behavior as split(regex) in kotlin
                         listOf(patternArgument)
                     limit == 0 -> { // zero, same replacement as for split without limit
-                        val newCallData = copy(arguments = arrayOf(arguments[0]))
+                        val newCallData = copy(arguments = listOf(arguments[0]))
                         return STRING_SPLIT.convertCall(newCallData)
                     }
                     else ->           // positive, same behavior as split(regex, limit) in kotlin
@@ -298,7 +298,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.last().type.canonicalText == "java.lang.Iterable<? extends java.lang.CharSequence>"
 
         override fun ConvertCallData.convertCall(): Expression? {
-            val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.take(1)))
+            val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.take(1)))
             return MethodCallExpression.buildNonNull(codeConverter.convertExpression(arguments[1]), "joinToString", argumentList)
         }
     },
@@ -313,9 +313,9 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
             }
             else {
                 return MethodCallExpression.buildNonNull(
-                        MethodCallExpression.buildNonNull(null, "arrayOf", ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.drop(1)))).assignNoPrototype(),
+                        MethodCallExpression.buildNonNull(null, "arrayOf", ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.drop(1)))).assignNoPrototype(),
                         "joinToString",
-                        ArgumentList.withNoPrototype(codeConverter.convertExpressions (arguments.take(1)))
+                        ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.take(1)))
                 )
             }
         }
@@ -341,13 +341,13 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_REGION_MATCHES(JAVA_LANG_STRING, "regionMatches", 5) {
         override fun ConvertCallData.convertCall()
-                = copy(arguments = arguments.drop(1).toTypedArray()).convertWithIgnoreCaseArgument("regionMatches", ignoreCaseArgument = arguments.first())
+                = copy(arguments = arguments.drop(1)).convertWithIgnoreCaseArgument("regionMatches", ignoreCaseArgument = arguments.first())
     },
 
     STRING_GET_BYTES(JAVA_LANG_STRING, "getBytes", null) {
         override fun ConvertCallData.convertCall(): MethodCallExpression {
             val charsetArg = arguments.lastOrNull()?.check { it.type?.canonicalText == JAVA_LANG_STRING }
-            val convertedArguments = codeConverter.convertExpressions(arguments).map {
+            val convertedArguments = codeConverter.convertExpressionsInList(arguments).map {
                 if (charsetArg != null && it.prototypes?.singleOrNull()?.element == charsetArg)
                     MethodCallExpression.buildNonNull(null, "charset", ArgumentList.withNoPrototype(it)).assignNoPrototype()
                 else
@@ -365,7 +365,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     STRING_GET_CHARS(JAVA_LANG_STRING, "getChars", 4) {
         override fun ConvertCallData.convertCall(): MethodCallExpression {
             // reorder parameters: srcBegin(0), srcEnd(1), dst(2), dstOffset(3) -> destination(2), destinationOffset(3), startIndex(0), endIndex(1)
-            val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressions(arguments.slice(listOf(2, 3, 0, 1))))
+            val argumentList = ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments.slice(listOf(2, 3, 0, 1))))
             return MethodCallExpression.buildNonNull(
                     codeConverter.convertExpression(qualifier),
                     "toCharArray",
@@ -383,7 +383,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         }
 
         override fun ConvertCallData.convertCall()
-                = MethodCallExpression.buildNonNull(null, "String", ArgumentList.withNoPrototype(codeConverter.convertExpressions (arguments)))
+                = MethodCallExpression.buildNonNull(null, "String", ArgumentList.withNoPrototype(codeConverter.convertExpressionsInList(arguments)))
     },
 
     STRING_COPY_VALUE_OF_CHAR_ARRAY(JAVA_LANG_STRING, "copyValueOf", null) {
@@ -399,7 +399,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_VALUE_OF(JAVA_LANG_STRING, "valueOf", 1) {
         override fun ConvertCallData.convertCall()
-                = MethodCallExpression.buildNonNull(codeConverter.convertExpression(arguments.single(), true), "toString")
+                = MethodCallExpression.buildNonNull(codeConverter.convertExpression(arguments.single(), shouldParenthesize = true), "toString")
     },
 
     SYSTEM_OUT_PRINTLN(PrintStream::class.java.name, "println", null) {
@@ -426,7 +426,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     data class ConvertCallData(
             val qualifier: PsiExpression?,
-            @Suppress("ArrayInDataClass") val arguments: Array<PsiExpression>,
+            @Suppress("ArrayInDataClass") val arguments: List<PsiExpression>,
             val typeArgumentsConverted: List<Type>,
             val dot: PsiElement?,
             val lPar: PsiElement?,
@@ -464,7 +464,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     }
 
     protected fun ConvertCallData.convertWithReceiverCast(): MethodCallExpression? {
-        val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
+        val convertedArguments = codeConverter.convertExpressionsInList(arguments)
         val qualifierWithCast = castQualifierToType(codeConverter, qualifier!!, qualifiedClassName!!) ?: return null
         return MethodCallExpression.buildNonNull(
                 qualifierWithCast,
@@ -506,7 +506,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         if (qualifier.referenceName != "out") return null
         if (typeArgumentsConverted.isNotEmpty()) return null
         val argumentList = ArgumentList(
-                arguments.map { codeConverter.convertExpression(it).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS) },
+                codeConverter.convertExpressionsInList(arguments),
                 LPar.withPrototype(lPar),
                 RPar.withPrototype(rPar)
         ).assignNoPrototype()
@@ -514,7 +514,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     }
 
     protected fun CodeConverter.convertToRegex(expression: PsiExpression?): Expression
-            = MethodCallExpression.buildNonNull(convertExpression(expression, true), "toRegex").assignNoPrototype()
+            = MethodCallExpression.buildNonNull(convertExpression(expression, shouldParenthesize = true), "toRegex").assignNoPrototype()
 
     companion object {
         private val valuesByName = values().groupBy { it.methodName }

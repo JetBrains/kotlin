@@ -343,7 +343,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
-                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull(), true), propertyName, null).assignNoPrototype()
+                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true), propertyName, null).assignNoPrototype()
                         else
                             propertyName
                     }
@@ -371,7 +371,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             else if (origin is KtFunction) {
                 if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
-                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), true)
+                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
                         MethodCallExpression.build(qualifier,
                                                    origin.name!!,
                                                    convertArguments(expression, isExtension = true),
@@ -393,7 +393,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val resolvedQualifier = (methodExpr.qualifier as? PsiReferenceExpression)?.resolve()
                 if (isFacadeClassFromLibrary(resolvedQualifier)) {
                     result = if (target.isKotlinExtensionFunction()) {
-                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), true)
+                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
                         MethodCallExpression.build(qualifier,
                                                    methodExpr.referenceName!!,
                                                    convertArguments(expression, isExtension = true),
@@ -418,7 +418,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             if (specialMethod != null) {
                 val lPar = expression.argumentList.lPar()
                 val rPar = expression.argumentList.rPar()
-                val data = SpecialMethod.ConvertCallData(qualifier, arguments, typeArguments, dot, lPar, rPar, codeConverter)
+                val data = SpecialMethod.ConvertCallData(qualifier, arguments.asList(), typeArguments, dot, lPar, rPar, codeConverter)
                 val converted = specialMethod.convertCall(data)
                 if (converted != null) {
                     result = converted
@@ -477,7 +477,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         else if (expression.arrayDimensions.size > 0 && expression.type is PsiArrayType) {
             result = ArrayWithoutInitializationExpression(
                     typeConverter.convertType(expression.type, Nullability.NotNull) as ArrayType,
-                    codeConverter.convertExpressions(expression.arrayDimensions))
+                    codeConverter.convertExpressionsInList(expression.arrayDimensions.asList()))
         }
         else {
             if (type?.canonicalText in PsiPrimitiveType.getAllBoxedTypeNames()) {
@@ -707,7 +707,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
         }
         else {
-            arguments.map { codeConverter.convertExpression(it).assignPrototype(it, commentsAndSpacesInheritance) }
+            codeConverter.convertExpressionsInList(arguments)
         }
 
         val lPar = argumentList?.lPar()
@@ -826,7 +826,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 }
             })
 
-            val callData = SpecialMethod.ConvertCallData(fakeReceiver, fakeParams.toTypedArray(), emptyList(), null, null, null, patchedConverter)
+            val callData = SpecialMethod.ConvertCallData(fakeReceiver, fakeParams, emptyList(), null, null, null, patchedConverter)
             statement = specialMethod.convertCall(callData)!!
         }
         else {
