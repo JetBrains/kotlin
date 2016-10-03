@@ -78,6 +78,6 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         List<OccurrenceInfo> expected = readExpectedOccurrences(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
         String actual = generateToText();
-        checkGeneratedTextAgainstExpectedOccurrences(actual, expected);
+        Companion.checkGeneratedTextAgainstExpectedOccurrences(actual, expected);
     }
 }
