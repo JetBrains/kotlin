@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+data class XY(val x: String, val y: String)
+
+fun convert(xy: XY, foo: (XY) -> Unit) = foo(xy)
+
+fun foo(xy: XY) = convert(xy) {
+    (x, y) ->
+    println(x + y)
+}

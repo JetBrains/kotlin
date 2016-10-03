@@ -32,22 +32,25 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-class DestructureInspection : IntentionBasedInspection<KtParameter>(DestructureIntention::class)
+class DestructureInspection : IntentionBasedInspection<KtDeclaration>(DestructureIntention::class)
 
-class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
-        KtParameter::class.java,
+class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
+        KtDeclaration::class.java,
         "Simplify using destructuring declaration"
 ) {
-    override fun applyTo(element: KtParameter, editor: Editor?) {
+    override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val forLoop = element.parent as? KtForExpression
         val functionLiteral = element.parent?.parent as? KtFunctionLiteral
-        if (forLoop == null && functionLiteral == null) return
+        if (forLoop == null && functionLiteral == null && (element !is KtFunctionLiteral || element.hasParameterSpecification())) {
+            return
+        }
         val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element, forLoop) ?: return
 
         val loopRange = forLoop?.loopRange
@@ -71,27 +74,48 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
                 loopRange.replace(loopRange.receiverExpression)
             }
         }
+        else if (element is KtFunctionLiteral) {
+            val lambda = element.parent as KtLambdaExpression
+            SpecifyExplicitLambdaSignatureIntention().applyTo(lambda, editor)
+            lambda.functionLiteral.valueParameters.singleOrNull()?.replace(
+                    factory.createDestructuringParameterForLambda("(${names.joinToString()})")
+            )
+        }
         else if (functionLiteral != null) {
             element.replace(factory.createDestructuringParameterForLambda("(${names.joinToString()})"))
         }
     }
 
-    override fun applicabilityRange(element: KtParameter): TextRange? {
+    override fun applicabilityRange(element: KtDeclaration): TextRange? {
         val forLoopIfAny = element.parent as? KtForExpression
-        if (forLoopIfAny == null && element.parent?.parent !is KtFunctionLiteral) return null
+        val functionLiteral = element.parent?.parent as? KtFunctionLiteral
+        if (forLoopIfAny == null && functionLiteral == null && (element !is KtFunctionLiteral || element.hasParameterSpecification())) {
+            return null
+        }
 
         val usagesToRemove = collectUsagesToRemove(element, forLoopIfAny)
         if (usagesToRemove != null && usagesToRemove.first.isNotEmpty()) {
-            return element.textRange
+            return if (element is KtFunctionLiteral) element.lBrace.textRange else element.textRange
         }
         return null
     }
 
     // Note: list should contains properties in order to create destructuring declaration
-    private fun collectUsagesToRemove(parameter: KtParameter, forLoop: KtForExpression?): Pair<List<UsageData>, Boolean>? {
-        val context = parameter.analyzeFullyAndGetResult().bindingContext
+    private fun collectUsagesToRemove(declaration: KtDeclaration, forLoop: KtForExpression?): Pair<List<UsageData>, Boolean>? {
+        val context = declaration.analyzeFullyAndGetResult().bindingContext
 
-        val parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter) ?: return null
+        val parameterDescriptor = when (declaration) {
+            is KtParameter ->
+                context.get(BindingContext.VALUE_PARAMETER, declaration)
+            is KtFunctionLiteral ->
+                if (declaration.hasParameterSpecification()) {
+                    null
+                }
+                else {
+                    context.get(BindingContext.FUNCTION, declaration)?.valueParameters?.singleOrNull()
+                }
+            else -> null
+        } ?: return null
         val parameterType = parameterDescriptor.type
         if (parameterType.isMarkedNullable) return null
         val classDescriptor = parameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
@@ -110,7 +134,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
                                                                                     NoLookupLocation.FROM_BUILTINS).first())
             })
 
-            ReferencesSearch.search(parameter).iterateOverMapEntryPropertiesUsages(
+            ReferencesSearch.search(declaration).iterateOverMapEntryPropertiesUsages(
                     context,
                     { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
@@ -122,8 +146,15 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
             val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
             usagesToRemove = Array(valueParameters.size, { UsageData(valueParameters[it] )})
 
-            ReferencesSearch.search(parameter).iterateOverDataClassPropertiesUsagesWithIndex(
+            val expressionToSearch = forLoop
+                                     ?: (declaration as? KtFunctionLiteral)
+                                     ?: (declaration.parent?.parent as? KtFunctionLiteral)
+
+            if (expressionToSearch !is KtExpression) return null
+
+            expressionToSearch.iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
+                    (declaration as? KtParameter)?.nameAsName ?: Name.identifier("it"),
                     classDescriptor,
                     { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
@@ -167,32 +198,39 @@ class DestructureIntention : SelfTargetingRangeIntention<KtParameter>(
         })
     }
 
-    private fun Query<PsiReference>.iterateOverDataClassPropertiesUsagesWithIndex(
+    private fun KtExpression.iterateOverDataClassPropertiesUsagesWithIndex(
             context: BindingContext,
+            parameterName: Name,
             dataClass: ClassDescriptor,
             process: (Int, UsageData) -> Unit,
             cancel: () -> Unit
     ) {
         val valueParameters = dataClass.unsubstitutedPrimaryConstructor?.valueParameters ?: return
 
-        forEach(Processor forEach@{
-            val applicableUsage = getDataIfUsageIsApplicable(it, context)
-            if (applicableUsage != null) {
-                for (valueParameter in valueParameters) {
-                    if (context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) == applicableUsage.descriptor) {
-                        process(valueParameter.index, applicableUsage)
-                        return@forEach true
+        var stopTravelling = false
+        forEachDescendantOfType<KtNameReferenceExpression> {
+            if (!stopTravelling && it.getReferencedNameAsName() == parameterName) {
+                val applicableUsage = getDataIfUsageIsApplicable(it, context)
+                if (applicableUsage != null) {
+                    for (valueParameter in valueParameters) {
+                        if (context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) == applicableUsage.descriptor) {
+                            process(valueParameter.index, applicableUsage)
+                            return@forEachDescendantOfType
+                        }
                     }
                 }
-            }
 
-            cancel()
-            return@forEach false
-        })
+                cancel()
+                stopTravelling = true
+            }
+        }
     }
 
-    private fun getDataIfUsageIsApplicable(usage: PsiReference, context: BindingContext): UsageData? {
-        val parentCall = usage.element.parent as? KtExpression ?: return null
+    private fun getDataIfUsageIsApplicable(usage: PsiReference, context: BindingContext) =
+            (usage.element as? KtReferenceExpression)?.let { getDataIfUsageIsApplicable(it, context) }
+
+    private fun getDataIfUsageIsApplicable(referenceExpression: KtReferenceExpression, context: BindingContext): UsageData? {
+        val parentCall = referenceExpression.parent as? KtExpression ?: return null
         val userParent = parentCall.parent
         if (userParent is KtBinaryExpression) {
             if (userParent.operationToken in KtTokens.ALL_ASSIGNMENTS &&

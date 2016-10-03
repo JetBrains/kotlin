@@ -6252,6 +6252,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/destructuringInLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("caret.kt")
+        public void testCaret() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/caret.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dependentLocal.kt")
         public void testDependentLocal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/dependentLocal.kt");
@@ -6279,6 +6285,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("list.kt")
         public void testList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/list.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noIt.kt")
+        public void testNoIt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/noIt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noItVariables.kt")
+        public void testNoItVariables() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/noItVariables.kt");
             doTest(fileName);
         }
 
