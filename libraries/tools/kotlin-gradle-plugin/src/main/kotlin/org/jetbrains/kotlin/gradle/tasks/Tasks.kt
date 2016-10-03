@@ -189,19 +189,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         fun filesToString(files: Iterable<File>) =
                 "[" + files.map(::relativePathOrCanonical).sorted().joinToString(separator = ", \n") + "]"
 
-        val targetType = "java-production"
-        val moduleName = args.moduleName
-        val targetId = TargetId(moduleName, targetType)
         val outputDir = destinationDir
-        val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
-        val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed.filter { it.isKotlinFile() }
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-        logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
 
-        fun getClasspathChanges(modifiedClasspath: List<File>): ChangesEither {
+        fun getClasspathChanges(modifiedClasspath: List<File>, lastBuildInfo: BuildInfo?): ChangesEither {
             if (modifiedClasspath.isEmpty()) {
                 logger.kotlinDebug { "No classpath changes" }
                 return ChangesEither.Known()
@@ -241,7 +234,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             return ChangesEither.Known(symbols, fqNames)
         }
 
-        fun calculateSourcesToCompile(javaFilesProcessor: ChangedJavaFilesProcessor): Pair<Set<File>, Boolean> {
+        fun calculateSourcesToCompile(javaFilesProcessor: ChangedJavaFilesProcessor, caches: IncrementalCachesManager, lastBuildInfo: BuildInfo?): Pair<Set<File>, Boolean> {
             fun rebuild(reason: String): Pair<Set<File>, Boolean> {
                 logger.kotlinInfo("Non-incremental compilation will be performed: $reason")
                 caches.clean()
@@ -259,7 +252,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             if (modifiedClassFiles.any()) return rebuild("Modified class files: ${filesToString(modifiedClassFiles)}")
 
             val modifiedClasspathEntries = modified.filter { it in classpath }
-            val classpathChanges = getClasspathChanges(modifiedClasspathEntries)
+            val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo)
             if (classpathChanges is ChangesEither.Unknown) {
                 return rebuild("could not get changes from modified classpath entries: ${filesToString(modifiedClasspathEntries)}")
             }
@@ -313,9 +306,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 cleanupOnError()
             }
 
-            caches.close(flush = true)
-            logger.debug("flushed incremental caches")
-
             when (exitCode) {
                 ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
                 ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
@@ -337,8 +327,14 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         anyClassesCompiled = false
         val javaFilesProcessor = ChangedJavaFilesProcessor()
+        val targetId = TargetId(name = args.moduleName, type = "java-production")
+        val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        logger.kotlinDebug { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
+        val caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
-        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor)
+        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile(javaFilesProcessor, caches, lastBuildInfo)
 
         if (isIncrementalDecided) {
             additionalClasspath.add(destinationDir)
@@ -440,6 +436,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         anyClassesCompiled = anyClassesCompiled || allGeneratedFiles.isNotEmpty()
+        caches.close(flush = true)
+        logger.kotlinDebug { "flushed incremental caches" }
         processCompilerExitCode(exitCode)
     }
 
