@@ -59,6 +59,8 @@ task run(type: JavaExec) {
    args '../experiments/translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
    args '-output', "$buildDir/out.bc"
 
+   jvmArgs '-ea'
+
    dependsOn ':backend.native:build'
    dependsOn ':runtime:build'
 
