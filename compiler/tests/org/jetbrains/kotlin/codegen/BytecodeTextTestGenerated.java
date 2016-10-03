@@ -1063,6 +1063,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("linenumberForNoParametersArgumentCallInExpression.kt")
+        public void testLinenumberForNoParametersArgumentCallInExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/linenumberForNoParametersArgumentCallInExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("linenumberForOneParametersArgumentCall.kt")
+        public void testLinenumberForOneParametersArgumentCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/linenumberForOneParametersArgumentCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noSynAccessor.kt")
         public void testNoSynAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");
