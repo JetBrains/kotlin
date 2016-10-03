@@ -31,6 +31,10 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     DestructuringLambdaParameters(KOTLIN_1_1),
     ;
 
+    val presentableText: String
+        // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
+        get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
+
     companion object {
         @JvmStatic
         fun fromString(str: String) = values().find { it.name == str }

@@ -269,6 +269,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("unsupportedFeature.kt")
+    public void testUnsupportedFeature() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unsupportedFeature.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("unusedParameter.kt")
     public void testUnusedParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unusedParameter.kt");

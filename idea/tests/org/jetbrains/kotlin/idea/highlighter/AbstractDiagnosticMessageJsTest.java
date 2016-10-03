@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
@@ -45,8 +47,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected AnalysisResult analyze(@NotNull KtFile file) {
-        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig());
+    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
+        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion));
     }
 
     @NotNull
@@ -62,12 +64,15 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     @NotNull
-    private JsConfig getConfig() {
+    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);
+        if (explicitLanguageVersion != null) {
+            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, new LanguageVersionSettingsImpl(explicitLanguageVersion));
+        }
         return new LibrarySourcesConfig(getProject(), configuration);
     }
 }

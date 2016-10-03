@@ -65,7 +65,11 @@ object JvmResolveUtil {
 
     @JvmStatic
     fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-            analyze(environment.project, files, environment.configuration) { scope ->
+            analyze(files, environment, environment.configuration)
+
+    @JvmStatic
+    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration): AnalysisResult =
+            analyze(environment.project, files, configuration) { scope ->
                 JvmPackagePartProvider(environment, scope)
             }
 

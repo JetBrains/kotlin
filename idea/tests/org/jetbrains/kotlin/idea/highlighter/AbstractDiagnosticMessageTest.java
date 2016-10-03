@@ -24,6 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -35,11 +39,13 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,8 +79,12 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     }
 
     @NotNull
-    protected AnalysisResult analyze(@NotNull KtFile file) {
-        return JvmResolveUtil.analyze(file, getEnvironment());
+    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
+        CompilerConfiguration configuration = getEnvironment().getConfiguration();
+        if (explicitLanguageVersion != null) {
+            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, new LanguageVersionSettingsImpl(explicitLanguageVersion));
+        }
+        return JvmResolveUtil.analyze(Collections.singleton(file), getEnvironment(), configuration);
     }
 
     public void doTest(String filePath) throws Exception {
@@ -87,8 +97,11 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
 
+        String explicitLanguageVersion = InTextDirectivesUtils.findStringWithPrefixes(fileData, "// LANGUAGE_VERSION:");
+        LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
+
         KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
-        AnalysisResult analysisResult = analyze(psiFile);
+        AnalysisResult analysisResult = analyze(psiFile, version);
         BindingContext bindingContext = analysisResult.getBindingContext();
 
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
