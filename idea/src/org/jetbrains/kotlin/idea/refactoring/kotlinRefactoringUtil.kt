@@ -137,6 +137,8 @@ fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(p
 
 fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
 
+fun VirtualFile.toPsiFileOrDirectory(project: Project): PsiFileSystemItem? = if (isDirectory) toPsiDirectory(project) else toPsiFile(project)
+
 fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
         is KtElement -> PsiTreeUtil.getParentOfType(this, KtPropertyAccessor::class.java, KtNamedDeclaration::class.java, KtFile::class.java)!!

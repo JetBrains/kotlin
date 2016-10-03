@@ -289,6 +289,7 @@
 
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoClassContributor"/>
+    <searchEverywhereClassifier implementation="org.jetbrains.kotlin.idea.goto.KotlinSearchEverywhereClassifier"/>
     <lang.importOptimizer language="kotlin" implementationClass="org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer"/>
     <lang.namesValidator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator"/>
 
