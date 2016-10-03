@@ -6278,9 +6278,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("waitNotify.kt")
-                public void testWaitNotify() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotify.kt");
+                @TestMetadata("waitNotifyGetClass.kt")
+                public void testWaitNotifyGetClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotifyGetClass.kt");
                     doTest(fileName);
                 }
             }

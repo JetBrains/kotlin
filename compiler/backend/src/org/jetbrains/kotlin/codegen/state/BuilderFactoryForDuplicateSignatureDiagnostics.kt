@@ -43,6 +43,7 @@ private val EXTERNAL_SOURCES_KINDS = arrayOf(
 )
 
 private val PREDEFINED_SIGNATURES = listOf(
+        "getClass()Ljava/lang/Class;",
         "notify()V",
         "notifyAll()V",
         "wait()V",
