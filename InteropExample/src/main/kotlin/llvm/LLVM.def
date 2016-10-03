@@ -23,7 +23,6 @@ linkerOpts = -stdlib=libc++ -fPIC -fvisibility-inlines-hidden \
     -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
     -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
-    -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport -lcurses -lpthread -lz -lm \
-    -lffi
+    -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lm -lffi
 
-excludedFunctions =
+linkerOpts.osx = -lcurses

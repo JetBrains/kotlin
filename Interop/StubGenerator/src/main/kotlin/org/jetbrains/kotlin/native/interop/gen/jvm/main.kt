@@ -22,11 +22,37 @@ fun main(args: Array<String>) {
     }
 }
 
+// Performs substitution similar to:
+//  foo = ${foo} ${foo.${arch}} ${foo.${os}}
+private fun substitute(properties: Properties, substitutions: Map<String, String>) {
+    for (key in properties.stringPropertyNames()) {
+        if (key.contains('.')) {
+            continue
+        }
+        var value = ""
+        for (substitution in substitutions.keys) {
+            val property = properties.getProperty(key + "." + substitutions[substitution])
+            if (property != null) {
+                value += " " + property
+            }
+        }
+        if (value != "") {
+            properties.setProperty(key, properties.getProperty(key, "") + " " + value)
+        }
+    }
+}
+
 private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, nativeLibsDir: String, llvmInstallPath: String) {
     val config = Properties()
     defFile.bufferedReader().use { reader ->
         config.load(reader)
     }
+    // TODO: remove OSX defaults.
+    val substitutions = mapOf(
+            "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
+            "os" to (System.getenv("TARGET_OS") ?: "osx")
+    )
+    substitute(config, substitutions)
 
     val headerFiles = config.getProperty("headers").split(' ')
     val compilerOpts = config.getProperty("compilerOpts").split(' ')
