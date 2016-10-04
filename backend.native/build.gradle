@@ -84,7 +84,7 @@ repositories {
     mavenCentral()
 }
 
-genInteropStubs {
+genCompilerInteropStubs {
     environment 'CPATH'        : "$llvmInstallPath/include"
     environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
 }

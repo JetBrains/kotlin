@@ -8,7 +8,6 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
-        def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs/kotlin")
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
 
         prj.configurations {
@@ -16,52 +15,49 @@ class NativeInteropPlugin implements Plugin<Project> {
         }
 
         prj.dependencies {
-            compile project(path: ':Interop:Runtime')
             interopStubGenerator project(path: ":Interop:StubGenerator")
         }
 
-        def genStubsTaskName = "genInteropStubs"
+        prj.sourceSets.all { sourceSet ->
+            def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs/${sourceSet.name}/kotlin")
 
-        prj.task(genStubsTaskName, type: JavaExec) {
-            classpath = prj.configurations.interopStubGenerator
-            main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-            args = [generatedSrcDir, nativeLibsDir]
-            systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
-            systemProperties "llvmInstallPath" : prj.llvmInstallPath
-            environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
-            environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
+            prj.dependencies {
+                add sourceSet.getCompileConfigurationName(), project(path: ':Interop:Runtime')
+            }
 
-            outputs.dir generatedSrcDir
-            outputs.dir nativeLibsDir
-        }
+            def genStubsTask = prj.task(sourceSet.getTaskName("gen", "interopStubs"), type: JavaExec) {
+                classpath = prj.configurations.interopStubGenerator
+                main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
+                systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
+                systemProperties "llvmInstallPath" : prj.llvmInstallPath
+                environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
+                environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
 
-        prj.afterEvaluate {
-            prj.tasks.getByName(genStubsTaskName) {
-                // TODO: handle other source sets
-                prj.sourceSets.each {
-                    it.kotlin.srcDirs.each { srcDir ->
-                      inputs.files prj.fileTree(srcDir.path).include('**/*.def')
-                      args srcDir
+                outputs.dir generatedSrcDir
+                outputs.dir nativeLibsDir
+
+                args = [generatedSrcDir, nativeLibsDir]
+
+                prj.afterEvaluate { // FIXME: it is a hack
+                    sourceSet.kotlin.srcDirs.each { srcDir ->
+                        if (srcDir != generatedSrcDir) {
+                            args srcDir
+                            inputs.files prj.fileTree(srcDir.path).include('**/*.def')
+                        }
                     }
                 }
             }
-        }
 
-        prj.sourceSets {
-            main {
-                kotlin {
-                    srcDirs generatedSrcDir
-                }
+            sourceSet.kotlin.srcDirs generatedSrcDir
+
+            prj.tasks.getByName(sourceSet.getTaskName("compile", "Kotlin")) {
+                dependsOn genStubsTask
             }
-        }
-
-        prj.tasks.getByName("compileKotlin") {
-            dependsOn genStubsTaskName
         }
 
         // FIXME: choose tasks more wisely
         prj.tasks.withType(JavaExec) {
-            if (name != genStubsTaskName) {
+            if (!name.endsWith("InteropStubs")) {
                 systemProperties "java.library.path": nativeLibsDir
             }
         }
