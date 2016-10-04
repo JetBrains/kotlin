@@ -19751,6 +19751,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/oneWarning"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("onBlockStatement.kt")
+                public void testOnBlockStatement() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/oneWarning/onBlockStatement.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("onClass.kt")
                 public void testOnClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/oneWarning/onClass.kt");
