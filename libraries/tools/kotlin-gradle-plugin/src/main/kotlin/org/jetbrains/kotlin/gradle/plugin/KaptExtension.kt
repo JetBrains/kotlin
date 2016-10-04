@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Project
+import java.util.*
 
 open class KaptExtension {
 
@@ -31,26 +32,36 @@ open class KaptExtension {
         this.closure = closure
     }
 
-    fun getAdditionalArguments(project: Project, variant: Any?, android: Any?): List<String> {
-        val closureToExecute = closure ?: return emptyList()
+    fun getAdditionalArguments(project: Project, variantData: Any?, androidExtension: Any?): Map<String, String> {
+        val closureToExecute = closure ?: return emptyMap()
 
-        val executor = KaptAdditionalArgumentsDelegate(project, variant, android)
+        val executor = KaptAdditionalArgumentsDelegate(project, variantData, androidExtension)
         executor.execute(closureToExecute)
-        return executor.additionalCompilerArgs
+        return executor.args
+    }
+
+    fun getAdditionalArgumentsForJavac(project: Project, variantData: Any?, androidExtension: Any?): List<String> {
+        val javacArgs = mutableListOf<String>()
+        for ((key, value) in getAdditionalArguments(project, variantData, androidExtension)) {
+            javacArgs += "-A" + key + (if (value.isNotEmpty()) "=$value" else "")
+        }
+        return javacArgs
     }
 }
 
+/**
+ * [project], [variant] and [android] properties are intended to be used inside the closure.
+ */
 open class KaptAdditionalArgumentsDelegate(
-        open val project: Project,
-        open val variant: Any?,
-        open val android: Any?
+        @Suppress("unused") open val project: Project,
+        @Suppress("unused") open val variant: Any?,
+        @Suppress("unused") open val android: Any?
 ) {
+    internal val args = LinkedHashMap<String, String>()
 
-    val additionalCompilerArgs = arrayListOf<String>()
-
+    @Suppress("unused")
     open fun arg(name: Any, vararg values: Any) {
-        val valuesString = if (values.isNotEmpty()) values.joinToString(" ", prefix = "=") else ""
-        additionalCompilerArgs.add("-A$name$valuesString")
+        args.put(name.toString(), values.joinToString(" "))
     }
 
     fun execute(closure: Closure<*>) {

@@ -201,7 +201,7 @@ class AnnotationProcessingManager(
 
     private fun appendAdditionalComplerArgs() {
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
-        val args = kaptExtension.getAdditionalArguments(project, androidVariant, getAndroidExtension())
+        val args = kaptExtension.getAdditionalArgumentsForJavac(project, androidVariant, getAndroidExtension())
         if (args.isEmpty()) return
 
         javaTask.modifyCompilerArguments { list ->

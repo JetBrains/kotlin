@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
+import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
+import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.APT_OPTIONS
+
 object AnnotationProcessingConfigurationKeys {
     val GENERATED_OUTPUT_DIR: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("generated files output directory")
@@ -44,6 +47,9 @@ object AnnotationProcessingConfigurationKeys {
     
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
+
+    val APT_OPTIONS: CompilerConfigurationKey<List<String>> =
+            CompilerConfigurationKey.create<List<String>>("annotation processing options")
 
     val INCREMENTAL_DATA_FILE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("data file for incremental compilation support")
@@ -66,6 +72,10 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
                 CliOption("apclasspath", "<classpath>", "Annotation processor classpath", 
                           required = false, allowMultipleOccurrences = true)
 
+        val APT_OPTIONS_OPTION: CliOption =
+                CliOption("apoption", "<key>:<value>", "Annotation processor option",
+                          required = false, allowMultipleOccurrences = true)
+
         val INCREMENTAL_DATA_FILE_OPTION: CliOption =
                 CliOption("incrementalData", "<path>", "Location of the incremental data file", required = false)
 
@@ -76,16 +86,19 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
-            listOf(GENERATED_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION,
+            listOf(GENERATED_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
                    CLASS_FILES_OUTPUT_DIR_OPTION, INCREMENTAL_DATA_FILE_OPTION, VERBOSE_MODE_OPTION)
+
+    private fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
+        val paths = getList(option).toMutableList()
+        paths.add(value)
+        put(option, paths)
+    }
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> {
-                val paths = configuration.getList(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH).toMutableList()
-                paths.add(value)
-                configuration.put(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH, paths)
-            }
+            ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
+            APT_OPTIONS_OPTION -> configuration.appendList(APT_OPTIONS, value)
             GENERATED_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR, value)
             CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
             INCREMENTAL_DATA_FILE_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.INCREMENTAL_DATA_FILE, value)
@@ -98,8 +111,14 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
 class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val generatedOutputDir = configuration.get(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR) ?: return
-        val apClasspath = configuration.get(AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
-        
+        val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
+
+        val apOptions = (configuration.get(APT_OPTIONS) ?: listOf())
+                .map { it.split(':') }
+                .filter { it.size == 2 }
+                .map { it[0] to it[1] }
+                .toMap()
+
         val incrementalDataFile = configuration.get(AnnotationProcessingConfigurationKeys.INCREMENTAL_DATA_FILE)?.let(::File)
 
         val generatedOutputDirFile = File(generatedOutputDir)
@@ -126,7 +145,7 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         val sourceRetentionAnnotationHandler = configuration[JVMConfigurationKeys.SOURCE_RETENTION_ANNOTATION_HANDLER]
         
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
-                classpath, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput, 
+                classpath, apOptions, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput,
                 incrementalDataFile, sourceRetentionAnnotationHandler)
 
         project.registerService(JeElementRegistry::class.java, JeElementRegistry())

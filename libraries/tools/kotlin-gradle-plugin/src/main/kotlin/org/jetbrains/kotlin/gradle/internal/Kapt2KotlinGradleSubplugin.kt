@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.builder.model.SourceProvider
@@ -122,6 +123,14 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
             pluginOptions += SubpluginOption("verbose", "true")
+        }
+
+        val androidPlugin = variantData?.let {
+            project.extensions.findByName("android") as? BaseExtension
+        }
+
+        for ((key, value) in kaptExtension.getAdditionalArguments(project, variantData, androidPlugin)) {
+            pluginOptions += SubpluginOption("apoption", "$key:$value")
         }
 
         val annotationsFile = File(kotlinCompile.taskBuildDirectory, "source-annotations.txt")
