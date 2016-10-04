@@ -21,14 +21,10 @@ ext.deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
 		 "${project(':Interop:Runtime').buildDir}/classes/main")
 
 sourceSets {
-    llvm {
-      kotlin.srcDirs += 'build/nativeInteropStubs/kotlin'
-      compileClasspath = deps
-    }
     compiler {
       java.srcDirs += 'compiler/ir/backend.native/src/'
       kotlin.srcDirs += 'compiler/ir/backend.native/src/'
-      compileClasspath = deps.plus(llvm.output)
+      compileClasspath = deps
     }
     cli_bc {
       java.srcDirs += 'cli.bc/src'
@@ -42,10 +38,8 @@ sourceSets {
    }
 }
 
-compilerClasses.dependsOn 'llvmClasses'
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 compilerClasses.dependsOn 'genInteropStubs'
-cli_bcClasses.dependsOn 'llvmClasses'
 cli_bcClasses.dependsOn 'compilerClasses'
 
 
