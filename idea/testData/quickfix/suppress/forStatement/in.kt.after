@@ -2,5 +2,5 @@
 
 fun foo() {
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    (1<caret>!! in (1..2))
+    1<caret>!! in (1..2)
 }
