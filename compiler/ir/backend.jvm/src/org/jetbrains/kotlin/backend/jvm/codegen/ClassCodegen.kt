@@ -225,7 +225,9 @@ val MemberDescriptor.effectiveModality: Modality
                 return Modality.ABSTRACT
             }
         }
-        if (DescriptorUtils.isAnnotationClass(this) || DescriptorUtils.isAnnotationClass(this.containingDeclaration)) {
+        if (DescriptorUtils.isSealedClass(this) ||
+            DescriptorUtils.isAnnotationClass(this) ||
+            DescriptorUtils.isAnnotationClass(this.containingDeclaration)) {
             return Modality.ABSTRACT
         }
 
