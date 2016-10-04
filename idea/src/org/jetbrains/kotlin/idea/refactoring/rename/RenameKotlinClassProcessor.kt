@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -75,6 +77,17 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
                 RenamePsiElementProcessor.forElement(file).prepareRenaming(file, newFileName, allRenames)
             }
         }
+    }
+
+    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String?, nonJava: Boolean): String? {
+        if (!nonJava) return newName
+
+        val qualifiedName = when (element) {
+            is KtClassOrObject -> element.fqName?.asString() ?: element.name
+            is PsiClass -> element.qualifiedName ?: element.name
+            else -> return null
+        }
+        return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
     }
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
