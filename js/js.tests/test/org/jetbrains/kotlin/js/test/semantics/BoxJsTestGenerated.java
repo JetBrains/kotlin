@@ -6198,6 +6198,30 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassSimpleName.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kClass.kt")
+        public void testKClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassOnReifiedType.kt")
+        public void testKClassOnReifiedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassOnReifiedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassSimpleName.kt")
+        public void testKClassSimpleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassSimpleName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassToAndFromJsClass.kt")
+        public void testKClassToAndFromJsClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassToAndFromJsClass.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/regression")

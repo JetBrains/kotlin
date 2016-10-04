@@ -6,10 +6,10 @@ inline fun <reified T : Any> foo(): JsClass<T> {
 }
 
 fun box(): String {
-    assertEquals(jsClass<A>(), foo<A>())
-    assertEquals(jsClass<B>(), foo<B>())
-    assertEquals(jsClass<O>(), foo<O>())
-    assertEquals(jsClass<E>(), foo<E>())
+    check(jsClass<A>(), foo<A>())
+    check(jsClass<B>(), foo<B>())
+    check(jsClass<O>(), foo<O>())
+    check(jsClass<E>(), foo<E>())
 
     return "OK"
 }
