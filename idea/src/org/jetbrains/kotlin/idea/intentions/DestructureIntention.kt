@@ -48,7 +48,9 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val forLoop = element.parent as? KtForExpression
         val functionLiteral = element.parent?.parent as? KtFunctionLiteral
-        if (forLoop == null && functionLiteral == null && (element !is KtFunctionLiteral || element.hasParameterSpecification())) {
+        if (forLoop == null && functionLiteral == null &&
+            (element !is KtFunctionLiteral || element.hasParameterSpecification()) &&
+            (element !is KtVariableDeclaration)) {
             return
         }
         val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element, forLoop) ?: return
@@ -67,8 +69,9 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             }
             names.add(name)
         }
+        val joinedNames = names.joinToString()
         if (forLoop != null) {
-            element.replace(factory.createDestructuringParameterForLoop("(${names.joinToString()})"))
+            element.replace(factory.createDestructuringParameterForLoop("($joinedNames)"))
 
             if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
                 loopRange.replace(loopRange.receiverExpression)
@@ -78,24 +81,35 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             val lambda = element.parent as KtLambdaExpression
             SpecifyExplicitLambdaSignatureIntention().applyTo(lambda, editor)
             lambda.functionLiteral.valueParameters.singleOrNull()?.replace(
-                    factory.createDestructuringParameterForLambda("(${names.joinToString()})")
+                    factory.createDestructuringParameterForLambda("($joinedNames)")
             )
         }
         else if (functionLiteral != null) {
-            element.replace(factory.createDestructuringParameterForLambda("(${names.joinToString()})"))
+            element.replace(factory.createDestructuringParameterForLambda("($joinedNames)"))
+        }
+        else if (element is KtVariableDeclaration) {
+            val modifiersText = element.modifierList?.text ?: ""
+            val initializerText = element.initializer!!.text
+            element.replace(factory.createDestructuringDeclaration("$modifiersText val ($joinedNames) = $initializerText"))
         }
     }
 
     override fun applicabilityRange(element: KtDeclaration): TextRange? {
         val forLoopIfAny = element.parent as? KtForExpression
         val functionLiteral = element.parent?.parent as? KtFunctionLiteral
-        if (forLoopIfAny == null && functionLiteral == null && (element !is KtFunctionLiteral || element.hasParameterSpecification())) {
+        if (forLoopIfAny == null && functionLiteral == null &&
+            (element !is KtFunctionLiteral || element.hasParameterSpecification()) &&
+            (element !is KtVariableDeclaration)) {
             return null
         }
 
         val usagesToRemove = collectUsagesToRemove(element, forLoopIfAny)
         if (usagesToRemove != null && usagesToRemove.first.isNotEmpty()) {
-            return if (element is KtFunctionLiteral) element.lBrace.textRange else element.textRange
+            return when (element) {
+                is KtFunctionLiteral -> element.lBrace.textRange
+                is KtVariableDeclaration -> element.nameIdentifier?.textRange ?: element.textRange
+                else -> element.textRange
+            }
         }
         return null
     }
@@ -104,7 +118,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     private fun collectUsagesToRemove(declaration: KtDeclaration, forLoop: KtForExpression?): Pair<List<UsageData>, Boolean>? {
         val context = declaration.analyzeFullyAndGetResult().bindingContext
 
-        val parameterDescriptor = when (declaration) {
+        val variableDescriptor = when (declaration) {
             is KtParameter ->
                 context.get(BindingContext.VALUE_PARAMETER, declaration)
             is KtFunctionLiteral ->
@@ -114,11 +128,13 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 else {
                     context.get(BindingContext.FUNCTION, declaration)?.valueParameters?.singleOrNull()
                 }
+            is KtVariableDeclaration ->
+                context.get(BindingContext.VARIABLE, declaration)
             else -> null
         } ?: return null
-        val parameterType = parameterDescriptor.type
-        if (parameterType.isMarkedNullable) return null
-        val classDescriptor = parameterType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        val variableType = variableDescriptor.type
+        if (variableType.isMarkedNullable) return null
+        val classDescriptor = variableType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
         var otherUsages = false
         val usagesToRemove : Array<UsageData>
@@ -149,12 +165,13 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             val expressionToSearch = forLoop
                                      ?: (declaration as? KtFunctionLiteral)
                                      ?: (declaration.parent?.parent as? KtFunctionLiteral)
+                                     ?: (declaration as? KtVariableDeclaration)?.parent
 
             if (expressionToSearch !is KtExpression) return null
 
             expressionToSearch.iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
-                    (declaration as? KtParameter)?.nameAsName ?: Name.identifier("it"),
+                    (declaration as? KtNamedDeclaration)?.nameAsName ?: Name.identifier("it"),
                     classDescriptor,
                     { index, usageData -> usagesToRemove[index] += usageData },
                     { otherUsages = true }
