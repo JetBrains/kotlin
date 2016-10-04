@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.JavaPsiFacade
@@ -291,7 +292,9 @@ abstract class AbstractAnnotationProcessingExtension(
         }
         
         // Update the platform caches
-        (psiManager().modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
+        ApplicationManager.getApplication().runWriteAction {
+            (psiManager().modificationTracker as? PsiModificationTrackerImpl)?.incCounter()
+        }
         
         // Find generated files
         val localFileSystem = StandardFileSystems.local()
