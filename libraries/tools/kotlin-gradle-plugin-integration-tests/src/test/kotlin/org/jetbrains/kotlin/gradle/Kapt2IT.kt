@@ -25,6 +25,8 @@ class Kapt2IT: BaseGradleIT() {
         private const val GRADLE_VERSION = "2.10"
         private const val GRADLE_2_14_VERSION = "2.14.1"
         private const val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
+
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete in [0-9]+ ms, 0 errors, 0 warnings".toRegex()
     }
 
     private fun androidBuildOptions() =
@@ -35,8 +37,9 @@ class Kapt2IT: BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true)
 
+
     private fun CompiledProject.assertKaptSuccessful() {
-        assertContains("Kapt: Annotation processing complete, 0 errors, 0 warnings")
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).single()
     }
 
     @Test
@@ -95,6 +98,17 @@ class Kapt2IT: BaseGradleIT() {
             assertContains(":compileKotlin UP-TO-DATE")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+        }
+    }
+
+    @Test
+    fun testArguments() {
+        Project("arguments", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertFileExists("build/generated/source/kapt2/main/example/TestClassCustomized.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassCustomized.class")
         }
     }
 

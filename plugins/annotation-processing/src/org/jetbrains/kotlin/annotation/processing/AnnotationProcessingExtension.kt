@@ -43,10 +43,10 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 import javax.tools.Diagnostic
-import kotlin.system.measureTimeMillis
 
 class ClasspathBasedAnnotationProcessingExtension(
         val annotationProcessingClasspath: List<File>,
+        override val options: Map<String, String>,
         generatedSourcesOutputDir: File,
         classesOutputDir: File,
         javaSourceRoots: List<File>,
@@ -73,7 +73,7 @@ abstract class AbstractAnnotationProcessingExtension(
     private companion object {
         val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
     }
-    
+
     private var annotationProcessingComplete = false
     private val messager = KotlinMessager()
 
@@ -119,7 +119,7 @@ abstract class AbstractAnnotationProcessingExtension(
         val javaPsiFacade = JavaPsiFacade.getInstance(project)
         val projectScope = GlobalSearchScope.projectScope(project)
 
-        val options = emptyMap<String, String>()
+        val options = this.options
         log { "Options: $options" }
 
         val filer = KotlinFiler(generatedSourcesOutputDir, classesOutputDir)
@@ -322,6 +322,7 @@ abstract class AbstractAnnotationProcessingExtension(
     }
 
     protected abstract fun loadAnnotationProcessors(): List<Processor>
+    protected abstract val options: Map<String, String>
 }
 
 private class ProcessingResult(val errorCount: Int, val warningCount: Int, val wasAnythingGenerated: Boolean)

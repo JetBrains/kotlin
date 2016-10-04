@@ -46,7 +46,10 @@ class AnnotationProcessingExtensionForTests(
 ) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true,
                                           createIncrementalDataFile(), SourceRetentionAnnotationHandlerImpl()) {
     override fun loadAnnotationProcessors() = processors
-    
+
+    override val options: Map<String, String>
+        get() = emptyMap()
+
     private companion object {
         fun createTempDir(): File = Files.createTempDirectory("ap-test").toFile().apply {
             deleteOnExit()
