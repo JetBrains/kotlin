@@ -42,12 +42,36 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class BlockInfo {
+class LoopInfo(val irLoop: IrLoop, val continueLabel: Label, val breakLabel: Label)
+
+class BlockInfo private constructor(val parent: BlockInfo?) {
     val variables: MutableList<VariableInfo> = mutableListOf()
+
+    private val loops = mutableListOf<LoopInfo>()
+
+    fun create() = BlockInfo(this)
+
+    fun addLoop(loop: LoopInfo) {
+        loops.add(loop)
+    }
+
+    fun removeLoop(loop: LoopInfo) {
+        assert (loops.last() == loop)
+        loops.dropLast(1)
+    }
+
+    fun findLoop(loop: IrLoop): LoopInfo? {
+        return loops.firstOrNull { it.irLoop == loop } ?: parent?.findLoop(loop)
+    }
+
+    companion object {
+        fun create() = BlockInfo(null)
+    }
 }
 
 class VariableInfo(val name: String, val index: Int, val type: Type, val startLabel: Label)
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class ExpressionCodegen(
         val irFunction: IrFunction,
         val frame: FrameMap,
@@ -64,7 +88,7 @@ class ExpressionCodegen(
 
     fun generate() {
         mv.visitCode()
-        val info = BlockInfo()
+        val info = BlockInfo.create()
         val result = irFunction.body?.accept(this, info)
 //        result?.apply {
 //            coerce(this.type, irFunction.body!!.as)
@@ -86,7 +110,7 @@ class ExpressionCodegen(
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): StackValue {
-        val info = BlockInfo()
+        val info = data.create()
         return super.visitBlock(expression, info).apply {
             if (!expression.isTransparentScope) {
                 writeLocalVariablesInTable(info)
@@ -443,34 +467,54 @@ class ExpressionCodegen(
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): StackValue {
-        val entry = Label()
-        mv.visitLabel(entry)
+        val continueLabel = Label()
+        mv.mark(continueLabel)
 
+        val endLabel = Label()
         val condition = loop.condition
         gen(condition, data)
-        val endLabel = Label()
         BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
 
-        loop.body?.apply {
-            gen(this, data)
+        with(LoopInfo(loop, continueLabel, endLabel)) {
+            data.addLoop(this)
+            loop.body?.apply {
+                gen(this, data)
+            }
+            data.removeLoop(this)
         }
-        mv.goTo(entry)
+        mv.goTo(continueLabel)
         mv.mark(endLabel)
 
+
         return loop.onStack
+    }
+
+    override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): StackValue {
+        val loop = data.findLoop(jump.loop)!!
+        val label = if (jump is IrBreak) loop.breakLabel else loop.continueLabel
+        mv.goTo(label)
+        return none()
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
         val entry = Label()
         mv.visitLabel(entry)
+        val endLabel = Label()
+        val continueLabel = Label()
 
-        loop.body?.apply {
-            gen(this, data)
+        with(LoopInfo(loop, continueLabel, endLabel)) {
+            data.addLoop(this)
+            loop.body?.apply {
+                gen(this, data)
+            }
+            data.removeLoop(this)
         }
 
+        mv.visitLabel(continueLabel)
         val condition = loop.condition
         gen(condition, data)
         BranchedValue.condJump(StackValue.onStack(condition.asmType), entry, false, mv)
+        mv.mark(endLabel)
 
         return loop.onStack
     }
