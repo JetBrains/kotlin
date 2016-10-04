@@ -83,6 +83,12 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
             return true
         }
 
+        if (elementsToSearch.any { it is KtEnumEntry }) {
+            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for enum entries")
+            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            return true
+        }
+
         when (container) {
             is PsiDirectory, is PsiPackage, is KtFile -> {
                 val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
