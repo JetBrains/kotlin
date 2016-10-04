@@ -149,7 +149,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13878`](https://youtrack.jetbrains.com/issue/KT-13878) Remove Redundant Receiver Parameter: Fix exception receiver removal
 - KT-13588 Allow to convert empty Unit returning functions to expression form
 - KT-12297 Add function to supertype immediately removes redundant modifiers
-
+- [`KT-14143`](https://youtrack.jetbrains.com/issue/KT-14143) Create from Usages: Do not suggest on type-mismatched expressions which are not call arguments
 
 #### Debugger
 
