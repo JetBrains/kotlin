@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/diagnosticForClassLiteral.kt
--no-stdlib
--output
-$TEMP_DIR$/out.js
