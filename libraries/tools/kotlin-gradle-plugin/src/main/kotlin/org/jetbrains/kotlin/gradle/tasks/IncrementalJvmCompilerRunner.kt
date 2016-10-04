@@ -47,23 +47,12 @@ internal class IncrementalJvmCompilerRunner(
             messageCollector: MessageCollector
     ): ExitCode {
         val targetId = TargetId(name = args.moduleName, type = "java-production")
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
         var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination))
-
-        reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
 
         return try {
             val javaFilesProcessor = ChangedJavaFilesProcessor()
-            val compilationMode = calculateSourcesToCompile(
-                    javaFilesProcessor,
-                    caches,
-                    lastBuildInfo,
-                    changedFiles,
-                    args.classpathAsList,
-                    dirtySourcesSinceLastTimeFile,
-                    artifactDifferenceRegistryProvider,
-                    reporter)
-            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
+            val compilationMode = calculateSourcesToCompile(javaFilesProcessor, caches, changedFiles, args.classpathAsList)
+            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
         }
         catch (e: PersistentEnumeratorBase.CorruptedException) {
             caches.clean()
@@ -74,7 +63,7 @@ internal class IncrementalJvmCompilerRunner(
             val javaFilesProcessor = ChangedJavaFilesProcessor()
             caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
             val compilationMode = CompilationMode.Rebuild()
-            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
+            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
         }
     }
 
@@ -88,12 +77,8 @@ internal class IncrementalJvmCompilerRunner(
     private fun calculateSourcesToCompile(
             javaFilesProcessor: ChangedJavaFilesProcessor,
             caches: IncrementalCachesManager,
-            lastBuildInfo: BuildInfo?,
             changedFiles: ChangedFiles,
-            classpath: Iterable<File>,
-            dirtySourcesSinceLastTimeFile: File,
-            artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
-            reporter: IncReporter
+            classpath: Iterable<File>
     ): CompilationMode {
         fun rebuild(reason: ()->String): CompilationMode {
             reporter.report {"Non-incremental compilation will be performed: ${reason()}"}
@@ -112,12 +97,11 @@ internal class IncrementalJvmCompilerRunner(
 
         val classpathSet = classpath.toHashSet()
         val modifiedClasspathEntries = changedFiles.modified.filter {it in classpathSet}
-        val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo, artifactDifferenceRegistryProvider, reporter)
-        if (classpathChanges is ChangesEither.Unknown) {
-            return rebuild {"could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}"}
-        }
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
+        val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo)
         if (classpathChanges !is ChangesEither.Known) {
-            throw AssertionError("Unknown implementation of ChangesEither: ${classpathChanges.javaClass}")
+            return rebuild {"could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}"}
         }
         val javaFilesDiff = FileCollectionDiff(
                 newOrModified = changedFiles.modified.filter(File::isJavaFile),
@@ -162,9 +146,7 @@ internal class IncrementalJvmCompilerRunner(
 
     private fun getClasspathChanges(
             modifiedClasspath: List<File>,
-            lastBuildInfo: BuildInfo?,
-            artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
-            reporter: IncReporter
+            lastBuildInfo: BuildInfo?
     ): ChangesEither {
         if (modifiedClasspath.isEmpty()) {
             reporter.report {"No classpath changes"}
@@ -214,7 +196,6 @@ internal class IncrementalJvmCompilerRunner(
             allKotlinSources: List<File>,
             targetId: TargetId,
             compilationMode: CompilationMode,
-            reporter: IncReporter,
             messageCollector: MessageCollector
     ): ExitCode {
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
