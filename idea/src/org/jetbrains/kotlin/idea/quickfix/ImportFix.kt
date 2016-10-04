@@ -398,19 +398,17 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
     ): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         val expression = element
-        if (expression is KtSimpleNameExpression) {
-            if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
-                val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+        if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
+            val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-                indicesHelper.getKotlinCallablesByName(name)
-                        .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
+            indicesHelper.getKotlinCallablesByName(name)
+                    .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
+                    .filterTo(result, filterByCallType)
+
+            if (!ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
+                indicesHelper.getJvmCallablesByName(name)
+                        .filter { it.canBeReferencedViaImport() }
                         .filterTo(result, filterByCallType)
-
-                if (!ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
-                    indicesHelper.getJvmCallablesByName(name)
-                            .filter { it.canBeReferencedViaImport() }
-                            .filterTo(result, filterByCallType)
-                }
             }
         }
         return result
@@ -425,7 +423,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
                 return@run Name.identifier(name).singletonList()
             }
         }
-        return@run emptyList<Name>()
+        return@run emptyList()
     }
 
     override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
