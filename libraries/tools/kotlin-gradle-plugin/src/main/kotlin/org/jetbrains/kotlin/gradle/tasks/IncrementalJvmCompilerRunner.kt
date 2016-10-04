@@ -24,17 +24,15 @@ import java.io.File
 import java.util.*
 
 internal class IncrementalJvmCompilerRunner(
+        workingDir: File,
         classpath: Iterable<File>,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
         private val sourceAnnotationsRegistry: SourceAnnotationsRegistry?,
         private val javaSourceRoots: Set<File>,
         private val destinationDir: File,
-        private val dirtySourcesSinceLastTimeFile: File,
-        private val lastBuildInfoFile: File,
         private val kapt2GeneratedSourcesDir: File,
         private val artifactFile: File?,
-        private val cacheDirectory: File,
         private val cacheVersions: List<CacheVersion>,
         private val reporter: IncReporter
 ) {
@@ -42,6 +40,9 @@ internal class IncrementalJvmCompilerRunner(
             private set
     private val classpath = classpath.toMutableList()
     private val additionalClasspath = LinkedHashSet<File>()
+    private val cacheDirectory = File(workingDir, CACHES_DIR_NAME)
+    private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
+    private val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
 
     fun compile(allKotlinSources: List<File>, changedFiles: ChangedFiles, args: K2JVMCompilerArguments, messageCollector: MessageCollector): ExitCode {
         val outputDir = destinationDir
@@ -405,5 +406,11 @@ internal class IncrementalJvmCompilerRunner(
             }
             delegate.report(severity, message, location)
         }
+    }
+
+    companion object {
+        const val CACHES_DIR_NAME = "caches"
+        const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
+        const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
     }
 }
