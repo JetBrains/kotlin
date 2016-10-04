@@ -42,9 +42,6 @@ import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
-const val CACHES_DIR_NAME = "caches"
-const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
-const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
@@ -107,9 +104,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
-    private val cacheDirectory: File by lazy { File(taskBuildDirectory, CACHES_DIR_NAME) }
-    private val dirtySourcesSinceLastTimeFile: File by lazy { File(taskBuildDirectory, DIRTY_SOURCES_FILE_NAME) }
-    private val lastBuildInfoFile: File by lazy { File(taskBuildDirectory, LAST_BUILD_INFO_FILE_NAME) }
     private val cacheVersions by lazy {
         listOf(normalCacheVersion(taskBuildDirectory),
                experimentalCacheVersion(taskBuildDirectory),
@@ -178,17 +172,16 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         val reporter = GradleIncReporter(project.rootProject.projectDir)
         val messageCollector = GradleMessageCollector(logger)
-        val compiler = IncrementalJvmCompilerRunner(classpath.toList(),
+        val compiler = IncrementalJvmCompilerRunner(
+                taskBuildDirectory,
+                classpath.toList(),
                 kaptAnnotationsFileUpdater,
                 artifactDifferenceRegistryProvider,
                 sourceAnnotationsRegistry,
                 getJavaSourceRoots(),
                 destinationDir,
-                dirtySourcesSinceLastTimeFile,
-                lastBuildInfoFile,
                 kapt2GeneratedSourcesDir,
                 artifactFile,
-                cacheDirectory,
                 cacheVersions,
                 reporter)
         compiler.compile(allKotlinSources, changedFiles, args, messageCollector)
