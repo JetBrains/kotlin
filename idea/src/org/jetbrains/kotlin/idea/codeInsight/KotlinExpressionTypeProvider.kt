@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
@@ -38,19 +39,28 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
             elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
 
-    private fun KtExpression.shouldShowType() = when(this) {
+    private fun KtExpression.shouldShowType() = when (this) {
         is KtFunctionLiteral -> false
         is KtFunction -> !hasBlockBody() && !hasDeclaredReturnType()
         is KtProperty -> typeReference == null
         is KtPropertyAccessor -> false
         is KtDestructuringDeclarationEntry -> true
         is KtStatementExpression, is KtDestructuringDeclaration -> false
-        is KtIfExpression, is KtLoopExpression, is KtWhenExpression, is KtTryExpression -> parent !is KtBlockExpression
+        is KtIfExpression, is KtWhenExpression, is KtTryExpression -> shouldShowStatementType()
+        is KtLoopExpression -> false
         else -> getQualifiedExpressionForSelector() == null
     }
 
+    private fun KtExpression.shouldShowStatementType(): Boolean {
+        if (parent !is KtBlockExpression) return true
+        if (parent.children.lastOrNull() == this) {
+            return analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, this] ?: false
+        }
+        return false
+    }
+
     override fun getInformationHint(element: KtExpression): String {
-        val bindingContext = element.analyze()
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
         return "<html>${renderExpressionType(element, bindingContext)}</html>"
     }
@@ -65,7 +75,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
         val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: return "Type is unknown"
         val expressionType = element.getType(bindingContext)
-        val result = expressionType?.let { typeRenderer.renderType(it) }  ?: return "Type is unknown"
+        val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
         val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue)
