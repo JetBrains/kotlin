@@ -67,6 +67,8 @@ public final class Namer {
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
     public static final String IS_CHAR_SEQUENCE = "isCharSequence";
+    public static final String GET_KCLASS = "getKClass";
+    public static final String GET_KCLASS_FROM_EXPRESSION = "getKClassFromExpression";
 
     public static final String CALLEE_NAME = "$fun";
 

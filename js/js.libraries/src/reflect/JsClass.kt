@@ -16,13 +16,24 @@
 
 package kotlin.js
 
+import kotlin.reflect.KClass
+import kotlin.reflect.js.internal.KClassImpl
+
 @native
 interface JsClass<T : Any> {
     val name: String
 }
 
 @native
+@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"))
 fun <T : Any> jsClass(): JsClass<T> = noImpl
 
+@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"))
 val <T : Any> T.jsClass: JsClass<T>
     get() = js("Object").getPrototypeOf(this).constructor
+
+val <T : Any> KClass<T>.js: JsClass<T>
+    get() = (this as KClassImpl<T>).jClass
+
+val <T : Any> JsClass<T>.kotlin: KClass<T>
+    get() = KClassImpl<T>(this)
