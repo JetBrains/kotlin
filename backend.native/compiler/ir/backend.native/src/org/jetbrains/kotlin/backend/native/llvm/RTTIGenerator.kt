@@ -104,13 +104,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val contributedDescriptors = classDesc.unsubstitutedMemberScope.getContributedDescriptors()
          // (includes declarations from supers)
 
-        val methods = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
+        val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
 
         val properties = contributedDescriptors.filterIsInstance<PropertyDescriptor>()
         val getters = properties.mapNotNull { it.getter }
         val setters = properties.mapNotNull { it.setter }
 
-        return methods + getters + setters
+        val allMethods = functions + getters + setters
+
+        // TODO: adding or removing 'open' modifier will break the binary compatibility
+        return allMethods.filter { it.modality != Modality.FINAL }
     }
 
     fun generate(classDesc: ClassDescriptor) {
