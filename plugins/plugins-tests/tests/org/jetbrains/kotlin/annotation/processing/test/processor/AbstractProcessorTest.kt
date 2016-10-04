@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessingExtension
+import org.jetbrains.kotlin.annotation.processing.diagnostic.DefaultErrorMessagesAnnotationProcessing
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
@@ -73,6 +76,9 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
         AnalysisCompletedHandlerExtension.registerExtension(project, apExtension)
 
         project.registerServiceInstance(JeElementRegistry::class.java, JeElementRegistry())
+
+        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME)
+                .registerExtension(DefaultErrorMessagesAnnotationProcessing())
 
         return environment
     }
