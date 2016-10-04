@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
@@ -351,7 +352,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             return;
         }
 
-        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles));
+        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles, modules.values()));
 
         boolean isMultiModuleTest = modules.size() != 1;
         StringBuilder rootPackageText = new StringBuilder();
@@ -382,12 +383,15 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         KotlinTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString());
     }
 
-    private RecursiveDescriptorComparator.Configuration createdAffectedPackagesConfiguration(List<TestFile> testFiles) {
+    private RecursiveDescriptorComparator.Configuration createdAffectedPackagesConfiguration(List<TestFile> testFiles, final Collection<? extends ModuleDescriptor> modules) {
         final Set<Name> packagesNames = getTopLevelPackagesFromFileList(getJetFiles(testFiles, false));
 
         Predicate<DeclarationDescriptor> stepIntoFilter = new Predicate<DeclarationDescriptor>() {
             @Override
             public boolean apply(DeclarationDescriptor descriptor) {
+                ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(descriptor);
+                if (!modules.contains(module)) return false;
+
                 if (descriptor instanceof PackageViewDescriptor) {
                     FqName fqName = ((PackageViewDescriptor) descriptor).getFqName();
 
