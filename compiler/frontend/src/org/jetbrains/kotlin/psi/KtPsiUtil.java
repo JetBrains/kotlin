@@ -796,7 +796,7 @@ public class KtPsiUtil {
                     return (KtElement) parent;
                 }
             }
-            if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+            if (current instanceof KtBlockExpression || (current instanceof KtParameter && !skipParameters)) {
                 return (KtElement) current;
             }
             if (current instanceof KtValueArgument) {

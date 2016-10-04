@@ -142,7 +142,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        KtElement enclosingBlock = KtPsiUtil.getEnclosingElementForLocalDeclaration(this, false);
+        KtElement enclosingBlock = KtPsiUtil.getEnclosingElementForLocalDeclaration(this, true);
         if (enclosingBlock != null) return new LocalSearchScope(enclosingBlock);
 
         return super.getUseScope();
