@@ -25,12 +25,10 @@ import java.util.*
 
 internal class IncrementalJvmCompilerRunner(
         workingDir: File,
-        classpath: Iterable<File>,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
         private val sourceAnnotationsRegistry: SourceAnnotationsRegistry?,
         private val javaSourceRoots: Set<File>,
-        private val destinationDir: File,
         private val kapt2GeneratedSourcesDir: File,
         private val artifactFile: File?,
         private val cacheVersions: List<CacheVersion>,
@@ -38,17 +36,19 @@ internal class IncrementalJvmCompilerRunner(
 ) {
     var anyClassesCompiled: Boolean = false
             private set
-    private val classpath = classpath.toMutableList()
-    private val additionalClasspath = LinkedHashSet<File>()
     private val cacheDirectory = File(workingDir, CACHES_DIR_NAME)
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     private val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
 
-    fun compile(allKotlinSources: List<File>, changedFiles: ChangedFiles, args: K2JVMCompilerArguments, messageCollector: MessageCollector): ExitCode {
-        val outputDir = destinationDir
+    fun compile(
+            allKotlinSources: List<File>,
+            changedFiles: ChangedFiles,
+            args: K2JVMCompilerArguments,
+            messageCollector: MessageCollector
+    ): ExitCode {
         val targetId = TargetId(name = args.moduleName, type = "java-production")
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-        var caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+        var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination))
 
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
 
@@ -59,11 +59,11 @@ internal class IncrementalJvmCompilerRunner(
                     caches,
                     lastBuildInfo,
                     changedFiles,
-                    classpath.toList(),
+                    args.classpathAsList,
                     dirtySourcesSinceLastTimeFile,
                     artifactDifferenceRegistryProvider,
                     reporter)
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
+            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
         }
         catch (e: PersistentEnumeratorBase.CorruptedException) {
             caches.clean()
@@ -72,9 +72,9 @@ internal class IncrementalJvmCompilerRunner(
             reporter.report { "Caches are corrupted. Rebuilding. $e" }
             // try to rebuild
             val javaFilesProcessor = ChangedJavaFilesProcessor()
-            caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
             val compilationMode = CompilationMode.Rebuild()
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
+            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
         }
     }
 
@@ -211,7 +211,6 @@ internal class IncrementalJvmCompilerRunner(
             args: K2JVMCompilerArguments,
             caches: IncrementalCachesManager,
             javaFilesProcessor: ChangedJavaFilesProcessor,
-            outputDir: File,
             allKotlinSources: List<File>,
             targetId: TargetId,
             compilationMode: CompilationMode,
@@ -224,7 +223,7 @@ internal class IncrementalJvmCompilerRunner(
         when (compilationMode) {
             is CompilationMode.Incremental -> {
                 dirtySources = allKotlinSources.filterTo(ArrayList()) { it in compilationMode.dirtyFiles }
-                additionalClasspath.add(destinationDir)
+                args.classpathAsList += args.destinationAsFile
             }
             is CompilationMode.Rebuild -> {
                 dirtySources = allKotlinSources.toMutableList()
@@ -258,7 +257,7 @@ internal class IncrementalJvmCompilerRunner(
             val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker, messageCollector)
+            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, { caches.incrementalCache }, lookupTracker, messageCollector)
             exitCode = compilerOutput.exitCode
 
             if (exitCode == ExitCode.OK) {
@@ -350,20 +349,20 @@ internal class IncrementalJvmCompilerRunner(
     private fun compileChanged(
             targets: List<TargetId>,
             sourcesToCompile: Set<File>,
-            outputDir: File,
             args: K2JVMCompilerArguments,
             getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
             lookupTracker: LookupTracker,
             messageCollector: MessageCollector
     ): CompileChangedResults {
         val compiler = K2JVMCompiler()
-        val compileClasspath = classpath + additionalClasspath
+        val outputDir = args.destinationAsFile
+        val classpath = args.classpathAsList
         val moduleFile = makeModuleFile(args.moduleName,
                 isTest = false,
                 outputDir = outputDir,
                 sourcesToCompile = sourcesToCompile,
                 javaSourceRoots = javaSourceRoots,
-                classpath = classpath + additionalClasspath,
+                classpath = classpath,
                 friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -379,7 +378,7 @@ internal class IncrementalJvmCompilerRunner(
             }
 
             reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
-            reporter.report { "compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}" }
+            reporter.report { "compiling with classpath: ${classpath.toList().sorted().joinToString()}" }
             val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
             val exitCode = compiler.exec(messageCollector, compileServices, args)
             return CompileChangedResults(
@@ -414,3 +413,11 @@ internal class IncrementalJvmCompilerRunner(
         const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
     }
 }
+
+internal var K2JVMCompilerArguments.destinationAsFile: File
+        get() = File(destination)
+        set(value) { destination = value.path }
+
+internal var K2JVMCompilerArguments.classpathAsList: List<File>
+    get() = classpath.split(File.pathSeparator).map(::File)
+    set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }
