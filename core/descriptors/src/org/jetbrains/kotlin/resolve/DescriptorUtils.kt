@@ -237,16 +237,17 @@ fun CallableMemberDescriptor.overriddenTreeAsSequence(useOriginal: Boolean): Seq
         sequenceOf(this) + overriddenDescriptors.asSequence().flatMap { it.overriddenTreeAsSequence(useOriginal) }
     }
 
-fun CallableDescriptor.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Sequence<CallableDescriptor> {
-    val set = hashSetOf<CallableDescriptor>()
+fun <D : CallableDescriptor> D.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Sequence<D> {
+    val set = hashSetOf<D>()
 
-    fun CallableDescriptor.doBuildOverriddenTreeAsSequence(): Sequence<CallableDescriptor> {
-        return with(if (useOriginal) original else this) {
+    @Suppress("UNCHECKED_CAST")
+    fun D.doBuildOverriddenTreeAsSequence(): Sequence<D> {
+        return with(if (useOriginal) original as D else this) {
             if (original in set)
                 emptySequence()
             else {
-                set += original
-                sequenceOf(this) + overriddenDescriptors.asSequence().flatMap { it.doBuildOverriddenTreeAsSequence() }
+                set += original as D
+                sequenceOf(this) + (overriddenDescriptors as Collection<D>).asSequence().flatMap { it.doBuildOverriddenTreeAsSequence() }
             }
         }
     }

@@ -6037,6 +6037,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class AccidentalOverrides extends AbstractDiagnosticsTest {
+                @TestMetadata("accidentalOverrideFromGrandparent.kt")
+                public void testAccidentalOverrideFromGrandparent() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/accidentalOverrideFromGrandparent.kt");
+                    doTest(fileName);
+                }
+
                 public void testAllFilesPresentInAccidentalOverrides() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
