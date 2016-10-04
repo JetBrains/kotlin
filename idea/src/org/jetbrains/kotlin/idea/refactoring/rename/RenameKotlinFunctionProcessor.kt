@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
+import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -125,6 +128,34 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return substitutedJavaElement
     }
 
+    override fun substituteElementToRename(element: PsiElement, editor: Editor, renameCallback: Pass<PsiElement>) {
+        fun preprocessAndPass(substitutedJavaElement: PsiElement) {
+            val elementToProcess = if (substitutedJavaElement is KtLightMethod && element is KtDeclaration) {
+                substitutedJavaElement.kotlinOrigin as? KtNamedFunction
+            }
+            else {
+                substitutedJavaElement
+            }
+            renameCallback.pass(elementToProcess)
+        }
+
+        val wrappedMethod = wrapPsiMethod(element) ?: return
+
+        val deepestSuperMethods = wrappedMethod.findDeepestSuperMethods()
+        when {
+            deepestSuperMethods.isEmpty() -> return
+            wrappedMethod.isConstructor || element !is KtNamedFunction -> {
+                javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor, Pass(::preprocessAndPass))
+            }
+            else -> {
+                val declaration = element.unwrapped as? KtNamedDeclaration ?: return
+                checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), "Rename", editor) {
+                    preprocessAndPass(if (it.size > 1) FunctionWithSupersWrapper(element, it) else wrappedMethod)
+                }
+            }
+        }
+    }
+
     override fun createRenameDialog(project: Project, element: PsiElement, nameSuggestionContext: PsiElement?, editor: Editor?): RenameDialog {
         val elementForDialog = (element as? FunctionWithSupersWrapper)?.originalDeclaration ?: element
         return object : RenameDialog(project, elementForDialog, nameSuggestionContext, editor) {
@@ -176,7 +207,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
-        is KtLightMethod -> element
+        is PsiMethod -> element
         is KtNamedFunction, is KtSecondaryConstructor -> runReadAction {
             LightClassUtil.getLightClassMethod(element as KtFunction)
         }
