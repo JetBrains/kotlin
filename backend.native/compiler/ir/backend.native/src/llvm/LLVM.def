@@ -25,5 +25,5 @@ linkerOpts = -stdlib=libc++ -fPIC -fvisibility-inlines-hidden \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport -lpthread -lz -lm \
     -lffi
-
+linkerOpts.linux=-Wl,-z,noexecstack 
 linkerOpts.osx = -lcurses
