@@ -82,9 +82,10 @@ internal interface ContextUtils {
      * Adds global variable with given name and value to [Context.llvmModule] of [context].
      * Returns pointer to this variable.
      */
-    fun addGlobalVar(name: String, value: CompileTimeValue): CompileTimeValue {
+    fun addGlobalConst(name: String, value: CompileTimeValue): CompileTimeValue {
         val global = LLVMAddGlobal(context.llvmModule, value.getLlvmType(), name)
         LLVMSetInitializer(global, value.getLlvmValue())
+        LLVMSetGlobalConstant(global, 1)
         return compileTimeValue(global)
     }
 
@@ -104,9 +105,9 @@ internal interface ContextUtils {
      * Adds global array-typed variable with given name and value to [Context.llvmModule] of [context].
      * Returns pointer to the first element of the global array.
      */
-    fun addGlobalArray(name: String, elemType: LLVMOpaqueType?, elements: List<CompileTimeValue>): CompileTimeValue {
+    fun addGlobalConstArray(name: String, elemType: LLVMOpaqueType?, elements: List<CompileTimeValue>): CompileTimeValue {
         return if (elements.size > 0) {
-            getPtrToFirstElem(addGlobalVar(name, ConstArray(elemType, elements)))
+            getPtrToFirstElem(addGlobalConst(name, ConstArray(elemType, elements)))
         } else {
             Zero(pointerType(elemType))
         }
