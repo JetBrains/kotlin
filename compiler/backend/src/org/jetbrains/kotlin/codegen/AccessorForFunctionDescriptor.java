@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
     private final FunctionDescriptor calleeDescriptor;
@@ -39,7 +38,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
         this.superCallTarget = superCallTarget;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor || AnnotationUtilKt.isPlatformStaticInObjectOrClass(descriptor)
+                   descriptor instanceof ConstructorDescriptor || CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)
                         ? null
                         : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),

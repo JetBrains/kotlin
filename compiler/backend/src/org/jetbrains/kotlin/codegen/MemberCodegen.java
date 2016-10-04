@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -698,7 +697,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             reg = 0;
         }
         else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
-            if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
+            if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }
         }

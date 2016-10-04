@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -3089,7 +3088,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
-                !AnnotationUtilKt.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
+                !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else if (isEnumEntry(calleeContainingClass)) {

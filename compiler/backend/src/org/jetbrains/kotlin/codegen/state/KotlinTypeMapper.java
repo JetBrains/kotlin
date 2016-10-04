@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -683,7 +682,7 @@ public class KotlinTypeMapper {
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
                                              isStaticAccessor(functionDescriptor) ||
-                                             AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
+                                             CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
                 if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                 }

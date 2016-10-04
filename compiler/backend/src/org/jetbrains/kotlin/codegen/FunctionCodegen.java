@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
@@ -202,7 +201,7 @@ public class FunctionCodegen {
             generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
         }
 
-        boolean staticInCompanionObject = AnnotationUtilKt.isPlatformStaticInCompanionObject(functionDescriptor);
+        boolean staticInCompanionObject = CodegenUtilKt.isJvmStaticInCompanionObject(functionDescriptor);
         if (staticInCompanionObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state, parentBodyCodegen));
