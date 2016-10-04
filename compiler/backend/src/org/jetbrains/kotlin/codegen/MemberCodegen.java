@@ -674,7 +674,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             reg = 0;
         }
         else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
-            if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
+            if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }
         }

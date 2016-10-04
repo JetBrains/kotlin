@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -43,22 +43,6 @@ private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
 
 fun DeclarationDescriptor.findStrictfpAnnotation() =
         DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
-
-fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClassOrEnumClass(it) }
-
-fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }
-
-private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
-        when (this) {
-            is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = correspondingProperty
-                predicate(propertyDescriptor.containingDeclaration) &&
-                (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
-            }
-            else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
-        }
 
 fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
     val constant: ConstantValue<*>? = allValueArguments.entries

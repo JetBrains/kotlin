@@ -20,6 +20,9 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -126,3 +131,24 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObject
     }
 
 }
+
+fun CallableDescriptor.isJvmStaticInObjectOrClass(): Boolean =
+        isJvmStaticIn {
+            DescriptorUtils.isNonCompanionObject(it) ||
+            // This is necessary because for generation of @JvmStatic methods from companion of class A
+            // we create a synthesized descriptor containing in class A
+            DescriptorUtils.isClassOrEnumClass(it)
+        }
+
+fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
+        isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
+
+private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
+        when (this) {
+            is PropertyAccessorDescriptor -> {
+                val propertyDescriptor = correspondingProperty
+                predicate(propertyDescriptor.containingDeclaration) &&
+                (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
+            }
+            else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
+        }

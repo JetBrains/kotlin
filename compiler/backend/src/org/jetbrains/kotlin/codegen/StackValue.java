@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -566,7 +565,7 @@ public abstract class StackValue {
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
-        if (AnnotationUtilKt.isPlatformStaticInObjectOrClass(descriptor)) {
+        if (CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)) {
             if (resultReceiver.canHaveSideEffects()) {
                 return coercion(resultReceiver, Type.VOID_TYPE);
             }
@@ -1434,7 +1433,7 @@ public abstract class StackValue {
             else if (dispatchReceiver != null) {
                 CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-                if (AnnotationUtilKt.isPlatformStaticInObjectOrClass(descriptor)) {
+                if (CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
 
