@@ -17,12 +17,12 @@
 package kotlin.js
 
 @native
-interface JsClass<T> {
+interface JsClass<T : Any> {
     val name: String
 }
 
 @native
-fun <T> jsClass(): JsClass<T> = noImpl
+fun <T : Any> jsClass(): JsClass<T> = noImpl
 
-val <T> T.jsClass: JsClass<T>
+val <T : Any> T.jsClass: JsClass<T>
     get() = js("Object").getPrototypeOf(this).constructor
