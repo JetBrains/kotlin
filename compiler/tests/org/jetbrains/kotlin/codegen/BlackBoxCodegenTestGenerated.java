@@ -8485,6 +8485,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlinePropertyAccessors.kt")
+        public void testInlinePropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/inlinePropertyAccessors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt9897_static.kt")
         public void testKt9897_static() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/kt9897_static.kt");
@@ -8524,6 +8530,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("propertyAccess.kt")
         public void testPropertyAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/propertyAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAccessorsCompanion.kt")
+        public void testPropertyAccessorsCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/propertyAccessorsCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAccessorsObject.kt")
+        public void testPropertyAccessorsObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/propertyAccessorsObject.kt");
             doTest(fileName);
         }
 
