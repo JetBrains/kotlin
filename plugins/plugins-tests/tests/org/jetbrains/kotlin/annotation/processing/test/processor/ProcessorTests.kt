@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.annotation.processing.test.processor
 
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.impl.PsiSubstitutorImpl
-import com.intellij.psi.util.PsiTypesUtil
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.annotation.processing.impl.DisposableRef
 import org.jetbrains.kotlin.annotation.processing.impl.KotlinProcessingEnvironment
@@ -34,6 +31,10 @@ import javax.lang.model.element.Element
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
+
+// See EnumArray.kt
+enum class RGBColors { RED, GREEN, BLUE }
+annotation class ColorsAnnotation(val colors: Array<RGBColors>)
 
 class ProcessorTests : AbstractProcessorTest() {
     override val testDataDir = "plugins/annotation-processing/testData/processors"
@@ -127,6 +128,13 @@ class ProcessorTests : AbstractProcessorTest() {
         assertTrue((anno2.getParam("e") as JeArrayAnnotationValue).value.first() is JeTypeAnnotationValue)
     }
     
+    fun testEnumArray() = test("EnumArray", "*") { set, roundEnv, env ->
+        val testClass = env.findClass("org.jetbrains.kotlin.annotation.processing.test.processor.Test")
+        val enumAnno = testClass.getAnnotation(ColorsAnnotation::class.java)
+        assertNotNull(enumAnno)
+        assertEquals(listOf("BLUE", "RED"), enumAnno!!.colors.map { it.name })
+    }
+
     fun testStringArray() = test("StringArray", "*") { set, roundEnv, env ->
         val testClass = env.findClass("Test")
         val suppress = testClass.getAnnotation(Suppress::class.java)
