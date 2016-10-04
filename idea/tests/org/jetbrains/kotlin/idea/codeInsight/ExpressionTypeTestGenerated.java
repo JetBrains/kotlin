@@ -77,6 +77,24 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("PropertyAccessor.kt")
+    public void testPropertyAccessor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/PropertyAccessor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCast.kt")
+    public void testSmartCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SmartCast.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SoftSmartCast.kt")
+    public void testSoftSmartCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SoftSmartCastMultipleTypes.kt")
     public void testSoftSmartCastMultipleTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCastMultipleTypes.kt");

@@ -77,8 +77,8 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         val expressionType = element.getType(bindingContext)
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
-        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue)
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(element, expressionType!!, bindingContext, element.findModuleDescriptor())
+        val types = expressionTypeInfo.dataFlowInfo.getPredictableTypes(dataFlowValue)
         if (!types.isEmpty()) {
             return types.joinToString(separator = " & ") { typeRenderer.renderType(it) } + " (smart cast from " + result + ")"
         }
