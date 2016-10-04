@@ -172,7 +172,7 @@ declaration
 
 statement
   : declaration
-  : expression
+  : annotations expression
   ;
 
 multiplicativeOperation
