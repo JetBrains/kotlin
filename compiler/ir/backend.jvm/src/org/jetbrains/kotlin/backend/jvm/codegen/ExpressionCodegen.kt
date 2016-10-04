@@ -461,7 +461,18 @@ class ExpressionCodegen(
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
-        return super.visitDoWhileLoop(loop, data)
+        val entry = Label()
+        mv.visitLabel(entry)
+
+        loop.body?.apply {
+            gen(this, data)
+        }
+
+        val condition = loop.condition
+        gen(condition, data)
+        BranchedValue.condJump(StackValue.onStack(condition.asmType), entry, false, mv)
+
+        return loop.onStack
     }
 
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
