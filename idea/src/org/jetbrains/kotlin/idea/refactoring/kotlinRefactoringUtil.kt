@@ -38,10 +38,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.popup.JBPopup
-import com.intellij.openapi.ui.popup.JBPopupAdapter
-import com.intellij.openapi.ui.popup.LightweightWindowEvent
-import com.intellij.openapi.ui.popup.PopupChooserBuilder
+import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -49,6 +46,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
+import com.intellij.psi.presentation.java.SymbolPresentationUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
@@ -58,10 +56,12 @@ import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.ui.components.JBList
+import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -241,7 +241,7 @@ fun reportDeclarationConflict(
     conflicts.putValue(declaration, message(RefactoringUIUtil.getDescription(declaration, true).capitalize()))
 }
 
-fun <T, E: PsiElement> getPsiElementPopup(
+fun <T, E : PsiElement> getPsiElementPopup(
         editor: Editor,
         elements: List<T>,
         renderer: PsiElementListCellRenderer<E>,
@@ -270,7 +270,7 @@ fun <T, E: PsiElement> getPsiElementPopup(
                 processor(elements[index])
             }
         }
-        addListener(object: JBPopupAdapter() {
+        addListener(object : JBPopupAdapter() {
             override fun onClosed(event: LightweightWindowEvent?) {
                 highlighter?.dropHighlight()
             }
@@ -656,7 +656,7 @@ fun (() -> Any).runRefactoringWithPostprocessing(
 ) {
     val connection = project.messageBus.connect()
     connection.subscribe(RefactoringEventListener.REFACTORING_EVENT_TOPIC,
-                         object: RefactoringEventListener {
+                         object : RefactoringEventListener {
                              override fun undoRefactoring(refactoringId: String) {
 
                              }
@@ -702,7 +702,7 @@ fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeC
 
 fun invokeOnceOnCommandFinish(action: () -> Unit) {
     val commandProcessor = CommandProcessor.getInstance()
-    val listener = object: CommandAdapter() {
+    val listener = object : CommandAdapter() {
         override fun beforeCommandFinished(event: CommandEvent?) {
             action()
             commandProcessor.removeCommandListener(this)
@@ -752,7 +752,7 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
     return originalList
 }
 
-fun <T> Pass(body: (T) -> Unit) = object: Pass<T>() {
+fun <T> Pass(body: (T) -> Unit) = object : Pass<T>() {
     override fun pass(t: T) = body(t)
 }
 
@@ -885,6 +885,61 @@ fun checkSuperMethods(
     if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
 
     return askUserForMethodsToSearch(declarationDescriptor, overriddenElementsToDescriptor)
+}
+
+fun checkSuperMethodsWithPopup(
+        declaration: KtNamedDeclaration,
+        deepestSuperMethods: List<PsiMethod>,
+        actionString: String,
+        editor: Editor,
+        action: (List<PsiElement>) -> Unit
+) {
+    if (deepestSuperMethods.isEmpty()) return action(listOf(declaration))
+
+    val superMethod = deepestSuperMethods.first()
+
+    val superClass = superMethod.containingClass ?: return action(listOf(declaration))
+
+    if (ApplicationManager.getApplication().isUnitTestMode) return action(deepestSuperMethods)
+
+    val kind = when (declaration) {
+        is KtNamedFunction -> "function"
+        is KtProperty, is KtParameter -> "property"
+        else -> return
+    }
+
+    val unwrappedSupers = deepestSuperMethods.mapNotNull { it.namedUnwrappedElement }
+    val hasJavaMethods = unwrappedSupers.any { it is PsiMethod }
+    val hasKtMembers = unwrappedSupers.any { it is KtNamedDeclaration }
+    val superKind = when {
+        hasJavaMethods && hasKtMembers -> "member"
+        hasJavaMethods -> "method"
+        else -> kind
+    }
+
+    val renameBase = actionString + " base $superKind" + (if (deepestSuperMethods.size > 1) "s" else "")
+    val renameCurrent = actionString + " only current $kind"
+    val title = buildString {
+        append(declaration.name)
+        append(if (superMethod.hasModifierProperty(PsiModifier.ABSTRACT)) " implements " else " overrides ")
+        append(ElementDescriptionUtil.getElementDescription(superMethod, UsageViewTypeLocation.INSTANCE))
+        append(" of ")
+        append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
+    }
+    val list = JBList(renameBase, renameCurrent)
+    JBPopupFactory.getInstance()
+            .createListPopupBuilder(list)
+            .setTitle(title)
+            .setMovable(false)
+            .setResizable(false)
+            .setRequestFocus(true)
+            .setItemChoosenCallback {
+                val value = list.selectedValue as? String ?: return@setItemChoosenCallback
+                val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
+                action(chosenElements)
+            }
+            .createPopup()
+            .showInBestPositionFor(editor)
 }
 
 fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {

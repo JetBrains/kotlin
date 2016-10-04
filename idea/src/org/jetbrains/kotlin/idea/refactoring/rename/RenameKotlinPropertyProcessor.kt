@@ -20,6 +20,7 @@ import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Pass
 import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
+import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -62,6 +64,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -80,9 +83,6 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     override fun setToSearchForTextOccurrences(element: PsiElement, enabled: Boolean) {
         JavaRefactoringSettings.getInstance().RENAME_SEARCH_FOR_TEXT_FOR_FIELD = enabled
     }
-
-    /* Can't properly update getters and setters in Java */
-    override fun isInplaceRenameSupported() = false
 
     private fun getJvmNames(element: PsiElement): Pair<String?, String?> {
         val descriptor = (element.unwrapped as? KtDeclaration)?.resolveToDescriptor() as? PropertyDescriptor ?: return null to null
@@ -251,6 +251,38 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
 
         return declarationToRename
+    }
+
+    override fun substituteElementToRename(element: PsiElement, editor: Editor, renameCallback: Pass<PsiElement>) {
+        val namedUnwrappedElement = element.namedUnwrappedElement ?: return
+
+        val callableDeclaration = namedUnwrappedElement as? KtCallableDeclaration
+                                  ?: throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+
+        fun preprocessAndPass(substitutedJavaElement: PsiElement) {
+            val (getterJvmName, setterJvmName) = getJvmNames(namedUnwrappedElement)
+            val elementToProcess = if (element is KtLightMethod) {
+                val name = element.name
+                if (element.name != getterJvmName && element.name != setterJvmName) {
+                    substitutedJavaElement
+                }
+                else {
+                    substitutedJavaElement.toLightMethods().firstOrNull { it.name == name }
+                }
+            }
+            else substitutedJavaElement
+            renameCallback.pass(elementToProcess)
+        }
+
+        val deepestSuperDeclaration = findDeepestOverriddenDeclaration(callableDeclaration)
+        if (deepestSuperDeclaration == null || deepestSuperDeclaration == callableDeclaration) {
+            return preprocessAndPass(callableDeclaration)
+        }
+
+        val superPsiMethods = deepestSuperDeclaration.getRepresentativeLightMethod().singletonOrEmptyList()
+        checkSuperMethodsWithPopup(callableDeclaration, superPsiMethods, "Rename", editor) {
+            preprocessAndPass(if (it.size > 1) deepestSuperDeclaration else callableDeclaration)
+        }
     }
 
     class PropertyMethodWrapper(val propertyMethod: PsiMethod) : PsiNamedElement by propertyMethod, NavigationItem by propertyMethod {
