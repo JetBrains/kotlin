@@ -15,7 +15,7 @@ fun testWithInstance() {
     assertEquals("E", E.X.jsClass.simpleName)
     assertEquals("Y", E.Y.jsClass.simpleName)
 // TODO uncomment after KT-13338 is fixed
-//    assertEquals("E", E.Z.jsClass.name)
+//    assertEquals("E", E.Z.jsClass.simpleName)
     assertEquals("undefined", undefined().jsClass.simpleName)
     assertEquals("Nested", Outer.Nested().jsClass.simpleName)
     assertEquals("Inner", Outer().Inner().jsClass.simpleName)

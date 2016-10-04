@@ -1,6 +1,6 @@
 package foo
 
-inline fun <reified T> foo(): JsClass<T> {
+inline fun <reified T : Any> foo(): JsClass<T> {
     val T = 1
     return jsClass<T>()
 }
