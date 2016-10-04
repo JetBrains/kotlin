@@ -28,6 +28,12 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
+
+    override fun setUp() {
+        super.setUp()
+        KtPostfixTemplateProvider.previouslySuggestedExpressions = emptyList()
+    }
+
     protected fun doTest(fileName: String) {
 
         myFixture.configureByFile(fileName)
