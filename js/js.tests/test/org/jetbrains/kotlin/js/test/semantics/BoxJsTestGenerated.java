@@ -6175,37 +6175,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), true);
         }
 
-        @TestMetadata("js/js.translator/testData/box/reflection/light")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Light extends AbstractBoxJsTest {
-            public void testAllFilesPresentInLight() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/reflection/light"), Pattern.compile("^([^_](.+))\\.kt$"), true);
-            }
+        @TestMetadata("jsClass.kt")
+        public void testJsClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClass.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("jsClass.kt")
-            public void testJsClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/light/jsClass.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("jsClassName.kt")
+        public void testJsClassName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassName.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("jsClassName.kt")
-            public void testJsClassName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/light/jsClassName.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("jsClassOnReifiedType.kt")
+        public void testJsClassOnReifiedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassOnReifiedType.kt");
+            doTest(fileName);
+        }
 
-            @TestMetadata("jsClassOnReifiedType.kt")
-            public void testJsClassOnReifiedType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/light/jsClassOnReifiedType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("jsClassSimpleName.kt")
-            public void testJsClassSimpleName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/light/jsClassSimpleName.kt");
-                doTest(fileName);
-            }
+        @TestMetadata("jsClassSimpleName.kt")
+        public void testJsClassSimpleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassSimpleName.kt");
+            doTest(fileName);
         }
     }
 
