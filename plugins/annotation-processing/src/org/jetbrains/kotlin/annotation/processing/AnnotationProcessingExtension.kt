@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 import java.io.IOException
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
@@ -132,8 +134,18 @@ abstract class AbstractAnnotationProcessingExtension(
                 elements, types, messager, options, filer, processors,
                 project, psiManager, javaPsiFacade, projectScope, bindingTrace.bindingContext, appendJavaSourceRootsHandler)
 
-        val processingResult = processingEnvironment.doAnnotationProcessing(files)
-        processingEnvironment.dispose()
+        var processingResult: ProcessingResult
+        try {
+            processingResult = processingEnvironment.doAnnotationProcessing(files)
+            processingEnvironment.dispose()
+        }
+        catch (thr: Throwable) {
+            messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "An exception occurred during annotation processing. Stacktrace: \n" + thr.getStackTraceAsString())
+
+            processingResult = ProcessingResult(errorCount = 1, warningCount = 0, wasAnythingGenerated = false)
+        }
 
         annotationProcessingComplete = true
         log {
@@ -162,6 +174,18 @@ abstract class AbstractAnnotationProcessingExtension(
                 module,
                 listOf(generatedSourcesOutputDir),
                 addToEnvironment = false)
+    }
+
+    private fun Throwable.getStackTraceAsString(): String {
+        val out = StringWriter(1024)
+        val printWriter = PrintWriter(out)
+        try {
+            printStackTrace(printWriter)
+            return out.toString().replace("\r", "")
+        }
+        finally {
+            printWriter.close()
+        }
     }
     
     private fun KotlinProcessingEnvironment.createTypeMapper(): KotlinTypeMapper {

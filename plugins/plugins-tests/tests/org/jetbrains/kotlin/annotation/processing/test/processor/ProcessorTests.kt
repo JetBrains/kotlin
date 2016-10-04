@@ -362,4 +362,22 @@ class ProcessorTests : AbstractProcessorTest() {
         test("c", "java.util.Map<java.lang.Integer,Test>")
         test("d", "java.util.Map<java.lang.Integer,Test>")
     }
+
+    fun testExceptionDuringAp() {
+        class HiThere : RuntimeException()
+
+        var kotlinEnv: KotlinProcessingEnvironment? = null
+        try {
+            test("MapMutableMap", "*") { set, roundEnv, env ->
+                kotlinEnv = env as KotlinProcessingEnvironment
+                throw HiThere()
+            }
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.startsWith("ANNOTATION_PROCESSING_ERROR"))
+        }
+        val env = kotlinEnv!!
+
+        assertEquals(1, env.messager.errorCount)
+        assertEquals(0, env.messager.warningCount)
+    }
 }
