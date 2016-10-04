@@ -55,15 +55,15 @@ class OverloadingConflictResolver<C : Any>(
 
     // if result contains only one element -- it is maximally specific; otherwise we have ambiguity
     fun chooseMaximallySpecificCandidates(
-            candidates: Set<C>,
+            candidates: Collection<C>,
             checkArgumentsMode: CheckArgumentTypesMode,
             discriminateGenerics: Boolean,
             isDebuggerContext: Boolean
     ): Set<C> {
-        if (candidates.size == 1) return candidates
+        candidates.setIfOneOrEmpty()?.let { return it }
 
         val fixedCandidates = if (getVariableCandidates(candidates.first()) != null) {
-            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return candidates
+            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return LinkedHashSet(candidates)
         }
         else {
             candidates
@@ -93,8 +93,8 @@ class OverloadingConflictResolver<C : Any>(
     // Sometimes we should compare "copies" from sources and from binary files.
     // But we cannot compare return types for such copies, because it may lead us to recursive problem (see KT-11995).
     // Because of this we compare them without return type and choose descriptor from source if we found duplicate.
-    fun filterOutEquivalentCalls(candidates: Set<C>): Set<C> {
-        if (candidates.size <= 1) return candidates
+    fun filterOutEquivalentCalls(candidates: Collection<C>): Set<C> {
+        candidates.setIfOneOrEmpty()?.let { return it }
 
         val fromSourcesGoesFirst = candidates.sortedBy { if (isFromSources(it.resultingDescriptor)) 0 else 1 }
 
@@ -112,6 +112,12 @@ class OverloadingConflictResolver<C : Any>(
         }
 
         return result
+    }
+
+    private fun Collection<C>.setIfOneOrEmpty() = when(size) {
+        0 -> emptySet()
+        1 -> setOf(single())
+        else -> null
     }
 
     private fun findMaximallySpecific(
@@ -140,7 +146,7 @@ class OverloadingConflictResolver<C : Any>(
             }
 
     // null means ambiguity between variables
-    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Set<C>, isDebuggerContext: Boolean): Set<C>? {
+    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Collection<C>, isDebuggerContext: Boolean): Set<C>? {
         val variableCalls = candidates.mapTo(newResolvedCallSet(candidates.size)) {
             getVariableCandidates(it) ?: throw AssertionError("Regular call among variable-as-function calls: $it")
         }
