@@ -14,53 +14,49 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
-ext.deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
+def deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
                  "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
-		 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar",
-		 "build/classes",
-		 "${project(':Interop:Runtime').buildDir}/classes/main")
+                 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar")
 
 sourceSets {
     compiler {
-      java.srcDirs += 'compiler/ir/backend.native/src/'
-      kotlin.srcDirs += 'compiler/ir/backend.native/src/'
-      compileClasspath = deps
+      java.srcDir 'compiler/ir/backend.native/src/'
+      kotlin.srcDir 'compiler/ir/backend.native/src/'
     }
     cli_bc {
-      java.srcDirs += 'cli.bc/src'
-      kotlin.srcDirs += 'cli.bc/src'
-      compileClasspath = deps.plus(compiler.output)
+      java.srcDir 'cli.bc/src'
+      kotlin.srcDir 'cli.bc/src'
     }
     bc_frontend {
-     java.srcDirs += 'bc.frontend/src'
-     kotlin.srcDirs += 'bc.frontend/src'
-     compileClasspath = deps
+     java.srcDir 'bc.frontend/src'
+     kotlin.srcDir 'bc.frontend/src'
    }
 }
 
+dependencies {
+   compilerCompile deps
+
+   cli_bcCompile deps
+   cli_bcCompile sourceSets.compiler.output
+
+   bc_frontendCompile deps
+}
+
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
-compilerClasses.dependsOn 'genInteropStubs'
-cli_bcClasses.dependsOn 'compilerClasses'
 
-
-def runtime = []
 
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-   project.sourceSets.each{runtime.add(it.output.classesDir)}
-   deps.each{runtime.add(it)}
-   classpath = files(runtime)
+   classpath sourceSets.cli_bc.runtimeClasspath
    args '../experiments/translator/src/test/kotlin/tests/classfields_1/classfields_1.kt'
    args '-output', "$buildDir/out.bc"
 
    jvmArgs '-ea'
 
-   dependsOn ':backend.native:build'
    dependsOn ':runtime:build'
 
    doFirst {
        args '-runtime', project(':runtime').build.outputs.files.singleFile
-       println(args)
    }
 }
 
