@@ -171,7 +171,6 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
             assertReportExists("projA")
             assertContains(":projA:compileKotlin")
-            assertContains("[KOTLIN] is incremental == true")
             assertNotContains("projA:compileKotlin UP-TO-DATE")
             assertReportExists("projB")
             assertContains(":projB:compileKotlin")
