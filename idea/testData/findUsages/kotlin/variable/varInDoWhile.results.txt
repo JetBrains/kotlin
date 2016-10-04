@@ -1,0 +1,2 @@
+Receiver 7 } while (message.isEmpty())
+Value read 6 println(message)

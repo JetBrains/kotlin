@@ -1090,4 +1090,10 @@ public class RenameTestGenerated extends AbstractRenameTest {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/topLevelPropertyRedeclaration/topLevelPropertyRedeclaration.test");
         doTest(fileName);
     }
+
+    @TestMetadata("varInDoWhile/varInDoWhile.test")
+    public void testVarInDoWhile_VarInDoWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/varInDoWhile/varInDoWhile.test");
+        doTest(fileName);
+    }
 }

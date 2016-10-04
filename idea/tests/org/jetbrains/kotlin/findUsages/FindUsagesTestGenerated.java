@@ -1320,6 +1320,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("varInDoWhile.0.kt")
+            public void testVarInDoWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/varInDoWhile.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("writeAccess.0.kt")
             public void testWriteAccess() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/writeAccess.0.kt");
