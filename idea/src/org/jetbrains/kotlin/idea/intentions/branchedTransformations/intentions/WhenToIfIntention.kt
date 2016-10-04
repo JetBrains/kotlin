@@ -33,6 +33,7 @@ class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenEx
         if (entries.isEmpty()) return null
         val lastEntry = entries.last()
         if (entries.any { it != lastEntry && it.isElse }) return null
+        if (entries.all { it.isElse }) return null // 'when' with only 'else' branch is not supported
         return element.whenKeyword.textRange
     }
 
