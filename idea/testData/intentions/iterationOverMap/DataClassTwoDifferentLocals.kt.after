@@ -2,10 +2,9 @@
 
 data class XY(val x: String, val y: Int)
 fun test(xys: Array<XY>) {
-    for (<caret>xy in xys) {
-        val x = xy.x
+    for ((x) in xys) {
         println(x)
-        val xx = xy.x
+        val xx = x
         println(xx)
     }
 }
