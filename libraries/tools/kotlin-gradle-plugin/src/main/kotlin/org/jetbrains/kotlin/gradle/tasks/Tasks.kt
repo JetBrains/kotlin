@@ -176,170 +176,23 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
-        anyClassesCompiled = false
-        val targetId = TargetId(name = args.moduleName, type = "java-production")
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
         val reporter = GradleIncReporter(project.rootProject.projectDir)
-        var caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
-
-        reporter.report { "Last Kotlin Build info for task $path -- $lastBuildInfo" }
-
-        try {
-            val javaFilesProcessor = ChangedJavaFilesProcessor()
-            val compilationMode = calculateSourcesToCompile(javaFilesProcessor,
-                    caches,
-                    lastBuildInfo,
-                    changedFiles,
-                    classpath.toList(),
-                    dirtySourcesSinceLastTimeFile,
-                    artifactDifferenceRegistryProvider,
-                    reporter)
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
-        }
-        catch (e: PersistentEnumeratorBase.CorruptedException) {
-            caches.clean()
-            artifactDifferenceRegistryProvider?.clean()
-
-            reporter.report { "Caches are corrupted. Rebuilding. $e" }
-            // try to rebuild
-            val javaFilesProcessor = ChangedJavaFilesProcessor()
-            caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
-            val compilationMode = CompilationMode.Rebuild()
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
-        }
-    }
-
-    private fun compileIncrementally(
-            args: K2JVMCompilerArguments,
-            caches: IncrementalCachesManager,
-            javaFilesProcessor: ChangedJavaFilesProcessor,
-            outputDir: File,
-            allKotlinSources: List<File>,
-            targetId: TargetId,
-            compilationMode: CompilationMode,
-            reporter: IncReporter
-    ) {
-        val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
-        val dirtySources: MutableList<File>
-
-        when (compilationMode) {
-            is CompilationMode.Incremental -> {
-                dirtySources = allKotlinSources.filterTo(ArrayList()) { it in compilationMode.dirtyFiles }
-                additionalClasspath.add(destinationDir)
-            }
-            is CompilationMode.Rebuild -> {
-                dirtySources = allKotlinSources.toMutableList()
-                // there is no point in updating annotation file since all files will be compiled anyway
-                kaptAnnotationsFileUpdater = null
-            }
-            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode.javaClass}")
-        }
-
-        @Suppress("NAME_SHADOWING")
-        var compilationMode = compilationMode
-
-        reporter.report { "Artifact to register difference for task $path: $artifactFile" }
-        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
-        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
-        val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
-        val buildDirtyFqNames = HashSet<FqName>()
-
-        var exitCode = ExitCode.OK
-        while (dirtySources.any()) {
-            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
-            val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
-            caches.incrementalCache.markOutputClassesDirty(dirtySources)
-            caches.incrementalCache.removeClassfilesBySources(dirtySources)
-
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.isFile }
-            if (sourcesToCompile.isNotEmpty()) {
-                reporter.report { "compile iteration: ${reporter.report { reporter.pathsAsString(sourcesToCompile) }}" }
-            }
-
-            val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
-            dirtySourcesSinceLastTimeFile.writeText(text)
-
-            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker)
-            exitCode = compilerOutput.exitCode
-
-            if (exitCode == ExitCode.OK) {
-                dirtySourcesSinceLastTimeFile.delete()
-                kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
-            } else {
-                kaptAnnotationsFileUpdater?.revert()
-                break
-            }
-
-            val generatedClassFiles = compilerOutput.generatedFiles
-            allGeneratedFiles.addAll(generatedClassFiles)
-            val compilationResult = updateIncrementalCaches(listOf(targetId), generatedClassFiles,
-                    compiledWithErrors = exitCode != ExitCode.OK,
-                    getIncrementalCache = { caches.incrementalCache })
-
-            caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-
-            val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
-            val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
-
-            if (compilationMode is CompilationMode.Rebuild) {
-                artifactFile?.let { artifactFile ->
-                    artifactDifferenceRegistryProvider?.withRegistry(reporter) { registry ->
-                        registry.remove(artifactFile)
-                    }
-                }
-                break
-            }
-
-            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), reporter)
-            val generatedJavaFilesChanges = javaFilesProcessor.process(generatedJavaFilesDiff)
-            val compiledInThisIterationSet = sourcesToCompile.toHashSet()
-            val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
-                is ChangesEither.Unknown -> {
-                    reporter.report { "Could not get changes for generated java files, recompiling all kotlin" }
-                    compilationMode = CompilationMode.Rebuild()
-                    allKotlinSources.toSet()
-                }
-                is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, reporter, excludes = compiledInThisIterationSet)
-                }
-                else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
-            }
-
-            with (dirtySources) {
-                clear()
-                addAll(dirtyKotlinFilesFromJava)
-                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
-                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
-            }
-
-            buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
-            buildDirtyFqNames.addAll(dirtyClassFqNames)
-
-            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
-        }
-
-        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
-            buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
-        }
-        if (artifactFile != null && artifactDifferenceRegistryProvider != null) {
-            val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-            val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
-            artifactDifferenceRegistryProvider!!.withRegistry(reporter) {registry ->
-                registry.add(artifactFile!!, artifactDifference)
-            }
-            reporter.report {
-                val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
-                "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
-                        "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
-            }
-        }
-
-        artifactDifferenceRegistryProvider?.withRegistry(reporter) {
-            it.flush(memoryCachesOnly = true)
-        }
-        caches.close(flush = true)
-        reporter.report { "flushed incremental caches" }
-        processCompilerExitCode(exitCode)
+        val compiler = IncrementalJvmCompilerRunner(classpath.toList(),
+                kaptAnnotationsFileUpdater,
+                artifactDifferenceRegistryProvider,
+                sourceAnnotationsRegistry,
+                getJavaSourceRoots(),
+                logger,
+                destinationDir,
+                dirtySourcesSinceLastTimeFile,
+                lastBuildInfoFile,
+                kapt2GeneratedSourcesDir,
+                artifactFile,
+                cacheDirectory,
+                cacheVersions,
+                reporter)
+        compiler.compile(allKotlinSources, changedFiles, args)
+        anyClassesCompiled = compiler.anyClassesCompiled
     }
 
     private fun cleanupOnError() {
@@ -357,56 +210,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
             ExitCode.OK -> {
-                sourceAnnotationsRegistry?.flush()
-                cacheVersions.forEach { it.saveIfNeeded() }
                 logger.kotlinInfo("Compilation succeeded")
             }
-        }
-    }
-
-    private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
-
-    private fun compileChanged(
-            targets: List<TargetId>,
-            sourcesToCompile: Set<File>,
-            outputDir: File,
-            args: K2JVMCompilerArguments,
-            getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
-            lookupTracker: LookupTracker
-    ): CompileChangedResults {
-        val moduleFile = makeModuleFile(args.moduleName,
-                isTest = false,
-                outputDir = outputDir,
-                sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = getJavaSourceRoots(),
-                classpath = compileClasspath,
-                friendDirs = listOf())
-        args.module = moduleFile.absolutePath
-        val outputItemCollector = OutputItemsCollectorImpl()
-        val messageCollector = GradleMessageCollector(logger, outputItemCollector)
-        sourceAnnotationsRegistry?.clear()
-
-        try {
-            val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
-            val compilationCanceledStatus = object : CompilationCanceledStatus {
-                override fun checkCanceled() {
-                }
-            }
-
-            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
-            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
-            val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
-            val exitCode = compiler.exec(messageCollector, compileServices, args)
-            return CompileChangedResults(
-                    exitCode,
-                    outputItemCollector.generatedFiles(
-                            targets = targets,
-                            representativeTarget = targets.first(),
-                            getSources = { sourcesToCompile },
-                            getOutputDir = { outputDir }))
-        }
-        finally {
-            moduleFile.delete()
         }
     }
 

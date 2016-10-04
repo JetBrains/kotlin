@@ -1,0 +1,390 @@
+package org.jetbrains.kotlin.gradle.tasks
+
+import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
+import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
+import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.com.intellij.util.io.PersistentEnumeratorBase
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
+import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import java.io.File
+import java.util.*
+
+internal class IncrementalJvmCompilerRunner(
+        classpath: Iterable<File>,
+        private var kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
+        private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
+        private val sourceAnnotationsRegistry: SourceAnnotationsRegistry?,
+        private val javaSourceRoots: Set<File>,
+        private val logger: Logger,
+        private val destinationDir: File,
+        private val dirtySourcesSinceLastTimeFile: File,
+        private val lastBuildInfoFile: File,
+        private val kapt2GeneratedSourcesDir: File,
+        private val artifactFile: File?,
+        private val cacheDirectory: File,
+        private val cacheVersions: List<CacheVersion>,
+        private val reporter: IncReporter
+) {
+    var anyClassesCompiled: Boolean = false
+            private set
+    private val classpath = classpath.toMutableList()
+    private val additionalClasspath = LinkedHashSet<File>()
+
+    fun compile(allKotlinSources: List<File>, changedFiles: ChangedFiles, args: K2JVMCompilerArguments): ExitCode {
+        val outputDir = destinationDir
+        val targetId = TargetId(name = args.moduleName, type = "java-production")
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        var caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+
+        reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
+
+        return try {
+            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            val compilationMode = calculateSourcesToCompile(
+                    javaFilesProcessor,
+                    caches,
+                    lastBuildInfo,
+                    changedFiles,
+                    classpath.toList(),
+                    dirtySourcesSinceLastTimeFile,
+                    artifactDifferenceRegistryProvider,
+                    reporter)
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+        }
+        catch (e: PersistentEnumeratorBase.CorruptedException) {
+            caches.clean()
+            artifactDifferenceRegistryProvider?.clean()
+
+            reporter.report { "Caches are corrupted. Rebuilding. $e" }
+            // try to rebuild
+            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
+            val compilationMode = CompilationMode.Rebuild()
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+        }
+    }
+
+    private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
+
+    private sealed class CompilationMode {
+        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
+        class Rebuild : CompilationMode()
+    }
+
+    private fun calculateSourcesToCompile(
+            javaFilesProcessor: ChangedJavaFilesProcessor,
+            caches: IncrementalCachesManager,
+            lastBuildInfo: BuildInfo?,
+            changedFiles: ChangedFiles,
+            classpath: Iterable<File>,
+            dirtySourcesSinceLastTimeFile: File,
+            artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
+            reporter: IncReporter
+    ): CompilationMode {
+        fun rebuild(reason: ()->String): CompilationMode {
+            reporter.report {"Non-incremental compilation will be performed: ${reason()}"}
+            caches.clean()
+            dirtySourcesSinceLastTimeFile.delete()
+            return CompilationMode.Rebuild()
+        }
+
+        if (changedFiles !is ChangedFiles.Known) return rebuild {"inputs' changes are unknown (first or clean build)"}
+
+        val removedClassFiles = changedFiles.removed.filter(File::isClassFile)
+        if (removedClassFiles.any()) return rebuild {"Removed class files: ${reporter.pathsAsString(removedClassFiles)}"}
+
+        val modifiedClassFiles = changedFiles.modified.filter(File::isClassFile)
+        if (modifiedClassFiles.any()) return rebuild {"Modified class files: ${reporter.pathsAsString(modifiedClassFiles)}"}
+
+        val classpathSet = classpath.toHashSet()
+        val modifiedClasspathEntries = changedFiles.modified.filter {it in classpathSet}
+        val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo, artifactDifferenceRegistryProvider, reporter)
+        if (classpathChanges is ChangesEither.Unknown) {
+            return rebuild {"could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}"}
+        }
+        if (classpathChanges !is ChangesEither.Known) {
+            throw AssertionError("Unknown implementation of ChangesEither: ${classpathChanges.javaClass}")
+        }
+        val javaFilesDiff = FileCollectionDiff(
+                newOrModified = changedFiles.modified.filter(File::isJavaFile),
+                removed = changedFiles.removed.filter(File::isJavaFile))
+        val javaFilesChanges = javaFilesProcessor.process(javaFilesDiff)
+        val affectedJavaSymbols = when (javaFilesChanges) {
+            is ChangesEither.Known -> javaFilesChanges.lookupSymbols
+            is ChangesEither.Unknown -> return rebuild {"Could not get changes for java files"}
+        }
+
+        val dirtyFiles = HashSet<File>(with(changedFiles) {modified.size + removed.size})
+        with(changedFiles) {
+            modified.asSequence() + removed.asSequence()
+        }.forEach {if (it.isKotlinFile()) dirtyFiles.add(it)}
+
+        val lookupSymbols = HashSet<LookupSymbol>()
+        lookupSymbols.addAll(affectedJavaSymbols)
+        lookupSymbols.addAll(classpathChanges.lookupSymbols)
+
+        if (lookupSymbols.any()) {
+            val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
+            dirtyFiles.addAll(dirtyFilesFromLookups)
+        }
+
+        val dirtyClassesFqNames = classpathChanges.fqNames.flatMap {withSubtypes(it, listOf(caches.incrementalCache))}
+        if (dirtyClassesFqNames.any()) {
+            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassesFqNames, reporter)
+            dirtyFiles.addAll(dirtyFilesFromFqNames)
+        }
+
+        if (dirtySourcesSinceLastTimeFile.exists()) {
+            val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter(File::exists)
+            if (files.isNotEmpty()) {
+                reporter.report {"Source files added since last compilation: ${reporter.pathsAsString(files)}"}
+            }
+
+            dirtyFiles.addAll(files)
+        }
+
+        return CompilationMode.Incremental(dirtyFiles)
+    }
+
+    private fun getClasspathChanges(
+            modifiedClasspath: List<File>,
+            lastBuildInfo: BuildInfo?,
+            artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
+            reporter: IncReporter
+    ): ChangesEither {
+        if (modifiedClasspath.isEmpty()) {
+            reporter.report {"No classpath changes"}
+            return ChangesEither.Known()
+        }
+        if (artifactDifferenceRegistryProvider == null) {
+            reporter.report {"No artifact history provider"}
+            return ChangesEither.Unknown()
+        }
+
+        val lastBuildTS = lastBuildInfo?.startTS
+        if (lastBuildTS == null) {
+            reporter.report {"Could not determine last build timestamp"}
+            return ChangesEither.Unknown()
+        }
+
+        val symbols = HashSet<LookupSymbol>()
+        val fqNames = HashSet<FqName>()
+        for (file in modifiedClasspath) {
+            val diffs = artifactDifferenceRegistryProvider.withRegistry(reporter) {artifactDifferenceRegistry ->
+                artifactDifferenceRegistry[file]
+            }
+            if (diffs == null) {
+                reporter.report {"Could not get changes for file: $file"}
+                return ChangesEither.Unknown()
+            }
+
+            val (beforeLastBuild, afterLastBuild) = diffs.partition {it.buildTS < lastBuildTS}
+            if (beforeLastBuild.isEmpty()) {
+                reporter.report {"No known build preceding timestamp $lastBuildTS for file $file"}
+                return ChangesEither.Unknown()
+            }
+
+            afterLastBuild.forEach {
+                symbols.addAll(it.dirtyData.dirtyLookupSymbols)
+                fqNames.addAll(it.dirtyData.dirtyClassesFqNames)
+            }
+        }
+
+        return ChangesEither.Known(symbols, fqNames)
+    }
+
+    private fun compileIncrementally(
+            args: K2JVMCompilerArguments,
+            caches: IncrementalCachesManager,
+            javaFilesProcessor: ChangedJavaFilesProcessor,
+            outputDir: File,
+            allKotlinSources: List<File>,
+            targetId: TargetId,
+            compilationMode: CompilationMode,
+            reporter: IncReporter
+    ): ExitCode {
+        val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
+        val dirtySources: MutableList<File>
+
+        when (compilationMode) {
+            is CompilationMode.Incremental -> {
+                dirtySources = allKotlinSources.filterTo(ArrayList()) { it in compilationMode.dirtyFiles }
+                additionalClasspath.add(destinationDir)
+            }
+            is CompilationMode.Rebuild -> {
+                dirtySources = allKotlinSources.toMutableList()
+                // there is no point in updating annotation file since all files will be compiled anyway
+                kaptAnnotationsFileUpdater = null
+            }
+            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode.javaClass}")
+        }
+
+        @Suppress("NAME_SHADOWING")
+        var compilationMode = compilationMode
+
+        reporter.report { "Artifact to register difference for: $artifactFile" }
+        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
+        BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+        val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
+        val buildDirtyFqNames = HashSet<FqName>()
+
+        var exitCode = ExitCode.OK
+        while (dirtySources.any()) {
+            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+            val outdatedClasses = caches.incrementalCache.classesBySources(dirtySources)
+            caches.incrementalCache.markOutputClassesDirty(dirtySources)
+            caches.incrementalCache.removeClassfilesBySources(dirtySources)
+
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.isFile }
+            if (sourcesToCompile.isNotEmpty()) {
+                reporter.report { "compile iteration: ${reporter.pathsAsString(sourcesToCompile)}" }
+            }
+
+            val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
+            dirtySourcesSinceLastTimeFile.writeText(text)
+
+            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker)
+            exitCode = compilerOutput.exitCode
+
+            if (exitCode == ExitCode.OK) {
+                dirtySourcesSinceLastTimeFile.delete()
+                kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
+            } else {
+                kaptAnnotationsFileUpdater?.revert()
+                break
+            }
+
+            val generatedClassFiles = compilerOutput.generatedFiles
+            allGeneratedFiles.addAll(generatedClassFiles)
+            val compilationResult = updateIncrementalCaches(listOf(targetId), generatedClassFiles,
+                    compiledWithErrors = exitCode != ExitCode.OK,
+                    getIncrementalCache = { caches.incrementalCache })
+
+            caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
+
+            val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
+            val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
+
+            if (compilationMode is CompilationMode.Rebuild) {
+                artifactFile?.let { artifactFile ->
+                    artifactDifferenceRegistryProvider?.withRegistry(reporter) { registry ->
+                        registry.remove(artifactFile)
+                    }
+                }
+                break
+            }
+
+            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), reporter)
+            val generatedJavaFilesChanges = javaFilesProcessor.process(generatedJavaFilesDiff)
+            val compiledInThisIterationSet = sourcesToCompile.toHashSet()
+            val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
+                is ChangesEither.Unknown -> {
+                    reporter.report { "Could not get changes for generated java files, recompiling all kotlin" }
+                    compilationMode = CompilationMode.Rebuild()
+                    allKotlinSources.toSet()
+                }
+                is ChangesEither.Known -> {
+                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, reporter, excludes = compiledInThisIterationSet)
+                }
+                else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
+            }
+
+            with (dirtySources) {
+                clear()
+                addAll(dirtyKotlinFilesFromJava)
+                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
+                addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
+            }
+
+            buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
+            buildDirtyFqNames.addAll(dirtyClassFqNames)
+
+            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
+        }
+
+        if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
+            buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
+        }
+        if (artifactFile != null && artifactDifferenceRegistryProvider != null) {
+            val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
+            val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
+            artifactDifferenceRegistryProvider.withRegistry(reporter) {registry ->
+                registry.add(artifactFile, artifactDifference)
+            }
+            reporter.report {
+                val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
+                "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
+                        "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
+            }
+        }
+
+        artifactDifferenceRegistryProvider?.withRegistry(reporter) {
+            it.flush(memoryCachesOnly = true)
+        }
+        caches.close(flush = true)
+        reporter.report { "flushed incremental caches" }
+
+        if (exitCode == ExitCode.OK) {
+            sourceAnnotationsRegistry?.flush()
+            cacheVersions.forEach { it.saveIfNeeded() }
+        }
+
+        return exitCode
+    }
+
+    private fun compileChanged(
+            targets: List<TargetId>,
+            sourcesToCompile: Set<File>,
+            outputDir: File,
+            args: K2JVMCompilerArguments,
+            getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
+            lookupTracker: LookupTracker
+    ): CompileChangedResults {
+        val compiler = K2JVMCompiler()
+        val compileClasspath = classpath + additionalClasspath
+        val moduleFile = makeModuleFile(args.moduleName,
+                isTest = false,
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = javaSourceRoots,
+                classpath = classpath + additionalClasspath,
+                friendDirs = listOf())
+        args.module = moduleFile.absolutePath
+        val outputItemCollector = OutputItemsCollectorImpl()
+        val messageCollector = GradleMessageCollector(logger, outputItemCollector)
+        sourceAnnotationsRegistry?.clear()
+
+        try {
+            val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
+            val compilationCanceledStatus = object : CompilationCanceledStatus {
+                override fun checkCanceled() {
+                }
+            }
+
+            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
+            val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
+            val exitCode = compiler.exec(messageCollector, compileServices, args)
+            return CompileChangedResults(
+                    exitCode,
+                    outputItemCollector.generatedFiles(
+                            targets = targets,
+                            representativeTarget = targets.first(),
+                            getSources = {sourcesToCompile},
+                            getOutputDir = {outputDir}))
+        }
+        finally {
+            moduleFile.delete()
+        }
+    }
+}
