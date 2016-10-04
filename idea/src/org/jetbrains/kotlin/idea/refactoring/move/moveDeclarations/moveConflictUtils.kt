@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -40,6 +41,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
@@ -147,25 +150,28 @@ class MoveConflictChecker(
         val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
         for (declaration in elementsToMove) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
-                refExpr.references
-                        .forEach { ref ->
-                            val target = ref.resolve() ?: return@forEach
-                            if (target.isInsideOf(elementsToMove)) return@forEach
-                            if (target in resolveScope) return@forEach
-                            if (target is KtTypeParameter) return@forEach
+                val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
-                            val superMethods = SmartSet.create<PsiMethod>()
-                            target.toLightMethods().forEach { superMethods += it.findDeepestSuperMethods() }
-                            if (superMethods.any { it in resolveScope }) return@forEach
+                val module = targetDescriptor.module
+                if (module.builtIns.builtInsModule == module) return@forEachDescendantOfType
 
-                            val refContainer = ref.element.getStrictParentOfType<KtNamedDeclaration>() ?: return@forEach
-                            val scopeDescription = RefactoringUIUtil.getDescription(refContainer, true)
-                            val message = RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.in.module.2",
-                                                                    RefactoringUIUtil.getDescription(target, true),
-                                                                    scopeDescription,
-                                                                    CommonRefactoringUtil.htmlEmphasize(targetModule.name))
-                            conflicts.putValue(target, CommonRefactoringUtil.capitalize(message))
-                        }
+                val target = DescriptorToSourceUtilsIde.getAnyDeclaration(project, targetDescriptor) ?: return@forEachDescendantOfType
+
+                if (target.isInsideOf(elementsToMove)) return@forEachDescendantOfType
+                if (target in resolveScope) return@forEachDescendantOfType
+                if (target is KtTypeParameter) return@forEachDescendantOfType
+
+                val superMethods = SmartSet.create<PsiMethod>()
+                target.toLightMethods().forEach { superMethods += it.findDeepestSuperMethods() }
+                if (superMethods.any { it in resolveScope }) return@forEachDescendantOfType
+
+                val refContainer = refExpr.getStrictParentOfType<KtNamedDeclaration>() ?: return@forEachDescendantOfType
+                val scopeDescription = RefactoringUIUtil.getDescription(refContainer, true)
+                val message = RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.in.module.2",
+                                                        RefactoringUIUtil.getDescription(target, true),
+                                                        scopeDescription,
+                                                        CommonRefactoringUtil.htmlEmphasize(targetModule.name))
+                conflicts.putValue(target, CommonRefactoringUtil.capitalize(message))
             }
         }
     }
