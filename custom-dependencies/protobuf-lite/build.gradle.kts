@@ -1,44 +1,119 @@
 
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.zip.ZipOutputStream
 
 buildscript {
     repositories {
-        mavenLocal()
-        maven { setUrl(rootProject.extra["repo"]) }
-        mavenCentral()
+        jcenter()
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["kotlinVersion"]}")
-        classpath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${rootProject.extra["kotlinVersion"]}")
+        classpath("com.github.jengelman.gradle.plugins:shadow:1.2.3")
     }
 }
 
-apply { plugin("kotlin") }
+apply { plugin("com.github.johnrengelman.shadow") }
 
 repositories {
     mavenCentral()
 }
 
 val protobufCfg = configurations.create("protobuf-java")
+val protobufVersion = "2.6.1"
 
 dependencies {
-    "protobuf-java"("com.google.protobuf:protobuf-java:2.6.1")
-    "protobuf-java"("org.fusesource.jansi:jansi:1.11")
+    "protobuf-java"("com.google.protobuf:protobuf-java:$protobufVersion")
+//    "protobuf-java"("org.fusesource.jansi:jansi:1.11")
 }
 
-task("prepare") {
-    dependsOn(protobufCfg)
-    val inputJar = protobufCfg.files.find { it.name.startsWith("protobuf-java") }?.let { it.canonicalPath } ?: throw Exception("protobuf-java jar not found")
-    val outputJar = "$buildDir/jars/protobuf-2.6.1-lite.jar"
-    inputs.file(inputJar)
-    outputs.file(outputJar)
-    doLast {
-        K2JVMCompiler().exec(System.out,
-                "-script",
-                "$rootDir/generators/infrastructure/build-protobuf-lite.kts",
-                inputJar,
-                outputJar)
+val protobufJarPrefix = "protobuf-$protobufVersion"
+val jarsDir = "$buildDir/jars"
+val renamedOutputJarPathWithoutExt = "$jarsDir/$protobufJarPrefix-relocated"
+val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
+val outputJarPath = "$jarsDir/$protobufJarPrefix-lite.jar"
+
+val relocateTask = task<ShadowJar>("relocate-protobuf") {
+    classifier = renamedOutputJarPathWithoutExt // TODO: something fishy about the usage here, according to docs only suffix is enough here, but it doesn't work
+    this.configurations = listOf(protobufCfg)
+    from(protobufCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
+    into(jarsDir)
+    relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
+        exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
 }
 
+task("prepare") {
+    dependsOn(relocateTask)
+    val inputJar = renamedOutputJarPath
+    println("Processing jar $inputJar")
+    println("into jar $outputJarPath")
+    inputs.files(inputJar)
+    outputs.file(outputJarPath)
+    File(outputJarPath).parentFile.mkdirs()
+    doLast {
+        val INCLUDE_START = "<include>**/"
+        val INCLUDE_END = ".java</include>"
+        val POM_PATH = "META-INF/maven/com.google.protobuf/protobuf-java/pom.xml"
+
+        fun loadAllFromJar(file: File): Map<String, Pair<JarEntry, ByteArray>> {
+            val result = hashMapOf<String, Pair<JarEntry, ByteArray>>()
+            val jar = JarFile(file)
+            try {
+                for (jarEntry in jar.entries()) {
+                    result[jarEntry.name] = Pair(jarEntry, jar.getInputStream(jarEntry).readBytes())
+                }
+            }
+            finally {
+                // Yes, JarFile does not extend Closeable on JDK 6 so we can't use "use" here
+                jar.close()
+            }
+            return result
+        }
+
+        val allFiles = loadAllFromJar(File(inputJar))
+
+        val keepClasses = arrayListOf<String>()
+
+        val pomBytes = allFiles[POM_PATH]?.second ?: error("pom.xml is not found in protobuf jar at $POM_PATH")
+        val lines = String(pomBytes).lines()
+
+        var liteProfileReached = false
+        for (lineUntrimmed in lines) {
+            val line = lineUntrimmed.trim()
+
+            if (liteProfileReached && line == "</includes>") {
+                break
+            }
+            else if (line == "<id>lite</id>") {
+                liteProfileReached = true
+                continue
+            }
+
+            if (liteProfileReached && line.startsWith(INCLUDE_START) && line.endsWith(INCLUDE_END)) {
+                keepClasses.add(line.removeSurrounding(INCLUDE_START, INCLUDE_END))
+            }
+        }
+
+        assert(liteProfileReached && keepClasses.isNotEmpty()) { "Wrong pom.xml or the format has changed, check its contents at $POM_PATH" }
+
+        val outputFile = File(outputJarPath).apply { delete() }
+        ZipOutputStream(BufferedOutputStream(FileOutputStream(outputFile))).use { output ->
+            for ((name, value) in allFiles) {
+                val className = name.substringAfter("org/jetbrains/kotlin/protobuf/").substringBeforeLast(".class")
+                if (keepClasses.any { className == it || className.startsWith(it + "$") }) {
+                    val (entry, bytes) = value
+                    output.putNextEntry(entry)
+                    output.write(bytes)
+                    output.closeEntry()
+                }
+            }
+        }
+    }
+}
+
+defaultTasks("prepare")
