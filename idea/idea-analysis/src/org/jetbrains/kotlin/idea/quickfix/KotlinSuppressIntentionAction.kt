@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList
@@ -90,7 +89,7 @@ class KotlinSuppressIntentionAction private constructor(
 
             return
         }
-        
+
         addArgumentToSuppressAnnotation(suppressAnnotation, id)
     }
 
@@ -109,10 +108,8 @@ class KotlinSuppressIntentionAction private constructor(
         val suppressAt = caretBox.expression
         assert(suppressAt !is KtDeclaration) { "Declarations should have been checked for above" }
 
-        val parentheses = PsiPrecedences.getPrecedence(suppressAt) > PsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
         val placeholderText = "PLACEHOLDER_ID"
-        val inner = if (parentheses) "($placeholderText)" else placeholderText
-        val annotatedExpression = KtPsiFactory(suppressAt).createExpression(suppressAnnotationText(id) + "\n" + inner)
+        val annotatedExpression = KtPsiFactory(suppressAt).createExpression(suppressAnnotationText(id) + "\n" + placeholderText)
 
         val copy = suppressAt.copy()!!
 
