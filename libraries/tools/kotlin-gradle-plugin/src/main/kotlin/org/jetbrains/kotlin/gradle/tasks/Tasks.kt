@@ -177,12 +177,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
         val reporter = GradleIncReporter(project.rootProject.projectDir)
+        val messageCollector = GradleMessageCollector(logger)
         val compiler = IncrementalJvmCompilerRunner(classpath.toList(),
                 kaptAnnotationsFileUpdater,
                 artifactDifferenceRegistryProvider,
                 sourceAnnotationsRegistry,
                 getJavaSourceRoots(),
-                logger,
                 destinationDir,
                 dirtySourcesSinceLastTimeFile,
                 lastBuildInfoFile,
@@ -191,7 +191,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 cacheDirectory,
                 cacheVersions,
                 reporter)
-        compiler.compile(allKotlinSources, changedFiles, args)
+        compiler.compile(allKotlinSources, changedFiles, args, messageCollector)
         anyClassesCompiled = compiler.anyClassesCompiled
     }
 
@@ -379,7 +379,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     }
 }
 
-internal class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItemsCollector? = null) : MessageCollector {
+internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
     private var hasErrors = false
 
     override fun hasErrors() = hasErrors
@@ -421,12 +421,6 @@ internal class GradleMessageCollector(val logger: Logger, val outputCollector: O
             CompilerMessageSeverity.INFO -> logger.info(text)
             CompilerMessageSeverity.WARNING -> logger.warn(text)
             else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
-        }
-        // TODO: consider adding some other way of passing input -> output mapping from compiler, e.g. dedicated service
-        if (outputCollector != null && severity == CompilerMessageSeverity.OUTPUT) {
-            OutputMessageUtil.parseOutputMessage(message)?.let {
-                outputCollector.add(it.sourceFiles, it.outputFile)
-            }
         }
     }
 }
