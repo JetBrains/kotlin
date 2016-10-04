@@ -1,6 +1,6 @@
 package foo
 
-fun <T> check(x: JsClass<T>, y: JsClass<T>, shouldBeEquals: Boolean = true) {
+fun check(x: JsClass<*>, y: JsClass<*>, shouldBeEquals: Boolean = true) {
     assertNotEquals(null, x)
     assertNotEquals(null, y)
     if (shouldBeEquals)
