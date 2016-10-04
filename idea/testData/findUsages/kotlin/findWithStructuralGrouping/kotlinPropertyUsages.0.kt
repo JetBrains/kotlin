@@ -1,5 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
-// GROUPING_RULES: org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider$KotlinDeclarationGroupingRule
+// GROUPING_RULES: org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupingRule
 // OPTIONS: usages
 package server
 

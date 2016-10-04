@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-class KotlinDeclarationGroupingRule(val level: Int) : UsageGroupingRule {
+class KotlinDeclarationGroupingRule(val level: Int = 0) : UsageGroupingRule {
     override fun groupUsage(usage: Usage): UsageGroup? {
         val element = (usage as? PsiElementUsage)?.element ?: return null
 
