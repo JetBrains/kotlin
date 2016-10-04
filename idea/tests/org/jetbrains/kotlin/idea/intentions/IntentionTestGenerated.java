@@ -6293,6 +6293,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/var.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withModifiers.kt")
+        public void testWithModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringVariables/withModifiers.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/foldInitializerAndIfToElvis")
