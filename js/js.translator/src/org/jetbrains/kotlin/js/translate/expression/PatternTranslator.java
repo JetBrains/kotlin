@@ -94,7 +94,7 @@ public final class PatternTranslator extends AbstractTranslator {
             onFail = JsLiteral.NULL;
         }
         else {
-            JsExpression throwCCEFunRef = context().namer().throwClassCastExceptionFunRef();
+            JsExpression throwCCEFunRef = Namer.throwClassCastExceptionFunRef();
             onFail = new JsInvocation(throwCCEFunRef);
         }
 
