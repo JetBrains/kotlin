@@ -6,10 +6,9 @@ import llvm.*
 import org.jetbrains.kotlin.backend.native.implementation
 import org.jetbrains.kotlin.backend.native.implementedInterfaces
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
@@ -32,6 +31,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                  val objOffsetsCount: Int,
                                  val interfaces: CompileTimeValue,
                                  val interfacesCount: Int,
+                                 val vtable: CompileTimeValue,
                                  val methods: CompileTimeValue,
                                  val methodsCount: Int,
                                  val fields: CompileTimeValue,
@@ -49,6 +49,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     interfaces,
                     Int32(interfacesCount),
+
+                    vtable,
 
                     methods,
                     Int32(methodsCount),
@@ -69,6 +71,33 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
         return classType
+    }
+
+    // TODO: optimize
+    private fun getVtableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
+        val superVtableEntries = if (KotlinBuiltIns.isAny(classDesc)) {
+            emptyList()
+        } else {
+            getVtableEntries(classDesc.getSuperClassOrAny())
+        }
+
+        val inheritedVtableSlots = Array<FunctionDescriptor?>(superVtableEntries.size, { null })
+        val methods = getMethodTableEntries(classDesc) // TODO: ensure order is well-defined
+        val entriesForNewVtableSlots = methods.toMutableSet()
+
+        methods.forEach { method ->
+            superVtableEntries.forEachIndexed { i, superMethod ->
+                if (OverridingUtil.overrides(method, superMethod)) {
+                    assert (inheritedVtableSlots[i] == null)
+                    inheritedVtableSlots[i] = method
+
+                    assert (method in entriesForNewVtableSlots)
+                    entriesForNewVtableSlots.remove(method)
+                }
+            }
+        }
+
+        return inheritedVtableSlots.map { it!! } + methods.filter { it in entriesForNewVtableSlots }
     }
 
     private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
@@ -120,6 +149,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val fieldsPtr = addGlobalConstArray("kfields:$className", runtime.fieldTableRecordType, fields)
 
+        // TODO: compile-time resolution limits binary compatibility
+        val vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
+        val vtablePtr = addGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+
         val methods = getMethodTableEntries(classDesc).map {
             val nameSignature = it.name.nameHash // FIXME: add signature
             // TODO: compile-time resolution limits binary compatibility
@@ -133,6 +166,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                 superType,
                                 objOffsetsPtr, objOffsets.size,
                                 interfacesPtr, interfaces.size,
+                                vtablePtr,
                                 methodsPtr, methods.size,
                                 fieldsPtr, fields.size)
 

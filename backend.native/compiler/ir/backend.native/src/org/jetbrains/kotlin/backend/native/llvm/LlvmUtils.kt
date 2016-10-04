@@ -55,6 +55,7 @@ internal fun compileTimeValue(value: LLVMOpaqueValue?) = object : CompileTimeVal
     override fun getLlvmValue() = value
 }
 
+internal val int8Type = LLVMInt8Type()
 internal val int32Type = LLVMInt32Type()
 
 internal fun pointerType(pointeeType: LLVMOpaqueType?) = LLVMPointerType(pointeeType, 0)
