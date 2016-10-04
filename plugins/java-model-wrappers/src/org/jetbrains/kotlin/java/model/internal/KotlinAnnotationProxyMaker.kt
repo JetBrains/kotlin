@@ -92,8 +92,12 @@ private fun getConstantValue(
                 is PsiArrayInitializerMemberValue -> psiValue.initializers.toList()
                 else -> listOf(psiValue)
             }
-            
-            if (jComponentType.isPrimitive || jComponentType.isAnnotation || jComponentType.canonicalName == JAVA_LANG_STRING) {
+
+            if (jComponentType.isPrimitive
+                || jComponentType.isAnnotation
+                || jComponentType.isEnum
+                || jComponentType.canonicalName == JAVA_LANG_STRING
+            ) {
                 val arr = Array.newInstance(jComponentType, arrayValues.size)
                 arrayValues.forEachIndexed { i, componentPsiValue ->
                     val componentValue = getConstantValue(componentPsiValue, returnType.componentType, jComponentType, evaluator)
