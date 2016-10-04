@@ -96,7 +96,7 @@ fun createContainerForLazyBodyResolve(
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
     useInstance(bodyResolveCache)
     useInstance(languageVersionSettings)
-    useImpl<LazyTopDownAnalyzerForTopLevel>()
+    useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
 }
 

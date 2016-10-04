@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -152,7 +152,7 @@ object TopDownAnalyzerFacadeForJVM {
                 additionalProviders
         ))
 
-        container.get<LazyTopDownAnalyzerForTopLevel>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
             val result = extension.analysisCompleted(project, module, trace, files)

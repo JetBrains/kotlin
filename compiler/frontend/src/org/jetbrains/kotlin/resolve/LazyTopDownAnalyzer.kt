@@ -50,8 +50,11 @@ class LazyTopDownAnalyzer(
         private val languageVersionSettings: LanguageVersionSettings,
         private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
-    fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
-
+    fun analyzeDeclarations(
+            topDownAnalysisMode: TopDownAnalysisMode,
+            declarations: Collection<PsiElement>,
+            outerDataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY
+    ): TopDownAnalysisContext {
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
         val topLevelFqNames = HashMultimap.create<FqName, KtElement>()
@@ -108,7 +111,7 @@ class LazyTopDownAnalyzer(
                     val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject, location) as ClassDescriptorWithResolutionScopes
 
                     c.declaredClasses.put(classOrObject, descriptor)
-                    registerDeclarations(classOrObject.getDeclarations())
+                    registerDeclarations(classOrObject.declarations)
                     registerTopLevelFqName(topLevelFqNames, classOrObject, descriptor)
 
                     checkClassOrObjectDeclarations(classOrObject, descriptor)
@@ -116,7 +119,7 @@ class LazyTopDownAnalyzer(
 
                 private fun checkClassOrObjectDeclarations(classOrObject: KtClassOrObject, classDescriptor: ClassDescriptor) {
                     var companionObjectAlreadyFound = false
-                    for (jetDeclaration in classOrObject.getDeclarations()) {
+                    for (jetDeclaration in classOrObject.declarations) {
                         if (jetDeclaration is KtObjectDeclaration && jetDeclaration.isCompanion()) {
                             if (companionObjectAlreadyFound) {
                                 trace.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
@@ -266,5 +269,3 @@ class LazyTopDownAnalyzer(
         }
     }
 }
-
-

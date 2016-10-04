@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.script.ScriptPriorities
 
 class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
     private val topDownAnalysisContext: TopDownAnalysisContext
-    private val topDownAnalyzer: LazyTopDownAnalyzerForTopLevel
+    private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
     private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
     val module: ModuleDescriptorImpl
@@ -67,7 +67,7 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
         this.topDownAnalysisContext = TopDownAnalysisContext(
                 TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
-        this.topDownAnalyzer = container.get<LazyTopDownAnalyzerForTopLevel>()
+        this.topDownAnalyzer = container.get<LazyTopDownAnalyzer>()
 
         moduleContext.initializeModuleContents(CompositePackageFragmentProvider(
                 listOf(

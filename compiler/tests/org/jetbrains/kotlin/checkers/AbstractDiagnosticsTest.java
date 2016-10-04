@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
@@ -326,8 +327,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
                 DslKt.getService(container, JavaDescriptorResolver.class).getPackageFragmentProvider()
         )));
 
-        DslKt.getService(container, LazyTopDownAnalyzerForTopLevel.class).analyzeDeclarations(
-                TopDownAnalysisMode.TopLevelDeclarations, files
+        DslKt.getService(container, LazyTopDownAnalyzer.class).analyzeDeclarations(
+                TopDownAnalysisMode.TopLevelDeclarations, files, DataFlowInfo.Companion.getEMPTY()
         );
 
         return AnalysisResult.success(moduleTrace.getBindingContext(), moduleDescriptor);

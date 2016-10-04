@@ -56,7 +56,6 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<ResolveSession>()
 
     useImpl<LazyTopDownAnalyzer>()
-    useImpl<LazyTopDownAnalyzerForTopLevel>()
     useImpl<JavaDescriptorResolver>()
     useImpl<DeserializationComponentsForJava>()
 

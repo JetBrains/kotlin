@@ -174,16 +174,11 @@ private object KotlinResolveDataProvider {
                     targetPlatform,
                     componentProvider.get<BodyResolveCache>(),
                     LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
-            ).get<LazyTopDownAnalyzerForTopLevel>()
+            ).get<LazyTopDownAnalyzer>()
 
-            lazyTopDownAnalyzer.analyzeDeclarations(
-                    TopDownAnalysisMode.TopLevelDeclarations,
-                    listOf(analyzableElement)
-            )
-            return AnalysisResult.success(
-                    trace.bindingContext,
-                    module
-            )
+            lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
+
+            return AnalysisResult.success(trace.bindingContext, module)
         }
         catch (e: ProcessCanceledException) {
             throw e
