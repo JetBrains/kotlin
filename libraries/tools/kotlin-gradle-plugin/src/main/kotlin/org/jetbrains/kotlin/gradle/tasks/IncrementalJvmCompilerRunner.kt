@@ -1,14 +1,18 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.com.intellij.util.io.PersistentEnumeratorBase
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -25,7 +29,6 @@ internal class IncrementalJvmCompilerRunner(
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
         private val sourceAnnotationsRegistry: SourceAnnotationsRegistry?,
         private val javaSourceRoots: Set<File>,
-        private val logger: Logger,
         private val destinationDir: File,
         private val dirtySourcesSinceLastTimeFile: File,
         private val lastBuildInfoFile: File,
@@ -40,7 +43,7 @@ internal class IncrementalJvmCompilerRunner(
     private val classpath = classpath.toMutableList()
     private val additionalClasspath = LinkedHashSet<File>()
 
-    fun compile(allKotlinSources: List<File>, changedFiles: ChangedFiles, args: K2JVMCompilerArguments): ExitCode {
+    fun compile(allKotlinSources: List<File>, changedFiles: ChangedFiles, args: K2JVMCompilerArguments, messageCollector: MessageCollector): ExitCode {
         val outputDir = destinationDir
         val targetId = TargetId(name = args.moduleName, type = "java-production")
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
@@ -59,7 +62,7 @@ internal class IncrementalJvmCompilerRunner(
                     dirtySourcesSinceLastTimeFile,
                     artifactDifferenceRegistryProvider,
                     reporter)
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
         }
         catch (e: PersistentEnumeratorBase.CorruptedException) {
             caches.clean()
@@ -70,7 +73,7 @@ internal class IncrementalJvmCompilerRunner(
             val javaFilesProcessor = ChangedJavaFilesProcessor()
             caches = IncrementalCachesManager(targetId, cacheDirectory, outputDir)
             val compilationMode = CompilationMode.Rebuild()
-            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter)
+            compileIncrementally(args, caches, javaFilesProcessor, outputDir, allKotlinSources, targetId, compilationMode, reporter, messageCollector)
         }
     }
 
@@ -211,7 +214,8 @@ internal class IncrementalJvmCompilerRunner(
             allKotlinSources: List<File>,
             targetId: TargetId,
             compilationMode: CompilationMode,
-            reporter: IncReporter
+            reporter: IncReporter,
+            messageCollector: MessageCollector
     ): ExitCode {
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val dirtySources: MutableList<File>
@@ -253,7 +257,7 @@ internal class IncrementalJvmCompilerRunner(
             val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker)
+            val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), outputDir, args, { caches.incrementalCache }, lookupTracker, messageCollector)
             exitCode = compilerOutput.exitCode
 
             if (exitCode == ExitCode.OK) {
@@ -348,7 +352,8 @@ internal class IncrementalJvmCompilerRunner(
             outputDir: File,
             args: K2JVMCompilerArguments,
             getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
-            lookupTracker: LookupTracker
+            lookupTracker: LookupTracker,
+            messageCollector: MessageCollector
     ): CompileChangedResults {
         val compiler = K2JVMCompiler()
         val compileClasspath = classpath + additionalClasspath
@@ -361,7 +366,8 @@ internal class IncrementalJvmCompilerRunner(
                 friendDirs = listOf())
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
-        val messageCollector = GradleMessageCollector(logger, outputItemCollector)
+        @Suppress("NAME_SHADOWING")
+        val messageCollector = MessageCollectorWrapper(messageCollector, outputItemCollector)
         sourceAnnotationsRegistry?.clear()
 
         try {
@@ -371,8 +377,8 @@ internal class IncrementalJvmCompilerRunner(
                 }
             }
 
-            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
-            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
+            reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
+            reporter.report { "compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}" }
             val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
             val exitCode = compiler.exec(messageCollector, compileServices, args)
             return CompileChangedResults(
@@ -385,6 +391,19 @@ internal class IncrementalJvmCompilerRunner(
         }
         finally {
             moduleFile.delete()
+        }
+    }
+
+    private class MessageCollectorWrapper(
+            private val delegate: MessageCollector,
+            private val outputCollector: OutputItemsCollector
+    ) : MessageCollector by delegate {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+            // TODO: consider adding some other way of passing input -> output mapping from compiler, e.g. dedicated service
+            OutputMessageUtil.parseOutputMessage(message)?.let {
+                outputCollector.add(it.sourceFiles, it.outputFile)
+            }
+            delegate.report(severity, message, location)
         }
     }
 }
