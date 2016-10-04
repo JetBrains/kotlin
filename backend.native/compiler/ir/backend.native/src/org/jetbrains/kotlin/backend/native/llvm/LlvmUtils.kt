@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.backend.native.llvm
 
 import kotlin_native.interop.mallocNativeArrayOf
 import llvm.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 /**
  * Represents the value which can be emitted as bitcode const value
@@ -56,3 +58,15 @@ internal fun compileTimeValue(value: LLVMOpaqueValue?) = object : CompileTimeVal
 internal val int32Type = LLVMInt32Type()
 
 internal fun pointerType(pointeeType: LLVMOpaqueType?) = LLVMPointerType(pointeeType, 0)
+
+internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? {
+    val returnType = getLLVMType(function.returnType!!)
+    val params = function.dispatchReceiverParameter.singletonOrEmptyList() +
+                 function.extensionReceiverParameter.singletonOrEmptyList() +
+                 function.valueParameters
+
+    val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
+
+    val paramTypesPtr = mallocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0] // TODO: dispose
+    return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
+}

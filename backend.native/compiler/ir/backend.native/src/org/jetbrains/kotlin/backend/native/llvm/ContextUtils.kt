@@ -49,7 +49,8 @@ internal interface ContextUtils {
             assert (this.kind.isReal)
             val globalName = this.symbolName
             val module = context.llvmModule
-            val functionType = LLVMFunctionType(LLVMVoidType(), null, 0, 0) // FIXME: use correct types
+
+            val functionType = getLlvmFunctionType(this)
             val function = LLVMGetNamedFunction(module, globalName) ?: LLVMAddFunction(module, globalName, functionType)
             return compileTimeValue(function)
         }

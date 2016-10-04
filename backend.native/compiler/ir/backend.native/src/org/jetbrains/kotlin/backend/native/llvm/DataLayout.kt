@@ -6,10 +6,12 @@ import org.jetbrains.kotlin.types.KotlinType
 
 internal fun getLLVMType(type: KotlinType): LLVMOpaqueType {
     return when {
-        KotlinBuiltIns.isBoolean(type) || KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
+        KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
+        KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
         KotlinBuiltIns.isShort(type) || KotlinBuiltIns.isChar(type) -> LLVMInt16Type()
         KotlinBuiltIns.isInt(type) -> LLVMInt32Type()
         KotlinBuiltIns.isLong(type) -> LLVMInt64Type()
+        KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
         !KotlinBuiltIns.isPrimitiveType(type) -> LLVMPointerType(LLVMInt8Type(), 0)
         else -> throw NotImplementedError()
     }!!
