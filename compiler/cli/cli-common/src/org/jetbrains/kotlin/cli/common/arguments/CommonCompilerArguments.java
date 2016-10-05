@@ -25,7 +25,8 @@ import java.util.List;
 public abstract class CommonCompilerArguments {
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
 
-    @GradleOption(defaultValue = "\"1.0\"", possibleValues = { "\"1.0\"" })
+    // todo: reuse LanguageVersion from frontend
+    @GradleOption(defaultValue = "\"1.1\"", possibleValues = { "\"1.0\", \"1.1\"" })
     @Argument(value = "language-version", description = "Provide source compatibility with specified language version")
     @ValueDescription("<version>")
     public String languageVersion;

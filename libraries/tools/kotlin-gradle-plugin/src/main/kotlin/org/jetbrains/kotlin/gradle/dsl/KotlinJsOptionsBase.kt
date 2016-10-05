@@ -11,7 +11,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 
     private var languageVersionField: kotlin.String? = null
     override var languageVersion: kotlin.String
-        get() = languageVersionField ?: "1.0"
+        get() = languageVersionField ?: "1.1"
         set(value) { languageVersionField = value }
 
     private var mainField: kotlin.String? = null
@@ -76,7 +76,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
     kjsm = true
-    languageVersion = "1.0"
+    languageVersion = "1.1"
     main = "noCall"
     metaInfo = true
     moduleKind = "plain"

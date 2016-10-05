@@ -21,7 +21,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 
     private var languageVersionField: kotlin.String? = null
     override var languageVersion: kotlin.String
-        get() = languageVersionField ?: "1.0"
+        get() = languageVersionField ?: "1.1"
         set(value) { languageVersionField = value }
 
     private var noJdkField: kotlin.Boolean? = null
@@ -66,7 +66,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     includeRuntime = false
     jdkHome = null
     jvmTarget = "1.6"
-    languageVersion = "1.0"
+    languageVersion = "1.1"
     noJdk = false
     noReflect = true
     noStdlib = true

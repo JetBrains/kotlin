@@ -12,8 +12,8 @@ interface KotlinJsOptions {
 
     /**
      * Provide source compatibility with specified language version
-     * Possible values: "1.0"
-     * Default value: "1.0"
+     * Possible values: "1.0", "1.1"
+     * Default value: "1.1"
      */
      var languageVersion: kotlin.String
 
