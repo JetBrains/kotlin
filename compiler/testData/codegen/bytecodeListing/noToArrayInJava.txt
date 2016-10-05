@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public interface test/A
+
+@kotlin.Metadata
+public abstract class test/B {
+    public method <init>(): void
+    public method add(p0: java.lang.Object): boolean
+    public method addAll(p0: java.util.Collection): boolean
+    public method clear(): void
+    public abstract method contains(p0: java.lang.Object): boolean
+    public abstract method getSize(): int
+    public method iterator(): java.util.Iterator
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public final method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+}

@@ -42,8 +42,6 @@ public final class A1 {
     public method remove(p0: java.lang.String): boolean
     public synthetic method removeAt(p0: int): java.lang.Object
     public @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
-    public method toArray(): java.lang.Object[]
-    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
 @kotlin.Metadata
@@ -59,6 +57,4 @@ public final class A2 {
     public final method remove(p0: java.lang.Object): boolean
     public method remove(p0: java.lang.String): boolean
     public method removeAt(p0: int): java.lang.String
-    public method toArray(): java.lang.Object[]
-    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
