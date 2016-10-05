@@ -313,7 +313,10 @@ class CollectionStubMethodGenerator(
         val genericSignature = if (synthetic) null else signature.genericsSignature
         val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.name, asmMethod.descriptor, genericSignature, null)
         mv.visitCode()
-        AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
+        AsmUtil.genThrow(
+                InstructionAdapter(mv),
+                "java/lang/UnsupportedOperationException",
+                "Operation is not supported for read-only collection")
         FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)
     }
 }
