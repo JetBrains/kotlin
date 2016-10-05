@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -72,8 +73,9 @@ interface ImportResolver {
 
 class LazyImportResolver(
         val storageManager: StorageManager,
-        val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         val moduleDescriptor: ModuleDescriptor,
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap,
         val indexedImports: IndexedImports,
         excludedImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
@@ -81,15 +83,16 @@ class LazyImportResolver(
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
         directive: KtImportDirective ->
-            val directiveImportScope = qualifiedExpressionResolver.processImportReference(
-                    directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
 
+        qualifiedExpressionResolver.processImportReference(
+                directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
+        )?.apply {
             if (!directive.isAllUnder) {
                 PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(
-                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getContributedDescriptors())
+                        platformToKotlinClassMap, traceForImportResolve, directive, getContributedDescriptors()
+                )
             }
-
-            directiveImportScope
+        }
     }
 
     override fun forceResolveAllImports() {

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
@@ -48,7 +49,8 @@ class FileScopeFactory(
         private val moduleDescriptor: ModuleDescriptor,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
-        private val ktImportsFactory: KtImportsFactory
+        private val ktImportsFactory: KtImportsFactory,
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap
 ) {
     private val defaultImports by storageManager.createLazyValue {
         ktImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
@@ -83,8 +85,11 @@ class FileScopeFactory(
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
                               ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
 
-        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null)
-                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames concat excludedImports, trace, packageFragment)
+        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null) =
+                LazyImportResolver(
+                        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap,
+                        indexedImports, aliasImportNames concat excludedImports, trace, packageFragment
+                )
 
         val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace) // TODO: should we count excludedImports here also?
