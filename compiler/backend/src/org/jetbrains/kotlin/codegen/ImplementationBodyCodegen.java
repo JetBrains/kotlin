@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -430,8 +431,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateToArray() {
         if (descriptor.getKind() == ClassKind.INTERFACE) return;
 
-        KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
+        final KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
         if (!isSubclass(descriptor, builtIns.getCollection())) return;
+
+        if (CollectionsKt.any(DescriptorUtilsKt.getAllSuperclassesWithoutAny(descriptor), new Function1<ClassDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(ClassDescriptor classDescriptor) {
+                return !(classDescriptor instanceof JavaClassDescriptor) && isSubclass(classDescriptor, builtIns.getCollection());
+            }
+        })) return;
 
         Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
                 Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND

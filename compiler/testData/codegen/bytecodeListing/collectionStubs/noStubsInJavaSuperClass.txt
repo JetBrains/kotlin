@@ -30,8 +30,6 @@ public final class test/C {
     public method remove(p0: int): java.lang.Object
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
-    public method toArray(): java.lang.Object[]
-    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
 @kotlin.Metadata

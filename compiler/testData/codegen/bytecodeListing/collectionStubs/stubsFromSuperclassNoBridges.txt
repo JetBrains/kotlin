@@ -22,8 +22,6 @@ public class B {
     public method <init>(): void
     public method contains(p0: java.lang.CharSequence): boolean
     public final method contains(p0: java.lang.Object): boolean
-    public method toArray(): java.lang.Object[]
-    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
 @kotlin.Metadata
@@ -45,6 +43,4 @@ public final class C {
     public method set(p0: int, p1: java.lang.CharSequence): java.lang.CharSequence
     public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
-    public method toArray(): java.lang.Object[]
-    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
