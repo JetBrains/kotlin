@@ -28,6 +28,8 @@ class NativeInteropPlugin implements Plugin<Project> {
             def genStubsTask = prj.task(sourceSet.getTaskName("gen", "interopStubs"), type: JavaExec) {
                 classpath = prj.configurations.interopStubGenerator
                 main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
+                jvmArgs '-ea'
+
                 systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
                 systemProperties "llvmInstallPath" : prj.llvmInstallPath
                 environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
