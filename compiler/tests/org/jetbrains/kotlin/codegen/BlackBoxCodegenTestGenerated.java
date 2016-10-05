@@ -3492,6 +3492,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collections/strList.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("toArrayInJavaClass.kt")
+        public void testToArrayInJavaClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collections/toArrayInJavaClass.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/constants")
