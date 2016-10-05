@@ -506,6 +506,7 @@ class ExpressionCodegen(
 
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): StackValue {
+        val asmType = expression.typeOperand.asmType
         when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 expression.argument.accept(this, data)
@@ -513,7 +514,7 @@ class ExpressionCodegen(
                 return none()
             }
             IrTypeOperator.IMPLICIT_CAST -> {
-                gen(expression.argument, expression.typeOperand.asmType, data)
+                gen(expression.argument, asmType, data)
             }
 
             IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST -> {
@@ -522,12 +523,14 @@ class ExpressionCodegen(
                 if (value.type === Type.VOID_TYPE) {
                     StackValue.putUnitInstance(mv)
                 }
-                generateAsCast(mv, expression.typeOperand, boxType(expression.typeOperand.asmType), expression.operator == IrTypeOperator.SAFE_CAST)
+                val boxedType = boxType(asmType)
+                generateAsCast(mv, expression.typeOperand, boxedType, expression.operator == IrTypeOperator.SAFE_CAST)
+                return onStack(boxedType)
             }
 
             IrTypeOperator.INSTANCEOF -> {
                 gen(expression.argument, OBJECT_TYPE, data)
-                val type = boxType(expression.typeOperand.asmType)
+                val type = boxType(asmType)
                 generateIsCheck(mv, expression.typeOperand, type)
             }
 
