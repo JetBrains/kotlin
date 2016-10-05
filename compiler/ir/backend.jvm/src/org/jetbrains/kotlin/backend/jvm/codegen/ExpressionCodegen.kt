@@ -464,6 +464,7 @@ class ExpressionCodegen(
 
         mv.areturn(returnType)
         mv.mark(afterReturnLabel)
+        mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
         return expression.onStack
     }
 
