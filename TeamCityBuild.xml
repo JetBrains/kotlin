@@ -11,6 +11,7 @@
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned"/>
+    <property name="plugin.xml.version.number" value="${build.number}"/>
 
     <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/KotlinVersion.java"/>
     <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
@@ -78,7 +79,8 @@
                 target.file="${plugin.xml}"
                 target.file.bk="${plugin.xml.bk}"
                 target.file.versioned="${plugin.xml.versioned}"
-                test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+                test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
+                version="${plugin.xml.version.number}"/>
 
         <substituteVersionInFile
                 target.file="${compiler.version.java}"
