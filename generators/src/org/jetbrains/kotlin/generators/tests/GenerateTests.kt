@@ -145,6 +145,7 @@ import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeSha
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
+import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
@@ -1161,6 +1162,12 @@ fun main(args: Array<String>) {
 
     testGroup("plugins/plugins-tests/tests", "plugins/allopen/allopen-cli/testData") {
         testClass<AbstractBytecodeListingTestForAllOpen>() {
+            model("bytecodeListing", extension = "kt")
+        }
+    }
+
+    testGroup("plugins/plugins-tests/tests", "plugins/noarg/noarg-cli/testData") {
+        testClass<AbstractBytecodeListingTestForNoArg>() {
             model("bytecodeListing", extension = "kt")
         }
     }

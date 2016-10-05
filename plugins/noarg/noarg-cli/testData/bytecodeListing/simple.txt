@@ -1,0 +1,10 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg
+
+@NoArg
+@kotlin.Metadata
+public final class Test {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
