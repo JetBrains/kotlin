@@ -580,6 +580,99 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
+        @TestMetadata("idea/testData/quickfix/autoImports/mismatchingArgs")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MismatchingArgs extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInMismatchingArgs() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/mismatchingArgs"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+            }
+
+            @TestMetadata("checkArgumentTypes.test")
+            public void testCheckArgumentTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/checkArgumentTypes.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("constantExpectedTypeMismatch.test")
+            public void testConstantExpectedTypeMismatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/constantExpectedTypeMismatch.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("expectedTypeRequired.test")
+            public void testExpectedTypeRequired() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/expectedTypeRequired.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("extensionExplicitReceiver.test")
+            public void testExtensionExplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/extensionExplicitReceiver.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("extensionImplicitReceiver.test")
+            public void testExtensionImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/extensionImplicitReceiver.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("extensionWrongReceiver.test")
+            public void testExtensionWrongReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/extensionWrongReceiver.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("ignoreErrorsOutsideCall.test")
+            public void testIgnoreErrorsOutsideCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/ignoreErrorsOutsideCall.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("lambdaArgument.test")
+            public void testLambdaArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/lambdaArgument.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("namedArgument.test")
+            public void testNamedArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/namedArgument.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("notForIncompleteCall.test")
+            public void testNotForIncompleteCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/notForIncompleteCall.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("smartCast.test")
+            public void testSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/smartCast.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("topLevelFun.test")
+            public void testTopLevelFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/topLevelFun.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("topLevelFun_notWithReceiver.test")
+            public void testTopLevelFun_notWithReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/topLevelFun_notWithReceiver.test");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("typeMismatch.test")
+            public void testTypeMismatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/mismatchingArgs/typeMismatch.test");
+                doTestWithExtraFile(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/changeSignature")

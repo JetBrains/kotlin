@@ -134,6 +134,12 @@ class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(ImportMemberFix)
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)
 
+        TOO_MANY_ARGUMENTS.registerFactory(ImportForMismatchingArgumentsFix)
+        NO_VALUE_FOR_PARAMETER.registerFactory(ImportForMismatchingArgumentsFix)
+        TYPE_MISMATCH.registerFactory(ImportForMismatchingArgumentsFix)
+        CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(ImportForMismatchingArgumentsFix)
+        NAMED_PARAMETER_NOT_FOUND.registerFactory(ImportForMismatchingArgumentsFix)
+
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(ImportFix)

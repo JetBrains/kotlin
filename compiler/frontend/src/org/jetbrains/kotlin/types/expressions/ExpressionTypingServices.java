@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -93,7 +91,7 @@ public class ExpressionTypingServices {
             @NotNull BindingTrace trace,
             boolean isStatement
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, isStatement, expression);
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, isStatement, expression, ContextDependency.INDEPENDENT);
     }
 
     @NotNull
@@ -104,10 +102,11 @@ public class ExpressionTypingServices {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace,
             boolean isStatement,
-            @NotNull final KtExpression contextExpression
+            @NotNull final KtExpression contextExpression,
+            @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType
+                trace, scope, dataFlowInfo, expectedType, contextDependency
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(new Function1<KtExpression, KtExpression>() {

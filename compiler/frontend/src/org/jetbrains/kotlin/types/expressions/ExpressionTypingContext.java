@@ -35,8 +35,19 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType expectedType
     ) {
+        return newContext(trace, scope, dataFlowInfo, expectedType, ContextDependency.INDEPENDENT);
+    }
+
+    @NotNull
+    public static ExpressionTypingContext newContext(
+            @NotNull BindingTrace trace,
+            @NotNull LexicalScope scope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull KotlinType expectedType,
+            @NotNull ContextDependency contextDependency
+    ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
-                          ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(),
+                          contextDependency, new ResolutionResultsCacheImpl(),
                           StatementFilter.NONE, false);
     }
 

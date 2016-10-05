@@ -1,0 +1,40 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Type mismatch: inferred type is Int but String was expected
+
+package main
+
+class X {
+    fun foo(p: String) {
+    }
+
+    fun f(p: Int) {
+        foo(<caret>p)
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p: Int) {
+}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Type mismatch: inferred type is Int but String was expected
+
+package main
+
+import other.foo
+
+class X {
+    fun foo(p: String) {
+    }
+
+    fun f(p: Int) {
+        foo(<caret>p)
+    }
+}
+

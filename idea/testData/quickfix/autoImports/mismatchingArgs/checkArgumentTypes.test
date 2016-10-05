@@ -1,0 +1,26 @@
+// FILE: first.before.kt
+// "Import" "false"
+// ERROR: Too many arguments for public final fun foo(): Unit defined in main.X
+// ACTION: Add parameter to function 'foo'
+// ACTION: Convert to expression body
+// ACTION: Create extension function 'X.foo'
+// ACTION: Create member function 'X.foo'
+
+package main
+
+class X {
+    fun foo() {
+    }
+
+    fun f() {
+        this.foo(<caret>1)
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p: String) {
+}

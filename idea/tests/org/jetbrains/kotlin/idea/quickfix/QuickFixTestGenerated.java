@@ -771,6 +771,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/unresolvedReferenceInCall.kt");
             doTest(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/canBeParameter")
