@@ -140,6 +140,33 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CollectionStubs extends AbstractBytecodeListingTest {
+        public void testAllFilesPresentInCollectionStubs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("noStubsInJavaSuperClass.kt")
+        public void testNoStubsInJavaSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs/noStubsInJavaSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stubsFromSuperclass.kt")
+        public void testStubsFromSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs/stubsFromSuperclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stubsFromSuperclassNoBridges.kt")
+        public void testStubsFromSuperclassNoBridges() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs/stubsFromSuperclassNoBridges.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

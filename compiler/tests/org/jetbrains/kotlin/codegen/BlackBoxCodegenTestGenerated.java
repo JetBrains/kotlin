@@ -3463,6 +3463,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noStubsInJavaSuperClass.kt")
+        public void testNoStubsInJavaSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collections/noStubsInJavaSuperClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("platformValueContains.kt")
         public void testPlatformValueContains() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collections/platformValueContains.kt");

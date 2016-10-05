@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.ThrowingLexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
@@ -73,18 +72,6 @@ class ClassResolutionScopesSupport(
         else {
             inheritanceScopeWithMe()
         }
-    }
-
-    fun ClassDescriptor.getAllSuperclassesWithoutAny(): List<ClassDescriptor> {
-        val superClasses = SmartList<ClassDescriptor>()
-        var parent: ClassDescriptor? = getSuperClassNotAny()
-
-        while(parent != null && parent != this) {
-            superClasses.add(parent)
-            parent = parent.getSuperClassNotAny()
-        }
-
-        return superClasses
     }
 
     private fun createInheritanceScope(
