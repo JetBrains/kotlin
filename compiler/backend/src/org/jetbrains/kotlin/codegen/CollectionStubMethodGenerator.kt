@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -49,20 +49,27 @@ import java.util.*
  * Kotlin's read-only collections. This is required on JVM because Kotlin's read-only collections are mapped to mutable JDK collections
  */
 class CollectionStubMethodGenerator(
-        state: GenerationState,
-        private val descriptor: ClassDescriptor,
-        private val functionCodegen: FunctionCodegen,
-        private val v: ClassBuilder
+        private val typeMapper: KotlinTypeMapper,
+        private val descriptor: ClassDescriptor
 ) {
-    private val typeMapper = state.typeMapper
+    private data class TasksToGenerate(
+            val methodStubsToGenerate: Set<JvmMethodGenericSignature>,
+            val syntheticStubsToGenerate: Set<JvmMethodGenericSignature>,
+            val bridgesToGenerate: Set<FunctionDescriptor>
+    )
 
-    fun generate() {
-        if (descriptor.kind == ClassKind.INTERFACE) return
+    companion object {
+        private val NO_TASKS = TasksToGenerate(emptySet(), emptySet(), emptySet())
+    }
+
+    private fun computeTasksToGenerate(): TasksToGenerate {
+        if (descriptor.kind == ClassKind.INTERFACE) return NO_TASKS
         val superCollectionClasses = findRelevantSuperCollectionClasses()
-        if (superCollectionClasses.isEmpty()) return
+        if (superCollectionClasses.isEmpty()) return NO_TASKS
 
         val methodStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
         val syntheticStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
+        val bridgesToGenerate = LinkedHashSet<FunctionDescriptor>()
 
         for ((readOnlyClass, mutableClass) in superCollectionClasses) {
             // To determine which method stubs we need to generate, we create a synthetic class (named 'child' here) which inherits from
@@ -144,24 +151,34 @@ class CollectionStubMethodGenerator(
                     // If the fake override is non-abstract, its implementation is already present in the class or inherited from one of its
                     // super classes, but is not related to the MutableCollection hierarchy. So maybe it uses more specific return types
                     // and we may need to generate some bridges
-                    functionCodegen.generateBridges(method)
+                    bridgesToGenerate.add(method)
                 }
             }
         }
 
+        return TasksToGenerate(methodStubsToGenerate, syntheticStubsToGenerate, bridgesToGenerate)
+    }
+
+    fun generate(functionCodegen: FunctionCodegen, v: ClassBuilder) {
+        val (methodStubsToGenerate, syntheticStubsToGenerate, bridgesToGenerate) = computeTasksToGenerate()
+
         for (signature in methodStubsToGenerate) {
-            generateMethodStub(signature, synthetic = false)
+            generateMethodStub(v, signature, synthetic = false)
         }
 
         for (signature in syntheticStubsToGenerate) {
-            generateMethodStub(signature, synthetic = true)
+            generateMethodStub(v, signature, synthetic = true)
+        }
+
+        for (method in bridgesToGenerate) {
+            functionCodegen.generateBridges(method)
         }
     }
 
     private fun isDefaultInJdk(method: FunctionDescriptor) =
         method.modality != Modality.ABSTRACT &&
         method.original.overriddenTreeUniqueAsSequence(useOriginal = true).all {
-            (it as FunctionDescriptor).kind == FAKE_OVERRIDE || it.isFromBuiltins()
+            it.kind == FAKE_OVERRIDE || it.isFromBuiltins()
         }
 
     private data class CollectionClassPair(
@@ -300,7 +317,7 @@ class CollectionStubMethodGenerator(
 
     private fun FunctionDescriptor.signature(): JvmMethodGenericSignature = typeMapper.mapSignatureWithGeneric(this, OwnerKind.IMPLEMENTATION)
 
-    private fun generateMethodStub(signature: JvmMethodGenericSignature, synthetic: Boolean) {
+    private fun generateMethodStub(v: ClassBuilder, signature: JvmMethodGenericSignature, synthetic: Boolean) {
         assert(descriptor.kind != ClassKind.INTERFACE) { "No stubs should be generated for interface ${descriptor.fqNameUnsafe}" }
 
         val access = ACC_PUBLIC or (if (synthetic) ACC_SYNTHETIC else 0)
