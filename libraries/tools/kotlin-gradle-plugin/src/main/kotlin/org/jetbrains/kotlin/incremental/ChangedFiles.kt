@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import java.io.File

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
-import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.gradle.tasks.incremental.BuildCacheStorage
 import java.io.File
 

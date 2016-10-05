@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.CompilationResult
 import org.jetbrains.kotlin.incremental.IncrementalCacheImpl
 import org.jetbrains.kotlin.incremental.dumpCollection
@@ -30,34 +31,34 @@ import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, target: TargetId) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
+internal class GradleIncrementalCacheImpl(targetDataRoot: java.io.File, targetOutputDir: java.io.File?, target: org.jetbrains.kotlin.modules.TargetId) : org.jetbrains.kotlin.incremental.IncrementalCacheImpl<org.jetbrains.kotlin.modules.TargetId>(targetDataRoot, targetOutputDir, target) {
     companion object {
         private val SOURCES_TO_CLASSFILES = "sources-to-classfiles"
         private val FILE_SNAPSHOT = "file-snapshot"
     }
 
-    private val log = Logging.getLogger(this.javaClass)
+    private val log = org.gradle.api.logging.Logging.getLogger(this.javaClass)
 
-    private val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
-    private val fileSnapshotMap = registerMap(FileSnapshotMap(FILE_SNAPSHOT.storageFile))
+    private val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(org.jetbrains.kotlin.incremental.GradleIncrementalCacheImpl.Companion.SOURCES_TO_CLASSFILES.storageFile))
+    private val fileSnapshotMap = registerMap(org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap(FILE_SNAPSHOT.storageFile))
 
-    fun compareAndUpdateFileSnapshots(files: Iterable<File>): FileCollectionDiff =
-            fileSnapshotMap.compareAndUpdate(files, SimpleFileSnapshotProviderImpl())
+    fun compareAndUpdateFileSnapshots(files: Iterable<java.io.File>): org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff =
+            fileSnapshotMap.compareAndUpdate(files, org.jetbrains.kotlin.incremental.snapshots.SimpleFileSnapshotProviderImpl())
 
-    fun removeClassfilesBySources(sources: Iterable<File>): Unit =
+    fun removeClassfilesBySources(sources: Iterable<java.io.File>): Unit =
             sources.forEach { sourceToClassfilesMap.remove(it) }
 
-    override fun saveFileToCache(generatedClass: GeneratedJvmClass<TargetId>): CompilationResult {
+    override fun saveFileToCache(generatedClass: org.jetbrains.kotlin.build.GeneratedJvmClass<org.jetbrains.kotlin.modules.TargetId>): org.jetbrains.kotlin.incremental.CompilationResult {
         generatedClass.sourceFiles.forEach { sourceToClassfilesMap.add(it, generatedClass.outputFile) }
         return super.saveFileToCache(generatedClass)
     }
 
-    inner class SourceToClassfilesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
-        fun add(sourceFile: File, classFile: File) {
+    inner class SourceToClassfilesMap(storageFile: java.io.File) : org.jetbrains.kotlin.incremental.storage.BasicStringMap<Collection<String>>(storageFile, org.jetbrains.kotlin.incremental.storage.PathStringDescriptor, org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer) {
+        fun add(sourceFile: java.io.File, classFile: java.io.File) {
             storage.append(sourceFile.absolutePath, classFile.absolutePath)
         }
 
-        operator fun get(sourceFile: File): Collection<File> =
+        operator fun get(sourceFile: java.io.File): Collection<java.io.File> =
                 storage[sourceFile.absolutePath].orEmpty().map(::File)
 
         override fun dumpValue(value: Collection<String>) = value.dumpCollection()

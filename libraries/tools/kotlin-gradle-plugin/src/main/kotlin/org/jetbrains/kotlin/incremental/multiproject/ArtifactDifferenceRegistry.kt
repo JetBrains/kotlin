@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.incremental.multiproject
 
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.IncReporter
