@@ -1,5 +1,6 @@
 // modules
-include 'core:builtins'
+include 'core.builtins'
+include 'core.builtins.serialized'
 include 'custom-dependencies:protobuf-lite'
 include 'core'
 include 'libraries:stdlib'

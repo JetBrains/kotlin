@@ -17,20 +17,20 @@ apply { plugin("kotlin") }
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(projectDir,"src"), File(rootDir, "core/runtime.jvm/src")))
+        java.setSrcDirs(listOf(File(rootDir, "core/builtins/src"), File(rootDir, "core/runtime.jvm/src")))
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
     }
 }
 
-task("sourcesets") {
-    doLast {
-        the<JavaPluginConvention>().sourceSets.all {
-            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
-        }
-    }
-}
+//task("sourcesets") {
+//    doLast {
+//        the<JavaPluginConvention>().sourceSets.all {
+//            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
+//        }
+//    }
+//}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.moduleName = "kotlin-builtins"

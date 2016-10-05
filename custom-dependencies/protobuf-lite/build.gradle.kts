@@ -1,5 +1,6 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.SourceTask
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -42,19 +43,24 @@ val relocateTask = task<ShadowJar>("relocate-protobuf") {
     this.configurations = listOf(protobufCfg)
     from(protobufCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
     into(jarsDir)
+    doFirst {
+        File(jarsDir).mkdirs()
+    }
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
 }
 
-task("prepare") {
+task<SourceTask>("prepare") {
     dependsOn(relocateTask)
     val inputJar = renamedOutputJarPath
     println("Processing jar $inputJar")
     println("into jar $outputJarPath")
     inputs.files(inputJar)
     outputs.file(outputJarPath)
-    File(outputJarPath).parentFile.mkdirs()
+    doFirst {
+        File(outputJarPath).parentFile.mkdirs()
+    }
     doLast {
         val INCLUDE_START = "<include>**/"
         val INCLUDE_END = ".java</include>"

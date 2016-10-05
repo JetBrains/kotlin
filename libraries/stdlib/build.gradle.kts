@@ -25,7 +25,7 @@ configure<JavaPluginConvention> {
 }
 
 dependencies {
-    compile(project(":core:builtins"))
+    compile(project(":core.builtins"))
 }
 
 task("sourcesets") {

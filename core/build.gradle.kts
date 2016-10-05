@@ -14,9 +14,7 @@ buildscript {
     }
 }
 
-apply {
-    plugin("kotlin")
-}
+apply { plugin("kotlin") }
 
 repositories {
     mavenLocal()
@@ -25,12 +23,15 @@ repositories {
 }
 
 dependencies {
+    compile(project(":core.builtins"))
+    compile(project(":libraries:stdlib"))
+    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) {
+        isTransitive = false
+        this
+    }
+    compile("javax.inject", "javax.inject", "1")
 //    compile("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
 //    compile("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
-    compile(project(":core:builtins"))
-    compile(project(":libraries:stdlib"))
-//    compile(project(":custom-dependencies:protobuf-lite"))
-    compile("javax.inject", "javax.inject", "1")
 //    classpath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${rootProject.extra["kotlinVersion"]}")
 }
 
@@ -43,21 +44,13 @@ configure<JavaPluginConvention> {
                 "core/util.runtime/src")
         .map { File(rootDir, it) }
         .let { java.setSrcDirs(it) }
+        println(compileClasspath.joinToString("\n    ", prefix = "classpath =\n    ") { it.canonicalFile.relativeTo(rootDir).path })
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
     }
 }
 
-task("sourcesets") {
-    doLast {
-        the<JavaPluginConvention>().sourceSets.all {
-            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
-        }
-    }
-}
-
 tasks.withType<KotlinCompile> {
-    kotlinOptions.moduleName = "kotlin-core"
     kotlinOptions.allowKotlinPackage = true
 }
