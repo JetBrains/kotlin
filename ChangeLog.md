@@ -118,7 +118,7 @@
 - [`KT-5044`](https://youtrack.jetbrains.com/issue/KT-5044) Generate more efficient bytecode for `in` on ranges with `double`, `float` and `long` element type
 - [`KT-14357`](https://youtrack.jetbrains.com/issue/KT-14357) Fixed CompilationException in case of try-catch used in false condition
 - [`KT-14012`](https://youtrack.jetbrains.com/issue/KT-14012) Fixed internal error on every first compilation after the source code change
-- KT-14304 Fixed inconsistent reporting of 'variable must be initialized' after assignment 
+- KT-14304 Fixed inconsistent reporting of 'variable must be initialized' after assignment
 in anonymous object
 - KT-14158 Fixed possible exception thrown when reporting unreachable code diagnostics
 - KT-7929, KT-8442 Fixed various exceptions caused by trying to use destructuring declarations outside of a code block
@@ -131,7 +131,7 @@ in anonymous object
 
 - Various runtime performance optimizations
 - [`KT-13700`](https://youtrack.jetbrains.com/issue/KT-13700) Fix reflective access on overridden generic property reference
-	
+
 ### IDE
 
 - [`KT-12852`](https://youtrack.jetbrains.com/issue/KT-12852) Support breadcrumbs for Kotlin
@@ -170,7 +170,7 @@ in anonymous object
 - [`KT-13981`](https://youtrack.jetbrains.com/issue/KT-13981), [`KT-5117`](https://youtrack.jetbrains.com/issue/KT-5117) Add indent before colon of super types list on new line
 - [`KT-7718`](https://youtrack.jetbrains.com/issue/KT-7718) Fixed indent in constructor delegate call
 - [`KT-13584`](https://youtrack.jetbrains.com/issue/KT-13584) Fixed IDE misbehavior (exceptions, index corruption) after Java to Kotlin conversion
-- [`KT-12402`](https://youtrack.jetbrains.com/issue/KT-12402) Fixed resolve of databinding 
+- [`KT-12402`](https://youtrack.jetbrains.com/issue/KT-12402) Fixed resolve of databinding
 classes inside the IDE
 - KT-14131 Formatter now removes spaces in labeled expressions
 - KT-14327 Allow to select single word on double click in one line doc comment
@@ -178,6 +178,7 @@ classes inside the IDE
 - KT-14153 Use correct fully-qualified name when creating run configurations for nested classes
 - KT-13753 Fixed "Go to implementations" when a class/interface and its implementations are both declared in a local scope
 - KT-14508 Improved performance of certain Find Usages operations
+- Implement Kotlin facet
 
 
 #### IDE. Code Completion
