@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.cfg.pseudocode
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction
@@ -308,3 +310,6 @@ fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     localDeclarations.forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }
     return null
 }
+
+val Label.isJumpToError: Boolean
+    get() = resolveToInstruction() == pseudocode.errorInstruction

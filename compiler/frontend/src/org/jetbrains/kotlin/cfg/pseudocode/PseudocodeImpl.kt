@@ -71,7 +71,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
 
     private var internalErrorInstruction: SubroutineExitInstruction? = null
 
-    private val errorInstruction: SubroutineExitInstruction
+    override val errorInstruction: SubroutineExitInstruction
         get() = internalErrorInstruction ?: throw AssertionError("Error instruction is read before initialization")
 
     private var postPrecessed = false
