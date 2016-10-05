@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -30,9 +29,8 @@ import java.util.Collection;
 import static org.jetbrains.kotlin.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
 
 public class PlatformTypesMappedToKotlinChecker {
-
     public static void checkPlatformTypesMappedToKotlin(
-            @NotNull ModuleDescriptor module,
+            @NotNull PlatformToKotlinClassMap platformToKotlinMap,
             @NotNull BindingTrace trace,
             @NotNull KtImportDirective importDirective,
             @NotNull Collection<? extends DeclarationDescriptor> descriptors
@@ -40,20 +38,19 @@ public class PlatformTypesMappedToKotlinChecker {
         KtExpression importedReference = importDirective.getImportedReference();
         if (importedReference != null) {
             for (DeclarationDescriptor descriptor : descriptors) {
-                reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
+                reportPlatformClassMappedToKotlin(platformToKotlinMap, trace, importedReference, descriptor);
             }
         }
     }
 
     public static void reportPlatformClassMappedToKotlin(
-            @NotNull ModuleDescriptor module,
+            @NotNull PlatformToKotlinClassMap platformToKotlinMap,
             @NotNull BindingTrace trace,
             @NotNull KtElement element,
             @NotNull DeclarationDescriptor descriptor
     ) {
         if (!(descriptor instanceof ClassDescriptor)) return;
 
-        PlatformToKotlinClassMap platformToKotlinMap = module.getPlatformToKotlinClassMap();
         Collection<ClassDescriptor> kotlinAnalogsForClass = platformToKotlinMap.mapPlatformClass((ClassDescriptor) descriptor);
         if (!kotlinAnalogsForClass.isEmpty()) {
             trace.report(PLATFORM_CLASS_MAPPED_TO_KOTLIN.on(element, kotlinAnalogsForClass));

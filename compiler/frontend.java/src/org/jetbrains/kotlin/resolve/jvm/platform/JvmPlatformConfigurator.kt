@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsTypeChecker
@@ -69,9 +70,10 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
         identifierChecker = JvmSimpleNameBacktickChecker,
 
-        overloadFilter = JvmOverloadFilter
-) {
+        overloadFilter = JvmOverloadFilter,
 
+        platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
+) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
 

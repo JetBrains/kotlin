@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -47,7 +47,8 @@ class FileScopeFactory(
         private val moduleDescriptor: ModuleDescriptor,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
-        private val ktImportsFactory: KtImportsFactory
+        private val ktImportsFactory: KtImportsFactory,
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap
 ) {
     private val defaultImports by storageManager.createLazyValue {
         ktImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
@@ -65,8 +66,11 @@ class FileScopeFactory(
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
                               ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
 
-        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
-                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames, trace, packageFragment)
+        fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace) =
+                LazyImportResolver(
+                        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap,
+                        indexedImports, aliasImportNames, trace, packageFragment
+                )
 
         val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)

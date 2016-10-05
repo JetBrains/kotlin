@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsNameChecker
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsNameClashChecker
 import org.jetbrains.kotlin.js.resolve.diagnostics.NativeInnerClassChecker
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -38,7 +39,8 @@ object JsPlatformConfigurator : PlatformConfigurator(
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
         identifierChecker = IdentifierChecker.DEFAULT,
-        overloadFilter = OverloadFilter.DEFAULT
+        overloadFilter = OverloadFilter.DEFAULT,
+        platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
 ) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)

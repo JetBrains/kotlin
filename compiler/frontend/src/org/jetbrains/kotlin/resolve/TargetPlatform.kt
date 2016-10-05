@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
@@ -46,7 +47,7 @@ abstract class TargetPlatform(
         override val defaultModuleParameters = ModuleParameters.Empty
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
-                                              IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT) {
+                                              IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY) {
                     override fun configure(container: StorageComponentContainer) {
                         super.configure(container)
                         container.useInstance(SyntheticScopes.Empty)
@@ -80,7 +81,8 @@ abstract class PlatformConfigurator(
         additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
         private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
         private val identifierChecker: IdentifierChecker,
-        private val overloadFilter: OverloadFilter
+        private val overloadFilter: OverloadFilter,
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap
 ) {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
@@ -97,6 +99,7 @@ abstract class PlatformConfigurator(
             additionalAnnotationCheckers.forEach { useInstance(it) }
             useInstance(identifierChecker)
             useInstance(overloadFilter)
+            useInstance(platformToKotlinClassMap)
         }
     }
 }

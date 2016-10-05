@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -57,9 +58,9 @@ class TypeResolver(
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
-        private val identifierChecker: IdentifierChecker
+        private val identifierChecker: IdentifierChecker,
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap
 ) {
-
     open class TypeTransformerForTests {
         open fun transformType(kotlinType: KotlinType): KotlinType? = null
     }
@@ -612,16 +613,18 @@ class TypeResolver(
             }
         }
 
-        val result = qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext)
-        if (result.classifierDescriptor != null) {
-            PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
-                    moduleDescriptor, trace, userType, result.classifierDescriptor)
+        return qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext).apply {
+            if (classifierDescriptor != null) {
+                PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
+                        platformToKotlinClassMap, trace, userType, classifierDescriptor
+                )
+            }
         }
-        return result
     }
 
     companion object {
-        @JvmStatic fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
+        @JvmStatic
+        fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
             return when (projectionKind) {
                 KtProjectionKind.IN -> IN_VARIANCE
                 KtProjectionKind.OUT -> OUT_VARIANCE
