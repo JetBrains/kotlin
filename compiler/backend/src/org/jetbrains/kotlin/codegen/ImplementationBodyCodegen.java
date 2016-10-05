@@ -69,6 +69,10 @@ import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -328,7 +332,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-        
+
         for (String kotlinMarkerInterface : kotlinMarkerInterfaces) {
             sw.writeInterface();
             sw.writeAsmType(Type.getObjectType(kotlinMarkerInterface));
@@ -379,7 +383,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
-        new CollectionStubMethodGenerator(state, descriptor, functionCodegen, v).generate();
+        new CollectionStubMethodGenerator(typeMapper, descriptor).generate(functionCodegen, v);
 
         generateToArray();
 
