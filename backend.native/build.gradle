@@ -77,4 +77,5 @@ repositories {
 genCompilerInteropStubs {
     environment 'CPATH'        : "$llvmInstallPath/include"
     environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
+    environment 'LD_LIBRARY_PATH' : "$llvmInstallPath/lib"
 }
