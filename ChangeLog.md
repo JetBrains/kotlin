@@ -207,6 +207,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-12398`](https://youtrack.jetbrains.com/issue/KT-12398) Call Hierarchy: Show Kotlin usages of Java methods
 - [`KT-13976`](https://youtrack.jetbrains.com/issue/KT-13976) Search Everywhere: Render function parameter types
 - [`KT-13977`](https://youtrack.jetbrains.com/issue/KT-13977) Search Everywhere: Render extension type in prefix position
+- Implement Kotlin facet
 
 #### Intention actions, inspections and quickfixes
 
