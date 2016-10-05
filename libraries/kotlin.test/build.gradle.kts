@@ -1,4 +1,5 @@
 
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -17,9 +18,12 @@ apply { plugin("kotlin") }
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(projectDir,"src")))
-    }
-    sourceSets.getByName("test").apply {
+        java.setSrcDirs(
+                listOf("shared/src/main/kotlin",
+                        "shared/src/main/kotlin.jvm",
+                        "junit/src/main/kotlin")
+                        .map { File(projectDir, it) }
+        )
         java.setSrcDirs(emptyList<File>())//listOf(File(projectDir,"test")))
     }
 }
@@ -30,9 +34,9 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.moduleName = "kotlin-stdlib"
     kotlinOptions.allowKotlinPackage = true
-    kotlinOptions.inheritMultifileParts = true
-    kotlinOptions.declarationsOutputPath = File(buildDir, "declarations/stdlib-declarations.json").canonicalPath
 }
 
+tasks.withType<Jar> {
+    exclude("kotlin/internal/OnlyInputTypes*", "kotlin/internal/InlineOnly*", "kotlin/internal")
+}

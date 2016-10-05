@@ -25,10 +25,7 @@ repositories {
 dependencies {
     compile(project(":core.builtins"))
     compile(project(":libraries:stdlib"))
-    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) {
-        isTransitive = false
-        this
-    }
+    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) { isTransitive = false }
     compile("javax.inject", "javax.inject", "1")
 //    compile("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
 //    compile("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
@@ -38,13 +35,13 @@ dependencies {
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
         listOf("core/descriptor.loader.java/src",
-                "core/descriptors/src",
-                "core/descriptors.runtime/src",
-                "core/deserialization/src",
-                "core/util.runtime/src")
+               "core/descriptors/src",
+               "core/descriptors.runtime/src",
+               "core/deserialization/src",
+               "core/util.runtime/src")
         .map { File(rootDir, it) }
         .let { java.setSrcDirs(it) }
-        println(compileClasspath.joinToString("\n    ", prefix = "classpath =\n    ") { it.canonicalFile.relativeTo(rootDir).path })
+//        println(compileClasspath.joinToString("\n    ", prefix = "classpath =\n    ") { it.canonicalFile.relativeTo(rootDir).path })
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
@@ -54,3 +51,7 @@ configure<JavaPluginConvention> {
 tasks.withType<KotlinCompile> {
     kotlinOptions.allowKotlinPackage = true
 }
+
+//tasks.withType<Jar> {
+//    enabled = false
+//}

@@ -1,9 +1,11 @@
 // modules
+include 'core'
 include 'core.builtins'
 include 'core.builtins.serialized'
+include 'core.reflection'
 include 'custom-dependencies:protobuf-lite'
-include 'core'
 include 'libraries:stdlib'
+include 'libraries:kotlin.test'
 
 rootProject.name = 'kotlin'
 

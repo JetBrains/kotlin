@@ -17,22 +17,21 @@ apply { plugin("kotlin") }
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(projectDir,"src")))
+        java.setSrcDirs(listOf(File(rootDir, "core/reflection/src")))
     }
     sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())//listOf(File(projectDir,"test")))
+        java.setSrcDirs(emptyList<File>())
     }
 }
 
 dependencies {
     compile(project(":core.builtins"))
-    compile("junit:junit:4.11")
+    compile(project(":core"))
+    compile(project(":libraries:stdlib"))
+    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) { isTransitive = false }
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.moduleName = "kotlin-stdlib"
     kotlinOptions.allowKotlinPackage = true
-    kotlinOptions.inheritMultifileParts = true
-    kotlinOptions.declarationsOutputPath = File(buildDir, "declarations/stdlib-declarations.json").canonicalPath
 }
 

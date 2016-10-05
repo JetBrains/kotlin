@@ -26,28 +26,27 @@ repositories {
 }
 
 val protobufCfg = configurations.create("protobuf-java")
+
 val protobufVersion = "2.6.1"
 val protobufJarPrefix = "protobuf-$protobufVersion"
-val jarsDir = "$buildDir/jars"
-val renamedOutputJarPathWithoutExt = "$jarsDir/$protobufJarPrefix-relocated"
+val renamedOutputJarPathWithoutExt = "$buildDir/jars/$protobufJarPrefix-relocated"
 val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
-val outputJarPath = "$jarsDir/$protobufJarPrefix-lite.jar"
+val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
 artifacts.add("protobuf-java", File(outputJarPath))
 
 dependencies {
     "protobuf-java"("com.google.protobuf:protobuf-java:$protobufVersion")
-//    "protobuf-java"("org.fusesource.jansi:jansi:1.11")
 }
 
 val relocateTask = task<ShadowJar>("relocate-protobuf") {
     classifier = renamedOutputJarPathWithoutExt // TODO: something fishy about the usage here, according to docs only suffix is enough here, but it doesn't work
     this.configurations = listOf(protobufCfg)
     from(protobufCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
-    into(jarsDir)
-    doFirst {
-        File(jarsDir).mkdirs()
-    }
+//    into(jarsDir)
+//    doFirst {
+//        File(jarsDir).mkdirs()
+//    }
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
@@ -56,8 +55,6 @@ val relocateTask = task<ShadowJar>("relocate-protobuf") {
 val prepareTask = task("prepare") {
     dependsOn(relocateTask)
     val inputJar = renamedOutputJarPath
-    println("Processing jar $inputJar")
-    println("into jar $outputJarPath")
     inputs.files(inputJar)
     outputs.file(outputJarPath)
     doFirst {
