@@ -18,28 +18,27 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering.Companion.clinitName
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.util.transform
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 
 class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
@@ -75,10 +74,16 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
 
 
         irClass.transformChildrenVoid(this)
-    }
 
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        return super.visitGetValue(expression)
+        //REMOVE private methods
+        val privateToRemove = irClass.declarations.filterIsInstance<IrFunction>().mapNotNull {
+            val visibility = AsmUtil.getVisibilityAccessFlag(it.descriptor)
+            if (visibility == Opcodes.ACC_PRIVATE && it.descriptor.name != clinitName) {
+                it
+            }
+            else null
+        }
+        irClass.declarations.removeAll(privateToRemove)
     }
 
     companion object {
