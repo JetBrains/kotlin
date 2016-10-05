@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.actions
 
+import com.intellij.ide.actions.CopyReferenceAction
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.jetbrains.kotlin.psi.KtVisitorVoid
-import com.intellij.psi.PsiElement
-import com.intellij.ide.actions.CopyReferenceAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import java.util.ArrayList
-import kotlin.test.assertEquals
+import org.jetbrains.kotlin.psi.KtVisitorVoid
+import java.util.*
 
 class QualifiedNamesTest: LightCodeInsightTestCase() {
     fun testClassRef() {
@@ -46,7 +45,7 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
                     }
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Companion", "foo.bar.Object", "foo.bar.anonymous", null),
+        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Companion", "foo.bar.Object", "foo.bar.ClassKt#getAnonymous", null),
                      getQualifiedNamesForDeclarations())
     }
 
@@ -68,7 +67,7 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
                     val topLevelVal = ":)"
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.memberFun", "foo.bar.Klass.memberVal", "foo.bar.topLevelFun", "foo.bar.topLevelVal"),
+        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass#memberFun", "foo.bar.Klass#getMemberVal", "foo.bar.FunKt#topLevelFun", "foo.bar.FunKt#getTopLevelVal"),
                      getQualifiedNamesForDeclarations())
     }
 
