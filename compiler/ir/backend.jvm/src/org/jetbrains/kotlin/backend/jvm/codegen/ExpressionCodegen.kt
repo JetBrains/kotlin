@@ -528,10 +528,13 @@ class ExpressionCodegen(
                 return onStack(boxedType)
             }
 
-            IrTypeOperator.INSTANCEOF -> {
+            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
                 gen(expression.argument, OBJECT_TYPE, data)
                 val type = boxType(asmType)
                 generateIsCheck(mv, expression.typeOperand, type)
+                if (IrTypeOperator.NOT_INSTANCEOF == expression.operator) {
+                    StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(Type.BOOLEAN_TYPE, mv)
+                }
             }
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
