@@ -48,14 +48,14 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testStdlibFunction() {
-        val target = resolveDocLink("arrayListOf")
+        val target = resolveDocLink("reader")
         UsefulTestCase.assertInstanceOf(target, KtFunction::class.java)
-        Assert.assertEquals("arrayListOf", (target as KtFunction).name)
+        Assert.assertEquals("reader", (target as KtFunction).name)
 
         val secondaryTarget = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.psiManager, "ArrayList", target)
+                myFixture.psiManager, "InputStream", target)
         UsefulTestCase.assertInstanceOf(secondaryTarget, PsiClass::class.java)
-        Assert.assertEquals("ArrayList", (secondaryTarget as PsiClass).name)
+        Assert.assertEquals("InputStream", (secondaryTarget as PsiClass).name)
     }
 
     private fun resolveDocLink(linkText: String): PsiElement? {
