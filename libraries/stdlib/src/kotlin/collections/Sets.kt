@@ -3,7 +3,6 @@
 
 package kotlin.collections
 
-import java.io.Serializable
 import java.util.*
 
 

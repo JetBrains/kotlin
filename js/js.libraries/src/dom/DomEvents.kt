@@ -1,6 +1,5 @@
 package kotlin.dom
 
-import java.io.Closeable
 import org.w3c.dom.*
 import org.w3c.dom.events.*
 
@@ -24,6 +23,10 @@ public fun mouseEventHandler(handler: (MouseEvent) -> Unit): EventListener {
             handler(e)
         }
     }
+}
+
+public interface Closeable {
+    public open fun close(): Unit
 }
 
 /**

@@ -1,7 +1,6 @@
 @file:kotlin.jvm.JvmName("TuplesKt")
 package kotlin
 
-import java.io.Serializable
 
 /**
  * Represents a generic pair of two values.

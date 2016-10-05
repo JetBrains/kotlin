@@ -102,3 +102,6 @@ internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
             this
         else
             this.copyOf()
+
+// temporary for shared code, until we have an annotation like JvmSerializable
+internal interface Serializable

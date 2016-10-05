@@ -340,10 +340,6 @@
         append: throwAbstractFunctionInvocationError("Appendable#append")
     });
 
-    Kotlin.Closeable = Kotlin.createTraitNow(null, null, {
-        close: throwAbstractFunctionInvocationError("Closeable#close")
-    });
-
     Kotlin.safeParseInt = function (str) {
         var r = parseInt(str, 10);
         return isNaN(r) ? null : r;
