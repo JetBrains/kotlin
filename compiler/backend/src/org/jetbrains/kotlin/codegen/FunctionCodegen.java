@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -82,8 +84,7 @@ import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBinding
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -597,11 +598,23 @@ public class FunctionCodegen {
                 CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
-                Method method = typeMapper.mapAsmMethod(descriptor);
-                int flags = ACC_ABSTRACT | getVisibilityAccessFlag(descriptor);
-                v.newMethod(JvmDeclarationOriginKt.OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
+                if (!isThereOverriddenInKotlinClass(descriptor)) {
+                    Method method = typeMapper.mapAsmMethod(descriptor);
+                    int flags = ACC_ABSTRACT | getVisibilityAccessFlag(descriptor);
+                    v.newMethod(JvmDeclarationOriginKt.OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
+                }
             }
         }
+    }
+
+    private static boolean isThereOverriddenInKotlinClass(@NotNull CallableMemberDescriptor descriptor) {
+        return CollectionsKt.any(getAllOverriddenDescriptors(descriptor), new Function1<CallableMemberDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(CallableMemberDescriptor descriptor) {
+                return !(descriptor.getContainingDeclaration() instanceof JavaClassDescriptor) &&
+                            isClass(descriptor.getContainingDeclaration());
+            }
+        });
     }
 
     @NotNull

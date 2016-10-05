@@ -187,6 +187,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noSpecialBridgeIfPresentInSuperClass.kt")
+        public void testNoSpecialBridgeIfPresentInSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/noSpecialBridgeIfPresentInSuperClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantStubForSize.kt")
         public void testRedundantStubForSize() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/redundantStubForSize.kt");

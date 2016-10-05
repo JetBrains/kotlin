@@ -1,0 +1,29 @@
+@kotlin.Metadata
+public abstract class A {
+    public method <init>(): void
+    public method add(p0: int, p1: java.lang.Object): void
+    public method add(p0: java.lang.Object): boolean
+    public method addAll(p0: int, p1: java.util.Collection): boolean
+    public method addAll(p0: java.util.Collection): boolean
+    public method clear(): void
+    public abstract method contains(p0: java.lang.Object): boolean
+    public abstract method getSize(): int
+    public abstract method indexOf(p0: java.lang.Object): int
+    public abstract method lastIndexOf(p0: java.lang.Object): int
+    public method listIterator(): java.util.ListIterator
+    public method listIterator(p0: int): java.util.ListIterator
+    public method remove(p0: int): java.lang.Object
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public final method size(): int
+    public method subList(p0: int, p1: int): java.util.List
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+}
+
+@kotlin.Metadata
+public abstract class B {
+    public method <init>(): void
+}
