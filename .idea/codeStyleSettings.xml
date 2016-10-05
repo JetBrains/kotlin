@@ -142,10 +142,6 @@
           <option name="FOR_BRACE_FORCE" value="1" />
           <option name="FIELD_ANNOTATION_WRAP" value="0" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-          <indentOptions>
-            <option name="INDENT_SIZE" value="2" />
-            <option name="TAB_SIZE" value="2" />
-          </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="HTML">
           <indentOptions>
