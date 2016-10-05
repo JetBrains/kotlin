@@ -24,7 +24,7 @@
     <property name="override.version.branch" value="1.0.5"/>
     <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1,branch:${override.version.branch}"/>
 
-    <!--<property name="override.version.disabled" value="true"/>-->
+    <property name="override.version.disabled" value="true"/>
 
     <condition property="isWindows">
         <os family="windows"/>
