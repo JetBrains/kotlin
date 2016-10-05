@@ -457,7 +457,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (!hasGenericToArray) {
-            MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_PUBLIC, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+            MethodVisitor mv = v.newMethod(
+                    NO_ORIGIN, ACC_PUBLIC, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", "<T:Ljava/lang/Object;>([TT;)[TT;", null);
 
             InstructionAdapter iv = new InstructionAdapter(mv);
             mv.visitCode();
