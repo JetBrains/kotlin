@@ -5,6 +5,7 @@ headers = clang-c/Index.h
 compiler = clang
 
 compilerOpts = -std=c99 -fPIC
+linkerOpts.linux = -Wl,-z,noexecstack
 
 linker = clang
 
