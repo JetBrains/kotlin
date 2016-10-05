@@ -1682,6 +1682,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("implicitThrow.kt")
+                public void testImplicitThrow() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/implicitThrow.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("nonValuedReturnWithThrow.kt")
                 public void testNonValuedReturnWithThrow() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws/nonValuedReturnWithThrow.kt");

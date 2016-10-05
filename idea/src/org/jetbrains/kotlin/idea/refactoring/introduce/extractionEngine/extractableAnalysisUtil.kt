@@ -243,6 +243,8 @@ private fun ExtractionData.analyzeControlFlow(
                 when {
                     it !is ReturnValueInstruction && it !is ReturnNoValueInstruction && it.owner != pseudocode ->
                         null
+                    it is UnconditionalJumpInstruction && it.targetLabel.isJumpToError ->
+                        it
                     e != null && e !is KtBreakExpression && e !is KtContinueExpression ->
                         it.previousInstructions.firstOrNull()
                     else ->
@@ -268,7 +270,7 @@ private fun ExtractionData.analyzeControlFlow(
                         || element is KtContinueExpression) {
                     jumpExits.add(inst)
                 }
-                else if (element !is KtThrowExpression) {
+                else if (element !is KtThrowExpression && !inst.targetLabel.isJumpToError) {
                     defaultExits.add(inst)
                 }
             }

@@ -121,6 +121,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-14128`](https://youtrack.jetbrains.com/issue/KT-14128), [`KT-13862`](https://youtrack.jetbrains.com/issue/KT-13862) Rename: Use qualified class name when looking for occurrences in non-code files
 - [`KT-6199`](https://youtrack.jetbrains.com/issue/KT-6199) Rename: Replace non-code class occurrences with new qualified name
 - [`KT-14182`](https://youtrack.jetbrains.com/issue/KT-14182) Move: Show error message on applying to enum entries
+- Extract Function: Support implicit abnormal exits via Nothing-typed expressions
 
 #### IDE. Inspections, Intentions and Quickfixes
 
