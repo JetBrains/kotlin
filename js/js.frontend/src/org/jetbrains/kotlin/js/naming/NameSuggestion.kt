@@ -87,7 +87,7 @@ class NameSuggestion {
             }
 
             // It's a special case when an object has `invoke` operator defined, in this case we simply generate object itself
-            is FakeCallableDescriptorForObject -> return suggest(descriptor.getReferencedDescriptor())
+            is FakeCallableDescriptorForObject -> return suggest(descriptor.getReferencedObject())
 
             // For primary constructors and constructors of native classes we generate references to containing classes
             is ConstructorDescriptor -> {

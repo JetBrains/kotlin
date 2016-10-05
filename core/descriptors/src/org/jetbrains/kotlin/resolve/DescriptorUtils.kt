@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -324,7 +325,7 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
 
 fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
     val methodTypeParameters = valueParameters
-    val nullableString = TypeUtils.makeNullable(builtIns.stringType)
+    val nullableString = builtIns.stringType.makeNullable()
     return DescriptorUtils.ENUM_VALUE_OF == name
            && methodTypeParameters.size == 1
            && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
