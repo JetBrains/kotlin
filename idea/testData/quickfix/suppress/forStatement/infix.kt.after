@@ -4,5 +4,5 @@ infix fun Int.add(other: Int) = this + other
 
 fun foo() {
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    (1!! add 2)
+    1!! add 2
 }
