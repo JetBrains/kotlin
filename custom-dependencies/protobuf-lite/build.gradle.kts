@@ -1,6 +1,7 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.SourceTask
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -26,17 +27,18 @@ repositories {
 
 val protobufCfg = configurations.create("protobuf-java")
 val protobufVersion = "2.6.1"
-
-dependencies {
-    "protobuf-java"("com.google.protobuf:protobuf-java:$protobufVersion")
-//    "protobuf-java"("org.fusesource.jansi:jansi:1.11")
-}
-
 val protobufJarPrefix = "protobuf-$protobufVersion"
 val jarsDir = "$buildDir/jars"
 val renamedOutputJarPathWithoutExt = "$jarsDir/$protobufJarPrefix-relocated"
 val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
 val outputJarPath = "$jarsDir/$protobufJarPrefix-lite.jar"
+
+artifacts.add("protobuf-java", File(outputJarPath))
+
+dependencies {
+    "protobuf-java"("com.google.protobuf:protobuf-java:$protobufVersion")
+//    "protobuf-java"("org.fusesource.jansi:jansi:1.11")
+}
 
 val relocateTask = task<ShadowJar>("relocate-protobuf") {
     classifier = renamedOutputJarPathWithoutExt // TODO: something fishy about the usage here, according to docs only suffix is enough here, but it doesn't work
@@ -51,7 +53,7 @@ val relocateTask = task<ShadowJar>("relocate-protobuf") {
     }
 }
 
-task<SourceTask>("prepare") {
+val prepareTask = task("prepare") {
     dependsOn(relocateTask)
     val inputJar = renamedOutputJarPath
     println("Processing jar $inputJar")
@@ -123,3 +125,4 @@ task<SourceTask>("prepare") {
 }
 
 defaultTasks("prepare")
+
