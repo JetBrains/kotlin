@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.allopen.ide
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
@@ -39,11 +40,8 @@ class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : Abs
         CachedValueProvider.Result.create(WeakHashMap<Module, List<String>>(), ProjectRootModificationTracker.getInstance(project))
     }
 
-    override fun getAllOpenAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String> {
-        val project = modifierListOwner.project
-
-        val virtualFile = modifierListOwner.containingFile?.virtualFile ?: return emptyList()
-        val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(virtualFile) ?: return emptyList()
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String> {
+        val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
         return cache.value.getOrPut(module) {
             val kotlinFacet = KotlinFacet.get(module) ?: return@getOrPut emptyList()

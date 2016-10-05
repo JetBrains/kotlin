@@ -71,6 +71,7 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" filepath="$PROJECT_DIR$/plugins/noarg/noarg-cli/noarg-cli.iml" />
       <module fileurl="file://$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" filepath="$PROJECT_DIR$/non-compiler-tests/non-compiler-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" filepath="$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" group="plugins" />

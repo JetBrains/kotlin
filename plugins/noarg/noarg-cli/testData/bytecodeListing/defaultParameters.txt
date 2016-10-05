@@ -1,0 +1,34 @@
+@NoArg
+@kotlin.Metadata
+public interface BaseIntf
+
+@NoArg
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class MetaAnno
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg
+
+@NoArg
+@kotlin.Metadata
+public final class Test {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class Test2 {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: long): void
+    public synthetic method <init>(p0: java.lang.String, p1: long, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@MetaAnno
+@kotlin.Metadata
+public final class Test3 {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

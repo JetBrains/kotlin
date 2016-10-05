@@ -16,26 +16,21 @@
 
 package org.jetbrains.kotlin.allopen
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.TypeUtils
 
 class CliAllOpenDeclarationAttributeAltererExtension(
         private val allOpenAnnotationFqNames: List<String>
 ) : AbstractAllOpenDeclarationAttributeAltererExtension() {
-    override fun getAllOpenAnnotationFqNames(modifierListOwner: KtModifierListOwner) = allOpenAnnotationFqNames
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner) = allOpenAnnotationFqNames
 }
 
-abstract class AbstractAllOpenDeclarationAttributeAltererExtension : DeclarationAttributeAltererExtension {
-    abstract fun getAllOpenAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String>
-
+abstract class AbstractAllOpenDeclarationAttributeAltererExtension : DeclarationAttributeAltererExtension, AnnotationBasedExtension {
     override fun refineDeclarationModality(
             modifierListOwner: KtModifierListOwner,
             declaration: DeclarationDescriptor?,
@@ -49,43 +44,12 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
 
         // Explicit final
         if (modifierListOwner.hasModifier(KtTokens.FINAL_KEYWORD)) {
-            return null
+            return Modality.FINAL
         }
 
         val descriptor = declaration ?: containingDeclaration ?: return null
-        if (descriptor.hasAllOpenAnnotation(modifierListOwner)) return Modality.OPEN
+        if (descriptor.hasSpecialAnnotation(modifierListOwner)) return Modality.OPEN
 
         return null
-    }
-
-    private fun DeclarationDescriptor.hasAllOpenAnnotation(modifierListOwner: KtModifierListOwner): Boolean {
-        if (annotations.any { it.isAllOpenAnnotation(modifierListOwner) }) return true
-
-        if (this is ClassDescriptor) {
-            for (superType in TypeUtils.getAllSupertypes(defaultType)) {
-                val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
-                if (superTypeDescriptor.annotations.any { it.isAllOpenAnnotation(modifierListOwner) }) return true
-            }
-        }
-
-        return false
-    }
-
-    private fun AnnotationDescriptor.isAllOpenAnnotation(
-            modifierListOwner: KtModifierListOwner,
-            allowMetaAnnotations: Boolean = true
-    ): Boolean {
-        val annotationType = type.constructor.declarationDescriptor ?: return false
-        if (annotationType.fqNameSafe.asString() in getAllOpenAnnotationFqNames(modifierListOwner)) return true
-
-        if (allowMetaAnnotations) {
-            for (metaAnnotation in annotationType.annotations) {
-                if (metaAnnotation.isAllOpenAnnotation(modifierListOwner, allowMetaAnnotations = false)) {
-                    return true
-                }
-            }
-        }
-
-        return false
     }
 }

@@ -1,0 +1,37 @@
+@NoArg
+@kotlin.Metadata
+public final enum class Colors {
+    private synthetic final static field $VALUES: Colors[]
+    public final static field RED: Colors
+    public final static field WHITE: Colors
+    static method <clinit>(): void
+    protected method <init>(p0: java.lang.String, p1: int): void
+    public static method valueOf(p0: java.lang.String): Colors
+    public static method values(): Colors[]
+}
+
+@NoArg
+@kotlin.Metadata
+public interface Intf
+
+@kotlin.Metadata
+public final class MyClass {
+    private @NoArg @org.jetbrains.annotations.NotNull field abc: java.lang.String
+    public method <init>(p0: int): void
+    public final @NoArg @org.jetbrains.annotations.NotNull method getAbc(): java.lang.String
+    public final @NoArg method setAbc(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @NoArg method someFun(): void
+}
+
+@NoArg
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg
+
+@NoArg
+@kotlin.Metadata
+public final class Obj {
+    public final static field INSTANCE: Obj
+    static method <clinit>(): void
+    private method <init>(): void
+}

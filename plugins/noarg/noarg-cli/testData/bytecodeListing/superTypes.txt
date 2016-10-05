@@ -1,0 +1,31 @@
+@NoArg
+@kotlin.Metadata
+public abstract class BaseClass {
+    public method <init>(): void
+}
+
+@NoArg
+@kotlin.Metadata
+public interface BaseIntf
+
+@kotlin.Metadata
+public final class MyClass {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg
+
+@kotlin.Metadata
+public class Test1 {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class Test12 {
+    public method <init>(): void
+    public method <init>(p0: int): void
+}
