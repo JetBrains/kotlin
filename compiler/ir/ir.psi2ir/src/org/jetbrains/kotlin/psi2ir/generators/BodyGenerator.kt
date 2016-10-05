@@ -105,12 +105,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         }
     }
 
-    private fun IrExpression.wrapWithReturn() =
-            if (KotlinBuiltIns.isNothing(type))
-                this
-            else {
-                generateReturnExpression(startOffset, endOffset, this)
-            }
+    private fun IrExpression.wrapWithReturn() = generateReturnExpression(startOffset, endOffset, this)
 
     private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression): IrReturnImpl {
         val returnTarget = (scopeOwner as? CallableDescriptor) ?:
