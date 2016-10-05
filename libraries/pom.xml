@@ -97,6 +97,7 @@
         <module>tools/kotlin-annotation-processing</module>
         <module>tools/kotlin-allopen</module>
         <module>tools/kotlin-maven-allopen</module>
+        <module>tools/kotlin-noarg</module>
 
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-api</module>
