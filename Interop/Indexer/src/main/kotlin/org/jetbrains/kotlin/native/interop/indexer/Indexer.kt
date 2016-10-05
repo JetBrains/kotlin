@@ -209,7 +209,15 @@ private class NativeIndexImpl : NativeIndex() {
                 val name = entityName!!
                 val value = clang_getEnumConstantDeclValue(info.cursor)
 
-                getEnumDefAt(container.cursor).values.add(EnumValue(name, value))
+                val values = getEnumDefAt(container.cursor).values
+                val existingValue = values.find { it.name == name }
+                if (existingValue == null) {
+                    values.add(EnumValue(name, value))
+                } else {
+                    // in some cases Clang may index the same definition multiple times; ignore redeclaration
+                    // TODO: implement the same fix for structs
+                    assert (existingValue.value == value)
+                }
             }
         }
     }

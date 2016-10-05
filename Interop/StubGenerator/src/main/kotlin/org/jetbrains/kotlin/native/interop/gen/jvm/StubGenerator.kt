@@ -32,6 +32,17 @@ class StubGenerator(
             return if (strippedCName !in forbiddenStructNames) strippedCName else (strippedCName + "Struct")
         }
 
+    val EnumDef.isAnonymous: Boolean
+        get() = spelling.contains("(anonymous ") // TODO: it is a hack
+
+    /**
+     * Indicates whether this enum should be represented as Kotlin enum.
+     */
+    val EnumDef.isKotlinEnum: Boolean
+            // TODO: if an anonymous enum defines e.g. a function return value or struct field type,
+            // then it probably should be represented as Kotlin enum
+        get() = !isAnonymous
+
     /**
      * The name to be used for this enum in Kotlin
      */
@@ -39,11 +50,15 @@ class StubGenerator(
         get() = if (spelling.startsWith("enum ")) {
             spelling.substringAfter(' ')
         } else {
+            assert (!isAnonymous)
             spelling
         }
 
     val RecordType.kotlinName: String
         get() = decl.kotlinName
+
+    val EnumType.isKotlinEnum: Boolean
+        get() = def.isKotlinEnum
 
     val EnumType.kotlinName: String
         get() = def.kotlinName
@@ -116,7 +131,11 @@ class StubGenerator(
 
             is ArrayType -> "void*" // TODO
 
-            is EnumType -> this.def.spelling
+            is EnumType -> if (this.def.isAnonymous) {
+                this.def.baseType.getStringRepresentation()
+            } else {
+                this.def.spelling
+            }
 
             else -> throw kotlin.NotImplementedError()
         }
@@ -155,7 +174,11 @@ class StubGenerator(
 
         is RecordType -> NativeRefType("${type.kotlinName}")
 
-        is EnumType -> NativeRefType("${type.kotlinName}.ref")
+        is EnumType -> if (type.isKotlinEnum) {
+            NativeRefType("${type.kotlinName}.ref")
+        } else {
+            getKotlinTypeForRefTo(type.def.baseType)
+        }
 
         is PointerType -> {
             if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
@@ -247,11 +270,15 @@ class StubGenerator(
             }
         }
 
-        is EnumType -> OutValueBinding(
-                kotlinType = type.kotlinName,
-                kotlinConv = { "$it.value" },
-                kotlinJniBridgeType = type.def.baseType.kotlinType
-        )
+        is EnumType -> if (type.isKotlinEnum) {
+            OutValueBinding(
+                    kotlinType = type.kotlinName,
+                    kotlinConv = { "$it.value" },
+                    kotlinJniBridgeType = type.def.baseType.kotlinType
+            )
+        } else {
+            getOutValueBinding(type.def.baseType)
+        }
 
         is ArrayType -> outValueRefBinding(getKotlinTypeForRefTo(type))
 
@@ -289,11 +316,15 @@ class StubGenerator(
             }
         }
 
-        is EnumType -> InValueBinding(
-                kotlinJniBridgeType = type.def.baseType.kotlinType,
-                conv = { "${type.kotlinName}.byValue($it)" },
-                kotlinType = type.kotlinName
-        )
+        is EnumType -> if (type.isKotlinEnum) {
+            InValueBinding(
+                    kotlinJniBridgeType = type.def.baseType.kotlinType,
+                    conv = { "${type.kotlinName}.byValue($it)" },
+                    kotlinType = type.kotlinName
+            )
+        } else {
+            getInValueBinding(type.def.baseType)
+        }
 
         is ArrayType -> inValueRefBinding(getKotlinTypeForRefTo(type))
 
@@ -313,10 +344,10 @@ class StubGenerator(
     /**
      * Produces to [out] the definition of Kotlin class representing the reference to given struct.
      */
-    private fun generateKotlinStruct(decl: StructDecl) {
+    private fun generateStruct(decl: StructDecl) {
         val def = decl.def
         if (def == null) {
-            generateKotlinForwardStruct(decl)
+            generateForwardStruct(decl)
             return
         }
 
@@ -344,7 +375,7 @@ class StubGenerator(
     /**
      * Produces to [out] the definition of Kotlin class representing the reference to given forward (incomplete) struct.
      */
-    private fun generateKotlinForwardStruct(s: StructDecl) {
+    private fun generateForwardStruct(s: StructDecl) {
         val className = s.kotlinName
         out("class $className(ptr: NativePtr) : NativeRef(ptr) {")
         out("    companion object : Type<$className>(::$className)")
@@ -352,9 +383,14 @@ class StubGenerator(
     }
 
     /**
-     * Produces to [out] the definition of Kotlin class representing the value of given enum.
+     * Produces to [out] the Kotlin definitions for given enum.
      */
-    private fun generateKotlinEnum(e: EnumDef) {
+    private fun generateEnum(e: EnumDef) {
+        if (!e.isKotlinEnum) {
+            generateEnumAsValues(e)
+            return
+        }
+
         val baseRefType = getKotlinTypeForRefTo(e.baseType)
 
         out("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType}) {")
@@ -377,6 +413,25 @@ class StubGenerator(
 
         }
         out("}")
+    }
+
+    /**
+     * Produces to [out] the Kotlin definitions for given enum which shouldn't be represented as Kotlin enum.
+     *
+     * @see isKotlinEnum
+     */
+    private fun generateEnumAsValues(e: EnumDef) {
+        // TODO: if this enum defines e.g. a type of struct field, then it should be generated inside the struct class
+        // to prevent name clashing
+
+        if (e.values.isEmpty()) {
+            return
+        }
+
+        out("// ${e.spelling}")
+        e.values.forEach {
+            out("val ${it.name}: ${e.baseType.kotlinType} = ${it.value}")
+        }
     }
 
     /**
@@ -508,7 +563,7 @@ class StubGenerator(
         nativeIndex.structs.forEach { s ->
             try {
                 transaction {
-                    generateKotlinStruct(s)
+                    generateStruct(s)
                     out("")
                 }
             } catch (e: Throwable) {
@@ -517,7 +572,7 @@ class StubGenerator(
         }
 
         nativeIndex.enums.forEach { e ->
-            generateKotlinEnum(e)
+            generateEnum(e)
             out("")
         }
 
