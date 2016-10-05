@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import kotlin_native.interop.Ref.to
 import org.jetbrains.kotlin.native.interop.indexer.NativeIndex
 import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -12,12 +14,31 @@ fun main(args: Array<String>) {
     val ktGenRoot = args[0]
     val nativeLibsDir = args[1]
     val ktSrcRoots = args.drop(2)
+    // TODO: remove OSX defaults.
+    val substitutions = mapOf(
+            "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
+            "os" to (System.getenv("TARGET_OS") ?: detectHost())
+    )
+
 
     ktSrcRoots.forEach { ktSrcRoot ->
         val defFiles = File(ktSrcRoot).walk().filter { it.name.endsWith(".def") }
 
         defFiles.forEach { defFile ->
-            processDefFile(ktSrcRoot, defFile, ktGenRoot, nativeLibsDir, llvmInstallPath)
+            processDefFile(ktSrcRoot, defFile, ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions)
+        }
+    }
+}
+
+private fun detectHost():String {
+    val os =System.getProperty("os.name")
+    when (os) {
+        "Linux" -> return "linux"
+        "Windows" -> return "win"
+        "Mac OS X" -> return "osx"
+        "FreeBSD" -> return "freebsd"
+        else -> {
+            throw IllegalArgumentException("we don't know ${os} value")
         }
     }
 }
@@ -42,16 +63,11 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
     }
 }
 
-private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, nativeLibsDir: String, llvmInstallPath: String) {
+private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, nativeLibsDir: String, llvmInstallPath: String, substitutions: Map<String, String>) {
     val config = Properties()
     defFile.bufferedReader().use { reader ->
         config.load(reader)
     }
-    // TODO: remove OSX defaults.
-    val substitutions = mapOf(
-            "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
-            "os" to (System.getenv("TARGET_OS") ?: "osx")
-    )
     substitute(config, substitutions)
 
     val headerFiles = config.getProperty("headers").split(' ')
