@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -36,11 +37,12 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
-        isStatement: Boolean = false
+        isStatement: Boolean = false,
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
 ): KotlinTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
     return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression)
+            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
 }
 
 @JvmOverloads fun KtExpression.analyzeInContext(
@@ -49,9 +51,10 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
-        isStatement: Boolean = false
+        isStatement: Boolean = false,
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
 ): BindingContext {
-    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement)
+    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement, contextDependency)
     return trace.bindingContext
 }
 

@@ -1,0 +1,39 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Type mismatch: inferred type is () -> Unit but Int was expected
+
+package main
+
+class X {
+    fun foo(p: Int) {
+    }
+
+    fun f() {
+        foo {<caret>}
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(filter: (String) -> Boolean){}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Type mismatch: inferred type is () -> Unit but Int was expected
+
+package main
+
+import other.foo
+
+class X {
+    fun foo(p: Int) {
+    }
+
+    fun f() {
+        foo {<caret>}
+    }
+}
+
