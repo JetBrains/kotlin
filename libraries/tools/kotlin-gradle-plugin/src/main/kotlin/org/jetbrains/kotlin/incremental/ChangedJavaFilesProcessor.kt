@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.gradle.tasks.kotlinDebug
+import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
 import java.io.File

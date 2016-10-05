@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.FqName

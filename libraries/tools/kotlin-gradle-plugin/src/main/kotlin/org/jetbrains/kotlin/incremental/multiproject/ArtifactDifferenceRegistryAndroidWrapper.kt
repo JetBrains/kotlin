@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.tasks.incremental.android
+package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.gradle.tasks.ArtifactDifference
-import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistry
-import org.jetbrains.kotlin.gradle.tasks.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
 
 internal class ArtifactDifferenceRegistryProviderAndroidWrapper(
