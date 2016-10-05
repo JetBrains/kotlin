@@ -351,17 +351,85 @@ class ExpressionCodegen(
     }
 
     override fun visitVararg(expression: IrVararg, data: BlockInfo): StackValue {
-        val size = expression.elements.size
-        mv.iconst(size)
-        val varargType = expression.asmType
-        val elementType = correctElementType(varargType)
-        val asmType = elementType
-        newArrayInstruction(expression.type)
-        for ((i, element)  in expression.elements.withIndex()) {
-            mv.dup()
-            StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
-            val rightSide = gen(element, asmType, data)
-            StackValue.arrayElement(asmType, StackValue.onStack(asmType), StackValue.onStack(Type.INT_TYPE)).store(rightSide, mv)
+        val outType = expression.type
+        val type = expression.asmType
+        assert(type.sort == Type.ARRAY)
+        val elementType = correctElementType(type)
+        val arguments = expression.elements
+        val size = arguments.size
+
+        val hasSpread = arguments.firstIsInstanceOrNull<IrSpreadElement>() != null
+
+        if (hasSpread) {
+            val arrayOfReferences = KotlinBuiltIns.isArray(outType)
+            if (size == 1) {
+                // Arrays.copyOf(receiverValue, newLength)
+                val argument = (arguments[0] as IrSpreadElement).expression
+                val arrayType = if (arrayOfReferences)
+                    Type.getType("[Ljava/lang/Object;")
+                else
+                    Type.getType("[" + elementType.descriptor)
+                gen(argument, type, data)
+                mv.dup()
+                mv.arraylength()
+                mv.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false)
+                if (arrayOfReferences) {
+                    mv.checkcast(type)
+                }
+            }
+            else {
+                val owner: String
+                val addDescriptor: String
+                val toArrayDescriptor: String
+                if (arrayOfReferences) {
+                    owner = "kotlin/jvm/internal/SpreadBuilder"
+                    addDescriptor = "(Ljava/lang/Object;)V"
+                    toArrayDescriptor = "([Ljava/lang/Object;)[Ljava/lang/Object;"
+                }
+                else {
+                    val spreadBuilderClassName = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
+                    owner = "kotlin/jvm/internal/" + spreadBuilderClassName
+                    addDescriptor = "(" + elementType.descriptor + ")V"
+                    toArrayDescriptor = "()" + type.getDescriptor()
+                }
+                mv.anew(Type.getObjectType(owner))
+                mv.dup()
+                mv.iconst(size)
+                mv.invokespecial(owner, "<init>", "(I)V", false)
+                for (i in 0..size - 1) {
+                    mv.dup()
+                    val argument = arguments[i]
+                    if (argument is IrSpreadElement) {
+                        gen(argument.expression, OBJECT_TYPE, data)
+                        mv.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false)
+                    }
+                    else {
+                        gen(argument, elementType, data)
+                        mv.invokevirtual(owner, "add", addDescriptor, false)
+                    }
+                }
+                if (arrayOfReferences) {
+                    mv.dup()
+                    mv.invokevirtual(owner, "size", "()I", false)
+                    newArrayInstruction(outType)
+                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
+                    mv.checkcast(type)
+                }
+                else {
+                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
+                }
+            }
+        }
+        else {
+            mv.iconst(size)
+            val asmType = elementType
+            newArrayInstruction(expression.type)
+            for ((i, element)  in expression.elements.withIndex()) {
+                mv.dup()
+                StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
+                val rightSide = gen(element, asmType, data)
+                StackValue.arrayElement(asmType, StackValue.onStack(asmType), StackValue.onStack(Type.INT_TYPE)).store(rightSide, mv)
+            }
         }
         return expression.onStack
     }
