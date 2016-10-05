@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
@@ -322,3 +323,6 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
 
     return result
 }
+
+fun ClassDescriptor.getAllSuperclassesWithoutAny() =
+        generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())

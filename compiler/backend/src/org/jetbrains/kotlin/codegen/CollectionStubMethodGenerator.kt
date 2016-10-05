@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERR
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.isFromBuiltins
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -32,10 +33,10 @@ import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
@@ -63,9 +64,14 @@ class CollectionStubMethodGenerator(
     }
 
     private fun computeTasksToGenerate(): TasksToGenerate {
-        if (descriptor.kind == ClassKind.INTERFACE) return NO_TASKS
+        if (descriptor.kind == ClassKind.INTERFACE || descriptor is JavaClassDescriptor) return NO_TASKS
         val superCollectionClasses = findRelevantSuperCollectionClasses()
         if (superCollectionClasses.isEmpty()) return NO_TASKS
+
+        val existingMethodsInSuperclasses = descriptor.getAllSuperclassesWithoutAny().flatMap {
+            val tasksFromSuperClass = CollectionStubMethodGenerator(typeMapper, it).computeTasksToGenerate()
+            (tasksFromSuperClass.methodStubsToGenerate + tasksFromSuperClass.syntheticStubsToGenerate).map { it.asmMethod }
+        }
 
         val methodStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
         val syntheticStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
@@ -139,10 +145,19 @@ class CollectionStubMethodGenerator(
                         method.signature()
                     }
 
-                    methodStubsToGenerate.add(commonSignature)
+                    if (commonSignature.asmMethod !in existingMethodsInSuperclasses &&
+                            // If original method already defined in a superclass we mustn't care about specialized version
+                            // The same way we do not generate specialized version in a common case like:
+                            // open class A<T> : MutableList<T> {
+                            //      fun add(x: T) = true
+                            // }
+                            // class B : A<String>() // No 'B.add(String)Z'
+                            originalSignature.asmMethod !in existingMethodsInSuperclasses) {
+                        methodStubsToGenerate.add(commonSignature)
 
-                    if (originalSignature.asmMethod != commonSignature.asmMethod) {
-                        syntheticStubsToGenerate.add(originalSignature)
+                        if (originalSignature.asmMethod != commonSignature.asmMethod) {
+                            syntheticStubsToGenerate.add(originalSignature)
+                        }
                     }
                 }
                 else {
