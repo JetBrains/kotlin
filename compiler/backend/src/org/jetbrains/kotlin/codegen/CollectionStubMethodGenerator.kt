@@ -101,10 +101,6 @@ class CollectionStubMethodGenerator(
                     // present in the bytecode (abstract) and we don't want a duplicate signature error
                     if (method.findOverriddenFromDirectSuperClass(descriptor)?.kind == DECLARATION) continue
 
-                    // Otherwise we can safely generate the stub with the substituted signature
-                    val signature = method.signature()
-                    methodStubsToGenerate.add(signature)
-
                     // If the substituted signature differs from the original one in MutableCollection, we should also generate a stub with
                     // the original (erased) signature. It doesn't really matter if this is a bridge method delegating to the first stub or
                     // a method with its own exception-throwing code, for simplicity we do the latter here.
@@ -114,9 +110,8 @@ class CollectionStubMethodGenerator(
                     // methods which need to be generated with the ACC_SYNTHETIC flag
                     val overriddenMethod = method.findOverriddenFromDirectSuperClass(mutableClass)!!
                     val originalSignature = overriddenMethod.original.signature()
-                    var specialSignature: JvmMethodSignature? = null
 
-                    if (overriddenMethod.isBuiltinWithSpecialDescriptorInJvm()) {
+                    val commonSignature = if (overriddenMethod.isBuiltinWithSpecialDescriptorInJvm()) {
                         // Stubs for remove(Ljava/lang/Object;)Z and remove(I) should not be synthetic
                         // Otherwise Javac will not see it
                         val overriddenMethodSignature = overriddenMethod.signature()
@@ -134,16 +129,19 @@ class CollectionStubMethodGenerator(
                                 else
                                     Pair(overriddenMethodSignature.asmMethod, overriddenMethodSignature.valueParameters)
 
-                        specialSignature = JvmMethodGenericSignature(
+                        JvmMethodGenericSignature(
                                 asmMethod,
                                 valueParameters,
                                 specialGenericSignature
                         )
-
-                        methodStubsToGenerate.add(specialSignature)
+                    }
+                    else {
+                        method.signature()
                     }
 
-                    if (originalSignature.asmMethod != signature.asmMethod && originalSignature.asmMethod != specialSignature?.asmMethod) {
+                    methodStubsToGenerate.add(commonSignature)
+
+                    if (originalSignature.asmMethod != commonSignature.asmMethod) {
                         syntheticStubsToGenerate.add(originalSignature)
                     }
                 }

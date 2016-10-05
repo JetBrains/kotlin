@@ -83,6 +83,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noRemoveAtInReadOnly.kt")
+    public void testNoRemoveAtInReadOnly() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/noRemoveAtInReadOnly.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samAdapterAndInlinedOne.kt")
     public void testSamAdapterAndInlinedOne() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
