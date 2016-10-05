@@ -52,13 +52,7 @@
 
     <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
 
-    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
-        <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
-            idea.maven.version="${ideaVersion}"/>
-    </target>
-
-    <target name="update_android_studio" depends="fetch-third-party,fetch-annotations,get_android_studio"
+    <target name="update" depends="fetch-third-party,fetch-annotations,get_android_studio"
             description="Update dependencies and Android Studio"/>
 
     <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
