@@ -707,12 +707,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private abstract class AbstractForLoopGenerator {
 
-        // for (e : E in c) {...}
-        protected final KtForExpression forExpression;
         private final Label loopParameterStartLabel = new Label();
         private final Label bodyEnd = new Label();
         private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
+        private StackValue loopParameter;
 
+        // for (e : E in c) {...}
+        protected final KtForExpression forExpression;
         protected final KotlinType elementType;
         protected final Type asmElementType;
 
@@ -857,6 +858,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + getterReturnType.getDescriptor(), false);
             StackValue.local(varToStore, varType).store(StackValue.onStack(getterReturnType), v);
         }
+
+        @NotNull
+        protected StackValue loopParameter() {
+            if (loopParameter == null) {
+                loopParameter = StackValue.local(loopParameterVar, loopParameterType);
+            }
+            return loopParameter;
+        }
     }
 
     private void generateLoopBody(@Nullable KtExpression body) {
@@ -990,8 +999,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.load(stringVar, JAVA_STRING_TYPE);
             v.load(indexVar, Type.INT_TYPE);
             v.invokevirtual("java/lang/String", "charAt", "(I)C", false);
-            StackValue.onStack(Type.CHAR_TYPE).put(asmElementType, v);
-            v.store(loopParameterVar, asmElementType);
+            loopParameter().store(StackValue.onStack(Type.CHAR_TYPE), v);
         }
 
         @Override
@@ -1070,8 +1078,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private abstract class AbstractForInProgressionOrRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
-        private StackValue loopParameter;
-
         private AbstractForInProgressionOrRangeLoopGenerator(@NotNull KtForExpression forExpression) {
             super(forExpression);
 
@@ -1111,14 +1117,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         public void checkPreCondition(@NotNull Label loopExit) {
-        }
-
-        @NotNull
-        protected StackValue loopParameter() {
-            if (loopParameter == null) {
-                loopParameter = StackValue.local(loopParameterVar, loopParameterType);
-            }
-            return loopParameter;
         }
     }
 
