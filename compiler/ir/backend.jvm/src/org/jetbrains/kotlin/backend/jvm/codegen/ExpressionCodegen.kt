@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue.*
+import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -38,31 +39,45 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_THROWABLE_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import java.util.*
 
-class LoopInfo(val irLoop: IrLoop, val continueLabel: Label, val breakLabel: Label)
+open class ExpressionInfo(val expression: IrExpression)
+
+class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label): ExpressionInfo(loop)
+
+class TryInfo(val tryBlock: IrTry) : ExpressionInfo(tryBlock) {
+    val gaps = mutableListOf<Label>()
+}
 
 class BlockInfo private constructor(val parent: BlockInfo?) {
     val variables: MutableList<VariableInfo> = mutableListOf()
 
-    private val loops = mutableListOf<LoopInfo>()
+    private val infos = Stack<ExpressionInfo>()
 
-    fun create() = BlockInfo(this)
-
-    fun addLoop(loop: LoopInfo) {
-        loops.add(loop)
+    fun create() = BlockInfo(this).apply {
+        this@apply.infos.addAll(this@BlockInfo.infos)
     }
 
-    fun removeLoop(loop: LoopInfo) {
-        assert (loops.last() == loop)
-        loops.dropLast(1)
+    fun addInfo(loop: ExpressionInfo) {
+        infos.add(loop)
     }
 
-    fun findLoop(loop: IrLoop): LoopInfo? {
-        return loops.firstOrNull { it.irLoop == loop } ?: parent?.findLoop(loop)
+    fun removeInfo(info: ExpressionInfo) {
+        assert (peek() == info)
+        pop()
     }
+
+    fun pop(): ExpressionInfo = infos.pop()
+
+    fun peek(): ExpressionInfo = infos.peek()
+
+    fun isEmpty(): Boolean = infos.isEmpty()
+
+    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
 
     companion object {
         fun create() = BlockInfo(null)
@@ -372,10 +387,15 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
-        val value = expression.value?.apply {
+        val value = expression.value.apply {
             gen(this, returnType, data)
         }
+
+        val afterReturnLabel = Label()
+        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+
         mv.areturn(returnType)
+        mv.mark(afterReturnLabel)
         return expression.onStack
     }
 
@@ -467,47 +487,76 @@ class ExpressionCodegen(
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): StackValue {
-        val continueLabel = Label()
-        mv.mark(continueLabel)
-
+        val continueLabel = markNewLabel()
         val endLabel = Label()
         val condition = loop.condition
         gen(condition, data)
         BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
-            data.addLoop(this)
+            data.addInfo(this)
             loop.body?.apply {
                 gen(this, data)
             }
-            data.removeLoop(this)
+            data.removeInfo(this)
         }
         mv.goTo(continueLabel)
         mv.mark(endLabel)
-
 
         return loop.onStack
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): StackValue {
-        val loop = data.findLoop(jump.loop)!!
-        val label = if (jump is IrBreak) loop.breakLabel else loop.continueLabel
-        mv.goTo(label)
+        generateBreakOrContinueExpression(jump, Label(), data)
         return none()
     }
 
+    private fun generateBreakOrContinueExpression(
+            expression: IrBreakContinue,
+            afterBreakContinueLabel: Label,
+            data: BlockInfo
+    ) {
+        if (data.isEmpty()) {
+            throw UnsupportedOperationException("Target label for break/continue not found")
+        }
+
+        val stackElement = data.peek()
+
+        if (stackElement is TryInfo) {
+            //noinspection ConstantConditions
+            genFinallyBlockOrGoto(stackElement, null, afterBreakContinueLabel, data)
+        }
+        else if (stackElement is LoopInfo) {
+            val loop = expression.loop
+            //noinspection ConstantConditions
+            if (loop == stackElement.loop) {
+                val label = if (expression is IrBreak) stackElement.breakLabel else stackElement.continueLabel
+                mv.fixStackAndJump(label)
+                mv.mark(afterBreakContinueLabel)
+                return
+            }
+        }
+        else {
+            throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
+        }
+
+        data.pop()
+        val result = generateBreakOrContinueExpression(expression, afterBreakContinueLabel, data)
+        data.addInfo(stackElement)
+        return result
+    }
+
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
-        val entry = Label()
-        mv.visitLabel(entry)
+        val entry = markNewLabel()
         val endLabel = Label()
         val continueLabel = Label()
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
-            data.addLoop(this)
+            data.addInfo(this)
             loop.body?.apply {
                 gen(this, data)
             }
-            data.removeLoop(this)
+            data.removeInfo(this)
         }
 
         mv.visitLabel(continueLabel)
@@ -517,6 +566,173 @@ class ExpressionCodegen(
         mv.mark(endLabel)
 
         return loop.onStack
+    }
+
+    override fun visitTry(aTry: IrTry, data: BlockInfo): StackValue {
+        val finallyExpression = aTry.finallyExpression
+        val tryInfo = if (finallyExpression != null) TryInfo(aTry) else null
+        if (tryInfo != null) {
+            data.addInfo(tryInfo)
+        }
+
+        val tryBlockStart = markNewLabel()
+        mv.nop()
+        gen(aTry.tryResult, aTry.asmType, data)
+        val tryBlockEnd = markNewLabel()
+
+        val tryRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, tryBlockEnd)
+
+        val tryCatchBlockEnd = Label()
+        genFinallyBlockOrGoto(tryInfo,  tryCatchBlockEnd, null, data)
+
+        val catches = aTry.catches
+        for (clause in catches) {
+            val clauseStart = markNewLabel()
+            val descriptor = clause.parameter
+            val descriptorType = descriptor.asmType
+            val index = frame.enter(descriptor, descriptorType)
+            mv.store(index, descriptorType)
+
+            val catchBody = clause.result
+            gen(catchBody, catchBody.asmType, data)
+
+            frame.leave(descriptor)
+
+            val clauseEnd = markNewLabel()
+
+            mv.visitLocalVariable(descriptor.name.asString(), descriptorType.descriptor, null, clauseStart, clauseEnd,
+                                 index)
+
+            genFinallyBlockOrGoto(tryInfo, if (clause != catches.last() || finallyExpression != null) tryCatchBlockEnd else null, null, data)
+
+            generateExceptionTable(clauseStart, tryRegions, descriptorType.internalName)
+        }
+
+        //for default catch clause
+        if (finallyExpression != null) {
+            val defaultCatchStart = Label()
+            mv.mark(defaultCatchStart)
+            val savedException = frame.enterTemp(JAVA_THROWABLE_TYPE)
+            mv.store(savedException, JAVA_THROWABLE_TYPE)
+
+            val defaultCatchEnd = Label()
+            mv.mark(defaultCatchEnd)
+
+            //do it before finally block generation
+            //javac also generates entry in exception table for default catch clause too!!!! so defaultCatchEnd as end parameter
+            val defaultCatchRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, defaultCatchEnd)
+
+            genFinallyBlockOrGoto(tryInfo, null, null, data)
+
+            mv.load(savedException, JAVA_THROWABLE_TYPE)
+            frame.leaveTemp(JAVA_THROWABLE_TYPE)
+
+            mv.athrow()
+
+            generateExceptionTable(defaultCatchStart, defaultCatchRegions, null)
+        }
+
+        mv.mark(tryCatchBlockEnd)
+        if (tryInfo != null) {
+            data.removeInfo(tryInfo)
+        }
+
+        return aTry.onStack
+    }
+
+    private fun getCurrentTryIntervals(
+            finallyBlockStackElement: TryInfo?,
+            blockStart: Label,
+            blockEnd: Label
+    ): List<Label> {
+        val gapsInBlock = if (finallyBlockStackElement != null) ArrayList<Label>(finallyBlockStackElement.gaps) else emptyList<Label>()
+        assert(gapsInBlock.size % 2 == 0)
+        val blockRegions = ArrayList<Label>(gapsInBlock.size + 2)
+        blockRegions.add(blockStart)
+        blockRegions.addAll(gapsInBlock)
+        blockRegions.add(blockEnd)
+        return blockRegions
+    }
+
+    private fun generateExceptionTable(catchStart: Label, catchedRegions: List<Label>, exception: String?) {
+        var i = 0
+        while (i < catchedRegions.size) {
+            val startRegion = catchedRegions[i]
+            val endRegion = catchedRegions[i + 1]
+            mv.visitTryCatchBlock(startRegion, endRegion, catchStart, exception)
+            i += 2
+        }
+    }
+
+    private fun genFinallyBlockOrGoto(
+            tryInfo: TryInfo?,
+            tryCatchBlockEnd: Label?,
+            afterJumpLabel: Label?,
+            data: BlockInfo
+    ) {
+        if (tryInfo != null) {
+            assert(tryInfo.gaps.size % 2 == 0) { "Finally block gaps are inconsistent" }
+
+            val topOfStack = data.pop()
+            assert(topOfStack === tryInfo) { "Top element of stack doesn't equals processing finally block" }
+
+            val tryBlock = tryInfo.tryBlock
+            val finallyStart = markNewLabel()
+            tryInfo.gaps.add(finallyStart)
+
+            //noinspection ConstantConditions
+            gen(tryBlock.finallyExpression!!, Type.VOID_TYPE, data)
+        }
+
+        if (tryCatchBlockEnd != null) {
+            mv.goTo(tryCatchBlockEnd)
+        }
+
+        if (tryInfo != null) {
+            val finallyEnd = afterJumpLabel ?: Label()
+            if (afterJumpLabel == null) {
+                mv.mark(finallyEnd)
+            }
+            tryInfo.gaps.add(finallyEnd)
+
+            data.addInfo(tryInfo)
+        }
+    }
+
+    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
+        if (data.hasFinallyBlocks()) {
+            if (Type.VOID_TYPE != returnType) {
+                val returnValIndex = frame.enterTemp(returnType)
+                val localForReturnValue = StackValue.local(returnValIndex, returnType)
+                localForReturnValue.store(StackValue.onStack(returnType), mv)
+                doFinallyOnReturn(afterReturnLabel, data)
+                localForReturnValue.put(returnType, mv)
+                frame.leaveTemp(returnType)
+            }
+            else {
+                doFinallyOnReturn(afterReturnLabel, data)
+            }
+        }
+    }
+
+
+    private fun doFinallyOnReturn(afterReturnLabel: Label, data: BlockInfo) {
+        if (!data.isEmpty()) {
+            val stackElement = data.peek()
+            if (stackElement is TryInfo) {
+                genFinallyBlockOrGoto(stackElement, null, afterReturnLabel, data)
+            }
+            else if (stackElement is LoopInfo) {
+
+            }
+            else {
+                throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
+            }
+
+            data.pop()
+            doFinallyOnReturn(afterReturnLabel, data)
+            data.addInfo(stackElement)
+        }
     }
 
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
