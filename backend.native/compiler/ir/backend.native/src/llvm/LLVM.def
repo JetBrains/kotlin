@@ -29,12 +29,12 @@ linkerOpts.osx = \
     -lpthread -lz -lm  -lcurses -lffi
 
 linkerOpts.linux=\
-    -Wl,—whole-archive \
+    -Wl,--whole-archive \
     -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter \
     -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
     -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
-    -Wl,—no-whole-archive \
+    -Wl,--no-whole-archive \
     -lrt -ldl -ltinfo -lpthread -lz -lm -lffi \
     -Wl,-z,noexecstack
