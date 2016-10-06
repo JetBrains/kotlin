@@ -1,0 +1,30 @@
+package
+
+public val fail1: kotlin.reflect.KClass<kotlin.String>
+public val fail2: kotlin.reflect.KClass<kotlin.String?>
+public val fail3: kotlin.reflect.KClass<C.Companion>
+public val fail4: kotlin.reflect.KClass<C.Companion>
+public val ok1: kotlin.reflect.KClass<C>
+public val ok2: kotlin.reflect.KClass<C.Companion>
+public val ok3: kotlin.reflect.KClass<O>
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object O {
+    private constructor O()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

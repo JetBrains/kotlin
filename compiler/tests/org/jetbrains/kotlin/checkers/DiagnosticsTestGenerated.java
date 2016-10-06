@@ -19457,6 +19457,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("boundCallableReference.kt")
+                public void testBoundCallableReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences/boundCallableReference.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundClassLiteral.kt")
+                public void testBoundClassLiteral() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences/boundClassLiteral.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("qualifiedJavaClassLiteralInKClassExtension.kt")
                 public void testQualifiedJavaClassLiteralInKClassExtension() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences/qualifiedJavaClassLiteralInKClassExtension.kt");
