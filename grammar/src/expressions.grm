@@ -176,7 +176,7 @@ statement
   ;
 
 blockLevelExpression
-  : annotations expression
+  : annotations ("\n")+ expression
   ;
 
 multiplicativeOperation

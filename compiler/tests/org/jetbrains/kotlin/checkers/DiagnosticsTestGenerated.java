@@ -19895,6 +19895,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("onBlockStatementSameLine.kt")
+                public void testOnBlockStatementSameLine() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/oneWarning/onBlockStatementSameLine.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("onClass.kt")
                 public void testOnClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/oneWarning/onClass.kt");

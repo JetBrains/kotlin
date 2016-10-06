@@ -2,6 +2,8 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
     var r: Any?
 
     @Suppress("UNCHECKED_CAST")
+    // comment
+    /* comment */
     r = block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int)
 
     // to prevent unused assignment diagnostic for the above statement
@@ -50,6 +52,9 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
     }
     l()
 
+    // many empty new lines
     @Suppress("UNCHECKED_CAST")
+
+
     y[i] += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
 }

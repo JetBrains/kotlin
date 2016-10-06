@@ -53,45 +53,45 @@ JetFile: expressionJustAtTyped.kt
                 PsiElement(CLOSING_QUOTE)('"')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n    ')
-      ANNOTATED_EXPRESSION
-        PsiErrorElement:Expected annotation identifier after '@'
-          PsiElement(AT)('@')
-        PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
         BINARY_EXPRESSION
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('3')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(PLUS)('+')
-            PsiWhiteSpace(' ')
-            BINARY_EXPRESSION
-              ANNOTATED_EXPRESSION
-                PsiErrorElement:Expected annotation identifier after '@'
-                  PsiElement(AT)('@')
-                PsiWhiteSpace('  ')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('4')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(MUL)('*')
-              PsiWhiteSpace(' ')
-              ANNOTATED_EXPRESSION
-                PsiErrorElement:Expected annotation identifier after '@'
-                  PsiElement(AT)('@')
-                PsiWhiteSpace(' ')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('5')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(IDENTIFIER)('infix')
-          PsiWhiteSpace(' ')
           ANNOTATED_EXPRESSION
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('6')
+              PsiElement(INTEGER_LITERAL)('3')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace('  ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('4')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(MUL)('*')
+            PsiWhiteSpace(' ')
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('5')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('infix')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('6')
       PsiWhiteSpace('\n\n    ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
