@@ -29,6 +29,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.pom.java.LanguageLevel;
@@ -40,6 +41,7 @@ import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade;
@@ -51,6 +53,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
+import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
@@ -65,14 +68,17 @@ import java.util.List;
 
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     private static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
+    private static final File TINY_APP_SRC = new File(TINY_APP, "src");
     private static boolean IS_TINY_APP_COMPILED = false;
 
-    // Delete LOCAL_CACHE_DIR to invalidate caches
+    // Caches are auto-invalidated when file modification in TINY_APP_SRC detected (through File.lastModified()).
+    // LOCAL_CACHE_DIR removing can be used to force caches invalidating as well.
     private static final boolean LOCAL_CACHE_REUSE = false;
 
     private static final File LOCAL_CACHE_DIR = new File("out/debuggerTinyApp");
     private static final File LOCAL_CACHE_JAR_DIR = new File(LOCAL_CACHE_DIR, "jar");
     private static final File LOCAL_CACHE_APP_DIR = new File(LOCAL_CACHE_DIR, "app");
+    private static final File LOCAL_CACHE_LAST_MODIFIED_FILE = new File(LOCAL_CACHE_DIR, "lastModified.txt");
 
     private static File CUSTOM_LIBRARY_JAR;
     private static final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
@@ -94,9 +100,20 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Override
     protected void setUp() throws Exception {
-        boolean localCacheRebuild = !LOCAL_CACHE_DIR.exists();
-
         if (LOCAL_CACHE_REUSE) {
+            boolean localCacheRebuild = false;
+
+            if (LOCAL_CACHE_DIR.exists()) {
+                if (isLocalCacheOutdated()) {
+                    System.out.println("-- Local caches outdated --");
+                    FilesKt.deleteRecursively(LOCAL_CACHE_DIR);
+                    localCacheRebuild = true;
+                }
+            }
+            else {
+                localCacheRebuild = true;
+            }
+
             overrideTempOutputDirectory();
             CUSTOM_LIBRARY_JAR = new File(LOCAL_CACHE_DIR, "debuggerCustomLibrary.jar");
             IS_TINY_APP_COMPILED = !localCacheRebuild;
@@ -107,6 +124,23 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
+    }
+
+    private static boolean isLocalCacheOutdated() {
+        if (!LOCAL_CACHE_LAST_MODIFIED_FILE.exists()) return true;
+
+        String text;
+        try {
+            text = FileUtil.loadFile(LOCAL_CACHE_LAST_MODIFIED_FILE);
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+
+        long cachedFor = Long.parseLong(text);
+        long currentLastDate = JetTestUtilsKt.lastModificationDate(TINY_APP_SRC);
+
+        return currentLastDate != cachedFor;
     }
 
     private static void overrideTempOutputDirectory() {
@@ -121,6 +155,12 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                         LOCAL_CACHE_APP_DIR.mkdir();
 
                 Assert.assertTrue("Failure on local cache directories creation", result);
+
+                boolean createFileResult = LOCAL_CACHE_LAST_MODIFIED_FILE.createNewFile();
+                Assert.assertTrue("Failure on " + LOCAL_CACHE_LAST_MODIFIED_FILE.getName() + " creation", createFileResult);
+
+                long lastModificationDate = JetTestUtilsKt.lastModificationDate(TINY_APP_SRC);
+                FileUtil.writeToFile(LOCAL_CACHE_LAST_MODIFIED_FILE, Long.toString(lastModificationDate));
             }
 
             ourOutputRootField.set(null, LOCAL_CACHE_APP_DIR);
@@ -129,6 +169,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             throw ExceptionUtilsKt.rethrow(e);
         }
         catch (IllegalAccessException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+        catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }

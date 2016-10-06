@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.test.util
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import java.io.File
 
 fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
@@ -54,4 +56,19 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
             }
     )
     return result
+}
+
+fun lastModificationDate(dir: File): Long {
+    var lastModified: Long = -1L
+
+    FileUtil.processFilesRecursively(dir) { file ->
+        val fileModified = file.lastModified()
+        if (fileModified > lastModified) {
+            lastModified = fileModified
+        }
+
+        true
+    }
+
+    return lastModified
 }
