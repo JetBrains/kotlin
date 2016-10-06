@@ -8,6 +8,8 @@ import java.util.*
 
 
 internal object EmptySet : Set<Nothing>, Serializable {
+    private const val serialVersionUID: Long = 3406603774387020532
+
     override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
     override fun hashCode(): Int = 0
     override fun toString(): String = "[]"
