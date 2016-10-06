@@ -287,28 +287,6 @@ public class KtPsiUtil {
     }
 
     @Nullable
-    public static Name getConventionName(@NotNull KtSimpleNameExpression simpleNameExpression) {
-        if (simpleNameExpression.getIdentifier() != null) {
-            return simpleNameExpression.getReferencedNameAsName();
-        }
-
-        PsiElement firstChild = simpleNameExpression.getFirstChild();
-        if (firstChild != null) {
-            IElementType elementType = firstChild.getNode().getElementType();
-            if (elementType instanceof KtToken) {
-                KtToken jetToken = (KtToken) elementType;
-                boolean isPrefixExpression = simpleNameExpression.getParent() instanceof KtPrefixExpression;
-                if (isPrefixExpression) {
-                    return OperatorConventions.getNameForOperationSymbol(jetToken, true, false);
-                }
-                return OperatorConventions.getNameForOperationSymbol(jetToken);
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
     @Contract("null, _ -> null")
     public static PsiElement getTopmostParentOfTypes(
             @Nullable PsiElement element,
