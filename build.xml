@@ -505,13 +505,6 @@
         <attribute name="compress" default="true"/>
 
         <sequential>
-            <local name="idea.core.uberjar.exists"/>
-            <available file="${dependencies.dir}/idea/idea-core-all.jar" property="idea.core.uberjar.exists"/>
-            <!-- TODO: move this jar creation to update_dependencies.xml eventually -->
-            <jar jarfile="${dependencies.dir}/idea/idea-core-all.jar" unless:true="${idea.core.uberjar.exists}">
-                <zipgroupfileset dir="${idea.sdk}/core" includes="*.jar" excludes="util.jar"/>
-            </jar>
-
             <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
@@ -530,7 +523,7 @@
                 </fileset>
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-                <zipfileset src="${dependencies.dir}/idea/idea-core-all.jar" excludes="META-INF/INDEX.LIST"/>
+                <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
                 <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
