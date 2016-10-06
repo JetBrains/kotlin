@@ -66,7 +66,10 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                 it.body = null
 
                 val mapping: Map<DeclarationDescriptor, ValueParameterDescriptor> =
-                        (listOf(it.descriptor.dispatchReceiverParameter!!) + it.descriptor.valueParameters).zip(functionDescriptorImpl.valueParameters).toMap()
+                        (
+                                listOf(it.descriptor.dispatchReceiverParameter!!, it.descriptor.extensionReceiverParameter).filterNotNull() +
+                                it.descriptor.valueParameters
+                        ).zip(functionDescriptorImpl.valueParameters).toMap()
 
                 newFunction.body?.transform(VariableRemapper(mapping), null)
             }
@@ -110,8 +113,14 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                                 newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
                                 interfaceDescriptor.defaultType, false, false, false, false, null, interfaceDescriptor.source, null)
+            val oldExtensionReceiver = descriptor.extensionReceiverParameter
+            val extensionReceiver = if (oldExtensionReceiver != null )
+                    ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                            newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+                            oldExtensionReceiver.value.type, false, false, false, false, null, oldExtensionReceiver.source, null)
+            else null
 
-            val valueParameters = listOf(dispatchReceiver) +
+            val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +
                                   descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + 1) }
 
             newFunction.initialize(
