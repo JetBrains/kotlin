@@ -1,0 +1,13 @@
+FILE /objectClassReference.kt
+  CLASS OBJECT A
+    CONSTRUCTOR private constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+  FUN public fun test(): kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
+      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
+          $receiver: CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>

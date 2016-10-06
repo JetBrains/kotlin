@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue.*
+import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -817,6 +818,34 @@ class ExpressionCodegen(
         gen(expression.value, JAVA_THROWABLE_TYPE, data)
         mv.athrow()
         return expression.onStack
+    }
+
+    override fun visitClassReference(expression: IrClassReference, data: BlockInfo): StackValue {
+        generateClassLiteralReference(expression, true, data)
+        return expression.onStack
+    }
+
+    fun generateClassLiteralReference(
+            receiverExpression: IrExpression,
+            wrapIntoKClass: Boolean,
+            data: BlockInfo
+    ) {
+        if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObject(receiverExpression.descriptor)*/) {
+            JavaClassProperty.generateImpl(mv, gen(receiverExpression, data))
+        }
+        else {
+//                if (TypeUtils.isTypeParameter(type)) {
+//                    assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
+//                    putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
+//                }
+
+            putJavaLangClassInstance(mv, typeMapper.mapType(receiverExpression.descriptor.defaultType))
+        }
+
+        if (wrapIntoKClass) {
+            wrapJavaClassIntoKClass(mv)
+        }
+
     }
 
     private fun coerceNotToUnit(fromType: Type, toType: Type) {

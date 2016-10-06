@@ -400,6 +400,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("classReference.kt")
+        public void testClassReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/classReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("coercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/coercionToUnit.kt");
@@ -517,6 +523,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/literals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectClassReference.kt")
+        public void testObjectClassReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/objectClassReference.kt");
             doTest(fileName);
         }
 
