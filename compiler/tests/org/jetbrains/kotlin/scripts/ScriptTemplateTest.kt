@@ -181,29 +181,45 @@ class ScriptTemplateTest {
     fun testScriptWithStandardTemplate() {
         val aClass = compileScript("fib_std.kts", StandardScriptTemplate::class, runIsolated = false)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("4", "other"))
+        captureOut {
+            aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("4", "other"))
+        }.let {
+            assertEqualsTrimmed(NUM_4_LINE + " (other)" + FIB_SCRIPT_OUTPUT_TAIL, it)
+        }
     }
 
     @Test
     fun testScriptWithPackage() {
         val aClass = compileScript("fib.pkg.kts", ScriptWithIntParam::class)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }.let {
+            assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
+        }
     }
 
     @Test
     fun testScriptWithScriptDefinition() {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class)
         Assert.assertNotNull(aClass)
-        aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        captureOut {
+            aClass!!.getConstructor(Integer.TYPE).newInstance(4)
+        }.let {
+            assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
+        }
     }
 
     @Test
     fun testScriptWithParamConversion() {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class)
         Assert.assertNotNull(aClass)
-        val anObj =  tryConstructScriptClass(aClass!!, listOf("4"))
-        Assert.assertNotNull(anObj)
+        captureOut {
+            val anObj =  tryConstructScriptClass(aClass!!, listOf("4"))
+            Assert.assertNotNull(anObj)
+        }.let {
+            assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
+        }
     }
 
     @Test
@@ -274,8 +290,6 @@ class ScriptTemplateTest {
 }
 
 open class TestKotlinScriptDummyDependenciesResolver : ScriptDependenciesResolver {
-
-    private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
     override fun resolve(script: ScriptContents,

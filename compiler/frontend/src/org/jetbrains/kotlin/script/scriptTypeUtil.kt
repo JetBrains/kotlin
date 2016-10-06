@@ -37,7 +37,7 @@ fun KotlinScriptDefinition.getScriptParameters(scriptDescriptor: ScriptDescripto
 
 fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
         getKotlinTypeByFqName(scriptDescriptor,
-                                                          kClass.qualifiedName ?: throw java.lang.RuntimeException("Cannot get FQN from $kClass"))
+                              kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))
 
 fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): KotlinType =
         scriptDescriptor.module.findNonGenericClassAcrossDependencies(

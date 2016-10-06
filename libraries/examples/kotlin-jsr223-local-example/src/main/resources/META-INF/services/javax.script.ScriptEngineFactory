@@ -1,1 +1,2 @@
-org.jetbrains.kotlin.script.jsr223.KotlinJsr232JvmLocalScriptEngineFactory
+org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
+

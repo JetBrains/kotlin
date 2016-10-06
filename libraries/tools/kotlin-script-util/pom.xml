@@ -103,7 +103,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <jvm>${env.JDK_17}/bin/java</jvm>
-                        <KOTLIN_JAVA_RUNTIME_JAR>${org.jetbrains.kotlin:kotlin-stdlib:jar}</KOTLIN_JAVA_RUNTIME_JAR>
+                        <kotlin.java.runtime.jar>${org.jetbrains.kotlin:kotlin-stdlib:jar}</kotlin.java.runtime.jar>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

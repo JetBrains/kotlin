@@ -152,10 +152,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false);
             }
             else {
-                // TODO: check if it is correct way to find a primary constructor
-                Collection<ClassConstructorDescriptor> ctorDescriptors = superclass.getConstructors();
-                assert ctorDescriptors.size() == 1;
-                ConstructorDescriptor ctorDesc = ctorDescriptors.iterator().next();
+                ConstructorDescriptor ctorDesc = superclass.getUnsubstitutedPrimaryConstructor();
                 assert ctorDesc != null;
 
                 iv.load(0, classType);

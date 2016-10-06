@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -74,28 +73,27 @@ open class GenericReplChecker(
 
     fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
+    @Synchronized
     override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
-        synchronized(this) {
-            val virtualFile =
-                    LightVirtualFile("line${codeLine.no}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
-                        charset = CharsetToolkit.UTF8_CHARSET
-                    }
-            val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
-                                  ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
+        val virtualFile =
+                LightVirtualFile("line${codeLine.no}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
+                    charset = CharsetToolkit.UTF8_CHARSET
+                }
+        val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
+                              ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
 
-            val errorHolder = createDiagnosticHolder()
+        val errorHolder = createDiagnosticHolder()
 
-            val syntaxErrorReport = AnalyzerWithCompilerReport.Companion.reportSyntaxErrors(psiFile, errorHolder)
+        val syntaxErrorReport = AnalyzerWithCompilerReport.Companion.reportSyntaxErrors(psiFile, errorHolder)
 
-            if (!syntaxErrorReport.isHasErrors) {
-                lineState = LineState(codeLine, psiFile, errorHolder)
-            }
+        if (!syntaxErrorReport.isHasErrors) {
+            lineState = LineState(codeLine, psiFile, errorHolder)
+        }
 
-            return when {
-                syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete
-                syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
-                else -> ReplCheckResult.Ok
-            }
+        return when {
+            syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete
+            syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
+            else -> ReplCheckResult.Ok
         }
     }
 }
@@ -113,61 +111,59 @@ open class GenericReplCompiler(
 
     private val descriptorsHistory = arrayListOf<Pair<ReplCodeLine, ScriptDescriptor>>()
 
+    @Synchronized
     override fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult {
-        synchronized(this) {
-
-            checkAndUpdateReplHistoryCollection(descriptorsHistory, history)?.let {
-                return@compile ReplCompileResult.HistoryMismatch(it)
-            }
-
-            val (psiFile, errorHolder) = run {
-                if (lineState == null || lineState!!.codeLine != codeLine) {
-                    val res = check(codeLine, history)
-                    when (res) {
-                        ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete
-                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
-                        ReplCheckResult.Ok -> {} // continue
-                    }
-                }
-                Pair(lineState!!.psiFile, lineState!!.errorHolder)
-            }
-
-            val newDependencies = scriptDefinition.getDependenciesFor(psiFile, environment.project, lastDependencies)
-            if (lastDependencies != newDependencies) {
-                lastDependencies = newDependencies
-            }
-
-            val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine.no)
-            AnalyzerWithCompilerReport.Companion.reportDiagnostics(analysisResult.diagnostics, errorHolder, false)
-            val scriptDescriptor = when (analysisResult) {
-                is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderedDiagnostics)
-                is CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
-                else -> error("Unexpected result ${analysisResult.javaClass}")
-            }
-
-            val state = GenerationState(
-                    psiFile.project,
-                    ClassBuilderFactories.binaries(false),
-                    analyzerEngine.module,
-                    analyzerEngine.trace.bindingContext,
-                    listOf(psiFile),
-                    compilerConfiguration
-            )
-            state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
-            state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.map { it.second }
-            state.beforeCompile()
-            KotlinCodegenFacade.generatePackage(
-                    state,
-                    psiFile.script!!.getContainingKtFile().packageFqName,
-                    setOf(psiFile.script!!.getContainingKtFile()),
-                    org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
-
-            descriptorsHistory.add(codeLine to scriptDescriptor)
-
-            return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
-                                                     state.replSpecific.hasResult,
-                                                     newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) } ?: emptyList())
+        checkAndUpdateReplHistoryCollection(descriptorsHistory, history)?.let {
+            return@compile ReplCompileResult.HistoryMismatch(it)
         }
+
+        val (psiFile, errorHolder) = run {
+            if (lineState == null || lineState!!.codeLine != codeLine) {
+                val res = check(codeLine, history)
+                when (res) {
+                    ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete
+                    is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
+                    ReplCheckResult.Ok -> {} // continue
+                }
+            }
+            Pair(lineState!!.psiFile, lineState!!.errorHolder)
+        }
+
+        val newDependencies = scriptDefinition.getDependenciesFor(psiFile, environment.project, lastDependencies)
+        if (lastDependencies != newDependencies) {
+            lastDependencies = newDependencies
+        }
+
+        val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine.no)
+        AnalyzerWithCompilerReport.Companion.reportDiagnostics(analysisResult.diagnostics, errorHolder, false)
+        val scriptDescriptor = when (analysisResult) {
+            is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderedDiagnostics)
+            is CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
+            else -> error("Unexpected result ${analysisResult.javaClass}")
+        }
+
+        val state = GenerationState(
+                psiFile.project,
+                ClassBuilderFactories.binaries(false),
+                analyzerEngine.module,
+                analyzerEngine.trace.bindingContext,
+                listOf(psiFile),
+                compilerConfiguration
+        )
+        state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
+        state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.map { it.second }
+        state.beforeCompile()
+        KotlinCodegenFacade.generatePackage(
+                state,
+                psiFile.script!!.getContainingKtFile().packageFqName,
+                setOf(psiFile.script!!.getContainingKtFile()),
+                org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
+
+        descriptorsHistory.add(codeLine to scriptDescriptor)
+
+        return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
+                                                 state.replSpecific.hasResult,
+                                                 newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) } ?: emptyList())
     }
 
     companion object {
@@ -188,9 +184,9 @@ open class GenericRepl(
 
     private val compiledEvaluator = GenericReplCompiledEvaluator(compilerConfiguration.jvmClasspathRoots, baseClassloader, scriptArgs, scriptArgsTypes)
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult = synchronized(this) {
-        return compileAndEval(this, compiledEvaluator, codeLine, history)
-    }
+    @Synchronized
+    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult =
+        compileAndEval(this, compiledEvaluator, codeLine, history)
 }
 
 

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
 import org.jetbrains.kotlin.script.util.resolvers.FlatLibDirectoryResolver
 import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
 import org.jetbrains.kotlin.script.util.resolvers.Resolver
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.lang.Exception
 import java.lang.IllegalArgumentException
@@ -34,29 +35,28 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
 {
     private val resolvers: MutableList<Resolver> = resolvers.toMutableList()
 
+    inner class ResolvedDependencies(previousDependencies: KotlinScriptExternalDependencies?, depsFromAnnotations: List<File> ) : KotlinScriptExternalDependencies {
+        override val classpath = if (resolvers.isEmpty()) baseClassPath  else baseClassPath + depsFromAnnotations
+        override val imports = if (previousDependencies != null) emptyList() else listOf(DependsOn::class.java.`package`.name + ".*")
+    }
+
     @AcceptedAnnotations(DependsOn::class, Repository::class)
     override fun resolve(script: ScriptContents,
                          environment: Map<String, Any?>?,
                          report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
                          previousDependencies: KotlinScriptExternalDependencies?
-    ): Future<KotlinScriptExternalDependencies?>
-            = (if (previousDependencies != null && resolveFromAnnotations(script).isEmpty()) previousDependencies
-                    else
-                        object : KotlinScriptExternalDependencies {
-                            override val classpath: Iterable<File> = if (resolvers.isEmpty()) baseClassPath  else baseClassPath + resolveFromAnnotations(script)
-                            override val imports: Iterable<String> =
-                                    previousDependencies?.let { emptyList<String>() } ?: listOf(DependsOn::class.java.`package`.name + ".*")
-                        }
-                   ).asFuture()
+    ): Future<KotlinScriptExternalDependencies?> {
+        val depsFromAnnotations: List<File> = resolveFromAnnotations(script)
+        return (if (previousDependencies != null && depsFromAnnotations.isEmpty()) previousDependencies
+                else ResolvedDependencies(previousDependencies, depsFromAnnotations)
+               ).asFuture()
+    }
 
     private fun resolveFromAnnotations(script: ScriptContents): List<File> {
         script.annotations.forEach {
             when (it) {
-                is Repository ->
-                    when {
-                        File(it.value).run { exists() && isDirectory } -> resolvers.add(FlatLibDirectoryResolver(File(it.value)))
-                        else -> throw IllegalArgumentException("Illegal argument for Repository annotation: ${it.value}")
-                    }
+                is Repository -> File(it.value).check { it.exists() && it.isDirectory }?.let { resolvers.add(FlatLibDirectoryResolver(it)) }
+                                                ?: throw IllegalArgumentException("Illegal argument for Repository annotation: ${it.value}")
                 is DependsOn -> {}
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
                 else -> throw Exception("Unknown annotation ${it.javaClass}")
@@ -83,7 +83,7 @@ private fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
 
 private fun classpathFromClasspathProperty(): List<File>? =
         System.getProperty("java.class.path")?.let {
-            it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
+            it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile(String::isEmpty)
                     .map(::File)
         }
 

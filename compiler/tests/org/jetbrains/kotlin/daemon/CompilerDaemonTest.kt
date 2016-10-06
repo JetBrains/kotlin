@@ -510,7 +510,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res0 = repl.check(ReplCodeLine(0, "val x ="), emptyList())
         TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
-        val codeLine1 = ReplCodeLine(1, "val x = 5")
+        val codeLine1 = ReplCodeLine(1, "val lst = listOf(1)\nval x = 5")
         val res1 = repl.compile(codeLine1, emptyList())
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)

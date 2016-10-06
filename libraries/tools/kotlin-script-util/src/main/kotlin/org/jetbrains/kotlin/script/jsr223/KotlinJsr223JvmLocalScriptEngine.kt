@@ -37,7 +37,7 @@ import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
 
-class KotlinJsr232JvmLocalScriptEngine(
+class KotlinJsr223JvmLocalScriptEngine(
         disposable: Disposable,
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
@@ -68,12 +68,11 @@ class KotlinJsr232JvmLocalScriptEngine(
         fun resetAndThrowOnErrors() {
             try {
                 if (hasErrors) {
-                    val msg = reports.joinToString("\n") { messageRenderer.render(it.severity, it.message, it.location) }
                     val firstErr = reports.firstOrNull { it.severity.isError }
                     if (firstErr != null)
-                        throw ScriptException(msg, firstErr.location.path, firstErr.location.line, firstErr.location.column)
+                        throw ScriptException(messageRenderer.render(firstErr.severity, firstErr.message, firstErr.location), firstErr.location.path, firstErr.location.line, firstErr.location.column)
                     else
-                        throw ScriptException(msg)
+                        throw ScriptException(reports.joinToString("\n") { messageRenderer.render(it.severity, it.message, it.location) })
                 }
             }
             finally {

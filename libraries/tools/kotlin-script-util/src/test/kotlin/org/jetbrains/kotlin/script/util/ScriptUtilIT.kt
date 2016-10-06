@@ -104,14 +104,12 @@ done
             scriptFileName: String,
             scriptTemplate: KClass<out Any>,
             environment: Map<String, Any?>? = null,
-            runIsolated: Boolean = true,
             suppressOutput: Boolean = false): Class<*>? =
-            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), runIsolated, suppressOutput)
+            compileScriptImpl("src/test/resources/scripts/" + scriptFileName, KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, null, null, environment), suppressOutput)
 
     private fun compileScriptImpl(
             scriptPath: String,
             scriptDefinition: KotlinScriptDefinition,
-            runIsolated: Boolean,
             suppressOutput: Boolean): Class<*>?
     {
         val paths = PathUtil.getKotlinPathsForDistDirectory()
@@ -123,7 +121,7 @@ done
         try {
             val configuration = CompilerConfiguration().apply {
                 addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                val rtJar = System.getProperty("KOTLIN_JAVA_RUNTIME_JAR")
+                val rtJar = System.getProperty("kotlin.java.runtime.jar")
                 Assert.assertNotNull(rtJar)
                 addJvmClasspathRoot(File(rtJar))
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -141,14 +139,12 @@ done
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
                 add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-                put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
             }
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
-                else KotlinToJVMBytecodeCompiler.compileScript(environment, this.javaClass.classLoader)
+                return KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -183,9 +179,13 @@ done
         val outStream = ByteArrayOutputStream()
         val prevOut = System.out
         System.setOut(PrintStream(outStream))
-        body()
-        System.out.flush()
-        System.setOut(prevOut)
+        try {
+            body()
+        }
+        finally {
+            System.out.flush()
+            System.setOut(prevOut)
+        }
         return outStream.toString()
     }
 }

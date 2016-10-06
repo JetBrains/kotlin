@@ -51,7 +51,7 @@ class KotlinJsr223ScriptEngineIT {
         val factory = ScriptEngineManager().getEngineByExtension("kts").factory
         Assert.assertNotNull(factory)
         val engine = factory!!.scriptEngine
-        Assert.assertNotNull(engine as? KotlinJsr232JvmLocalScriptEngine)
+        Assert.assertNotNull(engine as? KotlinJsr223JvmLocalScriptEngine)
         Assert.assertSame(factory, engine!!.factory)
         val bindings = engine.createBindings()
         Assert.assertTrue(bindings is SimpleBindings)

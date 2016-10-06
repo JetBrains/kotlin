@@ -22,14 +22,14 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
@@ -48,7 +48,7 @@ class GenericReplTest : TestCase() {
         val res1 = repl.replCompiler?.check(ReplCodeLine(0, "val x ="), emptyList())
         TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
-        val codeLine0 = ReplCodeLine(0, "1 + 2")
+        val codeLine0 = ReplCodeLine(0, "val l1 = listOf(1 + 2)\nl1.first()")
         val res2 = repl.replCompiler?.compile(codeLine0, emptyList())
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
@@ -89,12 +89,10 @@ internal class TestRepl(
         templateClasspath: List<File>,
         templateClassName: String
 ) {
-    private val configuration = CompilerConfiguration().apply {
-        addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-        addJvmClasspathRoots(PathUtil.getKotlinPathsForCompiler().let { listOf(it.runtimePath, it.reflectPath) })
-        addJvmClasspathRoots(templateClasspath)
+    private val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
     }
+
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
         val cls = classloader.loadClass(templateClassName)

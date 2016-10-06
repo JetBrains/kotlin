@@ -73,13 +73,13 @@ fun tryConstructScriptClass(scriptClass: Class<*>, scriptArgs: List<String>): An
     }
 
     try {
-        return scriptClass.getConstructor(Array<String>::class.java).newInstance(*arrayOf<Any>(scriptArgs.toTypedArray()))
+        return scriptClass.getConstructor(Array<String>::class.java).newInstance(scriptArgs.toTypedArray())
     }
-    catch (e: java.lang.NoSuchMethodException) {
+    catch (e: NoSuchMethodException) {
         for (ctor in scriptClass.kotlin.constructors) {
             val (ctorArgs, scriptArgsLeft) = ctor.parameters.fold(Pair(emptyList<Any>(), scriptArgs), ::foldingFunc)
             if (ctorArgs.size <= ctor.parameters.size && (scriptArgsLeft == null || scriptArgsLeft.isEmpty())) {
-                val argsMap = ctorArgs.zip(ctor.parameters) { a, p -> Pair(p, a) }.toMap()
+                val argsMap = ctor.parameters.zip(ctorArgs).toMap()
                 try {
                     return ctor.callBy(argsMap)
                 }

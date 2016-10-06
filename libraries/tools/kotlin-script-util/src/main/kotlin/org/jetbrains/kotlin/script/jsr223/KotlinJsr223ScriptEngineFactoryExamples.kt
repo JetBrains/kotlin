@@ -27,10 +27,10 @@ import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import kotlin.script.StandardScriptTemplate
 
-class KotlinJsr232JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
+class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     override fun getScriptEngine(): ScriptEngine =
-            KotlinJsr232JvmLocalScriptEngine(
+            KotlinJsr223JvmLocalScriptEngine(
                     Disposer.newDisposable(),
                     this,
                     listOf(kotlinRuntimeJar),
@@ -88,11 +88,11 @@ private fun makeSerializableArgumentsForTemplateWithArgsAndBindings(ctx: ScriptC
 private fun File.existsOrNull(): File? = existsAndCheckOrNull { true }
 private inline fun File.existsAndCheckOrNull(check: (File.() -> Boolean)): File? = if (exists() && check()) this else null
 
-private val kotlinCompilerJar = System.getProperty("KOTLIN_COMPILER_JAR")?.let(::File)?.existsOrNull()
+private val kotlinCompilerJar = System.getProperty("kotlin.compiler.jar")?.let(::File)?.existsOrNull()
         ?: getPathUtilJar().existsAndCheckOrNull { name == KOTLIN_COMPILER_JAR }
-        ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set KOTLIN_COMPILER_JAR property to proper location")
+        ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
 
-private val kotlinRuntimeJar = System.getProperty("KOTLIN_JAVA_RUNTIME_JAR")?.let(::File)?.existsOrNull()
+private val kotlinRuntimeJar = System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
         ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
         ?: getResourcePathForClass(StandardScriptTemplate::class.java).existsOrNull()
-        ?: throw FileNotFoundException("Cannot find kotlin runtime jar, set KOTLIN_JAVA_RUNTIME_JAR property to proper location")
+        ?: throw FileNotFoundException("Cannot find kotlin runtime jar, set kotlin.java.runtime.jar property to proper location")

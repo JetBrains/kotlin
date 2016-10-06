@@ -23,7 +23,7 @@ import java.util.*
 
 data class ReplCodeLine(val no: Int, val code: String) : Serializable {
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
 
@@ -31,7 +31,7 @@ data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializa
     override fun equals(other: Any?): Boolean = (other as? CompiledClassData)?.let { path == it.path && Arrays.equals(bytes, it.bytes) } ?: false
     override fun hashCode(): Int = path.hashCode() + Arrays.hashCode(bytes)
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
 
@@ -42,7 +42,7 @@ sealed class ReplCheckResult : Serializable {
         override fun toString(): String = "Error(message = \"$message\""
     }
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
 
@@ -54,7 +54,7 @@ sealed class ReplCompileResult : Serializable {
         override fun toString(): String = "Error(message = \"$message\""
     }
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
 
@@ -68,10 +68,10 @@ sealed class ReplEvalResult : Serializable {
     sealed class Error(val message: String) : ReplEvalResult() {
         class Runtime(message: String) : Error(message)
         class CompileTime(message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
-        override fun toString(): String = "${this.javaClass.kotlin.simpleName}Error(message = \"$message\""
+        override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
     }
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
 

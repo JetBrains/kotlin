@@ -52,11 +52,11 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
             defAnn != null ->
                 try {
                     defAnn.resolver.primaryConstructor?.call() ?: null.apply {
-                        log.error("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
+                        log.warn("[kts] No default constructor found for ${defAnn.resolver.qualifiedName}")
                     }
                 }
                 catch (ex: ClassCastException) {
-                    log.error("[kts] Script def error ${ex.message}")
+                    log.warn("[kts] Script def error ${ex.message}")
                     null
                 }
             else -> BasicScriptDependenciesResolver()

@@ -69,8 +69,9 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
 
-        fun ReplCompileResult.Error.locationString() = if (location == CompilerMessageLocation.NO_LOCATION) ""
-        else " at ${location.line}:${location.column}:"
+        fun ReplCompileResult.Error.locationString() =
+                if (location == CompilerMessageLocation.NO_LOCATION) ""
+                else " at ${location.line}:${location.column}"
 
         val compileResult = replCompiler.compile(codeLine, history)
         val compiled = when (compileResult) {

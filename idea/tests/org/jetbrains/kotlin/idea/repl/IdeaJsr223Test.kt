@@ -37,10 +37,10 @@ class IdeaJsr223Test : PlatformTestCase() {
         val res0 = assertFails { engine.eval("val x =") }
         assertTrue("Unexpected check results: $res0", (res0 as? ScriptException)?.message?.contains("incomplete code") ?: false)
 
-        val res1 = engine.eval("val x = 5")
+        val res1 = engine.eval("val x = 5\nval y = listOf(x)")
         assertNull("Unexpected eval result: $res1", res1)
 
-        val res2 = engine.eval("x + 2")
+        val res2 = engine.eval("y.first() + 2")
         assertEquals(7, res2)
     }
 

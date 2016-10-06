@@ -36,6 +36,6 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
                         arrayOf(
                                 (bindings[ScriptEngine.ARGV] as? Array<*>) ?: emptyArray<String>(),
                                 bindings) },
-                    arrayOf(Array<String>::class.java, java.util.Map::class.java)
+                    arrayOf(Array<String>::class.java, Map::class.java)
             )
 }

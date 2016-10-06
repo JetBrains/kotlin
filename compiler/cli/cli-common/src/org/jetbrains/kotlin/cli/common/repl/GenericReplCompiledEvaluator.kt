@@ -25,8 +25,7 @@ import kotlin.concurrent.write
 
 open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?, val scriptArgs: Array<Any?>? = null, val scriptArgsTypes: Array<Class<*>>? = null) : ReplCompiledEvaluator {
 
-    private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader =
-            org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
+    private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
     private val classLoaderLock = ReentrantReadWriteLock()
 
     private class ClassWithInstance(val klass: Class<*>, val instance: Any)
@@ -42,7 +41,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
         classLoaderLock.read {
             if (newClasspath.isNotEmpty()) {
                 classLoaderLock.write {
-                    classLoader = org.jetbrains.kotlin.cli.common.repl.ReplClassLoader(URLClassLoader(newClasspath.map { it.toURI().toURL() }.toTypedArray(), classLoader))
+                    classLoader = makeReplClassLoader(classLoader, newClasspath)
                 }
             }
             compiledClasses.filter { it.path.endsWith(".class") }
@@ -55,14 +54,9 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
 
         val constructorParams: Array<Class<*>> =
                 (compiledLoadedClassesHistory.map { it.second.klass } +
-                 (scriptArgs?.asIterable()
-                          ?.mapIndexed { i, it ->
-                              if (i < (scriptArgsTypes?.size ?: 0)) scriptArgsTypes!![i] else it?.javaClass ?: Any::class.java
-                          }
-                  ?: emptyList()
-                 )
+                 (scriptArgs?.mapIndexed { i, it -> scriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
                 ).toTypedArray()
-        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.map { it.second.instance } + (scriptArgs?.asIterable() ?: emptyList())).toTypedArray()
+        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.map { it.second.instance } + scriptArgs.orEmpty()).toTypedArray()
 
         val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
         val scriptInstance =
@@ -86,3 +80,6 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
     }
 }
+
+private fun makeReplClassLoader(baseClassloader: ClassLoader?, baseClasspath: Iterable<File>) =
+        ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))

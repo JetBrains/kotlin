@@ -39,9 +39,13 @@ internal fun captureOut(body: () -> Unit): String {
     val outStream = ByteArrayOutputStream()
     val prevOut = System.out
     System.setOut(PrintStream(outStream))
-    body()
-    System.out.flush()
-    System.setOut(prevOut)
+    try {
+        body()
+    }
+    finally {
+        System.out.flush()
+        System.setOut(prevOut)
+    }
     return outStream.toString()
 }
 

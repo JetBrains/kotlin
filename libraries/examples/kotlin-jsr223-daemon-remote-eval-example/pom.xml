@@ -86,8 +86,8 @@
                 <version>2.6</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <KOTLIN_COMPILER_JAR>${org.jetbrains.kotlin:kotlin-compiler:jar}</KOTLIN_COMPILER_JAR>
-                        <KOTLIN_JAVA_RUNTIME_JAR>${org.jetbrains.kotlin:kotlin-runtime:jar}</KOTLIN_JAVA_RUNTIME_JAR>
+                        <kotlin.compiler.jar>${org.jetbrains.kotlin:kotlin-compiler:jar}</kotlin.compiler.jar>
+                        <kotlin.java.runtime.jar>${org.jetbrains.kotlin:kotlin-runtime:jar}</kotlin.java.runtime.jar>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

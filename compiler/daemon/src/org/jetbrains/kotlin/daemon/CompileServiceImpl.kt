@@ -390,9 +390,10 @@ class CompileServiceImpl(
 
                 synchronized(state.sessions) {
                     // 2. check if any session hanged - clean
-                    state.sessions.filterValues { !it.isAlive }.apply { anyDead = true }.forEach {
+                    state.sessions.filterValues { !it.isAlive }.forEach {
                         it.value.dispose()
                         state.sessions.remove(it.key)
+                        anyDead = true
                     }
                 }
 
@@ -403,13 +404,14 @@ class CompileServiceImpl(
                 }
 
                 // 4. clean dead clients, then check if any left - conditional shutdown (with small delay)
-                    synchronized(state.clientProxies) {
-                        state.clientProxies.removeAll(
-                                state.clientProxies.filter { !it.isAlive }.apply { anyDead = true }.map {
-                                    it.dispose()
-                                    it
-                                })
-                    }
+                synchronized(state.clientProxies) {
+                    state.clientProxies.removeAll(
+                            state.clientProxies.filter { !it.isAlive }.map {
+                                it.dispose()
+                                anyDead = true
+                                it
+                            })
+                }
                 if (state.clientProxies.isEmpty() && compilationsCounter.get() > 0 && !state.delayedShutdownQueued.get()) {
                     log.info("No more clients left, delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
                     shutdownWithDelay()

@@ -38,6 +38,6 @@ data class CompilerMessageLocation private constructor(
         ): CompilerMessageLocation =
                 if (path == null) NO_LOCATION else CompilerMessageLocation(path, line, column, lineContent)
 
-        private val serialVersionUID: Long = 8228357578L // just a random number, should be changed when serialized data is changed
+        private val serialVersionUID: Long = 8228357578L
     }
 }
