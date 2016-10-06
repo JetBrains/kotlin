@@ -131,6 +131,7 @@
         <include name="cli-common/**"/>
         <include name="conditional-preprocessor/**"/>
         <include name="daemon/**"/>
+        <include name="daemon-common/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
