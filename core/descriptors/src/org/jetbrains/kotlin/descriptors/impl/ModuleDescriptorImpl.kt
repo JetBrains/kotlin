@@ -51,7 +51,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     override val effectivelyExcludedImports: List<FqName> by storageManager.createLazyValue {
-        val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
+        val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
         val dependencies = this.dependencies.sure { "Dependencies of module $id were not set" }
         val builtinTypeAliases = dependencies.allDependencies.filter { it != this }.flatMap {
             System.out.flush()
