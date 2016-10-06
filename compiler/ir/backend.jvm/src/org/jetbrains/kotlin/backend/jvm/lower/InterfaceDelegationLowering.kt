@@ -39,7 +39,7 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
 
     override fun lower(irClass: IrClass) {
         val descriptor = irClass.descriptor
-        if (!DescriptorUtils.isClass(descriptor)) {
+        if (DescriptorUtils.isInterface(descriptor)) {
             return
         }
 
