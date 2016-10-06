@@ -1229,7 +1229,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * statement
      *  : declaration
-     *  : annotations expression
+     *  : blockLevelExpression
      *  ;
      */
     private void parseStatement(boolean isScriptTopLevel) {
@@ -1239,20 +1239,25 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             else if (isScriptTopLevel){
                 PsiBuilder.Marker scriptInitializer = mark();
-                parseStatementLevelExpression();
+                parseBlockLevelExpression();
                 scriptInitializer.done(SCRIPT_INITIALIZER);
             }
             else {
-                parseStatementLevelExpression();
+                parseBlockLevelExpression();
             }
         }
     }
 
-    private void parseStatementLevelExpression() {
+    /*
+     * blockLevelExpression
+     *  : annotations expression
+     *  ;
+     */
+    private void parseBlockLevelExpression() {
         if (at(AT)) {
             PsiBuilder.Marker expression = mark();
             myKotlinParsing.parseAnnotations(DEFAULT);
-            parseStatementLevelExpression();
+            parseBlockLevelExpression();
             expression.done(ANNOTATED_EXPRESSION);
             return;
         }
@@ -1417,7 +1422,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     private void parseControlStructureBody() {
         if (!parseAnnotatedLambda(/* preferBlock = */true)) {
-            parseExpression();
+            parseBlockLevelExpression();
         }
     }
 

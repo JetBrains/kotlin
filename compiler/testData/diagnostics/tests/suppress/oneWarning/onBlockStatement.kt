@@ -14,6 +14,36 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
         i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
     }
 
+    if (i != 1)
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+
+    if (i != 2)
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+    else
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[1] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+
+    while (i != 1)
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+
+    do
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+    while (i != 1)
+
+    for (j in 1..100)
+        @Suppress("UNCHECKED_CAST")
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+
+    when (i) {
+        1 ->
+            @Suppress("UNCHECKED_CAST")
+            i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+    }
+
     val l: () -> Unit = {
         @Suppress("UNCHECKED_CAST")
         i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()

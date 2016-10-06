@@ -172,6 +172,10 @@ declaration
 
 statement
   : declaration
+  : blockLevelExpression
+  ;
+
+blockLevelExpression
   : annotations expression
   ;
 
