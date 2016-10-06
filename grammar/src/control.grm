@@ -4,8 +4,13 @@
 See [Control structures](control-flow.html)
 */
 
+controlStructureBody
+  : block
+  : blockLevelExpression
+  ;
+
 if
-  : "if" "(" expression ")" expression SEMI? ("else" expression)?
+  : "if" "(" expression ")" controlStructureBody SEMI? ("else" controlStructureBody)?
   ;
 
 try
@@ -27,13 +32,13 @@ loop
   ;
 
 for
-  : "for" "(" annotations (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+  : "for" "(" annotations (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" controlStructureBody
   ;
 
 while
-  : "while" "(" expression ")" expression
+  : "while" "(" expression ")" controlStructureBody
   ;
 
 doWhile
-  : "do" expression "while" "(" expression ")"
+  : "do" controlStructureBody "while" "(" expression ")"
   ;
