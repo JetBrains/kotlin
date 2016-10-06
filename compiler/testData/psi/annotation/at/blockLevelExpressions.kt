@@ -3,10 +3,20 @@ fun foo() {
     var x0 = foo0()
 
     @ann1
+    // comment
+    /* comment */
     x1 = foo1()
 
+    // many empty new lines
     @ann2
+
+
     x2 += foo2()
+
+    @ann21 @ann22
+
+    @ann23
+    x22 += foo22()
 
     for (i in 1..100) {
         @ann3

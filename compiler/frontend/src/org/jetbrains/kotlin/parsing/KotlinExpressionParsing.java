@@ -1250,13 +1250,20 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /*
      * blockLevelExpression
-     *  : annotations expression
+     *  : annotations + ("\n")+ expression
      *  ;
      */
     private void parseBlockLevelExpression() {
         if (at(AT)) {
             PsiBuilder.Marker expression = mark();
             myKotlinParsing.parseAnnotations(DEFAULT);
+
+            if (!myBuilder.newlineBeforeCurrentToken()) {
+                expression.rollbackTo();
+                parseExpression();
+                return;
+            }
+
             parseBlockLevelExpression();
             expression.done(ANNOTATED_EXPRESSION);
             return;

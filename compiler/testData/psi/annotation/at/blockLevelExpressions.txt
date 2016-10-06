@@ -46,6 +46,10 @@ JetFile: blockLevelExpressions.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('ann1')
         PsiWhiteSpace('\n    ')
+        PsiComment(EOL_COMMENT)('// comment')
+        PsiWhiteSpace('\n    ')
+        PsiComment(BLOCK_COMMENT)('/* comment */')
+        PsiWhiteSpace('\n    ')
         BINARY_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('x1')
@@ -60,6 +64,8 @@ JetFile: blockLevelExpressions.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n    ')
+      PsiComment(EOL_COMMENT)('// many empty new lines')
+      PsiWhiteSpace('\n    ')
       ANNOTATED_EXPRESSION
         ANNOTATION_ENTRY
           PsiElement(AT)('@')
@@ -68,7 +74,7 @@ JetFile: blockLevelExpressions.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('ann2')
-        PsiWhiteSpace('\n    ')
+        PsiWhiteSpace('\n\n\n    ')
         BINARY_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('x2')
@@ -79,6 +85,45 @@ JetFile: blockLevelExpressions.kt
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo2')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      ANNOTATED_EXPRESSION
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ann21')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ann22')
+        PsiWhiteSpace('\n\n    ')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ann23')
+        PsiWhiteSpace('\n    ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x22')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUSEQ)('+=')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo22')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
