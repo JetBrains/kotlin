@@ -296,6 +296,14 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
             return newDescriptor
         }
 
+        private fun suggestNameForCapturedValueParameter(valueDescriptor: ValueDescriptor): Name =
+                if (valueDescriptor.name.isSpecial) {
+                    val oldNameStr = valueDescriptor.name.asString()
+                    Name.identifier("$" + oldNameStr.substring(1, oldNameStr.length - 1))
+                }
+                else
+                    valueDescriptor.name
+
         private fun createUnsubstitutedCapturedValueParameter(
                 newParameterOwner: CallableMemberDescriptor,
                 valueDescriptor: ValueDescriptor,
@@ -303,7 +311,9 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
         ): ValueParameterDescriptor =
                 ValueParameterDescriptorImpl(
                         newParameterOwner, null, index,
-                        valueDescriptor.annotations, valueDescriptor.name, valueDescriptor.type,
+                        valueDescriptor.annotations,
+                        suggestNameForCapturedValueParameter(valueDescriptor),
+                        valueDescriptor.type,
                         false, false, false, false, null, valueDescriptor.source
                 )
 
