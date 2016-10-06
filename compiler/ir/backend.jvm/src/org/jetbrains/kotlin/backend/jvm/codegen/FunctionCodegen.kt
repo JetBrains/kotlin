@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -61,11 +64,28 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0) {
+            generateAnnotationDefaultValueIfNeeded(methodVisitor)
             methodVisitor.visitEnd()
             return
         }
 
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+    }
+
+    private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
+        val directMember = JvmCodegenUtil.getDirectMember(descriptor)
+        if (DescriptorUtils.isAnnotationClass(directMember.containingDeclaration)) {
+            val source = directMember.source
+            (source.getPsi() as? KtParameter)?.defaultValue?.apply {
+                val defaultValue = this
+                val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(defaultValue, state.bindingContext, true)
+                assert(!state.classBuilderMode.generateBodies || constant != null) { "Default value for annotation parameter should be compile time value: " + defaultValue.getText() }
+                if (constant != null) {
+                    val annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(methodVisitor, classCodegen, state.typeMapper)
+                    annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.returnType!!)
+                }
+            }
+        }
     }
 }
 
