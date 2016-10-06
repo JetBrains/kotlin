@@ -8,30 +8,113 @@
 ### Compiler
 
 - [`KT-13565`](https://youtrack.jetbrains.com/issue/KT-13565) Remove net/sf/cglib/core/* classes from compiler jars
+- KT-2787 Set reference target and report custom error instead unresolved reference for cases:
+  interface, generic parameter, object + invoke, class without companion.
+- KT-13408 Fix decompilation of types based on local classifiers
+- KT-13730 Fix signature clash problems when extending Hashtable and similar classes
+- Support for property reference inlining
+- KT-11123 Fix implicit type arguments resolution for inner classes
+- KT-11263 Refine diagnostic about type arguments for an outer class
+- KT-12238, KT-10627 Fix inference when captured type is used as a lambda parameter type
+- KT-13950 Fix false positive "Cannot capture" error reporting
+- KT-13381, KT-13396 Prevent generation of delegations to interfaces private methods
+- KT-13295 Add warning for redundant `lateinit` modifier
+- KT-13952, KT-13005 Prohibit return type mismatch for delegation members
+- KT-8154 Fix AssertionError when delegating base interface and implementing derived interface
+- KT-13969 Fix VerifyError for do-while, continue and a condition in a local variable
+- KT-14025 Fix CCE in OverloadResolver.findRedeclarations
+- KT-14147 Report error on declaring 'getClass' in class or package
+- KT-14146 Fix detection of accidental overrides with synthetic bridge
+- KT-10210 Annotation written before a block-level expression now applies to the entire expression, not to its first prefix
+
+### Reflection
+
+- Various runtime performance optimizations
+- KT-13700 Fix reflective access on overridden generic property reference
 
 ### IDE
 
+- KT-12852 Support breadcrumbs for Kotlin
 - [`KT-13474`](https://youtrack.jetbrains.com/issue/KT-13474) Fix performance of typing super call lambda
 - Re-highlight only single function after local modifications
 - Show "Variables and values captured in a closure" highlighting only for usages
 - [`KT-9125`](https://youtrack.jetbrains.com/issue/KT-9125) Support Type Hierarchy on references inside of super type call entries
+- [`KT-13838`](https://youtrack.jetbrains.com/issue/KT-13838) Add file name to the presentation of private top-level declaration (Go to symbol, etc.)
+- KT-12697 Expand selection selects ": Type"
+- KT-13693 Expand selection stops on brackets in indexing expression
+- KT-4519 Show first line for folded block comments
+- KT-5193 Multiline strings are now foldable
+- KT-13473 Structure view now shows local functions
+- KT-11775 Added icons for class initializers
+- KT-11776 Primary constructor members are shown in Project view when "Show members" is enabled
+- KT-13326 Speed search is now enabled in add import popup
+- KT-3363 Support "Surround with `if`" for expressions
+- KT-13927 exception Fixed on adding second inner class when there is a usage in Java of the first one
+- KT-9009 Support for auto-import of Java static methods
+- Improved performance for Find Usages of convention functions
+- KT-13643 Support for Find Usages of `invoke` operator method
+- KT-13605 Find Usages no longer fails to find usages of component function defined in Java
+- KT-13953 Import member popup no longer suggests methods when only property or variable is valid
+- KT-9019, KT-10178 Improved display of structure when "Group by file structure" is enabled
+- KT-13475 Show context when invoking Show Implementations from Find Usages popup
+- KT-13140 "Copy Reference" now copies JVM name of class or method to clipboard
+- KT-10095 Support "Show expression type" in variable declaration position
+- KT-10588 Show smart cast information in "Show expression type"
+- KT-11310, KT-8803 Use short names in Show Expression Type
+
+
+#### IDE. Code Completion
+
+- KT-4710 Postfix code completion
+- KT-13298 Completion after `override val` or `override fun` suggests base class method/property names
+- KT-13047 Autocomplete no longer inserts a fully-qualified variable name inside a String
+- KT-12083 Insert `{}` if needed when completing in string literal
+
+#### IDE. Refactorings
+
+- [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
+- [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Superclass" refactoring
+- [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Interface" refactoring
+
+##### Issues Fixed
+
 - [`KT-13542`](https://youtrack.jetbrains.com/issue/KT-13542) Rename: Do not search parameter text occurrences outside of its containing declaration
 - [`KT-8672`](https://youtrack.jetbrains.com/issue/KT-8672) Rename: Optimize search of parameter references in calls with named arguments
 - [`KT-9285`](https://youtrack.jetbrains.com/issue/KT-9285) Rename: Optimize search of private class members
+- [`KT-8867`](https://youtrack.jetbrains.com/issue/KT-8867) Rename: Rename all overridden members if user chooses to refactor base declaration(s)
+- Support inplace rename on type parameters
 - [`KT-13630`](https://youtrack.jetbrains.com/issue/KT-13630) Do not show Change Signature dialog when applying "Remove parameter" quick-fix
-- [`KT-13838`](https://youtrack.jetbrains.com/issue/KT-13838) Add file name to the presentation of private top-level declaration (Go to symbol, etc.)
+- [`KT-13535`](https://youtrack.jetbrains.com/issue/KT-13535) Pull Up: Remove visibility modifiers on adding 'override'
+- Pull Up: Drop 'override' modifier if moved member doesn't override anything
+- [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Report separate conflicts for each property accessor
+- [`KT-13215`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Forbid moving of enum entries
+- [`KT-13553`](https://youtrack.jetbrains.com/issue/KT-13553) Move: Do not show directory selection dialog if target directory is already specified by drag-and-drop
+- [`KT-13660`](https://youtrack.jetbrains.com/issue/KT-13660) Move: Do not drop object receivers when calling variable of extension functional type
+- [`KT-13903`](https://youtrack.jetbrains.com/issue/KT-13903) Move: Remove companion object which becomes empty after the move
+- [`KT-13916`](https://youtrack.jetbrains.com/issue/KT-13916) Move: Report visibility conflicts in import directives
+- [`KT-13906`](https://youtrack.jetbrains.com/issue/KT-13906) Move Nested Class to Upper Level: Do not show directory selection dialog twice
+- [`KT-13901`](https://youtrack.jetbrains.com/issue/KT-13901) Move: Do not ignore target directory selected in the dialog (DnD mode)
+- [`KT-13904`](https://youtrack.jetbrains.com/issue/KT-13904) Move Nested Class to Upper Level: Preserve state of "Search in comments"/"Search for text occurrences" checkboxes
+- [`KT-13909`](https://youtrack.jetbrains.com/issue/KT-13909) Move Files/Directories: Fix behavior of "Open moved files in editor" checkbox
+- [`KT-14004`](https://youtrack.jetbrains.com/issue/KT-14004) Introduce Variable: Fix exception on trying to extract variable of functional type
 
-#### Debugger
+#### IDE. Inspections, Intentions and Quickfixes
 
-- [`KT-7549`](https://youtrack.jetbrains.com/issue/KT-7549) Allow to evaluate kotlin expressions in Java files
+- Intention to convert loops over collections to use of standard library higher-order functions (filter, map, all, none etc.)
+- KT-13519 Add intention+inspection to remove empty parentheses from method call with single lambda parameter
+- KT-13384 Inspection to warn on using == with array types
+- KT-12804 Add quickfix for "A type annotation is required on a value parameter"
+- [`KT-11525`](https://youtrack.jetbrains.com/issue/KT-11525) Implement "Create type parameter" quickfix
+- KT-13521 Warning that right part of "expression ?: null" is useless
+- KT-13773, KT-13674 Quickfixes for FINAL_UPPER_BOUND diagnostic
+- KT-9590 Quickfix for accessing `::class` of a non-reified type parameter
+- KT-13551 Inspection + intention to replace `.let { it.foo() }` with `.foo()`
+- KT-13744 Add "Copy concatenation text to clipboard" intention
+- KT-13635 Implement quick fix to convert a too long char literal to a string
+- KT-13945 Add intention to replace Math.max/min with coerceAtLeast/coerceAtMost
+- KT-9839 Add intention to convert primary constructor to a secondary one and back
 
-#### Android Lint
-
-###### Issues fixed
-
-- [`KT-12022`](https://youtrack.jetbrains.com/issue/KT-12022) Report lint warnings even when file contains errors
-
-#### Intention actions, inspections and quickfixes
+##### Issues fixed
 
 - [`KT-9490`](https://youtrack.jetbrains.com/issue/KT-9490) Convert receiver to parameter: use template instead of the dialog
 - [`KT-11483`](https://youtrack.jetbrains.com/issue/KT-11483) Move to Companion: Do not use qualified names as labels
@@ -42,33 +125,43 @@
 - [`KT-13933`](https://youtrack.jetbrains.com/issue/KT-13933) Convert Parameter to Receiver: Do not qualify companion members with labeled 'this'
 - [`KT-13942`](https://youtrack.jetbrains.com/issue/KT-13942) Redundant 'toString()' in String Template: Disable for qualified expressions with 'super' receiver
 - [`KT-13878`](https://youtrack.jetbrains.com/issue/KT-13878) Remove Redundant Receiver Parameter: Fix exception receiver removal
+- KT-13588 Allow to convert empty Unit returning functions to expression form
+- KT-12297 Add function to supertype immediately removes redundant modifiers
 
-##### New features
 
-- [`KT-11525`](https://youtrack.jetbrains.com/issue/KT-11525) Implement "Create type parameter" quickfix
+#### Debugger
 
-#### Refactorings
+- KT-13534 Debugger didn't step into 'for' body if there's inline function call in range expression
 
-- [`KT-13535`](https://youtrack.jetbrains.com/issue/KT-13535) Pull Up: Remove visibility modifiers on adding 'override'
-- [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Report separate conflicts for each property accessor
-- [`KT-13216`](https://youtrack.jetbrains.com/issue/KT-13216) Move: Forbid moving of enum entries
-- [`KT-13553`](https://youtrack.jetbrains.com/issue/KT-13553) Move: Do not show directory selection dialog if target directory is already specified by drag-and-drop
-- [`KT-8867`](https://youtrack.jetbrains.com/issue/KT-8867) Rename: Rename all overridden members if user chooses to refactor base declaration(s)
-- Pull Up: Drop 'override' modifier if moved member doesn't override anything
-- [`KT-13660`](https://youtrack.jetbrains.com/issue/KT-13660) Move: Do not drop object receivers when calling variable of extension functional type
-- [`KT-13903`](https://youtrack.jetbrains.com/issue/KT-13903) Move: Remove companion object which becomes empty after the move
-- [`KT-13916`](https://youtrack.jetbrains.com/issue/KT-13916) Move: Report visibility conflicts in import directives
-- [`KT-13906`](https://youtrack.jetbrains.com/issue/KT-13906) Move Nested Class to Upper Level: Do not show directory selection dialog twice
-- [`KT-13901`](https://youtrack.jetbrains.com/issue/KT-13901) Move: Do not ignore target directory selected in the dialog (DnD mode)
-- [`KT-13904`](https://youtrack.jetbrains.com/issue/KT-13904) Move Nested Class to Upper Level: Preserve state of "Search in comments"/"Search for text occurrences" checkboxes
-- [`KT-13909`](https://youtrack.jetbrains.com/issue/KT-13909) Move Files/Directories: Fix behavior of "Open moved files in editor" checkbox
-- [`KT-14004`](https://youtrack.jetbrains.com/issue/KT-14004) Introduce Variable: Fix exception on trying to extract variable of functional type
+#### Android Lint
 
-##### New features
+###### Issues fixed
 
-- [`KT-13155`](https://youtrack.jetbrains.com/issue/KT-13155) Implement "Introduce Type Parameter" refactoring
-- [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Superclass" refactoring
-- [`KT-11017`](https://youtrack.jetbrains.com/issue/KT-11017) Implement "Extract Interface" refactoring
+- [`KT-12022`](https://youtrack.jetbrains.com/issue/KT-12022) Report lint warnings even when file contains errors
+
+#### Build Tools
+
+- Track changes in Java files generated by kapt2
+- KT-13633 All compiler options are now exposed as properties of Kotlin Gradle task
+
+#### JavaScript
+
+- KT-7500 Remove intrinsic for Long.equals, because it's applied incorrectly for nullable longs
+- KT-13576 Implement Long.hashCode function
+- KT-12810 Support special modifiers(e.g. getter and setter) in IDL
+- KT-13583 Allow local classes to capture members of outer classes
+- KT-7397 Fix `is` operator with object operand
+- KT-8283 Implement same semantics as JVM for comparing arrays using `==`
+- KT-13664 Write values of long compile-time constants as constants
+- KT-14082 Module was wrongly treated as JVM when js-stdlib is not the first in dependencies
+- KT-13825 Write simple name of class to constructor.$metadata$.simpleName.
+
+#### J2K
+
+- KT-11990 `native` modifier is converted to `external`
+- KT-13146 Fix infinite loop while converting self-referenced anonymous functions
+- KT-13529 Improve conversion of Java code on paste
+- KT-11804 Fix incorrect closing parenthesis position for method split to several lines
 
 ## 1.0.4
 
