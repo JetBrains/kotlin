@@ -80,8 +80,10 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
-        KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
+internal abstract class ImportFixBase<T : KtExpression> protected constructor(
+        expression: T,
+        private val factory: Factory
+) : KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
 
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
 
@@ -90,8 +92,9 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
             timestampCalculator = { PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount }
     )
 
+    protected open fun getSupportedErrors() = factory.supportedErrors
+
     protected abstract val importNames: Collection<Name>
-    protected abstract fun getSupportedErrors(): Collection<DiagnosticFactory<*>>
     protected abstract fun getCallTypeAndReceiver(): CallTypeAndReceiver<*, *>
 
     override fun showHint(editor: Editor): Boolean {
@@ -203,9 +206,15 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
             validationManager.getViolatorDependencyRules(file, targetFile).isEmpty()
         }
     }
+
+    abstract class Factory : KotlinSingleIntentionActionFactory() {
+        val supportedErrors: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
+
+        override fun isApplicableForCodeFragment() = true
+    }
 }
 
-internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) : ImportFixBase<T>(expression) {
+internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, factory: Factory) : ImportFixBase<T>(expression, factory) {
     override fun fillCandidates(
             name: String,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
@@ -236,38 +245,27 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) :
         result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression, bindingContext) { it == name })
         return result
     }
-
 }
 
-internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
     override val importNames = element.mainReference.resolvesByNames
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtSimpleNameExpression)?.let { ImportFix(it) }
-
-        override fun isApplicableForCodeFragment() = true
-
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression) {
+internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression, MyFactory) {
     override val importNames = OperatorNameConventions.INVOKE.singletonList()
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtExpression)?.let { InvokeImportFix(it) }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -275,16 +273,14 @@ internal open class ArrayAccessorImportFix(
         element: KtArrayAccessExpression,
         override val importNames: Collection<Name>,
         private val showHint: Boolean
-) : OrdinaryImportFixBase<KtArrayAccessExpression>(element) {
+) : OrdinaryImportFixBase<KtArrayAccessExpression>(element, MyFactory) {
 
     override fun getCallTypeAndReceiver() =
             CallTypeAndReceiver.OPERATOR(element.arrayExpression!!)
 
-    override fun getSupportedErrors() = ERRORS
-
     override fun showHint(editor: Editor) = showHint && super.showHint(editor)
 
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importName(diagnostic: Diagnostic): Name {
             return when (diagnostic.factory) {
                 Errors.NO_GET_METHOD -> OperatorNameConventions.GET
@@ -304,8 +300,6 @@ internal open class ArrayAccessorImportFix(
 
             return null
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -313,7 +307,7 @@ internal class DelegateAccessorsImportFix(
         element: KtExpression,
         override val importNames: Collection<Name>,
         private val solveSeveralProblems: Boolean
-) : OrdinaryImportFixBase<KtExpression>(element) {
+) : OrdinaryImportFixBase<KtExpression>(element, MyFactory) {
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.DELEGATE(element)
 
@@ -325,9 +319,7 @@ internal class DelegateAccessorsImportFix(
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importNames(diagnostics: Collection<Diagnostic>): Collection<Name> {
             return diagnostics.map {
                 val missingMethodSignature = Errors.DELEGATE_SPECIAL_FUNCTION_MISSING.cast(it).a
@@ -349,8 +341,6 @@ internal class DelegateAccessorsImportFix(
             val names = importNames(sameTypeDiagnostics)
             return (element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) }.singletonOrEmptyList()
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
@@ -358,7 +348,7 @@ internal class ComponentsImportFix(
         element: KtExpression,
         override val importNames: Collection<Name>,
         private val solveSeveralProblems: Boolean
-) : OrdinaryImportFixBase<KtExpression>(element) {
+) : OrdinaryImportFixBase<KtExpression>(element, MyFactory) {
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
@@ -370,9 +360,7 @@ internal class ComponentsImportFix(
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importNames(diagnostics: Collection<Diagnostic>) =
                 diagnostics.map { Name.identifier(Errors.COMPONENT_FUNCTION_MISSING.cast(it).a.identifier) }
 
@@ -388,12 +376,10 @@ internal class ComponentsImportFix(
             val solveSeveralProblems = sameTypeDiagnostics.size > 1
             return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
 
     override fun getText() = "Import member"
 
@@ -432,24 +418,17 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
         return@run emptyList()
     }
 
-    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
-
-        override fun isApplicableForCodeFragment() = true
-
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
+    companion object MyFactory : Factory() {
+        override fun createAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
     }
 }
 
-internal class ImportForMismatchingArgumentsFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportForMismatchingArgumentsFix(
+        expression: KtSimpleNameExpression
+) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
     override val importNames = element.mainReference.resolvesByNames
-
-    override fun getSupportedErrors() = ERRORS
 
     override fun elementsToCheckDiagnostics(): Collection<PsiElement> {
         val callExpression = element.parent as? KtCallExpression ?: return emptyList()
@@ -514,17 +493,13 @@ internal class ImportForMismatchingArgumentsFix(expression: KtSimpleNameExpressi
         return result
     }
 
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic): ImportForMismatchingArgumentsFix? {
             //TODO: not only KtCallExpression
             val callExpression = diagnostic.psiElement.getStrictParentOfType<KtCallExpression>() ?: return null
             val nameExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
             return ImportForMismatchingArgumentsFix(nameExpression)
         }
-
-        override fun isApplicableForCodeFragment() = true
-
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
