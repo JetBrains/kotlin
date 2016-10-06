@@ -39,11 +39,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-class DestructureInspection : IntentionBasedInspection<KtDeclaration>(DestructureIntention::class)
+class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
+        DestructureIntention::class,
+        additionalChecker = { declaration -> declaration !is KtVariableDeclaration }
+)
 
 class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         KtDeclaration::class.java,
-        "Simplify using destructuring declaration"
+        "Use destructuring declaration"
 ) {
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val forLoop = element.parent as? KtForExpression

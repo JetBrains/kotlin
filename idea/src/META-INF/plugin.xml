@@ -1638,11 +1638,11 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DestructureInspection"
-                     displayName="Can be simplified using destructing declaration"
+                     displayName="Use destructuring declaration"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="false"
-                     level="WEAK WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
