@@ -224,6 +224,12 @@ abstract class MapJsTest {
         assertEquals(KEYS.size, newMap.size)
     }
 
+    @test fun mapPutAllFromCustomMap() {
+        val newMap = emptyMutableMap()
+        newMap.putAll(ConstMap)
+        assertEquals(ConstMap.entries.single().toPair(), newMap.entries.single().toPair())
+    }
+
     @test fun mapRemove() {
         val map = createTestMutableMap()
         val last = KEYS.size - 1
@@ -540,6 +546,21 @@ abstract class MapJsTest {
         println("==== worked! $list")
     }
     */
+
+    private object ConstMap : Map<String, Int> {
+        override val entries: Set<Map.Entry<String, Int>>
+            get() = setOf(object : Map.Entry<String, Int> {
+                override val key: String get() = "key"
+                override val value: Int get() = 42
+            })
+        override val keys: Set<String> get() = setOf("key")
+        override val size: Int get() = 1
+        override val values = listOf(42)
+        override fun containsKey(key: String) = key == "key"
+        override fun containsValue(value: Int) = value == 42
+        override fun get(key: String) = if (key == "key") 42 else null
+        override fun isEmpty() = false
+    }
 
     // Helpers
 
