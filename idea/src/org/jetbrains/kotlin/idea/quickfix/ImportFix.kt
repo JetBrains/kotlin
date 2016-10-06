@@ -50,12 +50,12 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtPsiUtil.getConventionName
 import org.jetbrains.kotlin.psi.KtPsiUtil.isSelectorInQualified
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
@@ -243,7 +242,7 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) :
 internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
-    override val importNames = element.extractImportNames()
+    override val importNames = element.mainReference.resolvesByNames
 
     override fun getSupportedErrors() = ERRORS
 
@@ -256,32 +255,6 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
-
-private fun KtSimpleNameExpression.extractImportNames(): Collection<Name> {
-    if (getIdentifier() == null) {
-        val conventionName = getConventionName(this)
-        if (conventionName != null) {
-            if (this is KtOperationReferenceExpression) {
-                val elementType = firstChild.node.elementType
-                if (elementType in OperatorConventions.ASSIGNMENT_OPERATIONS) {
-                    val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[elementType]
-                    val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES[counterpart]
-                    if (counterpartName != null) {
-                        return listOf(conventionName, counterpartName)
-                    }
-                }
-            }
-
-            return conventionName.singletonOrEmptyList()
-        }
-    }
-    else if (Name.isValidIdentifier(getReferencedName())) {
-        return Name.identifier(getReferencedName()).singletonOrEmptyList()
-    }
-
-    return emptyList()
-}
-
 
 internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression) {
     override val importNames = OperatorNameConventions.INVOKE.singletonList()
@@ -474,7 +447,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
 internal class ImportForMismatchingArgumentsFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
-    override val importNames = element.extractImportNames()
+    override val importNames = element.mainReference.resolvesByNames
 
     override fun getSupportedErrors() = ERRORS
 
