@@ -422,7 +422,7 @@ object KotlinToJVMBytecodeCompiler {
                         CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                         environment.configuration,
                         { scope -> JvmPackagePartProvider(environment, scope) },
-                        scope
+                        sourceModuleSearchScope = scope
                 )
             }
 

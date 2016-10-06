@@ -1,0 +1,5 @@
+>>> val x: Pair<Any?, Any?> = null to null
+>>> if (x.first != null) x.first.hashCode()
+error: smart cast to 'Any' is impossible, because 'x.first' is a public API property declared in different module
+if (x.first != null) x.first.hashCode()
+                     ^

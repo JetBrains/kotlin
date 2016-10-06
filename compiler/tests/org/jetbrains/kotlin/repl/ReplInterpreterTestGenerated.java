@@ -200,6 +200,21 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
     }
 
+    @TestMetadata("compiler/testData/repl/modules")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Modules extends AbstractReplInterpreterTest {
+        public void testAllFilesPresentInModules() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/modules"), Pattern.compile("^(.+)\\.repl$"), true);
+        }
+
+        @TestMetadata("kt10001.repl")
+        public void testKt10001() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/modules/kt10001.repl");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/repl/multiline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

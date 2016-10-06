@@ -16,22 +16,19 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
-import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -49,32 +46,26 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
     init {
-        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.configuration)
-        this.module = moduleContext.module
-
-        this.scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
-
-        val moduleContentScope = ProjectScope.getAllScope(environment.project)
-        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
-                moduleContext,
+        // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
+        // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
+        // because no symbol declared in the REPL session can be used from Java)
+        val container = TopDownAnalyzerFacadeForJVM.createContainer(
+                environment.project,
+                emptyList(),
                 trace,
-                scriptDeclarationFactory,
-                moduleContentScope,
-                JvmPackagePartProvider(environment, moduleContentScope)
+                environment.configuration,
+                { scope -> JvmPackagePartProvider(environment, scope) },
+                { storageManager, files -> ScriptMutableDeclarationProviderFactory() },
+                GlobalSearchScope.EMPTY_SCOPE
         )
 
+        this.module = container.get<ModuleDescriptorImpl>()
+        this.scriptDeclarationFactory = container.get<ScriptMutableDeclarationProviderFactory>()
         this.resolveSession = container.get<ResolveSession>()
         this.topDownAnalysisContext = TopDownAnalysisContext(
                 TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
         this.topDownAnalyzer = container.get<LazyTopDownAnalyzer>()
-
-        moduleContext.initializeModuleContents(CompositePackageFragmentProvider(
-                listOf(
-                        resolveSession.packageFragmentProvider,
-                        container.get<JavaDescriptorResolver>().packageFragmentProvider
-                )
-        ))
     }
 
     interface ReplLineAnalysisResult {

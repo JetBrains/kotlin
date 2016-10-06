@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -57,6 +59,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
@@ -67,9 +70,34 @@ object TopDownAnalyzerFacadeForJVM {
             files: Collection<KtFile>,
             trace: BindingTrace,
             configuration: CompilerConfiguration,
-            packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
+            packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+            declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory = ::FileBasedDeclarationProviderFactory,
             sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): AnalysisResult {
+        val container = createContainer(
+                project, files, trace, configuration, packagePartProvider, declarationProviderFactory, sourceModuleSearchScope
+        )
+
+        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+
+        val module = container.get<ModuleDescriptor>()
+        for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
+            val result = extension.analysisCompleted(project, module, trace, files)
+            if (result != null) return result
+        }
+
+        return AnalysisResult.success(trace.bindingContext, module)
+    }
+
+    fun createContainer(
+            project: Project,
+            files: Collection<KtFile>,
+            trace: BindingTrace,
+            configuration: CompilerConfiguration,
+            packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+            declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
+            sourceModuleSearchScope: GlobalSearchScope
+    ): ComponentProvider {
         val moduleContext = createModuleContext(project, configuration)
 
         val storageManager = moduleContext.storageManager
@@ -98,7 +126,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                     dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
-                    packagePartProviderFactory(dependencyScope), languageVersionSettings, moduleClassResolver
+                    packagePartProvider(dependencyScope), languageVersionSettings, moduleClassResolver
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get<JavaDescriptorResolver>()
@@ -114,9 +142,9 @@ object TopDownAnalyzerFacadeForJVM {
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
-                moduleContext, trace, FileBasedDeclarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
+                moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
                 IncrementalPackagePartProvider.create(
-                        packagePartProviderFactory(sourceScope), targetIds, incrementalComponents, storageManager
+                        packagePartProvider(sourceScope), targetIds, incrementalComponents, storageManager
                 ),
                 languageVersionSettings, moduleClassResolver
         ).apply {
@@ -152,14 +180,7 @@ object TopDownAnalyzerFacadeForJVM {
                 additionalProviders
         ))
 
-        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-
-        for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
-            val result = extension.analysisCompleted(project, module, trace, files)
-            if (result != null) return result
-        }
-
-        return AnalysisResult.success(trace.bindingContext, module)
+        return container
     }
 
     fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
