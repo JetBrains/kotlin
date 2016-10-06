@@ -73,7 +73,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     // Caches are auto-invalidated when file modification in TINY_APP_SRC detected (through File.lastModified()).
     // LOCAL_CACHE_DIR removing can be used to force caches invalidating as well.
-    private static final boolean LOCAL_CACHE_REUSE = false;
+    private static final boolean LOCAL_CACHE_REUSE = true;
 
     private static final File LOCAL_CACHE_DIR = new File("out/debuggerTinyApp");
     private static final File LOCAL_CACHE_JAR_DIR = new File(LOCAL_CACHE_DIR, "jar");
