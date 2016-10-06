@@ -17,16 +17,13 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
-import org.jetbrains.kotlin.codegen.FrameMap
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -59,6 +56,9 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
                                                            flags,
                                                            signature.asmMethod.name, signature.asmMethod.descriptor,
                                                            signature.genericsSignature, null/*TODO support exception*/)
+
+        FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
+        FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0) {
             methodVisitor.visitEnd()

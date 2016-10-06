@@ -73,7 +73,7 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclarationContainer*/> {
+public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclarationContainer*/> implements InnerClassConsumer {
     protected final GenerationState state;
     protected final T element;
     protected final FieldOwnerContext context;
@@ -304,6 +304,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
     // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
     // See FileBasedKotlinClass.convertAnnotationVisitor
+    @Override
     public void addInnerClassInfoFromAnnotation(@NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor current = classDescriptor;
         while (current != null && !isTopLevelDeclaration(current)) {

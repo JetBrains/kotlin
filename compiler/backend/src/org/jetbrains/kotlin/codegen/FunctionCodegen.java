@@ -272,7 +272,17 @@ public class FunctionCodegen {
             Method asmMethod,
             MethodVisitor mv
     ) {
-        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper);
+        generateMethodAnnotations(functionDescriptor, asmMethod, mv, memberCodegen, typeMapper);
+    }
+
+    public static void generateMethodAnnotations(
+            @NotNull FunctionDescriptor functionDescriptor,
+            Method asmMethod,
+            MethodVisitor mv,
+            @NotNull InnerClassConsumer consumer,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
+        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, consumer, typeMapper);
 
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
             AnnotationUseSiteTarget target = functionDescriptor instanceof PropertySetterDescriptor ? PROPERTY_SETTER : PROPERTY_GETTER;
@@ -288,6 +298,17 @@ public class FunctionCodegen {
             @NotNull MethodVisitor mv,
             @NotNull JvmMethodSignature jvmSignature
     ) {
+        generateParameterAnnotations(functionDescriptor, mv, jvmSignature, memberCodegen, state);
+    }
+
+    public static void generateParameterAnnotations(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature,
+            @NotNull InnerClassConsumer innerClassConsumer,
+            @NotNull GenerationState state
+    ) {
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         Iterator<ValueParameterDescriptor> iterator = functionDescriptor.getValueParameters().iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
@@ -295,13 +316,13 @@ public class FunctionCodegen {
             JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
             JvmMethodParameterKind kind = parameterSignature.getKind();
             if (kind.isSkippedInGenericSignature()) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i);
+                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
                 continue;
             }
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, memberCodegen, typeMapper);
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
 
                 if (functionDescriptor instanceof PropertySetterDescriptor) {
                     PropertyDescriptor propertyDescriptor = ((PropertySetterDescriptor) functionDescriptor).getCorrespondingProperty();
@@ -320,7 +341,7 @@ public class FunctionCodegen {
                 ReceiverParameterDescriptor receiver = JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter();
 
                 if (receiver != null) {
-                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, memberCodegen, typeMapper);
+                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
                     Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(receiver.getType());
                     annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
 
@@ -330,9 +351,9 @@ public class FunctionCodegen {
         }
     }
 
-    private void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+    private static void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i, ClassBuilderMode mode) {
         // IDEA's ClsPsi builder fails to annotate synthetic parameters
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+        if (mode == ClassBuilderMode.LIGHT_CLASSES) return;
 
         // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
         // see MethodWriter.visitParameterAnnotation()

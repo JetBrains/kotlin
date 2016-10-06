@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSpecialDescriptor
 import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.*
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -38,7 +39,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext, val parentClassCodegen: ClassCodegen? = null) {
+class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBackendContext, val parentClassCodegen: ClassCodegen? = null) : InnerClassConsumer {
 
     private val innerClasses = mutableListOf<ClassDescriptor>()
 
@@ -69,6 +70,7 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
                 signature.superclassName,
                 signature.interfaces.toTypedArray()
         )
+        AnnotationCodegen.forClass(visitor.visitor, this, typeMapper).genAnnotations(descriptor, null)
 
         irClass.declarations.forEach {
             generateDeclaration(it)
@@ -121,8 +123,15 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
     fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
-        visitor.newField(field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
-                         fieldSignature, null/*TODO support default values*/)
+        val fv = visitor.newField(field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
+                                  fieldSignature, null/*TODO support default values*/)
+
+        if (field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(field.descriptor, null)
+        }
+        else {
+
+        }
     }
 
     fun generateMethod(method: IrFunction) {
@@ -155,6 +164,18 @@ class ClassCodegen private constructor(val irClass: IrClass, val context: JvmBac
 
     private fun classForInnerClassRecord(): ClassDescriptor? {
         return if (parentClassCodegen != null) descriptor else null
+    }
+
+    // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
+    // See FileBasedKotlinClass.convertAnnotationVisitor
+    override fun addInnerClassInfoFromAnnotation(classDescriptor: ClassDescriptor) {
+        var current: DeclarationDescriptor? = classDescriptor
+        while (current != null && !isTopLevelDeclaration(current)) {
+            if (current is ClassDescriptor) {
+                innerClasses.add(current)
+            }
+            current = current.containingDeclaration
+        }
     }
 
 }

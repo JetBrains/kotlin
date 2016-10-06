@@ -313,11 +313,16 @@ class ExpressionCodegen(
     }
 
     private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
+        val index = findLocalIndex(descriptor)
+        StackValue.local(index, type).put(type, mv)
+        return onStack(type)
+    }
+
+    private fun findLocalIndex(descriptor: CallableDescriptor): Int {
         val index = frame.getIndex(descriptor).apply {
             if (this < 0) throw AssertionError("Non-mapped local variable descriptor: $descriptor")
         }
-        StackValue.local(index, type).put(type, mv)
-        return onStack(type)
+        return index
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: BlockInfo): StackValue {
@@ -330,7 +335,7 @@ class ExpressionCodegen(
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
         val value = expression.value.accept(this, data)
-        StackValue.local(frame.getIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
+        StackValue.local(findLocalIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
         return none()
     }
 
@@ -494,8 +499,8 @@ class ExpressionCodegen(
         val end = Label()
 
         thenBranch.apply {
-            gen(this, data)
-            coerceNotToUnit(this.asmType, type)
+            gen(this, type, data)
+            //coerceNotToUnit(this.asmType, type)
         }
 
         mv.goTo(end)
