@@ -70,14 +70,14 @@ class OptimizedImportsBuilder(
 
     private val importInsertHelper = ImportInsertHelper.getInstance(file.project)
 
-    private sealed class ImportRule {
+    private interface ImportRule {
         // force presence of this import
-        data class Add(val importPath: ImportPath) : ImportRule() {
+        data class Add(val importPath: ImportPath) : ImportRule {
             override fun toString() = "+" + importPath.toString()
         }
 
         // force absence of this import
-        data class DoNotAdd(val importPath: ImportPath) : ImportRule() {
+        data class DoNotAdd(val importPath: ImportPath) : ImportRule {
             override fun toString() = "-" + importPath.toString()
         }
     }
