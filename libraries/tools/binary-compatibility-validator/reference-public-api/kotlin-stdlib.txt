@@ -99,10 +99,7 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 	public static final field Companion Lkotlin/collections/AbstractList$Companion;
 	protected fun <init> ()V
 	public fun add (ILjava/lang/Object;)V
-	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
-	public fun addAll (Ljava/util/Collection;)Z
-	public fun clear ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public abstract fun get (I)Ljava/lang/Object;
 	public abstract fun getSize ()I
@@ -113,14 +110,8 @@ public abstract class kotlin/collections/AbstractList : kotlin/collections/Abstr
 	public fun listIterator ()Ljava/util/ListIterator;
 	public fun listIterator (I)Ljava/util/ListIterator;
 	public fun remove (I)Ljava/lang/Object;
-	public fun remove (Ljava/lang/Object;)Z
-	public fun removeAll (Ljava/util/Collection;)Z
-	public fun removeAt (I)Ljava/lang/Object;
-	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
 	public fun subList (II)Ljava/util/List;
-	public fun toArray ()[Ljava/lang/Object;
-	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm/internal/markers/KMappedMarker {
@@ -186,18 +177,9 @@ public abstract class kotlin/collections/AbstractMutableSet : java/util/Abstract
 public abstract class kotlin/collections/AbstractSet : kotlin/collections/AbstractCollection, java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/collections/AbstractSet$Companion;
 	protected fun <init> ()V
-	public fun add (Ljava/lang/Object;)Z
-	public fun addAll (Ljava/util/Collection;)Z
-	public fun clear ()V
 	public fun equals (Ljava/lang/Object;)Z
-	public abstract fun getSize ()I
 	public fun hashCode ()I
 	public fun iterator ()Ljava/util/Iterator;
-	public fun remove (Ljava/lang/Object;)Z
-	public fun removeAll (Ljava/util/Collection;)Z
-	public fun retainAll (Ljava/util/Collection;)Z
-	public fun toArray ()[Ljava/lang/Object;
-	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/collections/ArraysKt {
