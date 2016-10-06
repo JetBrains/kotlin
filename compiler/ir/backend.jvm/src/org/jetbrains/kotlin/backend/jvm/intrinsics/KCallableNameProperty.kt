@@ -16,19 +16,43 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrGetClass
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class KCallableNameProperty : IntrinsicMethod() {
+
+    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
+        return object: IrIntrinsicFunction(expression, signature, context) {
+            override fun invoke(v: InstructionAdapter, codegen: org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen, data: BlockInfo): StackValue {
+                val callableReference = expression.dispatchReceiver as IrCallableReference
+                /*TODO optimize generation*/
+
+                codegen.gen(callableReference.dispatchReceiver ?: callableReference.extensionReceiver!!, VOID_TYPE, data)
+                codegen.mv.aconst(callableReference.descriptor.name.asString())
+                StackValue.coerce(JAVA_STRING_TYPE, returnType, codegen.mv)
+                return StackValue.onStack(signature.returnType)
+            }
+        }
+    }
+
     fun generate(resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue): StackValue? {
         val expressionReceiver = resolvedCall!!.dispatchReceiver as? ExpressionReceiver ?: return null
         val expression = expressionReceiver.expression as? KtCallableReferenceExpression ?: return null

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
@@ -42,8 +43,9 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {
         return intrinsics.getIntrinsic(descriptor) ?:
-               (if (descriptor is PropertyAccessorDescriptor) intrinsics.getIntrinsic(descriptor.correspondingProperty) else null) ?:
-               irMapping[descriptor.original]
+               (if (descriptor is PropertyAccessorDescriptor)
+                   intrinsics.getIntrinsic(DescriptorUtils.unwrapFakeOverride(descriptor.correspondingProperty))
+               else null) ?: irMapping[descriptor.original]
     }
 
 }
