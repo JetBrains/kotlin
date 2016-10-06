@@ -84,6 +84,8 @@ import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
+import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
+import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
@@ -734,8 +736,13 @@ fun main(args: Array<String>) {
             model("decompiler/stubBuilder", extension = null, recursive = false)
         }
 
-        testClass<AbstractOptimizeImportsTest>() {
-            model("editor/optimizeImports", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        testClass<AbstractJvmOptimizeImportsTest>() {
+            model("editor/optimizeImports/jvm", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+        testClass<AbstractJsOptimizeImportsTest>() {
+            model("editor/optimizeImports/js", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractPositionManagerTest>() {
