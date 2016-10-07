@@ -52,8 +52,6 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingOffsetInde
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         element.replaced(element.receiverExpression)
-
-        mutableMapOf(1 to 1).toMutableMap()
     }
 
     override fun isApplicableTo(element: KtDotQualifiedExpression): Boolean {
