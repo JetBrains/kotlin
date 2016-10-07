@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
@@ -98,7 +97,7 @@ private fun checkConflicts(
     for (member in membersToPush) {
         checkMemberClashing(conflicts, context, member, membersToKeepAbstract, substitutor, targetClass, targetClassDescriptor)
         checkSuperCalls(conflicts, context, member, membersToPush)
-        checkExternalUsages(conflicts, member, targetClassDescriptor, context.resolutionFacade)
+        checkExternalUsages(conflicts, context, member, targetClassDescriptor)
         checkVisibility(conflicts, context, member, targetClassDescriptor)
     }
 }
@@ -170,15 +169,15 @@ private fun checkSuperCalls(
     )
 }
 
-internal fun checkExternalUsages(
+private fun checkExternalUsages(
         conflicts: MultiMap<PsiElement, String>,
-        member: PsiElement,
-        targetClassDescriptor: ClassDescriptor,
-        resolutionFacade: ResolutionFacade
+        context: KotlinPushDownContext,
+        member: KtNamedDeclaration,
+        targetClassDescriptor: ClassDescriptor
 ): Unit {
     for (ref in ReferencesSearch.search(member, member.resolveScope, false)) {
         val calleeExpr = ref.element as? KtSimpleNameExpression ?: continue
-        val resolvedCall = calleeExpr.getResolvedCall(resolutionFacade.analyze(calleeExpr)) ?: continue
+        val resolvedCall = calleeExpr.getResolvedCall(context.resolutionFacade.analyze(calleeExpr)) ?: continue
         val callElement = resolvedCall.call.callElement
         val dispatchReceiver = resolvedCall.dispatchReceiver
         if (dispatchReceiver == null || dispatchReceiver is Qualifier) continue
