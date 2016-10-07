@@ -17,7 +17,6 @@ public final class kotlin/KotlinVersion : java/lang/Comparable {
 	public fun hashCode ()I
 	public final fun isAtLeast (II)Z
 	public final fun isAtLeast (III)Z
-	public final fun toInt ()I
 	public fun toString ()Ljava/lang/String;
 }
 

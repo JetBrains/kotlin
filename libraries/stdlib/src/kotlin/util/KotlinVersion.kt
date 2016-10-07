@@ -25,16 +25,6 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
     }
 
     /**
-     * Returns the integer representation of this version.
-     *
-     * Integer representations of two [KotlinVersion] instances can be compared,
-     * so that if `v1.toInt() > v2.toInt()` then `v1 > v2`.
-     *
-     * This value should not be persisted, as it can change between program runs.
-     */
-    public fun toInt(): Int = version
-
-    /**
      * Returns the string representation of this version
      */
     override fun toString(): String = "$major.$minor.$patch"
