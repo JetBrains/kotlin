@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -161,10 +162,17 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             // Note: list should contains properties in order to create destructuring declaration
             val usagesToRemove = mutableListOf<UsageData>()
             var noBadUsages = true
-            val removeSelectorInLoopRange: Boolean
+            var removeSelectorInLoopRange = false
             if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
-                val loopRangeDescriptorName = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
-                removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
+                val loopRangeDescriptor = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor
+                if (loopRangeDescriptor != null) {
+                    val loopRangeDescriptorOwner = loopRangeDescriptor.containingDeclaration
+                    val mapClassDescriptor = classDescriptor.builtIns.map
+                    if (loopRangeDescriptorOwner is ClassDescriptor &&
+                        DescriptorUtils.isSubclass(loopRangeDescriptorOwner, mapClassDescriptor)) {
+                        removeSelectorInLoopRange = loopRangeDescriptor.name.asString().let { it == "entries" || it == "entrySet" }
+                    }
+                }
 
                 listOf("key", "value").mapTo(usagesToRemove) {
                     UsageData(mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
@@ -178,7 +186,6 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 )
             }
             else if (classDescriptor.isData) {
-                removeSelectorInLoopRange = false
 
                 val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
                 valueParameters.mapTo(usagesToRemove) { UsageData(it) }
