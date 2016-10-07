@@ -202,14 +202,25 @@ class ExpressionsOfTypeProcessor(
         addTask(ProcessClassUsagesTask(classToSearch))
     }
 
-    private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processMethod: (PsiReference) -> Boolean) {
-        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processMethod: (PsiReference) -> Boolean) : Task {
+    private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
+        CallableOfOurType({ processor, reference ->
+                              processor.processReferenceToCallableOfOurType(reference)
+                          }),
+
+        ProcessLambdasInCalls({ processor, reference ->
+                                  (reference.element as? KtReferenceExpression)?.let { processor.processLambdasForCallableReference(it) }
+                                  true
+                              })
+    }
+
+    private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processor: ReferenceProcessor) {
+        data class ProcessCallableUsagesTask(val declaration: PsiElement, val processor: ReferenceProcessor) : Task {
             override fun perform() {
                 testLog?.add("Searched references to ${logPresentation(declaration)} in non-Java files")
                 val searchParameters = KotlinReferencesSearchParameters(
                         declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
                 searchReferences(searchParameters) { reference ->
-                    val processed = processMethod(reference)
+                    val processed = processor.handler(this@ExpressionsOfTypeProcessor, reference)
                     if (!processed) { // we don't know how to handle this reference and down-shift to plain search
                         downShiftToPlainSearch()
                     }
@@ -217,11 +228,11 @@ class ExpressionsOfTypeProcessor(
                 }
             }
         }
-        addTask(ProcessCallableUsagesTask(declaration, processMethod))
+        addTask(ProcessCallableUsagesTask(declaration, processor))
     }
 
     private fun addCallableDeclarationOfOurType(declaration: PsiElement) {
-        addCallableDeclarationToProcess(declaration, searchScope.restrictToKotlinSources(), this::processReferenceToCallableOfOurType)
+        addCallableDeclarationToProcess(declaration, searchScope.restrictToKotlinSources(), ReferenceProcessor.CallableOfOurType)
     }
 
     /**
@@ -230,10 +241,7 @@ class ExpressionsOfTypeProcessor(
     private fun addCallableDeclarationToProcessLambdasInCalls(declaration: PsiElement) {
         // we don't need to search usages of declarations in Java because Java doesn't have implicitly typed declarations so such usages cannot affect Kotlin code
         val scope = GlobalSearchScope.projectScope(project).excludeFileTypes(JavaFileType.INSTANCE, XmlFileType.INSTANCE)
-        addCallableDeclarationToProcess(declaration, scope) { reference ->
-            (reference.element as? KtReferenceExpression)?.let { processLambdasForCallableReference(it) }
-            true
-        }
+        addCallableDeclarationToProcess(declaration, scope, ReferenceProcessor.ProcessLambdasInCalls)
     }
 
     /**
