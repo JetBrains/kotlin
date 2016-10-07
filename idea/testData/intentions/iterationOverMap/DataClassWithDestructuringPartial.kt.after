@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+
+data class XY(val x: Int, val y: Int)
+
+fun foo(list: List<XY>): Int {
+    var result = 0
+    for ((x, y) in list) {
+        result += x
+        result += y
+    }
+    return result
+}

@@ -191,4 +191,44 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
         <description>Use destructuring declaration</description>
     </problem>
+    <problem>
+        <file>DataClassWithDestructuring.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassWithDestructuring.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>DataClassWithDestructuringFakeConflict.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassWithDestructuringFakeConflict.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>DataClassWithDestructuringPartial.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/DataClassWithDestructuringPartial.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>KeyOnlyWithDestructuring.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/KeyOnlyWithDestructuring.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>KeyValueWithDestructuring.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/KeyValueWithDestructuring.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
 </problems>
