@@ -17,6 +17,17 @@
 package kotlin.script.templates.standard
 
 /**
- * Default script definition template
+ * Basic script definition template without parameters
+ */
+public abstract class SimpleScriptTemplate()
+
+/**
+ * Script definition template with standard argv-like parameter; default for regular kotlin scripts
  */
 public abstract class ScriptTemplateWithArgs(val args: Array<String>)
+
+/**
+ * Script definition template with generic bindings parameter (String to Object)
+ */
+public abstract class ScriptTemplateWithBindings(val bindings: Map<String, Any?>)
+
