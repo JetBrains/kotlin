@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
@@ -44,13 +44,17 @@ class SharedVariablesLowering(val context: JvmBackendContext) : FunctionLowering
         fun lowerSharedVariables() {
             collectSharedVariables()
             if (sharedVariables.isEmpty()) return
+
             rewriteSharedVariables()
         }
 
         private fun collectSharedVariables() {
             irFunction.acceptVoid(object : IrElementVisitorVoid {
                 val declarationsStack = ArrayDeque<IrDeclaration>()
-                val declaredVariables = HashSet<VariableDescriptor>()
+                val currentDeclaration: DeclarationDescriptor
+                    get() = declarationsStack.peek().descriptor
+
+                val relevantVars = HashSet<VariableDescriptor>()
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
@@ -63,14 +67,17 @@ class SharedVariablesLowering(val context: JvmBackendContext) : FunctionLowering
                 }
 
                 override fun visitVariable(declaration: IrVariable) {
-                    declaredVariables.add(declaration.descriptor)
+                    val variableDescriptor = declaration.descriptor
+                    if (variableDescriptor.isVar) {
+                        relevantVars.add(variableDescriptor)
+                    }
                 }
 
                 override fun visitVariableAccess(expression: IrValueAccessExpression) {
                     expression.acceptChildrenVoid(this)
 
                     val descriptor = expression.descriptor
-                    if (descriptor in declaredVariables && descriptor.containingDeclaration != declarationsStack.peek()) {
+                    if (descriptor in relevantVars && descriptor.containingDeclaration != currentDeclaration) {
                         sharedVariables.add(descriptor)
                     }
                 }
