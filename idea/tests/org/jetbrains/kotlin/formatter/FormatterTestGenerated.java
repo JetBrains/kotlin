@@ -607,6 +607,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SuperListIndent.after.kt")
+        public void testSuperListIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SuperListIndent.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TryCatchLineBreak.after.kt")
         public void testTryCatchLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.kt");

@@ -422,6 +422,91 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         doLtGtTestNoAutoClose("fun some() { val a = 12; a <<caret> }")
     }
 
+    fun testColonOfSuperTypeList() {
+        doCharTypeTest(
+                ':',
+                """
+                |open class A
+                |class B
+                |<caret>
+                """,
+                """
+                |open class A
+                |class B
+                |    :<caret>
+                """)
+    }
+
+    fun testColonOfSuperTypeListInObject() {
+        doCharTypeTest(
+                ':',
+                """
+                |interface A
+                |object B
+                |<caret>
+                """,
+                """
+                |interface A
+                |object B
+                |    :<caret>
+                """)
+    }
+
+    fun testColonOfSuperTypeListInCompanionObject() {
+        doCharTypeTest(
+                ':',
+                """
+                |interface A
+                |class B {
+                |    companion object
+                |    <caret>
+                |}
+                """,
+                """
+                |interface A
+                |class B {
+                |    companion object
+                |        :<caret>
+                |}
+                """)
+    }
+
+    fun testColonOfSuperTypeListBeforeBody() {
+        doCharTypeTest(
+                ':',
+                """
+                |open class A
+                |class B
+                |<caret> {
+                |}
+                """,
+                """
+                |open class A
+                |class B
+                |    :<caret> {
+                |}
+                """)
+    }
+
+    fun testColonOfSuperTypeListNotNullIndent() {
+        doCharTypeTest(
+                ':',
+                """
+                |fun test() {
+                |    open class A
+                |    class B
+                |    <caret>
+                |}
+                """,
+                """
+                |fun test() {
+                |    open class A
+                |    class B
+                |        :<caret>
+                |}
+                """)
+    }
+
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
@@ -430,9 +515,9 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     private fun doCharTypeTest(ch: Char, beforeText: String, afterText: String) {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText)
+        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
-        checkResultByText(afterText)
+        checkResultByText(afterText.trimMargin())
     }
 
     private fun doLtGtTestNoAutoClose(initText: String) {

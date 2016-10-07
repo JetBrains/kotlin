@@ -46,6 +46,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
 
@@ -242,6 +243,12 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             }
         }
 
+        if (c == ':') {
+            if (autoIndentCase(editor, project, file)) {
+                return Result.STOP;
+            }
+        }
+
         return Result.CONTINUE;
     }
 
@@ -284,5 +291,19 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 });
             }
         }
+    }
+
+    private static boolean autoIndentCase(Editor editor, Project project, PsiFile file) {
+        int offset = editor.getCaretModel().getOffset();
+        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+        PsiElement currElement = file.findElementAt(offset - 1);
+        if (currElement != null) {
+            PsiElement parent = currElement.getParent();
+            if (parent != null && parent instanceof KtClassOrObject) {
+                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - 1);
+                return true;
+            }
+        }
+        return false;
     }
 }
