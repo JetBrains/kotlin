@@ -22,6 +22,9 @@ enum class JvmTarget(val string: String) {
     ;
 
     companion object {
+        @JvmField
+        val DEFAULT = JVM_1_6
+
         @JvmStatic
         fun fromString(string: String) = values().find { it.string == string }
     }

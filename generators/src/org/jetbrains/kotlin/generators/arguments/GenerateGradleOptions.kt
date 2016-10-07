@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import com.sampullara.cli.Argument
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -24,13 +25,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.io.PrintStream
-import kotlin.reflect.*
+import kotlin.reflect.KAnnotatedElement
+import kotlin.reflect.KProperty1
+import kotlin.reflect.memberProperties
 
 // Additional properties that should be included in interface
+@Suppress("unused")
 interface AdditionalGradleProperties {
-    @GradleOption(defaultValue = "emptyList()")
+    @GradleOption(EmptyList::class)
     @Argument(description = "A list of additional compiler arguments")
     var freeCompilerArgs: List<String>
+
+    object EmptyList : DefaultValues("emptyList()")
 }
 
 fun main(args: Array<String>) {
@@ -173,12 +179,12 @@ private fun Printer.generatePropertyDeclaration(property: KProperty1<*, *>, modi
 
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.findAnnotation<Argument>()!!.description
-    val possibleValues = property.gradlePossibleValues
+    val possibleValues = property.gradleValues.possibleValues
     val defaultValue = property.gradleDefaultValue
 
     println("/**")
     println(" * $description")
-    if (possibleValues.isNotEmpty()) {
+    if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
     println(" * Default value: $defaultValue")
@@ -191,11 +197,11 @@ private inline fun Printer.withIndent(fn: Printer.()->Unit) {
     popIndent()
 }
 
-private val KProperty1<*, *>.gradlePossibleValues: Array<String>
-        get() = findAnnotation<GradleOption>()!!.possibleValues
+private val KProperty1<*, *>.gradleValues: DefaultValues
+        get() = findAnnotation<GradleOption>()!!.value.objectInstance!!
 
 private val KProperty1<*, *>.gradleDefaultValue: String
-        get() = findAnnotation<GradleOption>()!!.defaultValue
+        get() = gradleValues.defaultValue
 
 private val KProperty1<*, *>.gradleReturnType: String
         get() {

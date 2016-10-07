@@ -28,24 +28,24 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String classpath;
 
-    @GradleOption(defaultValue = "false")
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
-    @GradleOption(defaultValue = "null")
+    @GradleOption(DefaultValues.StringNullDefault.class)
     @Argument(value = "jdk-home", description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME")
     @ValueDescription("<path>")
     public String jdkHome;
 
-    @GradleOption(defaultValue = "false")
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "no-jdk", description = "Don't include Java runtime into classpath")
     public boolean noJdk;
 
-    @GradleOption(defaultValue = "true")
+    @GradleOption(DefaultValues.BooleanTrueDefault.class)
     @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
-    @GradleOption(defaultValue = "true")
+    @GradleOption(DefaultValues.BooleanTrueDefault.class)
     @Argument(value = "no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
     public boolean noReflect;
 
@@ -67,7 +67,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "module-name", description = "Module name")
     public String moduleName;
 
-    @GradleOption(defaultValue = "\"1.6\"", possibleValues = { "\"1.6\"", "\"1.8\"" })
+    @GradleOption(DefaultValues.JvmTargetVersions.class)
     @Argument(value = "jvm-target", description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6")
     @ValueDescription("<version>")
     public String jvmTarget;

@@ -25,17 +25,16 @@ import java.util.List;
 public abstract class CommonCompilerArguments {
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
 
-    // todo: reuse LanguageVersion from frontend
-    @GradleOption(defaultValue = "\"1.1\"", possibleValues = { "\"1.0\", \"1.1\"" })
+    @GradleOption(DefaultValues.LanguageVersions.class)
     @Argument(value = "language-version", description = "Provide source compatibility with specified language version")
     @ValueDescription("<version>")
     public String languageVersion;
 
-    @GradleOption(defaultValue = "false")
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;
 
-    @GradleOption(defaultValue = "false")
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
     @Argument(value = "verbose", description = "Enable verbose logging output")
     public boolean verbose;
 
