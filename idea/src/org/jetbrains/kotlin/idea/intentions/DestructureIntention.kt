@@ -45,8 +45,12 @@ import java.util.*
 
 class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
         DestructureIntention::class,
-        additionalChecker = { declaration ->
-            declaration !is KtVariableDeclaration && declaration !is KtFunctionLiteral
+        { element, inspection ->
+            if (element is KtParameter) true
+            else with(inspection as DestructureInspection) {
+                val usagesToRemove = DestructureIntention.collectUsagesToRemove(element, element.parent as? KtForExpression)?.data
+                usagesToRemove != null && usagesToRemove.any { it.declarationToDrop is KtDestructuringDeclaration }
+            }
         }
 )
 
@@ -134,202 +138,205 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         else -> false
     }
 
-    private data class UsagesToRemove(val data: List<UsageData>, val removeSelectorInLoopRange: Boolean)
+    companion object {
 
-    private fun collectUsagesToRemove(declaration: KtDeclaration, forLoop: KtForExpression?): UsagesToRemove? {
-        val context = declaration.analyze()
+        internal data class UsagesToRemove(val data: List<UsageData>, val removeSelectorInLoopRange: Boolean)
 
-        val variableDescriptor = when (declaration) {
-            is KtParameter -> context.get(BindingContext.VALUE_PARAMETER, declaration)
-            is KtFunctionLiteral -> context.get(BindingContext.FUNCTION, declaration)?.valueParameters?.singleOrNull()
-            is KtVariableDeclaration -> context.get(BindingContext.VARIABLE, declaration)
-            else -> null
-        } ?: return null
+        internal fun collectUsagesToRemove(declaration: KtDeclaration, forLoop: KtForExpression?): UsagesToRemove? {
+            val context = declaration.analyze()
 
-        val variableType = variableDescriptor.type
-        if (variableType.isMarkedNullable) return null
-        val classDescriptor = variableType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            val variableDescriptor = when (declaration) {
+                                         is KtParameter -> context.get(BindingContext.VALUE_PARAMETER, declaration)
+                                         is KtFunctionLiteral -> context.get(BindingContext.FUNCTION, declaration)?.valueParameters?.singleOrNull()
+                                         is KtVariableDeclaration -> context.get(BindingContext.VARIABLE, declaration)
+                                         else -> null
+                                     } ?: return null
 
-        val mapEntryClassDescriptor = classDescriptor.builtIns.mapEntry
+            val variableType = variableDescriptor.type
+            if (variableType.isMarkedNullable) return null
+            val classDescriptor = variableType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-        // Note: list should contains properties in order to create destructuring declaration
-        val usagesToRemove = mutableListOf<UsageData>()
-        var noBadUsages = true
-        val removeSelectorInLoopRange: Boolean
-        if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
-            val loopRangeDescriptorName = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
-            removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
+            val mapEntryClassDescriptor = classDescriptor.builtIns.mapEntry
 
-            listOf("key", "value").mapTo(usagesToRemove) {
-                UsageData(mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
-                        Name.identifier(it), NoLookupLocation.FROM_BUILTINS).single())
-            }
+            // Note: list should contains properties in order to create destructuring declaration
+            val usagesToRemove = mutableListOf<UsageData>()
+            var noBadUsages = true
+            val removeSelectorInLoopRange: Boolean
+            if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
+                val loopRangeDescriptorName = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
+                removeSelectorInLoopRange = loopRangeDescriptorName?.asString().let { it == "entries" || it == "entrySet" }
 
-            ReferencesSearch.search(declaration).iterateOverMapEntryPropertiesUsages(
-                    context,
-                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
-                    { noBadUsages = false }
-            )
-        }
-        else if (classDescriptor.isData) {
-            removeSelectorInLoopRange = false
-
-            val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
-            valueParameters.mapTo(usagesToRemove) { UsageData(it) }
-
-            // inference bug: remove as? PsiElement when fixed
-            val usageScopeElement: PsiElement = forLoop as? PsiElement
-                                                ?: (declaration as? KtFunctionLiteral)
-                                                ?: (declaration.parent?.parent as? KtFunctionLiteral)
-                                                ?: (declaration as? KtVariableDeclaration)?.parent
-                                                ?: return null
-
-            val nameToSearch = when (declaration) {
-                is KtParameter -> declaration.nameAsName
-                is KtVariableDeclaration -> declaration.nameAsName
-                else -> Name.identifier("it")
-            } ?: return null
-
-            val descriptorToIndex = mutableMapOf<CallableDescriptor, Int>()
-            for (valueParameter in valueParameters) {
-                val propertyDescriptor = context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) ?: continue
-                descriptorToIndex[propertyDescriptor] = valueParameter.index
-            }
-            usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
-                    context,
-                    nameToSearch,
-                    descriptorToIndex,
-                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
-                    { noBadUsages = false }
-            )
-        }
-        else {
-            return null
-        }
-        if (!noBadUsages) return null
-
-        val droppedLastUnused = usagesToRemove.dropLastWhile { it.usagesToReplace.isEmpty() && it.declarationToDrop == null }
-        return UsagesToRemove(droppedLastUnused, removeSelectorInLoopRange)
-    }
-
-    private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
-            context: BindingContext,
-            process: (Int, SingleUsageData) -> Unit,
-            cancel: () -> Unit
-    ) {
-        // TODO: Remove SAM-constructor when KT-11265 will be fixed
-        forEach(Processor forEach@{
-            val applicableUsage = getDataIfUsageIsApplicable(it, context)
-            if (applicableUsage != null) {
-                val usageDescriptor = applicableUsage.descriptor
-                if (usageDescriptor == null) {
-                    process(0, applicableUsage)
-                    process(1, applicableUsage)
-                    return@forEach true
+                listOf("key", "value").mapTo(usagesToRemove) {
+                    UsageData(mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
+                            Name.identifier(it), NoLookupLocation.FROM_BUILTINS).single())
                 }
-                when (usageDescriptor.name.asString()) {
-                    "key", "getKey" -> {
-                        process(0, applicableUsage)
-                        return@forEach true
-                    }
-                    "value", "getValue" -> {
-                        process(1, applicableUsage)
-                        return@forEach true
-                    }
-                }
+
+                ReferencesSearch.search(declaration).iterateOverMapEntryPropertiesUsages(
+                        context,
+                        { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                        { noBadUsages = false }
+                )
             }
+            else if (classDescriptor.isData) {
+                removeSelectorInLoopRange = false
 
-            cancel()
-            return@forEach false
-        })
-    }
+                val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
+                valueParameters.mapTo(usagesToRemove) { UsageData(it) }
 
-    private fun PsiElement.iterateOverDataClassPropertiesUsagesWithIndex(
-            context: BindingContext,
-            parameterName: Name,
-            descriptorToIndex: Map<CallableDescriptor, Int>,
-            process: (Int, SingleUsageData) -> Unit,
-            cancel: () -> Unit
-    ) {
-        anyDescendantOfType<KtNameReferenceExpression> {
-            if (it.getReferencedNameAsName() != parameterName) false
+                // inference bug: remove as? PsiElement when fixed
+                val usageScopeElement: PsiElement = forLoop as? PsiElement
+                                                    ?: (declaration as? KtFunctionLiteral)
+                                                    ?: (declaration.parent?.parent as? KtFunctionLiteral)
+                                                    ?: (declaration as? KtVariableDeclaration)?.parent
+                                                    ?: return null
+
+                val nameToSearch = when (declaration) {
+                                       is KtParameter -> declaration.nameAsName
+                                       is KtVariableDeclaration -> declaration.nameAsName
+                                       else -> Name.identifier("it")
+                                   } ?: return null
+
+                val descriptorToIndex = mutableMapOf<CallableDescriptor, Int>()
+                for (valueParameter in valueParameters) {
+                    val propertyDescriptor = context.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter) ?: continue
+                    descriptorToIndex[propertyDescriptor] = valueParameter.index
+                }
+                usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
+                        context,
+                        nameToSearch,
+                        descriptorToIndex,
+                        { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                        { noBadUsages = false }
+                )
+            }
             else {
+                return null
+            }
+            if (!noBadUsages) return null
+
+            val droppedLastUnused = usagesToRemove.dropLastWhile { it.usagesToReplace.isEmpty() && it.declarationToDrop == null }
+            return UsagesToRemove(droppedLastUnused, removeSelectorInLoopRange)
+        }
+
+        private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
+                context: BindingContext,
+                process: (Int, SingleUsageData) -> Unit,
+                cancel: () -> Unit
+        ) {
+            // TODO: Remove SAM-constructor when KT-11265 will be fixed
+            forEach(Processor forEach@{
                 val applicableUsage = getDataIfUsageIsApplicable(it, context)
                 if (applicableUsage != null) {
                     val usageDescriptor = applicableUsage.descriptor
                     if (usageDescriptor == null) {
-                        for (index in descriptorToIndex.values) {
-                            process(index, applicableUsage)
-                        }
-                        return@anyDescendantOfType false
+                        process(0, applicableUsage)
+                        process(1, applicableUsage)
+                        return@forEach true
                     }
-                    val index = descriptorToIndex[usageDescriptor]
-                    if (index != null) {
-                        process(index, applicableUsage)
-                        return@anyDescendantOfType false
+                    when (usageDescriptor.name.asString()) {
+                        "key", "getKey" -> {
+                            process(0, applicableUsage)
+                            return@forEach true
+                        }
+                        "value", "getValue" -> {
+                            process(1, applicableUsage)
+                            return@forEach true
+                        }
                     }
                 }
 
                 cancel()
-                true
-            }
-        }
-    }
-
-    private fun getDataIfUsageIsApplicable(dataClassUsage: PsiReference, context: BindingContext) =
-            (dataClassUsage.element as? KtReferenceExpression)?.let { getDataIfUsageIsApplicable(it, context) }
-
-    private fun getDataIfUsageIsApplicable(dataClassUsage: KtReferenceExpression, context: BindingContext): SingleUsageData? {
-        val destructuringDecl = dataClassUsage.parent as? KtDestructuringDeclaration
-        if (destructuringDecl != null && destructuringDecl.initializer == dataClassUsage) {
-            return SingleUsageData(descriptor = null, usageToReplace = null, declarationToDrop = destructuringDecl)
-        }
-        val qualifiedExpression = dataClassUsage.getQualifiedExpressionForReceiver() ?: return null
-        val parent = qualifiedExpression.parent
-        when (parent) {
-            is KtBinaryExpression -> {
-                if (parent.operationToken in KtTokens.ALL_ASSIGNMENTS && parent.left == qualifiedExpression) return null
-            }
-            is KtUnaryExpression -> {
-                if (parent.operationToken == KtTokens.PLUSPLUS || parent.operationToken == KtTokens.MINUSMINUS) return null
-            }
+                return@forEach false
+            })
         }
 
-        val property = parent as? KtProperty // val x = d.y
-        if (property != null && property.isVar) return null
+        private fun PsiElement.iterateOverDataClassPropertiesUsagesWithIndex(
+                context: BindingContext,
+                parameterName: Name,
+                descriptorToIndex: Map<CallableDescriptor, Int>,
+                process: (Int, SingleUsageData) -> Unit,
+                cancel: () -> Unit
+        ) {
+            anyDescendantOfType<KtNameReferenceExpression> {
+                if (it.getReferencedNameAsName() != parameterName) false
+                else {
+                    val applicableUsage = getDataIfUsageIsApplicable(it, context)
+                    if (applicableUsage != null) {
+                        val usageDescriptor = applicableUsage.descriptor
+                        if (usageDescriptor == null) {
+                            for (index in descriptorToIndex.values) {
+                                process(index, applicableUsage)
+                            }
+                            return@anyDescendantOfType false
+                        }
+                        val index = descriptorToIndex[usageDescriptor]
+                        if (index != null) {
+                            process(index, applicableUsage)
+                            return@anyDescendantOfType false
+                        }
+                    }
 
-        val descriptor = qualifiedExpression.getResolvedCall(context)?.resultingDescriptor ?: return null
-        return SingleUsageData(descriptor = descriptor, usageToReplace = qualifiedExpression, declarationToDrop = property)
-    }
-
-    private data class SingleUsageData(
-            val descriptor: CallableDescriptor?,
-            val usageToReplace: KtExpression?,
-            val declarationToDrop: KtDeclaration?
-    )
-
-    private data class UsageData(
-            val descriptor: CallableDescriptor,
-            val usagesToReplace: MutableList<KtExpression> = mutableListOf(),
-            var declarationToDrop: KtDeclaration? = null,
-            var name: String? = declarationToDrop?.name
-    ) {
-        // Returns true if data is successfully added, false otherwise
-        fun add(newData: SingleUsageData, componentIndex: Int): Boolean {
-            if (newData.declarationToDrop is KtDestructuringDeclaration) {
-                val destructuringEntries = newData.declarationToDrop.entries
-                if (componentIndex < destructuringEntries.size) {
-                    if (declarationToDrop != null) return false
-                    name = destructuringEntries[componentIndex].name ?: return false
-                    declarationToDrop = newData.declarationToDrop
+                    cancel()
+                    true
                 }
             }
-            else {
-                name = name ?: newData.declarationToDrop?.name
-                declarationToDrop = declarationToDrop ?: newData.declarationToDrop
+        }
+
+        private fun getDataIfUsageIsApplicable(dataClassUsage: PsiReference, context: BindingContext) =
+                (dataClassUsage.element as? KtReferenceExpression)?.let { getDataIfUsageIsApplicable(it, context) }
+
+        private fun getDataIfUsageIsApplicable(dataClassUsage: KtReferenceExpression, context: BindingContext): SingleUsageData? {
+            val destructuringDecl = dataClassUsage.parent as? KtDestructuringDeclaration
+            if (destructuringDecl != null && destructuringDecl.initializer == dataClassUsage) {
+                return SingleUsageData(descriptor = null, usageToReplace = null, declarationToDrop = destructuringDecl)
             }
-            newData.usageToReplace?.let { usagesToReplace.add(it) }
-            return true
+            val qualifiedExpression = dataClassUsage.getQualifiedExpressionForReceiver() ?: return null
+            val parent = qualifiedExpression.parent
+            when (parent) {
+                is KtBinaryExpression -> {
+                    if (parent.operationToken in KtTokens.ALL_ASSIGNMENTS && parent.left == qualifiedExpression) return null
+                }
+                is KtUnaryExpression -> {
+                    if (parent.operationToken == KtTokens.PLUSPLUS || parent.operationToken == KtTokens.MINUSMINUS) return null
+                }
+            }
+
+            val property = parent as? KtProperty // val x = d.y
+            if (property != null && property.isVar) return null
+
+            val descriptor = qualifiedExpression.getResolvedCall(context)?.resultingDescriptor ?: return null
+            return SingleUsageData(descriptor = descriptor, usageToReplace = qualifiedExpression, declarationToDrop = property)
+        }
+
+        internal data class SingleUsageData(
+                val descriptor: CallableDescriptor?,
+                val usageToReplace: KtExpression?,
+                val declarationToDrop: KtDeclaration?
+        )
+
+        internal data class UsageData(
+                val descriptor: CallableDescriptor,
+                val usagesToReplace: MutableList<KtExpression> = mutableListOf(),
+                var declarationToDrop: KtDeclaration? = null,
+                var name: String? = declarationToDrop?.name
+        ) {
+            // Returns true if data is successfully added, false otherwise
+            fun add(newData: SingleUsageData, componentIndex: Int): Boolean {
+                if (newData.declarationToDrop is KtDestructuringDeclaration) {
+                    val destructuringEntries = newData.declarationToDrop.entries
+                    if (componentIndex < destructuringEntries.size) {
+                        if (declarationToDrop != null) return false
+                        name = destructuringEntries[componentIndex].name ?: return false
+                        declarationToDrop = newData.declarationToDrop
+                    }
+                }
+                else {
+                    name = name ?: newData.declarationToDrop?.name
+                    declarationToDrop = declarationToDrop ?: newData.declarationToDrop
+                }
+                newData.usageToReplace?.let { usagesToReplace.add(it) }
+                return true
+            }
         }
     }
 }

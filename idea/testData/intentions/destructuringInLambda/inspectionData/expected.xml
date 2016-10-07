@@ -1,0 +1,66 @@
+<problems>
+    <problem>
+        <file>dependentLocal.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/dependentLocal.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>firstProperties.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/firstProperties.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>fold.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/fold.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>last.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/last.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>list.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/list.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>noItWithDestructuring.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/noItWithDestructuring.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>simple.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/simple.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+    <problem>
+        <file>variables.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/variables.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
+</problems>

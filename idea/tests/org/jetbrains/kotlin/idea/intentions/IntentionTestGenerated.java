@@ -6329,6 +6329,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/variables.kt");
             doTest(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/intentions/destructuringVariables")
