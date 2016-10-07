@@ -93,6 +93,9 @@ class KtLightModifierList(
 internal fun computeAnnotations(lightElement: PsiModifierList,
                                 delegate: PsiAnnotationOwner): CachedValue<Array<out PsiAnnotation>> {
     fun doCompute(): Array<PsiAnnotation> {
+        val delegateAnnotations = delegate.annotations
+        if (delegateAnnotations.isEmpty()) return emptyArray()
+
         val lightOwner = lightElement.parent as? KtLightElement<*, *>
         val declaration = lightOwner?.kotlinOrigin as? KtDeclaration
         if (declaration != null && !declaration.isValid) return PsiAnnotation.EMPTY_ARRAY
@@ -105,8 +108,7 @@ internal fun computeAnnotations(lightElement: PsiModifierList,
         }
         val ktAnnotations = annotatedDescriptor?.annotations?.getAllAnnotations() ?: emptyList()
         var nextIndex = 0
-        val result = delegate
-                .annotations
+        val result = delegateAnnotations
                 .map { clsAnnotation ->
                     val currentIndex = ktAnnotations.indexOfFirst(nextIndex) {
                         it.annotation.type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() == clsAnnotation.qualifiedName
