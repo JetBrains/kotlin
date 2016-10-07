@@ -53,7 +53,7 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
             fakeOverride
         }
 
-        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.type)))
+        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.type)) ?: continue)
     }
 
     return result

@@ -181,7 +181,7 @@ class SamAdapterFunctionsScope(
                     TypeConstructorSubstitution.createByConstructorsMap(
                             substitutionMap, configuration.substitution.approximateCapturedTypes()).buildSubstitutor()
 
-            descriptor.baseDescriptorForSynthetic = original.baseDescriptorForSynthetic.substitute(sourceFunctionSubstitutor)
+            descriptor.baseDescriptorForSynthetic = original.baseDescriptorForSynthetic.substitute(sourceFunctionSubstitutor) ?: return null
 
             return descriptor
         }
