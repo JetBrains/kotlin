@@ -1296,6 +1296,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheck.kt")
+            public void testIsCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheck.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lhsEqualsNull.kt")
             public void testLhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/lhsEqualsNull.kt");
@@ -1353,6 +1359,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("notApplicableForSimpleNPE.kt")
             public void testNotApplicableForSimpleNPE() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/notApplicableForSimpleNPE.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notIsCheck.kt")
+            public void testNotIsCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/notIsCheck.kt");
                 doTest(fileName);
             }
 
