@@ -1,16 +1,27 @@
 package kotlin
 
 /**
- * Represents a version of the Kotlin standard library
+ * Represents a version of the Kotlin standard library.
+ *
+ * [major], [minor] and [patch] are integer components of a version,
+ * they must be non-negative and not greater than 255 ([MAX_COMPONENT_VALUE]).
+ *
+ * @constructor Creates a version from all three components.
  */
+@SinceKotlin("1.1")
 public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Comparable<KotlinVersion> {
+    /**
+     * Creates a version from [major] and [minor] components, leaving [patch] component zero.
+     */
     public constructor(major: Int, minor: Int) : this(major, minor, 0)
 
     private val version = versionOf(major, minor, patch)
 
     private fun versionOf(major: Int, minor: Int, patch: Int): Int {
-        require(major in 0..99 && minor in 0..99 && patch in 0..99) { "Version components are out of range: $major.$minor.$patch" }
-        return major * 100 * 100 + minor * 100 + patch
+        require(major in 0..MAX_COMPONENT_VALUE && minor in 0..MAX_COMPONENT_VALUE && patch in 0..MAX_COMPONENT_VALUE) {
+            "Version components are out of range: $major.$minor.$patch"
+        }
+        return major shl 16 + minor shl 8 + patch
     }
 
     /**
@@ -38,28 +49,37 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
 
     override fun compareTo(other: KotlinVersion): Int = version - other.version
 
+    /**
+     * Returns `true` if this version is not less than the version specified
+     * with the provided [major] and [minor] components.
+     */
     public fun isAtLeast(major: Int, minor: Int): Boolean =
             // or this.version >= versionOf(major, minor, 0)
             this.major > major || (this.major == major &&
                     this.minor >= minor)
 
+    /**
+     * Returns `true` if this version is not less than the version specified
+     * with the provided [major], [minor] and [patch] components.
+     */
     public fun isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
             // or this.version >= versionOf(major, minor, patch)
             this.major > major || (this.major == major &&
                     (this.minor > minor || this.minor == minor &&
                             this.patch >= patch))
 
-    public fun isAtLeast(version: KotlinVersion): Boolean = this >= version
-
     companion object {
         /**
-         * Returns the current version of the Kotlin standard library
+         * Maximum value a version component can have, a constant value 255.
+         */
+        // NOTE: Must be placed before CURRENT because its initialization requires this field being initialized in JS
+        public const val MAX_COMPONENT_VALUE = 255
+
+        /**
+         * Returns the current version of the Kotlin standard library.
          */
         // TODO: get from metadata or hardcode automatically during build
         @kotlin.jvm.JvmField
         public val CURRENT: KotlinVersion = KotlinVersion(1, 1, 0)
-
-        // should we have 'parse'?
-
     }
 }

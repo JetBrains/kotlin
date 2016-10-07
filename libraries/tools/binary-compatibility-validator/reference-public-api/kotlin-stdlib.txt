@@ -5,6 +5,7 @@ public final class kotlin/ExceptionsKt {
 public final class kotlin/KotlinVersion : java/lang/Comparable {
 	public static final field CURRENT Lkotlin/KotlinVersion;
 	public static final field Companion Lkotlin/KotlinVersion$Companion;
+	public static final field MAX_COMPONENT_VALUE I
 	public fun <init> (II)V
 	public fun <init> (III)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
@@ -16,7 +17,6 @@ public final class kotlin/KotlinVersion : java/lang/Comparable {
 	public fun hashCode ()I
 	public final fun isAtLeast (II)Z
 	public final fun isAtLeast (III)Z
-	public final fun isAtLeast (Lkotlin/KotlinVersion;)Z
 	public final fun toInt ()I
 	public fun toString ()Ljava/lang/String;
 }
