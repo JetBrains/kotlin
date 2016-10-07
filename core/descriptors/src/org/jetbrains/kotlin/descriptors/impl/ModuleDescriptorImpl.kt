@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -54,14 +55,21 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
         val dependencies = this.dependencies.sure { "Dependencies of module $id were not set" }
         val builtinTypeAliases = dependencies.allDependencies.filter { it != this }.flatMap {
-            System.out.flush()
             packagesWithAliases.map(it::getPackage).flatMap {
                 it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
             }
         }
 
-        val nonKotlinDefaultImportedPackages = defaultImports.filter { it.isAllUnder }.mapNotNull { it.fqnPart().check { !it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) } }
-        val nonKotlinAliasedTypeFqNames = builtinTypeAliases.mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }.filter { nonKotlinDefaultImportedPackages.any(it::isSubpackageOf) }
+        val nonKotlinDefaultImportedPackages =
+                defaultImports
+                    .filter { it.isAllUnder }
+                    .mapNotNull {
+                        it.fqnPart().check { !it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
+                    }
+        val nonKotlinAliasedTypeFqNames =
+                builtinTypeAliases
+                    .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
+                    .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
 
         excludedImports + nonKotlinAliasedTypeFqNames
     }
