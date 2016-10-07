@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,15 @@ public annotation class nativeInvoke
 
 @native
 @Target(CLASS, FUNCTION, PROPERTY)
-public annotation class library(public val name: String = "")
+internal annotation class library(public val name: String = "")
 
 @native
 @Target(PROPERTY)
 public annotation class enumerable()
 
-// TODO make it "internal" or "fake"
 @native
 @Target(CLASS)
-@Deprecated("Do not use this annotation: it is for internal use only")
-public annotation class marker
+internal annotation class marker
 
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
