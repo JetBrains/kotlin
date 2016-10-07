@@ -866,10 +866,8 @@ fun main(args: Array<String>) {
             model("refactoring/pullUp/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
         }
 
-        testClass<AbstractPushDownTest> {
-            model("refactoring/pushDown/k2k", extension = "kt", singleClass = true, testClassName = "K2K", testMethod = "doKotlinTest")
-            model("refactoring/pushDown/k2j", extension = "kt", singleClass = true, testClassName = "K2J", testMethod = "doKotlinTest")
-            model("refactoring/pushDown/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
+        testClass<AbstractPushDownTest>() {
+            model("refactoring/pushDown", extension = "kt", singleClass = true)
         }
 
         testClass<AbstractSelectExpressionForDebuggerTest> {
