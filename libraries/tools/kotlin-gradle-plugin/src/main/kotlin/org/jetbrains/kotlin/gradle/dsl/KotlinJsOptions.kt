@@ -62,7 +62,7 @@ interface KotlinJsOptions {
      var suppressWarnings: kotlin.Boolean
 
     /**
-     * Generate JS files for specific ECMA version)
+     * Generate JS files for specific ECMA version
      * Possible values: "v5"
      * Default value: "v5"
      */
