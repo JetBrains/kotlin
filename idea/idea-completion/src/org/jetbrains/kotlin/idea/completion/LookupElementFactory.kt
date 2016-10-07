@@ -151,7 +151,7 @@ class LookupElementFactory(
                 //TODO: order for them
                 val fuzzyParameterType = parameterType.toFuzzyType(descriptor.typeParameters)
                 for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
-                    val substitutedDescriptor = descriptor.substitute(substitutor)
+                    val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
                     add(createFunctionCallElementWithArguments(substitutedDescriptor, variable.name.render(), useReceiverTypes))
                 }
             }

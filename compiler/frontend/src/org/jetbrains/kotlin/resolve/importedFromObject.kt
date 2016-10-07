@@ -31,7 +31,7 @@ class FunctionImportedFromObject(functionFromObject: FunctionDescriptor) :
         ImportedFromObjectCallableDescriptor<FunctionDescriptor>(functionFromObject) {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor).wrap()
+    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor)?.wrap()
 
     private val _original by lazy {
         functionFromObject.original.wrap()

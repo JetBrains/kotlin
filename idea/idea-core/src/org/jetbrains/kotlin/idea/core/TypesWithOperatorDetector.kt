@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 abstract class TypesWithOperatorDetector(
@@ -70,7 +71,7 @@ abstract class TypesWithOperatorDetector(
             }
 
             val substitutor = checkIsSuitableByType(function, freeParameters) ?: continue
-            add(function.substitute(substitutor))
+            addIfNotNull(function.substitute(substitutor))
         }
         return this
     }
@@ -90,18 +91,17 @@ abstract class TypesWithOperatorDetector(
         if (type.nullability() != TypeNullability.NULLABLE) {
             for (memberFunction in type.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)) {
                 if (memberFunction.isValidOperator()) {
-                    checkIsSuitableByType(memberFunction, type.freeParameters)?.let { substitutor ->
-                        return Pair(memberFunction.substitute(substitutor), substitutor)
-                    }
+                    val substitutor = checkIsSuitableByType(memberFunction, type.freeParameters) ?: continue
+                    val substituted = memberFunction.substitute(substitutor) ?: continue
+                    return substituted to substitutor
                 }
             }
         }
 
         for (operator in extensionOperators) {
-            val substitutor = type.checkIsSubtypeOf(operator.fuzzyExtensionReceiverType()!!)
-            if (substitutor != null) {
-                return Pair(operator.substitute(substitutor), substitutor)
-            }
+            val substitutor = type.checkIsSubtypeOf(operator.fuzzyExtensionReceiverType()!!) ?: continue
+            val substituted = operator.substitute(substitutor) ?: continue
+            return substituted to substitutor
         }
 
         return null

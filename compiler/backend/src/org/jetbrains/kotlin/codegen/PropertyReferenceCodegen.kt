@@ -183,7 +183,7 @@ class PropertyReferenceCodegen(
         @JvmStatic
         fun createFakeOpenDescriptor(getFunction: FunctionDescriptor, classDescriptor: ClassDescriptor): FunctionDescriptor {
             val copy = getFunction.original.copy(classDescriptor, Modality.OPEN, getFunction.visibility, getFunction.kind, false)
-            return copy.substitute(ANY_SUBSTITUTOR)
+            return copy.substitute(ANY_SUBSTITUTOR)!!
         }
 
         @JvmStatic
