@@ -1,11 +1,11 @@
 package
 
+public fun </*0*/ T : kotlin.Any> kclass(/*0*/ k: kotlin.reflect.KClass<*>, /*1*/ kt: kotlin.reflect.KClass<T>): kotlin.Unit
 public fun n01(): kotlin.reflect.KProperty1<Foo, kotlin.Any>
 public fun n02(): kotlin.reflect.KFunction1<Foo, kotlin.Unit>
 public fun n03(): kotlin.reflect.KClass<Foo>
 public fun n04(/*0*/ p: kotlin.reflect.KProperty0<kotlin.Int>): kotlin.Int
 public fun n05(/*0*/ p: kotlin.reflect.KMutableProperty0<kotlin.String>): kotlin.Unit
-public fun n06(/*0*/ p: kotlin.reflect.KProperty0<kotlin.Int>): kotlin.Int
 public fun n07(/*0*/ p: kotlin.reflect.KFunction<kotlin.String>): kotlin.String
 public fun n08(/*0*/ p: kotlin.reflect.KProperty1<kotlin.String, kotlin.Int>): kotlin.Int
 public fun n09(/*0*/ p: kotlin.reflect.KProperty2<kotlin.String, kotlin.String, kotlin.Int>): kotlin.Int
