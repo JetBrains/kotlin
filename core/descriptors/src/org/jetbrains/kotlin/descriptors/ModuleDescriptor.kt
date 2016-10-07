@@ -50,7 +50,6 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 
 interface ModuleParameters {
     val defaultImports: List<ImportPath>
-    val excludedImports: List<FqName> get() = emptyList()
 
     object Empty : ModuleParameters {
         override val defaultImports: List<ImportPath> = emptyList()

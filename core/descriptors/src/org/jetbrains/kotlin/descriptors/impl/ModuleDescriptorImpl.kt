@@ -71,7 +71,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
                     .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
                     .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
 
-        excludedImports + nonKotlinAliasedTypeFqNames
+        nonKotlinAliasedTypeFqNames
     }
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)

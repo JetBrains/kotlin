@@ -31,8 +31,6 @@ object JvmPlatform : TargetPlatform("JVM") {
     override val defaultModuleParameters = object : ModuleParameters {
         override val defaultImports: List<ImportPath>
             get() = DEFAULT_IMPORTS_FOR_JVM
-        override val excludedImports: List<FqName>
-            get() = EXCLUDED_IMPORTS_FOR_JVM
     }
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
@@ -61,5 +59,3 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
         addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
     }
 }
-
-private val EXCLUDED_IMPORTS_FOR_JVM: List<FqName> = emptyList()
