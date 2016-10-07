@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
+import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
+import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptorImpl
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.isDefinitelyNotDefaultImplsMethod
 import org.jetbrains.kotlin.codegen.state.GenerationState

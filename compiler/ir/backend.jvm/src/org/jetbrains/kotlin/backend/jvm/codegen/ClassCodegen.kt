@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSpecialDescriptor
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.backend.jvm.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
@@ -207,7 +207,7 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
 
     flags =  flags.or(calcModalityFlag())
 
-    if (this is JvmSpecialDescriptor) {
+    if (this is JvmDescriptorWithExtraFlags) {
         flags = flags or extraFlags
     }
 

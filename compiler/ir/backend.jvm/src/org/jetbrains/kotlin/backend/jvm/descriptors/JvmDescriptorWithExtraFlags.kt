@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-interface JvmSpecialDescriptor {
+interface JvmDescriptorWithExtraFlags {
     val extraFlags: Int
 }
 
@@ -39,11 +39,17 @@ class JvmPropertyDescriptorImpl(
         source: SourceElement,
         isLateInit: Boolean,
         isConst: Boolean
-) : JvmSpecialDescriptor, PropertyDescriptorImpl(
+) : JvmDescriptorWithExtraFlags, PropertyDescriptorImpl(
         containingDeclaration, original, annotations, modality, visibility, isVar,
         name, kind, source, isLateInit, isConst
 ) {
-    override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, newModality: Modality, newVisibility: Visibility, original: PropertyDescriptor?, kind: CallableMemberDescriptor.Kind): PropertyDescriptorImpl =
+    override fun createSubstitutedCopy(
+            newOwner: DeclarationDescriptor,
+            newModality: Modality,
+            newVisibility: Visibility,
+            original: PropertyDescriptor?,
+            kind: CallableMemberDescriptor.Kind
+    ): PropertyDescriptorImpl =
             JvmPropertyDescriptorImpl(
                     newOwner, original, annotations, newModality, newVisibility, extraFlags, isVar, name, kind,
                     SourceElement.NO_SOURCE, isLateInit, isConst
