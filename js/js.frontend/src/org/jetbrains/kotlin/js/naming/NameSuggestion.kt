@@ -126,7 +126,17 @@ class NameSuggestion {
         // the class's parent scope.
         //
         val parts = mutableListOf<String>()
+
+        // For some strange reason we get FAKE_OVERRIDE for final functions called via subtype's receiver
         var current: DeclarationDescriptor = descriptor
+        if (current is CallableMemberDescriptor && current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            val overridden = getOverridden(current) as CallableMemberDescriptor
+            if (!overridden.isOverridableOrOverrides) {
+                current = overridden
+            }
+        }
+        val fixedDescriptor = current
+
         do {
             parts += getSuggestedName(current)
             var last = current
@@ -146,8 +156,8 @@ class NameSuggestion {
 
         parts.reverse()
         val unmangledName = parts.joinToString("$")
-        val (id, stable) = mangleNameIfNecessary(unmangledName, descriptor)
-        return SuggestedName(listOf(id), stable, descriptor, current)
+        val (id, stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor)
+        return SuggestedName(listOf(id), stable, fixedDescriptor, current)
     }
 
     // For regular names suggest its string representation
@@ -187,6 +197,10 @@ class NameSuggestion {
             return mangleRegularNameIfNecessary(baseName, overriddenDescriptor)
         }
 
+        private fun getOverridden(descriptor: CallableDescriptor): CallableDescriptor {
+            return generateSequence(descriptor) { it.overriddenDescriptors.firstOrNull()?.original }.last()
+        }
+
         private fun mangleRegularNameIfNecessary(baseName: String, descriptor: DeclarationDescriptor): NameAndStability {
             if (descriptor is ClassOrPackageFragmentDescriptor) {
                 return NameAndStability(baseName, !DescriptorUtils.isDescriptorWithLocalVisibility(descriptor))
@@ -212,6 +226,8 @@ class NameSuggestion {
 
                     // Make all public declarations stable
                     if (descriptor.visibility == Visibilities.PUBLIC) return mangledAndStable()
+
+                    if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
 
                     // Make all protected declarations of non-final public classes stable
                     if (descriptor.visibility == Visibilities.PROTECTED &&

@@ -2439,6 +2439,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("internalFunctionFromSuperclass.kt")
+            public void testInternalFunctionFromSuperclass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/invoke/internalFunctionFromSuperclass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("invokeInExtensionFunctionLiteral.kt")
             public void testInvokeInExtensionFunctionLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/invoke/invokeInExtensionFunctionLiteral.kt");
