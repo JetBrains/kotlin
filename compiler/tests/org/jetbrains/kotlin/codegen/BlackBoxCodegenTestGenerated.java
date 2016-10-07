@@ -13639,6 +13639,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("arrayLengthNPE.kt")
+        public void testArrayLengthNPE() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/arrayLengthNPE.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("collections.kt")
         public void testCollections() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/collections.kt");

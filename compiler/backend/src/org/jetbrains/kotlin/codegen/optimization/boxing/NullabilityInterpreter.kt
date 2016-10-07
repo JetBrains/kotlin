@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.BasicValueWrapper
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.InsnList
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue) = makeNotNullIfNeeded(insn, super.unaryOperation(insn, value))
@@ -36,7 +36,12 @@ class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
 
 private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
     when (insn.opcode) {
-        Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW -> NotNullBasicValue(value)
+        Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW ->
+            if (value?.type?.sort == Type.OBJECT || value?.type?.sort == Type.ARRAY)
+                NotNullBasicValue(value)
+            else
+                value
+
         else -> value
     }
 
