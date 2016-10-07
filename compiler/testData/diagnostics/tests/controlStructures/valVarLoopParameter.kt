@@ -22,11 +22,11 @@ fun f() {
 
     }
 
-    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>val<!> (i,j) in Coll()) {
+    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>val<!> (i,<!UNUSED_VARIABLE!>j<!>) in Coll()) {
 
     }
 
-    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>var<!> (i,j) in Coll()) {
+    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>var<!> (i,<!UNUSED_VARIABLE!>j<!>) in Coll()) {
 
     }
 }

@@ -745,6 +745,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UnusedInDestructuring.kt")
+        public void testUnusedInDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedInDestructuring.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnusedParameters.kt")
         public void testUnusedParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedParameters.kt");

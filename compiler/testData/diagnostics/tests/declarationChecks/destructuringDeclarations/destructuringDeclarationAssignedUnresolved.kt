@@ -5,7 +5,7 @@ fun useDeclaredVariables() {
 }
 
 fun checkersShouldRun() {
-    val (@A <!UNUSED_VARIABLE!>a<!>, <!UNDERSCORE_IS_RESERVED, UNUSED_VARIABLE!>_<!>) = <!UNRESOLVED_REFERENCE!>unresolved<!>
+    val (@A a, <!UNDERSCORE_IS_RESERVED, UNUSED_VARIABLE!>_<!>) = <!UNRESOLVED_REFERENCE!>unresolved<!>
 }
 
 annotation class A

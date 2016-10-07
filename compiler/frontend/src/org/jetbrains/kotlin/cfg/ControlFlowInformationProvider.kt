@@ -572,7 +572,7 @@ class ControlFlowInformationProvider private constructor(
                     val element = instruction.variableDeclarationElement as? KtNamedDeclaration ?: return@traverse
                     element.nameIdentifier ?: return@traverse
                     if (!VariableUseState.isUsed(variableUseState)) {
-                        if (KtPsiUtil.isVariableNotParameterDeclaration(element)) {
+                        if (KtPsiUtil.isRemovableVariableDeclaration(element)) {
                             report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
                         }
                         else if (element is KtParameter) {
@@ -607,7 +607,7 @@ class ControlFlowInformationProvider private constructor(
                             }
                         }
                     }
-                    else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isVariableNotParameterDeclaration(element)) {
+                    else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isRemovableVariableDeclaration(element)) {
                         report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
                     }
                     else if (variableUseState === WRITTEN_AFTER_READ && element is KtVariableDeclaration) {
