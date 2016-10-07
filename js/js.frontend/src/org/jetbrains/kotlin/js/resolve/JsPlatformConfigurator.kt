@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsReflectionAPICallChecker
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -48,5 +49,6 @@ object JsPlatformConfigurator : PlatformConfigurator(
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(JsNameClashChecker())
+        container.useImpl<JsReflectionAPICallChecker>()
     }
 }

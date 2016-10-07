@@ -718,4 +718,19 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
         }
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInReflection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("reflectionApi.kt")
+        public void testReflectionApi() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection/reflectionApi.kt");
+            doTest(fileName);
+        }
+    }
 }
