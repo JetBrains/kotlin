@@ -5,14 +5,14 @@ public fun f2(): kotlin.reflect.KFunction1<java.lang.Runnable, kotlin.Unit>
 public fun f3(): kotlin.reflect.KClass<java.lang.Runnable>
 public fun f4(): kotlin.reflect.KFunction1<java.lang.Runnable, kotlin.Unit>
 public fun f5(): kotlin.reflect.KClass<test.GenericSam<*>>
-public fun f6(): kotlin.reflect.KFunction2<test.GenericSam<*>, kotlin.Nothing!, kotlin.Unit>
+public fun f6(): kotlin.reflect.KFunction2<test.GenericSam<*>, @kotlin.ParameterName(name = "t") kotlin.Nothing!, kotlin.Unit>
 public fun f7(): kotlin.reflect.KClass<test.GenericSam<*>>
-public fun f8(): kotlin.reflect.KFunction2<test.GenericSam<kotlin.String>, kotlin.String!, kotlin.Unit>
+public fun f8(): kotlin.reflect.KFunction2<test.GenericSam<kotlin.String>, @kotlin.ParameterName(name = "t") kotlin.String!, kotlin.Unit>
 public fun g1(): kotlin.reflect.KClass<java.lang.Runnable>
 public fun g2(): kotlin.reflect.KFunction0<kotlin.Unit>
 public fun g3(): kotlin.reflect.KClass<java.lang.Runnable>
 public fun g4(): kotlin.reflect.KFunction0<kotlin.Unit>
 public fun g5(): kotlin.reflect.KClass<test.GenericSam<kotlin.String>>
-public fun g6(): kotlin.reflect.KFunction1<kotlin.String!, kotlin.Unit>
+public fun g6(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "t") kotlin.String!, kotlin.Unit>
 public fun g7(): kotlin.reflect.KClass<test.GenericSam<kotlin.String>>
-public fun g8(): kotlin.reflect.KFunction1<kotlin.String!, kotlin.Unit>
+public fun g8(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "t") kotlin.String!, kotlin.Unit>

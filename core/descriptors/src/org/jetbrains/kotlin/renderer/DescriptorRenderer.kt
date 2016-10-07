@@ -223,9 +223,7 @@ object ExcludedTypeAnnotations {
 
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact"),
-            KotlinBuiltIns.FQ_NAMES.extensionFunctionType,
-            KotlinBuiltIns.FQ_NAMES.parameterName
+            FqName("kotlin.internal.Exact")
     )
 }
 

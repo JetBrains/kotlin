@@ -46,6 +46,13 @@ internal class DescriptorRendererImpl(
         assert(options.isLocked)
     }
 
+    private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
+        this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) } as DescriptorRendererImpl
+    }
+    private val functionTypeParameterTypesRenderer: DescriptorRenderer by lazy {
+        this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.parameterName) }
+    }
+
     /* FORMATTING */
     private fun renderKeyword(keyword: String): String {
         when (textFormat) {
@@ -294,7 +301,10 @@ internal class DescriptorRendererImpl(
 
     private fun StringBuilder.renderFunctionType(type: KotlinType) {
         val lengthBefore = length
-        renderAnnotations(type)
+        // we need special renderer to skip @ExtensionFunctionType
+        with(functionTypeAnnotationsRenderer) {
+            renderAnnotations(type)
+        }
         val hasAnnotations = length != lengthBefore
 
         val isNullable = type.isMarkedNullable
@@ -335,7 +345,8 @@ internal class DescriptorRendererImpl(
                 append(renderName(name))
                 append(": ")
             }
-            append(renderTypeProjection(typeProjection))
+
+            append(functionTypeParameterTypesRenderer.renderTypeProjection(typeProjection))
         }
 
         append(") ").append(arrow()).append(" ")
