@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import java.util.*
@@ -45,10 +46,10 @@ private data class DeprecatedByAnnotation(private val annotation: AnnotationDesc
             val level = annotation.argumentValue("level") as? ClassDescriptor
 
             return when (level?.name?.asString()) {
-                "WARNING" -> DeprecationLevelValue.WARNING
-                "ERROR" -> DeprecationLevelValue.ERROR
-                "HIDDEN" -> DeprecationLevelValue.HIDDEN
-                else -> DeprecationLevelValue.WARNING
+                "WARNING" -> WARNING
+                "ERROR" -> ERROR
+                "HIDDEN" -> HIDDEN
+                else -> WARNING
             }
         }
 
@@ -171,11 +172,12 @@ private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
 
 internal fun createDeprecationDiagnostic(element: PsiElement, deprecation: Deprecation): Diagnostic {
     val targetOriginal = deprecation.target.original
-    if (deprecation.deprecationLevel == DeprecationLevelValue.ERROR) {
-        return Errors.DEPRECATION_ERROR.on(element, targetOriginal, deprecation.message)
+    val diagnosticFactory = when (deprecation.deprecationLevel) {
+        WARNING -> Errors.DEPRECATION
+        ERROR -> Errors.DEPRECATION_ERROR
+        HIDDEN -> Errors.DEPRECATION_ERROR
     }
-
-    return Errors.DEPRECATION.on(element, targetOriginal, deprecation.message)
+    return diagnosticFactory.on(element, targetOriginal, deprecation.message)
 }
 
 // values from kotlin.DeprecationLevel
@@ -184,7 +186,7 @@ enum class DeprecationLevelValue {
 }
 
 fun DeclarationDescriptor.isDeprecatedHidden(): Boolean {
-    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return getDeprecation()?.deprecationLevel == HIDDEN
 }
 
 fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
