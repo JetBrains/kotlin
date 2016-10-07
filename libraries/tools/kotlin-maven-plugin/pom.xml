@@ -7,6 +7,7 @@
     <properties>
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.5</maven.version>
+        <kotlin.version>1.0.4</kotlin.version>
     </properties>
 
     <parent>
@@ -56,6 +57,16 @@
             <artifactId>maven-plugin-testing-harness</artifactId>
             <version>3.3.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-impl</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${maven.version}</version>
         </dependency>
     </dependencies>
 
