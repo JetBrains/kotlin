@@ -398,6 +398,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addNewLineAfterAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddNewLineAfterAnnotations extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddNewLineAfterAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addNewLineAfterAnnotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNewLineAfterAnnotations/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("manyAnnotations.kt")
+        public void testManyAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNewLineAfterAnnotations/manyAnnotations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("poorlyFormattedExpression.kt")
+        public void testPoorlyFormattedExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNewLineAfterAnnotations/poorlyFormattedExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("preserveComments.kt")
+        public void testPreserveComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNewLineAfterAnnotations/preserveComments.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addNoinline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
