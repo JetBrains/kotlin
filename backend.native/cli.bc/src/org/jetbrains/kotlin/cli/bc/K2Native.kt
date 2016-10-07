@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import java.lang.System.out
+import java.util.*
 import java.util.Collections.emptyList
 import kotlin.reflect.jvm.internal.impl.load.java.JvmAbi
 
@@ -27,7 +28,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
 
         configuration.addKotlinSourceRoots(arguments.freeArgs)
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, emptyList())
+        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, Arrays.asList<String>("extensions/common.xml"))
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
 
