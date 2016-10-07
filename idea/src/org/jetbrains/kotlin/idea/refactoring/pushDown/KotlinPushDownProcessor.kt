@@ -29,24 +29,28 @@ import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.*
-import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.*
+import java.util.ArrayList
 
 class KotlinPushDownContext(
         val sourceClass: KtClass,
@@ -137,14 +141,31 @@ class KotlinPushDownProcessor(
                 is KtProperty, is KtNamedFunction -> {
                     memberDescriptor as CallableMemberDescriptor
 
-                    moveCallableMemberToClass(
-                            member as KtCallableDeclaration,
-                            memberDescriptor,
-                            targetClass,
-                            targetClassDescriptor,
-                            substitutor,
-                            memberInfo.isToAbstract
-                    )
+                    val targetMemberDescriptor = memberDescriptor.substitute(substitutor)?.let {
+                        targetClassDescriptor.findCallableMemberBySignature(it as CallableMemberDescriptor)
+                    }
+                    val targetMember = targetMemberDescriptor?.source?.getPsi() as? KtCallableDeclaration
+                    targetMember?.apply {
+                        if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
+                        }
+                        else if (memberDescriptor.overriddenDescriptors.isEmpty()) {
+                            removeModifier(KtTokens.OVERRIDE_KEYWORD)
+                        }
+                        else {
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
+                        }
+                    } ?: addMemberToTarget(member, targetClass).apply {
+                        if (this@KotlinPushDownProcessor.context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
+                            if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
+                                addModifier(KtTokens.ABSTRACT_KEYWORD)
+                            }
+                        }
+                        if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
+                            KtTokens.VISIBILITY_MODIFIERS.types.forEach { removeModifier(it as KtModifierKeywordToken) }
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
+                        }
+                    }
                 }
 
                 is KtClassOrObject, is KtPsiClassWrapper -> {
