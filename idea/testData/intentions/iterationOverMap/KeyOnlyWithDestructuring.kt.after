@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+fun foo(map: Map<Int, Int>) {
+    for ((key) in map) {
+    }
+}

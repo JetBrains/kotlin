@@ -62,7 +62,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         val factory = KtPsiFactory(element)
         val validator = NewDeclarationNameValidator(
                 element.parent, element, NewDeclarationNameValidator.Target.VARIABLES,
-                excludedDeclarations = usagesToRemove.map { it.variableToDrop.singletonOrEmptyList() }.flatten()
+                excludedDeclarations = usagesToRemove.map { it.declarationToDrop.singletonOrEmptyList() }.flatten()
         )
         val names = ArrayList<String>()
         usagesToRemove.forEach { (descriptor, usagesToReplace, variableToDrop, name) ->
@@ -154,7 +154,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
 
         // Note: list should contains properties in order to create destructuring declaration
         val usagesToRemove = mutableListOf<UsageData>()
-        var badUsageFound = false
+        var noBadUsages = true
         val removeSelectorInLoopRange: Boolean
         if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
             val loopRangeDescriptorName = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor?.name
@@ -167,8 +167,8 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
 
             ReferencesSearch.search(declaration).iterateOverMapEntryPropertiesUsages(
                     context,
-                    { index, usageData -> usagesToRemove[index].add(usageData) },
-                    { badUsageFound = true }
+                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                    { noBadUsages = false }
             )
         }
         else if (classDescriptor.isData) {
@@ -199,29 +199,35 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                     context,
                     nameToSearch,
                     descriptorToIndex,
-                    { index, usageData -> usagesToRemove[index].add(usageData) },
-                    { badUsageFound = true }
+                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                    { noBadUsages = false }
             )
         }
         else {
             return null
         }
-        if (badUsageFound) return null
+        if (!noBadUsages) return null
 
-        val droppedLastUnused = usagesToRemove.dropLastWhile { it.usagesToReplace.isEmpty() && it.variableToDrop == null }
+        val droppedLastUnused = usagesToRemove.dropLastWhile { it.usagesToReplace.isEmpty() && it.declarationToDrop == null }
         return UsagesToRemove(droppedLastUnused, removeSelectorInLoopRange)
     }
 
     private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
             context: BindingContext,
-            process: (Int, UsageData) -> Unit,
+            process: (Int, SingleUsageData) -> Unit,
             cancel: () -> Unit
     ) {
         // TODO: Remove SAM-constructor when KT-11265 will be fixed
         forEach(Processor forEach@{
             val applicableUsage = getDataIfUsageIsApplicable(it, context)
             if (applicableUsage != null) {
-                when (applicableUsage.descriptor.name.asString()) {
+                val usageDescriptor = applicableUsage.descriptor
+                if (usageDescriptor == null) {
+                    process(0, applicableUsage)
+                    process(1, applicableUsage)
+                    return@forEach true
+                }
+                when (usageDescriptor.name.asString()) {
                     "key", "getKey" -> {
                         process(0, applicableUsage)
                         return@forEach true
@@ -242,7 +248,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             context: BindingContext,
             parameterName: Name,
             descriptorToIndex: Map<CallableDescriptor, Int>,
-            process: (Int, UsageData) -> Unit,
+            process: (Int, SingleUsageData) -> Unit,
             cancel: () -> Unit
     ) {
         anyDescendantOfType<KtNameReferenceExpression> {
@@ -250,7 +256,14 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             else {
                 val applicableUsage = getDataIfUsageIsApplicable(it, context)
                 if (applicableUsage != null) {
-                    val index = descriptorToIndex[applicableUsage.descriptor]
+                    val usageDescriptor = applicableUsage.descriptor
+                    if (usageDescriptor == null) {
+                        for (index in descriptorToIndex.values) {
+                            process(index, applicableUsage)
+                        }
+                        return@anyDescendantOfType false
+                    }
+                    val index = descriptorToIndex[usageDescriptor]
                     if (index != null) {
                         process(index, applicableUsage)
                         return@anyDescendantOfType false
@@ -266,7 +279,11 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     private fun getDataIfUsageIsApplicable(dataClassUsage: PsiReference, context: BindingContext) =
             (dataClassUsage.element as? KtReferenceExpression)?.let { getDataIfUsageIsApplicable(it, context) }
 
-    private fun getDataIfUsageIsApplicable(dataClassUsage: KtReferenceExpression, context: BindingContext): UsageData? {
+    private fun getDataIfUsageIsApplicable(dataClassUsage: KtReferenceExpression, context: BindingContext): SingleUsageData? {
+        val destructuringDecl = dataClassUsage.parent as? KtDestructuringDeclaration
+        if (destructuringDecl != null && destructuringDecl.initializer == dataClassUsage) {
+            return SingleUsageData(descriptor = null, usageToReplace = null, declarationToDrop = destructuringDecl)
+        }
         val qualifiedExpression = dataClassUsage.getQualifiedExpressionForReceiver() ?: return null
         val parent = qualifiedExpression.parent
         when (parent) {
@@ -282,22 +299,37 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         if (property != null && property.isVar) return null
 
         val descriptor = qualifiedExpression.getResolvedCall(context)?.resultingDescriptor ?: return null
-        return UsageData(
-                descriptor = descriptor,
-                usagesToReplace = mutableListOf(qualifiedExpression),
-                variableToDrop = property)
+        return SingleUsageData(descriptor = descriptor, usageToReplace = qualifiedExpression, declarationToDrop = property)
     }
+
+    private data class SingleUsageData(
+            val descriptor: CallableDescriptor?,
+            val usageToReplace: KtExpression?,
+            val declarationToDrop: KtDeclaration?
+    )
 
     private data class UsageData(
             val descriptor: CallableDescriptor,
             val usagesToReplace: MutableList<KtExpression> = mutableListOf(),
-            var variableToDrop: KtProperty? = null,
-            var name: String? = variableToDrop?.name
+            var declarationToDrop: KtDeclaration? = null,
+            var name: String? = declarationToDrop?.name
     ) {
-        fun add(newData: UsageData) {
-            variableToDrop = variableToDrop ?: newData.variableToDrop
-            usagesToReplace.addAll(newData.usagesToReplace)
-            name = name ?: newData.name
+        // Returns true if data is successfully added, false otherwise
+        fun add(newData: SingleUsageData, componentIndex: Int): Boolean {
+            if (newData.declarationToDrop is KtDestructuringDeclaration) {
+                val destructuringEntries = newData.declarationToDrop.entries
+                if (componentIndex < destructuringEntries.size) {
+                    if (declarationToDrop != null) return false
+                    name = destructuringEntries[componentIndex].name ?: return false
+                    declarationToDrop = newData.declarationToDrop
+                }
+            }
+            else {
+                name = name ?: newData.declarationToDrop?.name
+                declarationToDrop = declarationToDrop ?: newData.declarationToDrop
+            }
+            newData.usageToReplace?.let { usagesToReplace.add(it) }
+            return true
         }
     }
 }
