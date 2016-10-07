@@ -8,7 +8,7 @@ object Some2: A
 
 object Some3
 
-:
+    :
 
 
         A
