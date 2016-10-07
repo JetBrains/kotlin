@@ -29,8 +29,6 @@ import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
-import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
@@ -446,7 +444,6 @@ class KotlinCoreEnvironment private constructor(
                 registerParserDefinition(KotlinParserDefinition())
                 application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
                 application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
-                application.registerService(TransactionGuard::class.java, TransactionGuardImpl::class.java)
             }
         }
 
