@@ -298,7 +298,6 @@ public final class StaticContext {
 
         List<JsName> names = new ArrayList<JsName>();
         if (suggested.getStable()) {
-
             for (String namePart : suggested.getNames()) {
                 names.add(scope.declareName(namePart));
             }
