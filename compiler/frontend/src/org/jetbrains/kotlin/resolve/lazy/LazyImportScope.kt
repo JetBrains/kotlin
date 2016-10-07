@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
+import org.jetbrains.kotlin.resolve.PlatformClassesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
@@ -88,7 +88,7 @@ class LazyImportResolver(
                 directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
         )?.apply {
             if (!directive.isAllUnder) {
-                PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(
+                PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
                         platformToKotlinClassMap, traceForImportResolve, directive, getContributedDescriptors()
                 )
             }

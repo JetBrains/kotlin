@@ -28,8 +28,8 @@ import java.util.Collection;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
 
-public class PlatformTypesMappedToKotlinChecker {
-    public static void checkPlatformTypesMappedToKotlin(
+public class PlatformClassesMappedToKotlinChecker {
+    public static void checkPlatformClassesMappedToKotlin(
             @NotNull PlatformToKotlinClassMap platformToKotlinMap,
             @NotNull BindingTrace trace,
             @NotNull KtImportDirective importDirective,

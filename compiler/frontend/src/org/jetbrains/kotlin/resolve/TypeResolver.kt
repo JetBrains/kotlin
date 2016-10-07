@@ -765,7 +765,7 @@ class TypeResolver(
 
         return qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext).apply {
             if (classifierDescriptor != null) {
-                PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
+                PlatformClassesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
                         platformToKotlinClassMap, trace, userType, classifierDescriptor
                 )
             }
