@@ -1131,8 +1131,29 @@
         </pack-runtime-jar>
     </target>
 
+    <target name="script-runtime">
+        <new-kotlinc output="${output}/classes/script-runtime" moduleName="kotlin-script-runtime">
+            <src>
+                <include name="core/script.runtime/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+        <pack-runtime-jar jar-name="kotlin-script-runtime.jar" implementation-title="${manifest.impl.title.kotlin.script.runtime}">
+            <jar-content>
+                <fileset dir="${output}/classes/script-runtime"/>
+            </jar-content>
+        </pack-runtime-jar>
+        <pack-runtime-jar jar-name="kotlin-script-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.script.runtime.sources}">
+            <jar-content>
+                <fileset dir="${basedir}/core/script.runtime/src" includes="**/*"/>
+            </jar-content>
+        </pack-runtime-jar>
+    </target>
+
     <target name="runtime"
-            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
+            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,script-runtime,mock-runtime-for-test"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
