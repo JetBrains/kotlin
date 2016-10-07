@@ -86,27 +86,25 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
     public BasicValue merge(
             @NotNull BasicValue v, @NotNull BasicValue w
     ) {
-        if (!v.equals(w)) {
-            if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
-                return BasicValue.UNINITIALIZED_VALUE;
-            }
+        if (v.equals(w)) return v;
 
-            // if merge of two references then `lub` is java/lang/Object
-            // arrays also are BasicValues with reference type's
-            if (isReference(v) && isReference(w)) {
-                return BasicValue.REFERENCE_VALUE;
-            }
-
-            // if merge of something can be stored in int var (int, char, boolean, byte, character)
-            if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
-                w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
-                return BasicValue.INT_VALUE;
-            }
-
+        if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
             return BasicValue.UNINITIALIZED_VALUE;
         }
 
-        return v;
+        // if merge of two references then `lub` is java/lang/Object
+        // arrays also are BasicValues with reference type's
+        if (isReference(v) && isReference(w)) {
+            return BasicValue.REFERENCE_VALUE;
+        }
+
+        // if merge of something can be stored in int var (int, char, boolean, byte, character)
+        if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
+            w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
+            return BasicValue.INT_VALUE;
+        }
+
+        return BasicValue.UNINITIALIZED_VALUE;
     }
 
     private static boolean isReference(@NotNull BasicValue v) {
