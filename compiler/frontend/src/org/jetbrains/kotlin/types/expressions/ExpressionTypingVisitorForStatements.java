@@ -309,10 +309,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         KtExpression leftOperand = expression.getLeft();
         if (leftOperand instanceof KtAnnotatedExpression) {
-            // We will lose all annotations during deparenthesizing, so we have to resolve them right now
-            components.annotationResolver.resolveAnnotationsWithArguments(
-                    scope, ((KtAnnotatedExpression) leftOperand).getAnnotationEntries(), context.trace
-            );
+            basic.resolveAnnotationsOnExpression((KtAnnotatedExpression) leftOperand, context);
         }
         KtExpression left = deparenthesize(leftOperand);
         KtExpression right = expression.getRight();
