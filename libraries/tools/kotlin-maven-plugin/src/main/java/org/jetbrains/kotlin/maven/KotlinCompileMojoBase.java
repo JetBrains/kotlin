@@ -16,14 +16,19 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.google.common.base.Joiner;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -38,16 +43,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
-    // TODO it would be nice to avoid using 2 injected fields for sources
-    // but I've not figured out how to have a defaulted parameter value
-    // which is also customisable inside an <execution> in a maven pom.xml
-    // so for now lets just use 2 fields
+    @Component
+    protected PlexusContainer container;
 
-    /**
-     * The default source directories containing the sources to be compiled.
-     */
-    @Parameter(defaultValue = "${project.compileSourceRoots}", required = true)
-    private List<String> defaultSourceDirs;
+    @Component
+    protected MojoExecution mojoExecution;
 
     /**
      * The source directories containing the sources to be compiled.
@@ -55,9 +55,27 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private List<String> sourceDirs;
 
+    /**
+     * A list of kotlin compiler plugins to be applied.
+     */
+    @Parameter
+    private List<String> compilerPlugins;
+
+    /**
+     * A classpaths required for kotlin compiler plugin(s). Useful if you don't use extensions due to some reason
+     */
+    @Parameter
+    private List<String> compilerPluginsClassPaths;
+
+    /**
+     * A list of plugin options in format plugin:(pluginId):(parameter)=(value)
+     */
+    @Parameter
+    private List<String> pluginArguments;
+
     protected List<String> getSourceFilePaths() {
         if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
-        return defaultSourceDirs;
+        return project.getCompileSourceRoots();
     }
 
     public List<File> getSourceDirs() {
@@ -197,6 +215,61 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
+    protected List<String> getCompilerPluginsClassPaths() {
+        ArrayList<String> result = new ArrayList<String>();
+
+        if (compilerPluginsClassPaths != null) {
+            result.addAll(compilerPluginsClassPaths);
+        }
+
+        // TODO do that once we have compiler running in the separate process
+//        URL[] urls = mojoExecution.getMojoDescriptor().getRealm().getURLs();
+//        for (URL url : urls) {
+//            if ("file".equals(url.getProtocol())) {
+//                try {
+//                    result.add(new File(url.toURI()).getAbsolutePath());
+//                } catch (URISyntaxException ignore) {
+//                }
+//            }
+//        }
+
+        return result;
+    }
+
+    protected List<String> getCompilerPluginArguments() throws ComponentLookupException {
+        return configureCompilerPlugins();
+    }
+
+    private List<String> configureCompilerPlugins() throws ComponentLookupException {
+        if (mojoExecution == null) {
+            throw new IllegalStateException("No mojoExecution injected");
+        }
+
+        List<String> pluginArguments = new ArrayList<String>();
+
+        if (this.pluginArguments != null) {
+            pluginArguments.addAll(this.pluginArguments);
+        }
+
+        if (compilerPlugins != null) {
+            for (String pluginId : compilerPlugins) {
+                getLog().debug("Looking for plugin " + pluginId);
+                KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginId);
+                getLog().debug("Got plugin instance" + pluginId + " of type " + extension.getClass().getName());
+
+                if (extension.isApplicable(project, mojoExecution)) {
+                    getLog().info("Applying plugin " + pluginId);
+                    pluginArguments.addAll(extension.getPluginArguments(project, mojoExecution));
+                    // TODO here we can use artifact resolver to build exact dependency tree
+
+                    container.getComponentDescriptor(KotlinMavenPluginExtension.class.getName(), pluginId).getRealm();
+                }
+            }
+        }
+
+        return pluginArguments;
+    }
+
     private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
             arguments.verbose = true;
@@ -233,6 +306,28 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         if (arguments.noInline) {
             getLog().info("Method inlining is turned off");
+        }
+
+        try {
+            List<String> pluginArguments = getCompilerPluginArguments();
+            if (pluginArguments != null && !pluginArguments.isEmpty()) {
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
+                }
+
+                arguments.pluginOptions = pluginArguments.toArray(new String[pluginArguments.size()]);
+            }
+        } catch (ComponentLookupException e) {
+            throw new MojoExecutionException("Failed to lookup kotlin compiler plugins", e);
+        }
+
+        List<String> classPaths = getCompilerPluginsClassPaths();
+
+        if (classPaths != null && !classPaths.isEmpty()) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(classPaths));
+            }
+            arguments.pluginClasspaths = classPaths.toArray(new String[classPaths.size()]);
         }
     }
 }
