@@ -29,5 +29,5 @@ class JvmBackendContext(
 ) {
     val builtIns = state.module.builtIns
     val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager, builtIns)
-    val sharedVariablesManager = JvmSharedVariablesManager(irBuiltIns)
+    val sharedVariablesManager = JvmSharedVariablesManager(builtIns)
 }

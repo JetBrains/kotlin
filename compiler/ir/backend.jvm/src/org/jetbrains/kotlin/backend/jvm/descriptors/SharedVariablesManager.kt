@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
@@ -43,12 +42,9 @@ interface SharedVariablesManager {
     fun setSharedValue(sharedVariableDescriptor: VariableDescriptor, originalSet: IrSetVariable): IrExpression
 }
 
-class JvmSharedVariablesManager(val irBuiltIns: IrBuiltIns) : SharedVariablesManager {
-    private val builtIns = irBuiltIns.builtIns
-    private val fromAny = listOf(builtIns.anyType)
-
+class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesManager {
     private val kotlinJvmInternalPackage = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.jvm.internal"))
-    private val refNamespaceClass = KnownClassDescriptor.createClass(Name.identifier("Ref"), kotlinJvmInternalPackage, fromAny)
+    private val refNamespaceClass = KnownClassDescriptor.createClass(Name.identifier("Ref"), kotlinJvmInternalPackage, listOf(builtIns.anyType))
 
     private class PrimitiveRefDescriptorsProvider(type: KotlinType, refClass: ClassDescriptor) {
         val refType: KotlinType = refClass.defaultType
@@ -59,7 +55,6 @@ class JvmSharedVariablesManager(val irBuiltIns: IrBuiltIns) : SharedVariablesMan
                     returnType = refType
                 }
 
-
         val elementField: PropertyDescriptor =
                 PropertyDescriptorImpl.create(
                         refClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
@@ -68,12 +63,12 @@ class JvmSharedVariablesManager(val irBuiltIns: IrBuiltIns) : SharedVariablesMan
                 ).initialize(type, dispatchReceiverParameter = refClass.thisAsReceiverParameter)
     }
 
-    private val primitiveRefDescriptorProviders =
+    private val primitiveRefDescriptorProviders: Map<PrimitiveType, PrimitiveRefDescriptorsProvider> =
             PrimitiveType.values().associate {
                 val type = builtIns.getPrimitiveKotlinType(it)
 
                 val refClassName = Name.identifier(it.typeName.asString() + "Ref")
-                val refClass = KnownClassDescriptor.createClass(refClassName, refNamespaceClass, fromAny)
+                val refClass = KnownClassDescriptor.createClass(refClassName, refNamespaceClass, listOf(builtIns.anyType))
 
                 it to PrimitiveRefDescriptorsProvider(type, refClass)
             }
@@ -81,7 +76,7 @@ class JvmSharedVariablesManager(val irBuiltIns: IrBuiltIns) : SharedVariablesMan
     private inner class ObjectRefDescriptorsProvider {
         val genericRefClass: ClassDescriptor =
                 KnownClassDescriptor.createClassWithTypeParameters(
-                        Name.identifier("ObjectRef"), refNamespaceClass, fromAny, listOf(Name.identifier("T"))
+                        Name.identifier("ObjectRef"), refNamespaceClass, listOf(builtIns.anyType), listOf(Name.identifier("T"))
                 )
 
         val genericRefConstructor: ClassConstructorDescriptor =
@@ -91,7 +86,6 @@ class JvmSharedVariablesManager(val irBuiltIns: IrBuiltIns) : SharedVariablesMan
                     val typeParameterType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameter.typeConstructor, listOf(), false, MemberScope.Empty)
                     returnType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, genericRefClass, listOf(TypeProjectionImpl(Variance.INVARIANT, typeParameterType)))
                 }
-
 
         val constructorTypeParameter: TypeParameterDescriptor =
                 genericRefConstructor.typeParameters[0]

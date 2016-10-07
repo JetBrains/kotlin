@@ -65,7 +65,10 @@ class Concat : IntrinsicMethod() {
     }
 
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return object : IrIntrinsicFunction(expression, signature, context, expression.receiverAndArgs().asmTypes(context)) {
+        val argsTypes = expression.receiverAndArgs().asmTypes(context).toMutableList()
+        argsTypes[0] = AsmTypes.JAVA_STRING_TYPE
+
+        return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
 
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 AsmUtil.genInvokeAppendMethod(v, argsTypes[1])
@@ -83,7 +86,6 @@ class Concat : IntrinsicMethod() {
             override fun genArg(expression: IrExpression, codegen: org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen, index: Int, data: BlockInfo) {
                 super.genArg(expression, codegen, index, data)
                 if (index == 0) {
-                    codegen.mv.checkcast(AsmTypes.JAVA_STRING_TYPE)
                     codegen.mv.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
                 }
             }
