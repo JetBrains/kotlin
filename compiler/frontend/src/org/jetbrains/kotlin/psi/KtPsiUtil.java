@@ -277,12 +277,13 @@ public class KtPsiUtil {
         }
     }
 
-    public static boolean isVariableNotParameterDeclaration(@NotNull KtDeclaration declaration) {
+    public static boolean isRemovableVariableDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
         assert declaration instanceof KtDestructuringDeclarationEntry;
-        KtDestructuringDeclarationEntry multiDeclarationEntry = (KtDestructuringDeclarationEntry) declaration;
-        return !(multiDeclarationEntry.getParent().getParent() instanceof KtForExpression);
+        KtDestructuringDeclaration parentDeclaration = (KtDestructuringDeclaration) declaration.getParent();
+        List<KtDestructuringDeclarationEntry> entries = parentDeclaration.getEntries();
+        return entries.size() > 1 && entries.get(entries.size() - 1) == declaration;
     }
 
     @Nullable
