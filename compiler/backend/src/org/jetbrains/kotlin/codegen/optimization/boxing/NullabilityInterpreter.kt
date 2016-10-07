@@ -30,7 +30,7 @@ class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
 
     override fun isExactValue(value: BasicValue) = super.isExactValue(value) || value is NotNullBasicValue
 
-    override fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?) = 
+    override fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?) =
             NotNullBasicValue(BasicValue(type))
 }
 
@@ -42,4 +42,7 @@ private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): Bas
 
 class NotNullBasicValue(wrappedValue: BasicValue?) : BasicValueWrapper(wrappedValue) {
     override fun equals(other: Any?): Boolean = other is NotNullBasicValue
+    // We do not differ not-nullable values, so we should always return the same hashCode
+    // Actually it doesn't really matter because analyzer is not supposed to store values in hashtables
+    override fun hashCode() = 0
 }
