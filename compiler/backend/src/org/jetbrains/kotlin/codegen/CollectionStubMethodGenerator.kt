@@ -217,16 +217,16 @@ class CollectionStubMethodGenerator(
 
         val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.defaultType).classes().toHashSet()
 
-        val ourSuperCollectionClasses = collectionClasses.filter { pair ->
-            pair.readOnlyClass in allSuperClasses && pair.mutableClass !in allSuperClasses
+        val ourSuperCollectionClasses = collectionClasses.filter { (readOnlyClass, mutableClass) ->
+            readOnlyClass in allSuperClasses && mutableClass !in allSuperClasses
         }
         if (ourSuperCollectionClasses.isEmpty()) return listOf()
 
         // Filter out built-in classes which are overridden by other built-in classes in the list, to avoid duplicating methods.
-        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet<ClassDescriptor>()) { pair ->
-            pair.readOnlyClass.typeConstructor.supertypes.classes()
+        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet<ClassDescriptor>()) { (readOnlyClass) ->
+            readOnlyClass.typeConstructor.supertypes.classes()
         }
-        return ourSuperCollectionClasses.filter { klass -> klass.readOnlyClass !in redundantClasses }
+        return ourSuperCollectionClasses.filter { (readOnlyClass) -> readOnlyClass !in redundantClasses }
     }
 
     private fun Collection<KotlinType>.classes(): Collection<ClassDescriptor> =
