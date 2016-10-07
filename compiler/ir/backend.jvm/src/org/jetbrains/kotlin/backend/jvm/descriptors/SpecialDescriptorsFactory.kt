@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptor
-import org.jetbrains.kotlin.backend.jvm.lower.FileClassDescriptorImpl
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -29,7 +28,10 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
+class SpecialDescriptorsFactory(
+        val psiSourceManager: PsiSourceManager,
+        val builtIns: KotlinBuiltIns
+) {
     private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
 
     fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
@@ -42,7 +44,12 @@ class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
                    ?: throw AssertionError("Unexpected file entry: $fileEntry")
         val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
         val sourceElement = KotlinSourceElement(ktFile)
-        return FileClassDescriptorImpl(fileClassInfo.fileClassFqName.shortName(), packageFragment, sourceElement)
+        return FileClassDescriptorImpl(
+                fileClassInfo.fileClassFqName.shortName(), packageFragment,
+                listOf(builtIns.anyType),
+                sourceElement,
+                Annotations.EMPTY // TODO file annotations
+        )
     }
 
     private fun createEnumEntryFieldDescriptor(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor {
@@ -76,8 +83,7 @@ class SpecialDescriptorsFactory(val psiSourceManager: PsiSourceManager) {
                 Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
                 Name.identifier("INSTANCE"),
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, false, false
-        )
-        instanceFieldDescriptor.setType(objectDescriptor.defaultType, listOf(), null as ReceiverParameterDescriptor?, null as ReceiverParameterDescriptor?)
+        ).initialize(objectDescriptor.defaultType)
 
         return instanceFieldDescriptor
     }

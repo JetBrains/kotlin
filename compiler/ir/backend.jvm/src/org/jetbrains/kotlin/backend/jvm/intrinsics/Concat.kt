@@ -83,6 +83,7 @@ class Concat : IntrinsicMethod() {
             override fun genArg(expression: IrExpression, codegen: org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen, index: Int, data: BlockInfo) {
                 super.genArg(expression, codegen, index, data)
                 if (index == 0) {
+                    codegen.mv.checkcast(AsmTypes.JAVA_STRING_TYPE)
                     codegen.mv.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
                 }
             }

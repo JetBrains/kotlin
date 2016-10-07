@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.descriptors.SpecialDescriptorsFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -27,6 +28,6 @@ class JvmBackendContext(
         val irBuiltIns: IrBuiltIns
 ) {
     val builtIns = state.module.builtIns
-    val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager)
+    val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager, builtIns)
+    val sharedVariablesManager = JvmSharedVariablesManager(irBuiltIns)
 }
-

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -31,13 +32,14 @@ class JvmLower(val context: JvmBackendContext) {
         FileClassLowering(context).lower(irFile)
         ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
-        InterfaceLowering(context.state).runOnFile(irFile)
-        InterfaceDelegationLowering(context.state).runOnFile(irFile)
-        LocalFunctionsLowering(context).runOnFile(irFile)
-        EnumClassLowering(context).runOnFile(irFile)
-        ObjectClassLowering(context).runOnFile(irFile)
-        InitializersLowering(context).runOnFile(irFile)
-        SingletonReferencesLowering(context).runOnFile(irFile)
+        InterfaceLowering(context.state).runOnFilePostfix(irFile)
+        InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
+        SharedVariablesLowering(context).runOnFilePostfix(irFile)
+        LocalFunctionsLowering(context).runOnFilePostfix(irFile)
+        EnumClassLowering(context).runOnFilePostfix(irFile)
+        ObjectClassLowering(context).runOnFilePostfix(irFile)
+        InitializersLowering(context).runOnFilePostfix(irFile)
+        SingletonReferencesLowering(context).runOnFilePostfix(irFile)
     }
 }
 
@@ -49,11 +51,15 @@ interface ClassLoweringPass {
     fun lower(irClass: IrClass)
 }
 
+interface FunctionLoweringPass {
+    fun lower(irFunction: IrFunction)
+}
+
 interface BodyLoweringPass {
     fun lower(irBody: IrBody)
 }
 
-fun ClassLoweringPass.runOnFile(irFile: IrFile) {
+fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -66,7 +72,7 @@ fun ClassLoweringPass.runOnFile(irFile: IrFile) {
     })
 }
 
-fun BodyLoweringPass.runOnFile(irFile: IrFile) {
+fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -75,6 +81,19 @@ fun BodyLoweringPass.runOnFile(irFile: IrFile) {
         override fun visitBody(body: IrBody) {
             body.acceptChildrenVoid(this)
             lower(body)
+        }
+    })
+}
+
+fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
+    irFile.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitFunction(declaration: IrFunction) {
+            declaration.acceptChildrenVoid(this)
+            lower(declaration)
         }
     })
 }

@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeSubstitution
 import org.jetbrains.kotlin.types.Variance
 
 class BuiltinsOperatorsBuilder(val packageFragment: PackageFragmentDescriptor, val builtIns: KotlinBuiltIns) {
@@ -36,6 +34,7 @@ class BuiltinsOperatorsBuilder(val packageFragment: PackageFragmentDescriptor, v
     val anyN = builtIns.nullableAnyType
     val int = builtIns.intType
     val nothing = builtIns.nothingType
+    val unit = builtIns.unitType
 
     fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrBuiltinOperatorDescriptor {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
@@ -60,13 +59,15 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     val throwNpe: FunctionDescriptor = builder.run { defineOperator("THROW_NPE", nothing, listOf()) }
     val booleanNot: FunctionDescriptor = builder.run { defineOperator("NOT", bool, listOf(bool)) }
 
+    val noWhenBranchMatchedException: FunctionDescriptor = builder.run { defineOperator("noWhenBranchMatchedException", unit, listOf()) }
+
     val enumValueOf: FunctionDescriptor =
             SimpleFunctionDescriptorImpl.create(
                     packageFragment,
                     Annotations.EMPTY,
                     Name.identifier("enumValueOf"),
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+                    SourceElement.NO_SOURCE
             ).apply {
                 val typeParameterT = TypeParameterDescriptorImpl.createWithDefaultBound(
                         this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T"), 0
@@ -80,19 +81,6 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
                 val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)
 
                 initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
-            }
-
-    val noWhenBranchMatchedException: FunctionDescriptor =
-            SimpleFunctionDescriptorImpl.create(
-                    packageFragment,
-                    Annotations.EMPTY,
-                    Name.identifier("noWhenBranchMatchedException"),
-                    CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
-            ).apply {
-                val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, builtIns.unit.typeConstructor, listOf(), false)
-
-                initialize(null, null, listOf(), listOf(), returnType, Modality.FINAL, Visibilities.PUBLIC)
             }
 
     companion object {

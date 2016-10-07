@@ -41,30 +41,6 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
         doTest(fileName);
     }
 
-    @TestMetadata("closureConversion1.kt")
-    public void testClosureConversion1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion1.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("closureConversion2.kt")
-    public void testClosureConversion2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion2.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("closureConversion3.kt")
-    public void testClosureConversion3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion3.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("closureConversion4.kt")
-    public void testClosureConversion4() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion4.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("enumClass.kt")
     public void testEnumClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass.kt");
@@ -99,5 +75,50 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/simple.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("compiler/testData/ir/box/closureConversion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClosureConversion extends AbstractIrBlackBoxCodegenTest {
+        public void testAllFilesPresentInClosureConversion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/box/closureConversion"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("closureConversion1.kt")
+        public void testClosureConversion1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("closureConversion2.kt")
+        public void testClosureConversion2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("closureConversion3.kt")
+        public void testClosureConversion3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("closureConversion4.kt")
+        public void testClosureConversion4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mutable1.kt")
+        public void testMutable1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/mutable1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mutablePrimitives.kt")
+        public void testMutablePrimitives() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/mutablePrimitives.kt");
+            doTest(fileName);
+        }
     }
 }
