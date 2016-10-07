@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
@@ -62,28 +59,27 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
     public BasicValue merge(
             @NotNull BasicValue v, @NotNull BasicValue w
     ) {
-        if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
-            return BasicValue.UNINITIALIZED_VALUE;
-        }
-        // Objects must be equal, others can just have the same sort
-        if (v.getType().getSort() == w.getType().getSort() && (v.getType().getSort() != Type.OBJECT || v.equals(w))) {
-            return v;
+        if (!v.equals(w)) {
+            if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
+                return BasicValue.UNINITIALIZED_VALUE;
+            }
+
+            // if merge of two references then `lub` is java/lang/Object
+            // arrays also are BasicValues with reference type's
+            if (v.getType().getSort() == Type.OBJECT && w.getType().getSort() == Type.OBJECT) {
+                return BasicValue.REFERENCE_VALUE;
+            }
+
+            assert v.getType().getSort() != Type.ARRAY && w.getType().getSort() != Type.ARRAY : "There should not be arrays";
+
+
+            // if merge of something can be stored in int var (int, char, boolean, byte, character)
+            if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
+                w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
+                return BasicValue.INT_VALUE;
+            }
         }
 
-        // if merge of two references then `lub` is java/lang/Object
-        // arrays also are BasicValues with reference type's
-        if (v.getType().getSort() == Type.OBJECT && w.getType().getSort() == Type.OBJECT) {
-            return BasicValue.REFERENCE_VALUE;
-        }
-
-        assert v.getType().getSort() != Type.ARRAY && w.getType().getSort() != Type.ARRAY : "There should not be arrays";
-
-        // if merge of something can be stored in int var (int, char, boolean, byte, character)
-        if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
-            w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
-            return BasicValue.INT_VALUE;
-        }
-
-        return BasicValue.UNINITIALIZED_VALUE;
+        return v;
     }
 }
