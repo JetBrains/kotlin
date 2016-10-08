@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -30,7 +31,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import java.util.*
 
-class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtDotQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class)
+class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtDotQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
+    override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+}
 
 class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
 
