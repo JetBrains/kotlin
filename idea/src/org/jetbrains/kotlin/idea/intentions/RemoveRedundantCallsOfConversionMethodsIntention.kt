@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -30,7 +32,7 @@ import java.util.*
 
 class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtDotQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class)
 
-class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingOffsetIndependentIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
+class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
 
     private val targetClassMap = mapOf("toList()" to List::class.qualifiedName,
                                        "toSet()" to Set::class.qualifiedName,
@@ -54,14 +56,22 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingOffsetInde
         element.replaced(element.receiverExpression)
     }
 
-    override fun isApplicableTo(element: KtDotQualifiedExpression): Boolean {
-        val selectorExpressionText = element.selectorExpression?.text
-        val qualifiedName = targetClassMap[selectorExpressionText] ?: return false
-        val receiverExpression = element.receiverExpression
-        return when (receiverExpression) {
+    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
+        val selectorExpression = element.selectorExpression ?: return null
+        val selectorExpressionText = selectorExpression.text
+        val qualifiedName = targetClassMap[selectorExpressionText] ?: return null
+        if(element.receiverExpression.isApplicableReceiverExpression(qualifiedName)) {
+            return selectorExpression.textRange
+        } else {
+            return null
+        }
+    }
+
+    private fun KtExpression.isApplicableReceiverExpression(qualifiedName: String): Boolean {
+        return when (this) {
             is KtStringTemplateExpression -> String::class.qualifiedName
-            is KtConstantExpression -> receiverExpression.getType(receiverExpression.analyze())?.getJetTypeFqName(false)
-            else -> receiverExpression.getResolvedCall(receiverExpression.analyze())?.candidateDescriptor?.returnType?.getJetTypeFqName(false)
+            is KtConstantExpression -> getType(analyze())?.getJetTypeFqName(false)
+            else -> getResolvedCall(analyze())?.candidateDescriptor?.returnType?.getJetTypeFqName(false)
         } == qualifiedName
     }
 }
