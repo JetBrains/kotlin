@@ -621,6 +621,37 @@ public class KotlinTypeMapper {
         return Variance.OUT_VARIANCE;
     }
 
+    //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride
+    private FunctionDescriptor findSuperDeclaration(@NotNull FunctionDescriptor descriptor, boolean isSuperCall) {
+        while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            Collection<? extends FunctionDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            if (overridden.isEmpty()) {
+                throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
+            }
+
+            FunctionDescriptor classCallable = null;
+            for (FunctionDescriptor overriddenFunction : overridden) {
+                if (!isInterface(overriddenFunction.getContainingDeclaration())) {
+                    classCallable = overriddenFunction;
+                    break;
+                }
+            }
+
+            if (classCallable != null) {
+                //prefer class callable cause of else branch
+                descriptor = classCallable;
+                continue;
+            }
+            else if (isSuperCall && !isInterface(descriptor.getContainingDeclaration())) {
+                //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated for target 1.6
+                return descriptor;
+            }
+
+            descriptor = overridden.iterator().next();
+        }
+        return descriptor;
+    }
+
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
         if (descriptor instanceof ConstructorDescriptor) {
@@ -632,7 +663,7 @@ public class KotlinTypeMapper {
 
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
-        FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
+        FunctionDescriptor functionDescriptor = findSuperDeclaration(descriptor.getOriginal(), superCall);
 
         JvmMethodSignature signature;
         Type owner;
