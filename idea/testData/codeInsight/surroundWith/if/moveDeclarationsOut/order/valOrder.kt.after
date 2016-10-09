@@ -1,9 +1,8 @@
 fun foo() {
     val a: String
-    val b: String
-    if (<caret>) {
+    val b = if (<caret>) {
         a = "aaa"
-        b = a
+        a
     }
 
     a.charAt(1)
