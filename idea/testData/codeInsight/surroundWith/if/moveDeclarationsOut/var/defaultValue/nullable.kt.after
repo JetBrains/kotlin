@@ -1,7 +1,6 @@
 fun foo() {
-    var a: String? = null
-    if (<caret>) {
-        a = "aaa"
+    var a: String? = if (<caret>) {
+        "aaa"
     }
     a = "bbb"
 }

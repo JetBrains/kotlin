@@ -587,6 +587,11 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             runTest("idea/testData/codeInsight/surroundWith/tryCatch/moveDeclarationsOut.kt");
         }
 
+        @TestMetadata("moveDeclarationsOutSingleStatement.kt")
+        public void testMoveDeclarationsOutSingleStatement() throws Exception {
+            runTest("idea/testData/codeInsight/surroundWith/tryCatch/moveDeclarationsOutSingleStatement.kt");
+        }
+
         @TestMetadata("multiExpression.kt")
         public void testMultiExpression() throws Exception {
             runTest("idea/testData/codeInsight/surroundWith/tryCatch/multiExpression.kt");

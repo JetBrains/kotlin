@@ -50,17 +50,22 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
         val scope = LocalSearchScope(container)
         val lastStatementOffset = statements[statements.size - 1].textRange.endOffset
 
-        for (statement in statements) {
+        statements.forEachIndexed { i, statement ->
             if (needToDeclareOut(statement, lastStatementOffset, scope)) {
                 val property = statement as? KtProperty
                 if (property?.initializer != null) {
-                    var declaration = createVariableDeclaration(property, generateDefaultInitializers)
-                    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
-                    propertiesDeclarations.add(declaration)
-                    container.addAfter(psiFactory.createNewLine(), declaration)
-
-                    val assignment = createVariableAssignment(property)
-                    resultStatements.add(property.replace(assignment))
+                    if (i == statements.size - 1) {
+                        kotlinStyleDeclareOut(container, dummyFirstStatement, resultStatements, propertiesDeclarations, property)
+                    } else {
+                        declareOut(
+                            container,
+                            dummyFirstStatement,
+                            generateDefaultInitializers,
+                            resultStatements,
+                            propertiesDeclarations,
+                            property
+                        )
+                    }
                 } else {
                     val newStatement = container.addBefore(statement, dummyFirstStatement)
                     container.addAfter(psiFactory.createNewLine(), newStatement)
@@ -77,6 +82,38 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
     ShortenReferences.DEFAULT.process(propertiesDeclarations)
 
     return PsiUtilCore.toPsiElementArray(resultStatements)
+}
+
+private fun kotlinStyleDeclareOut(
+    container: PsiElement,
+    dummyFirstStatement: PsiElement,
+    resultStatements: ArrayList<PsiElement>,
+    propertiesDeclarations: ArrayList<KtProperty>,
+    property: KtProperty
+) {
+    val name = property.name ?: return
+    var declaration = KtPsiFactory(property).createProperty(name, property.typeReference?.text, property.isVar, null)
+    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
+    container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
+    propertiesDeclarations.add(declaration)
+    property.initializer?.let {
+        resultStatements.add(property.replace(it))
+    }
+}
+
+private fun declareOut(
+    container: PsiElement,
+    dummyFirstStatement: PsiElement,
+    generateDefaultInitializers: Boolean,
+    resultStatements: ArrayList<PsiElement>,
+    propertiesDeclarations: ArrayList<KtProperty>,
+    property: KtProperty
+) {
+    var declaration = createVariableDeclaration(property, generateDefaultInitializers)
+    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
+    propertiesDeclarations.add(declaration)
+    val assignment = createVariableAssignment(property)
+    resultStatements.add(property.replace(assignment))
 }
 
 private fun createVariableAssignment(property: KtProperty): KtBinaryExpression {
@@ -105,11 +142,10 @@ private fun getPropertyType(property: KtProperty): KotlinType {
 
 private fun createProperty(property: KtProperty, propertyType: KotlinType, initializer: String?): KtProperty {
     val typeRef = property.typeReference
-    var typeString: String? = null
-    if (typeRef != null) {
-        typeString = typeRef.text
-    } else if (!propertyType.isError) {
-        typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
+    val typeString = when {
+        typeRef != null -> typeRef.text
+        !propertyType.isError -> IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
+        else -> null
     }
 
     return KtPsiFactory(property).createProperty(property.name!!, typeString, property.isVar, initializer)
