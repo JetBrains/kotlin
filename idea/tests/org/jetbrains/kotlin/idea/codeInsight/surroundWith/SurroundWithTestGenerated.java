@@ -532,6 +532,12 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithTryCatchSurrounder(fileName);
         }
 
+        @TestMetadata("moveDeclarationsOutSingleStatement.kt")
+        public void testMoveDeclarationsOutSingleStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatch/moveDeclarationsOutSingleStatement.kt");
+            doTestWithTryCatchSurrounder(fileName);
+        }
+
         @TestMetadata("multiExpression.kt")
         public void testMultiExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/surroundWith/tryCatch/multiExpression.kt");
