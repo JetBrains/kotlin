@@ -326,7 +326,21 @@ abstract class AbstractAnnotationProcessingExtension(
 
             val applicableAnnotationNames = when (acceptsAnyAnnotation) {
                 true -> roundEnvironment.roundAnnotations().annotationsMap.keys
-                false -> processor.supportedAnnotationTypes.filter { it in roundEnvironment.roundAnnotations().annotationsMap }
+                false -> {
+                    val processorSupportedAnnotationsPredicates: List<(String) -> Boolean> = supportedAnnotationNames.map { supportedName ->
+                        if (supportedName.endsWith(".*")) {
+                            val prefix = supportedName.removeSuffix("*")
+                            val annotationMatches: (String) -> Boolean = { it.startsWith(prefix) }
+                            annotationMatches
+                        }
+                        else {
+                            { annotation -> annotation == supportedName }
+                        }
+                    }
+                    roundEnvironment.roundAnnotations().annotationsMap.keys.filter { annotationMapKey ->
+                        processorSupportedAnnotationsPredicates.any { it(annotationMapKey) }
+                    }
+                }
             }
 
             if (applicableAnnotationNames.isEmpty()) {

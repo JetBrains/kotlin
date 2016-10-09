@@ -380,4 +380,17 @@ class ProcessorTests : AbstractProcessorTest() {
         assertEquals(1, env.messager.errorCount)
         assertEquals(0, env.messager.warningCount)
     }
+
+    fun testStarSuffix() = test("StarSuffix", "processors.*") { set, roundEnv, env ->
+        assertEquals(2, set.size)
+
+        fun test(annotationName:String, markedElementName:String){
+            val annotation = set.single { it.simpleName.toString() == annotationName}
+            val annotatedElement = roundEnv.getElementsAnnotatedWith(annotation).single()
+            assertEquals(annotatedElement.simpleName.toString(), markedElementName)
+        }
+
+        test("Anno1", "MarkedWithAnno1")
+        test("Anno2", "MarkedWithAnno2")
+    }
 }
