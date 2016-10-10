@@ -331,23 +331,14 @@ sealed class Action(val position: XSourcePositionImpl?) {
     fun apply(debugProcess: DebugProcessImpl,
               suspendContext: SuspendContextImpl,
               ignoreBreakpoints: Boolean) {
-        val command = createCommand(debugProcess, suspendContext, ignoreBreakpoints)
-        command.contextAction()
-    }
-
-    private fun createCommand(
-            debugProcess: DebugProcessImpl,
-            suspendContext: SuspendContextImpl,
-            ignoreBreakpoints: Boolean
-    ): SuspendContextCommandImpl {
-        return when (this) {
+        when (this) {
             is Action.RUN_TO_CURSOR -> {
                 runReadAction {
                     debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
-                }
+                }.contextAction()
             }
-            is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext)
-            is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints)
+            is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction()
+            is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction()
         }
     }
 }
