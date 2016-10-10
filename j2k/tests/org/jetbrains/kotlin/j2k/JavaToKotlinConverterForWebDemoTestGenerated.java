@@ -1711,6 +1711,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/docComments"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("quoted.java")
+        public void testCodeQuote() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/quoted.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("deprecatedDocTag.java")
         public void testDeprecatedDocTag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTag.java");

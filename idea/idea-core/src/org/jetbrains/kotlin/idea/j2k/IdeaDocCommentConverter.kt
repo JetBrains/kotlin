@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.XmlRecursiveElementVisitor
+import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.javadoc.PsiDocTag
 import com.intellij.psi.javadoc.PsiDocToken
@@ -132,10 +133,22 @@ object IdeaDocCommentConverter : DocCommentConverter {
             super.visitElement(element)
 
             val tokenType = element.node.elementType
-            if (tokenType == XmlTokenType.XML_DATA_CHARACTERS || tokenType == XmlTokenType.XML_CHAR_ENTITY_REF) {
-                appendPendingText()
-                markdownBuilder.append(element.text)
+
+            when (tokenType) {
+                XmlTokenType.XML_DATA_CHARACTERS -> {
+                    appendPendingText()
+                    markdownBuilder.append(element.text)
+                }
+                XmlTokenType.XML_CHAR_ENTITY_REF -> {
+                    appendPendingText()
+                    val grandParent = element.parent.parent
+                    if(grandParent is HtmlTag && (grandParent.name == "code" || grandParent.name == "literal"))
+                        markdownBuilder.append(StringUtil.unescapeXml(element.text))
+                    else
+                        markdownBuilder.append(element.text)
+                }
             }
+
         }
 
         override fun visitXmlTag(tag: XmlTag) {
