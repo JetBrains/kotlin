@@ -88,6 +88,7 @@ public final class kotlin/annotation/AnnotationTarget : java/lang/Enum {
 	public static final field PROPERTY_GETTER Lkotlin/annotation/AnnotationTarget;
 	public static final field PROPERTY_SETTER Lkotlin/annotation/AnnotationTarget;
 	public static final field TYPE Lkotlin/annotation/AnnotationTarget;
+	public static final field TYPEALIAS Lkotlin/annotation/AnnotationTarget;
 	public static final field TYPE_PARAMETER Lkotlin/annotation/AnnotationTarget;
 	public static final field VALUE_PARAMETER Lkotlin/annotation/AnnotationTarget;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/annotation/AnnotationTarget;

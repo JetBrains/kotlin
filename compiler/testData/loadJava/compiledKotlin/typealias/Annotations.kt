@@ -1,6 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
+@Target(AnnotationTarget.TYPEALIAS)
 annotation class Ann(val value: String = "")
 
 @Ann()
