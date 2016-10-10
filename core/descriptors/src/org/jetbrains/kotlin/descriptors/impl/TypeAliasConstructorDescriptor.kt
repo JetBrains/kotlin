@@ -124,7 +124,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
                              ?: return null
 
-            val containingDeclaration = constructor.containingDeclaration as ClassDescriptor
+            val containingDeclaration = constructor.containingDeclaration
             val dispatchReceiverParameter =
                     if (containingDeclaration.isInner)
                         containingDeclaration.thisAsReceiverParameter
