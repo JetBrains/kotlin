@@ -731,7 +731,7 @@
     <usageToPsiElementProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinUsageToPsiElementProvider"/>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1451,7 +1451,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisInspection"
                      displayName="If-Null return/break/... foldable to '?:'"
                      groupName="Kotlin"
                      enabledByDefault="true"
