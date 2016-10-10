@@ -101,6 +101,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
+    fun testKT12077() {
+        doTest()
+    }
+
     fun doTest(completionChar: Char = '\n', vararg extraFileNames: String) {
         val fileName = getTestName(false)
 

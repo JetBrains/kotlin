@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -363,6 +364,69 @@ class C(param1: String = "", param2: Int = 0) {
 
         val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
         annotationArguments.analyzeFullyAndGetResult()
+    }
+
+    fun testFunctionParameterAnnotation() {
+        val file = myFixture.configureByText("Test.kt", """
+        annotation class Ann
+        fun foo(@Ann p: Int) {
+            bar()
+        }
+        """) as KtFile
+
+        val function = (file.declarations[1]) as KtFunction
+        val annotationEntry = function.valueParameters[0].annotationEntries[0]
+        val typeRef = annotationEntry.typeReference!!
+
+        val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
+
+        val referenceExpr = (typeRef.typeElement as KtUserType).referenceExpression
+        val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpr]
+        TestCase.assertEquals("Ann", target?.importableFqName?.asString())
+
+        val statement = (function.bodyExpression as KtBlockExpression).statements[0]
+        TestCase.assertEquals(null, bindingContext[BindingContext.PROCESSED, statement])
+    }
+
+    fun testPrimaryConstructorParameterAnnotation() {
+        val file = myFixture.configureByText("Test.kt", """
+        annotation class Ann
+        class X(@set:Ann var p: Int)
+        """) as KtFile
+
+        val constructor = ((file.declarations[1]) as KtClass).getPrimaryConstructor()!!
+        val annotationEntry = constructor.valueParameters[0].annotationEntries[0]
+        val typeRef = annotationEntry.typeReference!!
+
+        val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
+
+        val referenceExpr = (typeRef.typeElement as KtUserType).referenceExpression
+        val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpr]
+        TestCase.assertEquals("Ann", target?.importableFqName?.asString())
+    }
+
+    fun testSecondaryConstructorParameterAnnotation() {
+        val file = myFixture.configureByText("Test.kt", """
+        annotation class Ann
+        class X {
+            constructor(@Ann p: Int) {
+                foo()
+            }
+        }
+        """) as KtFile
+
+        val constructor = ((file.declarations[1]) as KtClass).getSecondaryConstructors()[0]
+        val annotationEntry = constructor.valueParameters[0].annotationEntries[0]
+        val typeRef = annotationEntry.typeReference!!
+
+        val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
+
+        val referenceExpr = (typeRef.typeElement as KtUserType).referenceExpression
+        val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpr]
+        TestCase.assertEquals("Ann", target?.importableFqName?.asString())
+
+        val statement = (constructor.bodyExpression as KtBlockExpression).statements[0]
+        TestCase.assertEquals(null, bindingContext[BindingContext.PROCESSED, statement])
     }
 
     fun testFullResolveMultiple() {

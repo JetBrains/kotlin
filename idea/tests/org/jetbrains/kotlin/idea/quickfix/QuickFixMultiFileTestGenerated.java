@@ -83,6 +83,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("constructorParameterAnnotation.test")
+        public void testConstructorParameterAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/constructorParameterAnnotation.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("delegateExtensionBoth.test")
         public void testDelegateExtensionBoth() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateExtensionBoth.test");

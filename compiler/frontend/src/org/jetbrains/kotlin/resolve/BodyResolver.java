@@ -838,14 +838,14 @@ public class BodyResolver {
         assert functionDescriptor.getReturnType() != null;
     }
 
-    public void resolveConstructorParameterDefaultValuesAndAnnotations(
+    public void resolveConstructorParameterDefaultValues(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
-            @NotNull KtClass klass,
+            @NotNull KtPrimaryConstructor constructor,
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull LexicalScope declaringScope
     ) {
-        List<KtParameter> valueParameters = klass.getPrimaryConstructorParameters();
+        List<KtParameter> valueParameters = constructor.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
 
         LexicalScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
