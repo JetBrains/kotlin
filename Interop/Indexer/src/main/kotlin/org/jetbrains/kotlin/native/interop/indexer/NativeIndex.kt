@@ -64,38 +64,40 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
 /**
  * C type.
  */
-open class Type
+interface Type
 
-open class PrimitiveType : Type()
+interface PrimitiveType : Type
 
-object VoidType : Type()
+object VoidType : Type
 
-object Int8Type : PrimitiveType()
-object UInt8Type : PrimitiveType()
+object Int8Type : PrimitiveType
+object UInt8Type : PrimitiveType
 
-object Int16Type : PrimitiveType()
-object UInt16Type : PrimitiveType()
+object Int16Type : PrimitiveType
+object UInt16Type : PrimitiveType
 
-object Int32Type : PrimitiveType()
-object UInt32Type : PrimitiveType()
+object Int32Type : PrimitiveType
+object UInt32Type : PrimitiveType
 
-object IntPtrType : PrimitiveType()
-object UIntPtrType : PrimitiveType()
+object IntPtrType : PrimitiveType
+object UIntPtrType : PrimitiveType
 
-object Int64Type : PrimitiveType()
-object UInt64Type : PrimitiveType()
+object Int64Type : PrimitiveType
+object UInt64Type : PrimitiveType
 
-class RecordType(val decl: StructDecl) : Type()
+data class RecordType(val decl: StructDecl) : Type
 
-class EnumType(val def: EnumDef) : Type()
+data class EnumType(val def: EnumDef) : Type
 
-class PointerType(val pointeeType : Type) : Type()
+data class PointerType(val pointeeType : Type) : Type
 
-class FunctionType(val parameterTypes: List<Type>, val returnType: Type) : Type()
+data class FunctionType(val parameterTypes: List<Type>, val returnType: Type) : Type
 
-open class ArrayType(val elemType: Type) : Type()
-class ConstArrayType(elemType: Type, val length: Long) : ArrayType(elemType)
-class IncompleteArrayType(elemType: Type) : ArrayType(elemType)
+interface ArrayType : Type {
+    val elemType: Type
+}
 
-object UnsupportedType : Type()
+data class ConstArrayType(override val elemType: Type, val length: Long) : ArrayType
+data class IncompleteArrayType(override val elemType: Type) : ArrayType
 
+object UnsupportedType : Type

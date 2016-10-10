@@ -8,6 +8,8 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        def runtimeNativeLibsDir = new File(prj.findProject(':Interop:Runtime').buildDir, 'nativelibs')
+
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
 
         prj.configurations {
@@ -30,7 +32,11 @@ class NativeInteropPlugin implements Plugin<Project> {
                 main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
                 jvmArgs '-ea'
 
-                systemProperties "java.library.path" : new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs")
+
+                systemProperties "java.library.path" : prj.files(
+                        new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs"),
+                        runtimeNativeLibsDir
+                ).asPath
                 systemProperties "llvmInstallPath" : prj.llvmInstallPath
                 environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
                 environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
@@ -60,7 +66,10 @@ class NativeInteropPlugin implements Plugin<Project> {
         // FIXME: choose tasks more wisely
         prj.tasks.withType(JavaExec) {
             if (!name.endsWith("InteropStubs")) {
-                systemProperties "java.library.path": nativeLibsDir
+                systemProperties "java.library.path": prj.files(
+                        nativeLibsDir,
+                        runtimeNativeLibsDir
+                ).asPath
             }
         }
     }
