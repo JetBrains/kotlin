@@ -205,9 +205,19 @@ public abstract class BaseDiagnosticsTest
         return values;
     }
 
-    public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
+    private static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
         String directives = directiveMap.get(DIAGNOSTICS_DIRECTIVE);
         if (directives == null) {
+            // If "!API_VERSION" is present, disable the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic.
+            // Otherwise it would be reported in any non-trivial test on the @SinceKotlin value.
+            if (directiveMap.containsKey(API_VERSION_DIRECTIVE)) {
+                return new Condition<Diagnostic>() {
+                    @Override
+                    public boolean value(Diagnostic diagnostic) {
+                        return diagnostic.getFactory() != Errors.NEWER_VERSION_IN_SINCE_KOTLIN;
+                    }
+                };
+            }
             return Conditions.alwaysTrue();
         }
         Condition<Diagnostic> condition = Conditions.alwaysTrue();

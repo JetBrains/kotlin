@@ -162,6 +162,7 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
         MAP.put(ILLEGAL_SINCE_KOTLIN_VALUE, "Invalid @SinceKotlin annotation value (should be 'major.minor' or 'major.minor.patch')");
+        MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");

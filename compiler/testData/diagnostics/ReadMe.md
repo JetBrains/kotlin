@@ -87,6 +87,7 @@ This directive lets you enable or disable certain language features. Language fe
 ### 5. API_VERSION
 
 This directive emulates the behavior of the `-api-version` command line option, disallowing to use declarations annotated with `@SinceKotlin(X)` where X is greater than the specified API version.
+Note that if this directive is present, the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic is automatically disabled, _unless_ the "!DIAGNOSTICS" directive is present.
 
 #### Usage:
 

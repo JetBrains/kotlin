@@ -43,6 +43,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("apiVersionAndSinceNewerKotlin.args")
+        public void testApiVersionAndSinceNewerKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionAndSinceNewerKotlin.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("apiVersionGreaterThanLanguage.args")
         public void testApiVersionGreaterThanLanguage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionGreaterThanLanguage.args");
