@@ -1553,6 +1553,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnsafeCastFromDynamicInspection"
+                     displayName="Implicit (unsafe) cast from dynamic type"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OverridingDeprecatedMemberInspection"
                      shortName="OverridingDeprecatedMember"
                      displayName="Overriding deprecated member"
