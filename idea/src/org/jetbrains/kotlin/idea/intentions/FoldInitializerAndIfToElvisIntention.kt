@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention::class)
+class FoldInitializerAndIfToElvisInspection : IntentionBasedInspection<KtIfExpression>(FoldInitializerAndIfToElvisIntention::class)
 
-class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
+class FoldInitializerAndIfToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val data = calcData(element) ?: return null
 
@@ -49,7 +49,7 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val (initializer, declaration, ifNullExpr) = calcData(element)!!
+        val (initializer, declaration, ifNullExpr, typeReference) = calcData(element)!!
         val factory = KtPsiFactory(element)
 
         val explicitTypeToSet = when {
@@ -67,6 +67,9 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         val childRangeAfter = childRangeBefore.withoutLastStatement()
 
         val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as KtBinaryExpression
+        if (typeReference != null) {
+            elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", initializer, typeReference))
+        }
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
@@ -82,15 +85,25 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
     private data class Data(
             val initializer: KtExpression,
             val declaration: KtVariableDeclaration,
-            val ifNullExpression: KtExpression
+            val ifNullExpression: KtExpression,
+            val typeChecked: KtTypeReference? = null
     )
 
     private fun calcData(ifExpression: KtIfExpression): Data? {
         if (ifExpression.`else` != null) return null
 
-        val binaryExpression = ifExpression.condition as? KtBinaryExpression ?: return null
-        if (binaryExpression.operationToken != KtTokens.EQEQ) return null
-        val value = binaryExpression.expressionComparedToNull() as? KtNameReferenceExpression ?: return null
+        val operationExpression = ifExpression.condition as? KtOperationExpression ?: return null
+        val value = when (operationExpression) {
+            is KtBinaryExpression -> {
+                if (operationExpression.operationToken != KtTokens.EQEQ) return null
+                operationExpression.expressionComparedToNull()
+            }
+            is KtIsExpression -> {
+                if (!operationExpression.isNegated) return null
+                operationExpression.leftHandSide
+            }
+            else -> return null
+        } as? KtNameReferenceExpression ?: return null
 
         if (ifExpression.parent !is KtBlockExpression) return null
         val prevStatement = ifExpression.siblings(forward = false, withItself = false)
@@ -99,13 +112,14 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         if (prevStatement.nameAsName != value.getReferencedNameAsName()) return null
         val initializer = prevStatement.initializer ?: return null
         val then = ifExpression.then ?: return null
+        val typeReference = (operationExpression as? KtIsExpression)?.typeReference
 
         if (then is KtBlockExpression) {
             val statement = then.statements.singleOrNull() ?: return null
-            return Data(initializer, prevStatement, statement)
+            return Data(initializer, prevStatement, statement, typeReference)
         }
         else {
-            return Data(initializer, prevStatement, then)
+            return Data(initializer, prevStatement, then, typeReference)
         }
     }
 

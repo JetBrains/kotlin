@@ -6330,6 +6330,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NotIs.kt")
+        public void testNotIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/NotIs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OtherVar1.kt")
         public void testOtherVar1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/OtherVar1.kt");
