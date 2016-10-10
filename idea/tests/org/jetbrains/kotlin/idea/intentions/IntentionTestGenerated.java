@@ -1302,6 +1302,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheckWithSelector.kt")
+            public void testIsCheckWithSelector() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckWithSelector.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lhsEqualsNull.kt")
             public void testLhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/lhsEqualsNull.kt");
@@ -1371,6 +1377,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("nullBranchAlsoNull.kt")
             public void testNullBranchAlsoNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/nullBranchAlsoNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckWithSelector.kt")
+            public void testNullCheckWithSelector() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/nullCheckWithSelector.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckWithSelectorCall.kt")
+            public void testNullCheckWithSelectorCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/nullCheckWithSelectorCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullCheckWithSelectorCallChain.kt")
+            public void testNullCheckWithSelectorCallChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/nullCheckWithSelectorCallChain.kt");
                 doTest(fileName);
             }
 

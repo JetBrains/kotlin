@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
+import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -33,31 +35,33 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 ) {
 
     private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression) =
-            firstClause.isNotNullExpression() && secondClause.evaluatesTo(this) &&
+            firstClause.isNotNullExpression() &&
+            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this)) &&
             !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
+
+    private fun KtExpression.checkedExpression() = when (this) {
+        is KtBinaryExpression -> expressionComparedToNull()
+        is KtIsExpression -> leftHandSide
+        else -> null
+    }
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val condition = element.condition as? KtOperationExpression ?: return false
         val thenClause = element.then ?: return false
         val elseClause = element.`else` ?: return false
 
-        val expression = when (condition) {
-            is KtBinaryExpression -> condition.expressionComparedToNull() ?: return false
-            is KtIsExpression -> condition.leftHandSide
-            else -> return false
-
-        }
-        if (!expression.isStableVariable()) return false
+        val checkedExpression = condition.checkedExpression() ?: return false
+        if (!checkedExpression.isStableVariable()) return false
 
         return when (condition) {
             is KtBinaryExpression -> when (condition.operationToken) {
-                KtTokens.EQEQ -> expression.clausesReplaceableByElvis(thenClause, elseClause)
-                KtTokens.EXCLEQ -> expression.clausesReplaceableByElvis(elseClause, thenClause)
+                KtTokens.EQEQ -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause)
+                KtTokens.EXCLEQ -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause)
                 else -> false
             }
             is KtIsExpression -> when (condition.isNegated) {
-                true -> expression.clausesReplaceableByElvis(thenClause, elseClause)
-                false -> expression.clausesReplaceableByElvis(elseClause, thenClause)
+                true -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause)
+                false -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause)
             }
             else -> false
         }
@@ -66,6 +70,20 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
     private fun KtExpression.isNotNullExpression(): Boolean {
         val innerExpression = this.unwrapBlockOrParenthesis()
         return innerExpression !is KtBlockExpression && innerExpression.node.elementType != KtNodeTypes.NULL
+    }
+
+    private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
+        val actualReceiver = (unwrapBlockOrParenthesis() as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
+        return actualReceiver.evaluatesTo(receiver)
+    }
+
+    private fun KtExpression.insertSafeCalls(factory: KtPsiFactory): KtExpression {
+        if (this !is KtQualifiedExpression) return this
+        if (this is KtDotQualifiedExpression) {
+            operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
+        }
+        receiverExpression.insertSafeCalls(factory)
+        return this
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
@@ -90,11 +108,26 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         }
 
         val factory = KtPsiFactory(element)
-        val newExpr = factory.createExpressionByPattern("$0 ?: $1", left, right) as KtBinaryExpression
-        if (condition is KtIsExpression) {
-            newExpr.left!!.replace(factory.createExpressionByPattern("$0 as? $1", left, condition.typeReference!!))
+        val newReceiver = (condition as? KtIsExpression)?.let {
+            factory.createExpressionByPattern("$0 as? $1",
+                                              (left as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: left,
+                                              it.typeReference!!)
         }
-        val elvis = KtPsiUtil.deparenthesize(element.replaced(newExpr)) as KtBinaryExpression
+        val checkedExpression = condition.checkedExpression()!!
+        val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
+            if (condition is KtIsExpression) newReceiver!! else left
+        }
+        else {
+            if (condition is KtIsExpression) {
+                (left as KtDotQualifiedExpression).replaceFirstReceiver(
+                        factory, newReceiver!!, safeAccess = true)
+            }
+            else {
+                left.insertSafeCalls(factory)
+            }
+        }
+        val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1", replacedLeft, right))
+        val elvis = KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
 
         if (editor != null) {
             elvis.inlineLeftSideIfApplicableWithPrompt(editor)

@@ -261,3 +261,28 @@ fun KtElement?.isSizeOrLength(): Boolean {
         else -> false
     }
 }
+
+
+fun KtDotQualifiedExpression.getLeftMostReceiverExpression(): KtExpression =
+        (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
+
+fun KtDotQualifiedExpression.replaceFirstReceiver(
+        factory: KtPsiFactory,
+        newReceiver: KtExpression,
+        safeAccess: Boolean = false
+): KtExpression {
+    val receiver = receiverExpression
+    when (receiver) {
+        is KtDotQualifiedExpression -> {
+            receiver.replaceFirstReceiver(factory, newReceiver, safeAccess)
+        }
+        else -> {
+            if (safeAccess) {
+                operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
+            }
+            receiver.replace(newReceiver)
+        }
+    }
+    return this
+}
+

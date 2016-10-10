@@ -58,26 +58,6 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         return this
     }
 
-    private fun KtDotQualifiedExpression.replaceFirstReceiver(
-            factory: KtPsiFactory,
-            newReceiver: KtExpression,
-            safeAccess: Boolean = false
-    ): KtExpression {
-        val receiver = receiverExpression
-        when (receiver) {
-            is KtDotQualifiedExpression -> {
-                receiver.replaceFirstReceiver(factory, newReceiver, safeAccess)
-            }
-            else -> {
-                if (safeAccess) {
-                    operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
-                }
-                receiver.replace(newReceiver)
-            }
-        }
-        return this
-    }
-
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         if (!isLetMethod(element)) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
@@ -97,9 +77,6 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         if (parameters.size > 1) return null
         return if (parameters.size == 1) parameters[0].text else "it"
     }
-
-    private fun KtDotQualifiedExpression.getLeftMostReceiverExpression(): KtExpression =
-            (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
 
     private fun KtDotQualifiedExpression.receiverUsedAsArgument(receiverName: String): Boolean {
         if ((selectorExpression as? KtCallExpression)?.valueArguments?.firstOrNull { it.text == receiverName } != null) return true
