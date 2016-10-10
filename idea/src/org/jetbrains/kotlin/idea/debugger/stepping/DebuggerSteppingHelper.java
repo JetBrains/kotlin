@@ -65,15 +65,13 @@ public class DebuggerSteppingHelper {
 
                         SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
 
-                        if (command != null) {
-                            createStepRequest(
-                                    suspendContext, getContextThread(),
-                                    debugProcess.getVirtualMachineProxy().eventRequestManager(),
-                                    StepRequest.STEP_LINE, StepRequest.STEP_OUT);
+                        createStepRequest(
+                                suspendContext, getContextThread(),
+                                debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                                StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                            command.contextAction();
-                            return;
-                        }
+                        command.contextAction();
+                        return;
                     }
 
                     debugProcess.createStepOutCommand(suspendContext).contextAction();
@@ -108,16 +106,13 @@ public class DebuggerSteppingHelper {
                         );
 
                         SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
+                        createStepRequest(
+                                suspendContext, getContextThread(),
+                                debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                                StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                        if (command != null) {
-                            createStepRequest(
-                                    suspendContext, getContextThread(),
-                                    debugProcess.getVirtualMachineProxy().eventRequestManager(),
-                                    StepRequest.STEP_LINE, StepRequest.STEP_OUT);
-
-                            command.contextAction();
-                            return;
-                        }
+                        command.contextAction();
+                        return;
                     }
 
                     debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction();
