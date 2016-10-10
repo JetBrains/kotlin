@@ -240,7 +240,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
             assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
         }
         catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
+            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage().replace('\n', ' '));
         }
     }
 

@@ -1,0 +1,22 @@
+// WITH_RUNTIME
+
+enum class <caret>MyClass(val s: String = "") {
+    FOO("FOO"), BAR("BAR"), DEFAULT();
+
+    fun foo() {
+
+    }
+
+}
+
+fun test(e: MyClass) {
+    if (e == MyClass.BAR) {
+        println()
+    }
+
+    val n = when (e) {
+        MyClass.BAR -> 1
+        MyClass.FOO -> 2
+        MyClass.DEFAULT -> 0
+    }
+}
