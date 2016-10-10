@@ -328,7 +328,14 @@ sealed class Action(val position: XSourcePositionImpl?) {
     class STEP_OUT: Action(null)
     class RUN_TO_CURSOR(position: XSourcePositionImpl): Action(position)
 
-    fun createCommand(
+    fun apply(debugProcess: DebugProcessImpl,
+              suspendContext: SuspendContextImpl,
+              ignoreBreakpoints: Boolean) {
+        val command = createCommand(debugProcess, suspendContext, ignoreBreakpoints)
+        command.contextAction()
+    }
+
+    private fun createCommand(
             debugProcess: DebugProcessImpl,
             suspendContext: SuspendContextImpl,
             ignoreBreakpoints: Boolean

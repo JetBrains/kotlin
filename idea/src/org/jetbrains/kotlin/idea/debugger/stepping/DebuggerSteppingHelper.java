@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.stepping;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
-import com.intellij.debugger.engine.events.SuspendContextCommandImpl;
 import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
@@ -38,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,23 +61,18 @@ public class DebuggerSteppingHelper {
                                 kotlinSourcePosition
                         );
 
-                        SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
-
                         createStepRequest(
                                 suspendContext, getContextThread(),
                                 debugProcess.getVirtualMachineProxy().eventRequestManager(),
                                 StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                        command.contextAction();
+                        action.apply(debugProcess, suspendContext, ignoreBreakpoints);
                         return;
                     }
 
                     debugProcess.createStepOutCommand(suspendContext).contextAction();
                 }
                 catch (EvaluateException ignored) {
-                }
-                catch (Exception e) {
-                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
         };
@@ -105,23 +98,18 @@ public class DebuggerSteppingHelper {
                                 inlineArgument
                         );
 
-                        SuspendContextCommandImpl command = action.createCommand(debugProcess, suspendContext, ignoreBreakpoints);
                         createStepRequest(
                                 suspendContext, getContextThread(),
                                 debugProcess.getVirtualMachineProxy().eventRequestManager(),
                                 StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                        command.contextAction();
+                        action.apply(debugProcess, suspendContext, ignoreBreakpoints);
                         return;
                     }
 
                     debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction();
                 }
                 catch (EvaluateException ignored) {
-
-                }
-                catch (Exception e) {
-                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
         };
