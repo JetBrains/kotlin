@@ -60,7 +60,13 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         Disposer.dispose(myTestRootDisposable)
 
         val expectations = parseExpectations(ktFile)
-        expectations.check()
+        try {
+            expectations.check()
+        }
+        catch (e: Throwable) {
+            println(outputFiles.createText())
+            throw e
+        }
     }
 
     private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {
