@@ -1848,7 +1848,7 @@
                      displayName="Replace empty class body"
                      groupName="Kotlin"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
