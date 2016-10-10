@@ -1,4 +1,5 @@
-TESTS := sum
+TESTS := sum \
+         sum_foo_bar
 
 BIN_TESTS=$(foreach t, ${TESTS},${t}_test)
 
