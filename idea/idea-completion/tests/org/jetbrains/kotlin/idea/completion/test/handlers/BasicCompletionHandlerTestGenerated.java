@@ -41,24 +41,6 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("AnnotationInBrackets.kt")
-    public void testAnnotationInBrackets() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInBrackets.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("AnnotationInClassAddImport.kt")
-    public void testAnnotationInClassAddImport() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInClassAddImport.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("AnnotationInCompanionObjectAddImport.kt")
-    public void testAnnotationInCompanionObjectAddImport() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInCompanionObjectAddImport.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("ClassKeywordBeforeName.kt")
     public void testClassKeywordBeforeName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ClassKeywordBeforeName.kt");
@@ -219,6 +201,33 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     public void testTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/TypeParameter.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/annotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotation extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/annotation"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("AnnotationInBrackets.kt")
+        public void testAnnotationInBrackets() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/annotation/AnnotationInBrackets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AnnotationInClassAddImport.kt")
+        public void testAnnotationInClassAddImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/annotation/AnnotationInClassAddImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AnnotationInCompanionObjectAddImport.kt")
+        public void testAnnotationInCompanionObjectAddImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/annotation/AnnotationInCompanionObjectAddImport.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/callableReference")
