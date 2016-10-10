@@ -10251,6 +10251,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeEmptyClassBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveEmptyClassBody extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveEmptyClassBody() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeEmptyClassBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("emptyClass.kt")
+        public void testEmptyClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/emptyClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyDataClass.kt")
+        public void testEmptyDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/emptyDataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyInterface.kt")
+        public void testEmptyInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/emptyInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noneEmptyClass.kt")
+        public void testNoneEmptyClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/noneEmptyClass.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
