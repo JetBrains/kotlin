@@ -3003,6 +3003,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/spaceBeforeAssignment.java");
             doTest(fileName);
         }
+
+        @TestMetadata("unfinishedReferenceExpression.java")
+        public void testUnfinishedReferenceExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/unfinishedReferenceExpression.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/kotlinApiAccess")
