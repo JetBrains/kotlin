@@ -68,7 +68,8 @@ class CodeConformanceTest : TestCase() {
                         "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
                         { source ->
                             // substring check is an optimization
-                            "@author" in source && atAuthorPattern.matcher(source).find()
+                            "@author" in source && atAuthorPattern.matcher(source).find() &&
+                                "ASM: a very small and fast Java bytecode manipulation framework" !in source
                         }
                 ),
                 TestData(
