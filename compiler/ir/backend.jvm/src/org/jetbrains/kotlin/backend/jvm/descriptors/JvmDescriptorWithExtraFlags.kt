@@ -69,11 +69,6 @@ class JvmPropertyDescriptorImpl(
                 JvmPropertyDescriptorImpl(
                         containingDeclaration, null, annotations, modality, visibility, extraFlags, false, name,
                         CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
-                ).setTypeNoReceivers(type)
-
-        private fun PropertyDescriptorImpl.setTypeNoReceivers(type: KotlinType): PropertyDescriptorImpl {
-            setType(type, emptyList(), null as ReceiverParameterDescriptor?, null as ReceiverParameterDescriptor?)
-            return this
-        }
+                ).initialize(type)
     }
 }
