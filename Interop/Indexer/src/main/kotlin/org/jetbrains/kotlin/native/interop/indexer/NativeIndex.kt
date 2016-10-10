@@ -31,8 +31,11 @@ abstract class StructDecl(val spelling: String) {
 
 /**
  * C struct definition.
+ *
+ * @param hasNaturalLayout must be `false` if the struct has unnatural layout, e.g. it is `packed`.
+ * May be `false` even if the struct has natural layout.
  */
-abstract class StructDef(val size: Long, val decl: StructDecl) {
+abstract class StructDef(val size: Long, val decl: StructDecl, val hasNaturalLayout: Boolean) {
 
     abstract val fields: List<Field>
 }

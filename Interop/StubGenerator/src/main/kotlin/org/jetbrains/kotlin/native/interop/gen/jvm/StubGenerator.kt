@@ -590,10 +590,15 @@ class StubGenerator(
             is IntPtrType, is UIntPtrType, // TODO
             is PointerType, is ArrayType -> "Pointer"
             is EnumType -> getFfiType(type.def.baseType)
-            // FIXME: check that alignment is natural
-            is RecordType -> "Struct(" + type.decl.def!!.fields.map {
-                getFfiType(it.type)
-            }.joinToString(", ") + ")"
+            is RecordType -> {
+                val def = type.decl.def!!
+                if (!def.hasNaturalLayout) {
+                    throw NotImplementedError() // TODO: represent pointer to function as NativePtr instead
+                }
+                "Struct(" + def.fields.map {
+                    getFfiType(it.type)
+                }.joinToString(", ") + ")"
+            }
             else -> throw NotImplementedError(type.toString())
         }
     }

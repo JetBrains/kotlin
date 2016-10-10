@@ -1256,9 +1256,9 @@ fun clang_getIBOutletCollectionType(arg0: CXCursor, retValPlacement: Placement):
     return NativePtr.byValue(res).asRef(CXType)!!
 }
 
-fun clang_visitChildren(parent: CXCursor, visitor: NativePtr?, client_data: NativePtr?): Int {
+fun clang_visitChildren(parent: CXCursor, visitor: ((CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult)?, client_data: NativePtr?): Int {
     val _parent = parent.getNativePtr().asLong()
-    val _visitor = visitor.asLong()
+    val _visitor = visitor?.staticAsNative(NativeFunctionType1).asLong()
     val _client_data = client_data.asLong()
     val res = externals.clang_visitChildren(_parent, _visitor, _client_data)
     return res
@@ -1636,8 +1636,8 @@ fun clang_enableStackTraces(): Unit {
     return res
 }
 
-fun clang_executeOnThread(fn: NativePtr?, user_data: NativePtr?, stack_size: Int): Unit {
-    val _fn = fn.asLong()
+fun clang_executeOnThread(fn: ((NativePtr?) -> Unit)?, user_data: NativePtr?, stack_size: Int): Unit {
+    val _fn = fn?.staticAsNative(NativeFunctionType2).asLong()
     val _user_data = user_data.asLong()
     val res = externals.clang_executeOnThread(_fn, _user_data, stack_size)
     return res
@@ -1790,9 +1790,9 @@ fun clang_toggleCrashRecovery(isEnabled: Int): Unit {
     return res
 }
 
-fun clang_getInclusions(tu: CXTranslationUnitImpl?, visitor: NativePtr?, client_data: NativePtr?): Unit {
+fun clang_getInclusions(tu: CXTranslationUnitImpl?, visitor: ((NativePtr?, CXSourceLocation?, Int, NativePtr?) -> Unit)?, client_data: NativePtr?): Unit {
     val _tu = tu.getNativePtr().asLong()
-    val _visitor = visitor.asLong()
+    val _visitor = visitor?.staticAsNative(NativeFunctionType3).asLong()
     val _client_data = client_data.asLong()
     val res = externals.clang_getInclusions(_tu, _visitor, _client_data)
     return res
@@ -1986,9 +1986,9 @@ fun clang_indexLoc_getCXSourceLocation(loc: CXIdxLoc, retValPlacement: Placement
     return NativePtr.byValue(res).asRef(CXSourceLocation)!!
 }
 
-fun clang_Type_visitFields(T: CXType, visitor: NativePtr?, client_data: NativePtr?): Int {
+fun clang_Type_visitFields(T: CXType, visitor: ((CXCursor, NativePtr?) -> CXVisitorResult)?, client_data: NativePtr?): Int {
     val _T = T.getNativePtr().asLong()
-    val _visitor = visitor.asLong()
+    val _visitor = visitor?.staticAsNative(NativeFunctionType4).asLong()
     val _client_data = client_data.asLong()
     val res = externals.clang_Type_visitFields(_T, _visitor, _client_data)
     return res
@@ -2006,7 +2006,7 @@ class __darwin_pthread_handler_rec(ptr: NativePtr) : NativeStruct(ptr) {
     
     companion object : Type<__darwin_pthread_handler_rec>(24, ::__darwin_pthread_handler_rec)
     
-    val __routine by NativePtrBox at 0
+    val __routine by NativeFunctionType2.ref at 0
     val __arg by NativePtrBox at 8
     val __next by __darwin_pthread_handler_rec.ref at 16
 }
@@ -2266,7 +2266,7 @@ class CXCursorAndRangeVisitor(ptr: NativePtr) : NativeStruct(ptr) {
     companion object : Type<CXCursorAndRangeVisitor>(16, ::CXCursorAndRangeVisitor)
     
     val context by NativePtrBox at 0
-    val visit by NativePtrBox at 8
+    val visit by NativeFunctionType5.ref at 8
 }
 
 class CXIdxLoc(ptr: NativePtr) : NativeStruct(ptr) {
@@ -2446,14 +2446,14 @@ class IndexerCallbacks(ptr: NativePtr) : NativeStruct(ptr) {
     
     companion object : Type<IndexerCallbacks>(64, ::IndexerCallbacks)
     
-    val abortQuery by NativePtrBox at 0
-    val diagnostic by NativePtrBox at 8
-    val enteredMainFile by NativePtrBox at 16
-    val ppIncludedFile by NativePtrBox at 24
-    val importedASTFile by NativePtrBox at 32
-    val startedTranslationUnit by NativePtrBox at 40
-    val indexDeclaration by NativePtrBox at 48
-    val indexEntityReference by NativePtrBox at 56
+    val abortQuery by NativeFunctionType6.ref at 0
+    val diagnostic by NativeFunctionType7.ref at 8
+    val enteredMainFile by NativeFunctionType8.ref at 16
+    val ppIncludedFile by NativeFunctionType9.ref at 24
+    val importedASTFile by NativeFunctionType10.ref at 32
+    val startedTranslationUnit by NativeFunctionType11.ref at 40
+    val indexDeclaration by NativeFunctionType12.ref at 48
+    val indexEntityReference by NativeFunctionType13.ref at 56
 }
 
 enum class CXErrorCode(val value: Int) {
@@ -3567,6 +3567,92 @@ enum class CXIndexOptFlags(val value: Int) {
         var value: CXIndexOptFlags
             get() = byValue(Int32Box.byPtr(ptr).value)
             set(value) { Int32Box.byPtr(ptr).value = value.value }
+    }
+}
+
+object NativeFunctionType1 : NativeFunctionType<(CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Pointer), Struct(UInt32, SInt32, Pointer), Pointer) {
+    override fun invoke(function: (CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(CXCursor)!!, args[1].value.asRef(CXCursor)!!, args[2].value.asRef(NativePtrBox)!!.value)
+        CXChildVisitResult.ref.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType2 : NativeFunctionType<(NativePtr?) -> Unit>(Void, Pointer) {
+    override fun invoke(function: (NativePtr?) -> Unit, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value)
+    }
+}
+
+object NativeFunctionType3 : NativeFunctionType<(NativePtr?, CXSourceLocation?, Int, NativePtr?) -> Unit>(Void, Pointer, Pointer, UInt32, Pointer) {
+    override fun invoke(function: (NativePtr?, CXSourceLocation?, Int, NativePtr?) -> Unit, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXSourceLocation.ref)!!.value, args[2].value.asRef(Int32Box)!!.value, args[3].value.asRef(NativePtrBox)!!.value)
+    }
+}
+
+object NativeFunctionType4 : NativeFunctionType<(CXCursor, NativePtr?) -> CXVisitorResult>(UInt32, Struct(UInt32, SInt32, Pointer), Pointer) {
+    override fun invoke(function: (CXCursor, NativePtr?) -> CXVisitorResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(CXCursor)!!, args[1].value.asRef(NativePtrBox)!!.value)
+        CXVisitorResult.ref.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType5 : NativeFunctionType<(NativePtr?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Pointer), Struct(Pointer, UInt32, UInt32)) {
+    override fun invoke(function: (NativePtr?, CXCursor, CXSourceRange) -> CXVisitorResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXCursor)!!, args[2].value.asRef(CXSourceRange)!!)
+        CXVisitorResult.ref.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType6 : NativeFunctionType<(NativePtr?, NativePtr?) -> Int>(SInt32, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, NativePtr?) -> Int, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(NativePtrBox)!!.value)
+        Int32Box.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType7 : NativeFunctionType<(NativePtr?, NativePtr?, NativePtr?) -> Unit>(Void, Pointer, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, NativePtr?, NativePtr?) -> Unit, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(NativePtrBox)!!.value, args[2].value.asRef(NativePtrBox)!!.value)
+    }
+}
+
+object NativeFunctionType8 : NativeFunctionType<(NativePtr?, NativePtr?, NativePtr?) -> NativePtr?>(Pointer, Pointer, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, NativePtr?, NativePtr?) -> NativePtr?, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(NativePtrBox)!!.value, args[2].value.asRef(NativePtrBox)!!.value)
+        NativePtrBox.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType9 : NativeFunctionType<(NativePtr?, CXIdxIncludedFileInfo?) -> NativePtr?>(Pointer, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, CXIdxIncludedFileInfo?) -> NativePtr?, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXIdxIncludedFileInfo.ref)!!.value)
+        NativePtrBox.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType10 : NativeFunctionType<(NativePtr?, CXIdxImportedASTFileInfo?) -> NativePtr?>(Pointer, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, CXIdxImportedASTFileInfo?) -> NativePtr?, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXIdxImportedASTFileInfo.ref)!!.value)
+        NativePtrBox.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType11 : NativeFunctionType<(NativePtr?, NativePtr?) -> NativePtr?>(Pointer, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, NativePtr?) -> NativePtr?, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(NativePtrBox)!!.value)
+        NativePtrBox.byPtr(ret).value = res
+    }
+}
+
+object NativeFunctionType12 : NativeFunctionType<(NativePtr?, CXIdxDeclInfo?) -> Unit>(Void, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, CXIdxDeclInfo?) -> Unit, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXIdxDeclInfo.ref)!!.value)
+    }
+}
+
+object NativeFunctionType13 : NativeFunctionType<(NativePtr?, CXIdxEntityRefInfo?) -> Unit>(Void, Pointer, Pointer) {
+    override fun invoke(function: (NativePtr?, CXIdxEntityRefInfo?) -> Unit, args: NativeArray<NativePtrBox>, ret: NativePtr) {
+        val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXIdxEntityRefInfo.ref)!!.value)
     }
 }
 

@@ -17,12 +17,6 @@ def compilerArgsForJniIncludes = ["", "linux", "darwin"].collect { "-I$javaHome/
 
 model {
     components {
-        callback(NativeLibrarySpec) {
-            binaries.all {
-                cCompiler.args compilerArgsForJniIncludes
-            }
-        }
-
         clangbridge(NativeLibrarySpec) {
             sources {
                 c.source.srcDir 'prebuilt/nativeInteropStubs/c'
@@ -59,9 +53,8 @@ dependencies {
 }
 
 task nativelibs(type: Copy) {
-    dependsOn 'callbackSharedLibrary', 'clangbridgeSharedLibrary'
+    dependsOn 'clangbridgeSharedLibrary'
 
-    from "$buildDir/libs/callback/shared/"
     from "$buildDir/libs/clangbridge/shared/"
     into "$buildDir/nativelibs/"
 }
