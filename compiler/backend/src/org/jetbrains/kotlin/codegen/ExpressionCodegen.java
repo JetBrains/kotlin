@@ -3448,8 +3448,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                if (isIntRangeExpr(deparenthesized) && AsmUtil.isIntPrimitive(leftValue.type)) {
-                    genInIntRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
+                if (RangeCodegenUtil.isOptimizablePrimitiveRangeSpecialization(leftValue.type, deparenthesized, bindingContext)
+                    || RangeCodegenUtil.isOptimizableRangeTo(operationReference, bindingContext)) {
+                    generateInPrimitiveRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
                 }
                 else {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
@@ -3466,36 +3467,58 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     /*
-     * Translates x in a..b (for int and char ranges only) to a <= x && x <= b
-     * and x !in a..b to a > x || x > b
+     * Translates x in a..b to a <= x && x <= b
+     * and x !in a..b to a > x || x > b for any primitive type
      */
-    private void genInIntRange(StackValue leftValue, KtBinaryExpression rangeExpression, boolean isInverted) {
-        int localVarIndex = myFrameMap.enterTemp(Type.INT_TYPE);
-
+    private void generateInPrimitiveRange(StackValue leftValue, KtBinaryExpression rangeExpression, boolean isInverted) {
+        Type rangeType = leftValue.type;
+        int localVarIndex = myFrameMap.enterTemp(rangeType);
         // Load left bound
-        gen(rangeExpression.getLeft(), Type.INT_TYPE);
+        gen(rangeExpression.getLeft(), rangeType);
         // Load x into local variable to avoid StackValue#put side-effects
-        leftValue.put(Type.INT_TYPE, v);
-        v.store(localVarIndex, Type.INT_TYPE);
-        v.load(localVarIndex, Type.INT_TYPE);
+        leftValue.put(rangeType, v);
+        v.store(localVarIndex, rangeType);
+        v.load(localVarIndex, rangeType);
 
         // If (x < left) goto L1
         Label l1 = new Label();
-        v.ificmpgt(l1);
+        emitGreaterThan(rangeType, l1);
 
         // If (x > right) goto L1
-        v.load(localVarIndex, Type.INT_TYPE);
-        gen(rangeExpression.getRight(), Type.INT_TYPE);
-        v.ificmpgt(l1);
+        v.load(localVarIndex, rangeType);
+        gen(rangeExpression.getRight(), rangeType);
+        emitGreaterThan(rangeType, l1);
 
         Label l2 = new Label();
         v.iconst(isInverted ? 0 : 1);
         v.goTo(l2);
 
         v.mark(l1);
-        v.iconst(isInverted? 1 : 0);
+        v.iconst(isInverted ? 1 : 0);
         v.mark(l2);
-        myFrameMap.leaveTemp(Type.INT_TYPE);
+        myFrameMap.leaveTemp(rangeType);
+    }
+
+    private void emitGreaterThan(Type type, Label label) {
+        if (AsmUtil.isIntPrimitive(type)) {
+            v.ificmpgt(label);
+        }
+        else if (type == Type.LONG_TYPE) {
+            v.lcmp();
+            v.ifgt(label);
+        }
+        // '>' != 'compareTo' for NaN and +/- 0.0
+        else if (type == Type.FLOAT_TYPE) {
+            v.invokestatic("java/lang/Float", "compare", "(FF)I", false);
+            v.ifgt(label);
+        }
+        else if (type == Type.DOUBLE_TYPE) {
+            v.invokestatic("java/lang/Double", "compare", "(DD)I", false);
+            v.ifgt(label);
+        }
+        else {
+            throw new UnsupportedOperationException("Unexpected type: " + type);
+        }
     }
 
     private StackValue generateBooleanAnd(KtBinaryExpression expression) {
@@ -4538,19 +4561,6 @@ The "returned" value of try expression with no finally is either the last expres
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
-    }
-
-    private boolean isIntRangeExpr(KtExpression rangeExpression) {
-        if (rangeExpression instanceof KtBinaryExpression) {
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) rangeExpression;
-            if (binaryExpression.getOperationReference().getReferencedNameElementType() == KtTokens.RANGE) {
-                KotlinType jetType = bindingContext.getType(rangeExpression);
-                assert jetType != null;
-                DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                return DescriptorUtilsKt.getBuiltIns(descriptor).getIntegralRanges().contains(descriptor);
-            }
-        }
-        return false;
     }
 
     private Call makeFakeCall(ReceiverValue initializerAsReceiver) {

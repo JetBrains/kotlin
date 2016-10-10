@@ -402,8 +402,8 @@ public abstract class KotlinBuiltIns {
     public Set<DeclarationDescriptor> getIntegralRanges() {
         return SetsKt.<DeclarationDescriptor>setOf(
                 getBuiltInClassByName("CharRange", rangesPackageFragment),
-                getBuiltInClassByName("IntRange", rangesPackageFragment)
-                // TODO: contains in LongRange should be optimized too
+                getBuiltInClassByName("IntRange", rangesPackageFragment),
+                getBuiltInClassByName("LongRange", rangesPackageFragment)
         );
     }
 
