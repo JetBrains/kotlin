@@ -24,6 +24,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
@@ -56,10 +57,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -67,6 +65,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -182,10 +181,10 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         v.done();
     }
 
-    public void genFunctionOrProperty(@NotNull KtDeclaration functionOrProperty) {
-        if (functionOrProperty instanceof KtNamedFunction) {
+    public void genSimpleMember(@NotNull KtDeclaration declaration) {
+        if (declaration instanceof KtNamedFunction) {
             try {
-                functionCodegen.gen((KtNamedFunction) functionOrProperty);
+                functionCodegen.gen((KtNamedFunction) declaration);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -194,12 +193,12 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 throw e;
             }
             catch (Exception e) {
-                throw new CompilationException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
+                throw new CompilationException("Failed to generate function " + declaration.getName(), e, declaration);
             }
         }
-        else if (functionOrProperty instanceof KtProperty) {
+        else if (declaration instanceof KtProperty) {
             try {
-                propertyCodegen.gen((KtProperty) functionOrProperty);
+                propertyCodegen.gen((KtProperty) declaration);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -208,12 +207,44 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 throw e;
             }
             catch (Exception e) {
-                throw new CompilationException("Failed to generate property " + functionOrProperty.getName(), e, functionOrProperty);
+                throw new CompilationException("Failed to generate property " + declaration.getName(), e, declaration);
             }
+        }
+        else if (declaration instanceof KtTypeAlias) {
+            genTypeAlias((KtTypeAlias) declaration);
         }
         else {
-            throw new IllegalArgumentException("Unknown parameter: " + functionOrProperty);
+            throw new IllegalArgumentException("Unknown parameter: " + declaration);
         }
+    }
+
+    private void genTypeAlias(@NotNull KtTypeAlias typeAlias) {
+        if (!state.getClassBuilderMode().generateMetadata) return;
+
+        TypeAliasDescriptor typeAliasDescriptor = bindingContext.get(TYPE_ALIAS, typeAlias);
+        if (typeAliasDescriptor == null) {
+            throw ExceptionLogger.logDescriptorNotFound("Type alias " + typeAlias.getName() + " should have a descriptor", typeAlias);
+        }
+
+        genTypeAliasAnnotationsMethodIfRequired(typeAliasDescriptor);
+    }
+
+    private void genTypeAliasAnnotationsMethodIfRequired(TypeAliasDescriptor typeAliasDescriptor) {
+        boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplClassOwner(context);
+        Annotations annotations = typeAliasDescriptor.getAnnotations();
+        if (!isAnnotationsMethodOwner || annotations.getAllAnnotations().isEmpty()) return;
+
+        int flags = ACC_DEPRECATED | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
+        String name = JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(typeAliasDescriptor.getName());
+        String desc = "()V";
+        Method syntheticMethod = new Method(name, desc);
+
+        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(typeAliasDescriptor), flags, syntheticMethod.getName(),
+                                       syntheticMethod.getDescriptor(), null, null);
+        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, null);
+        mv.visitCode();
+        mv.visitInsn(Opcodes.RETURN);
+        mv.visitEnd();
     }
 
     public static void genClassOrObject(

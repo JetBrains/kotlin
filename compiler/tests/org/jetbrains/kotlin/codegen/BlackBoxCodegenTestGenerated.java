@@ -73,6 +73,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("annotationsOnTypeAliases.kt")
+        public void testAnnotationsOnTypeAliases() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/annotationsOnTypeAliases.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultParameterValues.kt")
         public void testDefaultParameterValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/defaultParameterValues.kt");

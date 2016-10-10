@@ -224,8 +224,8 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
     private void genMembers() {
         for (KtDeclaration declaration : scriptDeclaration.getDeclarations()) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
-                genFunctionOrProperty(declaration);
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
+                genSimpleMember(declaration);
             }
             else if (declaration instanceof KtClassOrObject) {
                 genClassOrObject((KtClassOrObject) declaration);

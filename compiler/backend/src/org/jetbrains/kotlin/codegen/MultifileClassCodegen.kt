@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -104,7 +101,7 @@ class MultifileClassCodegen(
         result
     }
 
-    private val delegateGenerationTasks = hashMapOf<CallableMemberDescriptor, () -> Unit>()
+    private val delegateGenerationTasks = hashMapOf<MemberDescriptor, () -> Unit>()
 
     private fun getSuperClassForPart(partInternalName: String) =
         if (shouldGeneratePartHierarchy)
@@ -249,17 +246,17 @@ class MultifileClassCodegen(
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForDelegatesInMultifileFacade(facadeContext)
         for (declaration in file.declarations) {
-            if (declaration is KtNamedFunction || declaration is KtProperty) {
+            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
-                if (descriptor !is CallableMemberDescriptor) {
+                if (descriptor !is MemberDescriptor) {
                     throw AssertionError("Expected callable member, was " + descriptor + " for " + declaration.text)
                 }
-                addDelegateGenerationTaskIfNeeded(descriptor, { memberCodegen.genFunctionOrProperty(declaration) })
+                addDelegateGenerationTaskIfNeeded(descriptor, { memberCodegen.genSimpleMember(declaration) })
             }
         }
     }
 
-    private fun shouldGenerateInFacade(descriptor: CallableMemberDescriptor): Boolean {
+    private fun shouldGenerateInFacade(descriptor: MemberDescriptor): Boolean {
         if (Visibilities.isPrivate(descriptor.visibility)) return false
         if (AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE) return false
 
@@ -272,7 +269,7 @@ class MultifileClassCodegen(
         return true
     }
 
-    private fun addDelegateGenerationTaskIfNeeded(callable: CallableMemberDescriptor, task: () -> Unit) {
+    private fun addDelegateGenerationTaskIfNeeded(callable: MemberDescriptor, task: () -> Unit) {
         if (shouldGenerateInFacade(callable)) {
             delegateGenerationTasks[callable] = task
         }

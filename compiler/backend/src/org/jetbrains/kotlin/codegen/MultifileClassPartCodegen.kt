@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassK
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -127,8 +128,8 @@ class MultifileClassPartCodegen(
 
     override fun generateBody() {
         for (declaration in element.declarations) {
-            if (declaration is KtNamedFunction || declaration is KtProperty) {
-                genFunctionOrProperty(declaration)
+            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
+                genSimpleMember(declaration)
             }
         }
 
