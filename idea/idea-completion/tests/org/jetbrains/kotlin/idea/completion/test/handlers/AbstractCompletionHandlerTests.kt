@@ -42,6 +42,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
         settingManager.temporarySettings = tempSettings
         try {
             val fileText = FileUtil.loadFile(File(testPath))
+            assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
             val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
             val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)

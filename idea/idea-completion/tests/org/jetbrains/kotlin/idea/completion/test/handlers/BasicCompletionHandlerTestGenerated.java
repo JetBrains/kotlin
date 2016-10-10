@@ -228,6 +228,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/annotation/AnnotationInCompanionObjectAddImport.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("KT12077.kt")
+        public void testKT12077() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/annotation/KT12077.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/callableReference")
