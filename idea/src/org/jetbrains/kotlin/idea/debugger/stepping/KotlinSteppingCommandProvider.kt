@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
+class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     override fun getStepOverCommand(
             suspendContext: SuspendContextImpl?,
             ignoreBreakpoints: Boolean,
@@ -332,7 +332,7 @@ sealed class Action(val position: XSourcePositionImpl?) {
             debugProcess: DebugProcessImpl,
             suspendContext: SuspendContextImpl,
             ignoreBreakpoints: Boolean
-    ): SuspendContextCommandImpl? {
+    ): SuspendContextCommandImpl {
         return when (this) {
             is Action.RUN_TO_CURSOR -> {
                 runReadAction {
