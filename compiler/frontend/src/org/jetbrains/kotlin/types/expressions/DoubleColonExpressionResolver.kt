@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.callableReferences.createReflectionTypeForCallableDescriptor
@@ -105,6 +106,7 @@ class DoubleColonExpressionResolver(
         }
 
         if (type != null) {
+            checkNoExpressionOnLHS(expression, c) { "" }
             return type
         }
 
@@ -163,7 +165,9 @@ class DoubleColonExpressionResolver(
         val hasErrors = hasErrors(trace) // Do not inline this local variable (execution order is important)
         trace.commit()
         if (!hasErrors && result != null) {
-            checkNoExpressionOnLHS(expression, c)
+            checkNoExpressionOnLHS(expression, c) {
+                "Original result: ${expression.callableReference.getResolvedCall(c.trace.bindingContext)?.resultingDescriptor}"
+            }
         }
         return dataFlowAnalyzer.createCheckedTypeInfo(result, c, expression)
     }
@@ -171,7 +175,7 @@ class DoubleColonExpressionResolver(
     private fun hasErrors(trace: TemporaryBindingTrace): Boolean =
             trace.bindingContext.diagnostics.all().any { diagnostic -> diagnostic.severity == Severity.ERROR }
 
-    private fun checkNoExpressionOnLHS(expression: KtCallableReferenceExpression, c: ExpressionTypingContext) {
+    private fun checkNoExpressionOnLHS(expression: KtDoubleColonExpression, c: ExpressionTypingContext, extraInfo: () -> String) {
         val typeReference = expression.typeReference ?: return
         var typeElement = typeReference.typeElement as? KtUserType ?: return
 
@@ -193,11 +197,10 @@ class DoubleColonExpressionResolver(
         if (resultingCalls.singleOrNull()?.resultingDescriptor is FakeCallableDescriptorForObject) return
 
         throw AssertionError(String.format(
-                "Expressions on left-hand side of callable reference are not supported yet.\n" +
-                "Resolution result: %s\n" +
-                "Original result: %s",
+                "Expressions on left-hand side of ${expression.javaClass.simpleName} are not supported yet.\n" +
+                "Resolution result: %s\n%s",
                 resultingCalls.map { call -> call.resultingDescriptor },
-                expression.callableReference.getResolvedCall(c.trace.bindingContext)?.resultingDescriptor
+                extraInfo()
         ))
     }
 
