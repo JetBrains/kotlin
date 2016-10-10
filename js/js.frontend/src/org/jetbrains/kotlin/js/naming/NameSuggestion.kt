@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.naming
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -88,6 +89,9 @@ class NameSuggestion {
 
             // It's a special case when an object has `invoke` operator defined, in this case we simply generate object itself
             is FakeCallableDescriptorForObject -> return suggest(descriptor.getReferencedObject())
+
+            // For type alias constructor descriptors we generate references to underlying constructors
+            is TypeAliasConstructorDescriptor -> return suggest(descriptor.underlyingConstructorDescriptor)
 
             // For primary constructors and constructors of native classes we generate references to containing classes
             is ConstructorDescriptor -> {

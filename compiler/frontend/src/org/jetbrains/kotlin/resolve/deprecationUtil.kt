@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
@@ -137,6 +138,11 @@ private fun DeclarationDescriptor.getDeprecationByAnnotation(): DeprecatedByAnno
             val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
             if (classAnnotation != null)
                 return DeprecatedByAnnotation(classAnnotation, classDescriptor)
+            if (this is TypeAliasConstructorDescriptor) {
+                val underlyingConstructorDeprecation = underlyingConstructorDescriptor.getDeprecationByAnnotation()
+                if (underlyingConstructorDeprecation != null)
+                    return underlyingConstructorDeprecation
+            }
         }
         is PropertyAccessorDescriptor -> {
             val propertyDescriptor = correspondingProperty

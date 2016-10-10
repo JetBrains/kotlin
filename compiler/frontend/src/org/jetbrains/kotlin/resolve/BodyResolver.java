@@ -231,7 +231,7 @@ public class BodyResolver {
 
     @Nullable
     private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
-        ResolvedCall<ClassConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
+        ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
         return call == null || !call.getStatus().isSuccess() ? null : call.getResultingDescriptor().getOriginal();
     }
 
@@ -430,7 +430,7 @@ public class BodyResolver {
             @NotNull ResolvedCall<?> call
     ) {
         //noinspection unchecked
-        trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ClassConstructorDescriptor>) call);
+        trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
     }
 
     private void checkSupertypeList(

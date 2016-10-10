@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.coroutines.getExpectedTypeForCoroutineControllerHandleResult
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -200,9 +202,18 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
 fun createResolutionCandidatesForConstructors(
         lexicalScope: LexicalScope,
         call: Call,
-        classWithConstructors: ClassDescriptor,
+        typeWithConstructors: KotlinType,
         knownSubstitutor: TypeSubstitutor? = null
-): Collection<ResolutionCandidate<ClassConstructorDescriptor>> {
+): Collection<ResolutionCandidate<ConstructorDescriptor>> {
+    val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
+
+    val unwrappedType = typeWithConstructors.unwrap()
+    val typeAliasDescriptor =
+            if (unwrappedType is AbbreviatedType)
+                unwrappedType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
+            else
+                null
+
     val constructors = classWithConstructors.constructors
 
     if (constructors.isEmpty()) return emptyList()
@@ -212,7 +223,7 @@ fun createResolutionCandidatesForConstructors(
 
     if (classWithConstructors.isInner) {
         val outerClassType = (classWithConstructors.containingDeclaration as? ClassDescriptor)?.defaultType ?: return emptyList()
-        val substitutedOuterClassType = knownSubstitutor?.let { it.substitute(outerClassType, Variance.INVARIANT) } ?: outerClassType
+        val substitutedOuterClassType = knownSubstitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
 
         val receiver = lexicalScope.getImplicitReceiversHierarchy().firstOrNull {
             KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
@@ -226,8 +237,21 @@ fun createResolutionCandidatesForConstructors(
         dispatchReceiver = null
     }
 
-    return constructors.map { ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor) }
+    return constructors.map {
+        val constructorDescriptor = it.getConstructorDescriptorForResolution(knownSubstitutor, typeAliasDescriptor)
+        ResolutionCandidate.create(call, constructorDescriptor, dispatchReceiver, receiverKind, knownSubstitutor)
+    }
 }
+
+private fun ClassConstructorDescriptor.getConstructorDescriptorForResolution(
+        knownSubstitutor: TypeSubstitutor?,
+        typeAliasDescriptor: TypeAliasDescriptor?
+): ConstructorDescriptor =
+        if (typeAliasDescriptor != null)
+            TypeAliasConstructorDescriptorImpl.create(typeAliasDescriptor, this, knownSubstitutor ?: TypeSubstitutor.EMPTY)
+            ?: throw AssertionError("Failed to create type alias constructor with substitutor: $knownSubstitutor")
+        else
+            this
 
 fun KtLambdaExpression.getCorrespondingParameterForFunctionArgument(
         bindingContext: BindingContext

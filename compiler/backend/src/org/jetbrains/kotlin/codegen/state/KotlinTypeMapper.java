@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -934,6 +935,9 @@ public class KotlinTypeMapper {
         if (f instanceof FunctionImportedFromObject) {
             return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject(), kind, skipGenericSignature);
         }
+        else if (f instanceof TypeAliasConstructorDescriptor) {
+            return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, valueParameters, skipGenericSignature);
+        }
 
         checkOwnerCompatibility(f);
 
@@ -1272,7 +1276,7 @@ public class KotlinTypeMapper {
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
         if (classBuilderMode.generateBodies) {
-            ResolvedCall<ClassConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
+            ResolvedCall<ConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
             if (superCall == null) return;
             writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);
         }
@@ -1281,7 +1285,7 @@ public class KotlinTypeMapper {
     private void writeSuperConstructorCallParameters(
             @NotNull JvmSignatureWriter sw,
             @NotNull ClassConstructorDescriptor descriptor,
-            @NotNull ResolvedCall<ClassConstructorDescriptor> superCall,
+            @NotNull ResolvedCall<ConstructorDescriptor> superCall,
             boolean hasOuter
     ) {
         ConstructorDescriptor superDescriptor = SamCodegenUtil.resolveSamAdapter(superCall.getResultingDescriptor());
@@ -1320,13 +1324,13 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private ResolvedCall<ClassConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ClassConstructorDescriptor descriptor) {
-        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+    private ResolvedCall<ConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ConstructorDescriptor descriptor) {
+        ClassifierDescriptorWithTypeParameters constructorOwner = descriptor.getContainingDeclaration();
         while (true) {
-            ResolvedCall<ClassConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
+            ResolvedCall<ConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
             if (next == null) return null;
             descriptor = next.getResultingDescriptor();
-            if (descriptor.getContainingDeclaration() != classDescriptor) return next;
+            if (descriptor.getContainingDeclaration() != constructorOwner) return next;
         }
     }
 

@@ -111,17 +111,18 @@ class TypeAliasConstructorDescriptorImpl private constructor(
         fun create(
                 typeAliasDescriptor: TypeAliasDescriptor,
                 constructor: ClassConstructorDescriptor,
-                substitutor: TypeSubstitutor
+                substitutor: TypeSubstitutor?
         ): TypeAliasConstructorDescriptor? {
+            val actualSubstitutor = substitutor ?: TypeSubstitutor.EMPTY
+
             val typeAliasConstructor =
                     TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, constructor, null, constructor.annotations,
                                                        constructor.kind, typeAliasDescriptor.source)
 
-            val valueParameters =
-                    FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false)
-                    ?: return null
+            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, actualSubstitutor, false)
+                                  ?: return null
 
-            val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
+            val returnType = actualSubstitutor.substitute(constructor.returnType, Variance.INVARIANT)
                              ?: return null
 
             val containingDeclaration = constructor.containingDeclaration
@@ -137,10 +138,12 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                                             valueParameters,
                                             returnType,
                                             Modality.FINAL,
-                                            constructor.visibility)
+                                            typeAliasDescriptor.visibility)
 
             return typeAliasConstructor
         }
+
+
     }
 }
 

@@ -1049,10 +1049,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         markLineNumberForConstructor(constructorDescriptor, constructor, codegen);
 
-        ResolvedCall<ClassConstructorDescriptor> constructorDelegationCall =
+        ResolvedCall<ConstructorDescriptor> constructorDelegationCall =
                 getDelegationConstructorCall(bindingContext, constructorDescriptor);
         ConstructorDescriptor delegateConstructor = constructorDelegationCall == null ? null :
-                                                     constructorDelegationCall.getResultingDescriptor();
+                                                    constructorDelegationCall.getResultingDescriptor();
 
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor, constructorDelegationCall);
         if (!isSameClassConstructor(delegateConstructor)) {
@@ -1383,7 +1383,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull InstructionAdapter iv,
             @NotNull ExpressionCodegen codegen,
             @NotNull ClassConstructorDescriptor constructorDescriptor,
-            @Nullable ResolvedCall<ClassConstructorDescriptor> delegationConstructorCall
+            @Nullable ResolvedCall<ConstructorDescriptor> delegationConstructorCall
     ) {
         if (delegationConstructorCall == null) {
             genSimpleSuperCall(iv);

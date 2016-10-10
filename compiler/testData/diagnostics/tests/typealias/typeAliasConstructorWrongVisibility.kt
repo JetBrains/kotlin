@@ -19,7 +19,7 @@ val test3a = MyClass(1.0)
 class MyDerived : MyClass(1.0) {
     val test4 = <!NONE_APPLICABLE!>MyAlias<!>(1)
     val test4a = <!NONE_APPLICABLE!>MyClass<!>(1)
-    val test5 = <!NONE_APPLICABLE!>MyAlias<!>("")
+    val test5 = <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>MyAlias<!>("")
     val test5a = <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>MyClass<!>("")
     val test6 = MyAlias(1.0)
     val test6a = MyClass(1.0)

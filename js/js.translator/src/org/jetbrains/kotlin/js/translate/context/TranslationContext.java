@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
@@ -463,6 +464,11 @@ public class TranslationContext {
 
     @Nullable
     public List<DeclarationDescriptor> getClassOrConstructorClosure(@NotNull MemberDescriptor classOrConstructor) {
+        if (classOrConstructor instanceof TypeAliasConstructorDescriptor) {
+            ClassConstructorDescriptor constructorDescriptor = ((TypeAliasConstructorDescriptor) classOrConstructor).getUnderlyingConstructorDescriptor();
+            return getClassOrConstructorClosure(constructorDescriptor);
+        }
+
         List<DeclarationDescriptor> result = staticContext.getClassOrConstructorClosure(classOrConstructor);
         if (result == null &&
             classOrConstructor instanceof ConstructorDescriptor &&

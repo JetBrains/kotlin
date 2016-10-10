@@ -1639,7 +1639,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                 assert primaryConstructor != null : "There should be primary constructor for object literal";
-                ResolvedCall<ClassConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
+                ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
                 if (superCall != null) {
                     // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
                     ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
