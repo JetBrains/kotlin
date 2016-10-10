@@ -231,15 +231,14 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isHiddenInResolution(functionDescriptor)
+        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isHiddenInResolution(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isDeprecatedHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
     }
 
-    //TODO: move mapping logic to front-end java
     public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
         Integer specialCase = specialCaseVisibility(descriptor);
         if (specialCase != null) {

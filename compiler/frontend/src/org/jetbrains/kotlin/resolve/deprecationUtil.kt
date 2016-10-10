@@ -183,11 +183,15 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
+fun DeclarationDescriptor.isDeprecatedHidden(): Boolean {
+    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+}
+
 @JvmOverloads
 fun DeclarationDescriptor.isHiddenInResolution(isSuperCall: Boolean = false): Boolean {
     if (this is FunctionDescriptor) {
         if (isHiddenToOvercomeSignatureClash) return true
         if (isHiddenForResolutionEverywhereBesideSupercalls && !isSuperCall) return true
     }
-    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return isDeprecatedHidden()
 }
