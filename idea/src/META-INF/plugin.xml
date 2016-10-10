@@ -1848,6 +1848,7 @@
                      displayName="Replace empty class body"
                      groupName="Kotlin"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      level="INFO"
                      language="kotlin"
     />
