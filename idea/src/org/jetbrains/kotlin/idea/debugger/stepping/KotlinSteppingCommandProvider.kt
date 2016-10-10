@@ -334,10 +334,10 @@ sealed class Action(val position: XSourcePositionImpl?) {
             is Action.RUN_TO_CURSOR -> {
                 runReadAction {
                     debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
-                }.contextAction()
+                }.contextAction(suspendContext)
             }
-            is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction()
-            is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction()
+            is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
+            is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
         }
     }
 }
