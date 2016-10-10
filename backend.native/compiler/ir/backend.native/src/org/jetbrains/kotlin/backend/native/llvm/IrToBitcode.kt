@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
@@ -76,13 +78,38 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 args.add(evaluateExpression(tmp, element as IrExpression))
             }
         })
-        when (value!!.origin) {
+        when (value.descriptor) {
+            is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value, args)
+            else -> {
+                TODO()
+            }
+        }
+
+        TODO()
+    }
+
+    private fun evaluateSimpleFunctionCall(tmpVariableName: String, value: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        return generator.call(value.descriptor as org.jetbrains.kotlin.descriptors.FunctionDescriptor, args, tmpVariableName)
+    }
+
+
+    private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
+        when {
+            descriptor.isOperator -> return evaluateOperatorCall(tmpVariableName, callee, args)
+            else -> {
+                return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
+            }
+        }
+    }
+
+    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
+        when (callee!!.origin) {
             IrStatementOrigin.PLUS -> return generator.plus(args[0]!!, args[1]!!, tmpVariableName)
             else -> {
                 TODO()
             }
         }
-        TODO()
     }
 
     override fun visitVariable(declaration: IrVariable) {
