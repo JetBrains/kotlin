@@ -183,7 +183,11 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
+fun DeclarationDescriptor.isDeprecatedHidden(): Boolean {
+    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+}
+
 fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
     if (this is FunctionDescriptor && this.isHiddenToOvercomeSignatureClash) return true
-    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return isDeprecatedHidden()
 }
