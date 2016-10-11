@@ -3232,6 +3232,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("stringOctalChars.java")
+        public void testStringOctalChars() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/stringOctalChars.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("trueOrFalse.java")
         public void testTrueOrFalse() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/trueOrFalse.java");
