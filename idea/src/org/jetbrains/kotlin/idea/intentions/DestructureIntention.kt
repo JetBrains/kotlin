@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -48,9 +47,9 @@ class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
         DestructureIntention::class,
         { element, inspection ->
             if (element is KtParameter) true
-            else with(inspection as DestructureInspection) {
-                val usagesToRemove = DestructureIntention.collectUsagesToRemove(element, element.parent as? KtForExpression)?.data
-                usagesToRemove != null && usagesToRemove.any { it.declarationToDrop is KtDestructuringDeclaration }
+            else {
+                val usagesToRemove = DestructureIntention.collectUsagesToRemove(element)?.data
+                usagesToRemove?.any { it.declarationToDrop is KtDestructuringDeclaration } ?: false
             }
         }
 )
@@ -60,13 +59,11 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         "Use destructuring declaration"
 ) {
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
-        val forLoop = element.parent as? KtForExpression
-        val loopRange = forLoop?.loopRange
-        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element, forLoop)!!
+        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element)!!
 
         val factory = KtPsiFactory(element)
         val validator = NewDeclarationNameValidator(
-                element.parent, element, NewDeclarationNameValidator.Target.VARIABLES,
+                container = element.parent, anchor = element, target = NewDeclarationNameValidator.Target.VARIABLES,
                 excludedDeclarations = usagesToRemove.map { it.declarationToDrop.singletonOrEmptyList() }.flatten()
         )
         val names = ArrayList<String>()
@@ -82,6 +79,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         val joinedNames = names.joinToString()
         when (element) {
             is KtParameter -> {
+                val loopRange = (element.parent as? KtForExpression)?.loopRange
                 element.replace(factory.createDestructuringParameter("($joinedNames)"))
                 if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
                     loopRange.replace(loopRange.receiverExpression)
@@ -105,9 +103,9 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     }
 
     override fun applicabilityRange(element: KtDeclaration): TextRange? {
-        if (!isSuitableDeclaration(element)) return null
+        if (!element.isSuitableDeclaration()) return null
 
-        val usagesToRemove = collectUsagesToRemove(element, element.parent as? KtForExpression)?.data ?: return null
+        val usagesToRemove = collectUsagesToRemove(element)?.data ?: return null
         if (usagesToRemove.isEmpty()) return null
 
         return when (element) {
@@ -116,24 +114,27 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         }
     }
 
-    private fun isSuitableDeclaration(declaration: KtDeclaration) = when (declaration) {
-        is KtParameter -> declaration.parent is KtForExpression
-        is KtVariableDeclaration -> true
-        else -> false
-    }
-
     companion object {
+
+        internal fun KtDeclaration.isSuitableDeclaration() = getUsageScopeElement() != null
+
+        private fun KtDeclaration.getUsageScopeElement() = when (this) {
+            is KtParameter -> parent as? KtForExpression
+            is KtVariableDeclaration -> parent
+            else -> null
+        }
 
         internal data class UsagesToRemove(val data: List<UsageData>, val removeSelectorInLoopRange: Boolean)
 
-        internal fun collectUsagesToRemove(declaration: KtDeclaration, forLoop: KtForExpression?): UsagesToRemove? {
+        internal fun collectUsagesToRemove(declaration: KtDeclaration): UsagesToRemove? {
             val context = declaration.analyze()
 
-            val variableDescriptor = when (declaration) {
-                                         is KtParameter -> context.get(BindingContext.VALUE_PARAMETER, declaration)
-                                         is KtVariableDeclaration -> context.get(BindingContext.VARIABLE, declaration)
-                                         else -> null
-                                     } ?: return null
+            val variableDescriptor =
+                    when (declaration) {
+                        is KtParameter -> context.get(BindingContext.VALUE_PARAMETER, declaration)
+                        is KtVariableDeclaration -> context.get(BindingContext.VARIABLE, declaration)
+                        else -> null
+                    } ?: return null
 
             val variableType = variableDescriptor.type
             if (variableType.isMarkedNullable) return null
@@ -145,6 +146,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             val usagesToRemove = mutableListOf<UsageData>()
             var noBadUsages = true
             var removeSelectorInLoopRange = false
+            val forLoop = declaration.parent as? KtForExpression
             if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
                 val loopRangeDescriptor = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor
                 if (loopRangeDescriptor != null) {
@@ -157,7 +159,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 }
 
                 listOf("key", "value").mapTo(usagesToRemove) {
-                    UsageData(mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
+                    UsageData(descriptor = mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
                             Name.identifier(it), NoLookupLocation.FROM_BUILTINS).single())
                 }
 
@@ -170,9 +172,9 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             else if (classDescriptor.isData) {
 
                 val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
-                valueParameters.mapTo(usagesToRemove) { UsageData(it) }
+                valueParameters.mapTo(usagesToRemove) { UsageData(descriptor = it) }
 
-                val usageScopeElement: PsiElement = forLoop ?: (declaration as? KtVariableDeclaration)?.parent ?: return null
+                val usageScopeElement = declaration.getUsageScopeElement() ?: return null
 
                 val nameToSearch = when (declaration) {
                                        is KtParameter -> declaration.nameAsName
@@ -230,7 +232,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 }
 
                 cancel()
-                return@forEach false
+                false
             })
         }
 
@@ -302,7 +304,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 val descriptor: CallableDescriptor,
                 val usagesToReplace: MutableList<KtExpression> = mutableListOf(),
                 var declarationToDrop: KtDeclaration? = null,
-                var name: String? = declarationToDrop?.name
+                var name: String? = null
         ) {
             // Returns true if data is successfully added, false otherwise
             fun add(newData: SingleUsageData, componentIndex: Int): Boolean {
