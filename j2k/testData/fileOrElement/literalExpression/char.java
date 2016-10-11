@@ -1,7 +1,9 @@
 //file
 class Test {
-  void test() {
-    char c1 = 'c';
-    Character c2 = 'C';
-  }
+    private char c = 0;
+
+    void test() {
+        char c1 = 'c';
+        Character c2 = 'C';
+    }
 }
