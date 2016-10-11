@@ -20,6 +20,10 @@ import com.google.common.base.Joiner;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,6 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +53,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Component
     protected MojoExecution mojoExecution;
+
+    @Component
+    protected RepositorySystem system;
 
     /**
      * The source directories containing the sources to be compiled.
@@ -222,16 +230,24 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             result.addAll(compilerPluginsClassPaths);
         }
 
-        // TODO do that once we have compiler running in the separate process
-//        URL[] urls = mojoExecution.getMojoDescriptor().getRealm().getURLs();
-//        for (URL url : urls) {
-//            if ("file".equals(url.getProtocol())) {
-//                try {
-//                    result.add(new File(url.toURI()).getAbsolutePath());
-//                } catch (URISyntaxException ignore) {
-//                }
-//            }
-//        }
+        List<File> files = new ArrayList<File>();
+
+        for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
+            Artifact artifact = system.createDependencyArtifact(dependency);
+            ArtifactResolutionResult resolved = system.resolve(new ArtifactResolutionRequest().setArtifact(artifact));
+
+            for (Artifact resolvedArtifact : resolved.getArtifacts()) {
+                File file = resolvedArtifact.getFile();
+
+                if (file != null && file.exists()) {
+                    files.add(file);
+                }
+            }
+        }
+
+        for (File file : files) {
+            result.add(file.getAbsolutePath());
+        }
 
         return result;
     }
