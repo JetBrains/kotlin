@@ -100,8 +100,8 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
     fun generateForLoop(ktFor: KtForExpression): IrExpression {
         val ktLoopParameter = ktFor.loopParameter
-        val ktLoopDestructuringParameter = ktFor.destructuringParameter
-        if (ktLoopParameter == null && ktLoopDestructuringParameter == null) {
+        val ktLoopDestructuringDeclaration = ktFor.destructuringDeclaration
+        if (ktLoopParameter == null && ktLoopDestructuringDeclaration == null) {
             throw AssertionError("Either loopParameter or destructuringParameter should be present:\n${ktFor.text}")
         }
 
@@ -137,18 +137,19 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val nextCall = statementGenerator.pregenerateCall(nextResolvedCall)
         nextCall.setExplicitReceiverValue(iteratorValue)
         val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrStatementOrigin.FOR_LOOP_NEXT)
-        val irLoopParameter = if (ktLoopParameter != null) {
-            val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-            IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
-                           loopParameterDescriptor, irNextCall)
-        }
-        else {
-            scope.createTemporaryVariable(irNextCall, "loop_parameter")
-        }
+        val irLoopParameter =
+                if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
+                    val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
+                    IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
+                                   loopParameterDescriptor, irNextCall)
+                }
+                else {
+                    scope.createTemporaryVariable(irNextCall, "loop_parameter")
+                }
         irInnerBody.statements.add(irLoopParameter)
 
-        if (ktLoopDestructuringParameter != null) {
-            statementGenerator.declareComponentVariablesInBlock(ktLoopDestructuringParameter, irInnerBody, VariableLValue(irLoopParameter))
+        if (ktLoopDestructuringDeclaration != null) {
+            statementGenerator.declareComponentVariablesInBlock(ktLoopDestructuringDeclaration, irInnerBody, VariableLValue(irLoopParameter))
         }
 
         if (ktForBody != null) {

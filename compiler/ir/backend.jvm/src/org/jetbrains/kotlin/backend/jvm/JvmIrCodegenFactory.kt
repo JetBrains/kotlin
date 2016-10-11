@@ -27,10 +27,6 @@ import org.jetbrains.kotlin.psi.KtFile
 object JvmIrCodegenFactory : CodegenFactory {
     override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen {
         val impl = PackageCodegenImpl(state, files, fqName, registry)
-//        val psi2ir = Psi2IrTranslator()
-//        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
-//        val jvmBackendContext = JvmBackendFacade.createJvmBackendContext(psi2ir, state)
-
 
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
@@ -38,7 +34,7 @@ object JvmIrCodegenFactory : CodegenFactory {
             }
 
             override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: PackageContext) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                TODO()
             }
 
             override fun getPackageFragment(): PackageFragmentDescriptor {
@@ -48,6 +44,6 @@ object JvmIrCodegenFactory : CodegenFactory {
     }
 
     override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO()
     }
 }
