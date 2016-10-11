@@ -217,15 +217,6 @@ public class RangeCodegenUtil {
         return false;
     }
 
-    private static boolean isBuiltInRangeTo(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) {
-            return false;
-        }
-
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        return extensionReceiver != null;
-    }
-
     /*
      * Checks whether for expression 'x in a..b' a..b is primitive integral range
      * with same type as x.
@@ -254,6 +245,15 @@ public class RangeCodegenUtil {
         }
 
         return false;
+    }
+
+    private static boolean isBuiltInRangeTo(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) {
+            return false;
+        }
+
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        return extensionReceiver != null;
     }
 
     private static boolean isTopLevelInPackage(@NotNull CallableDescriptor descriptor, @NotNull String name, @NotNull String packageName) {
