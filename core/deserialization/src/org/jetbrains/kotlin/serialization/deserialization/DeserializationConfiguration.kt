@@ -17,5 +17,8 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 interface DeserializationConfiguration {
+    val typeAliasesAllowed: Boolean
+        get() = true
+
     object Default : DeserializationConfiguration
 }

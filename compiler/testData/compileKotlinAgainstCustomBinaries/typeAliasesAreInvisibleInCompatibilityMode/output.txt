@@ -1,0 +1,16 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:2:13: error: unresolved reference: Str
+import test.Str
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:5:14: error: unresolved reference: Str
+        str: Str,
+             ^
+compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:6:12: error: unresolved reference: L
+        l: L<Str>,
+           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:6:14: error: unresolved reference: Str
+        l: L<Str>,
+             ^
+compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:7:23: error: unresolved reference: Nested
+        nested: Klass.Nested
+                      ^
+COMPILATION_ERROR

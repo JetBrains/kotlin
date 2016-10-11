@@ -51,7 +51,9 @@ abstract class DeserializedMemberScope protected constructor(
             }
     private val typeAliasProtos by
             c.storageManager.createLazyValue {
-                typeAliasList.groupByName { it.name }
+                if (c.components.configuration.typeAliasesAllowed)
+                    typeAliasList.groupByName { it.name }
+                else emptyMap()
             }
 
     private val functions =

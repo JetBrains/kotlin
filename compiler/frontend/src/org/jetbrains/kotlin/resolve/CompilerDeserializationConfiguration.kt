@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
-class CompilerDeserializationConfiguration(private val languageVersionSettings: LanguageVersionSettings) : DeserializationConfiguration
+class CompilerDeserializationConfiguration(private val languageVersionSettings: LanguageVersionSettings) : DeserializationConfiguration {
+    override val typeAliasesAllowed: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
+}
