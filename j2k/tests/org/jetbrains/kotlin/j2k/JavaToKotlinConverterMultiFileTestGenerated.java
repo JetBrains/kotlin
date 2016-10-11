@@ -35,6 +35,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("AnnotationWithArrayParameter")
+    public void testAnnotationWithArrayParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/AnnotationWithArrayParameter/");
+        doTest(fileName);
+    }
+
     @TestMetadata("FieldToProperty")
     public void testFieldToProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FieldToProperty/");
