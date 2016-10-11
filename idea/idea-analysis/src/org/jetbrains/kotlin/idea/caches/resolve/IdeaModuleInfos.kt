@@ -31,6 +31,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
 import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.lang.reflect.Method
@@ -167,7 +168,7 @@ internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
 
-private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
+private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project), GlobalSearchScopeWithModuleSources {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false

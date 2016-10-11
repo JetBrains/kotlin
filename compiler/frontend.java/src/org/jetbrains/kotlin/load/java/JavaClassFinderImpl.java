@@ -63,26 +63,35 @@ public class JavaClassFinderImpl implements JavaClassFinder {
 
     @PostConstruct
     public void initialize() {
-        javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {
-            @Override
-            public boolean contains(@NotNull VirtualFile file) {
-                return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
-            }
-
-            //NOTE: expected by class finder to be not null
-            @NotNull
-            @Override
-            public Project getProject() {
-                return project;
-            }
-
-            @Override
-            public String toString() {
-                return "JCFI: " + baseScope;
-            }
-        };
-
+        javaSearchScope = new MyDelegatingGlobalSearchScope();
         javaFacade = KotlinJavaPsiFacade.getInstance(project);
+    }
+
+    public class MyDelegatingGlobalSearchScope extends DelegatingGlobalSearchScope {
+        public MyDelegatingGlobalSearchScope() {
+            super(JavaClassFinderImpl.this.baseScope);
+        }
+
+        public GlobalSearchScope getBaseScope() {
+            return myBaseScope;
+        }
+
+        @Override
+        public boolean contains(@NotNull VirtualFile file) {
+            return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
+        }
+
+        //NOTE: expected by class finder to be not null
+        @NotNull
+        @Override
+        public Project getProject() {
+            return project;
+        }
+
+        @Override
+        public String toString() {
+            return "JCFI: " + baseScope;
+        }
     }
 
     @Nullable
