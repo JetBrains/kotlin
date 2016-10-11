@@ -3,38 +3,48 @@
 
 #include <cstdint>
 
-// All names in system are stored as hashes (or maybe, for debug builds,
-// as pointers to uniqued C strings containing names?).
-typedef int64_t NameHash;
+#include "Names.h"
 
 // An element of sorted by hash in-place array representing methods.
 struct MethodTableRecord {
-    NameHash nameSignature;
-    void* methodEntryPoint;
+    MethodNameHash nameSignature_;
+    void* methodEntryPoint_;
 };
 
 // An element of sorted by hash in-place array representing field offsets.
 struct FieldTableRecord {
-    NameHash nameSignature;
-    int fieldOffset;
+    FieldNameHash nameSignature_;
+    int fieldOffset_;
 };
 
 // This struct represents runtime type information and by itself is compile time
 // constant.
 struct TypeInfo {
-    NameHash name;
-    int size;
-    const TypeInfo* superType;
-    const int* objOffsets;
-    int objOffsetsCount;
-    TypeInfo* const* implementedInterfaces;
-    int implementedInterfacesCount;
-    void* const* vtable; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
-    const MethodTableRecord* methods;
-    int methodsCount;
-    const FieldTableRecord* fields;
-    int fieldsCount;
+    ClassNameHash name_;
+    int size_;
+    const TypeInfo* superType_;
+    const int* objOffsets_;
+    int objOffsetsCount_;
+    TypeInfo* const* implementedInterfaces_;
+    int implementedInterfacesCount_;
+    void* const* vtable_; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
+    const MethodTableRecord* methods_;
+    int methodsCount_;
+    const FieldTableRecord* fields_;
+    int fieldsCount_;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+// Find offset of given hash in table.
+int LookupFieldOffset(const TypeInfo* type_info, LocalHash hash);
 
-#endif //RUNTIME_TYPEINFO_H
+// Find method by its hash.
+void* LookupMethod(const TypeInfo* info, MethodNameHash nameSignature);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif // RUNTIME_TYPEINFO_H

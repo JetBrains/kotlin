@@ -2,8 +2,15 @@
 #include "TypeInfo.h"
 
 extern "C" {
-    int lookupField(TypeInfo* info, NameHash nameSignature) {
-        assert(false); // not implemented yet
-        return -1;
-    }
+
+int LookupFieldOffset(const TypeInfo* info, FieldNameHash nameSignature) {
+  assert(false); // not implemented yet
+  return -1;
+}
+
+void* LookupMethod(const TypeInfo* info, MethodNameHash nameSignature) {
+  assert(false); // not implemented yet
+  return nullptr;
+}
+
 }

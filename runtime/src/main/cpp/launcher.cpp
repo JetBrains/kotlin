@@ -1,6 +1,9 @@
+#include "Memory.h"
+
 extern "C" void kotlinNativeMain();
 
 int main() {
-    kotlinNativeMain();
-    return 0;
+  InitMemory();
+  kotlinNativeMain();
+  return 0;
 }
