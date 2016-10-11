@@ -71,7 +71,7 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? 
             function.valueParameters
 
     val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
-
+    if (paramTypes.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
     val paramTypesPtr = mallocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0] // TODO: dispose
     return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
 }
