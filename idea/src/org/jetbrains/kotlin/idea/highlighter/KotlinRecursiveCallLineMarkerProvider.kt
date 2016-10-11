@@ -113,7 +113,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
             callElement,
             callElement.textRange,
             AllIcons.Gutter.RecursiveMethod,
-            Pass.UPDATE_OVERRIDEN_MARKERS,
+            Pass.LINE_MARKERS,
             { "Recursive call" },
             null,
             GutterIconRenderer.Alignment.RIGHT
