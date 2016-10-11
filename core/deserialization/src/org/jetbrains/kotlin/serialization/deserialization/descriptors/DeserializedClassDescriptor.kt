@@ -275,18 +275,17 @@ class DeserializedClassDescriptor(
 
         internal val nestedClassNames = classProto.nestedClassNameList.map { c.nameResolver.getName(it) }.toSet()
 
-        private val nestedClassByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
-            name ->
-            if (name in nestedClassNames) {
+        private fun getClassDescriptor(name: Name): ClassDescriptor? =
                 c.components.deserializeClass(classId.createNestedClassId(name))
-            }
-            else null
-        }
 
-        fun findNestedClass(name: Name): ClassDescriptor? = nestedClassByName(name)
+        fun findNestedClass(name: Name): ClassDescriptor? =
+                if (name in nestedClassNames) {
+                    getClassDescriptor(name)
+                }
+                else null
 
         fun all(): Collection<ClassDescriptor> =
-                nestedClassNames.mapNotNull { name -> nestedClassByName(name) }
+                nestedClassNames.mapNotNull(this::getClassDescriptor)
     }
 
     private inner class EnumEntryClassDescriptors {
