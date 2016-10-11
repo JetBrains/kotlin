@@ -65,11 +65,6 @@ open class DeserializedPackageMemberScope(
                 result.addIfNotNull(getClassDescriptor(className))
             }
         }
-        for (typeAliasName in typeAliasNames) {
-            if (nameFilter(typeAliasName)) {
-                result.addIfNotNull(getTypeAlias(typeAliasName))
-            }
-        }
     }
 
     override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()

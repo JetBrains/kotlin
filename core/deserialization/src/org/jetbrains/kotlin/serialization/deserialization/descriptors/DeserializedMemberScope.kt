@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compactIfPossible
 import java.util.*
 
@@ -68,7 +69,7 @@ abstract class DeserializedMemberScope protected constructor(
         propertyProtos.keys + getNonDeclaredVariableNames()
     }
 
-    protected val typeAliasNames: Set<Name> get() = typeAliasProtos.keys
+    private val typeAliasNames: Set<Name> get() = typeAliasProtos.keys
 
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = variableNamesLazy
@@ -152,6 +153,14 @@ abstract class DeserializedMemberScope protected constructor(
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addClassifierDescriptors(result, nameFilter)
+        }
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.TYPE_ALIASES_MASK)) {
+            for (typeAliasName in typeAliasNames) {
+                if (nameFilter(typeAliasName)) {
+                    result.addIfNotNull(getTypeAlias(typeAliasName))
+                }
+            }
         }
 
         return result.compactIfPossible()
