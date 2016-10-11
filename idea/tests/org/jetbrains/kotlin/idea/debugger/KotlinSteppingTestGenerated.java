@@ -505,6 +505,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("soInlineOperatorIterator.kt")
+        public void testSoInlineOperatorIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineOperatorIterator.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("soInlineWhileCondition.kt")
         public void testSoInlineWhileCondition() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/soInlineWhileCondition.kt");
