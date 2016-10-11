@@ -53,12 +53,6 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
-    @TestMetadata("callableFunction.kt")
-    public void testCallableFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/callableFunction.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("callableProperty.kt")
     public void testCallableProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/callableProperty.kt");
