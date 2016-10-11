@@ -4,13 +4,6 @@ import llvm.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
-
-
-/**
- *
- * Created by minamoto on 07/10/2016.
- */
 
 internal class CodeGenerator(override val context:Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null

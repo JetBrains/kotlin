@@ -37,9 +37,6 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 
 }
 
-/**
- * TODO: split CodeGeneratorVisitor on Visitor and Generator :)
- */
 internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
     val generator = CodeGenerator(context)
     override fun visitFunction(declaration: IrFunction) {
