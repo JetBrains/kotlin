@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.tasks.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 
 internal class GradleIncReporter(private val projectRootFile: File) : IncReporter() {
