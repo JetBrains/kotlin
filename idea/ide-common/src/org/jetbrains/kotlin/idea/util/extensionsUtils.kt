@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -95,7 +95,9 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors.map { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable) }.toList()
+        return substitutors
+                .mapNotNull { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable?) }
+                .toList()
     }
 }
 
