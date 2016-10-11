@@ -15,6 +15,7 @@
  */
 package org.jetbrains.kotlin.test.testFramework.mock;
 
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Computable;
@@ -146,6 +147,11 @@ public class MockPsiDocumentManager extends PsiDocumentManager {
 
   @Override
   public void reparseFiles(@NotNull Collection<VirtualFile> files, boolean includeOpenFiles) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void performLaterWhenAllCommitted(@NotNull Runnable runnable, ModalityState modalityState) {
     throw new UnsupportedOperationException();
   }
 }
