@@ -4,7 +4,7 @@ class Bar : Serializable {
     internal var foobar = 0
 
     companion object {
-        @JvmStatic private val serialVersionUID: Long = 0
+        private const val serialVersionUID: Long = 0
     }
 }
 
