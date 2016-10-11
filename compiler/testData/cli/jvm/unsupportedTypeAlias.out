@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/unsupportedTypeAlias.kt:3:1: error: the feature is only available since Kotlin 1.1: type aliases
+typealias Unused = String
+^
+COMPILATION_ERROR

@@ -667,7 +667,7 @@ public class DescriptorResolver {
         else if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
             typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
             PsiElement typeAliasKeyword = typeAlias.getTypeAliasKeyword();
-            trace.report(UNSUPPORTED_TYPEALIAS.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias));
+            trace.report(UNSUPPORTED_FEATURE.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias, LanguageFeature.TypeAliases));
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
                     ErrorUtils.createErrorType(name.asString()),

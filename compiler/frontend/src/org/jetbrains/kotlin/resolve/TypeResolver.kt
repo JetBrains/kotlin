@@ -456,7 +456,7 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
         if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
-            c.trace.report(UNSUPPORTED_TYPEALIAS.on(type))
+            c.trace.report(UNSUPPORTED_FEATURE.on(type, LanguageFeature.TypeAliases))
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 

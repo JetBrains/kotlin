@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -229,8 +228,6 @@ class LazyTopDownAnalyzer(
     }
 
     private fun createTypeAliasDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, KtElement>, typeAliases: List<KtTypeAlias>) {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) return
-
         for (typeAlias in typeAliases) {
             val descriptor = lazyDeclarationResolver.resolveToDescriptor(typeAlias) as TypeAliasDescriptor
 

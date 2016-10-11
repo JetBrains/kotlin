@@ -271,6 +271,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("unsupportedTypeAlias.args")
+        public void testUnsupportedTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/unsupportedTypeAlias.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("version.args")
         public void testVersion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/version.args");

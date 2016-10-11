@@ -19,3 +19,4 @@ public final class Test3 {
 public typealias CA = [ERROR : CA]
 public typealias L</*0*/ T>  = [ERROR : L]
 public typealias S = [ERROR : S]
+public typealias Unused = [ERROR : Unused]
