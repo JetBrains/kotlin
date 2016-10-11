@@ -3,7 +3,7 @@
 
 data class XY(val x: Int, val y: Int)
 fun test(xys: Array<XY>) {
-    for (xy in xys) {
+    for (xy<caret> in xys) {
         val x = xy.x
         println(x)
         val y = xy.y + x
