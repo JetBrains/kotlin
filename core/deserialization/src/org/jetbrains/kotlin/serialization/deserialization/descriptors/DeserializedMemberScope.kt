@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -28,14 +26,17 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.receiverType
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
-        propertyList: Collection<ProtoBuf.Property>
+        propertyList: Collection<ProtoBuf.Property>,
+        classNames: () -> Collection<Name>
 ) : MemberScopeImpl() {
 
     private data class ProtoKey(val name: Name, val isExtension: Boolean)
@@ -64,6 +65,8 @@ abstract class DeserializedMemberScope protected constructor(
         }
         return map
     }
+
+    internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }
 
     private fun computeFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
         val protos = functionProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
@@ -99,8 +102,6 @@ abstract class DeserializedMemberScope protected constructor(
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = properties(name)
 
-    protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
-
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
@@ -119,7 +120,11 @@ abstract class DeserializedMemberScope protected constructor(
         addNonDeclaredDescriptors(result, location)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addClassDescriptors(result, nameFilter)
+            for (className in classNames) {
+                if (nameFilter(className)) {
+                    result.addIfNotNull(deserializeClass(className))
+                }
+            }
         }
 
         return result.toReadOnlyList()
@@ -155,6 +160,20 @@ abstract class DeserializedMemberScope protected constructor(
     }
 
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation)
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+            when {
+                hasClass(name) -> deserializeClass(name)
+                else -> null
+            }
+
+    private fun deserializeClass(name: Name): ClassDescriptor? =
+            c.components.deserializeClass(createClassId(name))
+
+    protected open fun hasClass(name: Name): Boolean =
+            name in classNames
+
+    protected abstract fun createClassId(name: Name): ClassId
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
