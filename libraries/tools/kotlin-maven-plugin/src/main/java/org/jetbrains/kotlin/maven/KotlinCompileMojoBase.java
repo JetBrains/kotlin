@@ -110,6 +110,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     public String testModule;
 
+
+    @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
+    protected String languageVersion;
+
     /**
      * Additional command line arguments for Kotlin compiler.
      */
@@ -217,6 +221,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         arguments.suppressWarnings = nowarn;
+        arguments.languageVersion = languageVersion;
 
         getLog().info("Compiling Kotlin sources from " + sources);
 

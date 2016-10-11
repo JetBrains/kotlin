@@ -56,9 +56,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(defaultValue = "${project.artifactId}-test", required = true, readonly = true)
     protected String testModuleName;
 
-    @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
-    protected String languageVersion;
-
     @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
     protected String jvmTarget;
 
@@ -110,7 +107,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().info("Optimization is turned off");
         }
 
-        arguments.languageVersion = languageVersion;
         arguments.jvmTarget = jvmTarget;
 
         if (jdkHome != null) {
