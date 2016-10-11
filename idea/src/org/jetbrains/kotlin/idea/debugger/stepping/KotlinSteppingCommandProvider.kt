@@ -269,17 +269,17 @@ sealed class Action(val position: XSourcePositionImpl? = null,
                     val stepOverInlineData: StepOverFilterData? = null) {
     class STEP_OVER : Action() {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
-                debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
+                debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction()
     }
     class STEP_OUT : Action() {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
-            debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
+            debugProcess.createStepOutCommand(suspendContext).contextAction()
     }
     class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position) {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
             return runReadAction {
                 debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
-            }.contextAction(suspendContext)
+            }.contextAction()
         }
     }
     class STEP_OVER_INLINED(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData) {
