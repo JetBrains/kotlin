@@ -13,7 +13,7 @@ internal abstract class CompileTimeValue {
     abstract fun getLlvmValue(): LLVMOpaqueValue?
 
     fun getLlvmType(): LLVMOpaqueType? {
-	return LLVMTypeOf(getLlvmValue())
+        return LLVMTypeOf(getLlvmValue())
     }
 
 }
@@ -21,10 +21,10 @@ internal abstract class CompileTimeValue {
 internal class ConstArray(val elemType: LLVMOpaqueType?, val elements: List<CompileTimeValue>) : CompileTimeValue() {
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
-	val values = elements.map { it.getLlvmValue() }.toTypedArray()
-	val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
+        val values = elements.map { it.getLlvmValue() }.toTypedArray()
+        val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
 
-	return LLVMConstArray(elemType, valuesNativeArrayPtr, values.size)
+        return LLVMConstArray(elemType, valuesNativeArrayPtr, values.size)
     }
 }
 
@@ -33,9 +33,9 @@ internal open class Struct(val type: LLVMOpaqueType?, val elements: List<Compile
     constructor(type: LLVMOpaqueType?, vararg elements: CompileTimeValue) : this(type, elements.toList())
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
-	val values = elements.map { it.getLlvmValue() }.toTypedArray()
-	val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
-	return LLVMConstNamedStruct(type, valuesNativeArrayPtr, values.size)
+        val values = elements.map { it.getLlvmValue() }.toTypedArray()
+        val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
+        return LLVMConstNamedStruct(type, valuesNativeArrayPtr, values.size)
     }
 }
 
@@ -67,8 +67,8 @@ internal fun pointerType(pointeeType: LLVMOpaqueType?) = LLVMPointerType(pointee
 internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? {
     val returnType = getLLVMType(function.returnType!!)
     val params = function.dispatchReceiverParameter.singletonOrEmptyList() +
-		 function.extensionReceiverParameter.singletonOrEmptyList() +
-		 function.valueParameters
+            function.extensionReceiverParameter.singletonOrEmptyList() +
+            function.valueParameters
 
     val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
 
