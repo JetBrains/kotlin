@@ -164,7 +164,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
             declaration,
             declaration.textOffset,
             if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
-            Pass.UPDATE_OVERRIDEN_MARKERS,
+            Pass.LINE_MARKERS,
             SuperDeclarationMarkerTooltip,
             SuperDeclarationMarkerNavigationHandler()
     )
@@ -188,7 +188,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
             anchor,
             anchor.textOffset,
             if (isTrait) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-            Pass.UPDATE_OVERRIDEN_MARKERS,
+            Pass.LINE_MARKERS,
             SUBCLASSED_CLASS.tooltip,
             SUBCLASSED_CLASS.navigationHandler
     ))
@@ -218,7 +218,7 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
                 anchor,
                 anchor.textOffset,
                 if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-                Pass.UPDATE_OVERRIDEN_MARKERS,
+                Pass.LINE_MARKERS,
                 OVERRIDDEN_PROPERTY.tooltip,
                 OVERRIDDEN_PROPERTY.navigationHandler,
                 GutterIconRenderer.Alignment.RIGHT
@@ -298,7 +298,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
                 anchor,
                 anchor.textOffset,
                 if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-                Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
+                Pass.LINE_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
                 OVERRIDDEN_FUNCTION.navigationHandler,
                 GutterIconRenderer.Alignment.RIGHT
         ))
