@@ -87,7 +87,7 @@ internal fun chooseApplicableComponentFunctions(
 
     if (editor == null) return callback(emptyList())
 
-    val list = JBList("Create single variable", "Create destructuring declaration")
+    val list = JBList<String>("Create single variable", "Create destructuring declaration")
     JBPopupFactory.getInstance()
             .createListPopupBuilder(list)
             .setMovable(true)
