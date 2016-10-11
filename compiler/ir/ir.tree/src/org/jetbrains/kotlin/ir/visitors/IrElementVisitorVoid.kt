@@ -114,8 +114,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitVariableAccess(expression: IrValueAccessExpression) = visitDeclarationReference(expression)
     override fun visitValueAccess(expression: IrValueAccessExpression, data: Nothing?) = visitVariableAccess(expression)
 
-    fun visitGetVariable(expression: IrGetValue) = visitVariableAccess(expression)
-    override fun visitGetValue(expression: IrGetValue, data: Nothing?) = visitGetVariable(expression)
+    fun visitGetValue(expression: IrGetValue) = visitVariableAccess(expression)
+    override fun visitGetValue(expression: IrGetValue, data: Nothing?) = visitGetValue(expression)
 
     fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
