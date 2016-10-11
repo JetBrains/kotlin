@@ -3470,13 +3470,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
      * Translates x in a..b to a <= x && x <= b
      * and x !in a..b to a > x || x > b for any primitive type
      */
-    private void generateInPrimitiveRange(StackValue leftValue, KtBinaryExpression rangeExpression, boolean isInverted) {
-        Type rangeType = leftValue.type;
+    private void generateInPrimitiveRange(StackValue argument, KtBinaryExpression rangeExpression, boolean isInverted) {
+        Type rangeType = argument.type;
         int localVarIndex = myFrameMap.enterTemp(rangeType);
         // Load left bound
         gen(rangeExpression.getLeft(), rangeType);
         // Load x into local variable to avoid StackValue#put side-effects
-        leftValue.put(rangeType, v);
+        argument.put(rangeType, v);
         v.store(localVarIndex, rangeType);
         v.load(localVarIndex, rangeType);
 
