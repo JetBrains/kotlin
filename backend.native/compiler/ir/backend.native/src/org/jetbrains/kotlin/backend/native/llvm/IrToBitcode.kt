@@ -19,7 +19,7 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val context = Context(module, runtime, llvmModule) // TODO: dispose
 
     module.accept(RTTIGeneratorVisitor(context), null)
-    // module.accept(CodeGeneratorVisitor(context), null)
+    module.accept(CodeGeneratorVisitor(context), null)
     LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 
