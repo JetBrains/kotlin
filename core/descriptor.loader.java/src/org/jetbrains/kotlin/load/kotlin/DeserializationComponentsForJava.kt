@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration,
         classDataFinder: JavaClassDataFinder,
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
@@ -41,13 +42,11 @@ class DeserializationComponentsForJava(
         // currently built-ins may be not an instance of JvmBuiltIns only in case of built-ins serialization
         val jvmBuiltIns = moduleDescriptor.builtIns as? JvmBuiltIns
         components = DeserializationComponents(
-                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                LocalClassifierTypeSettings.Default,
-                errorReporter, lookupTracker, JavaFlexibleTypeDeserializer, ClassDescriptorFactory.EMPTY,
-                notFoundClasses,
+                storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+                LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
+                ClassDescriptorFactory.EMPTY, notFoundClasses,
                 additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
-                platformDependentDeclarationFilter =
-                    jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent
+                platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent
         )
     }
 }

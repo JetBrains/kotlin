@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -72,8 +73,9 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
                     module, notFoundClasses, storageManager, reflectKotlinClassFinder
             )
             val deserializationComponentsForJava = DeserializationComponentsForJava(
-                    storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,
-                    lazyJavaPackageFragmentProvider, notFoundClasses, RuntimeErrorReporter, LookupTracker.DO_NOTHING
+                    storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
+                    binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
+                    RuntimeErrorReporter, LookupTracker.DO_NOTHING
             )
 
             singleModuleClassResolver.resolver = javaDescriptorResolver

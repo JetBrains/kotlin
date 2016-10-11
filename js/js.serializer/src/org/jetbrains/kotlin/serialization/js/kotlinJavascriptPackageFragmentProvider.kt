@@ -29,6 +29,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
+        configuration: DeserializationConfiguration,
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
     val packageFragments = packageFqNames.map { fqName ->
@@ -41,6 +42,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
     val components = DeserializationComponents(
             storageManager,
             module,
+            configuration,
             DeserializedClassDataFinder(provider),
             AnnotationAndConstantLoaderImpl(module, notFoundClasses, JsSerializerProtocol),
             provider,
