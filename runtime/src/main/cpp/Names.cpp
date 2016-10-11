@@ -2,6 +2,7 @@
 
 #include "Names.h"
 
+#include "City.h"
 #include "Sha1.h"
 
 namespace {
@@ -21,7 +22,7 @@ extern "C" {
 
 // Make local hash out of arbitrary data.
 void MakeLocalHash(const void* data, uint32_t size, LocalHash* hash) {
-   assert(false); // not implemented yet
+  *hash = CityHash64(data, size);
 }
 
 // Make global hash out of arbitrary data.

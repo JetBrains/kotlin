@@ -1,6 +1,5 @@
 #ifndef RUNTIME_SHA1_H
 #define RUNTIME_SHA1_H
-/* ================ sha1.h ================ */
 /*
 SHA-1 in C
 By Steve Reid <steve@edmweb.com>

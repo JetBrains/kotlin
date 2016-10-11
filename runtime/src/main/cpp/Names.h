@@ -6,12 +6,12 @@
 // All names in system are stored as hashes (or maybe, for debug builds,
 // as pointers to uniqued C strings containing names?).
 // There are two types of hashes:
-//  - local hash, must be unique per class (CitiHash64 is being used)
+//  - local hash, must be unique per class (CityHash64 is being used)
 //  - global hash, must be unique globally (SHA1 is being used)
 // Generic guideline is that global hash is being used in global persistent context, while local
 // hashes are more local in scope.
 // Local hash.
-typedef int64_t LocalHash;
+typedef uint64_t LocalHash;
 // Hash of field name.
 typedef LocalHash FieldNameHash;
 // Hash of open method name.
