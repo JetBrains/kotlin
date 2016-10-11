@@ -21,7 +21,6 @@ fun foo(x: List<String>, y: Throwable) {
 
     y.fillInStackTrace() checkType { _<Int>() }
 
-    // TODO: Relevant extensions has been removed from stdlib
-    // We should consider reverting their removal
-    y.<!DEPRECATION_ERROR!>printStackTrace<!>()
+    // Falls back to extension in stdlib
+    y.printStackTrace()
 }
