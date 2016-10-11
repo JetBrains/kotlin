@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
@@ -33,18 +32,14 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-abstract class TargetPlatform(
-        val platformName: String
-) {
-    override fun toString(): String {
-        return platformName
-    }
+abstract class TargetPlatform(val platformName: String) {
+    override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
-    abstract val defaultModuleParameters: ModuleParameters
+    abstract val defaultImports: List<ImportPath>
 
     object Default : TargetPlatform("Default") {
-        override val defaultModuleParameters = ModuleParameters.Empty
+        override val defaultImports = emptyList<ImportPath>()
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
                                               IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY) {
@@ -115,7 +110,7 @@ fun TargetPlatform.createModule(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
-) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
+) = ModuleDescriptorImpl(name, storageManager, defaultImports, builtIns, capabilities)
 
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit)

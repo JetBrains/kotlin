@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -61,7 +60,7 @@ abstract class DeserializerForDecompilerBase(
     protected fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor =
             MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
 
-    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, ModuleParameters.Empty, builtIns)
+    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, emptyList(), builtIns)
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)

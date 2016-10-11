@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
@@ -81,9 +82,7 @@ public abstract class KotlinBuiltIns {
 
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
-        builtInsModule = new ModuleDescriptorImpl(
-                BUILTINS_MODULE_NAME, storageManager, ModuleParameters.Empty.INSTANCE, this
-        );
+        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, Collections.<ImportPath>emptyList(), this);
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,

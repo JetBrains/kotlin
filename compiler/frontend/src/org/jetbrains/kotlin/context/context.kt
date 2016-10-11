@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.context
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.createModule
 import org.jetbrains.kotlin.storage.ExceptionTracker
@@ -100,11 +100,11 @@ fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleC
 fun ContextForNewModule(
         project: Project,
         moduleName: Name,
-        parameters: ModuleParameters,
+        defaultImports: List<ImportPath>,
         builtIns: KotlinBuiltIns
 ): MutableModuleContext {
     val projectContext = ProjectContext(project)
-    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters, builtIns)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, defaultImports, builtIns)
     return MutableModuleContextImpl(module, projectContext)
 }
 

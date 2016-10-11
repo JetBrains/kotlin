@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFac
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -109,7 +110,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     private static PackageFragmentProvider createBuiltInsPackageFragmentProvider() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
-                KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, ModuleParameters.Empty.INSTANCE, DefaultBuiltIns.getInstance()
+                KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, Collections.<ImportPath>emptyList(), DefaultBuiltIns.getInstance()
         );
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -46,9 +45,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
         fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val builtIns = JvmBuiltIns(storageManager)
-            val module = ModuleDescriptorImpl(
-                    Name.special("<runtime module for $classLoader>"), storageManager, ModuleParameters.Empty, builtIns
-            )
+            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, emptyList(), builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)

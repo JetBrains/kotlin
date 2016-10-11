@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.ModuleParameters
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -28,34 +26,31 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    override val defaultModuleParameters = object : ModuleParameters {
-        override val defaultImports: List<ImportPath>
-            get() = DEFAULT_IMPORTS_FOR_JVM
-    }
+    override val defaultImports: List<ImportPath>
+        get() = ArrayList<ImportPath>().apply {
+            add(ImportPath("java.lang.*"))
+            add(ImportPath("kotlin.*"))
+            add(ImportPath("kotlin.annotation.*"))
+            add(ImportPath("kotlin.jvm.*"))
+            add(ImportPath("kotlin.collections.*"))
+            add(ImportPath("kotlin.coroutines.*"))
+            add(ImportPath("kotlin.ranges.*"))
+            add(ImportPath("kotlin.sequences.*"))
+            add(ImportPath("kotlin.text.*"))
+            add(ImportPath("kotlin.io.*"))
+
+            fun addAllClassifiersFromScope(scope: MemberScope) {
+                for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                    add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+                }
+            }
+
+            val builtIns = DefaultBuiltIns.Instance
+            for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
+                addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+            }
+        }
+
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
-}
-
-private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().apply {
-    add(ImportPath("java.lang.*"))
-    add(ImportPath("kotlin.*"))
-    add(ImportPath("kotlin.annotation.*"))
-    add(ImportPath("kotlin.jvm.*"))
-    add(ImportPath("kotlin.collections.*"))
-    add(ImportPath("kotlin.coroutines.*"))
-    add(ImportPath("kotlin.ranges.*"))
-    add(ImportPath("kotlin.sequences.*"))
-    add(ImportPath("kotlin.text.*"))
-    add(ImportPath("kotlin.io.*"))
-
-    fun addAllClassifiersFromScope(scope: MemberScope) {
-        for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-            add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
-        }
-    }
-
-    val builtIns = DefaultBuiltIns.Instance
-    for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
-        addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
-    }
 }

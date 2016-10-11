@@ -17,12 +17,16 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
@@ -34,10 +38,10 @@ import java.lang.IllegalArgumentException
 class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
         private val storageManager: StorageManager,
-        private val moduleParameters: ModuleParameters,
+        override val defaultImports: List<ImportPath>,
         override val builtIns: KotlinBuiltIns,
         private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
-) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, ModuleParameters by moduleParameters {
+) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
