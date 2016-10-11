@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="container" exported="" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="resolution" exported="" />
+    <orderEntry type="library" exported="" name="kotlin-script-runtime" level="project" />
   </component>
 </module>

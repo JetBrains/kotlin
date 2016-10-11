@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.getScriptDefinition
-import kotlin.script.StandardScriptTemplate
 
 class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {

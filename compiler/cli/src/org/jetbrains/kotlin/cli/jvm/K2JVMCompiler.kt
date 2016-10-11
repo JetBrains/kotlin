@@ -344,6 +344,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
             if (!arguments.noStdlib) {
                 classpath.add(paths.runtimePath)
+                classpath.add(paths.scriptRuntimePath)
             }
             // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
             // which is likely not what user wants since s/he manually provided "-no-stdlib"

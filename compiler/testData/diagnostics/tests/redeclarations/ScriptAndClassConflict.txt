@@ -9,7 +9,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final class A : kotlin.script.StandardScriptTemplate {
+    public final class A : kotlin.script.templates.standard.ScriptTemplateWithArgs {
         public constructor A(/*0*/ args: kotlin.Array<kotlin.String>)
         public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
         public final val x: kotlin.Int = 1

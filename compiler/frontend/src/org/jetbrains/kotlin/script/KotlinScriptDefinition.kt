@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.script.StandardScriptTemplate
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) {
 
@@ -50,5 +50,5 @@ interface KotlinScriptExternalDependencies {
     val scripts: Iterable<File> get() = emptyList()
 }
 
-object StandardScriptDefinition : KotlinScriptDefinition(StandardScriptTemplate::class)
+object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)
 

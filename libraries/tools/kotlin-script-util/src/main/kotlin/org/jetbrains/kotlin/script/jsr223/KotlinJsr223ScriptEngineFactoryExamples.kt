@@ -25,7 +25,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
-import kotlin.script.StandardScriptTemplate
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
@@ -34,9 +34,9 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
                     Disposer.newDisposable(),
                     this,
                     listOf(kotlinRuntimeJar),
-                    "kotlin.script.ScriptTemplateWithArgsAndBindings",
-                    ::makeArgumentsForTemplateWithArgsAndBindings,
-                    arrayOf(Array<String>::class.java, java.util.Map::class.java)
+                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
+                    arrayOf(Map::class.java)
             )
 }
 
@@ -48,9 +48,9 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
                     this,
                     kotlinCompilerJar,
                     listOf(kotlinRuntimeJar),
-                    "kotlin.script.ScriptTemplateWithArgsAndBindings",
-                    ::makeArgumentsForTemplateWithArgsAndBindings,
-                    arrayOf(Array<String>::class.java, java.util.Map::class.java)
+                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
+                    arrayOf(Map::class.java)
             )
 }
 
@@ -62,27 +62,18 @@ class KotlinJsr223JvmDaemonRemoteEvalScriptEngineFactory : KotlinJsr223JvmScript
                     this,
                     kotlinCompilerJar,
                     listOf(kotlinRuntimeJar),
-                    "kotlin.script.ScriptTemplateWithArgsAndBindings",
-                    ::makeSerializableArgumentsForTemplateWithArgsAndBindings,
-                    arrayOf(Array<String>::class.java, java.util.Map::class.java)
+                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    ::makeSerializableArgumentsForTemplateWithBindings,
+                    arrayOf(Map::class.java)
             )
 }
 
-private fun makeArgumentsForTemplateWithArgsAndBindings(ctx: ScriptContext): Array<Any?> {
-    val bindings = ctx.getBindings(ScriptContext.ENGINE_SCOPE)
-    return arrayOf(
-            (bindings[ScriptEngine.ARGV] as? Array<*>) ?: emptyArray<String>(),
-            bindings)
-}
-
-private fun makeSerializableArgumentsForTemplateWithArgsAndBindings(ctx: ScriptContext): Array<Any?> {
+private fun makeSerializableArgumentsForTemplateWithBindings(ctx: ScriptContext): Array<Any?> {
     val bindings = ctx.getBindings(ScriptContext.ENGINE_SCOPE)
     val serializableBindings = linkedMapOf<String, Any>()
     // TODO: consider deeper analysis and copying to serializable data if possible
     serializableBindings.putAll(bindings)
-    return arrayOf(
-            (bindings[ScriptEngine.ARGV] as? Array<*>) ?: emptyArray<String>(),
-            serializableBindings)
+    return arrayOf(serializableBindings)
 }
 
 private fun File.existsOrNull(): File? = existsAndCheckOrNull { true }
@@ -94,5 +85,5 @@ private val kotlinCompilerJar = System.getProperty("kotlin.compiler.jar")?.let(:
 
 private val kotlinRuntimeJar = System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
         ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
-        ?: getResourcePathForClass(StandardScriptTemplate::class.java).existsOrNull()
+        ?: getResourcePathForClass(ScriptTemplateWithArgs::class.java).existsOrNull()
         ?: throw FileNotFoundException("Cannot find kotlin runtime jar, set kotlin.java.runtime.jar property to proper location")

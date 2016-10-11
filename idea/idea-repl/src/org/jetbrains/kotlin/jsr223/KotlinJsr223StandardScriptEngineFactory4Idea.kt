@@ -29,13 +29,9 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
             KotlinJsr223JvmScriptEngine4Idea(
                     Disposer.newDisposable(),
                     this,
-                    listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath),
-                    "kotlin.script.ScriptTemplateWithArgsAndBindings",
-                    { ctx ->
-                        val bindings = ctx.getBindings(ScriptContext.ENGINE_SCOPE)
-                        arrayOf(
-                                (bindings[ScriptEngine.ARGV] as? Array<*>) ?: emptyArray<String>(),
-                                bindings) },
-                    arrayOf(Array<String>::class.java, Map::class.java)
+                    listOf(PathUtil.getKotlinPathsForIdeaPlugin().runtimePath, PathUtil.getKotlinPathsForIdeaPlugin().scriptRuntimePath),
+                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
+                    arrayOf(Map::class.java)
             )
 }

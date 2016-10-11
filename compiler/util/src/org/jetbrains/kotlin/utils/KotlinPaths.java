@@ -34,6 +34,9 @@ public interface KotlinPaths {
     File getReflectPath();
 
     @NotNull
+    File getScriptRuntimePath();
+
+    @NotNull
     File getKotlinTestPath();
 
     @NotNull

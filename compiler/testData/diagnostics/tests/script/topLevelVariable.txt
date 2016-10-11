@@ -1,6 +1,6 @@
 package
 
-public final class TopLevelVariable : kotlin.script.StandardScriptTemplate {
+public final class TopLevelVariable : kotlin.script.templates.standard.ScriptTemplateWithArgs {
     public constructor TopLevelVariable(/*0*/ args: kotlin.Array<kotlin.String>)
     public final val a: kotlin.Int
     public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>

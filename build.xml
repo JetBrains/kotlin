@@ -15,6 +15,7 @@
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
+    <property name="bootstrap.script.runtime" value="${bootstrap.compiler.home}/lib/kotlin-script-runtime.jar"/>
     <property name="bootstrap.kotlin.test" value="${bootstrap.compiler.home}/lib/kotlin-test.jar" />
 
     <property name="output" value="${basedir}/dist"/>
@@ -57,8 +58,8 @@
     little to no differences between the new and the newest runtime.
     -->
     <condition property="compiler.manifest.class.path"
-               value="kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar"
-               else="kotlin-runtime.jar kotlin-reflect.jar">
+               value="kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar kotlin-script-runtime-internal-bootstrap.jar"
+               else="kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar">
         <istrue value="${bootstrap.or.local.build}"/>
     </condition>
 
@@ -66,6 +67,7 @@
         <file file="${bootstrap.runtime}"/>
         <file file="${bootstrap.kotlin.test}" />
         <file file="${bootstrap.reflect}"/>
+        <file file="${bootstrap.script.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <pathelement location="${protobuf.jar}"/>
 
@@ -190,6 +192,7 @@
         <sequential if:true="${bootstrap.or.local.build}">
             <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
             <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
+            <copy file="${bootstrap.script.runtime}" tofile="${kotlin-home}/lib/kotlin-script-runtime-internal-bootstrap.jar"/>
             <copy file="${bootstrap.kotlin.test}" tofile="${kotlin-home}/lib/kotlin-test-internal-bootstrap.jar" failonerror="false"/>
             <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
                 <manifest>
@@ -206,6 +209,7 @@
         <sequential unless:true="${bootstrap.or.local.build}">
             <copy file="${bootstrap.runtime}" todir="${kotlin-home}/lib"/>
             <copy file="${bootstrap.reflect}" todir="${kotlin-home}/lib"/>
+            <copy file="${bootstrap.script.runtime}" todir="${kotlin-home}/lib"/>
             <copy file="${bootstrap.kotlin.test}" todir="${kotlin-home}/lib"/>
         </sequential>
     </target>
@@ -612,6 +616,9 @@
             <zipfileset src="${bootstrap.reflect}">
                 <patternset refid="lib.metainf.patternset"/>
             </zipfileset>
+            <zipfileset src="${bootstrap.script.runtime}">
+                <patternset refid="lib.metainf.patternset"/>
+            </zipfileset>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -640,6 +647,7 @@
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${bootstrap.script.runtime}"/>
                 <pathelement path="${idea.sdk}/lib/util.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
@@ -683,6 +691,7 @@
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${bootstrap.script.runtime}"/>
                 <pathelement path="${bootstrap.kotlin.test}"/>
                 <pathelement path="${protobuf.jar}"/>
                 <pathelement path="${idea.sdk}/lib/junit-4.12.jar"/>
@@ -812,6 +821,7 @@
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${bootstrap.script.runtime}"/>
             </classpath>
         </javac2>
 
@@ -1201,7 +1211,6 @@
         <delete dir="${output}/mock-runtime-src" failonerror="false"/>
         <mkdir dir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/core/runtime.jvm/src/kotlin/TypeAliases.kt" todir="${output}/mock-runtime-src"/>
-        <copy file="${basedir}/core/runtime.jvm/src/kotlin/script/Scripts.kt" todir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/util/Standard.kt" todir="${output}/mock-runtime-src"/>
         <copy file="${basedir}/libraries/stdlib/src/kotlin/internal/Annotations.kt" todir="${output}/mock-runtime-src"/>
 

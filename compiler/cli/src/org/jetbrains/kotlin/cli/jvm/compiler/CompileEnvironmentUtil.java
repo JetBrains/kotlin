@@ -122,8 +122,16 @@ public class CompileEnvironmentUtil {
         if (!runtimePath.exists()) {
             throw new CompileEnvironmentException("Couldn't find runtime library");
         }
+        File scriptRuntimePath = PathUtil.getKotlinPathsForCompiler().getScriptRuntimePath();
+        if (!scriptRuntimePath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find script runtime library");
+        }
 
-        JarInputStream jis = new JarInputStream(new FileInputStream(runtimePath));
+        copyJarImpl(stream, runtimePath);
+    }
+
+    private static void copyJarImpl(JarOutputStream stream, File jarPath) throws IOException {
+        JarInputStream jis = new JarInputStream(new FileInputStream(jarPath));
         try {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();

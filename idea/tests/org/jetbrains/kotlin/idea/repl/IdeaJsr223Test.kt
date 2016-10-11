@@ -55,10 +55,7 @@ class IdeaJsr223Test : PlatformTestCase() {
         bindings.put(ScriptEngine.ARGV, arrayOf("42"))
         bindings.put("abc", 13)
 
-        val res1 = engine.eval("2 + args[0].toInt()")
-        assertEquals(44, res1)
-
-        val res2 = engine.eval("2 + (bindings[\"abc\"] as Int)")
-        assertEquals(15, res2)
+        val res1 = engine.eval("2 + (bindings[\"abc\"] as Int)")
+        assertEquals(15, res1)
     }
 }

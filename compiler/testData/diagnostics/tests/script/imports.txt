@@ -1,6 +1,6 @@
 package
 
-public final class Imports : kotlin.script.StandardScriptTemplate {
+public final class Imports : kotlin.script.templates.standard.ScriptTemplateWithArgs {
     public constructor Imports(/*0*/ args: kotlin.Array<kotlin.String>)
     public final val al: java.util.ArrayList<kotlin.String>? = null
     public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>

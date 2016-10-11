@@ -494,7 +494,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             withDisposable { disposable ->
                 val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
                                                     classpathFromClassloader(),
-                                                    "kotlin.script.StandardScriptTemplate",
+                                                    "kotlin.script.templates.standard.ScriptTemplateWithArgs",
                                                     System.err)
 
                 val localEvaluator = GenericReplCompiledEvaluator(emptyList(),
@@ -543,7 +543,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 val repl = KotlinRemoteReplEvaluator(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
                                                      listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
-                                                     "kotlin.script.StandardScriptTemplate",
+                                                     "kotlin.script.templates.standard.ScriptTemplateWithArgs",
                                                      arrayOf(emptyArray<String>()), null,
                                                      System.err, evalOut, evalErr, evalIn)
 

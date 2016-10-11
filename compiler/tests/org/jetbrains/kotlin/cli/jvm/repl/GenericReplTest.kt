@@ -43,7 +43,7 @@ class GenericReplTest : TestCase() {
 
         val repl = TestRepl(disposable,
                             listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
-                            "kotlin.script.StandardScriptTemplate")
+                            "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
         val res1 = repl.replCompiler?.check(ReplCodeLine(0, "val x ="), emptyList())
         TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)

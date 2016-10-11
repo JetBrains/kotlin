@@ -125,6 +125,7 @@ private fun updateJar(
     val jarPath: File = when (libraryJarDescriptor) {
         LibraryJarDescriptor.RUNTIME_JAR -> paths.runtimePath
         LibraryJarDescriptor.REFLECT_JAR -> paths.reflectPath
+        LibraryJarDescriptor.SCRIPT_RUNTIME_JAR -> paths.scriptRuntimePath
         LibraryJarDescriptor.TEST_JAR -> paths.kotlinTestPath
         LibraryJarDescriptor.RUNTIME_SRC_JAR -> paths.runtimeSourcesPath
         LibraryJarDescriptor.JS_STDLIB_JAR -> paths.jsStdLibJarPath
@@ -160,6 +161,7 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
 private enum class LibraryJarDescriptor private constructor(val jarName: String, val shouldExist: Boolean) {
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
+    SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, true),
     TEST_JAR(PathUtil.KOTLIN_TEST_JAR, false),
     RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
     JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),

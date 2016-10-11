@@ -187,7 +187,7 @@ private class ScriptCommandLineState(environment: ExecutionEnvironment, configur
         val params = commonParameters()
 
         val kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin()
-        listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath)
+        listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
                 .map { it.absolutePath }
                 .forEach { dependencyJar -> params.classPath.add(dependencyJar) }
 

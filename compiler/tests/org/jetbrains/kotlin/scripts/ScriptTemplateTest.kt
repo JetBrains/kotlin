@@ -37,12 +37,11 @@ import org.junit.Test
 import java.io.File
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
-import java.net.URISyntaxException
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
-import kotlin.script.StandardScriptTemplate
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
 // as soon as the the latter is removed from the codebase
@@ -179,7 +178,7 @@ class ScriptTemplateTest {
 
     @Test
     fun testScriptWithStandardTemplate() {
-        val aClass = compileScript("fib_std.kts", StandardScriptTemplate::class, runIsolated = false)
+        val aClass = compileScript("fib_std.kts", ScriptTemplateWithArgs::class, runIsolated = false)
         Assert.assertNotNull(aClass)
         captureOut {
             aClass!!.getConstructor(Array<String>::class.java).newInstance(arrayOf("4", "other"))
@@ -324,12 +323,12 @@ class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesRe
     {
         val cp = script.annotations.flatMap {
             when (it) {
-                is DependsOn -> listOf(if (it.path == "@{runtime}") kotlinPaths.runtimePath else File(it.path))
-                is DependsOnTwo -> listOf(it.path1, it.path2).mapNotNull {
+                is DependsOn -> if (it.path == "@{runtime}") listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath) else listOf(File(it.path))
+                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap {
                     when {
-                        it.isBlank() -> null
-                        it == "@{runtime}" -> kotlinPaths.runtimePath
-                        else -> File(it)
+                        it.isBlank() -> emptyList()
+                        it == "@{runtime}" -> listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+                        else -> listOf(File(it))
                     }
                 }
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
