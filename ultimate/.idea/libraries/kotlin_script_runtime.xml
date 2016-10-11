@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlin-script-runtime">
+    <CLASSES>
+      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-script-runtime.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
