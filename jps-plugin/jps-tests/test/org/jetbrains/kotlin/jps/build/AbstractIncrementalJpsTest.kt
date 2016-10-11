@@ -86,7 +86,7 @@ abstract class AbstractIncrementalJpsTest(
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
         TestLoggerFactory.dumpLogToStdout("")
-        TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
+        TestLoggerFactory.enableDebugLogging(testRootDisposable, "#org")
 
         val console = ConsoleAppender()
         console.layout = PatternLayout("%d [%p|%c|%C{1}] %m%n")
@@ -263,7 +263,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
-        Disposer.register(myTestRootDisposable, Disposable { FileUtilRt.delete(workDir) })
+        Disposer.register(testRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 
         val moduleNames = configureModules()
         initialMake()
