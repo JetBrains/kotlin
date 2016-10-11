@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 val AbstractInsnNode.isMeaningful: Boolean get() =
     when (this.type) {
@@ -67,14 +66,6 @@ fun MethodNode.prepareForEmitting() {
         }
 
         current = prev
-    }
-}
-
-abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wrappedValue?.type) {
-    val basicValue: BasicValue? get() = (wrappedValue as? BasicValueWrapper)?.basicValue ?: wrappedValue
-
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other) && this.javaClass == other?.javaClass
     }
 }
 

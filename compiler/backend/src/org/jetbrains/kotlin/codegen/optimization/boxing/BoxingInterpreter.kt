@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.RangeCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -93,8 +94,8 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
 
     override fun merge(v: BasicValue, w: BasicValue) =
             when {
-                v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE -> {
-                    BasicValue.UNINITIALIZED_VALUE
+                v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE -> {
+                    StrictBasicValue.UNINITIALIZED_VALUE
                 }
                 v is BoxedBasicValue && v.typeEquals(w) -> {
                     onMergeSuccess(v, w as BoxedBasicValue)

@@ -18,19 +18,18 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class BoxedBasicValue(
         boxedType: Type,
         val boxingInsn: AbstractInsnNode,
         val progressionIterator: ProgressionIteratorBasicValue?
-) : BasicValue(boxedType) {
+) : StrictBasicValue(boxedType) {
     private val associatedInsns = HashSet<AbstractInsnNode>()
     private val unboxingWithCastInsns = HashSet<Pair<AbstractInsnNode, Type>>()
     private val associatedVariables = HashSet<Int>()

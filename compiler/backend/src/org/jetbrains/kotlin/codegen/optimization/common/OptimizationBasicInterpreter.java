@@ -23,22 +23,27 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
-public class OptimizationBasicInterpreter extends BasicInterpreter {
-    private static final BasicValue BOOLEAN_VALUE = new BasicValue(Type.BOOLEAN_TYPE);
-    private static final BasicValue CHAR_VALUE = new BasicValue(Type.CHAR_TYPE);
-    private static final BasicValue BYTE_VALUE = new BasicValue(Type.BYTE_TYPE);
-    private static final BasicValue SHORT_VALUE = new BasicValue(Type.SHORT_TYPE);
+import static org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue.*;
 
+public class OptimizationBasicInterpreter extends BasicInterpreter {
     @Override
     @Nullable
-    public BasicValue newValue(@Nullable Type type) {
+    public StrictBasicValue newValue(@Nullable Type type) {
         if (type == null) {
-            return super.newValue(null);
+            return UNINITIALIZED_VALUE;
         }
 
         switch (type.getSort()) {
             case Type.VOID:
                 return null;
+            case Type.INT:
+                return INT_VALUE;
+            case Type.FLOAT:
+                return FLOAT_VALUE;
+            case Type.LONG:
+                return LONG_VALUE;
+            case Type.DOUBLE:
+                return DOUBLE_VALUE;
             case Type.BOOLEAN:
                 return BOOLEAN_VALUE;
             case Type.CHAR:
@@ -48,9 +53,11 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
             case Type.SHORT:
                 return SHORT_VALUE;
             case Type.OBJECT:
-                return new BasicValue(type);
+                return new StrictBasicValue(type);
+            case Type.ARRAY:
+                return StrictBasicValue.REFERENCE_VALUE;
             default:
-                return super.newValue(type);
+                throw new IllegalArgumentException("Unknown type sort " + type.getSort());
         }
     }
 
@@ -61,14 +68,14 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
     ) {
         if (v.equals(w)) return v;
 
-        if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
-            return BasicValue.UNINITIALIZED_VALUE;
+        if (v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE) {
+            return StrictBasicValue.UNINITIALIZED_VALUE;
         }
 
         // if merge of two references then `lub` is java/lang/Object
         // arrays also are BasicValues with reference type's
         if (v.getType().getSort() == Type.OBJECT && w.getType().getSort() == Type.OBJECT) {
-            return BasicValue.REFERENCE_VALUE;
+            return StrictBasicValue.REFERENCE_VALUE;
         }
 
         assert v.getType().getSort() != Type.ARRAY && w.getType().getSort() != Type.ARRAY : "There should not be arrays";
@@ -77,9 +84,9 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
         // if merge of something can be stored in int var (int, char, boolean, byte, character)
         if (v.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE &&
             w.getType().getOpcode(Opcodes.ISTORE) == Opcodes.ISTORE) {
-            return BasicValue.INT_VALUE;
+            return StrictBasicValue.INT_VALUE;
         }
 
-        return BasicValue.UNINITIALIZED_VALUE;
+        return StrictBasicValue.UNINITIALIZED_VALUE;
     }
 }

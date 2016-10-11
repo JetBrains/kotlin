@@ -21,12 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.RangeCodegenUtil;
 import org.jetbrains.kotlin.codegen.intrinsics.IteratorNext;
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
 
-public class ProgressionIteratorBasicValue extends BasicValue {
+public class ProgressionIteratorBasicValue extends StrictBasicValue {
     private final static ImmutableMap<String, Type> VALUES_TYPENAME_TO_TYPE;
 
     static {
