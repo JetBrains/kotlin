@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType() = returnType?.toFuzzyType(typeParameters)
@@ -170,13 +171,20 @@ class FuzzyType(
         if (otherSubstitutedType.isError) return TypeSubstitutor.EMPTY
         if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
 
-        val substitution = constraintSystem.typeVariables.map { it.originalTypeParameter }.associateBy({ it.typeConstructor }) {
-            val type = it.defaultType
-            val solution = substitutor.substitute(type, Variance.INVARIANT)
-            TypeProjectionImpl(if (solution != null && !ErrorUtils.containsUninferredParameter(solution)) solution else type)
-        }
+        val substitutorToKeepCapturedTypes = object : DelegatedTypeSubstitution(substitutor.substitution) {
+            override fun approximateCapturedTypes() = false
+        }.buildSubstitutor()
 
-        return TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(substitution))
+        val substitutionMap: Map<TypeConstructor, TypeProjection> = constraintSystem.typeVariables
+                .map { it.originalTypeParameter }
+                .associateBy(
+                        keySelector = { it.typeConstructor },
+                        valueTransform = {
+                            val typeProjection = TypeProjectionImpl(Variance.INVARIANT, it.defaultType)
+                            val substitutedProjection = substitutorToKeepCapturedTypes.substitute(typeProjection)
+                            substitutedProjection?.check { !ErrorUtils.containsUninferredParameter(it.type) } ?: typeProjection
+                        })
+        return TypeConstructorSubstitution.createByConstructorsMap(substitutionMap, approximateCapturedTypes = true).buildSubstitutor()
     }
 }
 
