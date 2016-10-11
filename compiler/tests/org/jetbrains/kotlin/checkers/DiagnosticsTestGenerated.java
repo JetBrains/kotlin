@@ -20832,6 +20832,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typealiasRhsAnnotations.kt")
+            public void testTypealiasRhsAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typealiasRhsAnnotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupportedTypeAlias.kt")
             public void testUnsupportedTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/unsupportedTypeAlias.kt");
