@@ -3196,6 +3196,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("exponentDouble.java")
+        public void testExponentDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/exponentDouble.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exponentFloat.java")
+        public void testExponentFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/exponentFloat.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("float.java")
         public void testFloat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/float.java");

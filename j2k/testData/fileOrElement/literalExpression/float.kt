@@ -7,6 +7,8 @@ internal class A {
     private val f6 = -1f
     private val f7 = -1f
     private val f8 = +1f
+    private val f9 = 1f
+    private val f10 = 1f
 
     fun foo1(f: Float) {
     }
