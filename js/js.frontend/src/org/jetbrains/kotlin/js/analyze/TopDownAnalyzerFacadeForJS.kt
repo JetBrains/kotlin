@@ -14,78 +14,68 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.analyze;
+package org.jetbrains.kotlin.js.analyze
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
-import org.jetbrains.kotlin.context.ContextKt;
-import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.frontend.js.di.InjectionKt;
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.context.ContextForNewModule
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+object TopDownAnalyzerFacadeForJS {
+    @JvmStatic
+    fun analyzeFiles(files: Collection<KtFile>, config: JsConfig): JsAnalysisResult {
+        val trace = BindingTraceContext()
 
-public final class TopDownAnalyzerFacadeForJS {
-    private TopDownAnalyzerFacadeForJS() {
+        val newModuleContext = ContextForNewModule(
+                config.project, Name.special("<" + config.moduleId + ">"), JsPlatform
+        )
+        newModuleContext.setDependencies(computeDependencies(newModuleContext.module, config))
+        return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config)
     }
 
-    @NotNull
-    public static JsAnalysisResult analyzeFiles(@NotNull Collection<KtFile> files, @NotNull JsConfig config) {
-        BindingTrace trace = new BindingTraceContext();
-
-        MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
-                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE
-        );
-        newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
-        return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config);
-    }
-
-    @NotNull
-    private static List<ModuleDescriptorImpl> computeDependencies(ModuleDescriptorImpl module, @NotNull JsConfig config) {
-        List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
-        allDependencies.add(module);
-        for (JsModuleDescriptor<ModuleDescriptorImpl> descriptor : config.getModuleDescriptors()) {
-            allDependencies.add(descriptor.getData());
+    private fun computeDependencies(module: ModuleDescriptorImpl, config: JsConfig): List<ModuleDescriptorImpl> {
+        val allDependencies = ArrayList<ModuleDescriptorImpl>()
+        allDependencies.add(module)
+        for (descriptor in config.moduleDescriptors) {
+            allDependencies.add(descriptor.data)
         }
-        allDependencies.add(JsPlatform.INSTANCE.getBuiltIns().getBuiltInsModule());
-        return allDependencies;
+        allDependencies.add(JsPlatform.builtIns.builtInsModule)
+        return allDependencies
     }
 
-    @NotNull
-    public static JsAnalysisResult analyzeFilesWithGivenTrace(
-            @NotNull Collection<KtFile> files,
-            @NotNull BindingTrace trace,
-            @NotNull ModuleContext moduleContext,
-            @NotNull JsConfig config
-    ) {
-        Collection<KtFile> allFiles = JsConfig.withJsLibAdded(files, config);
+    @JvmStatic
+    fun analyzeFilesWithGivenTrace(
+            files: Collection<KtFile>,
+            trace: BindingTrace,
+            moduleContext: ModuleContext,
+            config: JsConfig
+    ): JsAnalysisResult {
+        val allFiles = JsConfig.withJsLibAdded(files, config)
 
-        LazyTopDownAnalyzerForTopLevel analyzerForJs = InjectionKt.createTopDownAnalyzerForJs(
+        val analyzerForJs = createTopDownAnalyzerForJs(
                 moduleContext, trace,
-                new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles),
+                FileBasedDeclarationProviderFactory(moduleContext.storageManager, allFiles),
                 LanguageVersionSettingsImpl.DEFAULT
-        );
-        analyzerForJs.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, Collections.<PackageFragmentProvider>emptyList());
-        return JsAnalysisResult.success(trace, moduleContext.getModule());
+        )
+        analyzerForJs.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files, emptyList<PackageFragmentProvider>())
+        return JsAnalysisResult.success(trace, moduleContext.module)
     }
 
-    public static void checkForErrors(@NotNull Collection<KtFile> allFiles, @NotNull BindingContext bindingContext) {
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        for (KtFile file : allFiles) {
-            AnalyzingUtils.checkForSyntacticErrors(file);
+    @JvmStatic
+    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext) {
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+        for (file in allFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file)
         }
     }
 }
