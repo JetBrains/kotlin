@@ -1,5 +1,6 @@
 TESTS := sum \
-         sum_foo_bar
+         sum_foo_bar \
+         arithmetic
 
 BIN_TESTS=$(foreach t, ${TESTS},${t}_test)
 
