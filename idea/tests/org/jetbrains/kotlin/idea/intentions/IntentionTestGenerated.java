@@ -6389,113 +6389,113 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/ifNullToElvis")
+    @TestMetadata("idea/testData/intentions/foldInitializerAndIfToElvis")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class IfNullToElvis extends AbstractIntentionTest {
-        public void testAllFilesPresentInIfNullToElvis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/ifNullToElvis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+    public static class FoldInitializerAndIfToElvis extends AbstractIntentionTest {
+        public void testAllFilesPresentInFoldInitializerAndIfToElvis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/foldInitializerAndIfToElvis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("Break.kt")
         public void testBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Break.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Break.kt");
             doTest(fileName);
         }
 
         @TestMetadata("CommentInBlock.kt")
         public void testCommentInBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/CommentInBlock.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/CommentInBlock.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Comments.kt")
         public void testComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Comments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Comments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Comments2.kt")
         public void testComments2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Comments2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Comments2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Continue.kt")
         public void testContinue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Continue.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Continue.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExplicitValType.kt")
         public void testExplicitValType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ExplicitValType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/ExplicitValType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExplicitVarType.kt")
         public void testExplicitVarType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ExplicitVarType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/ExplicitVarType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfNotNull.kt")
         public void testIfNotNull() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/IfNotNull.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/IfNotNull.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ifStatementPriority.kt")
         public void testIfStatementPriority() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ifStatementPriority.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/ifStatementPriority.kt");
             doTest(fileName);
         }
 
         @TestMetadata("MultiStatementBlock.kt")
         public void testMultiStatementBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/MultiStatementBlock.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/MultiStatementBlock.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NotExit.kt")
         public void testNotExit() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/NotExit.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/NotExit.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NotIs.kt")
         public void testNotIs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/NotIs.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/NotIs.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OtherVar1.kt")
         public void testOtherVar1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/OtherVar1.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/OtherVar1.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OtherVar2.kt")
         public void testOtherVar2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/OtherVar2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/OtherVar2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Return.kt")
         public void testReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Return.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Return.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ThrowInBlock.kt")
         public void testThrowInBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ThrowInBlock.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/ThrowInBlock.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Var.kt")
         public void testVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Var.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Var.kt");
             doTest(fileName);
         }
     }
