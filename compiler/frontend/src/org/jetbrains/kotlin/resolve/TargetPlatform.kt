@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
@@ -31,21 +30,17 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-abstract class TargetPlatform(
-        val platformName: String
-) {
-    override fun toString(): String {
-        return platformName
-    }
+abstract class TargetPlatform(val platformName: String) {
+    override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
     abstract val builtIns: KotlinBuiltIns
-    abstract val defaultModuleParameters: ModuleParameters
+    abstract val defaultImports: List<ImportPath>
 
     object Default : TargetPlatform("Default") {
         override val builtIns: KotlinBuiltIns
             get() = DefaultBuiltIns.Instance
-        override val defaultModuleParameters = ModuleParameters.Empty
+        override val defaultImports = emptyList<ImportPath>()
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
                                               IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY) {
@@ -110,4 +105,4 @@ fun TargetPlatform.createModule(
         name: Name,
         storageManager: StorageManager,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
-) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
+) = ModuleDescriptorImpl(name, storageManager, defaultImports, builtIns, capabilities)

@@ -941,7 +941,7 @@ public class KotlinTestUtils {
     @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull TargetPlatform platform) {
         return new ModuleDescriptorImpl(
-                Name.special(name), LockBasedStorageManager.NO_LOCKS, platform.getDefaultModuleParameters(), platform.getBuiltIns()
+                Name.special(name), LockBasedStorageManager.NO_LOCKS, platform.getDefaultImports(), platform.getBuiltIns()
         );
     }
 
