@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.annotation
 
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.tasks.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.util.*

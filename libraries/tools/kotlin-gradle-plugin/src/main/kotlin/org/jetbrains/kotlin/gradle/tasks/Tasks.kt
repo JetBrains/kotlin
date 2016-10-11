@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
@@ -416,19 +418,5 @@ internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
             CompilerMessageSeverity.WARNING -> logger.warn(text)
             else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
-    }
-}
-
-internal fun Logger.kotlinInfo(message: String) {
-    this.info("[KOTLIN] $message")
-}
-
-internal fun Logger.kotlinDebug(message: String) {
-    this.debug("[KOTLIN] $message")
-}
-
-internal inline fun Logger.kotlinDebug(message: ()->String) {
-    if (isDebugEnabled) {
-        kotlinDebug(message())
     }
 }
