@@ -20,5 +20,5 @@ import com.intellij.diagnostic.ITNReporter
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 
 class AndroidExtensionsReportSubmitter : ITNReporter() {
-    override fun showErrorInRelease(event: IdeaLoggingEvent?) = true
+    override fun showErrorInRelease(event: IdeaLoggingEvent) = true
 }
