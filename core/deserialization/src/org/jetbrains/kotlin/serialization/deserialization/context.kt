@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.FlexibleTypeFactory
 class DeserializationComponents(
         val storageManager: StorageManager,
         val moduleDescriptor: ModuleDescriptor,
+        val configuration: DeserializationConfiguration,
         val classDataFinder: ClassDataFinder,
         val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
         val packageFragmentProvider: PackageFragmentProvider,

@@ -24,11 +24,13 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
@@ -179,9 +181,12 @@ public abstract class JsConfig {
                 JsPlatform.INSTANCE, Name.special("<" + metadata.getModuleName() + ">"), storageManager
         );
 
-
         JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
-                metadata.getBody(), storageManager, moduleDescriptor);
+                metadata.getBody(), storageManager, moduleDescriptor, new CompilerDeserializationConfiguration(
+                        LanguageVersionSettingsImpl.DEFAULT
+                )
+        );
+
         PackageFragmentProvider provider = rawDescriptor.getData();
         moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
 

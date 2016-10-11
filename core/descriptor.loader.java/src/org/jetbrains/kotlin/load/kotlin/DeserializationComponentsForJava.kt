@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration,
         classDataFinder: JavaClassDataFinder,
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
@@ -39,9 +40,10 @@ class DeserializationComponentsForJava(
 
     init {
         components = DeserializationComponents(
-                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, LocalClassifierTypeSettings.Default,
-                errorReporter, lookupTracker, FlexibleJavaClassifierTypeFactory, ClassDescriptorFactory.EMPTY,
-                notFoundClasses, JavaTypeCapabilitiesLoader,
+                storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+                LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, FlexibleJavaClassifierTypeFactory,
+                ClassDescriptorFactory.EMPTY, notFoundClasses,
+                JavaTypeCapabilitiesLoader,
                 additionalSupertypes = BuiltInClassesAreSerializableOnJvm(moduleDescriptor)
         )
     }

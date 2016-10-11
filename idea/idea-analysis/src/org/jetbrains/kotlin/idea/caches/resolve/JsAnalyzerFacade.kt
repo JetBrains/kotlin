@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
@@ -66,7 +67,9 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                     .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
                     .filter { it.isAbiVersionCompatible }
                     .mapNotNull {
-                        KotlinJavascriptSerializationUtil.readModule(it.body, moduleContext.storageManager, moduleDescriptor).data
+                        KotlinJavascriptSerializationUtil.readModule(
+                                it.body, moduleContext.storageManager, moduleDescriptor, container.get<DeserializationConfiguration>()
+                        ).data
                     }
 
             if (providers.isNotEmpty()) {

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
@@ -56,18 +57,25 @@ object KotlinJavascriptSerializationUtil {
         stream.toByteArray()
     }
 
-    @JvmStatic fun readModule(metadata: ByteArray, storageManager: StorageManager,
-                              kotlinModule: ModuleDescriptor): JsModuleDescriptor<PackageFragmentProvider?> {
+    @JvmStatic
+    fun readModule(
+            metadata: ByteArray, storageManager: StorageManager, kotlinModule: ModuleDescriptor, configuration: DeserializationConfiguration
+    ): JsModuleDescriptor<PackageFragmentProvider?> {
         val jsModule = metadata.readAsContentMap(kotlinModule.name.asString())
-        return jsModule.copy(createPackageFragmentProvider(kotlinModule, jsModule.data, storageManager))
+        return jsModule.copy(createPackageFragmentProvider(kotlinModule, jsModule.data, storageManager, configuration))
     }
 
-    @JvmStatic private fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, contentMap: Map<String, ByteArray>,
-                                                         storageManager: StorageManager): PackageFragmentProvider? {
-        val packageFqNames = getPackages(contentMap).map { FqName(it) }.toSet()
+    @JvmStatic
+    private fun createPackageFragmentProvider(
+            moduleDescriptor: ModuleDescriptor,
+            contentMap: Map<String, ByteArray>,
+            storageManager: StorageManager,
+            configuration: DeserializationConfiguration
+    ): PackageFragmentProvider? {
+        val packageFqNames = getPackages(contentMap).map(::FqName).toSet()
         if (packageFqNames.isEmpty()) return null
 
-        return createKotlinJavascriptPackageFragmentProvider(storageManager, moduleDescriptor, packageFqNames) {
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, moduleDescriptor, packageFqNames, configuration) {
             path ->
             if (!contentMap.containsKey(path)) {
                 when {

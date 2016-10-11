@@ -60,10 +60,9 @@ class KotlinJavaScriptDeserializerForDecompiler(
         val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, JsSerializerProtocol)
 
         deserializationComponents = DeserializationComponents(
-                storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                ResolveEverythingToKotlinAnyLocalClassifierResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, DynamicTypeFactory, ClassDescriptorFactory.EMPTY,
-                notFoundClasses
+                storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
+                packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
+                LookupTracker.DO_NOTHING, DynamicTypeFactory, ClassDescriptorFactory.EMPTY, notFoundClasses
         )
     }
 
