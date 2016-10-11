@@ -33,6 +33,7 @@ class Runtime(private val bitcodeFile: String) {
     val typeInfoType = LLVMGetTypeByName(llvmModule, "struct.TypeInfo")
     val fieldTableRecordType = LLVMGetTypeByName(llvmModule, "struct.FieldTableRecord")
     val methodTableRecordType = LLVMGetTypeByName(llvmModule, "struct.MethodTableRecord")
+    val globalhHashType = LLVMGetTypeByName(llvmModule, "struct.GlobalHash")
 
     val target = LLVMGetTarget(llvmModule)!!.asCString().toString()
 

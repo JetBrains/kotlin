@@ -39,7 +39,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             Struct(
                     runtime.typeInfoType,
 
-                    Int64(name),
+                    Struct(runtime.globalhHashType, ConstArray(LLVMInt8Type(), Array(20, {i -> Int8(1)}).toList())),
                     Int32(size),
 
                     superType,
@@ -102,7 +102,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
         val contributedDescriptors = classDesc.unsubstitutedMemberScope.getContributedDescriptors()
-         // (includes declarations from supers)
+        // (includes declarations from supers)
 
         val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
 
@@ -166,12 +166,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val methodsPtr = addGlobalConstArray("kmethods:$className", runtime.methodTableRecordType, methods)
 
         val typeInfo = TypeInfo(name, size,
-                                superType,
-                                objOffsetsPtr, objOffsets.size,
-                                interfacesPtr, interfaces.size,
-                                vtablePtr,
-                                methodsPtr, methods.size,
-                                fieldsPtr, fields.size)
+                superType,
+                objOffsetsPtr, objOffsets.size,
+                interfacesPtr, interfaces.size,
+                vtablePtr,
+                methodsPtr, methods.size,
+                fieldsPtr, fields.size)
 
         val typeInfoGlobal = classDesc.llvmTypeInfoPtr.getLlvmValue() // TODO: it is a hack
         LLVMSetInitializer(typeInfoGlobal, typeInfo.getLlvmValue())

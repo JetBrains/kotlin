@@ -39,6 +39,10 @@ internal open class Struct(val type: LLVMOpaqueType?, val elements: List<Compile
     }
 }
 
+internal class Int8(val value: Byte) : CompileTimeValue() {
+    override fun getLlvmValue() = LLVMConstInt(LLVMInt8Type(), value.toLong(), 1)
+}
+
 internal class Int32(val value: Int) : CompileTimeValue() {
     override fun getLlvmValue() = LLVMConstInt(LLVMInt32Type(), value.toLong(), 1)
 }
@@ -63,8 +67,8 @@ internal fun pointerType(pointeeType: LLVMOpaqueType?) = LLVMPointerType(pointee
 internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? {
     val returnType = getLLVMType(function.returnType!!)
     val params = function.dispatchReceiverParameter.singletonOrEmptyList() +
-                 function.extensionReceiverParameter.singletonOrEmptyList() +
-                 function.valueParameters
+            function.extensionReceiverParameter.singletonOrEmptyList() +
+            function.valueParameters
 
     val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
 
