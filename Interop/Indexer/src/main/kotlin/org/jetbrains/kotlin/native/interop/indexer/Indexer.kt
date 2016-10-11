@@ -10,7 +10,9 @@ private class StructDeclImpl(spelling: String) : StructDecl(spelling) {
     override var def: StructDefImpl? = null
 }
 
-private class StructDefImpl(size: Long, decl: StructDecl) : StructDef(size, decl) {
+private class StructDefImpl(size: Long, decl: StructDecl, hasNaturalLayout: Boolean) :
+        StructDef(size, decl, hasNaturalLayout) {
+
     override val fields = mutableListOf<Field>()
 }
 
@@ -92,6 +94,22 @@ private class NativeIndexImpl : NativeIndex() {
         return res
     }
 
+    /**
+     * Computes [StructDef.hasNaturalLayout] property.
+     */
+    fun structHasNaturalLayout(structDefCursor: CXCursor): Boolean {
+        val hasAttributes = malloc(Int32Box)
+        hasAttributes.value = 0
+        clang_visitChildren(structDefCursor, { cursor, parent, clientData ->
+            if (clang_isAttribute(cursor.kind.value) != 0) {
+                clientData.asRef(Int32Box)!!.value = 1
+            }
+            CXChildVisitResult.CXChildVisit_Continue
+        }, hasAttributes.ptr)
+
+        return hasAttributes.value == 0
+    }
+
     fun convertType(type: CXType): Type {
         val kind = type.kind.value
         return when (kind) {
@@ -104,6 +122,7 @@ private class NativeIndexImpl : NativeIndex() {
                 }
             }
 
+            // TODO: is e.g. CXType_Int guaranteed to be int32_t?
             CXType_Void -> VoidType
 
             CXType_Char_U, CXType_UChar -> UInt8Type
@@ -182,7 +201,8 @@ private class NativeIndexImpl : NativeIndex() {
                 val structDecl = getStructDeclAt(cursor)
                 if (clang_isCursorDefinition(cursor) != 0) {
                     val size = clang_Type_getSizeOf(clang_getCursorType(cursor, arena))
-                    structDecl.def = StructDefImpl(size, structDecl)
+                    val hasNaturalLayout = structHasNaturalLayout(cursor)
+                    structDecl.def = StructDefImpl(size, structDecl, hasNaturalLayout)
                 }
             }
 
@@ -241,28 +261,32 @@ fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
 
     val res = NativeIndexImpl()
     try {
-    val indexDeclarationNativeCallback = indexDeclarationCallback.setUp({ res.indexDeclaration(it) })
+        val nativeIndexPtr = StableObjPtr.create(res)
+        val clientData = nativeIndexPtr.value
 
         try {
             with(callbacks) {
-                abortQuery.value = null
-                diagnostic.value = null
-                enteredMainFile.value = null
-                ppIncludedFile.value = null
-                importedASTFile.value = null
-                startedTranslationUnit.value = null
-                indexDeclaration.value = indexDeclarationNativeCallback
-                indexEntityReference.value = null
+                abortQuery.setStatic(null)
+                diagnostic.setStatic(null)
+                enteredMainFile.setStatic(null)
+                ppIncludedFile.setStatic(null)
+                importedASTFile.setStatic(null)
+                startedTranslationUnit.setStatic(null)
+                indexDeclaration.setStatic { clientData, info ->
+                    val index = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
+                    index.indexDeclaration(info!!)
+                }
+                indexEntityReference.setStatic(null)
             }
 
-            clang_indexSourceFile(indexAction, null, callbacks, IndexerCallbacks.Companion.size, 0, headerFile.path,
+            clang_indexSourceFile(indexAction, clientData, callbacks, IndexerCallbacks.size, 0, headerFile.path,
                     mallocNativeArrayOf(Int8Box.Companion, *args1)[0], args1.size, null, 0, null, 0)
 
 
             return res
 
         } finally {
-            indexDeclarationCallback.reset()
+            nativeIndexPtr.dispose()
         }
     } finally {
         res.clearNativeMem()

@@ -66,6 +66,15 @@ class StubGenerator(
 
     val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
 
+    private val usedFunctionTypes = mutableMapOf<FunctionType, String>()
+
+    val FunctionType.kotlinName: String
+        get() {
+            return usedFunctionTypes.getOrPut(this, {
+                "NativeFunctionType" + (usedFunctionTypes.size + 1)
+            })
+        }
+
     /**
      * The output currently used by the generator.
      * Should append line separator after any usage.
@@ -181,10 +190,13 @@ class StubGenerator(
         }
 
         is PointerType -> {
-            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
+            val pointeeType = type.pointeeType
+            if (pointeeType is VoidType) {
                 NativeRefType("NativePtrBox")
+            } else if (pointeeType is FunctionType) {
+                NativeRefType("NativeFunctionBox<${getKotlinFunctionType(pointeeType)}>", "${pointeeType.kotlinName}.ref")
             } else {
-                val pointeeRefType = getKotlinTypeForRefTo(type.pointeeType)
+                val pointeeRefType = getKotlinTypeForRefTo(pointeeType)
                 NativeRefType("RefBox<${pointeeRefType.typeName}>", "${pointeeRefType.typeExpr}.ref")
             }
         }
@@ -258,13 +270,6 @@ class StubGenerator(
                         kotlinConv = { "$it.asLong()" },
                         kotlinJniBridgeType = "Long"
                 )
-            } else if (type.pointeeType is Int8Type) {
-                OutValueBinding(
-                        kotlinType = "String?",
-                        kotlinConv = { name -> "CString.fromString($name).getNativePtr().asLong()" },
-                        convFree = { name -> "free(NativePtr.byValue($name))" },
-                        kotlinJniBridgeType = "Long"
-                )
             } else {
                 outValueRefBinding(getKotlinTypeForRefTo(type.pointeeType))
             }
@@ -282,17 +287,51 @@ class StubGenerator(
 
         is ArrayType -> outValueRefBinding(getKotlinTypeForRefTo(type))
 
-        is RecordType -> {
-            val refType = getKotlinTypeForRefTo(type)
-            // pointer will be converted to value in C code
-            OutValueBinding(
-                    kotlinType = refType.typeName,
-                    kotlinConv = { "$it.getNativePtr().asLong()" },
-                    kotlinJniBridgeType = "Long"
+        else -> throw NotImplementedError()
+    }
+
+    fun getCFunctionParamBinding(type: Type): OutValueBinding {
+        when (type) {
+            is PointerType -> {
+                val pointeeType = type.pointeeType
+                when (pointeeType) {
+                    is FunctionType -> return OutValueBinding(
+                            kotlinType = "(" + getKotlinFunctionType(pointeeType) + ")?",
+                            kotlinConv = { "$it?.staticAsNative(${pointeeType.kotlinName}).asLong()" },
+                            kotlinJniBridgeType = "Long"
+                    )
+                    is Int8Type -> return OutValueBinding(
+                            kotlinType = "String?",
+                            kotlinConv = { name -> "CString.fromString($name).getNativePtr().asLong()" },
+                            convFree = { name -> "free(NativePtr.byValue($name))" },
+                            kotlinJniBridgeType = "Long"
+                    )
+                }
+            }
+            is RecordType -> {
+                val refType = getKotlinTypeForRefTo(type)
+                // pointer will be converted to value in C code
+                return OutValueBinding(
+                        kotlinType = refType.typeName,
+                        kotlinConv = { "$it.getNativePtr().asLong()" },
+                        kotlinJniBridgeType = "Long"
+                )
+            }
+        }
+
+        return getOutValueBinding(type)
+    }
+
+    fun getCallbackRetValBinding(type: Type): OutValueBinding {
+        if (type is VoidType) {
+            return OutValueBinding(
+                    kotlinType = "Unit",
+                    kotlinConv = { throw UnsupportedOperationException() },
+                    kotlinJniBridgeType = "void"
             )
         }
 
-        else -> throw NotImplementedError()
+        return getOutValueBinding(type)
     }
 
     /**
@@ -301,8 +340,6 @@ class StubGenerator(
     fun getInValueBinding(type: Type): InValueBinding = when (type) {
 
         is PrimitiveType -> InValueBinding(type.kotlinType)
-
-        is VoidType -> InValueBinding("Unit")
 
         is PointerType -> {
             if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
@@ -328,17 +365,35 @@ class StubGenerator(
 
         is ArrayType -> inValueRefBinding(getKotlinTypeForRefTo(type))
 
-        is RecordType -> {
-            // TODO: valid only for return values
-            val refType = getKotlinTypeForRefTo(type)
-            InValueBinding(
-                    kotlinJniBridgeType = "Long",
-                    conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
-                    kotlinType = refType.typeName
-            )
+        else -> throw NotImplementedError()
+    }
+
+    fun getCFunctionRetValBinding(type: Type): InValueBinding {
+        when (type) {
+            is VoidType -> return InValueBinding("Unit")
+
+            is RecordType -> {
+                val refType = getKotlinTypeForRefTo(type)
+                InValueBinding(
+                        kotlinJniBridgeType = "Long",
+                        conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
+                        kotlinType = refType.typeName
+                )
+            }
         }
 
-        else -> throw NotImplementedError()
+        return getInValueBinding(type)
+    }
+
+    fun getCallbackParamBinding(type: Type): InValueBinding {
+        return getInValueBinding(type)
+    }
+
+    private fun getKotlinFunctionType(type: FunctionType): String {
+        return "(" +
+                type.parameterTypes.map { getCallbackParamBinding(it).kotlinType }.joinToString(", ") +
+                ") -> " +
+                getCallbackRetValBinding(type.returnType).kotlinType
     }
 
     /**
@@ -437,14 +492,14 @@ class StubGenerator(
     /**
      * Constructs [InValueBinding] for return value of Kotlin binding for given C function.
      */
-    private fun retValBinding(func: FunctionDecl) = getInValueBinding(func.returnType)
+    private fun retValBinding(func: FunctionDecl) = getCFunctionRetValBinding(func.returnType)
 
     /**
      * Constructs [OutValueBinding]s for parameters of Kotlin binding for given C function.
      */
     private fun paramBindings(func: FunctionDecl): Array<OutValueBinding> {
         val paramBindings = func.parameters.map { param ->
-            getOutValueBinding(param.type)
+            getCFunctionParamBinding(param.type)
         }.toMutableList()
 
         val retValType = func.returnType
@@ -523,6 +578,68 @@ class StubGenerator(
         out("}")
     }
 
+    private fun getFfiType(type: Type): String {
+        return when(type) {
+            is VoidType -> "Void"
+            is Int8Type -> "SInt8"
+            is UInt8Type -> "UInt8"
+            is Int16Type -> "SInt16"
+            is UInt16Type -> "UInt16"
+            is Int32Type -> "SInt32"
+            is UInt32Type -> "UInt32"
+            is IntPtrType, is UIntPtrType, // TODO
+            is PointerType, is ArrayType -> "Pointer"
+            is EnumType -> getFfiType(type.def.baseType)
+            is RecordType -> {
+                val def = type.decl.def!!
+                if (!def.hasNaturalLayout) {
+                    throw NotImplementedError() // TODO: represent pointer to function as NativePtr instead
+                }
+                "Struct(" + def.fields.map {
+                    getFfiType(it.type)
+                }.joinToString(", ") + ")"
+            }
+            else -> throw NotImplementedError(type.toString())
+        }
+    }
+
+    private fun generateFunctionType(type: FunctionType, name: String) {
+        val kotlinFunctionType = getKotlinFunctionType(type)
+
+        val constructorArgs = listOf(type.returnType, *type.parameterTypes.toTypedArray()).map {
+            getFfiType(it)
+        }.joinToString(", ")
+
+        out("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgs) {")
+        indent {
+            out("override fun invoke(function: $kotlinFunctionType, args: NativeArray<NativePtrBox>, ret: NativePtr) {")
+            indent {
+                val args = type.parameterTypes.mapIndexed { i, paramType ->
+                    val refType = getKotlinTypeForRefTo(paramType)
+                    val ref = "args[$i].value.asRef(${refType.typeExpr})!!"
+                    when (paramType) {
+                        is RecordType -> "$ref"
+                        else -> "$ref.value"
+                    }
+                }.joinToString(", ")
+
+                out("val res = function($args)")
+
+                when (type.returnType) {
+                    is RecordType -> throw NotImplementedError()
+                    is VoidType -> {} // nothing to do
+                    else -> {
+                        val retRefType = getKotlinTypeForRefTo(type.returnType)
+                        out("${retRefType.typeExpr}.byPtr(ret).value = res")
+                    }
+                }
+
+            }
+            out("}")
+        }
+        out("}")
+    }
+
     /**
      * Produces to [out] the definition of Kotlin JNI function used in binding for given C function.
      */
@@ -573,6 +690,11 @@ class StubGenerator(
 
         nativeIndex.enums.forEach { e ->
             generateEnum(e)
+            out("")
+        }
+
+        usedFunctionTypes.entries.forEach {
+            generateFunctionType(it.key, it.value)
             out("")
         }
 

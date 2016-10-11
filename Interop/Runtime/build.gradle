@@ -9,6 +9,29 @@ buildscript {
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'c'
+
+def javaHome = System.getProperty('java.home')
+def compilerArgsForJniIncludes = ["", "linux", "darwin"].collect { "-I$javaHome/../include/$it" } as String[]
+
+model {
+    components {
+        callbacks(NativeLibrarySpec) {
+            sources.c.source {
+                srcDir 'src/callbacks/c'
+                include '**/*.c'
+            }
+            binaries.all {
+                cCompiler.args compilerArgsForJniIncludes
+                cCompiler.args "-I$ffiIncludePath"
+
+                String libffiPicPath = "$ffiLibPath/libffi_pic.a"
+                linker.args file(libffiPicPath).exists() ? libffiPicPath : "$ffiLibPath/libffi.a"
+            }
+        }
+   }
+
+}
 
 repositories {
     mavenCentral()
@@ -17,3 +40,13 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
+
+task nativelibs(type: Copy) {
+    dependsOn 'callbacksSharedLibrary'
+
+    from "$buildDir/libs/callbacks/shared/"
+    into "$buildDir/nativelibs/"
+}
+
+classes.dependsOn nativelibs
