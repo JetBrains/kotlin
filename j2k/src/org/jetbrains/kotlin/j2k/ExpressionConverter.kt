@@ -283,15 +283,16 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         if (type != null) {
             val typeStr = type.canonicalText
             if (typeStr == "double") {
-                text = text.replace("D", "").replace("d", "")
-                if (!text.contains(".")) {
-                    text += ".0"
+                text = text.replace("d", "", true)
+                if (!text.contains(".") && !text.contains("e", true))
+                    text += "."
+                if (text.endsWith(".")) {
+                    text += "0"
                 }
-
             }
 
             if (typeStr == "float") {
-                text = text.replace("F", "f")
+                text = text.replace(".f", "f", true).replace("F", "f")
             }
 
             if (typeStr == "long") {

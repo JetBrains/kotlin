@@ -124,8 +124,8 @@ class CodeConverter(
                     if (expectedTypeStr == "float") {
                         text += "f"
                     }
-                    else {
-                        if (!text.contains(".")) {
+                    if (expectedTypeStr == "double") {
+                        if (!text.contains(".") && !text.contains("e", true)) {
                             text += ".0"
                         }
                     }
