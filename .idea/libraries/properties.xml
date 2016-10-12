@@ -5,6 +5,7 @@
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/properties/lib/properties.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/properties/lib/resources_en.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
