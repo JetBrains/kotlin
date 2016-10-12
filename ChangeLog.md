@@ -285,6 +285,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Extract Function: Support implicit abnormal exits via Nothing-typed expressions
 - [`KT-14285`](https://youtrack.jetbrains.com/issue/KT-14285) Rename: Forbid on backing field reference
 - [`KT-14240`](https://youtrack.jetbrains.com/issue/KT-14240) Introduce Variable: Do not replace assignment left-hand sides
+- [`KT-14234`](https://youtrack.jetbrains.com/issue/KT-14234) Rename: Do not suggest type-based names for functions with primitive return types
 
 ##### New features
 
