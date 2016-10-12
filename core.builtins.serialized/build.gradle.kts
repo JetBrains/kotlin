@@ -1,5 +1,6 @@
 
 import java.io.File
+import java.lang.IllegalStateException
 
 buildscript {
     repositories {
@@ -11,6 +12,8 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-compiler:${rootProject.extra["kotlinVersion"]}")
     }
 }
+
+val serializedCfg = configurations.create("default")
 
 val builtinsSrc = File(rootDir, "core/builtins/src")
 val builtinsNative = File(rootDir, "core/builtins/native")

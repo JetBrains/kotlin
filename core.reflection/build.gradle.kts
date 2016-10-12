@@ -32,6 +32,6 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.allowKotlinPackage = true
+    kotlinOptions.freeCompilerArgs = listOf("-XallowKotlinPackage")
 }
 

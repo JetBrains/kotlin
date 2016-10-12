@@ -30,9 +30,10 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.moduleName = "kotlin-stdlib"
-    kotlinOptions.allowKotlinPackage = true
-    kotlinOptions.inheritMultifileParts = true
-    kotlinOptions.declarationsOutputPath = File(buildDir, "declarations/stdlib-declarations.json").canonicalPath
+    kotlinOptions.freeCompilerArgs =
+            listOf("-XallowKotlinPackage",
+                    "moduleName", "kotlin-stdlib",
+                    "-XinheritMultifileParts",
+                    "-XdeclarationsOutputPath", File(buildDir, "declarations/stdlib-declarations.json").canonicalPath)
 }
 
