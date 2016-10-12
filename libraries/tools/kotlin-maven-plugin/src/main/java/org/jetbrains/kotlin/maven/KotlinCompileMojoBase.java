@@ -114,6 +114,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
     protected String languageVersion;
 
+
+    @Parameter(property = "kotlin.compiler.apiVersion", required = false, readonly = false)
+    protected String apiVersion;
+
     /**
      * Additional command line arguments for Kotlin compiler.
      */
@@ -222,6 +226,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         arguments.suppressWarnings = nowarn;
         arguments.languageVersion = languageVersion;
+        arguments.apiVersion = apiVersion;
 
         getLog().info("Compiling Kotlin sources from " + sources);
 
