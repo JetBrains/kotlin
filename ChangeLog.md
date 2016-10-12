@@ -107,6 +107,12 @@
 - [`KT-13955`](https://youtrack.jetbrains.com/issue/KT-13955) Find Usages: Add special type for usages inside of type aliases
 - [`KT-13479`](https://youtrack.jetbrains.com/issue/KT-13479) Support navigation to type aliases from binaries
 
+### Scripting
+
+- A new library `kotlin-script-util` containing utilities for implementing kotlin script support  
+- [`KT-7880`](https://youtrack.jetbrains.com/issue/KT-7880) Experimental support for JSR 223 Scripting API
+- Implement support for custom template-based scripts in command-line compiler, maven and gradle plugins
+
 ## 1.1-M01 (EAP-1)
 
 ### Language features
