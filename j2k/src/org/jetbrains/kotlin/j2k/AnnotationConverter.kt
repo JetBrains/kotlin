@@ -29,8 +29,8 @@ import java.lang.annotation.Target
 
 class AnnotationConverter(private val converter: Converter) {
     private val annotationsToRemove: Set<String> = (NullableNotNullManager.getInstance(converter.project).notNulls
-            + NullableNotNullManager.getInstance(converter.project).nullables
-            + listOf(CommonClassNames.JAVA_LANG_OVERRIDE, ElementType::class.java.name)).toSet()
+                                                    + NullableNotNullManager.getInstance(converter.project).nullables
+                                                    + listOf(CommonClassNames.JAVA_LANG_OVERRIDE, ElementType::class.java.name, SuppressWarnings::class.java.name)).toSet()
 
     fun isImportNotRequired(fqName: FqName): Boolean {
         val nameAsString = fqName.asString()
