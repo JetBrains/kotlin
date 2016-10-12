@@ -135,6 +135,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-6199`](https://youtrack.jetbrains.com/issue/KT-6199) Rename: Replace non-code class occurrences with new qualified name
 - [`KT-14182`](https://youtrack.jetbrains.com/issue/KT-14182) Move: Show error message on applying to enum entries
 - Extract Function: Support implicit abnormal exits via Nothing-typed expressions
+- [`KT-14234`](https://youtrack.jetbrains.com/issue/KT-14234) Rename: Do not suggest type-based names for functions with primitive return types
 
 #### IDE. Inspections, Intentions and Quickfixes
 
