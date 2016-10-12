@@ -120,7 +120,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         }
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
-        if (getTestName(true).startsWith("dex")) {
+        if (DexLikeBytecodePatchKt.needDexPatch(getTestName(true))) {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
@@ -188,7 +188,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        if (getTestName(true).startsWith("dex")) {
+        if (DexLikeBytecodePatchKt.needDexPatch(getTestName(true))) {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(false);
         }
 

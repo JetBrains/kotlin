@@ -1,4 +1,4 @@
-package dexStopInInlineFun
+package stopInInlineFunDex
 
 fun main(args: Array<String>) {
     inlineFun()

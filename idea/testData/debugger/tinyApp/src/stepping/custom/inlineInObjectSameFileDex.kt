@@ -1,4 +1,4 @@
-package dexInlineInObjectSameFile
+package inlineInObjectSameFileDex
 
 fun main(args: Array<String>) {
     //Breakpoint!
