@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    override val defaultImports: List<ImportPath> get() = ArrayList<ImportPath>().apply {
+    override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
         add(ImportPath("java.lang.*"))
         add(ImportPath("kotlin.*"))
         add(ImportPath("kotlin.annotation.*"))
