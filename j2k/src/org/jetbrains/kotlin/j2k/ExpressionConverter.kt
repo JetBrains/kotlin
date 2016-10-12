@@ -235,9 +235,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val type = converter.convertTypeElement(operand, Nullability.NotNull)
         val typeName = operand.type.canonicalText
         val primitiveType = JvmPrimitiveType.values().firstOrNull { it.javaKeywordName == typeName }
+        if (typeName == "void") {
+            result = QualifiedExpression(Identifier("Void", false).assignNoPrototype(), Identifier.withNoPrototype("TYPE", isNullable = false), null)
+            return
+        }
         val name = if (primitiveType != null) {
-            "javaPrimitiveType"
-        } else if (typeName == "void") {
             "javaPrimitiveType"
         } else {
             "java"
