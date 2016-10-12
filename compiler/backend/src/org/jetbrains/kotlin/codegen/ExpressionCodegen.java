@@ -634,10 +634,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull ResolvedCall<? extends CallableDescriptor> loopRangeCall
     ) {
         CallableDescriptor loopRangeCallee = loopRangeCall.getResultingDescriptor();
-        if (RangeCodegenUtil.isOptimizableRangeTo(loopRangeCallee)) {
+        if (RangeCodegenUtil.isPrimitiveNumberRangeTo(loopRangeCallee)) {
             return new ForInRangeLiteralLoopGenerator(forExpression, loopRangeCall);
         }
-        else if (RangeCodegenUtil.isOptimizableDownTo(loopRangeCallee)) {
+        else if (RangeCodegenUtil.isPrimitiveNumberDownTo(loopRangeCallee)) {
             return new ForInDownToProgressionLoopGenerator(forExpression, loopRangeCall);
         }
         else if (RangeCodegenUtil.isArrayOrPrimitiveArrayIndices(loopRangeCallee)) {
@@ -3448,8 +3448,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                if (RangeCodegenUtil.isOptimizablePrimitiveRangeSpecialization(leftValue.type, deparenthesized, bindingContext)
-                    || RangeCodegenUtil.isOptimizableRangeTo(operationReference, bindingContext)) {
+                if (RangeCodegenUtil.isPrimitiveRangeSpecializationOfType(leftValue.type, deparenthesized, bindingContext) ||
+                    RangeCodegenUtil.isPrimitiveRangeToExtension(operationReference, bindingContext)) {
                     generateInPrimitiveRange(leftValue, (KtBinaryExpression) deparenthesized, isInverted);
                 }
                 else {

@@ -128,19 +128,24 @@ public class RangeCodegenUtil {
         return getPrimitiveRangeOrProgressionElementType(className) != null;
     }
 
-    /*
-     * Checks whether rangeTo expression is optimizable for loop
-     */
-    public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
-        if ("rangeTo".equals(rangeTo.getName().asString())) {
-            if (isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isPrimitiveNumberRangeTo(CallableDescriptor rangeTo) {
+        if (!"rangeTo".equals(rangeTo.getName().asString())) return false;
+
+        if (!isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) return false;
+
+        return true;
     }
 
-    public static boolean isOptimizableDownTo(@NotNull CallableDescriptor descriptor) {
+    private static boolean isPrimitiveRangeToExtension(@NotNull CallableDescriptor descriptor) {
+        if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) return false;
+
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        if (extensionReceiver == null) return false;
+
+        return KotlinBuiltIns.isPrimitiveType(extensionReceiver.getType());
+    }
+
+    public static boolean isPrimitiveNumberDownTo(@NotNull CallableDescriptor descriptor) {
         if (!isTopLevelInPackage(descriptor, "downTo", "kotlin.ranges")) return false;
 
         ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
@@ -184,44 +189,33 @@ public class RangeCodegenUtil {
         return true;
     }
 
-    /*
-     * Checks whether rangeTo expression is optimizable target of contains operator
-     */
-    public static boolean isOptimizableRangeTo(@NotNull KtSimpleNameExpression operationReference, @NotNull BindingContext bindingContext) {
+    public static boolean isPrimitiveRangeToExtension(@NotNull KtSimpleNameExpression operationReference, @NotNull BindingContext bindingContext) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt
                 .getResolvedCallWithAssert(operationReference, bindingContext);
         ReceiverValue receiver = resolvedCall.getDispatchReceiver();
 
         /*
          * Range is optimizable if
-         * 'in' receiver is expression 'rangeTo' from stdlib package and its argument
-         * has same primitive type as generic range parameter.
+         * 'in' receiver is expression 'rangeTo' from stdlib package
+         * and its argument has same primitive type as generic range parameter.
          * For non-matching primitive types (e.g. int in double range)
          * dispatch receiver will be null, because extension method will be called.
          */
-        if (receiver instanceof ExpressionReceiver) {
-            ExpressionReceiver e = (ExpressionReceiver) receiver;
-            ResolvedCall<? extends CallableDescriptor> resolvedReceiver =
-                    CallUtilKt.getResolvedCall(e.getExpression(), bindingContext);
+        if (!(receiver instanceof ExpressionReceiver)) return false;
+        ExpressionReceiver e = (ExpressionReceiver) receiver;
 
-            if (resolvedReceiver == null) {
-                return false;
-            }
+        ResolvedCall<? extends CallableDescriptor> resolvedReceiver =
+                CallUtilKt.getResolvedCall(e.getExpression(), bindingContext);
+        if (resolvedReceiver == null) return false;
 
-            CallableDescriptor descriptor = resolvedReceiver.getResultingDescriptor();
-            // kotlin.ranges.Ranges#rangeTo: ClosedRange<T> and T is primitive
-            // noinspection ConstantConditions
-            return isBuiltInRangeTo(descriptor) && KotlinBuiltIns.isPrimitiveType(descriptor.getExtensionReceiverParameter().getType());
-        }
-
-        return false;
+        return isPrimitiveRangeToExtension(resolvedReceiver.getResultingDescriptor());
     }
 
     /*
      * Checks whether for expression 'x in a..b' a..b is primitive integral range
      * with same type as x.
      */
-    public static boolean isOptimizablePrimitiveRangeSpecialization(
+    public static boolean isPrimitiveRangeSpecializationOfType(
             @NotNull Type argumentType,
             @NotNull KtExpression rangeExpression,
             @NotNull BindingContext bindingContext
@@ -245,15 +239,6 @@ public class RangeCodegenUtil {
         }
 
         return false;
-    }
-
-    private static boolean isBuiltInRangeTo(@NotNull CallableDescriptor descriptor) {
-        if (!isTopLevelInPackage(descriptor, "rangeTo", "kotlin.ranges")) {
-            return false;
-        }
-
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        return extensionReceiver != null;
     }
 
     private static boolean isTopLevelInPackage(@NotNull CallableDescriptor descriptor, @NotNull String name, @NotNull String packageName) {
