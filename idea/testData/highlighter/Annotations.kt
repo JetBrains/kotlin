@@ -9,7 +9,7 @@ fun <info descr="null">bar</info>(<info descr="null">block</info>: () -> <info d
 fun <info descr="null">foo</info>() {
     1 + <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 2
 
-    <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 3 + 4
+    <warning descr="[ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE] Annotations on block-level expressions are being parsed differently depending on presence of a new line after them. Use new line if whole block-level expression must be annotated or wrap annotated expression in parentheses" textAttributesKey="WARNING_ATTRIBUTES"><info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 3</warning> + 4
 
     <info descr="null"><info descr="null">bar</info></info> <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> { 1 }
 

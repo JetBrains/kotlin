@@ -939,6 +939,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("blockLevelOnTheSameLineWarning.kt")
+            public void testBlockLevelOnTheSameLineWarning() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/blockLevelOnTheSameLineWarning.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ConstructorCall.kt")
             public void testConstructorCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/ConstructorCall.kt");
