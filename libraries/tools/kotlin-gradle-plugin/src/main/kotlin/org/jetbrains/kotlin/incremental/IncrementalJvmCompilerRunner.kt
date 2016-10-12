@@ -64,8 +64,7 @@ internal class IncrementalJvmCompilerRunner(
             // try to rebuild
             val javaFilesProcessor = ChangedJavaFilesProcessor()
             caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
-            val compilationMode = CompilationMode.Rebuild()
-            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
+            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, CompilationMode.Rebuild, messageCollector)
         }
     }
 
@@ -73,7 +72,7 @@ internal class IncrementalJvmCompilerRunner(
 
     private sealed class CompilationMode {
         class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
-        class Rebuild : CompilationMode()
+        object Rebuild : CompilationMode()
     }
 
     private fun calculateSourcesToCompile(
@@ -86,7 +85,7 @@ internal class IncrementalJvmCompilerRunner(
             reporter.report {"Non-incremental compilation will be performed: ${reason()}"}
             caches.clean()
             dirtySourcesSinceLastTimeFile.delete()
-            return CompilationMode.Rebuild()
+            return CompilationMode.Rebuild
         }
 
         if (changedFiles !is ChangedFiles.Known) return rebuild {"inputs' changes are unknown (first or clean build)"}
@@ -277,7 +276,7 @@ internal class IncrementalJvmCompilerRunner(
             val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
                 is ChangesEither.Unknown -> {
                     reporter.report { "Could not get changes for generated java files, recompiling all kotlin" }
-                    compilationMode = CompilationMode.Rebuild()
+                    compilationMode = CompilationMode.Rebuild
                     allKotlinSources.toSet()
                 }
                 is ChangesEither.Known -> {
