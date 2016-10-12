@@ -1,6 +1,6 @@
 package
 
-@Anno1() @Anno2() public fun t1(): kotlin.Unit
+@Anno1 @Anno2 public fun t1(): kotlin.Unit
 
 @kotlin.SinceKotlin(version = "1.1") public final annotation class Anno1 : kotlin.Annotation {
     public constructor Anno1(/*0*/ s: kotlin.String)
