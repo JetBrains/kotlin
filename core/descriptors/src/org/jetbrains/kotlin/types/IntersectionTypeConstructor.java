@@ -20,17 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 
 import java.util.*;
 
-public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeConstructor {
+public class IntersectionTypeConstructor implements TypeConstructor {
     private final Set<KotlinType> intersectedTypes;
     private final int hashCode;
 
-    public IntersectionTypeConstructor(Annotations annotations, Collection<KotlinType> typesToIntersect) {
-        super(annotations);
+    public IntersectionTypeConstructor(Collection<KotlinType> typesToIntersect) {
         assert !typesToIntersect.isEmpty() : "Attempt to create an empty intersection";
 
         this.intersectedTypes = new LinkedHashSet<KotlinType>(typesToIntersect);
@@ -105,5 +102,4 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
     public int hashCode() {
         return hashCode;
     }
-
 }

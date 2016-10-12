@@ -132,7 +132,7 @@ public class TypeIntersector {
             return TypeUtils.makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }
 
-        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.Companion.getEMPTY(), resultingTypes);
+        TypeConstructor constructor = new IntersectionTypeConstructor(resultingTypes);
 
         return KotlinTypeImpl.create(
                 Annotations.Companion.getEMPTY(),

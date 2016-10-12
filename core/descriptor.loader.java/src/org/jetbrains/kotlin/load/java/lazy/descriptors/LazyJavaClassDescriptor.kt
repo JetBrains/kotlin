@@ -207,8 +207,6 @@ class LazyJavaClassDescriptor(
         override val supertypeLoopChecker: SupertypeLoopChecker
             get() = c.components.supertypeLoopChecker
 
-        override fun getAnnotations() = Annotations.EMPTY
-
         override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
