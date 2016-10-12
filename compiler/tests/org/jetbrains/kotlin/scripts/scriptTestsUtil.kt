@@ -49,5 +49,8 @@ internal fun captureOut(body: () -> Unit): String {
     return outStream.toString()
 }
 
+private fun String.linesSplitTrim() =
+        split('\n','\r').map(String::trim).filter(String::isNotBlank)
+
 internal fun assertEqualsTrimmed(expected: String, actual: String) =
-        Assert.assertEquals(expected.trim(), actual.trim())
+        Assert.assertEquals(expected.linesSplitTrim(), actual.linesSplitTrim())
