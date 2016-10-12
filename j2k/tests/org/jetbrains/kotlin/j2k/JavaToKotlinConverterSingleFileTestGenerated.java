@@ -3178,6 +3178,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("charOctal.java")
+        public void testCharOctal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/charOctal.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("dollarInsideString.java")
         public void testDollarInsideString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/dollarInsideString.java");
