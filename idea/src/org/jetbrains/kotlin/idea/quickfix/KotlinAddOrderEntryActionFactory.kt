@@ -26,6 +26,8 @@ import com.intellij.psi.PsiReferenceBase
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.runWhenSmart
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -49,7 +51,13 @@ object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
             override fun getCanonicalText() = refElement.text
 
             override fun bindToElement(element: PsiElement): PsiElement {
-                return simpleExpression.mainReference.bindToElement(element, ShorteningMode.FORCED_SHORTENING)
+                val project = element.project
+                project.runWhenSmart {
+                    project.executeWriteCommand("") {
+                        simpleExpression.mainReference.bindToElement(element, ShorteningMode.FORCED_SHORTENING)
+                    }
+                }
+                return element
             }
         }
 
