@@ -1,4 +1,4 @@
-package dexStopInInlineInOtherFile
+package stopInInlineInOtherFileDex
 
 inline fun inlineFun() {
     var i = 1

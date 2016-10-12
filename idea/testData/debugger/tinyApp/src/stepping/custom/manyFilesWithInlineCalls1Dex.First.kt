@@ -1,4 +1,4 @@
-package dexManyFilesWithInlineCalls1.first
+package manyFilesWithInlineCalls1Dex.first
 
 inline fun firstInline() {
     // Breakpoint 1

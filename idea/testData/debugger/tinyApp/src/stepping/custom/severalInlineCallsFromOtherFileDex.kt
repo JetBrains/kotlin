@@ -1,4 +1,4 @@
-package dexSeveralInlineCallsFromOtherFile
+package severalInlineCallsFromOtherFileDex
 
 fun main(args: Array<String>) {
     //Breakpoint!
@@ -15,4 +15,4 @@ fun secondCall() {
 }
 
 // RESUME: 2
-// ADDITIONAL_BREAKPOINT: dexSeveralInlineCallsFromOtherFile.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: severalInlineCallsFromOtherFileDex.Other.kt: Breakpoint 1

@@ -1,4 +1,4 @@
-package dexInline
+package inlineDex
 
 fun main(args: Array<String>) {
     //Breakpoint!

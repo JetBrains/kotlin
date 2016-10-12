@@ -1,6 +1,6 @@
-package dexInlineInClass.other
+package inlineInObjectDex.other
 
-class TestDexInlineInClass {
+object TestDexInlineInObject {
     inline fun inlineFun() {
         // Breakpoint 1
         some()

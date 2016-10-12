@@ -1,4 +1,4 @@
-package dexSeveralInlineCallsFromOtherFile
+package severalInlineCallsFromOtherFileDex
 
 inline fun inlineFun() {
     var i = 1

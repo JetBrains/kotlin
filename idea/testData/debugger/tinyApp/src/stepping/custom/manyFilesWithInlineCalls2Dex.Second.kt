@@ -1,4 +1,4 @@
-package dexManyFilesWithInlineCalls2.second
+package manyFilesWithInlineCalls2Dex.second
 
 inline fun secondInline() {
     // Breakpoint 1

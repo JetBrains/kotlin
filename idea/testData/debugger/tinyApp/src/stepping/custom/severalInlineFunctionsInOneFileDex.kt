@@ -1,4 +1,4 @@
-package dexSeveralInlineFunctionsInOneFile
+package severalInlineCallsFromOtherFileDex
 
 fun main(args: Array<String>) {
     //Breakpoint!
