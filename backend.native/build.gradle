@@ -33,13 +33,26 @@ sourceSets {
    }
 }
 
+kotlinNativeInterop {
+   llvm {
+     defFile 'llvm.def'
+     compilerOpts "-I$llvmInstallPath/include"
+     linkerOpts "-L$llvmInstallPath/lib"
+   }
+}
+
 dependencies {
    compilerCompile deps
+   compilerCompile kotlinNativeInterop['llvm']
 
    cli_bcCompile deps
    cli_bcCompile sourceSets.compiler.output
 
    bc_frontendCompile deps
+}
+
+configurations {
+   cli_bcRuntime.extendsFrom compilerRuntime
 }
 
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
@@ -72,10 +85,4 @@ task jars {
 
 repositories {
     mavenCentral()
-}
-
-genCompilerInteropStubs {
-    environment 'CPATH'        : "$llvmInstallPath/include"
-    environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
-    environment 'LD_LIBRARY_PATH' : "$llvmInstallPath/lib"
 }
