@@ -76,6 +76,7 @@ public annotation class ExtensionFunctionType
  */
 @Target(TYPE_PARAMETER)
 @MustBeDocumented
+@SinceKotlin("1.1")
 public annotation class ParameterName(val name: String)
 
 /**
