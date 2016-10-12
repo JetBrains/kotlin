@@ -1,0 +1,21 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun bar(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ y: kotlin.IntArray): kotlin.Unit
+public infix fun kotlin.Int.foo(/*0*/ other: kotlin.Int): kotlin.Int
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) public final annotation class Ann1 : kotlin.Annotation {
+    public constructor Ann1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) public final annotation class Ann2 : kotlin.Annotation {
+    public constructor Ann2(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

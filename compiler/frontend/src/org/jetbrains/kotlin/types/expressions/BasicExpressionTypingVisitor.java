@@ -1539,10 +1539,45 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     protected void resolveAnnotationsOnExpression(KtAnnotatedExpression expression, ExpressionTypingContext context) {
+        if (isAnnotatedExpressionInBlockLevelBinary(expression)) {
+            context.trace.report(ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE.on(expression));
+        }
+
         if (!(expression.getBaseExpression() instanceof KtObjectLiteralExpression)) {
             // annotations on object literals are resolved later inside LazyClassDescriptor
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace);
         }
+    }
+
+    private static boolean isAnnotatedExpressionInBlockLevelBinary(KtAnnotatedExpression annotatedExpression) {
+        PsiElement current = annotatedExpression;
+        PsiElement parent = current.getParent();
+
+        // Here we implicitly assume that grammar rules are:
+        // blockLevelExpression = annotations expression
+        // expression = binaryExpression
+        // binaryExpression = prefixExpression <op> prefixExpression
+        // prefixExpression = annotations expression
+
+        // If there is no binary parent, annotations are being parsed the same way independently of newline after them
+        if (!(parent instanceof KtBinaryExpression)) return false;
+
+        while (parent instanceof KtBinaryExpression) {
+            // if we came not from the left parent, there's no need to report an error
+            if (((KtBinaryExpression) parent).getLeft() != current) {
+                return false;
+            }
+            current = parent;
+            parent = parent.getParent();
+        }
+
+        return isParentForBlockLevelExpression(parent);
+    }
+
+    private static boolean isParentForBlockLevelExpression(@Nullable PsiElement parent) {
+        return parent instanceof KtBlockExpression ||
+               parent instanceof KtContainerNodeForControlStructureBody ||
+               parent instanceof KtWhenEntry;
     }
 
     @Override
