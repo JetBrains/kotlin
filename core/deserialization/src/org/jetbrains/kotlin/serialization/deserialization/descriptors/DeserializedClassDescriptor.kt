@@ -176,8 +176,6 @@ class DeserializedClassDescriptor(
 
         override fun getDeclarationDescriptor() = this@DeserializedClassDescriptor
 
-        override val annotations: Annotations get() = Annotations.EMPTY // TODO
-
         override fun toString() = name.toString()
 
         override val supertypeLoopChecker: SupertypeLoopChecker

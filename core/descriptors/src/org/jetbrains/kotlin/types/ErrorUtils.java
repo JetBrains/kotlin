@@ -460,12 +460,6 @@ public class ErrorUtils {
                 return DefaultBuiltIns.getInstance();
             }
 
-            @NotNull
-            @Override
-            public Annotations getAnnotations() {
-                return Annotations.Companion.getEMPTY();
-            }
-
             @Override
             public String toString() {
                 return debugName;
@@ -629,12 +623,6 @@ public class ErrorUtils {
         @Override
         public ClassifierDescriptor getDeclarationDescriptor() {
             return errorTypeConstructor.getDeclarationDescriptor();
-        }
-
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return errorTypeConstructor.getAnnotations();
         }
 
         @NotNull

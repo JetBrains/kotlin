@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -151,9 +151,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = new ClassTypeConstructorImpl(
-                this, Annotations.Companion.getEMPTY(), ModalityKt.isFinalClass(this), typeParameters, supertypes
-        );
+        this.typeConstructor = new ClassTypeConstructorImpl(this, ModalityKt.isFinalClass(this), typeParameters, supertypes);
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ClassConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }

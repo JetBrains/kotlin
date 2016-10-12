@@ -22,12 +22,11 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface TypeConstructor extends Annotated {
+public interface TypeConstructor {
     /**
      * It may differ from ClassDescriptor.declaredParameters if the class is inner, in such case
      * it also contains additional parameters from outer declarations.

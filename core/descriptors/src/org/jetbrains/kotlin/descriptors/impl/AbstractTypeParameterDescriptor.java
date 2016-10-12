@@ -185,12 +185,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
         @NotNull
         @Override
-        public Annotations getAnnotations() {
-            return AbstractTypeParameterDescriptor.this.getAnnotations();
-        }
-
-        @NotNull
-        @Override
         public KotlinBuiltIns getBuiltIns() {
             return DescriptorUtilsKt.getBuiltIns(AbstractTypeParameterDescriptor.this);
         }

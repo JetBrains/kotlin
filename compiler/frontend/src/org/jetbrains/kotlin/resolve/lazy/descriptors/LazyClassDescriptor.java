@@ -656,12 +656,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return LazyClassDescriptor.this;
         }
 
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return Annotations.Companion.getEMPTY(); // TODO
-        }
-
         @Override
         public String toString() {
             return LazyClassDescriptor.this.getName().toString();

@@ -88,10 +88,6 @@ abstract class AbstractTypeAliasDescriptor(
         override fun getBuiltIns(): KotlinBuiltIns =
                 declarationDescriptor.builtIns
 
-        override val annotations: Annotations
-            get() = declarationDescriptor.annotations
-
         override fun toString(): String = "[typealias ${declarationDescriptor.name.asString()}]"
     }
-
 }

@@ -116,8 +116,6 @@ class NewCapturedTypeConstructor(val projection: TypeProjection, private var sup
     override fun isDenotable() = false
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.builtIns
-    override val annotations: Annotations get() = Annotations.EMPTY
 
     override fun toString() = "CapturedType($projection)"
-
 }

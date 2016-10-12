@@ -51,7 +51,7 @@ open class KnownClassDescriptor(
     fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>, supertypes: List<KotlinType>) {
         this.declaredTypeParameters = declaredTypeParameters
         this.supertypes = supertypes
-        this.typeConstructor = ClassTypeConstructorImpl(this, annotations, true, declaredTypeParameters, supertypes)
+        this.typeConstructor = ClassTypeConstructorImpl(this, true, declaredTypeParameters, supertypes)
         this.defaultType = TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
     }
 

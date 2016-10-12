@@ -53,9 +53,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = new ClassTypeConstructorImpl(
-                this, Annotations.Companion.getEMPTY(), false, Collections.<TypeParameterDescriptor>emptyList(), supertypes
-        );
+        this.typeConstructor = new ClassTypeConstructorImpl(this, false, Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
     public final void initialize(

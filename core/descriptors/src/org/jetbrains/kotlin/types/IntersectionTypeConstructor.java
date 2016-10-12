@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 
@@ -109,11 +107,5 @@ public class IntersectionTypeConstructor implements TypeConstructor {
     @Override
     public int hashCode() {
         return hashCode;
-    }
-
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return Annotations.Companion.getEMPTY();
     }
 }
