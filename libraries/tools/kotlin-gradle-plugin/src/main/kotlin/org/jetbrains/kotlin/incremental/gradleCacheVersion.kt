@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.incremental.CacheVersion
 import java.io.File
 
 internal const val GRADLE_CACHE_VERSION = 2

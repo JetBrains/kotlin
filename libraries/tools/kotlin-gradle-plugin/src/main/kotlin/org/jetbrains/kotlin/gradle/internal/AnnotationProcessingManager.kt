@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.tasks.kapt.generateAnnotationProcessorWrapper
 import org.jetbrains.kotlin.gradle.tasks.kapt.generateKotlinAptAnnotation
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.zip.ZipFile
 
 internal fun Project.initKapt(

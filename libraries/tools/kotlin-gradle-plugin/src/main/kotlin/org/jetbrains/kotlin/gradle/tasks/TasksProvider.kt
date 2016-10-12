@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.RegexTaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.TaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
