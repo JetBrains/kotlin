@@ -19573,6 +19573,30 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/sinceOldVersionIsOK.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("typealiasesAsConstructors.kt")
+                public void testTypealiasesAsConstructors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesAsConstructors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typealiasesAsObjects.kt")
+                public void testTypealiasesAsObjects() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesAsObjects.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typealiasesAsTypes.kt")
+                public void testTypealiasesAsTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesAsTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typealiasesOnImport.kt")
+                public void testTypealiasesOnImport() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesOnImport.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noBoundCallableReferences")

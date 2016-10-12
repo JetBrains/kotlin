@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 
 private val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
 
@@ -70,5 +69,17 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): ApiVersion? {
     val ctorClass = (this as? ConstructorDescriptor)?.containingDeclaration?.loadAnnotationValue()
     val property = (this as? PropertyAccessorDescriptor)?.correspondingProperty?.loadAnnotationValue()
 
-    return listOfNotNull(ownVersion, ctorClass, property).max()
+    val typeAliasDescriptor = (this as? TypeAliasDescriptor) ?:
+                              (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor ?:
+                              (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
+
+    val typeAlias = typeAliasDescriptor?.loadAnnotationValue()
+
+    // We should check only the upper-most classifier ('A' in 'A<B<C>>') to guarantee binary compatibility.
+    val underlyingClass = typeAliasDescriptor?.classDescriptor?.loadAnnotationValue()
+
+    val underlyingConstructor = (this as? TypeAliasConstructorDescriptor)?.underlyingConstructorDescriptor?.loadAnnotationValue()
+    val underlyingObject = (this as? FakeCallableDescriptorForTypeAliasObject)?.getReferencedObject()?.loadAnnotationValue()
+
+    return listOfNotNull(ownVersion, ctorClass, property, typeAlias, underlyingClass, underlyingConstructor, underlyingObject).max()
 }
