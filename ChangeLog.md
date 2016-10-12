@@ -252,6 +252,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-14182`](https://youtrack.jetbrains.com/issue/KT-14182) Move: Show error message on applying to enum entries
 - Extract Function: Support implicit abnormal exits via Nothing-typed expressions
 - [`KT-14285`](https://youtrack.jetbrains.com/issue/KT-14285) Rename: Forbid on backing field reference
+- [`KT-14240`](https://youtrack.jetbrains.com/issue/KT-14240) Introduce Variable: Do not replace assignment left-hand sides
 
 ##### New features
 

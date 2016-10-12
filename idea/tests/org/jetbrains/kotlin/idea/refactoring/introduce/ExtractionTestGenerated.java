@@ -43,6 +43,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("arrayAssignment.kt")
+        public void testArrayAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/arrayAssignment.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("callUnderSmartCast.kt")
         public void testCallUnderSmartCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/callUnderSmartCast.kt");
@@ -337,6 +343,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("onAssignmentLHS.kt")
+        public void testOnAssignmentLHS() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/onAssignmentLHS.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("OneExplicitReceiver.kt")
         public void testOneExplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/OneExplicitReceiver.kt");
@@ -367,6 +379,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("selectorAssignment.kt")
+        public void testSelectorAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/selectorAssignment.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/Simple.kt");
@@ -382,6 +400,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("skipClassReference.kt")
         public void testSkipClassReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/skipClassReference.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("skipUsageInAssignmentLHS.kt")
+        public void testSkipUsageInAssignmentLHS() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/skipUsageInAssignmentLHS.kt");
             doIntroduceVariableTest(fileName);
         }
 
