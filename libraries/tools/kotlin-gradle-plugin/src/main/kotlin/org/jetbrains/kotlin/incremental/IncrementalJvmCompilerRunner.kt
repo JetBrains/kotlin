@@ -231,7 +231,7 @@ internal class IncrementalJvmCompilerRunner(
             caches.incrementalCache.markOutputClassesDirty(dirtySources)
             caches.incrementalCache.removeClassfilesBySources(dirtySources)
 
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.isFile }
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
             if (sourcesToCompile.isNotEmpty()) {
                 reporter.report { "compile iteration: ${reporter.pathsAsString(sourcesToCompile)}" }
             }
