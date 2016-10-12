@@ -126,6 +126,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/serialVersionUID.java");
             doTest(fileName);
         }
+
+        @TestMetadata("suppressWarnings.java")
+        public void testSuppressWarnings() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/suppressWarnings.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/anonymousBlock")
@@ -1045,6 +1051,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("fieldsInitializedFromParams.java")
         public void testFieldsInitializedFromParams() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/fieldsInitializedFromParams.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeNoInspectionComment.java")
+        public void testRemoveNoInspectionComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/removeNoInspectionComment.java");
             doTest(fileName);
         }
     }

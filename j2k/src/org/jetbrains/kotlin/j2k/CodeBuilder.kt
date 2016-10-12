@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.*
 
-fun<T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
+fun <T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
         append(prefix)
         var first = true
@@ -51,6 +51,8 @@ fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix:
 class ElementCreationStackTraceRequiredException : RuntimeException()
 
 class CodeBuilder(private val topElement: PsiElement?, private var docConverter: DocCommentConverter) {
+    private val commentPatternsToDrop = listOf("^//[ ]*noinspection[ ]+[A-Za-z][A-Za-z0-9_]*([ ].*?)?$".toRegex())
+
     private val builder = StringBuilder()
     private var endOfLineCommentAtEnd = false
 
@@ -78,7 +80,9 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             append(docConverter.convertDocComment(element))
         }
         else {
-            append(element.text!!, CommentInfo(element, postInsert))
+            if (element !is PsiComment || !commentPatternsToDrop.any { it.matches(element.text) }) {
+                append(element.text!!, CommentInfo(element, postInsert))
+            }
         }
     }
 
@@ -98,7 +102,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         if (commentInfo.isComment) {
             // Original comment was first in line, but there's no line break before the current one
             if (!commentInfo.isPostInsert && commentInfo.isFirstNonWhitespaceElementInLine &&
-                    !builder.takeLastWhile { it.isWhitespace() }.contains('\n')) {
+                !builder.takeLastWhile { it.isWhitespace() }.contains('\n')) {
                 builder.append('\n')
             }
 
@@ -165,7 +169,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         // scan for all comments inside which are not yet used in the text and put them here to not loose any comment from code
         for ((prototype, inheritance) in element.prototypes!!) {
             if (inheritance.commentsInside) {
-                prototype.accept(object : JavaRecursiveElementVisitor(){
+                prototype.accept(object : JavaRecursiveElementVisitor() {
                     override fun visitComment(comment: PsiComment) {
                         if (comment !in notInsideElements && commentsAndSpacesUsed.add(comment)) {
                             appendCommentOrWhiteSpace(comment, true)
@@ -272,7 +276,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
                     collectCommentsAndSpacesBefore(prev)
                 }
             }
-            else if (prev.isEmptyElement()){
+            else if (prev.isEmptyElement()) {
                 collectCommentsAndSpacesBefore(prev)
             }
         }
@@ -294,7 +298,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
                     collectCommentsAndSpacesAfter(next)
                 }
             }
-            else if (next.isEmptyElement()){
+            else if (next.isEmptyElement()) {
                 collectCommentsAndSpacesAfter(next)
             }
         }
@@ -306,7 +310,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
     private fun MutableList<PsiElement>.collectCommentsAndSpacesAtStart(element: PsiElement): MutableList<PsiElement> {
         var child = element.firstChild
-        while(child != null) {
+        while (child != null) {
             if (child.isCommentOrSpace()) {
                 if (child !in commentsAndSpacesUsed) add(child) else break
             }
@@ -321,7 +325,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
     private fun MutableList<PsiElement>.collectCommentsAndSpacesAtEnd(element: PsiElement): MutableList<PsiElement> {
         var child = element.lastChild
-        while(child != null) {
+        while (child != null) {
             if (child.isCommentOrSpace()) {
                 if (child !in commentsAndSpacesUsed) add(child) else break
             }
@@ -335,7 +339,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
     }
 
     private companion object {
-        operator fun<T> List<T>.plus(other: List<T>): List<T> {
+        operator fun <T> List<T>.plus(other: List<T>): List<T> {
             when {
                 isEmpty() -> return other
 
@@ -350,7 +354,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             }
         }
 
-        fun<T> List<T>.reversed(): List<T> {
+        fun <T> List<T>.reversed(): List<T> {
             return if (size <= 1)
                 this
             else
