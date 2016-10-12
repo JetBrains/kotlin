@@ -445,6 +445,7 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
  *
  * The returned map preserves the entry iteration order of the original map.
  */
+@SinceKotlin("1.1")
 public fun <K, V> Map<out K, V>.toMap(): Map<K, V> = when (size) {
     0 -> emptyMap()
     1 -> toSingletonMap()
@@ -456,11 +457,13 @@ public fun <K, V> Map<out K, V>.toMap(): Map<K, V> = when (size) {
  *
  * The returned map preserves the entry iteration order of the original map.
  */
+@SinceKotlin("1.1")
 public fun <K, V> Map<out K, V>.toMutableMap(): MutableMap<K, V> = LinkedHashMap(this)
 
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given map.
  */
+@SinceKotlin("1.1")
 public fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.toMap(destination: M): M
         = destination.apply { putAll(this@toMap) }
 

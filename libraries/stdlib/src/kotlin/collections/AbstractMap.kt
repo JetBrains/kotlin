@@ -20,6 +20,7 @@
 
 package kotlin.collections
 
+@SinceKotlin("1.1")
 public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> {
 
     override fun containsKey(key: K): Boolean {

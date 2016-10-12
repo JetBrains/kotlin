@@ -15,6 +15,7 @@
  */
 package kotlin.collections
 
+@SinceKotlin("1.1")
 public abstract class AbstractSet<out E> protected constructor() : AbstractCollection<E>(), Set<E> {
 
     override fun equals(other: Any?): Boolean {

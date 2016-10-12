@@ -41,6 +41,7 @@ public interface MatchGroupCollection : Collection<MatchGroup?> {
 /**
  * Extends [MatchGroupCollection] by introducing a way to get matched groups by name, when regex supports it.
  */
+@SinceKotlin("1.1")
 public interface MatchNamedGroupCollection : MatchGroupCollection {
     /**
      * Returns a named group with the specified [name].

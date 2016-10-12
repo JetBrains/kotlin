@@ -22,6 +22,7 @@ internal open class PlatformImplementations {
     }
 }
 
+@SinceKotlin("1.1")
 @kotlin.internal.InlineExposed
 internal fun platformCloseSuppressed(instance: Closeable, cause: Throwable) = IMPLEMENTATIONS.closeSuppressed(instance, cause)
 

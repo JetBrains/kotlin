@@ -88,6 +88,7 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
 fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
 
 /** Asserts that given function [block] fails by throwing an exception. */
+@SinceKotlin("1.1")
 fun assertFails(message: String?, block: () -> Unit): Throwable {
     try {
         block()
