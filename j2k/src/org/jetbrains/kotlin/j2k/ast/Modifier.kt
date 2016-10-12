@@ -68,7 +68,7 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
     fun accessModifier(): Modifier? = modifiers.firstOrNull { it in ACCESS_MODIFIERS }
 
     operator fun plus(other: Modifiers): Modifiers {
-        return Modifiers(this.modifiers + other.modifiers).assignNoPrototype()
+        return Modifiers(this.modifiers + other.modifiers).assignPrototypesFrom(this)
     }
 
     companion object {
