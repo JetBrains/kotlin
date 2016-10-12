@@ -27,6 +27,7 @@ public interface KType {
      *
      * Returns `null` if this type is not denotable in Kotlin, for example if it is an intersection type.
      */
+    @SinceKotlin("1.1")
     public val classifier: KClassifier?
 
     /**
@@ -37,6 +38,7 @@ public interface KType {
      * then its outer class, and so on.
      * For example, in the type `Outer<A, B>.Inner<C, D>` the returned list is `[C, D, A, B]`.
      */
+    @SinceKotlin("1.1")
     public val arguments: List<KTypeProjection>
 
     /**
@@ -68,6 +70,7 @@ public interface KType {
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#type-projections)
  * for more information.
  */
+@SinceKotlin("1.1")
 public data class KTypeProjection private constructor(
         /**
          * The use-site variance specified in the projection, or `null` if this is a star projection.

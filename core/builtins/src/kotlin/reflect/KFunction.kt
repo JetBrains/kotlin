@@ -25,6 +25,7 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isInline: Boolean
 
     /**
@@ -32,6 +33,7 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-interop.html#using-jni-with-kotlin)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isExternal: Boolean
 
     /**
@@ -39,6 +41,7 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/operator-overloading.html)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isOperator: Boolean
 
     /**
@@ -46,6 +49,7 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/functions.html#infix-notation)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isInfix: Boolean
 
     /**
@@ -53,10 +57,12 @@ public interface KFunction<out R> : KCallable<R>, Function<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isTailrec: Boolean
 
     /**
      * `true` if this is a suspending function.
      */
+    @SinceKotlin("1.1")
     public val isSuspend: Boolean
 }

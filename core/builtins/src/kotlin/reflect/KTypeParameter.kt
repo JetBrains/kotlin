@@ -21,6 +21,7 @@ package kotlin.reflect
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#generics)
  * for more information.
  */
+@SinceKotlin("1.1")
 public interface KTypeParameter : KClassifier {
     /**
      * The name of this type parameter as it was declared in the source code.

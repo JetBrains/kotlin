@@ -26,6 +26,7 @@ package kotlin.reflect
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/visibility-modifiers.html)
  * for more information.
  */
+@SinceKotlin("1.1")
 enum class KVisibility {
     /**
      * Visibility of declarations marked with the `public` modifier, or with no modifier at all.

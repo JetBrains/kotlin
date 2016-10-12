@@ -21,6 +21,7 @@ package kotlin.reflect
  * Returns a parameter representing the `this` instance needed to call this callable,
  * or `null` if this callable is not a member of a class and thus doesn't take such parameter.
  */
+@SinceKotlin("1.1")
 val KCallable<*>.instanceParameter: KParameter?
     get() = parameters.singleOrNull { it.kind == KParameter.Kind.INSTANCE }
 
@@ -28,18 +29,21 @@ val KCallable<*>.instanceParameter: KParameter?
  * Returns a parameter representing the extension receiver instance needed to call this callable,
  * or `null` if this callable is not an extension.
  */
+@SinceKotlin("1.1")
 val KCallable<*>.extensionReceiverParameter: KParameter?
     get() = parameters.singleOrNull { it.kind == KParameter.Kind.EXTENSION_RECEIVER }
 
 /**
  * Returns parameters of this callable, excluding the `this` instance and the extension receiver parameter.
  */
+@SinceKotlin("1.1")
 val KCallable<*>.valueParameters: List<KParameter>
     get() = parameters.filter { it.kind == KParameter.Kind.VALUE }
 
 /**
  * Returns the parameter of this callable with the given name, or `null` if there's no such parameter.
  */
+@SinceKotlin("1.1")
 fun KCallable<*>.findParameterByName(name: String): KParameter? {
     return parameters.singleOrNull { it.name == name }
 }

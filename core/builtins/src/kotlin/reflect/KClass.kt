@@ -67,31 +67,37 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     /**
      * The list of type parameters of this class. This list does *not* include type parameters of outer classes.
      */
+    @SinceKotlin("1.1")
     public val typeParameters: List<KTypeParameter>
 
     /**
      * The list of immediate supertypes of this class, in the order they are listed in the source code.
      */
+    @SinceKotlin("1.1")
     public val supertypes: List<KType>
 
     /**
      * Visibility of this class, or `null` if its visibility cannot be represented in Kotlin.
      */
+    @SinceKotlin("1.1")
     public val visibility: KVisibility?
 
     /**
      * `true` if this class is `final`.
      */
+    @SinceKotlin("1.1")
     public val isFinal: Boolean
 
     /**
      * `true` if this class is `open`.
      */
+    @SinceKotlin("1.1")
     public val isOpen: Boolean
 
     /**
      * `true` if this class is `abstract`.
      */
+    @SinceKotlin("1.1")
     public val isAbstract: Boolean
 
     /**
@@ -99,6 +105,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/classes.html#sealed-classes)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isSealed: Boolean
 
     /**
@@ -106,6 +113,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/data-classes.html)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isData: Boolean
 
     /**
@@ -113,6 +121,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/nested-classes.html#inner-classes)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isInner: Boolean
 
     /**
@@ -120,6 +129,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/object-declarations.html#companion-objects)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isCompanion: Boolean
 
     /**

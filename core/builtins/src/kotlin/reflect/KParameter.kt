@@ -75,6 +75,7 @@ public interface KParameter : KAnnotatedElement {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/functions.html#variable-number-of-arguments-varargs)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isVararg: Boolean
 
     /**
@@ -82,6 +83,7 @@ public interface KParameter : KAnnotatedElement {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html#noinline)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isNoinline: Boolean
 
     /**
@@ -89,10 +91,12 @@ public interface KParameter : KAnnotatedElement {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/inline-functions.html#non-local-returns)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isCrossinline: Boolean
 
     /**
      * `true` if this parameter is `coroutine`.
      */
+    @SinceKotlin("1.1")
     public val isCoroutine: Boolean
 }
