@@ -20,3 +20,16 @@ extra["repo"] = "https://repo.gradle.org/gradle/repo"
 //
 //apply { plugin("kotlin") }
 
+val importedAntTasksPrefix = "imported-ant-update-"
+
+ant.importBuild("update_dependencies.xml") { antTaskName -> importedAntTasksPrefix + antTaskName }
+
+tasks.matching { task ->
+    task.name.startsWith(importedAntTasksPrefix)
+}.forEach {
+    it.group = "Imported ant"
+}
+
+task("update-dependencies") {
+    dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
+}

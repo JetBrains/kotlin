@@ -25,7 +25,7 @@ repositories {
 dependencies {
     compile(project(":core.builtins"))
     compile(project(":libraries:stdlib"))
-    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) { isTransitive = false }
+    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
     compile("javax.inject", "javax.inject", "1")
 //    compile("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
 //    compile("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")

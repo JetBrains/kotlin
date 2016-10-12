@@ -28,7 +28,7 @@ dependencies {
     compile(project(":core.builtins"))
     compile(project(":core"))
     compile(project(":libraries:stdlib"))
-    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-java")) { isTransitive = false }
+    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
 }
 
 tasks.withType<KotlinCompile> {
