@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks.kapt
 
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 

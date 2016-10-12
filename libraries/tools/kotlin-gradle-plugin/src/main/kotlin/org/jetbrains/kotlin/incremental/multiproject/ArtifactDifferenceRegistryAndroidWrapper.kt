@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
 
 internal class ArtifactDifferenceRegistryProviderAndroidWrapper(

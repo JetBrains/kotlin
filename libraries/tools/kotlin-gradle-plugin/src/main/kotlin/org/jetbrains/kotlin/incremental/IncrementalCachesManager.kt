@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 

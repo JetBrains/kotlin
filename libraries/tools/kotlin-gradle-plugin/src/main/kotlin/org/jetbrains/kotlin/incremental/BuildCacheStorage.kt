@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryImpl
 import org.jetbrains.kotlin.incremental.CacheVersion
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryImpl
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.incremental.stackTraceStr
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import java.io.File

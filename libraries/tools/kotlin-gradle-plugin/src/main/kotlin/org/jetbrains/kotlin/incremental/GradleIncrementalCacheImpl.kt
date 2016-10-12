@@ -16,19 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.CompilationResult
-import org.jetbrains.kotlin.incremental.IncrementalCacheImpl
-import org.jetbrains.kotlin.incremental.dumpCollection
-import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
-import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
-import org.jetbrains.kotlin.incremental.snapshots.SimpleFileSnapshotProviderImpl
-import org.jetbrains.kotlin.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
-import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
-import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
 internal class GradleIncrementalCacheImpl(targetDataRoot: java.io.File, targetOutputDir: java.io.File?, target: org.jetbrains.kotlin.modules.TargetId) : org.jetbrains.kotlin.incremental.IncrementalCacheImpl<org.jetbrains.kotlin.modules.TargetId>(targetDataRoot, targetOutputDir, target) {
