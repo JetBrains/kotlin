@@ -22,6 +22,7 @@ private fun notSupportedError(): Nothing {
     throw kotlin.UnsupportedOperationException("Not supported for local property reference.")
 }
 
+@SinceKotlin("1.1")
 open class LocalVariableReference : PropertyReference0() {
     override fun getOwner(): KDeclarationContainer = notSupportedError()
 
@@ -29,6 +30,7 @@ open class LocalVariableReference : PropertyReference0() {
 
 }
 
+@SinceKotlin("1.1")
 open class MutableLocalVariableReference : MutablePropertyReference0() {
     override fun getOwner(): KDeclarationContainer = notSupportedError()
 

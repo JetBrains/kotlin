@@ -303,6 +303,7 @@ public interface Map<K, out V> {
      *
      * @since JDK 1.8
      */
+    @SinceKotlin("1.1")
     @PlatformDependent
     public fun getOrDefault(key: K, defaultValue: @UnsafeVariance V): V {
         // See default implementation in JDK sources
@@ -368,6 +369,7 @@ public interface MutableMap<K, V> : Map<K, V> {
      *
      * @return true if entry was removed
      */
+    @SinceKotlin("1.1")
     @PlatformDependent
     public fun remove(key: K, value: V): Boolean {
         // See default implementation in JDK sources
