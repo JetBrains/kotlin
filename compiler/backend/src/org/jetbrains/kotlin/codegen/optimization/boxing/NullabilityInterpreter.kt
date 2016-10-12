@@ -38,7 +38,7 @@ private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): Bas
     when (insn.opcode) {
         Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW ->
             if (value?.type?.sort == Type.OBJECT || value?.type?.sort == Type.ARRAY)
-                NotNullBasicValue(value.type)
+                NotNullBasicValue(value!!.type)
             else
                 value
 
