@@ -311,7 +311,7 @@ class Converter private constructor(
         //TODO: annotations from getter/setter?
         val annotations = field?.let { convertAnnotations(it) } ?: Annotations.Empty
 
-        val modifiers = propertyInfo.modifiers + (field?.let{ specialModifiersCase(field) } ?: Modifiers.Empty)
+        val modifiers = (propertyInfo.modifiers + (field?.let{ specialModifiersCase(field) } ?: Modifiers.Empty))
 
         val name = propertyInfo.identifier
         if (field is PsiEnumConstant) {
