@@ -36,7 +36,7 @@ class DeserializationComponents(
         val errorReporter: ErrorReporter,
         val lookupTracker: LookupTracker,
         val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-        val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
+        val fictitiousClassDescriptorFactories: Iterable<ClassDescriptorFactory>,
         val notFoundClasses: NotFoundClasses,
         val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All

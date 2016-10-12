@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -112,7 +113,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                Collections.singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule)),
                 PlatformDependentDeclarationFilter.All.INSTANCE,
                 AdditionalClassPartsProvider.None.INSTANCE,
                 new Function1<String, InputStream>() {

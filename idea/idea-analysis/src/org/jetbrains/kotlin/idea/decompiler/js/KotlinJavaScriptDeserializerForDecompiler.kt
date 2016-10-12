@@ -65,7 +65,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
                 packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, DynamicTypeDeserializer, ClassDescriptorFactory.EMPTY, notFoundClasses
+                LookupTracker.DO_NOTHING, DynamicTypeDeserializer, emptyList(), notFoundClasses
         )
     }
 

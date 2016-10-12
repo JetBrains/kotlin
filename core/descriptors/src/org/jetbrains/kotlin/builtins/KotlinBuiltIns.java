@@ -86,7 +86,7 @@ public abstract class KotlinBuiltIns {
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
+                Collections.singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule)),
                 getPlatformDependentDeclarationFilter(),
                 getAdditionalClassPartsProvider(),
                 new Function1<String, InputStream>() {

@@ -29,7 +29,7 @@ fun createBuiltInPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
-        classDescriptorFactory: ClassDescriptorFactory,
+        classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         loadResource: (String) -> InputStream?
@@ -52,7 +52,7 @@ fun createBuiltInPackageFragmentProvider(
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
             FlexibleTypeDeserializer.ThrowException,
-            classDescriptorFactory,
+            classDescriptorFactories,
             notFoundClasses,
             additionalClassPartsProvider = additionalClassPartsProvider,
             platformDependentDeclarationFilter = platformDependentDeclarationFilter

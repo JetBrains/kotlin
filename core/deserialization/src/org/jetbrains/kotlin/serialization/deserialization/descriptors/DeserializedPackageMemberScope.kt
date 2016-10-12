@@ -45,7 +45,7 @@ open class DeserializedPackageMemberScope(
             = computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
 
     override fun hasClass(name: Name) =
-            super.hasClass(name) || c.components.fictitiousClassDescriptorFactory.shouldCreateClass(packageFqName, name)
+            super.hasClass(name) || c.components.fictitiousClassDescriptorFactories.any { it.shouldCreateClass(packageFqName, name) }
 
     override fun createClassId(name: Name) = ClassId(packageFqName, name)
 

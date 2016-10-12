@@ -32,7 +32,9 @@ class ClassDeserializer(private val components: DeserializationComponents) {
 
     private fun createClass(key: ClassKey): ClassDescriptor? {
         val classId = key.classId
-        components.fictitiousClassDescriptorFactory.createClass(classId)?.let { return it }
+        for (factory in components.fictitiousClassDescriptorFactories) {
+            factory.createClass(classId)?.let { return it }
+        }
         val (classData, sourceElement) = key.classDataWithSource
                                          ?: components.classDataFinder.findClassData(classId)
                                          ?: return null

@@ -50,7 +50,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
             DynamicTypeDeserializer,
-            ClassDescriptorFactory.EMPTY,
+            emptyList(),
             notFoundClasses
     )
 
