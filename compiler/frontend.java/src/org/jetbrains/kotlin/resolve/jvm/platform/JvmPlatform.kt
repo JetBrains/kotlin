@@ -26,31 +26,29 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    override val defaultImports: List<ImportPath>
-        get() = ArrayList<ImportPath>().apply {
-            add(ImportPath("java.lang.*"))
-            add(ImportPath("kotlin.*"))
-            add(ImportPath("kotlin.annotation.*"))
-            add(ImportPath("kotlin.jvm.*"))
-            add(ImportPath("kotlin.collections.*"))
-            add(ImportPath("kotlin.coroutines.*"))
-            add(ImportPath("kotlin.ranges.*"))
-            add(ImportPath("kotlin.sequences.*"))
-            add(ImportPath("kotlin.text.*"))
-            add(ImportPath("kotlin.io.*"))
+    override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
+        add(ImportPath("java.lang.*"))
+        add(ImportPath("kotlin.*"))
+        add(ImportPath("kotlin.annotation.*"))
+        add(ImportPath("kotlin.jvm.*"))
+        add(ImportPath("kotlin.collections.*"))
+        add(ImportPath("kotlin.coroutines.*"))
+        add(ImportPath("kotlin.ranges.*"))
+        add(ImportPath("kotlin.sequences.*"))
+        add(ImportPath("kotlin.text.*"))
+        add(ImportPath("kotlin.io.*"))
 
-            fun addAllClassifiersFromScope(scope: MemberScope) {
-                for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-                    add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
-                }
-            }
-
-            val builtIns = DefaultBuiltIns.Instance
-            for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
-                addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+        fun addAllClassifiersFromScope(scope: MemberScope) {
+            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
             }
         }
 
+        val builtIns = DefaultBuiltIns.Instance
+        for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
+            addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+        }
+    }
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 }
