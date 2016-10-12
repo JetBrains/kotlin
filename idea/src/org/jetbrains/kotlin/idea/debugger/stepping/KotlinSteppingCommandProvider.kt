@@ -296,34 +296,6 @@ interface KotlinMethodFilter: MethodFilter {
     fun locationMatches(context: SuspendContextImpl, location: Location): Boolean
 }
 
-class KotlinStepOverInlineFilter(val stepOverLines: Set<Int>, val fromLine: Int,
-                                 val inlineFunRangeVariables: List<LocalVariable>) : KotlinMethodFilter {
-    override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
-        val frameProxy = context.frameProxy
-        if (frameProxy == null) return true
-
-        val currentLine = location.lineNumber()
-
-        if (!(stepOverLines.contains(location.lineNumber()))) {
-            return currentLine != fromLine
-        }
-
-        val visibleInlineVariables = getInlineRangeLocalVariables(frameProxy)
-
-        // Our ranges check missed exit from inline function. This is when breakpoint was in last statement of inline functions.
-        // This can be observed by inline local range-variables. Absence of any means step out was done.
-        return inlineFunRangeVariables.any { !visibleInlineVariables.contains(it) }
-    }
-
-    override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-        throw IllegalStateException() // Should not be called from Kotlin hint
-    }
-
-    override fun getCallingExpressionLines(): Range<Int>? {
-        throw IllegalStateException() // Should not be called from Kotlin hint
-    }
-}
-
 fun getStepOverAction(
         location: Location,
         kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition,
@@ -496,7 +468,7 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
     return null
 }
 
-private fun getInlineRangeLocalVariables(stackFrame: StackFrameProxyImpl): List<LocalVariable> {
+fun getInlineRangeLocalVariables(stackFrame: StackFrameProxyImpl): List<LocalVariable> {
     return stackFrame.visibleVariables()
             .filter {
                 val name = it.name()
