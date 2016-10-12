@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.EventDispatcher
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.request.StepRequest
+import java.lang.reflect.Field
 
 // Mass-copy-paste code for commands behaviour from com.intellij.debugger.engine.DebugProcessImpl
 @SuppressWarnings("UnnecessaryFinalOnLocalVariableOrParameter")
@@ -46,25 +47,23 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
     private val session: DebuggerSession get() = debuggerProcess.session
 
     // TODO: ask for better API
-    private val debugProcessDispatcher: EventDispatcher<DebugProcessListener>
-        // Should be safe to use reflection as field is protected and not obfuscated
-        get() = getFromField("myDebugProcessDispatcher")
+    // Should be safe to use reflection as field is protected and not obfuscated
+    private val debugProcessDispatcher: EventDispatcher<DebugProcessListener> = getFromField("myDebugProcessDispatcher")
 
     // TODO: ask for better API
-    private val threadBlockedMonitor: ThreadBlockedMonitor
-        // FIXME: obfuscated in ULTIMATE. Absent in old AS
-        get() = getFromField("myThreadBlockedMonitor")
+    // Get field by type as it private and obfuscated in Ultimate
+    private val threadBlockedMonitor: ThreadBlockedMonitor = getFromField(ThreadBlockedMonitor::class.java)
 
     private fun showStatusText(message: String) {
         debuggerProcess.showStatusText(message)
     }
 
     // TODO: ask for better API
+    // Should be safe to use reflection as method is protected and not obfuscated
     private fun doStep(
             suspendContext: SuspendContextImpl,
             stepThread: ThreadReferenceProxyImpl,
             size: Int, depth: Int, hint: RequestHint) {
-        // Should be safe to use reflection as field is protected and not obfuscated
         val doStepMethod = DebugProcessImpl::class.java.getDeclaredMethod(
                 "doStep",
                 SuspendContextImpl::class.java, ThreadReferenceProxyImpl::class.java,
@@ -75,9 +74,16 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         doStepMethod.invoke(debuggerProcess, suspendContext, stepThread, size, depth, hint)
     }
 
+    private fun <T> getFromField(fieldType: Class<T>): T {
+        return getFromField(DebugProcessImpl::class.java.declaredFields.single { it.type == fieldType })
+    }
+
     private fun <T> getFromField(fieldName: String): T {
-        val field = DebugProcessImpl::class.java.getDeclaredField(fieldName)
-        field.isAccessible = true
+        return getFromField(DebugProcessImpl::class.java.getDeclaredField(fieldName))
+    }
+
+    private fun <T> getFromField(field: Field?): T {
+        field!!.isAccessible = true
 
         @Suppress("UNCHECKED_CAST")
         return field.get(debuggerProcess) as T
@@ -144,7 +150,6 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
             resumeAction(suspendContext, stepThread)
             debugProcessDispatcher.multicaster.resumed(suspendContext)
         }
-
     }
 
     companion object {
