@@ -30,9 +30,17 @@ public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
 	public fun <init> (Ljava/lang/Throwable;)V
 }
 
+public abstract interface annotation class kotlin/ParameterName : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
 public abstract interface annotation class kotlin/ReplaceWith : java/lang/annotation/Annotation {
 	public abstract fun expression ()Ljava/lang/String;
 	public abstract fun imports ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/SinceKotlin : java/lang/annotation/Annotation {
+	public abstract fun version ()Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
