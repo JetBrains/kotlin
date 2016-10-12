@@ -25,7 +25,7 @@ repositories {
     mavenCentral()
 }
 
-val protobufCfg = configurations.create("protobuf-java")
+val protobufCfg = configurations.create("protobuf-lite")
 
 val protobufVersion = "2.6.1"
 val protobufJarPrefix = "protobuf-$protobufVersion"
@@ -33,10 +33,10 @@ val renamedOutputJarPathWithoutExt = "$buildDir/jars/$protobufJarPrefix-relocate
 val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
-artifacts.add("protobuf-java", File(outputJarPath))
+artifacts.add("protobuf-lite", File(outputJarPath))
 
 dependencies {
-    "protobuf-java"("com.google.protobuf:protobuf-java:$protobufVersion")
+    "protobuf-lite"("com.google.protobuf:protobuf-java:$protobufVersion")
 }
 
 val relocateTask = task<ShadowJar>("relocate-protobuf") {
