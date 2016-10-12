@@ -66,7 +66,7 @@ done
         captureOut {
             ctor!!.newInstance(arrayOf("a1"))
         }.let {
-            Assert.assertEquals(argsHelloWorldOutput, it)
+            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
         }
     }
 
@@ -79,7 +79,7 @@ done
         captureOut {
             ctor!!.newInstance(hashMapOf("a1" to 42))
         }.let {
-            Assert.assertEquals(bindingsHelloWorldOutput, it)
+            Assert.assertEquals(bindingsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
         }
     }
 
@@ -96,7 +96,7 @@ done
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
         }.let {
-            Assert.assertEquals(argsHelloWorldOutput, it)
+            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
         }
     }
 
@@ -174,6 +174,9 @@ done
     } catch (t: Throwable) {
         default
     }
+
+    private fun String.linesSplitTrim() =
+            split('\n','\r').map(String::trim).filter(String::isNotBlank)
 
     private fun captureOut(body: () -> Unit): String {
         val outStream = ByteArrayOutputStream()
