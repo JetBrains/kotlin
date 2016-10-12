@@ -22,7 +22,10 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
     private String defFile
 
+    private String pkg;
+
     private List<String> compilerOpts = []
+    private FileCollection headers;
     private List<String> linkerOpts = []
     private FileCollection linkFiles;
     private List<String> linkTasks = []
@@ -32,8 +35,17 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
         genTask.inputs.file(project.file(defFile))
     }
 
+    void pkg(String value) {
+        pkg = value
+    }
+
     void compilerOpts(String... values) {
         compilerOpts.addAll(values)
+    }
+
+    void headers(FileCollection files) {
+        dependsOnFiles(files)
+        headers = headers + files
     }
 
     void linkerOpts(String... values) {
@@ -95,6 +107,7 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
         this.name = name
         this.project = project
 
+        this.headers = project.files()
         this.linkFiles = project.files()
 
         interopStubs = project.sourceSets.create(name + "InteropStubs")
@@ -139,10 +152,21 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
                 linkerOpts += linkFiles.files
 
-                args = [generatedSrcDir, nativeLibsDir, project.file(defFile)]
+                args = [generatedSrcDir, nativeLibsDir]
+                if (defFile != null) {
+                    args "-def:" + project.file(defFile)
+                }
+
+                if (pkg != null) {
+                    args "-pkg:" + pkg
+                }
 
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }
+
+                headers.files.each {
+                    args "-h:$it"
+                }
             }
         }
     }

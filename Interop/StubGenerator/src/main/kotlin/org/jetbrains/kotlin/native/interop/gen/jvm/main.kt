@@ -11,8 +11,7 @@ fun main(args: Array<String>) {
 
     val ktGenRoot = args[0]
     val nativeLibsDir = args[1]
-    val defFile = args[2]
-    val otherArgs = args.drop(3)
+    val otherArgs = args.drop(2)
 
     // TODO: remove OSX defaults.
     val substitutions = mapOf(
@@ -20,7 +19,7 @@ fun main(args: Array<String>) {
             "os" to (System.getenv("TARGET_OS") ?: detectHost())
     )
 
-    processDefFile(File(defFile), ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions, otherArgs)
+    processLib(ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions, otherArgs)
 }
 
 private fun detectHost():String {
@@ -56,11 +55,21 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
     }
 }
 
-private fun String.removePrefixOrNull(prefix: String): String? {
-    if (this.startsWith(prefix)) {
-        return this.substring(prefix.length)
-    } else {
+private fun getArgPrefix(arg: String): String? {
+    val index = arg.indexOf(':')
+    if (index == -1) {
         return null
+    } else {
+        return arg.substring(0, index)
+    }
+}
+
+private fun dropPrefix(arg: String): String? {
+    val index = arg.indexOf(':')
+    if (index == -1) {
+        return null
+    } else {
+        return arg.substring(index + 1)
     }
 }
 
@@ -73,30 +82,40 @@ private fun ProcessBuilder.runExpectingSuccess() {
     }
 }
 
-private fun processDefFile(defFile: File,
-                           ktGenRoot: String,
-                           nativeLibsDir: String,
-                           llvmInstallPath: String,
-                           substitutions: Map<String, String>,
-                           additionalArgs: List<String>) {
+private fun Properties.getSpaceSeparated(name: String): List<String> {
+    return this.getProperty(name)?.split(' ') ?: emptyList()
+}
+
+private fun processLib(ktGenRoot: String,
+                       nativeLibsDir: String,
+                       llvmInstallPath: String,
+                       substitutions: Map<String, String>,
+                       additionalArgs: List<String>) {
+
+    val args = additionalArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
+
+    val defFile = args["-def"]?.single()?.let { File(it) }
 
     val config = Properties()
-    defFile.bufferedReader().use { reader ->
+    defFile?.bufferedReader()?.use { reader ->
         config.load(reader)
     }
     substitute(config, substitutions)
 
-    val additionalCompilerOpts = additionalArgs.mapNotNull { it.removePrefixOrNull("-copt:") }
-    val additionalLinkerOpts = additionalArgs.mapNotNull { it.removePrefixOrNull("-lopt:") }
+    val additionalHeaders = args["-h"].orEmpty()
+    val additionalCompilerOpts = args["-copt"].orEmpty()
+    val additionalLinkerOpts = args["-lopt"].orEmpty()
 
-    val headerFiles = config.getProperty("headers").split(' ')
-    val compilerOpts = config.getProperty("compilerOpts").split(' ') + additionalCompilerOpts
-    val compiler = config.getProperty("compiler")
-    val linkerOpts = config.getProperty("linkerOpts").split(' ').toTypedArray() + additionalLinkerOpts
-    val linker = config.getProperty("linker")
-    val excludedFunctions = config.getProperty("excludedFunctions")?.split(' ')?.toSet() ?: emptySet()
+    val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
+    val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
+    val compiler = config.getProperty("compiler") ?: "clang"
+    val linkerOpts = config.getSpaceSeparated("linkerOpts").toTypedArray() + additionalLinkerOpts
+    val linker = config.getProperty("linker") ?: "clang"
+    val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
-    val fqParts = defFile.name.split('.').reversed().drop(1)
+    val fqParts = args["-pkg"]?.singleOrNull()?.let {
+        it.split('.')
+    } ?: defFile!!.name.split('.').reversed().drop(1)
 
     val outKtFileName = fqParts.last() + ".kt"
 
@@ -135,10 +154,10 @@ private fun processDefFile(defFile: File,
             *compilerArgsForJniIncludes,
             "-c", outCFile.path, "-o", outOFile.path)
 
-    val defFileDir = defFile.parentFile
+    val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
     ProcessBuilder(*compilerCmd)
-            .directory(defFileDir)
+            .directory(workDir)
             .inheritIO()
             .runExpectingSuccess()
 
@@ -150,7 +169,7 @@ private fun processDefFile(defFile: File,
             "-Wl,-flat_namespace,-undefined,dynamic_lookup")
 
     ProcessBuilder(*linkerCmd)
-            .directory(defFileDir)
+            .directory(workDir)
             .inheritIO()
             .runExpectingSuccess()
 
