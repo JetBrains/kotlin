@@ -10605,12 +10605,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("inIntRange.kt")
-            public void testInIntRange() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inIntRange.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("inOptimizableDoubleRange.kt")
             public void testInOptimizableDoubleRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inOptimizableDoubleRange.kt");
