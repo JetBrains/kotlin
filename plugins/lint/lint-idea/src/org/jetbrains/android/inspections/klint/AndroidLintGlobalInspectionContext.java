@@ -34,13 +34,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * @author Eugene.Kudelevsky
+ */
 class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExtension<AndroidLintGlobalInspectionContext> {
-  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidKlintGlobalInspectionContext");
+  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidLintGlobalInspectionContext");
   private Map<Issue, Map<File, List<ProblemData>>> myResults;
 
   @NotNull

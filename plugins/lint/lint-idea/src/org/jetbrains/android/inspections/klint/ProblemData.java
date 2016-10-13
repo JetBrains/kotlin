@@ -6,6 +6,9 @@ import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Eugene.Kudelevsky
+ */
 public class ProblemData {
   private final Issue myIssue;
   private final String myMessage;

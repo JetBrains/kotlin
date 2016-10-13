@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright (C) 2016 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,303 @@
 
 package com.android.tools.klint.client.api;
 
+import com.android.SdkConstants;
 import com.android.annotations.NonNull;
-import org.jetbrains.uast.*;
+import com.android.annotations.Nullable;
+import com.android.resources.ResourceType;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.google.common.base.Joiner;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiLocalVariable;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiVariable;
+
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.ULiteralExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UQualifiedReferenceExpression;
+import org.jetbrains.uast.UResolvable;
+import org.jetbrains.uast.USimpleNameReferenceExpression;
+import org.jetbrains.uast.UVariable;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.java.JavaAbstractUExpression;
+import org.jetbrains.uast.java.JavaUVariableDeclarationsExpression;
+
+import java.util.Collections;
+import java.util.List;
 
 public class UastLintUtils {
-
-    public static boolean isChildOfExpression(
-            @NonNull UExpression child,
-            @NonNull UExpression parent) {
-        UElement current = child;
-        while (current != null) {
-            if (current.equals(parent)) {
-                return true;
-            } else if (!(current instanceof UExpression)) {
-                return false;
-            }
-
-            current = current.getParent();
+    @NonNull
+    public static String getClassName(PsiClassType type) {
+        PsiClass psiClass = type.resolve();
+        if (psiClass == null) {
+            return type.getClassName();
+        } else {
+            return getClassName(psiClass);
         }
-
-        return false;
     }
     
+    @NonNull
+    public static String getClassName(PsiClass psiClass) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(psiClass.getName());
+        psiClass = psiClass.getContainingClass();
+        while (psiClass != null) {
+            stringBuilder.insert(0, psiClass.getName() + ".");
+            psiClass = psiClass.getContainingClass();
+        }
+        return stringBuilder.toString();
+    }
+    
+    @Nullable
+    public static UExpression findLastAssignment(
+            @NonNull PsiVariable variable,
+            @NonNull UElement call,
+            @NonNull JavaContext context) {
+        UElement lastAssignment = null;
+        
+        if (variable instanceof UVariable) {
+            variable = ((UVariable) variable).getPsi();
+        }
+        
+        if (!variable.hasModifierProperty(PsiModifier.FINAL) &&
+                (variable instanceof PsiLocalVariable || variable instanceof PsiParameter)) {
+            UMethod containingFunction = UastUtils.getContainingUMethod(call);
+            if (containingFunction != null) {
+                ConstantEvaluator.LastAssignmentFinder
+                        finder = new ConstantEvaluator.LastAssignmentFinder(
+                        variable, call, context, null,
+                        (variable instanceof PsiParameter) ? 1 : 0);
+                containingFunction.accept(finder);
+                lastAssignment = finder.getLastAssignment();
+            }
+        } else {
+            lastAssignment = context.getUastContext().getInitializerBody(variable);
+        }
+
+        if (lastAssignment instanceof UExpression) {
+            return (UExpression) lastAssignment;
+        }
+
+        return null;
+    }
+    
+    @Nullable
+    public static String getReferenceName(UReferenceExpression expression) {
+        if (expression instanceof USimpleNameReferenceExpression) {
+            return ((USimpleNameReferenceExpression) expression).getIdentifier();
+        } else if (expression instanceof UQualifiedReferenceExpression) {
+            UExpression selector = ((UQualifiedReferenceExpression) expression).getSelector();
+            if (selector instanceof USimpleNameReferenceExpression) {
+                return ((USimpleNameReferenceExpression) selector).getIdentifier();
+            }
+        }
+        
+        return null;
+    } 
+    
+    @Nullable
+    public static Object findLastValue(
+            @NonNull PsiVariable variable,
+            @NonNull UElement call,
+            @NonNull JavaContext context,
+            @NonNull ConstantEvaluator evaluator) {
+        Object value = null;
+        
+        if (!variable.hasModifierProperty(PsiModifier.FINAL) &&
+                (variable instanceof PsiLocalVariable || variable instanceof PsiParameter)) {
+            UMethod containingFunction = UastUtils.getContainingUMethod(call);
+            if (containingFunction != null) {
+                ConstantEvaluator.LastAssignmentFinder
+                        finder = new ConstantEvaluator.LastAssignmentFinder(
+                        variable, call, context, evaluator, 1);
+                containingFunction.getUastBody().accept(finder);
+                value = finder.getCurrentValue();
+            }
+        } else {
+            UExpression initializer = context.getUastContext().getInitializerBody(variable);
+            if (initializer != null) {
+                value = initializer.evaluate();
+            }
+        }
+
+        return value;
+    }
+
+    @Nullable
+    private static AndroidReference toAndroidReference(UQualifiedReferenceExpression expression) {
+        List<String> path = UastUtils.asQualifiedPath(expression);
+        
+        String packageNameFromResolved = null;
+
+        PsiClass containingClass = UastUtils.getContainingClass(expression.resolve());
+        if (containingClass != null) {
+            String containingClassFqName = containingClass.getQualifiedName();
+            
+            if (containingClassFqName != null) {
+                int i = containingClassFqName.lastIndexOf(".R.");
+                if (i >= 0) {
+                    packageNameFromResolved = containingClassFqName.substring(0, i);
+                }
+            }
+        }
+
+        if (path == null) {
+            return null;
+        }
+
+        int size = path.size();
+        if (size < 3) {
+            return null;
+        }
+
+        String r = path.get(size - 3);
+        if (!r.equals(SdkConstants.R_CLASS)) {
+            return null;
+        }
+
+        String packageName = packageNameFromResolved != null
+                ? packageNameFromResolved
+                : Joiner.on('.').join(path.subList(0, size - 3));
+
+        String type = path.get(size - 2);
+        String name = path.get(size - 1);
+
+        ResourceType resourceType = null;
+        for (ResourceType value : ResourceType.values()) {
+            if (value.getName().equals(type)) {
+                resourceType = value;
+                break;
+            }
+        }
+
+        if (resourceType == null) {
+            return null;
+        }
+
+        return new AndroidReference(expression, packageName, resourceType, name);
+    }
+
+
+    @Nullable
+    public static AndroidReference toAndroidReferenceViaResolve(UElement element) {
+        if (element instanceof UQualifiedReferenceExpression
+                && element instanceof JavaAbstractUExpression) {
+            AndroidReference ref = toAndroidReference((UQualifiedReferenceExpression) element);
+            if (ref != null) {
+                return ref;
+            }
+        }
+
+        PsiElement declaration;
+        if (element instanceof UVariable) {
+            declaration = ((UVariable) element).getPsi();
+        } else if (element instanceof UResolvable) {
+            declaration = ((UResolvable) element).resolve();
+        } else {
+            return null;
+        }
+        
+        if (declaration == null && element instanceof USimpleNameReferenceExpression 
+                && element instanceof JavaAbstractUExpression) {
+            // R class can't be resolved in tests so we need to use heuristics to calc the reference 
+            UExpression maybeQualified = UastUtils.getQualifiedParentOrThis((UExpression) element);
+            if (maybeQualified instanceof UQualifiedReferenceExpression) {
+                AndroidReference ref = toAndroidReference(
+                        (UQualifiedReferenceExpression) maybeQualified);
+                if (ref != null) {
+                    return ref;
+                }
+            }
+        }
+        
+        if (!(declaration instanceof PsiVariable)) {
+            return null;
+        }
+        
+        PsiVariable variable = (PsiVariable) declaration;
+        if (!(variable instanceof PsiField) 
+                || variable.getType() != PsiType.INT
+                || !variable.hasModifierProperty(PsiModifier.STATIC) 
+                || !variable.hasModifierProperty(PsiModifier.FINAL)) {
+            return null;
+        }
+        
+        PsiClass resTypeClass = ((PsiField) variable).getContainingClass();
+        if (resTypeClass == null || !resTypeClass.hasModifierProperty(PsiModifier.STATIC)) {
+            return null;
+        }
+        
+        PsiClass rClass = resTypeClass.getContainingClass();
+        if (rClass == null || rClass.getContainingClass() != null || !"R".equals(rClass.getName())) {
+            return null;
+        }
+        
+        String packageName = ((PsiJavaFile) rClass.getContainingFile()).getPackageName();
+        if (packageName.isEmpty()) {
+            return null;
+        }
+
+        String resourceTypeName = resTypeClass.getName();
+        ResourceType resourceType = null;
+        for (ResourceType value : ResourceType.values()) {
+            if (value.getName().equals(resourceTypeName)) {
+                resourceType = value;
+                break;
+            }
+        }
+
+        if (resourceType == null) {
+            return null;
+        }
+
+        String resourceName = variable.getName();
+
+        UExpression node;
+        if (element instanceof UExpression) {
+            node = (UExpression) element;
+        } else if (element instanceof UVariable) {
+            node = new JavaUVariableDeclarationsExpression(
+                    null, Collections.singletonList(((UVariable) element)));
+        } else {
+            throw new IllegalArgumentException("element must be an expression or an UVariable");
+        }
+
+        return new AndroidReference(node, packageName, resourceType, resourceName);
+    }
+
+    public static boolean areIdentifiersEqual(UExpression first, UExpression second) {
+        String firstIdentifier = getIdentifier(first);
+        String secondIdentifier = getIdentifier(second);
+        return firstIdentifier != null && secondIdentifier != null
+                && firstIdentifier.equals(secondIdentifier);
+    }
+
+    @Nullable
+    public static String getIdentifier(UExpression expression) {
+        if (expression instanceof ULiteralExpression) {
+            expression.asRenderString();
+        } else if (expression instanceof USimpleNameReferenceExpression) {
+            return ((USimpleNameReferenceExpression) expression).getIdentifier();
+        } else if (expression instanceof UQualifiedReferenceExpression) {
+            UQualifiedReferenceExpression qualified = (UQualifiedReferenceExpression) expression;
+            String receiverIdentifier = getIdentifier(qualified.getReceiver());
+            String selectorIdentifier = getIdentifier(qualified.getSelector());
+            if (receiverIdentifier == null || selectorIdentifier == null) {
+                return null;
+            }
+            return receiverIdentifier + "." + selectorIdentifier;
+        }
+
+        return null;
+    }
 }

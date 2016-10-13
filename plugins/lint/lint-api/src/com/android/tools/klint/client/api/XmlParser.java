@@ -22,6 +22,7 @@ import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.annotations.Beta;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -29,7 +30,7 @@ import org.w3c.dom.Node;
 /**
  * A wrapper for an XML parser. This allows tools integrating lint to map directly
  * to builtin services, such as already-parsed data structures in XML editors.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */

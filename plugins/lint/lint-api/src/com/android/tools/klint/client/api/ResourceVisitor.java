@@ -24,10 +24,20 @@ import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.ResourceContext;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.annotations.Beta;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.RandomAccess;
 
 /**
  * Specialized visitor for running detectors on resources: typically XML documents,

@@ -19,27 +19,35 @@ package com.android.tools.klint.checks;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.google.common.collect.Maps;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 
-import java.io.File;
+import org.jetbrains.uast.UBinaryExpressionWithType;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.util.UastExpressionUtils;
+import org.jetbrains.uast.visitor.UastVisitor;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Detector looking for casts on th result of context.getSystemService which are suspect
  */
-public class ServiceCastDetector extends Detector implements UastScanner {
+public class ServiceCastDetector extends Detector implements Detector.UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "ServiceCast", //$NON-NLS-1$
@@ -54,56 +62,54 @@ public class ServiceCastDetector extends Detector implements UastScanner {
             Severity.FATAL,
             new Implementation(
                     ServiceCastDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
     /** Constructs a new {@link ServiceCastDetector} check */
     public ServiceCastDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-    // ---- Implements UastScanner ----
-
+    // ---- Implements JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("getSystemService"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UExpression receiver = UastUtils.getQualifiedCallElement(node);
-        UElement parent = receiver.getParent();
-        if (!(parent instanceof UBinaryExpressionWithType)
-                || ((UBinaryExpressionWithType)parent).getOperationKind() != UastBinaryExpressionWithTypeKind.TYPE_CAST) {
-            return;
-        }
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
+        UElement parent = LintUtils.skipParentheses(
+                UastUtils.getQualifiedParentOrThis(call).getContainingElement());
+        if (UastExpressionUtils.isTypeCast(parent)) {
+            UBinaryExpressionWithType cast = (UBinaryExpressionWithType) parent;
 
-        UBinaryExpressionWithType cast = (UBinaryExpressionWithType) parent;
-        List<UExpression> args = node.getValueArguments();
-        if (args.size() == 1) {
-            String name = stripPackage(args.get(0).renderString());
-            String expectedClass = getExpectedType(name);
-            if (expectedClass != null) {
-                String castType = cast.getType().getName();
-                if (castType.indexOf('.') == -1) {
-                    expectedClass = stripPackage(expectedClass);
+            List<UExpression> args = call.getValueArguments();
+            if (args.size() == 1 && args.get(0) instanceof UReferenceExpression) {
+                PsiElement resolvedServiceConst = ((UReferenceExpression) args.get(0)).resolve();
+                if (!(resolvedServiceConst instanceof PsiField)) {
+                    return;
                 }
-                if (!castType.equals(expectedClass)) {
-                    // It's okay to mix and match
-                    // android.content.ClipboardManager and android.text.ClipboardManager
-                    if (isClipboard(castType) && isClipboard(expectedClass)) {
-                        return;
+                String name = ((PsiField) resolvedServiceConst).getName();
+                String expectedClass = getExpectedType(name);
+                if (expectedClass != null && cast != null) {
+                    String castType = cast.getType().getCanonicalText();
+                    if (castType.indexOf('.') == -1) {
+                        expectedClass = stripPackage(expectedClass);
                     }
+                    if (!castType.equals(expectedClass)) {
+                        // It's okay to mix and match
+                        // android.content.ClipboardManager and android.text.ClipboardManager
+                        if (isClipboard(castType) && isClipboard(expectedClass)) {
+                            return;
+                        }
 
-                    String message = String.format(
-                      "Suspicious cast to `%1$s` for a `%2$s`: expected `%3$s`",
-                      stripPackage(castType), name, stripPackage(expectedClass));
-                    context.report(ISSUE, node, context.getLocation(cast), message);
+                        String message = String.format(
+                                "Suspicious cast to `%1$s` for a `%2$s`: expected `%3$s`",
+                                stripPackage(castType), name, stripPackage(expectedClass));
+                        context.report(ISSUE, call, context.getUastLocation(cast), message);
+                    }
                 }
+
             }
         }
     }
@@ -123,14 +129,14 @@ public class ServiceCastDetector extends Detector implements UastScanner {
     }
 
     @Nullable
-    private static String getExpectedType(@NonNull String value) {
-        return getServiceMap().get(value);
+    private static String getExpectedType(@Nullable String value) {
+        return value != null ? getServiceMap().get(value) : null;
     }
 
     @NonNull
     private static Map<String, String> getServiceMap() {
         if (sServiceMap == null) {
-            final int EXPECTED_SIZE = 49;
+            final int EXPECTED_SIZE = 55;
             sServiceMap = Maps.newHashMapWithExpectedSize(EXPECTED_SIZE);
 
             sServiceMap.put("ACCESSIBILITY_SERVICE", "android.view.accessibility.AccessibilityManager");
@@ -144,13 +150,15 @@ public class ServiceCastDetector extends Detector implements UastScanner {
             sServiceMap.put("BLUETOOTH_SERVICE", "android.bluetooth.BluetoothManager");
             sServiceMap.put("CAMERA_SERVICE", "android.hardware.camera2.CameraManager");
             sServiceMap.put("CAPTIONING_SERVICE", "android.view.accessibility.CaptioningManager");
-            sServiceMap.put("CLIPBOARD_SERVICE", "android.text.ClipboardManager");
+            sServiceMap.put("CARRIER_CONFIG_SERVICE", "android.telephony.CarrierConfigManager");
+            sServiceMap.put("CLIPBOARD_SERVICE", "android.text.ClipboardManager"); // also allow @Deprecated android.content.ClipboardManager
             sServiceMap.put("CONNECTIVITY_SERVICE", "android.net.ConnectivityManager");
             sServiceMap.put("CONSUMER_IR_SERVICE", "android.hardware.ConsumerIrManager");
             sServiceMap.put("DEVICE_POLICY_SERVICE", "android.app.admin.DevicePolicyManager");
             sServiceMap.put("DISPLAY_SERVICE", "android.hardware.display.DisplayManager");
             sServiceMap.put("DOWNLOAD_SERVICE", "android.app.DownloadManager");
             sServiceMap.put("DROPBOX_SERVICE", "android.os.DropBoxManager");
+            sServiceMap.put("FINGERPRINT_SERVICE", "android.hardware.fingerprint.FingerprintManager");
             sServiceMap.put("INPUT_METHOD_SERVICE", "android.view.inputmethod.InputMethodManager");
             sServiceMap.put("INPUT_SERVICE", "android.hardware.input.InputManager");
             sServiceMap.put("JOB_SCHEDULER_SERVICE", "android.app.job.JobScheduler");
@@ -161,6 +169,8 @@ public class ServiceCastDetector extends Detector implements UastScanner {
             sServiceMap.put("MEDIA_PROJECTION_SERVICE", "android.media.projection.MediaProjectionManager");
             sServiceMap.put("MEDIA_ROUTER_SERVICE", "android.media.MediaRouter");
             sServiceMap.put("MEDIA_SESSION_SERVICE", "android.media.session.MediaSessionManager");
+            sServiceMap.put("MIDI_SERVICE", "android.media.midi.MidiManager");
+            sServiceMap.put("NETWORK_STATS_SERVICE", "android.app.usage.NetworkStatsManager");
             sServiceMap.put("NFC_SERVICE", "android.nfc.NfcManager");
             sServiceMap.put("NOTIFICATION_SERVICE", "android.app.NotificationManager");
             sServiceMap.put("NSD_SERVICE", "android.net.nsd.NsdManager");
@@ -172,13 +182,15 @@ public class ServiceCastDetector extends Detector implements UastScanner {
             sServiceMap.put("STORAGE_SERVICE", "android.os.storage.StorageManager");
             sServiceMap.put("TELECOM_SERVICE", "android.telecom.TelecomManager");
             sServiceMap.put("TELEPHONY_SERVICE", "android.telephony.TelephonyManager");
+            sServiceMap.put("TELEPHONY_SUBSCRIPTION_SERVICE", "android.telephony.SubscriptionManager");
             sServiceMap.put("TEXT_SERVICES_MANAGER_SERVICE", "android.view.textservice.TextServicesManager");
             sServiceMap.put("TV_INPUT_SERVICE", "android.media.tv.TvInputManager");
             sServiceMap.put("UI_MODE_SERVICE", "android.app.UiModeManager");
+            sServiceMap.put("USAGE_STATS_SERVICE", "android.app.usage.UsageStatsManager");
             sServiceMap.put("USB_SERVICE", "android.hardware.usb.UsbManager");
             sServiceMap.put("USER_SERVICE", "android.os.UserManager");
             sServiceMap.put("VIBRATOR_SERVICE", "android.os.Vibrator");
-            sServiceMap.put("WALLPAPER_SERVICE", "com.android.server.WallpaperService");
+            sServiceMap.put("WALLPAPER_SERVICE", "android.service.wallpaper.WallpaperService");
             sServiceMap.put("WIFI_P2P_SERVICE", "android.net.wifi.p2p.WifiP2pManager");
             sServiceMap.put("WIFI_SERVICE", "android.net.wifi.WifiManager");
             sServiceMap.put("WINDOW_SERVICE", "android.view.WindowManager");

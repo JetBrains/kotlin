@@ -16,26 +16,32 @@
 
 package com.android.tools.klint.checks;
 
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
+
+import org.jetbrains.uast.UClass;
 
 import java.util.Collections;
 import java.util.List;
-
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Checks that subclasses of certain APIs are overriding all methods that were abstract
  * in one or more earlier API levels that are still targeted by the minSdkVersion
  * of this project.
  */
-public class OverrideConcreteDetector extends Detector implements UastScanner {
+public class OverrideConcreteDetector extends Detector implements Detector.UastScanner {
     /** Are previously-abstract methods all overridden? */
     public static final Issue ISSUE = Issue.create(
         "OverrideAbstract", //$NON-NLS-1$
@@ -55,7 +61,7 @@ public class OverrideConcreteDetector extends Detector implements UastScanner {
         Severity.FATAL,
         new Implementation(
                 OverrideConcreteDetector.class,
-                Scope.SOURCE_FILE_SCOPE)
+                Scope.JAVA_FILE_SCOPE)
     );
 
     // This check is currently hardcoded for the specific case of the
@@ -76,24 +82,22 @@ public class OverrideConcreteDetector extends Detector implements UastScanner {
     public OverrideConcreteDetector() {
     }
 
-    // ---- Implements UastScanner ----
+    // ---- Implements JavaScanner ----
 
-
+    @Nullable
     @Override
-    public List<String> getApplicableSuperClasses() {
+    public List<String> applicableSuperClasses() {
         return Collections.singletonList(NOTIFICATION_LISTENER_SERVICE_FQN);
     }
 
     @Override
-    public void visitClass(UastAndroidContext context, UClass node) {
-        if (node == null) {
-            return;
-        }
-        if (node.hasModifier(UastModifier.ABSTRACT)) {
+    public void checkClass(@NonNull JavaContext context, @NonNull UClass declaration) {
+        JavaEvaluator evaluator = context.getEvaluator();
+        if (evaluator.isAbstract(declaration)) {
             return;
         }
 
-        int minSdk = Math.max(context.getLintContext().getProject().getMinSdk(), getTargetApi(node));
+        int minSdk = Math.max(context.getProject().getMinSdk(), getTargetApi(declaration));
         if (minSdk >= CONCRETE_IN) {
             return;
         }
@@ -101,28 +105,26 @@ public class OverrideConcreteDetector extends Detector implements UastScanner {
         String[] methodNames = {ON_NOTIFICATION_POSTED, ON_NOTIFICATION_REMOVED};
         for (String methodName : methodNames) {
             boolean found = false;
-            List<UFunction> allFunctions = UastUtils.getAllFunctions(node, context);
-            for (UFunction method : allFunctions) {
-                if (!method.matchesName(methodName)) {
-                    continue;
-                }
-
+            for (PsiMethod method : declaration.findMethodsByName(methodName, true)) {
                 // Make sure it's not the base method, but that it's been defined
                 // in a subclass, concretely
-                UClass containingClass = UastUtils.getContainingClassOrEmpty(method);
-                if (containingClass.matchesFqName(NOTIFICATION_LISTENER_SERVICE_FQN)) {
+                PsiClass containingClass = method.getContainingClass();
+                if (containingClass == null) {
+                    continue;
+                }
+                if (NOTIFICATION_LISTENER_SERVICE_FQN.equals(containingClass.getQualifiedName())) {
                     continue;
                 }
                 // Make sure subclass isn't just defining another abstract definition
                 // of the method
-                if (method.hasModifier(UastModifier.ABSTRACT)) {
+                if (evaluator.isAbstract(method)) {
                     continue;
                 }
                 // Make sure it has the exact right signature
-                if (method.getValueParameterCount() != 1) {
+                if (method.getParameterList().getParametersCount() != 1) {
                     continue; // Wrong signature
                 }
-                if (!method.getValueParameters().get(0).getType().matchesFqName(STATUS_BAR_NOTIFICATION_FQN)) {
+                if (!evaluator.parameterHasType(method, 0, STATUS_BAR_NOTIFICATION_FQN)) {
                     continue;
                 }
 
@@ -132,25 +134,24 @@ public class OverrideConcreteDetector extends Detector implements UastScanner {
 
             if (!found) {
                 String message = String.format(
-                  "Must override `%1$s.%2$s(%3$s)`: Method was abstract until %4$d, and your `minSdkVersion` is %5$d",
-                  NOTIFICATION_LISTENER_SERVICE_FQN, methodName,
-                  STATUS_BAR_NOTIFICATION_FQN, CONCRETE_IN, minSdk);
-                context.report(ISSUE, node, context.getLocation(node.getNameElement()),
-                               message);
+                        "Must override `%1$s.%2$s(%3$s)`: Method was abstract until %4$d, and your `minSdkVersion` is %5$d",
+                        NOTIFICATION_LISTENER_SERVICE_FQN, methodName,
+                        STATUS_BAR_NOTIFICATION_FQN, CONCRETE_IN, minSdk);
+                context.reportUast(ISSUE, declaration, context.getUastNameLocation(declaration), message);
                 break;
             }
 
         }
     }
 
-    private static int getTargetApi(UClass node) {
+    private static int getTargetApi(@NonNull PsiClass node) {
         while (node != null) {
-            int targetApi = ApiDetector.Companion.getTargetApi(node.getAnnotations());
+            int targetApi = ApiDetector.getTargetApi(node.getModifierList());
             if (targetApi != -1) {
                 return targetApi;
             }
 
-            node = UastUtils.getContainingClass(node);
+            node = PsiTreeUtil.getParentOfType(node, PsiClass.class, true);
         }
 
         return -1;

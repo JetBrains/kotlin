@@ -17,27 +17,26 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 
-import java.io.File;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.ULiteralExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.USimpleReferenceExpression;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /** Detector looking for text messages sent to an unlocalized phone number. */
-public class NonInternationalizedSmsDetector extends Detector implements UastScanner {
+public class NonInternationalizedSmsDetector extends Detector implements Detector.UastScanner {
     /** The main issue discovered by this detector */
     public static final Issue ISSUE = Issue.create(
             "UnlocalizedSms", //$NON-NLS-1$
@@ -52,50 +51,50 @@ public class NonInternationalizedSmsDetector extends Detector implements UastSca
             Severity.WARNING,
             new Implementation(
                     NonInternationalizedSmsDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
 
     /** Constructs a new {@link NonInternationalizedSmsDetector} check */
     public NonInternationalizedSmsDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-
-    // ---- Implements UastScanner ----
+    // ---- Implements JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
-        List<String> methodNames = new ArrayList<String>(2);
-        methodNames.add("sendTextMessage");  //$NON-NLS-1$
-        methodNames.add("sendMultipartTextMessage");  //$NON-NLS-1$
-        return methodNames;
+    public List<String> getApplicableMethodNames() {
+      List<String> methodNames = new ArrayList<String>(2);
+      methodNames.add("sendTextMessage");  //$NON-NLS-1$
+      methodNames.add("sendMultipartTextMessage");  //$NON-NLS-1$
+      return methodNames;
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        String functionName = node.getFunctionName();
-
-        assert "sendTextMessage".equals(functionName) ||  //$NON-NLS-1$
-               "sendMultipartTextMessage".equals(functionName);  //$NON-NLS-1$
-
-        List<UExpression> args = node.getValueArguments();
-        if (args.size() == 5) {
-            UExpression destinationAddress = args.get(0);
-            if (destinationAddress instanceof ULiteralExpression
-                    && ((ULiteralExpression)destinationAddress).isString()) {
-                String number = (String) ((ULiteralExpression) destinationAddress).getValue();
-
-                if (number != null && !number.startsWith("+")) {  //$NON-NLS-1$
-                    context.report(ISSUE, node, context.getLocation(destinationAddress),
-                                   "To make sure the SMS can be sent by all users, please start the SMS number " +
-                                   "with a + and a country code or restrict the code invocation to people in the country " +
-                                   "you are targeting.");
-                }
-            }
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
+        if (call.getReceiver() == null) {
+            // "sendTextMessage"/"sendMultipartTextMessage" in the code with no operand
+            return;
         }
+
+        List<UExpression> args = call.getValueArguments();
+        if (args.size() != 5) {
+            return;
+        }
+        UExpression destinationAddress = args.get(0);
+        if (!(destinationAddress instanceof ULiteralExpression)) {
+            return;
+        }
+        Object literal = ((ULiteralExpression) destinationAddress).getValue();
+        if (!(literal instanceof String)) {
+            return;
+        }
+        String number = (String) literal;
+        if (number.startsWith("+")) {  //$NON-NLS-1$
+            return;
+        }
+        context.report(ISSUE, call, context.getUastLocation(destinationAddress),
+                "To make sure the SMS can be sent by all users, please start the SMS number " +
+                        "with a + and a country code or restrict the code invocation to people in the " +
+                        "country you are targeting.");
     }
 }

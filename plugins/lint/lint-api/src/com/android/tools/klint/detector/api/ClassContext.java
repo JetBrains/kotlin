@@ -16,22 +16,36 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.SdkConstants.CONSTRUCTOR_NAME;
+import static com.android.SdkConstants.DOT_CLASS;
+import static com.android.SdkConstants.DOT_JAVA;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.BACKWARD;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.EOL_BACKWARD;
+import static com.android.tools.klint.detector.api.Location.SearchDirection.FORWARD;
+
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.LintDriver;
+import com.android.tools.klint.detector.api.Location.SearchDirection;
+import com.android.tools.klint.detector.api.Location.SearchHints;
+import com.android.utils.AsmUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.*;
+
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.io.File;
 import java.util.List;
 
-import static com.android.SdkConstants.*;
-
 /**
  * A {@link Context} used when checking .class files.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
@@ -148,11 +162,11 @@ public class ClassContext extends Context {
             if (source == null) {
                 source = file.getName();
                 if (source.endsWith(DOT_CLASS)) {
-                    source = source.substring(0, source.length() - DOT_CLASS.length()) + DOT_JAVA;
+                    source = source.substring(0, source.length() - DOT_CLASS.length()) + ".kt";
                 }
                 int index = source.indexOf('$');
                 if (index != -1) {
-                    source = source.substring(0, index) + DOT_JAVA;
+                    source = source.substring(0, index) + ".kt";
                 }
             }
             if (source != null) {
@@ -248,7 +262,7 @@ public class ClassContext extends Context {
      */
     @NonNull
     public Location getLocationForLine(int line, @Nullable String patternStart,
-            @Nullable String patternEnd, @Nullable Location.SearchHints hints) {
+            @Nullable String patternEnd, @Nullable SearchHints hints) {
         File sourceFile = getSourceFile();
         if (sourceFile != null) {
             // ASM line numbers are 1-based, and lint line numbers are 0-based
@@ -269,8 +283,8 @@ public class ClassContext extends Context {
      * Detectors should only call this method if an error applies to the whole class
      * scope and there is no specific method or field that applies to the error.
      * If so, use
-     * {@link #report(Issue, org.jetbrains.org.objectweb.asm.tree.MethodNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, Location, String)} or
-     * {@link #report(Issue, org.jetbrains.org.objectweb.asm.tree.FieldNode, Location, String)}, such that
+     * {@link #report(Issue, org.objectweb.asm.tree.MethodNode, org.objectweb.asm.tree.AbstractInsnNode, Location, String)} or
+     * {@link #report(Issue, org.objectweb.asm.tree.FieldNode, Location, String)}, such that
      * suppress annotations are checked.
      *
      * @param issue the issue to report
@@ -280,7 +294,7 @@ public class ClassContext extends Context {
     @Override
     public void report(
             @NonNull Issue issue,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message) {
         if (mDriver.isSuppressed(issue, mClassNode)) {
             return;
@@ -344,7 +358,7 @@ public class ClassContext extends Context {
             @NonNull Issue issue,
             @Nullable MethodNode method,
             @Nullable AbstractInsnNode instruction,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message) {
         if (method != null && mDriver.isSuppressed(issue, mClassNode, method, instruction)) {
             return;
@@ -365,7 +379,7 @@ public class ClassContext extends Context {
     public void report(
             @NonNull Issue issue,
             @Nullable FieldNode field,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message) {
         if (field != null && mDriver.isSuppressed(issue, field)) {
             return;
@@ -387,7 +401,7 @@ public class ClassContext extends Context {
             @NonNull Issue issue,
             @Nullable MethodNode method,
             @Nullable AbstractInsnNode instruction,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message,
             @SuppressWarnings("UnusedParameters") @Nullable Object data) {
         report(issue, method, instruction, location, message);
@@ -406,7 +420,7 @@ public class ClassContext extends Context {
     public void report(
             @NonNull Issue issue,
             @Nullable FieldNode field,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message,
             @SuppressWarnings("UnusedParameters") @Nullable Object data) {
         report(issue, field, location, message);
@@ -502,7 +516,7 @@ public class ClassContext extends Context {
         }
 
         return getLocationForLine(findLineNumber(classNode), pattern, null,
-                Location.SearchHints.create(Location.SearchDirection.BACKWARD).matchJavaSymbol());
+                SearchHints.create(BACKWARD).matchJavaSymbol());
     }
 
     @Nullable
@@ -543,21 +557,21 @@ public class ClassContext extends Context {
         // to find a method, look up the corresponding line number then search
         // around it for a suitable tag, such as the class name.
         String pattern;
-        Location.SearchDirection searchMode;
+        SearchDirection searchMode;
         if (methodNode.name.equals(CONSTRUCTOR_NAME)) {
-            searchMode = Location.SearchDirection.EOL_BACKWARD;
+            searchMode = EOL_BACKWARD;
             if (isAnonymousClass(classNode.name)) {
                 pattern = classNode.superName.substring(classNode.superName.lastIndexOf('/') + 1);
             } else {
                 pattern = classNode.name.substring(classNode.name.lastIndexOf('$') + 1);
             }
         } else {
-            searchMode = Location.SearchDirection.BACKWARD;
+            searchMode = BACKWARD;
             pattern = methodNode.name;
         }
 
         return getLocationForLine(findLineNumber(methodNode), pattern, null,
-                Location.SearchHints.create(searchMode).matchJavaSymbol());
+                SearchHints.create(searchMode).matchJavaSymbol());
     }
 
     /**
@@ -569,7 +583,7 @@ public class ClassContext extends Context {
      */
     @NonNull
     public Location getLocation(@NonNull AbstractInsnNode instruction) {
-        Location.SearchHints hints = Location.SearchHints.create(Location.SearchDirection.FORWARD).matchJavaSymbol();
+        SearchHints hints = SearchHints.create(FORWARD).matchJavaSymbol();
         String pattern = null;
         if (instruction instanceof MethodInsnNode) {
             MethodInsnNode call = (MethodInsnNode) instruction;
@@ -685,7 +699,7 @@ public class ClassContext extends Context {
 
         // If class name contains $, it's not an ambiguous inner class name.
         if (fqcn.indexOf('$') != -1) {
-            return fqcn.replace('.', '/');
+            return AsmUtils.toInternalName(fqcn);
         }
         // Let's assume that components that start with Caps are class names.
         StringBuilder sb = new StringBuilder(fqcn.length());

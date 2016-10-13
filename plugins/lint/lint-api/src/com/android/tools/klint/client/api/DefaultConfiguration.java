@@ -16,6 +16,9 @@
 
 package com.android.tools.klint.client.api;
 
+import static com.android.SdkConstants.CURRENT_PLATFORM;
+import static com.android.SdkConstants.PLATFORM_WINDOWS;
+
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Context;
@@ -28,22 +31,35 @@ import com.android.utils.XmlUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
-import org.w3c.dom.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXParseException;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static com.android.SdkConstants.CURRENT_PLATFORM;
-import static com.android.SdkConstants.PLATFORM_WINDOWS;
-
 /**
  * Default implementation of a {@link Configuration} which reads and writes
  * configuration data into {@code lint.xml} in the project directory.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
@@ -251,7 +267,7 @@ public class DefaultConfiguration extends Configuration {
         }, mClient);
         mClient.report(new Context(driver, mProject, mProject, mConfigFile),
                 IssueRegistry.LINT_ERROR,
-                mProject.getConfiguration().getSeverity(IssueRegistry.LINT_ERROR),
+                mProject.getConfiguration(driver).getSeverity(IssueRegistry.LINT_ERROR),
                 Location.create(mConfigFile), message, TextFormat.RAW);
     }
 
@@ -348,7 +364,6 @@ public class DefaultConfiguration extends Configuration {
         }
     }
 
-    @VisibleForTesting
     @NonNull
     public static String globToRegexp(@NonNull String glob) {
         StringBuilder sb = new StringBuilder(glob.length() * 2);

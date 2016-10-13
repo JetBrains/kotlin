@@ -16,6 +16,11 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.SdkConstants.DOT_GRADLE;
+import static com.android.SdkConstants.DOT_JAVA;
+import static com.android.SdkConstants.DOT_XML;
+import static com.android.SdkConstants.SUPPRESS_ALL;
+
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.Configuration;
@@ -28,8 +33,6 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.android.SdkConstants.*;
 
 /**
  * Context passed to the detectors during an analysis run. It provides
@@ -100,7 +103,7 @@ public class Context {
         mDriver = driver;
         mProject = project;
         mMainProject = main;
-        mConfiguration = project.getConfiguration();
+        mConfiguration = project.getConfiguration(driver);
     }
 
     /**
@@ -245,23 +248,33 @@ public class Context {
      * Reports an issue. Convenience wrapper around {@link LintClient#report}
      *
      * @param issue the issue to report
-     * @param location the location of the issue, or null if not known
+     * @param location the location of the issue
      * @param message the message for this warning
      */
     public void report(
             @NonNull Issue issue,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message) {
+        //noinspection ConstantConditions
+        if (location == null) {
+            // Misbehaving third-party lint detectors
+            assert false : issue;
+            return;
+        }
+
+        if (location == Location.NONE) {
+            // Detector reported error for issue in a non-applicable location etc
+            return;
+        }
+
         Configuration configuration = mConfiguration;
 
         // If this error was computed for a context where the context corresponds to
         // a project instead of a file, the actual error may be in a different project (e.g.
         // a library project), so adjust the configuration as necessary.
-        if (location != null && location.getFile() != null) {
-            Project project = mDriver.findProjectFor(location.getFile());
-            if (project != null) {
-                configuration = project.getConfiguration();
-            }
+        Project project = mDriver.findProjectFor(location.getFile());
+        if (project != null) {
+            configuration = project.getConfiguration(mDriver);
         }
 
         // If an error occurs in a library project, but you've disabled that check in the
@@ -293,7 +306,7 @@ public class Context {
     @Deprecated
     public void report(
             @NonNull Issue issue,
-            @Nullable Location location,
+            @NonNull Location location,
             @NonNull String message,
             @SuppressWarnings("UnusedParameters") @Nullable Object data) {
         report(issue, location, message);
@@ -348,7 +361,7 @@ public class Context {
         // Java and XML files are handled in sub classes (XmlContext, JavaContext)
 
         String path = file.getPath();
-        if (path.endsWith(DOT_JAVA) || path.endsWith(DOT_GRADLE)) {
+        if (path.endsWith(DOT_JAVA) || path.endsWith(".kt") || path.endsWith(DOT_GRADLE)) {
             return JavaContext.SUPPRESS_COMMENT_PREFIX;
         } else if (path.endsWith(DOT_XML)) {
             return XmlContext.SUPPRESS_COMMENT_PREFIX;

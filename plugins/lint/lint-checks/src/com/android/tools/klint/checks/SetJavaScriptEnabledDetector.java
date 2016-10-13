@@ -16,24 +16,29 @@
 
 package com.android.tools.klint.checks;
 
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Looks for invocations of android.webkit.WebSettings.setJavaScriptEnabled.
  */
-public class SetJavaScriptEnabledDetector extends Detector implements UastScanner {
+public class SetJavaScriptEnabledDetector extends Detector implements Detector.UastScanner {
     /** Invocations of setJavaScriptEnabled */
     public static final Issue ISSUE = Issue.create("SetJavaScriptEnabled", //$NON-NLS-1$
             "Using `setJavaScriptEnabled`",
@@ -46,7 +51,7 @@ public class SetJavaScriptEnabledDetector extends Detector implements UastScanne
             Severity.WARNING,
             new Implementation(
                     SetJavaScriptEnabledDetector.class,
-                    Scope.SOURCE_FILE_SCOPE))
+                    Scope.JAVA_FILE_SCOPE))
             .addMoreInfo(
             "http://developer.android.com/guide/practices/security.html"); //$NON-NLS-1$
 
@@ -57,21 +62,21 @@ public class SetJavaScriptEnabledDetector extends Detector implements UastScanne
     // ---- Implements UastScanner ----
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        if (node.getValueArgumentCount() != 1) {
-            return;
-        }
-
-        Object value = node.getValueArguments().get(0).evaluate();
-        if (value instanceof Boolean && (Boolean) value) {
-            context.report(ISSUE, node, context.getLocation(node),
-                           "Using `setJavaScriptEnabled` can introduce XSS vulnerabilities " +
-                           "into you application, review carefully.");
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
+        List<UExpression> arguments = call.getValueArguments();
+        if (arguments.size() == 1) {
+            Object constant = ConstantEvaluator.evaluate(context, arguments.get(0));
+            if (constant != null && !Boolean.FALSE.equals(constant)) {
+                context.report(ISSUE, call, context.getUastLocation(call),
+                        "Using `setJavaScriptEnabled` can introduce XSS vulnerabilities " +
+                                "into you application, review carefully.");
+            }
         }
     }
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("setJavaScriptEnabled");
     }
 }

@@ -16,12 +16,33 @@
 
 package com.android.tools.klint.client.api;
 
+import static com.android.SdkConstants.ATTR_IGNORE;
+import static com.android.SdkConstants.CLASS_CONSTRUCTOR;
+import static com.android.SdkConstants.CONSTRUCTOR_NAME;
+import static com.android.SdkConstants.DOT_CLASS;
+import static com.android.SdkConstants.DOT_JAR;
+import static com.android.SdkConstants.DOT_JAVA;
+import static com.android.SdkConstants.FD_GRADLE_WRAPPER;
+import static com.android.SdkConstants.FN_GRADLE_WRAPPER_PROPERTIES;
+import static com.android.SdkConstants.FN_LOCAL_PROPERTIES;
+import static com.android.SdkConstants.FQCN_SUPPRESS_LINT;
+import static com.android.SdkConstants.RES_FOLDER;
+import static com.android.SdkConstants.SUPPRESS_ALL;
+import static com.android.SdkConstants.SUPPRESS_LINT;
+import static com.android.SdkConstants.TOOLS_URI;
+import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
+import static com.android.tools.klint.detector.api.LintUtils.isAnonymousClass;
+import static java.io.File.separator;
+
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
+import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceFolderType;
+import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.IAndroidTarget;
+import com.android.tools.klint.client.api.LintListener.EventType;
 import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
@@ -37,16 +58,39 @@ import com.android.tools.klint.detector.api.Severity;
 import com.android.tools.klint.detector.api.TextFormat;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.*;
-import com.sun.istack.internal.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastChecker;
-import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.UastVisitor;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.tree.*;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiAnnotationParameterList;
+import com.intellij.psi.PsiArrayInitializerExpression;
+import com.intellij.psi.PsiArrayInitializerMemberValue;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLiteral;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiNameValuePair;
+
+import org.jetbrains.uast.UElement;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -54,13 +98,40 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.android.SdkConstants.*;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
-import static java.io.File.separator;
+import lombok.ast.Annotation;
+import lombok.ast.AnnotationElement;
+import lombok.ast.AnnotationMethodDeclaration;
+import lombok.ast.AnnotationValue;
+import lombok.ast.ArrayInitializer;
+import lombok.ast.ConstructorDeclaration;
+import lombok.ast.Expression;
+import lombok.ast.MethodDeclaration;
+import lombok.ast.Modifiers;
+import lombok.ast.Node;
+import lombok.ast.StrictListAccessor;
+import lombok.ast.StringLiteral;
+import lombok.ast.TypeDeclaration;
+import lombok.ast.TypeReference;
+import lombok.ast.VariableDefinition;
 
 /**
  * Analyzes Android projects and files
@@ -95,6 +166,8 @@ public class LintDriver {
     private boolean mAbbreviating = true;
     private boolean mParserErrors;
     private Map<Object,Object> mProperties;
+    /** Whether we need to look for legacy (old Lombok-based Java API) detectors */
+    private boolean mRunCompatChecks = true;
 
     /**
      * Creates a new {@link LintDriver}
@@ -357,13 +430,13 @@ public class LintDriver {
             return;
         }
 
-        registerCustomRules(projects);
+        registerCustomDetectors(projects);
 
         if (mScope == null) {
             mScope = Scope.infer(projects);
         }
 
-        fireEvent(LintListener.EventType.STARTING, null);
+        fireEvent(EventType.STARTING, null);
 
         for (Project project : projects) {
             mPhase = 1;
@@ -386,10 +459,24 @@ public class LintDriver {
             runExtraPhases(project, main);
         }
 
-        fireEvent(mCanceled ? LintListener.EventType.CANCELED : LintListener.EventType.COMPLETED, null);
+        fireEvent(mCanceled ? EventType.CANCELED : EventType.COMPLETED, null);
     }
 
-    private void registerCustomRules(Collection<Project> projects) {
+    @Nullable
+    private Set<Issue> myCustomIssues;
+
+    /**
+     * Returns true if the given issue is an issue that was loaded as a custom rule
+     * (e.g. a 3rd-party library provided the detector, it's not built in)
+     *
+     * @param issue the issue to be looked up
+     * @return true if this is a custom (non-builtin) check
+     */
+    public boolean isCustomIssue(@NonNull Issue issue) {
+        return myCustomIssues != null && myCustomIssues.contains(issue);
+    }
+
+    private void registerCustomDetectors(Collection<Project> projects) {
         // Look at the various projects, and if any of them provide a custom
         // lint jar, "add" them (this will replace the issue registry with
         // a CompositeIssueRegistry containing the original issue registry
@@ -397,6 +484,9 @@ public class LintDriver {
         Set<File> jarFiles = Sets.newHashSet();
         for (Project project : projects) {
             jarFiles.addAll(mClient.findRuleJars(project));
+            for (Project library : project.getAllLibraries()) {
+                jarFiles.addAll(mClient.findRuleJars(library));
+            }
         }
 
         jarFiles.addAll(mClient.findGlobalRuleJars());
@@ -406,7 +496,15 @@ public class LintDriver {
             registries.add(mRegistry);
             for (File jarFile : jarFiles) {
                 try {
-                    registries.add(JarFileIssueRegistry.get(mClient, jarFile));
+                    JarFileIssueRegistry registry = JarFileIssueRegistry.get(mClient, jarFile);
+                    if (registry.hasLegacyDetectors()) {
+                        mRunCompatChecks = true;
+                    }
+                    if (myCustomIssues == null) {
+                        myCustomIssues = Sets.newHashSet();
+                    }
+                    myCustomIssues.addAll(registry.getIssues());
+                    registries.add(registry);
                 } catch (Throwable e) {
                     mClient.log(e, "Could not load custom rule jar file %1$s", jarFile);
                 }
@@ -432,7 +530,7 @@ public class LintDriver {
 
             do {
                 mPhase++;
-                fireEvent(LintListener.EventType.NEW_PHASE,
+                fireEvent(EventType.NEW_PHASE,
                         new Context(this, project, null, project.getDir()));
 
                 // Narrow the scope down to the set of scopes requested by
@@ -493,7 +591,7 @@ public class LintDriver {
         // and simultaneously build up the detectorToScope map which tracks
         // the scopes each detector is affected by (this is used to populate
         // the mScopeDetectors map which is used during iteration).
-        Configuration configuration = project.getConfiguration();
+        Configuration configuration = project.getConfiguration(this);
         for (Detector detector : detectors) {
             Class<? extends Detector> detectorClass = detector.getClass();
             Collection<Issue> detectorIssues = issueMap.get(detectorClass);
@@ -550,7 +648,7 @@ public class LintDriver {
         mCurrentFolderType = null;
         mCurrentVisitor = null;
 
-        Configuration configuration = project.getConfiguration();
+        Configuration configuration = project.getConfiguration(this);
         mScopeDetectors = new EnumMap<Scope, List<Detector>>(Scope.class);
         mApplicableDetectors = mRegistry.createDetectors(mClient, configuration,
                 mScope, mScopeDetectors);
@@ -567,6 +665,7 @@ public class LintDriver {
             List<Detector> resourceFileDetectors = mScopeDetectors.get(Scope.RESOURCE_FILE);
             if (resourceFileDetectors != null) {
                 for (Detector detector : resourceFileDetectors) {
+                    // This is wrong; it should allow XmlScanner instead of ResourceXmlScanner!
                     assert detector instanceof ResourceXmlDetector : detector;
                 }
             }
@@ -577,16 +676,22 @@ public class LintDriver {
                     assert detector instanceof Detector.XmlScanner : detector;
                 }
             }
-            List<Detector> javaCodeDetectors = mScopeDetectors.get(Scope.ALL_SOURCE_FILES);
+            List<Detector> javaCodeDetectors = mScopeDetectors.get(Scope.ALL_JAVA_FILES);
             if (javaCodeDetectors != null) {
                 for (Detector detector : javaCodeDetectors) {
-                    assert (detector instanceof UastScanner) : detector;
+                    assert detector instanceof Detector.JavaScanner ||
+                            // TODO: Migrate all
+                            detector instanceof Detector.UastScanner ||
+                            detector instanceof Detector.JavaPsiScanner : detector;
                 }
             }
-            List<Detector> javaFileDetectors = mScopeDetectors.get(Scope.SOURCE_FILE);
+            List<Detector> javaFileDetectors = mScopeDetectors.get(Scope.JAVA_FILE);
             if (javaFileDetectors != null) {
                 for (Detector detector : javaFileDetectors) {
-                    assert (detector instanceof UastScanner) : detector;
+                    assert detector instanceof Detector.JavaScanner ||
+                            // TODO: Migrate all
+                            detector instanceof Detector.UastScanner ||
+                            detector instanceof Detector.JavaPsiScanner : detector;
                 }
             }
 
@@ -650,13 +755,15 @@ public class LintDriver {
 
         // Ensure that we have absolute paths such that if you lint
         //  "foo bar" in "baz" we can show baz/ as the root
-        if (files.size() > 1) {
-            List<File> absolute = new ArrayList<File>(files.size());
-            for (File file : files) {
-                absolute.add(file.getAbsoluteFile());
-            }
-            files = absolute;
+        List<File> absolute = new ArrayList<File>(files.size());
+        for (File file : files) {
+            absolute.add(file.getAbsoluteFile());
+        }
+        // Always use absoluteFiles so that we can check the file's getParentFile()
+        // which is null if the file is not absolute.
+        files = absolute;
 
+        if (files.size() > 1) {
             sharedRoot = LintUtils.getCommonParent(files);
             if (sharedRoot != null && sharedRoot.getParentFile() == null) { // "/" ?
                 sharedRoot = null;
@@ -809,7 +916,7 @@ public class LintDriver {
         File projectDir = project.getDir();
 
         Context projectContext = new Context(this, project, null, projectDir);
-        fireEvent(LintListener.EventType.SCANNING_PROJECT, projectContext);
+        fireEvent(EventType.SCANNING_PROJECT, projectContext);
 
         List<Project> allLibraries = project.getAllLibraries();
         Set<Project> allProjects = new HashSet<Project>(allLibraries.size() + 1);
@@ -833,7 +940,7 @@ public class LintDriver {
             List<Project> libraries = project.getAllLibraries();
             for (Project library : libraries) {
                 Context libraryContext = new Context(this, library, project, projectDir);
-                fireEvent(LintListener.EventType.SCANNING_LIBRARY_PROJECT, libraryContext);
+                fireEvent(EventType.SCANNING_LIBRARY_PROJECT, libraryContext);
                 mCurrentProject = library;
 
                 for (Detector check : mApplicableDetectors) {
@@ -875,7 +982,7 @@ public class LintDriver {
                     // Must provide an issue since API guarantees that the issue parameter
                 IssueRegistry.CANCELLED,
                 Severity.INFORMATIONAL,
-                null /*range*/,
+                Location.create(project.getDir()),
                 "Lint canceled by user", TextFormat.RAW);
         }
 
@@ -902,7 +1009,7 @@ public class LintDriver {
                                 if (detectors != null) {
                                     ResourceVisitor v = new ResourceVisitor(parser, detectors,
                                             null);
-                                    fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                                    fireEvent(EventType.SCANNING_FILE, context);
                                     v.visitFile(context, manifestFile);
                                 }
                             }
@@ -962,9 +1069,9 @@ public class LintDriver {
             }
         }
 
-        if (mScope.contains(Scope.SOURCE_FILE) || mScope.contains(Scope.ALL_SOURCE_FILES)) {
-            List<Detector> checks = union(mScopeDetectors.get(Scope.SOURCE_FILE),
-                    mScopeDetectors.get(Scope.ALL_SOURCE_FILES));
+        if (mScope.contains(Scope.JAVA_FILE) || mScope.contains(Scope.ALL_JAVA_FILES)) {
+            List<Detector> checks = union(mScopeDetectors.get(Scope.JAVA_FILE),
+                    mScopeDetectors.get(Scope.ALL_JAVA_FILES));
             if (checks != null && !checks.isEmpty()) {
                 List<File> files = project.getSubset();
                 if (files != null) {
@@ -1041,7 +1148,7 @@ public class LintDriver {
             }
             for (File file : files) {
                 Context context = new Context(this, project, main, file);
-                fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                fireEvent(EventType.SCANNING_FILE, context);
                 for (Detector detector : detectors) {
                     if (detector.appliesTo(context, file)) {
                         detector.beforeCheckFile(context);
@@ -1059,7 +1166,7 @@ public class LintDriver {
             List<File> files = project.getProguardFiles();
             for (File file : files) {
                 Context context = new Context(this, project, main, file);
-                fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                fireEvent(EventType.SCANNING_FILE, context);
                 for (Detector detector : detectors) {
                     if (detector.appliesTo(context, file)) {
                         detector.beforeCheckFile(context);
@@ -1085,7 +1192,7 @@ public class LintDriver {
         File file = new File(project.getDir(), relativePath);
         if (file.exists()) {
             Context context = new Context(this, project, main, file);
-            fireEvent(LintListener.EventType.SCANNING_FILE, context);
+            fireEvent(EventType.SCANNING_FILE, context);
             for (Detector detector : detectors) {
                 if (detector.appliesTo(context, file)) {
                     detector.beforeCheckFile(context);
@@ -1180,7 +1287,7 @@ public class LintDriver {
         // the parent chains (such that for example for a virtual dispatch, we can
         // also check the super classes).
 
-        List<File> libraries = project.getJavaLibraries();
+        List<File> libraries = project.getJavaLibraries(false);
         List<ClassEntry> libraryEntries = ClassEntry.fromClassPath(mClient, libraries, true);
 
         List<File> classFolders = project.getJavaClassFolders();
@@ -1192,7 +1299,7 @@ public class LintDriver {
             Location location = Location.create(project.getDir());
             mClient.report(new Context(this, project, main, project.getDir()),
                     IssueRegistry.LINT_ERROR,
-                    project.getConfiguration().getSeverity(IssueRegistry.LINT_ERROR),
+                    project.getConfiguration(this).getSeverity(IssueRegistry.LINT_ERROR),
                     location, message, TextFormat.RAW);
             classEntries = Collections.emptyList();
         } else {
@@ -1397,7 +1504,7 @@ public class LintDriver {
             }
         }
         // Search in the libraries
-        for (File root : mClient.getJavaLibraries(project)) {
+        for (File root : mClient.getJavaLibraries(project, true)) {
             // TODO: Handle .jar files!
             //if (root.getPath().endsWith(DOT_JAR)) {
             //}
@@ -1424,45 +1531,124 @@ public class LintDriver {
             @Nullable Project main,
             @NonNull List<File> sourceFolders,
             @NonNull List<Detector> checks) {
+        JavaParser javaParser = mClient.getJavaParser(project);
+        if (javaParser == null) {
+            mClient.log(null, "No java parser provided to lint: not running Java checks");
+            return;
+        }
+
         assert !checks.isEmpty();
 
         // Gather all Java source files in a single pass; more efficient.
         List<File> sources = new ArrayList<File>(100);
         for (File folder : sourceFolders) {
-            gatherKotlinFiles(folder, sources);
+            gatherJavaFiles(folder, sources);
         }
         if (!sources.isEmpty()) {
             List<JavaContext> contexts = Lists.newArrayListWithExpectedSize(sources.size());
             for (File file : sources) {
-                JavaContext context = new JavaContext(this, project, main, file);
+                JavaContext context = new JavaContext(this, project, main, file, javaParser);
                 contexts.add(context);
             }
+            visitJavaFiles(checks, javaParser, contexts);
+        }
+    }
 
-            com.intellij.openapi.project.Project ideaProject = mClient.getProject();
-            if (ideaProject == null) {
-                return;
+    private void visitJavaFiles(@NonNull List<Detector> checks, JavaParser javaParser,
+            List<JavaContext> contexts) {
+        // Temporary: we still have some builtin checks that aren't migrated to
+        // PSI. Until that's complete, remove them from the list here
+        //List<Detector> scanners = checks;
+        List<Detector> scanners = Lists.newArrayListWithCapacity(0);
+        List<Detector> uastScanners = Lists.newArrayListWithCapacity(checks.size());
+        for (Detector detector : checks) {
+            if (detector instanceof Detector.JavaPsiScanner) {
+                scanners.add(detector);
+            } else if (detector instanceof Detector.UastScanner) {
+                uastScanners.add(detector);
             }
+        }
 
+        if (!scanners.isEmpty()) {
+            JavaPsiVisitor visitor = new JavaPsiVisitor(javaParser, scanners);
+            visitor.prepare(contexts);
             for (JavaContext context : contexts) {
-                fireEvent(LintListener.EventType.SCANNING_FILE, context);
-
-                for (Detector check : checks) {
-                    if (check instanceof UastScanner) {
-                        UastScanner scanner = (UastScanner) check;
-                        UastVisitor customVisitor = scanner.createUastVisitor(context);
-                        if (customVisitor != null) {
-                            UastChecker.INSTANCE.check(
-                                    ideaProject, context.file, context, customVisitor);
-                        } else {
-                            UastChecker.INSTANCE.check(
-                                    ideaProject, context.file, (UastScanner)check, context);
-                        }
-                    }
-                }
-
+                fireEvent(EventType.SCANNING_FILE, context);
+                visitor.visitFile(context);
                 if (mCanceled) {
                     return;
                 }
+            }
+
+            visitor.dispose();
+        }
+
+        if (!uastScanners.isEmpty()) {
+            final UElementVisitor uElementVisitor = new UElementVisitor(javaParser, uastScanners);
+            uElementVisitor.prepare(contexts);
+            for (final JavaContext context : contexts) {
+                fireEvent(EventType.SCANNING_FILE, context);
+                ApplicationManager.getApplication().runReadAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        uElementVisitor.visitFile(context);
+                    }
+                });
+                if (mCanceled) {
+                    return;
+                }
+            }
+            
+            uElementVisitor.dispose();
+        }
+
+        // Only if the user is using some custom lint rules that haven't been updated
+        // yet
+        //noinspection ConstantConditions
+        if (mRunCompatChecks) {
+            // Filter the checks to only those that implement JavaScanner
+            List<Detector> filtered = Lists.newArrayListWithCapacity(checks.size());
+            for (Detector detector : checks) {
+                if (detector instanceof Detector.JavaScanner) {
+                    filtered.add(detector);
+                }
+            }
+
+            if (!filtered.isEmpty()) {
+                List<String> detectorNames = Lists.newArrayListWithCapacity(filtered.size());
+                for (Detector detector : filtered) {
+                    detectorNames.add(detector.getClass().getName());
+                }
+                Collections.sort(detectorNames);
+
+                /* Let's not complain quite yet
+                String message = String.format("Lint found one or more custom checks using its "
+                        + "older Java API; these checks are still run in compatibility mode, "
+                        + "but this causes duplicated parsing, and in the next version lint "
+                        + "will no longer include this legacy mode. Make sure the following "
+                        + "lint detectors are upgraded to the new API: %1$s",
+                        Joiner.on(", ").join(detectorNames));
+                JavaContext first = contexts.get(0);
+                Project project = first.getProject();
+                Location location = Location.create(project.getDir());
+                mClient.report(first,
+                        IssueRegistry.LINT_ERROR,
+                        project.getConfiguration(this).getSeverity(IssueRegistry.LINT_ERROR),
+                        location, message, TextFormat.RAW);
+                */
+
+
+                JavaVisitor oldVisitor = new JavaVisitor(javaParser, filtered);
+
+                oldVisitor.prepare(contexts);
+                for (JavaContext context : contexts) {
+                    fireEvent(EventType.SCANNING_FILE, context);
+                    oldVisitor.visitFile(context);
+                    if (mCanceled) {
+                        return;
+                    }
+                }
+                oldVisitor.dispose();
             }
         }
     }
@@ -1472,63 +1658,35 @@ public class LintDriver {
             @Nullable Project main,
             @NonNull List<Detector> checks,
             @NonNull List<File> files) {
-        List<UastScanner> uastDetectors = new ArrayList<UastScanner>();
 
-        for (Detector check : checks) {
-            if (check instanceof UastScanner) {
-                uastDetectors.add((UastScanner) check);
-            }
-        }
-
-        checkWithUastDetectors(project, main, uastDetectors, files);
-    }
-
-    private void checkWithUastDetectors(
-            @NotNull Project project,
-            @Nullable Project main,
-            @NotNull List<UastScanner> detectors,
-            @NotNull List<File> files) {
-        com.intellij.openapi.project.Project intellijProject = mClient.getProject();
-        if (intellijProject == null || intellijProject.isDisposed()) {
+        JavaParser javaParser = mClient.getJavaParser(project);
+        if (javaParser == null) {
+            mClient.log(null, "No java parser provided to lint: not running Java checks");
             return;
         }
 
-        UastChecker checker = UastChecker.INSTANCE;
-        List<UastLanguagePlugin> plugins = project.getClient().getLanguagePlugins();
-
+        List<JavaContext> contexts = Lists.newArrayListWithExpectedSize(files.size());
         for (File file : files) {
-            if (!file.isFile()) {
-                continue;
-            }
-
-            String filename = file.getName();
-            // Ignore Java files for now (check only Kotlin files)
-            if (filename.endsWith(DOT_JAVA) || !UastConverterUtils.isFileSupported(plugins, filename)) {
-                continue;
-            }
-
-            JavaContext
-                    context = new JavaContext(this, project, main, file);
-
-            for (UastScanner detector : detectors) {
-                UastVisitor customHandler = detector.createUastVisitor(context);
-                if (customHandler != null) {
-                    checker.check(intellijProject, file, context, customHandler);
-                } else {
-                    checker.check(intellijProject, file, detector, context);
-                }
+            if (file.isFile() && file.getPath().endsWith(".kt")) {
+                contexts.add(new JavaContext(this, project, main, file, javaParser));
             }
         }
+
+        if (contexts.isEmpty()) {
+            return;
+        }
+
+        visitJavaFiles(checks, javaParser, contexts);
     }
 
-    private static void gatherKotlinFiles(@NonNull File dir, @NonNull List<File> result) {
+    private static void gatherJavaFiles(@NonNull File dir, @NonNull List<File> result) {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".kt")) { //$NON-NLS-1$
+                if (file.isFile() && file.getName().endsWith(".java")) { //$NON-NLS-1$
                     result.add(file);
                 } else if (file.isDirectory()) {
-                    gatherKotlinFiles(file, result);
+                    gatherJavaFiles(file, result);
                 }
             }
         }
@@ -1636,7 +1794,7 @@ public class LintDriver {
         if (dirChecks != null && !dirChecks.isEmpty()) {
             ResourceContext context = new ResourceContext(this, project, main, dir, type);
             String folderName = dir.getName();
-            fireEvent(LintListener.EventType.SCANNING_FILE, context);
+            fireEvent(EventType.SCANNING_FILE, context);
             for (Detector check : dirChecks) {
                 if (check.appliesTo(type)) {
                     check.beforeCheckFile(context);
@@ -1663,11 +1821,12 @@ public class LintDriver {
                 if (LintUtils.isXmlFile(file)) {
                     XmlContext context = new XmlContext(this, project, main, file, type,
                             visitor.getParser());
-                    fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                    fireEvent(EventType.SCANNING_FILE, context);
                     visitor.visitFile(context, file);
-                } else if (binaryChecks != null && LintUtils.isBitmapFile(file)) {
+                } else if (binaryChecks != null && (LintUtils.isBitmapFile(file) ||
+                            type == ResourceFolderType.RAW)) {
                     ResourceContext context = new ResourceContext(this, project, main, file, type);
-                    fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                    fireEvent(EventType.SCANNING_FILE, context);
                     visitor.visitBinaryResource(context);
                 }
                 if (mCanceled) {
@@ -1709,7 +1868,7 @@ public class LintDriver {
                     if (visitor != null) {
                         XmlContext context = new XmlContext(this, project, main, file, type,
                                 visitor.getParser());
-                        fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                        fireEvent(EventType.SCANNING_FILE, context);
                         visitor.visitFile(context, file);
                     }
                 }
@@ -1722,7 +1881,7 @@ public class LintDriver {
                     if (visitor != null) {
                         ResourceContext context = new ResourceContext(this, project, main, file,
                                 type);
-                        fireEvent(LintListener.EventType.SCANNING_FILE, context);
+                        fireEvent(EventType.SCANNING_FILE, context);
                         visitor.visitBinaryResource(context);
                         if (mCanceled) {
                             return;
@@ -1778,6 +1937,7 @@ public class LintDriver {
         private final LintClient mDelegate;
 
         public LintClientWrapper(@NonNull LintClient delegate) {
+            super(getClientName());
             mDelegate = delegate;
         }
 
@@ -1786,9 +1946,16 @@ public class LintDriver {
                 @NonNull Context context,
                 @NonNull Issue issue,
                 @NonNull Severity severity,
-                @Nullable Location location,
+                @NonNull Location location,
                 @NonNull String message,
                 @NonNull TextFormat format) {
+            //noinspection ConstantConditions
+            if (location == null) {
+                // Misbehaving third-party lint detectors
+                assert false : issue;
+                return;
+            }
+
             assert mCurrentProject != null;
             if (!mCurrentProject.getReportIssues()) {
                 return;
@@ -1818,10 +1985,10 @@ public class LintDriver {
 
         @Override
         @NonNull
-        public Configuration getConfiguration(@NonNull Project project) {
-            return mDelegate.getConfiguration(project);
+        public Configuration getConfiguration(@NonNull Project project,
+          @Nullable LintDriver driver) {
+            return mDelegate.getConfiguration(project, driver);
         }
-
 
         @Override
         public void log(@NonNull Severity severity, @Nullable Throwable exception,
@@ -1855,8 +2022,37 @@ public class LintDriver {
 
         @NonNull
         @Override
-        public List<File> getJavaLibraries(@NonNull Project project) {
-            return mDelegate.getJavaLibraries(project);
+        public List<File> getJavaLibraries(@NonNull Project project, boolean includeProvided) {
+            return mDelegate.getJavaLibraries(project, includeProvided);
+        }
+
+        @NonNull
+        @Override
+        public List<File> getTestSourceFolders(@NonNull Project project) {
+            return mDelegate.getTestSourceFolders(project);
+        }
+
+        @Override
+        public Collection<Project> getKnownProjects() {
+            return mDelegate.getKnownProjects();
+        }
+
+        @Nullable
+        @Override
+        public BuildToolInfo getBuildTools(@NonNull Project project) {
+            return mDelegate.getBuildTools(project);
+        }
+
+        @NonNull
+        @Override
+        public Map<String, String> createSuperClassMap(@NonNull Project project) {
+            return mDelegate.createSuperClassMap(project);
+        }
+
+        @NonNull
+        @Override
+        public ResourceVisibilityLookup.Provider getResourceVisibilityProvider() {
+            return mDelegate.getResourceVisibilityProvider();
         }
 
         @Override
@@ -1890,6 +2086,12 @@ public class LintDriver {
             return mDelegate.getProject(dir, referenceDir);
         }
 
+        @Nullable
+        @Override
+        public JavaParser getJavaParser(@Nullable Project project) {
+            return mDelegate.getJavaParser(project);
+        }
+
         @Override
         public File findResource(@NonNull String relativePath) {
             return mDelegate.findResource(relativePath);
@@ -1903,7 +2105,7 @@ public class LintDriver {
 
         @Override
         @NonNull
-        protected LintClient.ClassPathInfo getClassPath(@NonNull Project project) {
+        protected ClassPathInfo getClassPath(@NonNull Project project) {
             return mDelegate.getClassPath(project);
         }
 
@@ -2000,6 +2202,17 @@ public class LintDriver {
             return mDelegate.addCustomLintRules(registry);
         }
 
+        @NonNull
+        @Override
+        public List<File> getAssetFolders(@NonNull Project project) {
+            return mDelegate.getAssetFolders(project);
+        }
+
+        @Override
+        public ClassLoader createUrlClassLoader(@NonNull URL[] urls, @NonNull ClassLoader parent) {
+            return mDelegate.createUrlClassLoader(urls, parent);
+        }
+
         @Override
         public boolean checkForSuppressComments() {
             return mDelegate.checkForSuppressComments();
@@ -2032,16 +2245,6 @@ public class LintDriver {
         @Override
         public void closeConnection(@NonNull URLConnection connection) throws IOException {
             mDelegate.closeConnection(connection);
-        }
-
-        @Override
-        public com.intellij.openapi.project.Project getProject() {
-            return mDelegate.getProject();
-        }
-
-        @Override
-        public List<UastLanguagePlugin> getLanguagePlugins() {
-            return mDelegate.getLanguagePlugins();
         }
     }
 
@@ -2114,7 +2317,7 @@ public class LintDriver {
                     return true;
                 }
             } else if (classNode.outerClass != null && classNode.outerMethod == null
-                       && LintUtils.isAnonymousClass(classNode)) {
+                        && isAnonymousClass(classNode)) {
                 if (isSuppressed(issue, classNode)) {
                     return true;
                 }
@@ -2225,7 +2428,7 @@ public class LintDriver {
         }
 
         if (classNode.outerClass != null && classNode.outerMethod == null
-            && LintUtils.isAnonymousClass(classNode)) {
+                && isAnonymousClass(classNode)) {
             ClassNode outer = getOuterClassNode(classNode);
             if (outer != null) {
                 MethodNode m = findMethod(outer, CONSTRUCTOR_NAME, false);
@@ -2312,6 +2515,36 @@ public class LintDriver {
     }
 
     /**
+     * Returns true if the given issue is suppressed by the given suppress string; this
+     * is typically the same as the issue id, but is allowed to not match case sensitively,
+     * and is allowed to be a comma separated list, and can be the string "all"
+     *
+     * @param issue  the issue id to match
+     * @param string the suppress string -- typically the id, or "all", or a comma separated list
+     *               of ids
+     * @return true if the issue is suppressed by the given string
+     */
+    private static boolean isSuppressed(@NonNull Issue issue, @NonNull String string) {
+        if (string.isEmpty()) {
+            return false;
+        }
+
+        if (string.indexOf(',') == -1) {
+            if (matches(issue, string)) {
+                return true;
+            }
+        } else {
+            for (String id : Splitter.on(',').trimResults().split(string)) {
+                if (matches(issue, id)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns whether the given issue is suppressed in the given parse tree node.
      *
      * @param context the context for the source being scanned
@@ -2321,33 +2554,102 @@ public class LintDriver {
      *         issue in this class
      */
     public boolean isSuppressed(@Nullable JavaContext context, @NonNull Issue issue,
-                                @Nullable UElement scope) {
+            @Nullable Node scope) {
         boolean checkComments = mClient.checkForSuppressComments() &&
-                                context != null && context.containsCommentSuppress();
+                context != null && context.containsCommentSuppress();
         while (scope != null) {
-            if (scope instanceof UVariable) {
-                UVariable declaration = (UVariable) scope;
-                if (isUastSuppressed(issue, declaration.getAnnotations())) {
+            Class<? extends Node> type = scope.getClass();
+            // The Lombok AST uses a flat hierarchy of node type implementation classes
+            // so no need to do instanceof stuff here.
+            if (type == VariableDefinition.class) {
+                // Variable
+                VariableDefinition declaration = (VariableDefinition) scope;
+                if (isSuppressed(issue, declaration.astModifiers())) {
                     return true;
                 }
-            } else if (scope instanceof UFunction) {
-                UFunction declaration = (UFunction) scope;
-                if (isUastSuppressed(issue, declaration.getAnnotations())) {
+            } else if (type == MethodDeclaration.class) {
+                // Method
+                // Look for annotations on the method
+                MethodDeclaration declaration = (MethodDeclaration) scope;
+                if (isSuppressed(issue, declaration.astModifiers())) {
                     return true;
                 }
-            } else if (scope instanceof UClass) {
-                UClass declaration = (UClass) scope;
-                if (isUastSuppressed(issue, declaration.getAnnotations())) {
+            } else if (type == ConstructorDeclaration.class) {
+                // Constructor
+                // Look for annotations on the method
+                ConstructorDeclaration declaration = (ConstructorDeclaration) scope;
+                if (isSuppressed(issue, declaration.astModifiers())) {
+                    return true;
+                }
+            } else if (TypeDeclaration.class.isAssignableFrom(type)) {
+                // Class, annotation, enum, interface
+                TypeDeclaration declaration = (TypeDeclaration) scope;
+                if (isSuppressed(issue, declaration.astModifiers())) {
+                    return true;
+                }
+            } else if (type == AnnotationMethodDeclaration.class) {
+                // Look for annotations on the method
+                AnnotationMethodDeclaration declaration = (AnnotationMethodDeclaration) scope;
+                if (isSuppressed(issue, declaration.astModifiers())) {
                     return true;
                 }
             }
 
-            //TODO check comments
-            //if (checkComments && context.isSuppressedWithComment(scope, issue)) {
-            //    return true;
-            //}
+            if (checkComments && context.isSuppressedWithComment(scope, issue)) {
+                return true;
+            }
 
             scope = scope.getParent();
+        }
+
+        return false;
+    }
+
+    public boolean isSuppressed(@Nullable JavaContext context, @NonNull Issue issue,
+            @Nullable UElement scope) {
+        boolean checkComments = mClient.checkForSuppressComments() &&
+                context != null && context.containsCommentSuppress();
+        while (scope != null) {
+            if (scope instanceof PsiModifierListOwner) {
+                PsiModifierListOwner owner = (PsiModifierListOwner) scope;
+                if (isSuppressed(issue, owner.getModifierList())) {
+                    return true;
+                }
+            }
+
+            if (checkComments && context.isSuppressedWithComment(scope, issue)) {
+                return true;
+            }
+
+            scope = scope.getContainingElement();
+            if (scope instanceof PsiFile) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+    
+    public boolean isSuppressed(@Nullable JavaContext context, @NonNull Issue issue,
+            @Nullable PsiElement scope) {
+        boolean checkComments = mClient.checkForSuppressComments() &&
+                context != null && context.containsCommentSuppress();
+        while (scope != null) {
+            if (scope instanceof PsiModifierListOwner) {
+                PsiModifierListOwner owner = (PsiModifierListOwner) scope;
+                if (isSuppressed(issue, owner.getModifierList())) {
+                    return true;
+                }
+            }
+
+            if (checkComments && context.isSuppressedWithComment(scope, issue)) {
+                return true;
+            }
+
+            scope = scope.getParent();
+            if (scope instanceof PsiFile) {
+                return false;
+            }
         }
 
         return false;
@@ -2362,31 +2664,124 @@ public class LintDriver {
      * @return true if the issue or all issues should be suppressed for this
      *         modifier
      */
-    private static boolean isUastSuppressed(@Nullable Issue issue, @Nullable List<UAnnotation> annotations) {
-        for (UAnnotation annotation : annotations) {
-            if (annotation.matchesName(SUPPRESS_LINT)
-                || annotation.matchesName("SuppressWarnings")) {     //$NON-NLS-1$
-                List<UNamedExpression> values = annotation.getValueArguments();
-                for (UNamedExpression element : values) {
-                    UExpression valueNode = element.getExpression();
-                    String value = UastLiteralUtils.getValueIfStringLiteral(valueNode);
-                    if (value != null) {
-                        if (matches(issue, value)) {
-                            return true;
+    private static boolean isSuppressed(@Nullable Issue issue, @Nullable Modifiers modifiers) {
+        if (modifiers == null) {
+            return false;
+        }
+        StrictListAccessor<Annotation, Modifiers> annotations = modifiers.astAnnotations();
+        if (annotations == null) {
+            return false;
+        }
+
+        for (Annotation annotation : annotations) {
+            TypeReference t = annotation.astAnnotationTypeReference();
+            String typeName = t.getTypeName();
+            if (typeName.endsWith(SUPPRESS_LINT)
+                    || typeName.endsWith("SuppressWarnings")) {     //$NON-NLS-1$
+                StrictListAccessor<AnnotationElement, Annotation> values =
+                        annotation.astElements();
+                if (values != null) {
+                    for (AnnotationElement element : values) {
+                        AnnotationValue valueNode = element.astValue();
+                        if (valueNode == null) {
+                            continue;
                         }
-                    } else if (valueNode instanceof UCallExpression
-                               && ((UCallExpression)valueNode).getKind() == UastCallKind.ARRAY_INITIALIZER) {
-                        UCallExpression array = (UCallExpression) valueNode;
-                        List<UExpression> expressions = array.getValueArguments();
-                        for (UExpression arrayElement : expressions) {
-                            String elementValue = UastLiteralUtils.getValueIfStringLiteral(arrayElement);
-                            if (elementValue != null) {
-                                if (matches(issue, elementValue)) {
-                                    return true;
+                        if (valueNode instanceof StringLiteral) {
+                            StringLiteral literal = (StringLiteral) valueNode;
+                            String value = literal.astValue();
+                            if (matches(issue, value)) {
+                                return true;
+                            }
+                        } else if (valueNode instanceof ArrayInitializer) {
+                            ArrayInitializer array = (ArrayInitializer) valueNode;
+                            StrictListAccessor<Expression, ArrayInitializer> expressions =
+                                    array.astExpressions();
+                            if (expressions == null) {
+                                continue;
+                            }
+                            for (Expression arrayElement : expressions) {
+                                if (arrayElement instanceof StringLiteral) {
+                                    String value = ((StringLiteral) arrayElement).astValue();
+                                    if (matches(issue, value)) {
+                                        return true;
+                                    }
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static final String SUPPRESS_WARNINGS_FQCN = "java.lang.SuppressWarnings";
+
+
+    /**
+     * Returns true if the given AST modifier has a suppress annotation for the
+     * given issue (which can be null to check for the "all" annotation)
+     *
+     * @param issue the issue to be checked
+     * @param modifierList the modifier to check
+     * @return true if the issue or all issues should be suppressed for this
+     *         modifier
+     */
+    public static boolean isSuppressed(@NonNull Issue issue,
+            @Nullable PsiModifierList modifierList) {
+        if (modifierList == null) {
+            return false;
+        }
+
+        for (PsiAnnotation annotation : modifierList.getAnnotations()) {
+            String fqcn = annotation.getQualifiedName();
+            if (fqcn != null && (fqcn.equals(FQCN_SUPPRESS_LINT)
+                    || fqcn.equals(SUPPRESS_WARNINGS_FQCN)
+                    || fqcn.equals(SUPPRESS_LINT))) { // when missing imports
+                PsiAnnotationParameterList parameterList = annotation.getParameterList();
+                for (PsiNameValuePair pair : parameterList.getAttributes()) {
+                    if (isSuppressed(issue, pair.getValue())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if the annotation member value, assumed to be specified on a a SuppressWarnings
+     * or SuppressLint annotation, specifies the given id (or "all").
+     *
+     * @param issue the issue to be checked
+     * @param value     the member value to check
+     * @return true if the issue or all issues should be suppressed for this modifier
+     */
+    public static boolean isSuppressed(@NonNull Issue issue,
+            @Nullable PsiAnnotationMemberValue value) {
+        if (value instanceof PsiLiteral) {
+            PsiLiteral literal = (PsiLiteral)value;
+            Object literalValue = literal.getValue();
+            if (literalValue instanceof String) {
+                if (isSuppressed(issue, (String) literalValue)) {
+                    return true;
+                }
+            }
+        } else if (value instanceof PsiArrayInitializerMemberValue) {
+            PsiArrayInitializerMemberValue mv = (PsiArrayInitializerMemberValue)value;
+            for (PsiAnnotationMemberValue mmv : mv.getInitializers()) {
+                if (isSuppressed(issue, mmv)) {
+                    return true;
+                }
+            }
+        } else if (value instanceof PsiArrayInitializerExpression) {
+            PsiArrayInitializerExpression expression = (PsiArrayInitializerExpression) value;
+            PsiExpression[] initializers = expression.getInitializers();
+            for (PsiExpression e : initializers) {
+                if (isSuppressed(issue, e)) {
+                    return true;
                 }
             }
         }
@@ -2414,16 +2809,8 @@ public class LintDriver {
                 Element element = (Element) node;
                 if (element.hasAttributeNS(TOOLS_URI, ATTR_IGNORE)) {
                     String ignore = element.getAttributeNS(TOOLS_URI, ATTR_IGNORE);
-                    if (ignore.indexOf(',') == -1) {
-                        if (matches(issue, ignore)) {
-                            return true;
-                        }
-                    } else {
-                        for (String id : ignore.split(",")) { //$NON-NLS-1$
-                            if (matches(issue, id)) {
-                                return true;
-                            }
-                        }
+                    if (isSuppressed(issue, ignore)) {
+                        return true;
                     }
                 } else if (checkComments && context.isSuppressedWithComment(node, issue)) {
                     return true;

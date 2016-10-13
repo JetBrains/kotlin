@@ -28,23 +28,26 @@ import com.android.resources.ResourceType;
 import com.android.tools.klint.client.api.LintDriver;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LayoutDetector;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiElement;
 
 import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,7 +68,7 @@ import java.util.Set;
 /**
  * Checks for consistency in layouts across different resource folders
  */
-public class LayoutConsistencyDetector extends LayoutDetector implements UastScanner {
+public class LayoutConsistencyDetector extends LayoutDetector implements Detector.UastScanner {
 
     /** Map from layout resource names to a list of files defining that resource,
      * and within each file the value is a map from string ids to the widget type
@@ -112,7 +115,7 @@ public class LayoutConsistencyDetector extends LayoutDetector implements UastSca
             Severity.WARNING,
             new Implementation(
                     LayoutConsistencyDetector.class,
-                    Scope.SOURCE_AND_RESOURCE_FILES));
+                    Scope.JAVA_AND_RESOURCE_FILES));
 
     /** Constructs a consistency check */
     public LayoutConsistencyDetector() {
@@ -121,12 +124,6 @@ public class LayoutConsistencyDetector extends LayoutDetector implements UastSca
     @Override
     public boolean appliesTo(@NonNull ResourceFolderType folderType) {
         return folderType == ResourceFolderType.LAYOUT;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.NORMAL;
     }
 
     @Override
@@ -435,8 +432,10 @@ public class LayoutConsistencyDetector extends LayoutDetector implements UastSca
     }
 
     @Override
-    public void visitResourceReference(UastAndroidContext context, UElement element, String type, String name, boolean isFramework) {
-        if (!isFramework && type.equals(ResourceType.ID.getName())) {
+    public void visitResourceReference(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UElement node, @NonNull ResourceType type, @NonNull String name,
+            boolean isFramework) {
+        if (!isFramework && type == ResourceType.ID) {
             mRelevantIds.add(name);
         }
     }

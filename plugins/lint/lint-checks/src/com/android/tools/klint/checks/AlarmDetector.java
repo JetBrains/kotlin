@@ -17,31 +17,33 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 
-import java.io.File;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
 
 /**
  * Makes sure that alarms are handled correctly
  */
-public class AlarmDetector extends Detector implements UastScanner {
+public class AlarmDetector extends Detector implements Detector.UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             AlarmDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Alarm set too soon/frequently  */
     public static final Issue ISSUE = Issue.create(
@@ -65,49 +67,39 @@ public class AlarmDetector extends Detector implements UastScanner {
     public AlarmDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
-    // ---- Implements UastScanner ----
+    // ---- Implements JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("setRepeating");
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UFunction setRepeatingFunction = node.resolve(context);
-        UClass containingClass = UastUtils.getContainingClassOrEmpty(setRepeatingFunction);
-
-        if (containingClass.matchesFqName("android.app.AlarmManager")
-                && node.getValueArgumentCount() == 4) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        JavaEvaluator evaluator = context.getEvaluator();
+        if (evaluator.isMemberInClass(method, "android.app.AlarmManager") &&
+                evaluator.getParameterCount(method) == 4) {
             ensureAtLeast(context, node, 1, 5000L);
             ensureAtLeast(context, node, 2, 60000L);
         }
     }
 
-    private static void ensureAtLeast(@NonNull UastAndroidContext context,
+    private static void ensureAtLeast(@NonNull JavaContext context,
             @NonNull UCallExpression node, int parameter, long min) {
-        UExpression arg = node.getValueArguments().get(parameter);
-        long value = getLongValue(arg);
+        UExpression argument = node.getValueArguments().get(parameter);
+        long value = getLongValue(context, argument);
         if (value < min) {
-            String message = String.format("Value will be forced up to %d as of Android 5.1; "
+            String message = String.format("Value will be forced up to %1$d as of Android 5.1; "
                     + "don't rely on this to be exact", min);
-            context.report(ISSUE, arg, context.getLocation(arg), message);
+            context.report(ISSUE, argument, context.getUastLocation(argument), message);
         }
     }
 
-    private static long getLongValue(@NonNull UExpression argument) {
-        Object value = argument.evaluate();
+    private static long getLongValue(
+            @NonNull JavaContext context,
+            @NonNull UExpression argument) {
+        Object value = ConstantEvaluator.evaluate(context, argument);
         if (value instanceof Number) {
             return ((Number)value).longValue();
         }

@@ -17,29 +17,31 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
-
-import java.io.File;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UastLiteralUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Looks for hardcoded references to /sdcard/.
  */
-public class SdCardDetector extends Detector implements UastScanner {
+public class SdCardDetector extends Detector implements Detector.UastScanner {
     /** Hardcoded /sdcard/ references */
     public static final Issue ISSUE = Issue.create(
             "SdCardPath", //$NON-NLS-1$
@@ -57,7 +59,7 @@ public class SdCardDetector extends Detector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     SdCardDetector.class,
-                    Scope.SOURCE_FILE_SCOPE))
+                    Scope.JAVA_FILE_SCOPE))
             .addMoreInfo(
             "http://developer.android.com/guide/topics/data/data-storage.html#filesExternal"); //$NON-NLS-1$
 
@@ -65,62 +67,61 @@ public class SdCardDetector extends Detector implements UastScanner {
     public SdCardDetector() {
     }
 
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
 
     // ---- Implements UastScanner ----
 
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
+        return Collections.<Class<? extends UElement>>singletonList(ULiteralExpression.class);
+    }
+
+    @Nullable
+    @Override
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         return new StringChecker(context);
     }
 
     private static class StringChecker extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
+        private final JavaContext mContext;
 
-        public StringChecker(UastAndroidContext context) {
+        private StringChecker(JavaContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitLiteralExpression(@NotNull ULiteralExpression node) {
-            if (!node.isString()) return false;
+        public boolean visitClass(@NotNull UClass node) {
+            return super.visitClass(node);
+        }
 
-            String s = (String) node.getValue();
-            if (s == null || s.isEmpty()) {
-                return false;
-            }
-            char c = s.charAt(0);
-            if (c != '/' && c != 'f') {
-                return false;
-            }
+        @Override
+        public boolean visitLiteralExpression(ULiteralExpression node) {
+            String s = UastLiteralUtils.getValueIfStringLiteral(node);
+            if (s != null && !s.isEmpty()) {
+                char c = s.charAt(0);
+                if (c != '/' && c != 'f') {
+                    return false;
+                }
 
-            if (s.startsWith("/sdcard")                        //$NON-NLS-1$
-                || s.startsWith("/mnt/sdcard/")            //$NON-NLS-1$
-                || s.startsWith("/system/media/sdcard")    //$NON-NLS-1$
-                || s.startsWith("file://sdcard/")          //$NON-NLS-1$
-                || s.startsWith("file:///sdcard/")) {      //$NON-NLS-1$
-                String message = "Do not hardcode \"/sdcard/\"; " +
-                                 "use `Environment.getExternalStorageDirectory().getPath()` instead";
-                Location location = mContext.getLocation(node);
-                mContext.report(ISSUE, node, location, message);
-            } else if (s.startsWith("/data/data/")    //$NON-NLS-1$
-                       || s.startsWith("/data/user/")) { //$NON-NLS-1$
-                String message = "Do not hardcode \"`/data/`\"; " +
-                                 "use `Context.getFilesDir().getPath()` instead";
-                Location location = mContext.getLocation(node);
-                mContext.report(ISSUE, node, location, message);
+                if (s.startsWith("/sdcard")                        //$NON-NLS-1$
+                        || s.startsWith("/mnt/sdcard/")            //$NON-NLS-1$
+                        || s.startsWith("/system/media/sdcard")    //$NON-NLS-1$
+                        || s.startsWith("file://sdcard/")          //$NON-NLS-1$
+                        || s.startsWith("file:///sdcard/")) {      //$NON-NLS-1$
+                    String message = "Do not hardcode \"/sdcard/\"; " +
+                            "use `Environment.getExternalStorageDirectory().getPath()` instead";
+                    Location location = mContext.getUastLocation(node);
+                    mContext.report(ISSUE, node, location, message);
+                } else if (s.startsWith("/data/data/")    //$NON-NLS-1$
+                        || s.startsWith("/data/user/")) { //$NON-NLS-1$
+                    String message = "Do not hardcode \"`/data/`\"; " +
+                            "use `Context.getFilesDir().getPath()` instead";
+                    Location location = mContext.getUastLocation(node);
+                    mContext.report(ISSUE, node, location, message);
+                }
             }
-
-            return false;
+            
+            return super.visitLiteralExpression(node);
         }
     }
 }

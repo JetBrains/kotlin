@@ -16,32 +16,65 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.*;
+import static com.android.SdkConstants.ANDROID_URI;
+import static com.android.SdkConstants.ATTR_BACKGROUND;
+import static com.android.SdkConstants.ATTR_CONTEXT;
+import static com.android.SdkConstants.ATTR_NAME;
+import static com.android.SdkConstants.ATTR_PARENT;
+import static com.android.SdkConstants.ATTR_THEME;
+import static com.android.SdkConstants.ATTR_TILE_MODE;
+import static com.android.SdkConstants.DOT_XML;
+import static com.android.SdkConstants.DRAWABLE_PREFIX;
+import static com.android.SdkConstants.NULL_RESOURCE;
+import static com.android.SdkConstants.R_CLASS;
+import static com.android.SdkConstants.STYLE_RESOURCE_PREFIX;
+import static com.android.SdkConstants.TAG_ACTIVITY;
+import static com.android.SdkConstants.TAG_APPLICATION;
+import static com.android.SdkConstants.TAG_BITMAP;
+import static com.android.SdkConstants.TAG_STYLE;
+import static com.android.SdkConstants.TOOLS_URI;
+import static com.android.SdkConstants.TRANSPARENT_COLOR;
+import static com.android.SdkConstants.VALUE_DISABLED;
 import static com.android.tools.klint.detector.api.LintUtils.endsWith;
 import static com.android.utils.SdkUtils.getResourceFieldName;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
+import com.android.resources.ResourceType;
+import com.android.tools.klint.client.api.AndroidReference;
+import com.android.tools.klint.client.api.UastLintUtils;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LayoutDetector;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Project;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
+import com.intellij.psi.JavaRecursiveElementVisitor;
+import com.intellij.psi.PsiAnonymousClass;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiReferenceExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UAnonymousClass;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UQualifiedReferenceExpression;
+import org.jetbrains.uast.USimpleNameReferenceExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
-import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -54,17 +87,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Check which looks for overdraw problems where view areas are painted and then
  * painted over, meaning that the bottom paint operation is a waste of time.
  */
-public class OverdrawDetector extends LayoutDetector implements UastScanner {
-    private static final String R_STYLE_PREFIX = "R.style.";    //$NON-NLS-1$
+public class OverdrawDetector extends LayoutDetector implements Detector.UastScanner {
     private static final String SET_THEME = "setTheme";         //$NON-NLS-1$
 
     /** The main issue discovered by this detector */
@@ -97,7 +127,7 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
             Severity.WARNING,
             new Implementation(
                     OverdrawDetector.class,
-                    EnumSet.of(Scope.MANIFEST, Scope.SOURCE_FILE, Scope.ALL_RESOURCE_FILES)));
+                    EnumSet.of(Scope.MANIFEST, Scope.JAVA_FILE, Scope.ALL_RESOURCE_FILES)));
 
     /** Mapping from FQN activity names to theme names registered in the manifest */
     private Map<String, String> mActivityToTheme;
@@ -110,10 +140,6 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
 
     /** List of theme names registered in the project which have blank backgrounds */
     private List<String> mBlankThemes;
-
-    /** Set of activities registered in the manifest. We will limit the Java analysis to
-     * these. */
-    private Set<String> mActivities;
 
     /** List of drawable resources that are not flagged for overdraw (XML drawables
      * except for {@code <bitmap>} drawables without tiling) */
@@ -138,17 +164,6 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
                 || folderType == ResourceFolderType.VALUES
                 // and in drawable files for bitmap tiling modes
                 || folderType == ResourceFolderType.DRAWABLE;
-    }
-
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return LintUtils.isXmlFile(file) || LintUtils.endsWith(file.getName(), DOT_JAVA);
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
     }
 
     /** Is the given theme a "blank" theme (one not painting its background) */
@@ -384,11 +399,6 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
             }
         }
 
-        if (mActivities == null) {
-            mActivities = new HashSet<String>();
-        }
-        mActivities.add(name);
-
         String theme = element.getAttributeNS(ANDROID_URI, ATTR_THEME);
         if (theme != null && !theme.isEmpty()) {
             if (mActivityToTheme == null) {
@@ -470,72 +480,75 @@ public class OverdrawDetector extends LayoutDetector implements UastScanner {
 
     // ---- Implements UastScanner ----
 
+
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(@NonNull UastAndroidContext context) {
-        if (!context.getLintContext().getProject().getReportIssues()) {
-            return null;
+    public List<String> applicableSuperClasses() {
+        return Collections.singletonList("android.app.Activity");
+    }
+
+    @Nullable
+    @Override
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
+        return Collections.<Class<? extends UElement>>singletonList(UClass.class);
+    }
+
+    @Override
+    public void checkClass(@NonNull JavaContext context, @NonNull UClass declaration) {
+        if (!context.getProject().getReportIssues()) {
+            return;
         }
-        return new OverdrawVisitor();
+        String name = declaration.getQualifiedName();
+        if (name != null) {
+            declaration.accept(new OverdrawVisitor(name, declaration));
+        }
     }
 
     private class OverdrawVisitor extends AbstractUastVisitor {
-        private static final String ACTIVITY = "Activity"; //$NON-NLS-1$
-        private String mClassFqn;
+        private final String mName;
+        private final PsiClass mCls;
 
-        @Override
-        public boolean visitClass(@NotNull UClass node) {
-            String name = node.getName();
-            if (mActivities != null && mActivities.contains(mClassFqn) || name.endsWith(ACTIVITY)
-                || node.isSubclassOf(CLASS_ACTIVITY)) {
-                mClassFqn = node.getFqName();
-                return false;
-            }
-
-            return true; // Done: No need to look inside this class
+        public OverdrawVisitor(String name, PsiClass cls) {
+            mName = name;
+            mCls = cls;
         }
 
-        // Store R.layout references in activity classes in a map mapping back layouts
-        // to activities
         @Override
-        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            if (node.getSelector().renderString().equals("layout") //$NON-NLS-1$
-                && node.getReceiver() instanceof USimpleReferenceExpression
-                && ((USimpleReferenceExpression) node.getReceiver()).getIdentifier()
-                    .equals("R")                             //$NON-NLS-1$
-                && node.getParent() instanceof UQualifiedExpression) {
-                String layout = ((UQualifiedExpression) node.getParent()).getSelector().renderString();
-                registerLayoutActivity(layout, mClassFqn);
+        public boolean visitClass(UClass node) {
+            // Don't go into inner classes
+            if (mCls.equals(node.getPsi())) {
+                return true;
             }
-
-            return false;
+            
+            return super.visitClass(node);
         }
 
+        @Override
+        public boolean visitSimpleNameReferenceExpression(USimpleNameReferenceExpression node) {
+            AndroidReference androidReference = UastLintUtils.toAndroidReferenceViaResolve(node);
+            if (androidReference != null && androidReference.getType() == ResourceType.LAYOUT) {
+                registerLayoutActivity(androidReference.getName(), mName);
+            }
 
-        // Look for setTheme(R.style.whatever) and register as a theme registration
-        // for the current activity
-
+            return super.visitSimpleNameReferenceExpression(node);
+        }
 
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            if (SET_THEME.equals(node.getFunctionName())) {
+        public boolean visitCallExpression(UCallExpression node) {
+            if (SET_THEME.equals(node.getMethodName()) && node.getValueArgumentCount() == 1) {
                 // Look at argument
-                List<UExpression> args = node.getValueArguments();
-                if (args.size() == 1) {
-                    UExpression arg = args.get(0);
-                    if (arg instanceof UQualifiedExpression) {
-                        String resource = arg.renderString();
-                        if (resource.startsWith(R_STYLE_PREFIX)) {
-                            if (mActivityToTheme == null) {
-                                mActivityToTheme = new HashMap<String, String>();
-                            }
-                            String name = ((UQualifiedExpression) arg).getSelector().renderString();
-                            mActivityToTheme.put(mClassFqn, STYLE_RESOURCE_PREFIX + name);
-                        }
+                UExpression arg = node.getValueArguments().get(0);
+                AndroidReference androidReference = UastLintUtils.toAndroidReferenceViaResolve(arg);
+                if (androidReference != null && androidReference.getType() == ResourceType.STYLE) {
+                    String style = androidReference.getName();
+                    if (mActivityToTheme == null) {
+                        mActivityToTheme = new HashMap<String, String>();
                     }
+                    mActivityToTheme.put(mName, STYLE_RESOURCE_PREFIX + style);
                 }
             }
 
-            return false;
+            return super.visitCallExpression(node);
         }
     }
 }

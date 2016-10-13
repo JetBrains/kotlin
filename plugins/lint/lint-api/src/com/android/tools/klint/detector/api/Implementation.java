@@ -24,7 +24,7 @@ import java.util.EnumSet;
  * An {@linkplain Implementation} of an {@link Issue} maps to the {@link Detector}
  * class responsible for analyzing the issue, as well as the {@link Scope} required
  * by the detector to perform its analysis.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */

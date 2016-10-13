@@ -23,22 +23,24 @@ import static com.android.SdkConstants.DOT_XML;
 import static com.android.SdkConstants.ID_PREFIX;
 import static com.android.SdkConstants.NEW_ID_PREFIX;
 import static com.android.SdkConstants.VIEW_TAG;
-import static org.jetbrains.uast.UastBinaryExpressionWithTypeUtils.*;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
+import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.klint.client.api.LintClient;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.ResourceEvaluator;
 import com.android.tools.klint.detector.api.ResourceXmlDetector;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
@@ -51,10 +53,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiType;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UBinaryExpressionWithType;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UParenthesizedExpression;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -83,7 +91,7 @@ import java.util.Set;
  * check its name or class attributes to make sure the cast is compatible with
  * the named fragment class!
  */
-public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner {
+public class ViewTypeDetector extends ResourceXmlDetector implements Detector.UastScanner {
     /** Mismatched view types */
     @SuppressWarnings("unchecked")
     public static final Issue ISSUE = Issue.create(
@@ -96,8 +104,8 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             Severity.FATAL,
             new Implementation(
                     ViewTypeDetector.class,
-                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.ALL_SOURCE_FILES),
-                    Scope.SOURCE_FILE_SCOPE));
+                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.ALL_JAVA_FILES),
+                    Scope.JAVA_FILE_SCOPE));
 
     /** Flag used to do no work if we're running in incremental mode in a .java file without
      * a client supporting project resources */
@@ -159,98 +167,85 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
         }
     }
 
-    // ---- Implements Detector.UastScanner ----
+    // ---- Implements Detector.JavaScanner ----
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("findViewById"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        JavaContext lintContext = context.getLintContext();
-        LintClient client = lintContext.getClient();
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
+        LintClient client = context.getClient();
         if (mIgnore == Boolean.TRUE) {
             return;
         } else if (mIgnore == null) {
-            mIgnore = !lintContext.getScope().contains(Scope.ALL_RESOURCE_FILES) &&
-                      !client.supportsProjectResources();
+            mIgnore = !context.getScope().contains(Scope.ALL_RESOURCE_FILES) &&
+                    !client.supportsProjectResources();
             if (mIgnore) {
                 return;
             }
         }
-        assert "findViewById".equals(node.getFunctionName());
-        UBinaryExpressionWithType cast = findContainingTypeCast(node.getParent());
-        if (cast == null) {
-            return;
+        assert method.getName().equals("findViewById");
+        UElement node = LintUtils.skipParentheses(call);
+        while (node != null && node.getContainingElement() instanceof UParenthesizedExpression) {
+            node = node.getContainingElement();
         }
+        if (node.getContainingElement() instanceof UBinaryExpressionWithType) {
+            UBinaryExpressionWithType cast = (UBinaryExpressionWithType) node.getContainingElement();
+            PsiType type = cast.getType();
+            String castType = null;
+            if (type instanceof PsiClassType) {
+                castType = type.getCanonicalText();
+            }
+            if (castType == null) {
+                return;
+            }
 
-        String castType = cast.getType().getFqName();
-        List<UExpression> args = node.getValueArguments();
-        if (args.size() == 1) {
-            UExpression first = args.get(0);
-            // TODO: Do flow analysis as in the StringFormatDetector in order
-            // to handle variable references too
-            if (first instanceof UQualifiedExpression) {
-                if (UastUtils.startsWithQualified(first, "R.id")) { //$NON-NLS-1$
-                    String id = ((UQualifiedExpression) first).getSelectorAsIdentifier();
+            List<UExpression> args = call.getValueArguments();
+            if (args.size() == 1) {
+                UExpression first = args.get(0);
+                ResourceUrl resourceUrl = ResourceEvaluator.getResource(context, first);
+                if (resourceUrl != null && resourceUrl.type == ResourceType.ID &&
+                        !resourceUrl.framework) {
+                    String id = resourceUrl.name;
 
-                    if (id != null) {
-                        if (client.supportsProjectResources()) {
-                            AbstractResourceRepository resources = client
-                                    .getProjectResources(lintContext.getMainProject(), true);
-                            if (resources == null) {
-                                return;
-                            }
+                    if (client.supportsProjectResources()) {
+                        AbstractResourceRepository resources = client
+                                .getProjectResources(context.getMainProject(), true);
+                        if (resources == null) {
+                            return;
+                        }
 
-                            List<ResourceItem> items = resources.getResourceItem(ResourceType.ID, id);
-                            if (items != null && !items.isEmpty()) {
-                                Set<String> compatible = Sets.newHashSet();
-                                for (ResourceItem item : items) {
-                                    Collection<String> tags = getViewTags(lintContext, item);
-                                    if (tags != null) {
-                                        compatible.addAll(tags);
-                                    }
+                        List<ResourceItem> items = resources.getResourceItem(ResourceType.ID,
+                                id);
+                        if (items != null && !items.isEmpty()) {
+                            Set<String> compatible = Sets.newHashSet();
+                            for (ResourceItem item : items) {
+                                Collection<String> tags = getViewTags(context, item);
+                                if (tags != null) {
+                                    compatible.addAll(tags);
                                 }
-                                if (!compatible.isEmpty()) {
-                                    ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
-                                    checkCompatible(lintContext, castType, null, layoutTypes, cast);
-                                }
                             }
-                        } else {
-                            Object types = mIdToViewTag.get(id);
-                            if (types instanceof String) {
-                                String layoutType = (String) types;
-                                checkCompatible(lintContext, castType, layoutType, null, cast);
-                            } else if (types instanceof List<?>) {
-                                @SuppressWarnings("unchecked")
-                                List<String> layoutTypes = (List<String>) types;
-                                checkCompatible(lintContext, castType, null, layoutTypes, cast);
+                            if (!compatible.isEmpty()) {
+                                ArrayList<String> layoutTypes = Lists.newArrayList(compatible);
+                                checkCompatible(context, castType, null, layoutTypes, cast);
                             }
+                        }
+                    } else {
+                        Object types = mIdToViewTag.get(id);
+                        if (types instanceof String) {
+                            String layoutType = (String) types;
+                            checkCompatible(context, castType, layoutType, null, cast);
+                        } else if (types instanceof List<?>) {
+                            @SuppressWarnings("unchecked")
+                            List<String> layoutTypes = (List<String>) types;
+                            checkCompatible(context, castType, null, layoutTypes, cast);
                         }
                     }
                 }
             }
-        }
-    }
-
-    private UBinaryExpressionWithType findContainingTypeCast(UElement expression) {
-        if (expression == null) {
-            return null;
-        }
-
-        if (isTypeCast(expression)) {
-            return (UBinaryExpressionWithType) expression;
-        } else if (expression instanceof UQualifiedExpression) {
-            UElement parent = expression.getParent();
-            if (expression.equals(expression.getParent())) {
-                return null;
-            }
-            return findContainingTypeCast(parent);
-        } else if (expression instanceof UParenthesizedExpression) {
-            return findContainingTypeCast(expression.getParent());
-        } else {
-            return null;
         }
     }
 
@@ -345,8 +340,8 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             }
             String message = String.format(
                     "Unexpected cast to `%1$s`: layout tag was `%2$s`",
-                    castType, layoutType);
-            context.report(ISSUE, node, context.getLocation(node), message);
+                    castType.substring(castType.lastIndexOf('.') + 1), layoutType);
+            context.report(ISSUE, node, context.getUastLocation(node), message);
         }
     }
 }

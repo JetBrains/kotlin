@@ -16,35 +16,45 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.*;
+import static com.android.SdkConstants.CLASS_VIEW;
+import static com.android.SdkConstants.CLASS_VIEWGROUP;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiMethod;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UIfExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.USwitchExpression;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Looks for ListView scrolling performance: should use view holder pattern
  */
-public class ViewHolderDetector extends Detector implements UastScanner {
+public class ViewHolderDetector extends Detector implements Detector.UastScanner {
 
     private static final Implementation IMPLEMENTATION = new Implementation(
             ViewHolderDetector.class,
-            Scope.SOURCE_FILE_SCOPE);
+            Scope.JAVA_FILE_SCOPE);
 
     /** Using a view inflater unconditionally in an AdapterView */
     public static final Issue ISSUE = Issue.create(
@@ -70,84 +80,78 @@ public class ViewHolderDetector extends Detector implements UastScanner {
     public ViewHolderDetector() {
     }
 
-    @NonNull
+    // ---- Implements JavaScanner ----
+
+    @Nullable
     @Override
-    public Speed getSpeed() {
-        return Speed.NORMAL;
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
+        return Collections.<Class<? extends UElement>>singletonList(UMethod.class);
     }
 
-    // ---- Implements UastScanner ----
-
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         return new ViewAdapterVisitor(context);
     }
 
     private static class ViewAdapterVisitor extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
+        private final JavaContext mContext;
 
-        public ViewAdapterVisitor(UastAndroidContext context) {
+        public ViewAdapterVisitor(JavaContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitFunction(@NotNull UFunction node) {
-            if (isViewAdapterMethod(node)) {
+        public boolean visitMethod(UMethod method) {
+            if (isViewAdapterMethod(mContext, method)) {
                 InflationVisitor visitor = new InflationVisitor(mContext);
-                node.accept(visitor);
+                method.accept(visitor);
                 visitor.finish();
             }
-            return false;
+            return super.visitMethod(method);
         }
 
         /**
          * Returns true if this method looks like it's overriding android.widget.Adapter's getView
          * method: getView(int position, View convertView, ViewGroup parent)
          */
-        private static boolean isViewAdapterMethod(UFunction node) {
-            if (GET_VIEW.equals(node.getName())) {
-                List<UVariable> parameters = node.getValueParameters();
-                if (parameters.size() == 3) {
-                    //noinspection RedundantIfStatement
-                    if (!parameters.get(2).getType().matchesFqName(CLASS_VIEWGROUP)) {
-                        return false;
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
+        private static boolean isViewAdapterMethod(JavaContext context, PsiMethod node) {
+            JavaEvaluator evaluator = context.getEvaluator();
+            return GET_VIEW.equals(node.getName()) && evaluator.parametersMatch(node,
+                    TYPE_INT, CLASS_VIEW, CLASS_VIEWGROUP);
         }
     }
 
     private static class InflationVisitor extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
+        private final JavaContext mContext;
         private List<UElement> mNodes;
         private boolean mHaveConditional;
 
-        public InflationVisitor(UastAndroidContext context) {
+        public InflationVisitor(JavaContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            UElement parent = node.getParent();
-            if (parent instanceof UQualifiedExpression) {
-                String methodName = node.getFunctionName();
-                if (INFLATE.equals(methodName) && node.getValueArgumentCount() >= 1) {
+        public boolean visitCallExpression(UCallExpression node) {
+            if (UastExpressionUtils.isMethodCall(node)) {
+                checkMethodCall(node);
+            }
+            return super.visitCallExpression(node);
+        }
+
+        private void checkMethodCall(UCallExpression node) {
+            UExpression receiver = node.getReceiver();
+            if (receiver != null) {
+                String methodName = node.getMethodName();
+                if (INFLATE.equals(methodName)
+                        && node.getValueArgumentCount() >= 1) {
                     // See if we're inside a conditional
                     boolean insideIf = false;
-                    UElement p = parent.getParent();
-                    while (p != null) {
-                        if (p instanceof UIfExpression || p instanceof USwitchExpression) {
-                            insideIf = true;
-                            mHaveConditional = true;
-                            break;
-                        } else if (p == node) {
-                            break;
-                        }
-                        p = p.getParent();
+                    //noinspection unchecked
+                    if (UastUtils.getParentOfType(node, true, UIfExpression.class, 
+                            USwitchExpression.class) != null) {
+                        insideIf = true;
+                        mHaveConditional = true;
                     }
                     if (!insideIf) {
                         // Rather than reporting immediately, we only report if we didn't
@@ -166,8 +170,6 @@ public class ViewHolderDetector extends Detector implements UastScanner {
                     }
                 }
             }
-
-            return false;
         }
 
         public void finish() {
@@ -177,7 +179,7 @@ public class ViewHolderDetector extends Detector implements UastScanner {
                             + "Should use View Holder pattern (use recycled view passed "
                             + "into this method as the second parameter) for smoother "
                             + "scrolling";
-                    mContext.report(ISSUE, node, mContext.getLocation(node), message);
+                    mContext.report(ISSUE, node, mContext.getUastLocation(node), message);
                 }
             }
         }
