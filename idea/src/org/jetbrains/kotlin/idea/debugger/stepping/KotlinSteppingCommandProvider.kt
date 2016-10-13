@@ -287,7 +287,7 @@ sealed class Action(val position: XSourcePositionImpl? = null,
             is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction()
             is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction()
             is Action.STEP_OVER_INLINED -> KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
-                    KotlinStepOverInlineFilter(stepOverLines!!, lineNumber ?: -1, inlineRangeVariables!!)).contextAction()
+                    KotlinStepOverInlineFilter(stepOverLines!!, lineNumber ?: -1, inlineRangeVariables!!)).contextAction(suspendContext)
         }
     }
 }
