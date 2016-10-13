@@ -28,8 +28,8 @@ struct TypeInfo {
     TypeInfo* const* implementedInterfaces_;
     int implementedInterfacesCount_;
     void* const* vtable_; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
-    const MethodTableRecord* methods_;
-    int methodsCount_;
+    const MethodTableRecord* openMethods_;
+    int openMethodsCount_;
     const FieldTableRecord* fields_;
     int fieldsCount_;
 };
@@ -38,10 +38,10 @@ struct TypeInfo {
 extern "C" {
 #endif
 // Find offset of given hash in table.
-int LookupFieldOffset(const TypeInfo* type_info, LocalHash hash);
+int LookupFieldOffset(const TypeInfo* type_info, FieldNameHash hash);
 
-// Find method by its hash.
-void* LookupMethod(const TypeInfo* info, MethodNameHash nameSignature);
+// Find open method by its hash. Other methods are resolved in compile-time.
+void* LookupOpenMethod(const TypeInfo* info, MethodNameHash nameSignature);
 
 #ifdef __cplusplus
 } // extern "C"
