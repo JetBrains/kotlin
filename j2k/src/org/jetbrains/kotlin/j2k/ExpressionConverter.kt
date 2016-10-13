@@ -232,29 +232,19 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val operand = expression.operand
+        val type = converter.convertTypeElement(operand, Nullability.NotNull)
         val typeName = operand.type.canonicalText
         val primitiveType = JvmPrimitiveType.values().firstOrNull { it.javaKeywordName == typeName }
-        val wrapperTypeName = if (primitiveType != null) {
-            primitiveType.wrapperFqName
-        }
-        else if (typeName == "void") { // by unknown reason it's not in JvmPrimitiveType enum
-            FqName("java.lang.Void")
-        }
-        else {
-            val type = converter.convertTypeElement(operand, Nullability.NotNull)
-            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype("java"), null)
+        if (typeName == "void") {
+            result = QualifiedExpression(Identifier("Void", false).assignNoPrototype(), Identifier.withNoPrototype("TYPE", isNullable = false), null)
             return
         }
-
-        //TODO: need more correct way to detect if short name is ok
-        val qualifiedName = wrapperTypeName.asString()
-        val classNameToUse = if (qualifiedName in needQualifierNameSet)
-            qualifiedName
-        else
-            wrapperTypeName.shortName().asString()
-        result = QualifiedExpression(Identifier(classNameToUse, false).assignPrototype(operand),
-                                     Identifier.withNoPrototype("TYPE", isNullable = false),
-                                     null)
+        val name = if (primitiveType != null) {
+            "javaPrimitiveType"
+        } else {
+            "java"
+        }
+        result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype(name), null)
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -916,9 +906,5 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitExpression(expression: PsiExpression) {
         result = DummyStringExpression(expression.text)
-    }
-
-    companion object {
-        private val needQualifierNameSet = setOf("java.lang.Byte", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short")
     }
 }
