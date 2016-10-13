@@ -35,27 +35,18 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.util.InheritanceUtil;
 
 import java.io.File;
 
 @SuppressWarnings("MethodMayBeStatic") // Some of these methods may be overridden by LintClients
 public abstract class JavaEvaluator {
-    public abstract boolean extendsClass(
-            @Nullable PsiClass cls,
-            @NonNull String className,
-            boolean strict);
-
-    public abstract boolean implementsInterface(
-            @NonNull PsiClass cls,
-            @NonNull String interfaceName,
-            boolean strict);
-
     public boolean isMemberInSubClassOf(
             @NonNull PsiMember method,
             @NonNull String className,
             boolean strict) {
         PsiClass containingClass = method.getContainingClass();
-        return containingClass != null && extendsClass(containingClass, className, strict);
+        return containingClass != null && InheritanceUtil.isInheritor(containingClass, strict, className);
     }
 
     public static boolean isMemberInClass(
@@ -70,18 +61,6 @@ public abstract class JavaEvaluator {
 
     public int getParameterCount(@NonNull PsiMethod method) {
         return method.getParameterList().getParametersCount();
-    }
-
-    /**
-     * Checks whether the class extends a super class or implements a given interface. Like calling
-     * both {@link #extendsClass(PsiClass, String, boolean)} and {@link
-     * #implementsInterface(PsiClass, String, boolean)}.
-     */
-    public boolean inheritsFrom(
-            @NonNull PsiClass cls,
-            @NonNull String className,
-            boolean strict) {
-        return extendsClass(cls, className, strict) || implementsInterface(cls, className, strict);
     }
 
     /**

@@ -151,7 +151,7 @@ public class CallSuperDetector extends Detector implements Detector.UastScanner 
         PsiMethod superMethod = directSuper;
         while (superMethod != null) {
             PsiAnnotation[] annotations = superMethod.getModifierList().getAnnotations();
-            annotations = filterRelevantAnnotations(annotations);
+            annotations = filterRelevantAnnotations(context.getEvaluator(), annotations);
             for (PsiAnnotation annotation : annotations) {
                 String signature = annotation.getQualifiedName();
                 if (CALL_SUPER_ANNOTATION.equals(signature)) {

@@ -152,23 +152,6 @@ public class IdeaJavaParser extends JavaParser {
             myProject = project;
         }
 
-        @Override
-        public boolean extendsClass(@Nullable PsiClass cls, @NonNull String className, boolean strict) {
-            // TODO: This checks interfaces too. Let's find a cheaper method which only checks direct super classes!
-            return InheritanceUtil.isInheritor(cls, strict, className);
-        }
-
-        @Override
-        public boolean implementsInterface(@NonNull PsiClass cls, @NonNull String interfaceName, boolean strict) {
-            // TODO: This checks superclasses too. Let's find a cheaper method which only checks interfaces.
-            return false;
-        }
-
-        @Override
-        public boolean inheritsFrom(@NonNull PsiClass cls, @NonNull String className, boolean strict) {
-            return InheritanceUtil.isInheritor(cls, strict, className);
-        }
-
         @Nullable
         @Override
         public PsiClass findClass(@NonNull String qualifiedName) {
@@ -184,7 +167,7 @@ public class IdeaJavaParser extends JavaParser {
         @NonNull
         @Override
         public PsiAnnotation[] getAllAnnotations(@NonNull PsiModifierListOwner owner) {
-            return AnnotationUtil.getAllAnnotations(owner, inHierarchy, null, true);
+            return AnnotationUtil.getAllAnnotations(owner, true, null, true);
         }
 
         @Nullable

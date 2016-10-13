@@ -32,6 +32,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UAnonymousClass;
 import org.jetbrains.uast.UClass;
 
@@ -89,8 +90,7 @@ public class ParcelDetector extends Detector implements Detector.UastScanner {
         }
 
         // Parceling spans is handled in TextUtils#CHAR_SEQUENCE_CREATOR
-        if (context.getEvaluator().implementsInterface(declaration,
-                "android.text.ParcelableSpan", false)) {
+        if (InheritanceUtil.isInheritor(declaration, false, "android.text.ParcelableSpan")) {
             return;
         }
 
