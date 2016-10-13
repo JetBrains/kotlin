@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
@@ -39,7 +40,7 @@ object JvmPlatform : TargetPlatform("JVM") {
             }
         }
 
-        val builtIns = DefaultBuiltIns.Instance
+        val builtIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
         for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
             addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
         }

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -150,9 +151,10 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         return file.getDeclaration(this, original.toStringKey()) ?: run {
             if (descriptor !is ClassDescriptor) return null
 
-            val classFqName = descriptor.fqNameSafe
+            val classFqName = descriptor.fqNameUnsafe
             if (JvmBuiltInsSettings.isSerializableInJava(classFqName)) {
-                val builtInDescriptor = DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName, NoLookupLocation.FROM_IDE)
+                val builtInDescriptor =
+                        DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
                 return builtInDescriptor?.let { file.getDeclaration(this, it.toStringKey()) }
             }
             return null
@@ -168,4 +170,3 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         withDefinedIn = true
     }
 }
-

@@ -35,8 +35,8 @@ fun box(): String {
     check<Int>(::number, ::comparableOfInt, ::serializable)
     checkAll<Int>(::number, ::comparableOfInt, ::serializable, ::any)
 
-    check<Array<Any>>(::cloneable, ::serializable)
-    checkAll<Array<Any>>(::cloneable, ::serializable, ::any)
+    check<Array<Any>>(::any, ::cloneable, ::serializable)
+    checkAll<Array<Any>>(::any, ::cloneable, ::serializable)
 
     return "OK"
 }

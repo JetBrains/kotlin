@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.platform
 
+import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
@@ -49,4 +50,7 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
     }
 
     override fun getAdditionalClassPartsProvider() = settings
+
+    override fun getClassDescriptorFactories() =
+            super.getClassDescriptorFactories() + JvmBuiltInClassDescriptorFactory(storageManager, builtInsModule)
 }

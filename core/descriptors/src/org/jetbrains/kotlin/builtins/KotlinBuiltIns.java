@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
+import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -86,7 +87,7 @@ public abstract class KotlinBuiltIns {
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                Collections.singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule)),
+                getClassDescriptorFactories(),
                 getPlatformDependentDeclarationFilter(),
                 getAdditionalClassPartsProvider(),
                 new Function1<String, InputStream>() {
@@ -127,6 +128,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     protected PlatformDependentDeclarationFilter getPlatformDependentDeclarationFilter() {
         return PlatformDependentDeclarationFilter.NoPlatformDependent.INSTANCE;
+    }
+
+    @NotNull
+    protected Iterable<ClassDescriptorFactory> getClassDescriptorFactories() {
+        return Collections.<ClassDescriptorFactory>singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule));
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
@@ -441,11 +447,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getThrowable() {
         return getBuiltInClassByName("Throwable");
-    }
-
-    @NotNull
-    public ClassDescriptor getCloneable() {
-        return getBuiltInClassByName("Cloneable");
     }
 
     @NotNull

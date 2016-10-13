@@ -21,7 +21,7 @@ public open class Any {
     /*primary*/ public constructor Any()
 }
 
-public final class Array</*0*/ T> : kotlin.Cloneable, java.io.Serializable {
+public final class Array</*0*/ T> : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
@@ -40,7 +40,7 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean>, java.io.Serializ
     public final infix fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
 
-public final class BooleanArray : kotlin.Cloneable, java.io.Serializable {
+public final class BooleanArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
     public constructor BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Boolean)
     public final val size: kotlin.Int
@@ -114,7 +114,7 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     }
 }
 
-public final class ByteArray : kotlin.Cloneable, java.io.Serializable {
+public final class ByteArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
     public constructor ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Byte)
     public final val size: kotlin.Int
@@ -159,7 +159,7 @@ public final class Char : kotlin.Comparable<kotlin.Char>, java.io.Serializable {
     }
 }
 
-public final class CharArray : kotlin.Cloneable, java.io.Serializable {
+public final class CharArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
     public constructor CharArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Char)
     public final val size: kotlin.Int
@@ -284,7 +284,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
     }
 }
 
-public final class DoubleArray : kotlin.Cloneable, java.io.Serializable {
+public final class DoubleArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
     public constructor DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Double)
     public final val size: kotlin.Int
@@ -380,7 +380,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
     }
 }
 
-public final class FloatArray : kotlin.Cloneable, java.io.Serializable {
+public final class FloatArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
     public constructor FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Float)
     public final val size: kotlin.Int
@@ -464,7 +464,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     }
 }
 
-public final class IntArray : kotlin.Cloneable, java.io.Serializable {
+public final class IntArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
     public constructor IntArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Int)
     public final val size: kotlin.Int
@@ -545,7 +545,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     }
 }
 
-public final class LongArray : kotlin.Cloneable, java.io.Serializable {
+public final class LongArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
     public constructor LongArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Long)
     public final val size: kotlin.Int
@@ -648,7 +648,7 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     }
 }
 
-public final class ShortArray : kotlin.Cloneable, java.io.Serializable {
+public final class ShortArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
     public constructor ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Short)
     public final val size: kotlin.Int

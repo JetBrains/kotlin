@@ -298,6 +298,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("arraysAreCloneable.kt")
+        public void testArraysAreCloneable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arraysAreCloneable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/cloneArray.kt");

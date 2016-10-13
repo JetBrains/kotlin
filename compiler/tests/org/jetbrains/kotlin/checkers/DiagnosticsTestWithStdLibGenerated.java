@@ -656,6 +656,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Builtins extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInBuiltins() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builtins"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arraysAreCloneable.kt")
+        public void testArraysAreCloneable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins/arraysAreCloneable.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/cast")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

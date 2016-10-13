@@ -22,7 +22,7 @@ package kotlin
  * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class ByteArray(size: Int) : Cloneable {
+public class ByteArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -39,15 +39,13 @@ public class ByteArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ByteIterator
-
-    public override fun clone(): ByteArray
 }
 
 /**
  * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class CharArray(size: Int) : Cloneable {
+public class CharArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -64,15 +62,13 @@ public class CharArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): CharIterator
-
-    public override fun clone(): CharArray
 }
 
 /**
  * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class ShortArray(size: Int) : Cloneable {
+public class ShortArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -89,15 +85,13 @@ public class ShortArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ShortIterator
-
-    public override fun clone(): ShortArray
 }
 
 /**
  * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class IntArray(size: Int) : Cloneable {
+public class IntArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -114,15 +108,13 @@ public class IntArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): IntIterator
-
-    public override fun clone(): IntArray
 }
 
 /**
  * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class LongArray(size: Int) : Cloneable {
+public class LongArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -139,15 +131,13 @@ public class LongArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): LongIterator
-
-    public override fun clone(): LongArray
 }
 
 /**
  * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class FloatArray(size: Int) : Cloneable {
+public class FloatArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -164,15 +154,13 @@ public class FloatArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): FloatIterator
-
-    public override fun clone(): FloatArray
 }
 
 /**
  * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
-public class DoubleArray(size: Int) : Cloneable {
+public class DoubleArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -189,15 +177,13 @@ public class DoubleArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): DoubleIterator
-
-    public override fun clone(): DoubleArray
 }
 
 /**
  * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
  * @constructor Creates a new array of the specified [size], with all elements initialized to false.
  */
-public class BooleanArray(size: Int) : Cloneable {
+public class BooleanArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -214,7 +200,5 @@ public class BooleanArray(size: Int) : Cloneable {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): BooleanIterator
-
-    public override fun clone(): BooleanArray
 }
 
