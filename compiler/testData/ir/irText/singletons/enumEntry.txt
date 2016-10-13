@@ -1,0 +1,28 @@
+FILE /enumEntry.kt
+  CLASS ENUM_CLASS Z
+    CONSTRUCTOR private constructor Z()
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Z'
+    ENUM_ENTRY enum entry ENTRY
+      init: ENUM_CONSTRUCTOR_CALL 'constructor ENTRY()'
+      class: CLASS ENUM_ENTRY ENTRY
+        CONSTRUCTOR private constructor ENTRY()
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'constructor Z()'
+            INSTANCE_INITIALIZER_CALL classDescriptor='ENTRY'
+        FUN public final fun test(): kotlin.Unit
+          BLOCK_BODY
+        CLASS CLASS A
+          CONSTRUCTOR public constructor A()
+            BLOCK_BODY
+              DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+              INSTANCE_INITIALIZER_CALL classDescriptor='A'
+          FUN public final fun test2(): kotlin.Unit
+            BLOCK_BODY
+              CALL 'test(): Unit' type=kotlin.Unit origin=null
+                $this: GET_OBJECT 'ENTRY' type=Z.ENTRY
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Z>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Z
+      SYNTHETIC_BODY kind=ENUM_VALUEOF

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -42,8 +43,17 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
     }
 
     val receiverExpression = when (receiver) {
-        is ImplicitClassReceiver ->
-            IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset, receiver.classDescriptor.thisAsReceiverParameter)
+        is ImplicitClassReceiver -> {
+            if (receiver.classDescriptor.kind.isSingleton &&
+                this.scopeOwner != receiver.classDescriptor && //For anonymous initializers
+                this.scopeOwner.containingDeclaration != receiver.classDescriptor) {
+                IrGetObjectValueImpl(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver.type,
+                                     receiver.classDescriptor)
+            }
+            else {
+                IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver.classDescriptor.thisAsReceiverParameter)
+            }
+        }
         is ThisClassReceiver ->
             generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
         is SuperCallReceiverValue ->

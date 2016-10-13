@@ -1,0 +1,17 @@
+FILE /companion.kt
+  CLASS CLASS Z
+    CONSTRUCTOR public constructor Z()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Z'
+    FUN public final fun test2(): kotlin.Unit
+      BLOCK_BODY
+        CALL 'test(): Unit' type=kotlin.Unit origin=null
+          $this: GET_OBJECT 'companion object of Z' type=Z.Companion
+    CLASS OBJECT companion object of Z
+      CONSTRUCTOR private constructor Companion()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'
+      FUN public final fun test(): kotlin.Unit
+        BLOCK_BODY

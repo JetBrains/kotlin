@@ -1,0 +1,17 @@
+FILE /object.kt
+  CLASS OBJECT Z
+    CONSTRUCTOR private constructor Z()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Z'
+    FUN public final fun test(): kotlin.Unit
+      BLOCK_BODY
+    CLASS CLASS A
+      CONSTRUCTOR public constructor A()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='A'
+      FUN public final fun test2(): kotlin.Unit
+        BLOCK_BODY
+          CALL 'test(): Unit' type=kotlin.Unit origin=null
+            $this: GET_OBJECT 'Z' type=Z
