@@ -2002,8 +2002,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             final Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
-        final VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, statement);
-        assert variableDescriptor != null;
+        final VariableDescriptor variableDescriptor = getVariableDescriptorNotNull(statement);
 
         final Type type = getVariableType(variableDescriptor);
 
@@ -3265,15 +3264,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             );
         }
 
-        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
-        if (variableDescriptor != null) {
-            return generatePropertyReference(
-                    expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                    receiverAsmType, receiverValue
-            );
-        }
-
-        throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
+        VariableDescriptor variableDescriptor = getVariableDescriptorNotNull(expression);
+        return generatePropertyReference(
+                expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
+                receiverAsmType, receiverValue
+        );
     }
 
     @NotNull
@@ -3931,7 +3926,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtVariableDeclaration variableDeclaration,
             @NotNull StackValue initializer
     ) {
-        LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) bindingContext.get(VARIABLE, variableDeclaration);
+        LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) getVariableDescriptorNotNull(variableDeclaration);
 
         if (KtPsiUtil.isScriptDeclaration(variableDeclaration)) {
             return;
@@ -3943,7 +3938,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-        assert variableDescriptor != null;
 
         Type varType = getVariableTypeNoSharing(variableDescriptor);
 
@@ -3961,6 +3955,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
             invokePropertyDelegatedOnLocalVar(variableDescriptor, storeTo, metadataValue);
         }
+    }
+
+    @NotNull
+    private VariableDescriptor getVariableDescriptorNotNull(@NotNull KtElement declaration) {
+        VariableDescriptor descriptor = bindingContext.get(VARIABLE, declaration);
+        assert descriptor != null :  "Couldn't find variable declaration in binding context " + declaration.getText();
+        return descriptor;
     }
 
     private void invokePropertyDelegatedOnLocalVar(
