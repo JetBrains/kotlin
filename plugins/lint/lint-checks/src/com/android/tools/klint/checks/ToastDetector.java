@@ -28,12 +28,7 @@ import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.intellij.psi.PsiMethod;
 
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UReturnExpression;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -90,32 +85,34 @@ public class ToastDetector extends Detector implements Detector.UastScanner {
                                 "duration value is not supported");
             }
         }
-
         
-        UMethod surroundingMethod = UastUtils.getContainingUMethod(call);
-        if (surroundingMethod == null) {
+        UElement surroundingDeclaration = UastUtils.getParentOfType(
+                call, true,
+                UMethod.class, UBlockExpression.class, ULambdaExpression.class);
+
+        if (surroundingDeclaration == null) {
             return;
         }
 
         ShowFinder finder = new ShowFinder(call);
-        surroundingMethod.getUastBody().accept(finder);
+        surroundingDeclaration.accept(finder);
         if (!finder.isShowCalled()) {
             context.report(ISSUE, call, context.getUastNameLocation(call),
-                    "Toast created but not shown: did you forget to call `show()` ?");
+                           "Toast created but not shown: did you forget to call `show()` ?");
         }
 
     }
 
     private static class ShowFinder extends AbstractUastVisitor {
         /** The target makeText call */
-        private final UExpression mTarget;
+        private final UCallExpression mTarget;
         /** Whether we've found the show method */
         private boolean mFound;
         /** Whether we've seen the target makeText node yet */
         private boolean mSeenTarget;
 
         private ShowFinder(UCallExpression target) {
-            mTarget = UastUtils.getQualifiedParentOrThis(target);
+            mTarget = target;
         }
 
         @Override
@@ -123,14 +120,14 @@ public class ToastDetector extends Detector implements Detector.UastScanner {
             if (node.equals(mTarget)) {
                 mSeenTarget = true;
             } else {
-                if ((mTarget.equals(node.getReceiver())) 
-                        && "show".equals(node.getMethodName())) {
+                if ((mSeenTarget || mTarget.equals(node.getReceiver()))
+                    && "show".equals(node.getMethodName())) {
                     // TODO: Do more flow analysis to see whether we're really calling show
                     // on the right type of object?
                     mFound = true;
                 }
             }
-            
+
             return super.visitCallExpression(node);
         }
 
@@ -140,7 +137,7 @@ public class ToastDetector extends Detector implements Detector.UastScanner {
                 // If you just do "return Toast.makeText(...) don't warn
                 mFound = true;
             }
-            
+
             return super.visitReturnExpression(node);
         }
 

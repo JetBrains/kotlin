@@ -15,8 +15,8 @@ class LogTest {
         Log.d(TAG1, m) // ok: unconditional, but not performing computation
         Log.d(TAG1, "a" + "b") // ok: unconditional, but not performing non-constant computation
         Log.d(TAG1, Constants.MY_MESSAGE) // ok: unconditional, but constant string
-        Log.i(TAG1, "message" + m) // error: unconditional w/ computation
-        Log.i(TAG1, toString()) // error: unconditional w/ computation
+        Log.<warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">i(TAG1, "message" + m)</warning> // error: unconditional w/ computation
+        Log.<warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">i(TAG1, toString())</warning> // error: unconditional w/ computation
         Log.e(TAG1, toString()) // ok: only flagging debug/info messages
         Log.w(TAG1, toString()) // ok: only flagging debug/info messages
         Log.wtf(TAG1, toString()) // ok: only flagging debug/info messages
@@ -26,11 +26,11 @@ class LogTest {
     }
 
     fun checkWrongTag(tag: String) {
-        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `MyTag1` versus `MyTag2` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
-            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `MyTag1` versus `MyTag2`">TAG2</error>, "message") // warn: mismatched tags!
+        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `getTAG1` versus `getTAG2` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
+            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `getTAG1` versus `getTAG2`">TAG2</error>, "message") // warn: mismatched tags!
         }
-        if (Log.isLoggable("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `my_tag` versus `other_tag` (Conflicting tag)">my_tag</error>", Log.DEBUG)) {
-            Log.d("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `my_tag` versus `other_tag`">other_tag</error>", "message") // warn: mismatched tags!
+        if (Log.isLoggable("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `\"my_tag\"` versus `\"other_tag\"` (Conflicting tag)">my_tag</error>", Log.DEBUG)) {
+            Log.d("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `\"my_tag\"` versus `\"other_tag\"`">other_tag</error>", "message") // warn: mismatched tags!
         }
         if (Log.isLoggable("my_tag", Log.DEBUG)) {
             Log.d("my_tag", "message") // ok: strings equal
@@ -73,9 +73,9 @@ class LogTest {
         if (Log.isLoggable(TAG1, <error descr="Mismatched logging levels: when checking `isLoggable` level `DEBUG`, the corresponding log call should be `Log.d`, not `Log.v` (Conflicting tag)">Log.DEBUG</error>)) {
             Log.<error descr="Mismatched logging levels: when checking `isLoggable` level `DEBUG`, the corresponding log call should be `Log.d`, not `Log.v`">v</error>(TAG1, "message") // warn: wrong level
         }
-        if (Log.isLoggable(TAG1, DEBUG)) {
+        if (Log.isLoggable(TAG1, <error descr="Mismatched logging levels: when checking `isLoggable` level `DEBUG`, the corresponding log call should be `Log.d`, not `Log.v` (Conflicting tag)">DEBUG</error>)) {
             // static import of level
-            Log.v(TAG1, "message") // warn: wrong level
+            Log.<error descr="Mismatched logging levels: when checking `isLoggable` level `DEBUG`, the corresponding log call should be `Log.d`, not `Log.v`">v</error>(TAG1, "message") // warn: wrong level
         }
         if (Log.isLoggable(TAG1, <error descr="Mismatched logging levels: when checking `isLoggable` level `VERBOSE`, the corresponding log call should be `Log.v`, not `Log.d` (Conflicting tag)">Log.VERBOSE</error>)) {
             Log.<error descr="Mismatched logging levels: when checking `isLoggable` level `VERBOSE`, the corresponding log call should be `Log.v`, not `Log.d`">d</error>(TAG1, "message") // warn? verbose is a lower logging level, which includes debug
