@@ -127,7 +127,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
 
             if (stepThread == null) {
                 // TODO: Intellij code doesn't bother to check thread for null, so probably it's not-null actually
-                debuggerProcess.createStepOverCommand(suspendContext, true).contextAction(suspendContext)
+                debuggerProcess.createStepOverCommand(suspendContext, true).contextAction()
                 return
             }
 
