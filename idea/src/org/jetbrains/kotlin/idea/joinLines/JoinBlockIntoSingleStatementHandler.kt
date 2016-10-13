@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.joinLines
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.intentions.MergeIfsIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -45,15 +46,7 @@ class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
             // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
             if (pparent.`else` != null) return -1
 
-            val condition1 = pparent.condition
-            val condition2 = statement.condition
-            val body = statement.then
-            if (condition1 != null && condition2 != null && body != null) {
-                val newCondition = KtPsiFactory(pparent).createExpressionByPattern("$0 && $1", condition1, condition2)
-                condition1.replace(newCondition)
-                val newBody = block.replace(body)
-                return newBody.textRange!!.startOffset
-            }
+            return MergeIfsIntention.applyTo(pparent)
         }
 
         val newStatement = block.replace(statement)

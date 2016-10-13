@@ -10507,6 +10507,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/mergeIfs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MergeIfs extends AbstractIntentionTest {
+        public void testAllFilesPresentInMergeIfs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/mergeIfs"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/mergeIfs/comments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("else1.kt")
+        public void testElse1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/mergeIfs/else1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("else2.kt")
+        public void testElse2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/mergeIfs/else2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expression.kt")
+        public void testExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/mergeIfs/expression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/mergeIfs/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/moveLambdaInsideParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
