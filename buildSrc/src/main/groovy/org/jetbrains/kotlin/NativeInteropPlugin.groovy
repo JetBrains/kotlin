@@ -26,6 +26,7 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
     private List<String> compilerOpts = []
     private FileCollection headers;
+    private String linker
     private List<String> linkerOpts = []
     private FileCollection linkFiles;
     private List<String> linkTasks = []
@@ -46,6 +47,10 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
     void headers(FileCollection files) {
         dependsOnFiles(files)
         headers = headers + files
+    }
+
+    void linker(String value) {
+        linker = value
     }
 
     void linkerOpts(String... values) {
@@ -159,6 +164,10 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
                 if (pkg != null) {
                     args "-pkg:" + pkg
+                }
+
+                if (linker != null) {
+                    args "-linker:" + linker
                 }
 
                 args compilerOpts.collect { "-copt:$it" }

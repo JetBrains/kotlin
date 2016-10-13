@@ -110,7 +110,7 @@ private fun processLib(ktGenRoot: String,
     val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
     val compiler = config.getProperty("compiler") ?: "clang"
     val linkerOpts = config.getSpaceSeparated("linkerOpts").toTypedArray() + additionalLinkerOpts
-    val linker = config.getProperty("linker") ?: "clang"
+    val linker = args["-linker"]?.singleOrNull() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
     val fqParts = args["-pkg"]?.singleOrNull()?.let {
