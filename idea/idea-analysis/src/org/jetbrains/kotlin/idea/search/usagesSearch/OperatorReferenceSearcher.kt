@@ -244,21 +244,23 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
 
         if (scope is LocalSearchScope) {
             for (element in scope.scope) {
-                runReadAction {
-                    if (element.isValid) {
-                        val refs = ArrayList<PsiReference>()
-                        val elements = element.collectDescendantsOfType<KtElement> {
-                            val ref = extractReference(it) ?: return@collectDescendantsOfType false
-                            refs.add(ref)
-                            true
+                if (element is KtElement) {
+                    runReadAction {
+                        if (element.isValid) {
+                            val refs = ArrayList<PsiReference>()
+                            val elements = element.collectDescendantsOfType<KtElement> {
+                                val ref = extractReference(it) ?: return@collectDescendantsOfType false
+                                refs.add(ref)
+                                true
+                            }
+
+                            // resolve all references at once
+                            (element.containingFile as KtFile).getResolutionFacade().analyze(elements, BodyResolveMode.PARTIAL)
+
+                            refs
+                                    .filter { it.isReferenceTo(targetDeclaration) }
+                                    .forEach { consumer.process(it) }
                         }
-
-                        // resolve all references at once
-                        (element.containingFile as KtFile).getResolutionFacade().analyze(elements, BodyResolveMode.PARTIAL)
-
-                        refs
-                                .filter { it.isReferenceTo(targetDeclaration) }
-                                .forEach { consumer.process(it) }
                     }
                 }
             }
