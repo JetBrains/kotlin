@@ -279,8 +279,10 @@ fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
                 indexEntityReference.setStatic(null)
             }
 
+            val commandLineArgs = if (args1.size != 0) mallocNativeArrayOf(Int8Box.Companion, *args1)[0] else null
+
             clang_indexSourceFile(indexAction, clientData, callbacks, IndexerCallbacks.size, 0, headerFile.path,
-                    mallocNativeArrayOf(Int8Box.Companion, *args1)[0], args1.size, null, 0, null, 0)
+                    commandLineArgs, args1.size, null, 0, null, 0)
 
 
             return res
