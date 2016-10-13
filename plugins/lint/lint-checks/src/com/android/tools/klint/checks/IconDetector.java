@@ -1972,9 +1972,10 @@ public class IconDetector extends ResourceXmlDetector implements Detector.UastSc
 
     // ---- Implements UastScanner ----
 
-    private static final String NOTIFICATION_CLASS = "Notification";
-    private static final String NOTIFICATION_BUILDER_CLASS = "Notification.Builder";
-    private static final String NOTIFICATION_COMPAT_BUILDER_CLASS = "NotificationCompat.Builder";
+    private static final String NOTIFICATION_CLASS = "android.app.Notification";
+    private static final String NOTIFICATION_BUILDER_CLASS = "android.app.Notification.Builder";
+    private static final String NOTIFICATION_COMPAT_BUILDER_CLASS =
+            "android.support.v4.app.NotificationCompat.Builder";
     private static final String SET_SMALL_ICON = "setSmallIcon";
     private static final String ON_CREATE_OPTIONS_MENU = "onCreateOptionsMenu";
 
@@ -2026,7 +2027,7 @@ public class IconDetector extends ResourceXmlDetector implements Detector.UastSc
             if (!(resolved instanceof PsiClass)) {
                 return;
             }
-            String typeName = ((PsiClass) resolved).getName();
+            String typeName = ((PsiClass) resolved).getQualifiedName();
             if (NOTIFICATION_CLASS.equals(typeName)) {
                 List<UExpression> args = node.getValueArguments();
                 if (args.size() == 3) {

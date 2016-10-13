@@ -1162,12 +1162,12 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 boolean argWasReference = false;
                 if (lastArg instanceof UReferenceExpression) {
                     PsiElement resolved = ((UReferenceExpression) lastArg).resolve();
-
-
                     if (resolved instanceof PsiVariable) {
                         UExpression initializer = context.getUastContext().getInitializerBody (
                                 (PsiVariable) resolved);
-                        if (UastExpressionUtils.isConstructorCall(initializer)) {
+                        if (initializer != null &&
+                            (UastExpressionUtils.isNewArray(initializer) ||
+                             UastExpressionUtils.isNestedArrayInitializer(initializer))) {
                             argWasReference = true;
                             // Now handled by check below
                             lastArg = initializer;
@@ -1175,14 +1175,16 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                     }
                 }
 
-                if (UastExpressionUtils.isNewArray(lastArg)) {
-                    UCallExpression callExpression = (UCallExpression) lastArg;
+                if (UastExpressionUtils.isNewArray(lastArg) ||
+                    UastExpressionUtils.isNestedArrayInitializer(lastArg)) {
+                    UCallExpression arrayInitializer = (UCallExpression) lastArg;
 
-                    if (UastExpressionUtils.isNewArrayWithInitializer(lastArg)) {
-                        callCount = callExpression.getValueArgumentCount();
+                    if (UastExpressionUtils.isNewArrayWithInitializer(lastArg) ||
+                        UastExpressionUtils.isNestedArrayInitializer(lastArg)) {
+                        callCount = arrayInitializer.getValueArgumentCount();
                         knownArity = true;
                     } else if (UastExpressionUtils.isNewArrayWithDimensions(lastArg)) {
-                        List<UExpression> arrayDimensions = callExpression.getValueArguments();
+                        List<UExpression> arrayDimensions = arrayInitializer.getValueArguments();
                         if (arrayDimensions.size() == 1) {
                             UExpression first = arrayDimensions.get(0);
                             if (first instanceof ULiteralExpression) {
