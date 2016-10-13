@@ -44,7 +44,7 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { r
 }
 
 private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
-    (containingFile.moduleInfo as? IdeaModuleInfo)?.let { return it }
+    (containingFile?.moduleInfo as? IdeaModuleInfo)?.let { return it }
 
     if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement(onFailure)
 
