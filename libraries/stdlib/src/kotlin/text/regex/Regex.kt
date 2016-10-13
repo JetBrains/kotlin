@@ -16,7 +16,8 @@
 @file:JvmVersion
 package kotlin.text
 
-import java.util.*
+import java.util.Collections
+import java.util.EnumSet
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.internal.IMPLEMENTATIONS
@@ -232,11 +233,9 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
     override val value: String
         get() = matchResult.group()
 
-    override val groups: MatchGroupCollection = object : MatchNamedGroupCollection {
+    override val groups: MatchGroupCollection = object : MatchNamedGroupCollection, AbstractCollection<MatchGroup?>() {
         override val size: Int get() = matchResult.groupCount() + 1
         override fun isEmpty(): Boolean = false
-        override fun contains(element: MatchGroup?): Boolean = this.any { it == element }
-        override fun containsAll(elements: Collection<MatchGroup?>): Boolean = elements.all { contains(it) }
 
         override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
         override fun get(index: Int): MatchGroup? {

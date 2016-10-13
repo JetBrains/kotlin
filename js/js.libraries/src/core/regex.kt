@@ -197,15 +197,9 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
         override val value: String
             get() = match[0]!!
 
-        override val groups: MatchGroupCollection = object : MatchGroupCollection {
+        override val groups: MatchGroupCollection = object : MatchGroupCollection, AbstractCollection<MatchGroup?>() {
             override val size: Int get() = match.length
-            override fun isEmpty(): Boolean = size == 0
-
-            override fun contains(element: MatchGroup?): Boolean = this.any { it == element }
-            override fun containsAll(elements: Collection<MatchGroup?>): Boolean = elements.all { contains(it) }
-
             override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
-
             override fun get(index: Int): MatchGroup? = match[index]?.let { MatchGroup(it) }
         }
 
