@@ -6,7 +6,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 
     private var apiVersionField: kotlin.String? = null
     override var apiVersion: kotlin.String
-        get() = apiVersionField ?: "1.1"
+        get() = apiVersionField ?: "1.0"
         set(value) { apiVersionField = value }
 
     private var includeRuntimeField: kotlin.Boolean? = null
@@ -69,7 +69,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
-    apiVersion = "1.1"
+    apiVersion = "1.0"
     includeRuntime = false
     jdkHome = null
     jvmTarget = "1.6"

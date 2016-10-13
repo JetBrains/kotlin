@@ -6,8 +6,8 @@ interface KotlinJvmOptions {
 
     /**
      * Allow to use declarations only from the specified version of bundled libraries
-     * Possible values: "1.0", "1.1"
-     * Default value: "1.1"
+     * Possible values: "1.0"
+     * Default value: "1.0"
      */
      var apiVersion: kotlin.String
 

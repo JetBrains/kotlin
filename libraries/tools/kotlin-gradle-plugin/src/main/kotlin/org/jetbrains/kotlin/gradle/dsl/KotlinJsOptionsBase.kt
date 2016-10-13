@@ -6,7 +6,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 
     private var apiVersionField: kotlin.String? = null
     override var apiVersion: kotlin.String
-        get() = apiVersionField ?: "1.1"
+        get() = apiVersionField ?: "1.0"
         set(value) { apiVersionField = value }
 
     private var kjsmField: kotlin.Boolean? = null
@@ -81,7 +81,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
-    apiVersion = "1.1"
+    apiVersion = "1.0"
     kjsm = true
     languageVersion = "1.0"
     main = "noCall"
