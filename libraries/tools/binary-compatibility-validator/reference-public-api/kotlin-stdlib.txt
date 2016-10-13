@@ -138,14 +138,14 @@ public abstract class kotlin/collections/AbstractMap : java/util/Map, kotlin/jvm
 	public final fun values ()Ljava/util/Collection;
 }
 
-public abstract class kotlin/collections/AbstractMutableCollection : java/util/AbstractCollection {
+public abstract class kotlin/collections/AbstractMutableCollection : java/util/AbstractCollection, java/util/Collection, kotlin/jvm/internal/markers/KMutableCollection {
 	protected fun <init> ()V
 	public abstract fun add (Ljava/lang/Object;)Z
 	public abstract fun getSize ()I
 	public final fun size ()I
 }
 
-public abstract class kotlin/collections/AbstractMutableList : java/util/AbstractList {
+public abstract class kotlin/collections/AbstractMutableList : java/util/AbstractList, java/util/List, kotlin/jvm/internal/markers/KMutableList {
 	protected fun <init> ()V
 	public abstract fun add (ILjava/lang/Object;)V
 	public abstract fun getSize ()I
@@ -155,7 +155,7 @@ public abstract class kotlin/collections/AbstractMutableList : java/util/Abstrac
 	public final fun size ()I
 }
 
-public abstract class kotlin/collections/AbstractMutableMap : java/util/AbstractMap {
+public abstract class kotlin/collections/AbstractMutableMap : java/util/AbstractMap, java/util/Map, kotlin/jvm/internal/markers/KMutableMap {
 	protected fun <init> ()V
 	public final fun entrySet ()Ljava/util/Set;
 	public abstract fun getEntries ()Ljava/util/Set;
@@ -168,7 +168,7 @@ public abstract class kotlin/collections/AbstractMutableMap : java/util/Abstract
 	public final fun values ()Ljava/util/Collection;
 }
 
-public abstract class kotlin/collections/AbstractMutableSet : java/util/AbstractSet {
+public abstract class kotlin/collections/AbstractMutableSet : java/util/AbstractSet, java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
 	protected fun <init> ()V
 	public abstract fun getSize ()I
 	public final fun size ()I
