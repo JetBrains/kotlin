@@ -20,6 +20,8 @@ class CasesPublicAPITest {
 
     @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
 
+    @Test fun interfaces() { snapshotAPIAndCompare(testName.methodName) }
+
     @Test fun internal() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun java() { snapshotAPIAndCompare(testName.methodName) }
