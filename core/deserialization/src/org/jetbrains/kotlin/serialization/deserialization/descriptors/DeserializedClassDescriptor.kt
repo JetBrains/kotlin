@@ -186,9 +186,12 @@ class DeserializedClassDescriptor(
             get() = SupertypeLoopChecker.EMPTY
     }
 
+    // workaround KT-13454
+    private fun nestedClassNames() = { classProto.nestedClassNameList.map { c.nameResolver.getName(it) } }
+
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(
             c, classProto.functionList, classProto.propertyList,
-            classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
+            nestedClassNames()
     ) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
 
