@@ -125,6 +125,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("KT14130.kt")
+    public void testKT14130() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/KT14130.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedTypeArg.kt")
     public void testNestedTypeArg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NestedTypeArg.kt");
