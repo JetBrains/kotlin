@@ -25,4 +25,7 @@ interface ClassDescriptorFactory {
     fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean
 
     fun createClass(classId: ClassId): ClassDescriptor?
+
+    // Note: do not rely on this function to return _all_ classes. Some factories can not enumerate all classes that they're able to create
+    fun getAllContributedClassesIfPossible(packageFqName: FqName): Collection<ClassDescriptor>
 }
