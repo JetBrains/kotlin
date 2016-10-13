@@ -195,7 +195,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         )
         args.classpathAsList = classpath.toList()
         args.destinationAsFile = destinationDir
-        compiler.compile(allKotlinSources, changedFiles, args, messageCollector)
+        compiler.compile(allKotlinSources, args, messageCollector, { changedFiles })
         anyClassesCompiled = compiler.anyClassesCompiled
     }
 

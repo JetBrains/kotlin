@@ -83,6 +83,8 @@ fun parseTestBuildLog(file: File): List<BuildStep> {
     }
 }
 
+// used in integration tests
+@Suppress("unused")
 fun dumpBuildLog(buildSteps: Iterable<BuildStep>): String {
     val sb = StringBuilder()
 
