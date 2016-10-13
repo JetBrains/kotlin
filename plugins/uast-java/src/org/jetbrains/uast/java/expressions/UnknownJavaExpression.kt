@@ -16,12 +16,13 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class UnknownJavaExpression(
         override val psi: PsiElement,
-        override val parent: UElement
+        override val containingElement: UElement?
 ) : UExpression, PsiElementBacked {
-    override fun logString() = "[!] UnknownJavaExpression ($psi)"
+    override fun asLogString() = "[!] UnknownJavaExpression ($psi)"
 }

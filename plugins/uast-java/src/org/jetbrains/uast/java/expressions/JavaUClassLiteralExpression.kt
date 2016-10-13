@@ -16,14 +16,18 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiClassObjectAccessExpression
+import com.intellij.psi.PsiType
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UType
+
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUClassLiteralExpression(
         override val psi: PsiClassObjectAccessExpression,
-        override val parent: UElement
-) : JavaAbstractUElement(), UClassLiteralExpression, PsiElementBacked, JavaUElementWithType {
-    override val type: UType by lz { JavaConverter.convert(psi.type, this) }
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UClassLiteralExpression, PsiElementBacked {
+    override val type: PsiType
+        get() = psi.type
+    
+    override val expression by lz { JavaUTypeReferenceExpression(psi.operand, this) }
 }

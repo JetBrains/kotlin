@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUReturnExpression(
         override val psi: PsiReturnStatement,
-        override val parent: UElement
-) : JavaAbstractUElement(), UReturnExpression, PsiElementBacked {
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UReturnExpression, PsiElementBacked {
     override val returnExpression by lz { JavaConverter.convertOrNull(psi.returnValue, this) }
 }

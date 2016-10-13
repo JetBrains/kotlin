@@ -15,11 +15,18 @@
  */
 package org.jetbrains.uast
 
-internal fun List<UElement>.logString() = joinToString("\n") { it.logString().withMargin }
+import com.intellij.psi.PsiType
 
-internal fun UModifierOwner.renderModifiers() = UastModifier.VALUES
-        .filter { hasModifier(it) }
-        .joinToString(" ") { it.name }
+internal val ERROR_NAME = "<error>"
+
+internal val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+
+val String.withMargin: String
+    get() = lines().joinToString(LINE_SEPARATOR) { "    " + it }
+
+internal operator fun String.times(n: Int) = this.repeat(n)
+
+internal fun List<UElement>.asLogString() = joinToString(LINE_SEPARATOR) { it.asLogString().withMargin }
 
 internal fun StringBuilder.appendWithSpace(s: String) {
     if (s.isNotEmpty()) {
@@ -27,3 +34,13 @@ internal fun StringBuilder.appendWithSpace(s: String) {
         append(' ')
     }
 }
+
+internal tailrec fun UExpression.unwrapParenthesis(): UExpression = when (this) {
+    is UParenthesizedExpression -> expression.unwrapParenthesis()
+    else -> this
+}
+
+internal fun <T> lz(f: () -> T) = lazy(LazyThreadSafetyMode.NONE, f)
+
+internal val PsiType.name: String
+    get() = getCanonicalText(false)

@@ -16,7 +16,7 @@
 package org.jetbrains.uast
 
 /**
- * Kinds of [USpecialExpressionList].
+ * Kinds of [UExpressionList].
  */
 open class UastSpecialExpressionKind(val name: String) {
     override fun toString(): String{

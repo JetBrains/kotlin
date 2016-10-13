@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUBlockExpression(
         override val psi: PsiBlockStatement,
-        override val parent: UElement
-) : JavaAbstractUElement(), UBlockExpression, PsiElementBacked, JavaUElementWithType {
-    override val expressions by lz { psi.codeBlock.statements.map { JavaConverter.convert(it, this) } }
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UBlockExpression, PsiElementBacked {
+    override val expressions by lz { psi.codeBlock.statements.map { JavaConverter.convertStatement(it, this) } }
 }

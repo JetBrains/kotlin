@@ -20,7 +20,7 @@ package org.jetbrains.uast
  */
 open class UastBinaryOperator(override val text: String): UastOperator {
     class LogicalOperator(text: String): UastBinaryOperator(text)
-    class ComparationOperator(text: String): UastBinaryOperator(text)
+    class ComparisonOperator(text: String): UastBinaryOperator(text)
     class ArithmeticOperator(text: String): UastBinaryOperator(text)
     class BitwiseOperator(text: String): UastBinaryOperator(text)
     class AssignOperator(text: String): UastBinaryOperator(text)
@@ -36,7 +36,7 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         val MINUS = ArithmeticOperator("-")
 
         @JvmField
-        val MULT = ArithmeticOperator("*")
+        val MULTIPLY = ArithmeticOperator("*")
 
         @JvmField
         val DIV = ArithmeticOperator("/")
@@ -60,28 +60,28 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         val BITWISE_XOR = BitwiseOperator("^")
 
         @JvmField
-        val EQUALS = ComparationOperator("==")
+        val EQUALS = ComparisonOperator("==")
 
         @JvmField
-        val NOT_EQUALS = ComparationOperator("!=")
+        val NOT_EQUALS = ComparisonOperator("!=")
 
         @JvmField
-        val IDENTITY_EQUALS = ComparationOperator("===")
+        val IDENTITY_EQUALS = ComparisonOperator("===")
 
         @JvmField
-        val IDENTITY_NOT_EQUALS = ComparationOperator("!==")
+        val IDENTITY_NOT_EQUALS = ComparisonOperator("!==")
 
         @JvmField
-        val GREATER = ComparationOperator(">")
+        val GREATER = ComparisonOperator(">")
 
         @JvmField
-        val GREATER_OR_EQUAL = ComparationOperator(">=")
+        val GREATER_OR_EQUAL = ComparisonOperator(">=")
 
         @JvmField
-        val LESS = ComparationOperator("<")
+        val LESS = ComparisonOperator("<")
 
         @JvmField
-        val LESS_OR_EQUAL = ComparationOperator("<=")
+        val LESS_OR_EQUAL = ComparisonOperator("<=")
 
         @JvmField
         val SHIFT_LEFT = BitwiseOperator("<<")
@@ -93,7 +93,7 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         val UNSIGNED_SHIFT_RIGHT = BitwiseOperator(">>>")
 
         @JvmField
-        val UNKNOWN = UastBinaryOperator("<unknown>")
+        val OTHER = UastBinaryOperator("<other>")
 
         @JvmField
         val PLUS_ASSIGN = AssignOperator("+=")

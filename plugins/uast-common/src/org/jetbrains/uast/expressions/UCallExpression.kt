@@ -15,64 +15,49 @@
  */
 package org.jetbrains.uast
 
+
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
+import org.jetbrains.uast.expressions.UReferenceExpression
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
- * Represents a call expression (function call, constructor call, array initializer).
+ * Represents a call expression (method/constructor call, array initializer).
  */
 interface UCallExpression : UExpression, UResolvable {
-    val receiverType: UType?
-    
     /**
      * Returns the call kind.
      */
     val kind: UastCallKind
 
     /**
-     * Returns the function reference expression if the call is a function call, null otherwise.
+     * Returns the called method name, or null if the call is not a method call.
+     * This property should return the actual resolved function name.
      */
-    val functionReference: USimpleReferenceExpression?
+    val methodName: String?
+
+    /**
+     * Returns the expression receiver.
+     * For example, for call `a.b.[c()]` the receiver is `a.b`.
+     */
+    val receiver: UExpression?
+
+    /**
+     * Returns the receiver type, or null if the call has not a receiver.
+     */
+    val receiverType: PsiType?
+
+    /**
+     * Returns the function reference expression if the call is a non-constructor method call, null otherwise.
+     */
+    val methodIdentifier: UIdentifier?
 
     /**
      * Returns the class reference if the call is a constructor call, null otherwise.
      */
-    val classReference: USimpleReferenceExpression?
-
-    /**
-     * Returns the function name if the call is a function call, null otherwise.
-     *
-     * [functionName] should only be used in debug messages.
-     * Use [matchesFunctionName] to check against the name.
-     */
-    val functionName: String?
-
-    /**
-     * Returns an element for the function name node, or null if the node does not exist in the underlying AST (Psi).
-     */
-    val functionNameElement: UElement?
-
-    /**
-     * Checks if the function name is [name].
-     *
-     * @param name the name to check against.
-     * @return true if the call is a function call, and the function name is [name], false otherwise.
-     */
-    open fun matchesFunctionName(name: String) = functionName == name
-
-    /**
-     * Checks if the function name is [name], and the function containing class qualified name is [containingClassFqName].
-     *
-     * @param containingClassFqName the required containing class qualified name.
-     * @param name the function name to check against.
-     * @return true if the call is a function call, the function name is [name],
-     *              and the qualified name of the function direct containing class is [containingClassFqName],
-     *         false otherwise.
-     */
-    open fun matchesFunctionNameWithContaining(containingClassFqName: String, name: String): Boolean {
-        if (!matchesFunctionName(name)) return false
-        val containingClass = parent as? UClass ?: return false
-        return containingClass.matchesFqName(containingClassFqName)
-    }
+    val classReference: UReferenceExpression?
 
     /**
      * Returns the value argument count.
@@ -93,40 +78,35 @@ interface UCallExpression : UExpression, UResolvable {
     val typeArgumentCount: Int
 
     /**
-     * Returns the function type arguments.
+     * Returns the type arguments for the call.
      */
-    val typeArguments: List<UType>
+    val typeArguments: List<PsiType>
 
     /**
-     * Resolve the call to the [UFunction] element.
-     *
-     * @param context the Uast context
-     * @return the [UFunction] element, or null if the reference was not resolved.
+     * Returns the return type of the called function, or null if the call is not a function call.
      */
-    override fun resolve(context: UastContext): UFunction?
+    val returnType: PsiType?
 
     /**
-     * Try to resolve the call to the [UFunction] element.
-     *
-     * @param context the Uast context
-     * @return the [UFunction] element, of [UFunctionNotResolved] if the reference was not resolved,
-     *         or the call is not a function call.
+     * Resolve the called method.
+     * 
+     * @return the [PsiMethod], or null if the method was not resolved. 
+     * Note that the [PsiMethod] is an unwrapped [PsiMethod], not a [UMethod].
      */
-    override fun resolveOrEmpty(context: UastContext): UFunction = resolve(context) ?: UFunctionNotResolved
+    override fun resolve(): PsiMethod?
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCallExpression(this)) return
-        functionReference?.accept(visitor)
+        methodIdentifier?.accept(visitor)
         classReference?.accept(visitor)
-        functionNameElement?.accept(visitor)
         valueArguments.acceptList(visitor)
-        typeArguments.acceptList(visitor)
         visitor.afterVisitCallExpression(this)
     }
 
-    override fun logString() = log("UFunctionCallExpression ($kind, argCount = $valueArgumentCount)", functionReference, valueArguments)
-    override fun renderString(): String {
-        val ref = functionName ?: classReference?.renderString() ?: functionReference?.renderString() ?: "<noref>"
-        return ref + "(" + valueArguments.joinToString { it.renderString() } + ")"
+    override fun asLogString() = log("UCallExpression ($kind, argCount = $valueArgumentCount)", methodIdentifier, valueArguments)
+    
+    override fun asRenderString(): String {
+        val ref = classReference?.asRenderString() ?: methodName ?: methodIdentifier?.asRenderString() ?: "<noref>"
+        return ref + "(" + valueArguments.joinToString { it.asRenderString() } + ")"
     }
 }

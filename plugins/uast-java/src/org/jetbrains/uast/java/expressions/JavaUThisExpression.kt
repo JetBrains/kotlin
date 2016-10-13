@@ -22,5 +22,5 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUThisExpression(
         override val psi: PsiThisExpression,
-        override val parent: UElement
-) : JavaAbstractUElement(), UThisExpression, PsiElementBacked, JavaUElementWithType
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UThisExpression, PsiElementBacked

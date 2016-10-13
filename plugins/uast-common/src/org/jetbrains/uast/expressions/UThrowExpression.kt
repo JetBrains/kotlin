@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -33,7 +34,6 @@ interface UThrowExpression : UExpression {
         visitor.afterVisitThrowExpression(this)
     }
 
-    override fun renderString() = "throw " + thrownExpression.renderString()
-
-    override fun logString() = log("UThrowExpression", thrownExpression)
+    override fun asRenderString() = "throw " + thrownExpression.asRenderString()
+    override fun asLogString() = log("UThrowExpression", thrownExpression)
 }

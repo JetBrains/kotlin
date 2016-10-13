@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" exported="" name="intellij-core" level="project" />
   </component>
 </module>

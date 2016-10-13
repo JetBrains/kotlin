@@ -22,8 +22,8 @@ import org.jetbrains.uast.visitor.UastVisitor
  * Qualified `super` is not supported at the moment.
  */
 interface USuperExpression : UExpression {
-    override fun logString() = "USuperExpression"
-    override fun renderString() = "super"
+    override fun asLogString() = "USuperExpression"
+    override fun asRenderString() = "super"
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitSuperExpression(this)

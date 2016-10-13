@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,49 +17,27 @@
 package org.jetbrains.uast.visitor
 
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UTypeReferenceExpression
+
 
 class DelegatingUastVisitor(private val visitors: List<UastVisitor>): UastVisitor {
     override fun visitElement(node: UElement): Boolean {
         return visitors.all { it.visitElement(node) }
     }
 
-    override fun visitFile(node: UFile): Boolean {
-        return visitors.all { it.visitFile(node) }
-    }
-
-    override fun visitImportStatement(node: UImportStatement): Boolean {
-        return visitors.all { it.visitImportStatement(node) }
-    }
-
-    override fun visitAnnotation(node: UAnnotation): Boolean {
-        return visitors.all { it.visitAnnotation(node) }
-    }
-
-    override fun visitCatchClause(node: UCatchClause): Boolean {
-        return visitors.all { it.visitCatchClause(node) }
-    }
-
-    override fun visitType(node: UType): Boolean {
-        return visitors.all { it.visitType(node) }
-    }
-
-    override fun visitClass(node: UClass): Boolean {
-        return visitors.all { it.visitClass(node) }
-    }
-
-    override fun visitFunction(node: UFunction): Boolean {
-        return visitors.all { it.visitFunction(node) }
-    }
-
     override fun visitVariable(node: UVariable): Boolean {
         return visitors.all { it.visitVariable(node) }
+    }
+
+    override fun visitMethod(node: UMethod): Boolean {
+        return visitors.all { it.visitMethod(node) }
     }
 
     override fun visitLabeledExpression(node: ULabeledExpression): Boolean {
         return visitors.all { it.visitLabeledExpression(node) }
     }
 
-    override fun visitDeclarationsExpression(node: UDeclarationsExpression): Boolean {
+    override fun visitDeclarationsExpression(node: UVariableDeclarationsExpression): Boolean {
         return visitors.all { it.visitDeclarationsExpression(node) }
     }
 
@@ -67,12 +45,16 @@ class DelegatingUastVisitor(private val visitors: List<UastVisitor>): UastVisito
         return visitors.all { it.visitBlockExpression(node) }
     }
 
-    override fun visitQualifiedExpression(node: UQualifiedExpression): Boolean {
-        return visitors.all { it.visitQualifiedExpression(node) }
+    override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression): Boolean {
+        return visitors.all { it.visitQualifiedReferenceExpression(node) }
     }
 
-    override fun visitSimpleReferenceExpression(node: USimpleReferenceExpression): Boolean {
-        return visitors.all { it.visitSimpleReferenceExpression(node) }
+    override fun visitSimpleNameReferenceExpression(node: USimpleNameReferenceExpression): Boolean {
+        return visitors.all { it.visitSimpleNameReferenceExpression(node) }
+    }
+
+    override fun visitTypeReferenceExpression(node: UTypeReferenceExpression): Boolean {
+        return visitors.all { it.visitTypeReferenceExpression(node) }
     }
 
     override fun visitCallExpression(node: UCallExpression): Boolean {
@@ -103,8 +85,8 @@ class DelegatingUastVisitor(private val visitors: List<UastVisitor>): UastVisito
         return visitors.all { it.visitPostfixExpression(node) }
     }
 
-    override fun visitSpecialExpressionList(node: USpecialExpressionList): Boolean {
-        return visitors.all { it.visitSpecialExpressionList(node) }
+    override fun visitExpressionList(node: UExpressionList): Boolean {
+        return visitors.all { it.visitExpressionList(node) }
     }
 
     override fun visitIfExpression(node: UIfExpression): Boolean {
@@ -139,6 +121,10 @@ class DelegatingUastVisitor(private val visitors: List<UastVisitor>): UastVisito
         return visitors.all { it.visitTryExpression(node) }
     }
 
+    override fun visitCatchClause(node: UCatchClause): Boolean {
+        return visitors.all { it.visitCatchClause(node) }
+    }
+    
     override fun visitLiteralExpression(node: ULiteralExpression): Boolean {
         return visitors.all { it.visitLiteralExpression(node) }
     }

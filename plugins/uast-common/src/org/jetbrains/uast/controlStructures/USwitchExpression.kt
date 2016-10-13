@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -30,16 +32,21 @@ import org.jetbrains.uast.visitor.UastVisitor
  *   conditional expression.
  */
 interface USwitchExpression : UExpression {
-    /*
+    /**
         Returns the expression on which the `switch` expression is performed.
      */
     val expression: UExpression?
 
-    /*
+    /**
         Returns the switch body.
-        Body should contain [USwitchClauseExpression] expressions.
+        The body should contain [USwitchClauseExpression] expressions.
      */
     val body: UExpression
+
+    /**
+     * Returns an identifier for the 'switch' ('case', 'when', ...) keyword.
+     */
+    val switchIdentifier: UIdentifier
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitSwitchExpression(this)) return
@@ -48,11 +55,12 @@ interface USwitchExpression : UExpression {
         visitor.afterVisitSwitchExpression(this)
     }
 
-    override fun logString() = log("USwitchExpression", expression, body)
-    override fun renderString() = buildString {
-        val expr = expression?.let { "(" + it.renderString() + ") " } ?: ""
+    override fun asLogString() = log("USwitchExpression", expression, body)
+    
+    override fun asRenderString() = buildString {
+        val expr = expression?.let { "(" + it.asRenderString() + ") " } ?: ""
         appendln("switch $expr")
-        appendln(body.renderString())
+        appendln(body.asRenderString())
     }
 }
 
@@ -74,8 +82,8 @@ interface USwitchClauseExpression : UExpression {
         visitor.afterVisitSwitchClauseExpression(this)
     }
 
-    override fun renderString() = (caseValues?.joinToString { it.renderString() } ?: "else") + " -> "
-    override fun logString() = log("USwitchClauseExpression", caseValues)
+    override fun asRenderString() = (caseValues?.joinToString { it.asRenderString() } ?: "else") + " -> "
+    override fun asLogString() = log("USwitchClauseExpression", caseValues)
 }
 
 /**
@@ -97,6 +105,6 @@ interface USwitchClauseExpressionWithBody : USwitchClauseExpression {
         visitor.afterVisitSwitchClauseExpression(this)
     }
 
-    override fun renderString() = (caseValues?.joinToString { it.renderString() } ?: "else") + " -> " + body.renderString()
-    override fun logString() = log("USwitchClauseExpressionWithBody", caseValues, body)
+    override fun asRenderString() = (caseValues?.joinToString { it.asRenderString() } ?: "else") + " -> " + body.asRenderString()
+    override fun asLogString() = log("USwitchClauseExpressionWithBody", caseValues, body)
 }
