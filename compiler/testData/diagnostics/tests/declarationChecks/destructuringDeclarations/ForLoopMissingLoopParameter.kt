@@ -6,7 +6,7 @@ fun useDeclaredVariables() {
 }
 
 fun checkersShouldRun() {
-    for ((@A a, _)<!SYNTAX!><!>) {
+    for ((@A <!UNUSED_VARIABLE!>a<!>, _)<!SYNTAX!><!>) {
 
     }
 }

@@ -1,8 +1,7 @@
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun foo(block: (Int, String) -> Unit) { }
-fun foobar(block: (Double) -> Unit) { }
+fun foo(<!UNUSED_PARAMETER!>block<!>: (Int, String) -> Unit) { }
+fun foobar(<!UNUSED_PARAMETER!>block<!>: (Double) -> Unit) { }
 
 fun bar() {
     foo { _, b ->
@@ -41,9 +40,9 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { <!REDECLARATION, REDECLARATION!>`_`<!>, <!REDECLARATION, REDECLARATION!>`_`<!> ->
+    foo { <!REDECLARATION, REDECLARATION, UNUSED_PARAMETER!>`_`<!>, <!REDECLARATION, REDECLARATION!>`_`<!> ->
         _ checkType { _<String>() }
     }
 
-    foo(fun(x: Int, _: String) {})
+    foo(fun(<!UNUSED_PARAMETER!>x<!>: Int, _: String) {})
 }

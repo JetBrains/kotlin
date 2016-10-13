@@ -23,7 +23,7 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: _<
 }
 
 // one underscore parameters for named function are still prohibited
-fun oneUnderscore(<!UNUSED_PARAMETER, UNDERSCORE_IS_RESERVED!>_<!>: Int) {}
+fun oneUnderscore(<!UNDERSCORE_IS_RESERVED!>_<!>: Int) {}
 
 fun doIt(f: (Any?) -> Any?) = f(null)
 

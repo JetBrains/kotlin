@@ -19,32 +19,32 @@ public class A {
 // FILE: main.kt
 fun main() {
     A().foo {
-        x -> 1
+        x -> x.hashCode()
     }
 
     A.bar {
-        x -> 1
+        x -> x.hashCode()
     }
 
 
     // baz
     A.baz {
-        x -> "" // OK
+        x -> x.toString() // OK
     }
 
     A.baz {
-        x -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+        x -> <!TYPE_MISMATCH!>x.hashCode()<!>
     }
 
     val block: (String) -> Any? = {
-        x -> 1
+        x -> x.hashCode()
     }
 
     A().foo(block)
     A.bar(block)
 
     val block2: (String) -> CharSequence? = {
-        x -> ""
+        x -> x.toString()
     }
 
     A.<!NONE_APPLICABLE!>baz<!>(block)

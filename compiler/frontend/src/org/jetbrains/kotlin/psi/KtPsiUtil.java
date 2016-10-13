@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -280,9 +279,8 @@ public class KtPsiUtil {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
         assert declaration instanceof KtDestructuringDeclarationEntry;
-        KtDestructuringDeclaration parentDeclaration = (KtDestructuringDeclaration) declaration.getParent();
-        List<KtDestructuringDeclarationEntry> entries = parentDeclaration.getEntries();
-        return entries.size() > 1 && entries.get(entries.size() - 1) == declaration;
+        // We can always replace destructuring entry with _
+        return true;
     }
 
     @Nullable

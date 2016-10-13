@@ -17,8 +17,8 @@ val none = { -> }
 
 val parameterWithFunctionType = { a: ((Int) -> Int) -> <!SYNTAX!><!>} // todo fix parser
 
-val newSyntax = { a: Int -> }
-val newSyntax1 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> -> }
-val newSyntax2 = { a: Int, b: Int -> }
-val newSyntax3 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, b: Int -> }
-val newSyntax4 = { a: Int, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> -> }
+val newSyntax = { <!UNUSED_PARAMETER!>a<!>: Int -> }
+val newSyntax1 = { <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>a<!>, <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>b<!> -> }
+val newSyntax2 = { <!UNUSED_PARAMETER!>a<!>: Int, <!UNUSED_PARAMETER!>b<!>: Int -> }
+val newSyntax3 = { <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>a<!>, <!UNUSED_PARAMETER!>b<!>: Int -> }
+val newSyntax4 = { <!UNUSED_PARAMETER!>a<!>: Int, <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>b<!> -> }

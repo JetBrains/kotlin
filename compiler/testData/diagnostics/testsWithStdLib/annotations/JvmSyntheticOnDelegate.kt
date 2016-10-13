@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 import kotlin.properties.Delegates
 
 class My {

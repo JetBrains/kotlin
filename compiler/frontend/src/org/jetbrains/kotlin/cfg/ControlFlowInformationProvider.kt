@@ -578,6 +578,7 @@ class ControlFlowInformationProvider private constructor(
                         }
                         else if (element is KtParameter) {
                             val owner = element.parent?.parent
+                            if (element.isSingleUnderscore) return@traverse
                             when (owner) {
                                 is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
                                     val containingClass = owner.getContainingClassOrObject()
@@ -590,7 +591,6 @@ class ControlFlowInformationProvider private constructor(
                                 is KtFunction -> {
                                     val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
                                     val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
-                                    if (owner is KtFunctionLiteral) return@traverse
                                     val functionDescriptor =
                                             trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
                                             ?: throw AssertionError(owner.text)

@@ -1,6 +1,6 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<String>): String {
-    return javaClass.doSomething("", 1) { s: String -> "" }
+    return javaClass.doSomething("", 1) { <!UNUSED_PARAMETER!>s<!>: String -> "" }
 }
 
 // FILE: JavaClass.java

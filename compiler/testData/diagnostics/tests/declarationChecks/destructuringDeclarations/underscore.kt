@@ -43,6 +43,8 @@ fun test() {
     val (_, <!NAME_SHADOWING, REDECLARATION!>`_`<!>) = A()
 
     foo(<!TYPE_MISMATCH!>_<!>, y)
+
+    val (<!UNUSED_VARIABLE!>unused<!>, _) = A()
 }
 
 fun foo(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: String) {}
