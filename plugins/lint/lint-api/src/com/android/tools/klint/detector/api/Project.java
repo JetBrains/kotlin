@@ -16,21 +16,49 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.SdkConstants.ANDROID_LIBRARY;
+import static com.android.SdkConstants.ANDROID_LIBRARY_REFERENCE_FORMAT;
+import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
+import static com.android.SdkConstants.ANDROID_URI;
+import static com.android.SdkConstants.APPCOMPAT_LIB_ARTIFACT;
+import static com.android.SdkConstants.ATTR_MIN_SDK_VERSION;
+import static com.android.SdkConstants.ATTR_PACKAGE;
+import static com.android.SdkConstants.ATTR_TARGET_SDK_VERSION;
+import static com.android.SdkConstants.FN_ANDROID_MANIFEST_XML;
+import static com.android.SdkConstants.FN_PROJECT_PROGUARD_FILE;
+import static com.android.SdkConstants.OLD_PROGUARD_FILE;
+import static com.android.SdkConstants.PROGUARD_CONFIG;
+import static com.android.SdkConstants.PROJECT_PROPERTIES;
+import static com.android.SdkConstants.RES_FOLDER;
+import static com.android.SdkConstants.SUPPORT_LIB_ARTIFACT;
+import static com.android.SdkConstants.TAG_USES_SDK;
+import static com.android.SdkConstants.VALUE_TRUE;
+import static com.android.sdklib.SdkVersionInfo.HIGHEST_KNOWN_API;
+import static com.android.sdklib.SdkVersionInfo.LOWEST_ACTIVE_API;
+
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.build.FilterData;
 import com.android.build.OutputFile;
-import com.android.builder.model.*;
+import com.android.builder.model.AndroidArtifact;
+import com.android.builder.model.AndroidArtifactOutput;
+import com.android.builder.model.AndroidLibrary;
+import com.android.builder.model.AndroidProject;
+import com.android.builder.model.ProductFlavor;
+import com.android.builder.model.ProductFlavorContainer;
+import com.android.builder.model.Variant;
 import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.resources.Density;
 import com.android.resources.ResourceFolderType;
 import com.android.sdklib.AndroidVersion;
+import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkVersionInfo;
 import com.android.tools.klint.client.api.CircularDependencyException;
 import com.android.tools.klint.client.api.Configuration;
 import com.android.tools.klint.client.api.LintClient;
+import com.android.tools.klint.client.api.LintDriver;
 import com.android.tools.klint.client.api.SdkInfo;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
@@ -40,6 +68,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,12 +77,15 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.android.SdkConstants.*;
-import static com.android.sdklib.SdkVersionInfo.HIGHEST_KNOWN_API;
 
 /**
  * A project contains information about an Android project being scanned for
@@ -93,9 +125,11 @@ public class Project {
     protected List<File> mManifestFiles;
     protected List<File> mJavaSourceFolders;
     protected List<File> mJavaClassFolders;
+    protected List<File> mNonProvidedJavaLibraries;
     protected List<File> mJavaLibraries;
     protected List<File> mTestSourceFolders;
     protected List<File> mResourceFolders;
+    protected List<File> mAssetFolders;
     protected List<Project> mDirectLibraries;
     protected List<Project> mAllLibraries;
     protected boolean mReportIssues = true;
@@ -104,6 +138,7 @@ public class Project {
     protected Boolean mAppCompat;
     private Map<String, String> mSuperClassMap;
     private ResourceVisibilityLookup mResourceVisibility;
+    private BuildToolInfo mBuildTools;
 
     /**
      * Creates a new {@link Project} for the given directory.
@@ -155,7 +190,7 @@ public class Project {
     public AndroidProject getGradleProjectModel() {
         return null;
     }
-
+    
     /**
      * Returns the project model for this project if it corresponds to
      * a Gradle library. This is the case if both
@@ -292,6 +327,18 @@ public class Project {
         } else {
             mDirectLibraries = Collections.emptyList();
         }
+
+        if (isAospBuildEnvironment()) {
+            if (isAospFrameworksRelatedProject(mDir)) {
+                // No manifest file for this project: just init the manifest values here
+                mManifestMinSdk = mManifestTargetSdk = new AndroidVersion(HIGHEST_KNOWN_API, null);
+            } else if (mBuildSdk == -1) {
+                // only set BuildSdk for projects other than frameworks and
+                // the ones that don't have one set in project.properties.
+                mBuildSdk = getClient().getHighestKnownApiLevel();
+            }
+
+        }
     }
 
     @Override
@@ -348,7 +395,7 @@ public class Project {
     @NonNull
     public List<File> getJavaSourceFolders() {
         if (mJavaSourceFolders == null) {
-            if (isAospFrameworksProject(mDir)) {
+            if (isAospFrameworksRelatedProject(mDir)) {
                 return Collections.singletonList(new File(mDir, "java")); //$NON-NLS-1$
             }
             if (isAospBuildEnvironment()) {
@@ -373,9 +420,9 @@ public class Project {
     public List<File> getJavaClassFolders() {
         if (mJavaClassFolders == null) {
             if (isAospFrameworksProject(mDir)) {
-                File top = mDir.getParentFile().getParentFile().getParentFile();
+                String top = getAospTop();
                 if (top != null) {
-                    File out = new File(top, "out");
+                    File out = new File(top, "out"); //$NON-NLS-1$
                     if (out.exists()) {
                         String relative =
                             "target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar";
@@ -406,20 +453,39 @@ public class Project {
      * library projects which are processed in a separate pass with their own
      * source and class folders.
      *
+     * @param includeProvided If true, included provided libraries too (libraries
+     *                        that are not packaged with the app, but are provided
+     *                        for compilation purposes and are assumed to be present
+     *                        in the running environment)
      * @return a list of .jar files (or class folders) that this project depends
      *         on.
      */
     @NonNull
-    public List<File> getJavaLibraries() {
-        if (mJavaLibraries == null) {
-            // AOSP builds already merge libraries and class folders into
-            // the single classes.jar file, so these have already been processed
-            // in getJavaClassFolders.
-
-            mJavaLibraries = mClient.getJavaLibraries(this);
+    public List<File> getJavaLibraries(boolean includeProvided) {
+        if (includeProvided) {
+            if (mJavaLibraries == null) {
+                // AOSP builds already merge libraries and class folders into
+                // the single classes.jar file, so these have already been processed
+                // in getJavaClassFolders.
+                mJavaLibraries = mClient.getJavaLibraries(this, true);
+                if (isAospBuildEnvironment()) {
+                    // We still need to add the support-annotations library in the case of AOSP
+                    File out = new File(getAospTop(), "out");
+                    String relative = "target/common/obj/JAVA_LIBRARIES/"
+                            + "android-support-annotations_intermediates/classes";
+                    File annotationsDir = new File(out, relative.replace('/', File.separatorChar));
+                    if (annotationsDir.exists()) {
+                        mJavaLibraries.add(annotationsDir);
+                    }
+                }
+            }
+            return mJavaLibraries;
+        } else {
+            if (mNonProvidedJavaLibraries == null) {
+                mNonProvidedJavaLibraries = mClient.getJavaLibraries(this, false);
+            }
+            return mNonProvidedJavaLibraries;
         }
-
-        return mJavaLibraries;
     }
 
     /**
@@ -437,17 +503,17 @@ public class Project {
     }
 
     /**
-     * Returns the resource folder.
+     * Returns the resource folders.
      *
-     * @return a file pointing to the resource folder, or null if the project
-     *         does not contain any resources
+     * @return a list of files pointing to the resource folders, which might be empty if the project
+     * does not provide any resources.
      */
     @NonNull
     public List<File> getResourceFolders() {
         if (mResourceFolders == null) {
             List<File> folders = mClient.getResourceFolders(this);
 
-            if (folders.size() == 1 && isAospFrameworksProject(mDir)) {
+            if (folders.size() == 1 && isAospFrameworksRelatedProject(mDir)) {
                 // No manifest file for this project: just init the manifest values here
                 mManifestMinSdk = mManifestTargetSdk = new AndroidVersion(HIGHEST_KNOWN_API, null);
                 File folder = new File(folders.get(0), RES_FOLDER);
@@ -460,7 +526,21 @@ public class Project {
         }
 
         return mResourceFolders;
+    }
 
+    /**
+     * Returns the asset folders.
+     *
+     * @return a list of files pointing to the asset folders, which might be empty if the project
+     * does not provide any resources.
+     */
+    @NonNull
+    public List<File> getAssetFolders() {
+        if (mAssetFolders == null) {
+            mAssetFolders = mClient.getAssetFolders(this);
+        }
+
+        return mAssetFolders;
     }
 
     /**
@@ -536,12 +616,13 @@ public class Project {
     /**
      * Gets the configuration associated with this project
      *
+     * @param driver the current driver, if any
      * @return the configuration associated with this project
      */
     @NonNull
-    public Configuration getConfiguration() {
+    public Configuration getConfiguration(@Nullable LintDriver driver) {
         if (mConfiguration == null) {
-            mConfiguration = mClient.getConfiguration(this);
+            mConfiguration = mClient.getConfiguration(this, driver);
         }
         return mConfiguration;
     }
@@ -553,9 +634,6 @@ public class Project {
      */
     @Nullable
     public String getPackage() {
-        //assert !mLibrary; // Should call getPackage on the master project, not the library
-        // Assertion disabled because you might be running lint on a standalone library project.
-
         return mPackage;
     }
 
@@ -611,6 +689,20 @@ public class Project {
      */
     public int getBuildSdk() {
         return mBuildSdk;
+    }
+
+    /**
+     * Returns the specific version of the build tools being used, if known
+     *
+     * @return the build tools version in use, or null if not known
+     */
+    @Nullable
+    public BuildToolInfo getBuildTools() {
+        if (mBuildTools == null) {
+            mBuildTools = mClient.getBuildTools(this);
+        }
+
+        return mBuildTools;
     }
 
     /**
@@ -919,7 +1011,7 @@ public class Project {
     private static Boolean sAospBuild;
 
     /** Is lint running in an AOSP build environment */
-    private static boolean isAospBuildEnvironment() {
+    public static boolean isAospBuildEnvironment() {
         if (sAospBuild == null) {
             sAospBuild = getAospTop() != null;
         }
@@ -928,29 +1020,51 @@ public class Project {
     }
 
     /**
-     * Is this the frameworks AOSP project? Needs some hardcoded support since
+     * Is this the frameworks or related AOSP project? Needs some hardcoded support since
      * it doesn't have a manifest file, etc.
      *
+     * A frameworks AOSP projects can be any directory under "frameworks" that
+     * 1. Is not the "support" directory (which uses the public support annotations)
+     * 2. Doesn't have an AndroidManifest.xml (it's an app instead)
+     *
      * @param dir the project directory to check
-     * @return true if this looks like the frameworks/base/core project
+     * @return true if this looks like the frameworks/dir project and does not have
+     *         an AndroidManifest.xml
+     */
+    public static boolean isAospFrameworksRelatedProject(@NonNull File dir) {
+        if (isAospBuildEnvironment()) {
+            File frameworks = new File(getAospTop(), "frameworks"); //$NON-NLS-1$
+            String frameworksDir = frameworks.getAbsolutePath();
+            String supportDir = new File(frameworks, "support").getAbsolutePath(); //$NON-NLS-1$
+            if (dir.exists()
+                    && !dir.getAbsolutePath().startsWith(supportDir)
+                    && dir.getAbsolutePath().startsWith(frameworksDir)
+                    && !(new File(dir, FN_ANDROID_MANIFEST_XML).exists())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Is this the actual frameworks project.
+     * @param dir the project directory to check.
+     * @return true if this is the frameworks project.
      */
     public static boolean isAospFrameworksProject(@NonNull File dir) {
-        if (!dir.getPath().endsWith("core")) { //$NON-NLS-1$
+        String top = getAospTop();
+        if (top != null) {
+            File toCompare = new File(top, "frameworks" //$NON-NLS-1$
+                    + File.separator + "base"           //$NON-NLS-1$
+                    + File.separator + "core");         //$NON-NLS-1$
+            try {
+                return dir.getCanonicalFile().equals(toCompare) && dir.exists();
+            } catch (IOException e) {
+                return false;
+            }
+        } else {
             return false;
         }
-
-        File parent = dir.getParentFile();
-        if (parent == null || !parent.getName().equals("base")) { //$NON-NLS-1$
-            return false;
-        }
-
-        parent = parent.getParentFile();
-        //noinspection RedundantIfStatement
-        if (parent == null || !parent.getName().equals("frameworks")) { //$NON-NLS-1$
-            return false;
-        }
-
-        return true;
     }
 
     /** Get the root AOSP dir, if any */
@@ -1025,6 +1139,13 @@ public class Project {
         // some Android.mk files do some complicated things with it - and most
         // projects use the same module name as the directory name.
         String moduleName = mDir.getName();
+        try {
+            // Get the actual directory name instead of '.' that's possible
+            // when using this via CLI.
+            moduleName = mDir.getCanonicalFile().getName();
+        } catch (IOException ioe) {
+            // pass
+        }
 
         String top = getAospTop();
         final String[] outFolders = new String[] {
@@ -1092,32 +1213,34 @@ public class Project {
     /** In an AOSP build environment, identify the currently built image version, if available */
     private static AndroidVersion findCurrentAospVersion() {
         if (sCurrentVersion == null) {
-            File apiDir = new File(getAospTop(), "frameworks/base/api" //$NON-NLS-1$
+            File versionMk = new File(getAospTop(), "build/core/version_defaults.mk" //$NON-NLS-1$
                     .replace('/', File.separatorChar));
-            File[] apiFiles = apiDir.listFiles();
-            if (apiFiles == null) {
+
+            if (!versionMk.exists()) {
                 sCurrentVersion = AndroidVersion.DEFAULT;
                 return sCurrentVersion;
             }
-            int max = 1;
-            for (File apiFile : apiFiles) {
-                String name = apiFile.getName();
-                int index = name.indexOf('.');
-                if (index > 0) {
-                    String base = name.substring(0, index);
-                    if (Character.isDigit(base.charAt(0))) {
+            int sdkVersion = LOWEST_ACTIVE_API;
+            try {
+                Pattern p = Pattern.compile("PLATFORM_SDK_VERSION\\s*:=\\s*(.*)");
+                List<String> lines = Files.readLines(versionMk, Charsets.UTF_8);
+                for (String line : lines) {
+                    line = line.trim();
+                    Matcher matcher = p.matcher(line);
+                    if (matcher.matches()) {
+                        String version = matcher.group(1);
                         try {
-                            int version = Integer.parseInt(base);
-                            if (version > max) {
-                                max = version;
-                            }
-                        } catch (NumberFormatException nufe) {
+                            sdkVersion = Integer.parseInt(version);
+                        } catch (NumberFormatException nfe) {
                             // pass
                         }
+                        break;
                     }
                 }
+            } catch (IOException io) {
+                // pass
             }
-            sCurrentVersion = new AndroidVersion(max, null);
+            sCurrentVersion = new AndroidVersion(sdkVersion, null);
         }
 
         return sCurrentVersion;
@@ -1137,7 +1260,7 @@ public class Project {
     public Boolean dependsOn(@NonNull String artifact) {
         if (SUPPORT_LIB_ARTIFACT.equals(artifact)) {
             if (mSupportLib == null) {
-                for (File file : getJavaLibraries()) {
+                for (File file : getJavaLibraries(true)) {
                     String name = file.getName();
                     if (name.equals("android-support-v4.jar")      //$NON-NLS-1$
                             || name.startsWith("support-v4-")) {   //$NON-NLS-1$
@@ -1162,7 +1285,7 @@ public class Project {
             return mSupportLib;
         } else if (APPCOMPAT_LIB_ARTIFACT.equals(artifact)) {
             if (mAppCompat == null) {
-                for (File file : getJavaLibraries()) {
+                for (File file : getJavaLibraries(true)) {
                     String name = file.getName();
                     if (name.startsWith("appcompat-v7-")) { //$NON-NLS-1$
                         mAppCompat = true;

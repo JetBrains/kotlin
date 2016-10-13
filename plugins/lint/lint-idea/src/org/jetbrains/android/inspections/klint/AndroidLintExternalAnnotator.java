@@ -1,12 +1,13 @@
 package org.jetbrains.android.inspections.klint;
 
 import com.android.SdkConstants;
+import com.android.tools.idea.gradle.util.Projects;
 import com.android.tools.klint.client.api.IssueRegistry;
 import com.android.tools.klint.client.api.LintDriver;
-import com.android.tools.klint.client.api.LintLanguageExtension;
 import com.android.tools.klint.client.api.LintRequest;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.Scope;
+import com.android.utils.SdkUtils;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.DaemonBundle;
@@ -46,11 +47,9 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.UastConverterUtils;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 
 import javax.swing.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -60,6 +59,9 @@ import static com.android.SdkConstants.*;
 import static com.android.tools.klint.detector.api.TextFormat.HTML;
 import static com.android.tools.klint.detector.api.TextFormat.RAW;
 
+/**
+ * @author Eugene.Kudelevsky
+ */
 public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State> {
   static final boolean INCLUDE_IDEA_SUPPRESS_ACTIONS = false;
 
@@ -88,22 +90,14 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
 
     final FileType fileType = file.getFileType();
 
-    if (fileType == StdFileTypes.XML) {
-      if (facet == null || facet.getLocalResourceManager().getFileResourceType(file) == null &&
-          !SdkConstants.ANDROID_MANIFEST_XML.equals(vFile.getName())) {
-        return null;
-      }
-    }
-    else if (fileType == FileTypes.PLAIN_TEXT) {
+    if (fileType == FileTypes.PLAIN_TEXT) {
       if (!AndroidCommonUtils.PROGUARD_CFG_FILE_NAME.equals(file.getName()) &&
           !AndroidCompileUtil.OLD_PROGUARD_CFG_FILE_NAME.equals(file.getName())) {
         return null;
       }
     }
-    else if (fileType != StdFileTypes.JAVA && fileType != StdFileTypes.PROPERTIES) {
-      if (!LintLanguageExtension.isFileSupported(file.getProject(), file.getName())) {
-        return null;
-      }
+    else if (fileType != KotlinFileType.INSTANCE && fileType != StdFileTypes.PROPERTIES) {
+      return null;
     }
 
     final List<Issue> issues = getIssuesFromInspections(file.getProject(), file);
@@ -129,20 +123,16 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
         } else {
           scope = Scope.RESOURCE_FILE_SCOPE;
         }
-      } else if (fileType == StdFileTypes.JAVA) {
-        scope = Scope.SOURCE_FILE_SCOPE;
+      } else if (fileType == KotlinFileType.INSTANCE) {
+        scope = Scope.JAVA_FILE_SCOPE;
       } else if (name.equals(OLD_PROGUARD_FILE) || name.equals(FN_PROJECT_PROGUARD_FILE)) {
         scope = EnumSet.of(Scope.PROGUARD_FILE);
       } else if (fileType == StdFileTypes.PROPERTIES) {
         scope = Scope.PROPERTY_SCOPE;
       } else {
-        if (UastConverterUtils.isFileSupported(client.getLanguagePlugins(), mainFile.getName())) {
-          scope = Scope.SOURCE_FILE_SCOPE;
-        } else {
-          // #collectionInformation above should have prevented this
-          assert false;
-          return state;
-        }
+        // #collectionInformation above should have prevented this
+        assert false;
+        return state;
       }
 
       Project project = state.getModule().getProject();
@@ -189,6 +179,12 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
 
       if (!enabled) {
         continue;
+      } else if (!issue.isEnabledByDefault()) {
+        // If an issue is marked as not enabled by default, lint won't run it, even if it's in the set
+        // of issues provided by an issue registry. Since in the IDE we're enforcing the enabled-state via
+        // inspection profiles, mark the issue as enabled to allow users to turn on a lint check directly
+        // via the inspections UI.
+        issue.setEnabledByDefault(true);
       }
       result.add(issue);
     }
@@ -245,6 +241,16 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
             for (IntentionAction intention : inspection.getIntentions(startElement, endElement)) {
               annotation.registerFix(intention);
             }
+
+            String id = key.getID();
+            if (IntellijLintIssueRegistry.CUSTOM_ERROR == issue
+                || IntellijLintIssueRegistry.CUSTOM_WARNING == issue) {
+              Issue original = IntellijLintClient.findCustomIssue(message);
+              if (original != null) {
+                id = original.getId();
+              }
+            }
+
             annotation.registerFix(new MyDisableInspectionFix(key));
             annotation.registerFix(new MyEditInspectionToolsSettingsAction(key, inspection));
 
@@ -285,55 +291,14 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       severity = HighlightSeverity.WARNING;
     }
 
-    // Attempt to mark up as HTML? Only if available
-    Method createHtmlAnnotation = getCreateHtmlAnnotation();
-    if (createHtmlAnnotation != null) {
-      // Based on LocalInspectionsPass#createHighlightInfo
-      String link = " <a "
-          + "href=\"#lint/" + issue.getId() + "\""
-          + (UIUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
-          + ">" + DaemonBundle.message("inspection.extended.description")
-          + "</a> " + getShowMoreShortCut();
-      String tooltip = XmlStringUtil.wrapInHtml(RAW.convertTo(message, HTML) + link);
+    String link = " <a "
+        +"href=\"#lint/" + issue.getId() + "\""
+        + (UIUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
+        +">" + DaemonBundle.message("inspection.extended.description")
+        +"</a> " + getShowMoreShortCut();
+    String tooltip = XmlStringUtil.wrapInHtml(RAW.convertTo(message, HTML) + link);
 
-      try {
-        return (Annotation)createHtmlAnnotation.invoke(holder, severity, range, message, tooltip);
-      }
-      catch (IllegalAccessException ignored) {
-        ourCreateHtmlAnnotationMethod = null;
-        //noinspection AssignmentToStaticFieldFromInstanceMethod
-        ourCreateHtmlAnnotationMethodFailed = true;
-      }
-      catch (InvocationTargetException e) {
-        ourCreateHtmlAnnotationMethod = null;
-        //noinspection AssignmentToStaticFieldFromInstanceMethod
-        ourCreateHtmlAnnotationMethodFailed = true;
-      }
-    }
-
-    return holder.createAnnotation(severity, range, message);
-  }
-
-  private static boolean ourCreateHtmlAnnotationMethodFailed;
-  private static Method ourCreateHtmlAnnotationMethod;
-
-  @Nullable
-  private static Method getCreateHtmlAnnotation() {
-    if (ourCreateHtmlAnnotationMethod != null) {
-      return ourCreateHtmlAnnotationMethod;
-    }
-    if (ourCreateHtmlAnnotationMethodFailed) {
-      return null;
-    } else {
-      ourCreateHtmlAnnotationMethodFailed = true;
-      try {
-        ourCreateHtmlAnnotationMethod = AnnotationHolder.class.getMethod("createAnnotation", HighlightSeverity.class,
-                                                                        TextRange.class, String.class, String.class);
-      }
-      catch (NoSuchMethodException ignore) {
-      }
-      return ourCreateHtmlAnnotationMethod;
-    }
+    return holder.createAnnotation(severity, range, message, tooltip);
   }
 
   // Based on similar code in the LocalInspectionsPass constructor

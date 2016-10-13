@@ -58,24 +58,25 @@ import static com.android.SdkConstants.TAG_APPLICATION;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LayoutDetector;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Project;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.EmptyUastVisitor;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.USimpleNameReferenceExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
@@ -92,14 +93,14 @@ import java.util.Locale;
 /**
  * Check which looks for RTL issues (right-to-left support) in layouts
  */
-public class RtlDetector extends LayoutDetector implements UastScanner {
+public class RtlDetector extends LayoutDetector implements Detector.UastScanner {
 
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION = new Implementation(
             RtlDetector.class,
-            EnumSet.of(Scope.RESOURCE_FILE, Scope.SOURCE_FILE, Scope.MANIFEST),
+            EnumSet.of(Scope.RESOURCE_FILE, Scope.JAVA_FILE, Scope.MANIFEST),
             Scope.RESOURCE_FILE_SCOPE,
-            Scope.SOURCE_FILE_SCOPE,
+            Scope.JAVA_FILE_SCOPE,
             Scope.MANIFEST_SCOPE
     );
 
@@ -186,11 +187,9 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
 
     private static final String RIGHT_FIELD = "RIGHT";                          //$NON-NLS-1$
     private static final String LEFT_FIELD = "LEFT";                            //$NON-NLS-1$
-    private static final String GRAVITY_CLASS = "Gravity";                      //$NON-NLS-1$
     private static final String FQCN_GRAVITY = "android.view.Gravity";          //$NON-NLS-1$
-    private static final String FQCN_GRAVITY_PREFIX = "android.view.Gravity.";  //$NON-NLS-1$
-    private static final String ATTR_SUPPORTS_RTL = "supportsRtl";              //$NON-NLS-1$
     private static final String ATTR_TEXT_ALIGNMENT = "textAlignment";          //$NON-NLS-1$
+    static final String ATTR_SUPPORTS_RTL = "supportsRtl";                      //$NON-NLS-1$
 
     /** API version in which RTL support was added */
     private static final int RTL_API = 17;
@@ -205,12 +204,6 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
 
     /** Constructs a new {@link RtlDetector} */
     public RtlDetector() {
-    }
-
-    @Override
-    @NonNull
-    public  Speed getSpeed() {
-        return Speed.NORMAL;
     }
 
     private boolean rtlApplies(@NonNull Context context) {
@@ -558,76 +551,59 @@ public class RtlDetector extends LayoutDetector implements UastScanner {
 
     // ---- Implements UastScanner ----
 
+
+    @Nullable
     @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return true;
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
+        return Collections.<Class<? extends UElement>>singletonList(USimpleNameReferenceExpression.class);
     }
 
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
-        if (rtlApplies(context.getLintContext())) {
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
+        if (rtlApplies(context)) {
             return new IdentifierChecker(context);
         }
 
-        return EmptyUastVisitor.INSTANCE;
+        return null;
     }
 
     private static class IdentifierChecker extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
+        private final JavaContext mContext;
 
-        public IdentifierChecker(UastAndroidContext context) {
+        public IdentifierChecker(JavaContext context) {
             mContext = context;
         }
 
         @Override
-        public boolean visitSimpleReferenceExpression(@NotNull USimpleReferenceExpression node) {
+        public boolean visitSimpleNameReferenceExpression(USimpleNameReferenceExpression node) {
             String identifier = node.getIdentifier();
             boolean isLeft = LEFT_FIELD.equals(identifier);
             boolean isRight = RIGHT_FIELD.equals(identifier);
             if (!isLeft && !isRight) {
-                return false;
+                return super.visitSimpleNameReferenceExpression(node);
             }
 
-            UElement parent = node.getParent();
-            if (parent instanceof UImportStatement || parent instanceof UVariable) {
-                return false;
-            }
-
-            UElement resolved = node.resolve(mContext);
-            if (resolved != null) {
-                if (!(resolved instanceof UVariable)) {
-                    return false;
-                } else {
-                    UClass containingClass = UastUtils.getContainingClass(resolved);
-                    if (containingClass == null || !containingClass.matchesFqName(FQCN_GRAVITY)) {
-                        return false;
-                    }
-                }
+            PsiElement resolved = node.resolve();
+            if (!(resolved instanceof PsiField)) {
+                return super.visitSimpleNameReferenceExpression(node);
             } else {
-                // Can't resolve types (for example while editing code with errors):
-                // rely on heuristics like import statements and class qualifiers
-                if (parent instanceof UQualifiedExpression &&
-                    !(UastUtils.matchesQualified(((UQualifiedExpression) parent).getReceiver(), GRAVITY_CLASS))) {
-                    return false;
-                }
-                if (parent instanceof USimpleReferenceExpression) {
-                    // No operand: make sure it's statically imported
-                    if (!LintUtils.isImported(mContext.getLintContext().getCompilationUnit(),
-                                              FQCN_GRAVITY_PREFIX + identifier)) {
-                        return false;
-                    }
+                PsiField field = (PsiField) resolved;
+                if (!JavaEvaluator.isMemberInClass(field, FQCN_GRAVITY)) {
+                    return super.visitSimpleNameReferenceExpression(node);
                 }
             }
 
             String message = String.format(
-              "Use \"`Gravity.%1$s`\" instead of \"`Gravity.%2$s`\" to ensure correct "
-              + "behavior in right-to-left locales",
-              (isLeft ? GRAVITY_VALUE_START : GRAVITY_VALUE_END).toUpperCase(Locale.US),
-              (isLeft ? GRAVITY_VALUE_LEFT : GRAVITY_VALUE_RIGHT).toUpperCase(Locale.US));
-            Location location = mContext.getLocation(node);
+                    "Use \"`Gravity.%1$s`\" instead of \"`Gravity.%2$s`\" to ensure correct "
+                            + "behavior in right-to-left locales",
+                    (isLeft ? GRAVITY_VALUE_START : GRAVITY_VALUE_END).toUpperCase(Locale.US),
+                    (isLeft ? GRAVITY_VALUE_LEFT : GRAVITY_VALUE_RIGHT).toUpperCase(Locale.US));
+            
+            Location location = mContext.getUastLocation(node);
             mContext.report(USE_START, node, location, message);
 
-            return true;
+            return super.visitSimpleNameReferenceExpression(node);
         }
     }
 }

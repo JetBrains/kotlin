@@ -1,11 +1,7 @@
 package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.concurrency.GuardedBy;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -16,7 +12,6 @@ import com.intellij.lang.annotation.ProblemGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -35,13 +30,12 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.File;
 import java.util.*;
 
-import static com.android.tools.klint.detector.api.TextFormat.HTML;
-import static com.android.tools.klint.detector.api.TextFormat.RAW;
+import static com.android.tools.klint.detector.api.TextFormat.*;
 import static com.intellij.xml.CommonXmlStrings.HTML_END;
 import static com.intellij.xml.CommonXmlStrings.HTML_START;
 
 public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.klint.AndroidLintInspectionBase");
+  private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.lint.AndroidLintInspectionBase");
 
   private static final Object ISSUE_MAP_LOCK = new Object();
 
@@ -56,12 +50,9 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
     myIssue = issue;
 
     final Category category = issue.getCategory();
-    final String[] categoryNames = category != null
-                                   ? computeAllNames(category)
-                                   : ArrayUtil.EMPTY_STRING_ARRAY;
 
     myGroupPath = ArrayUtil.mergeArrays(new String[]{AndroidBundle.message("android.inspections.group.name"),
-      AndroidBundle.message("android.lint.inspections.subgroup.name")}, categoryNames);
+      AndroidBundle.message("android.lint.inspections.subgroup.name")}, computeAllNames(category));
     myDisplayName = displayName;
   }
 
@@ -157,8 +148,6 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   private ProblemDescriptor[] computeProblemDescriptors(@NotNull PsiElement psiFile,
                                                         @NotNull InspectionManager manager,
                                                         @NotNull List<ProblemData> problems) {
-    ProgressManager.checkCanceled();
-
     final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
 
     for (ProblemData problemData : problems) {
@@ -167,7 +156,12 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
       // We need to have explicit <html> and </html> tags around the text; inspection infrastructure
       // such as the {@link com.intellij.codeInspection.ex.DescriptorComposer} will call
       // {@link com.intellij.xml.util.XmlStringUtil.isWrappedInHtml}. See issue 177283 for uses.
-      final String formattedMessage = HTML_START + RAW.convertTo(originalMessage, HTML) + HTML_END;
+      // Note that we also need to use HTML with unicode characters here, since the HTML display
+      // in the inspections view does not appear to support numeric code character entities.
+      String formattedMessage = HTML_START + RAW.convertTo(originalMessage, HTML_WITH_UNICODE) + HTML_END;
+
+      // The inspections UI does not correctly handle
+
       final TextRange range = problemData.getTextRange();
 
       if (range.getStartOffset() == range.getEndOffset()) {
@@ -198,50 +192,15 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
   @NotNull
   @Override
   public SuppressQuickFix[] getBatchSuppressActions(@Nullable PsiElement element) {
-    SuppressLintQuickFix suppressLintQuickFix = new SuppressLintQuickFix(myIssue);
     if (AndroidLintExternalAnnotator.INCLUDE_IDEA_SUPPRESS_ACTIONS) {
       final List<SuppressQuickFix> result = new ArrayList<SuppressQuickFix>();
-      result.add(suppressLintQuickFix);
       result.addAll(Arrays.asList(BatchSuppressManager.SERVICE.getInstance().createBatchSuppressActions(HighlightDisplayKey.find(getShortName()))));
       result.addAll(Arrays.asList(new XmlSuppressableInspectionTool.SuppressTagStatic(getShortName()),
                                   new XmlSuppressableInspectionTool.SuppressForFile(getShortName())));
       return result.toArray(new SuppressQuickFix[result.size()]);
     } else {
-      return new SuppressQuickFix[] { suppressLintQuickFix };
+      return new SuppressQuickFix[0];
     }
-  }
-
-  private static class SuppressLintQuickFix implements SuppressQuickFix {
-    private Issue myIssue;
-
-    private SuppressLintQuickFix(Issue issue) {
-      myIssue = issue;
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, @NotNull PsiElement context) {
-      return true;
-    }
-
-    @Override
-    public boolean isSuppressAll() {
-      return false;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-      return "Suppress with @SuppressLint (Java) or tools:ignore (XML)";
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return "Suppress";
-    }
-
-    @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {}
   }
 
   @TestOnly
@@ -389,7 +348,7 @@ public abstract class AndroidLintInspectionBase extends GlobalInspectionTool {
       return false;
     }
     final Scope scope = scopes.iterator().next();
-    return scope == Scope.SOURCE_FILE || scope == Scope.RESOURCE_FILE || scope == Scope.MANIFEST
+    return scope == Scope.JAVA_FILE || scope == Scope.RESOURCE_FILE || scope == Scope.MANIFEST
            || scope == Scope.PROGUARD_FILE || scope == Scope.OTHER;
   }
 

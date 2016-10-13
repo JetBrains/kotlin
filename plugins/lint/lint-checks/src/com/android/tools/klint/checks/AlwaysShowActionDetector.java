@@ -21,9 +21,12 @@ import static com.android.SdkConstants.VALUE_ALWAYS;
 import static com.android.SdkConstants.VALUE_IF_ROOM;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.resources.ResourceFolderType;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.JavaContext;
@@ -31,21 +34,16 @@ import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.ResourceXmlDetector;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UQualifiedExpression;
-import org.jetbrains.uast.USimpleReferenceExpression;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-import org.jetbrains.uast.visitor.AbstractUastVisitor;
+import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +53,8 @@ import java.util.List;
  * MenuItem.SHOW_AS_ACTION_ALWAYS in code), which is usually a style guide violation.
  * (Use ifRoom instead).
  */
-public class AlwaysShowActionDetector extends ResourceXmlDetector implements UastScanner {
+public class AlwaysShowActionDetector extends ResourceXmlDetector implements
+        Detector.UastScanner {
 
     /** The main issue discovered by this detector */
     @SuppressWarnings("unchecked")
@@ -81,7 +80,7 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
             Severity.WARNING,
             new Implementation(
                     AlwaysShowActionDetector.class,
-                    Scope.SOURCE_AND_RESOURCE_FILES,
+                    Scope.JAVA_AND_RESOURCE_FILES,
                     Scope.RESOURCE_FILE_SCOPE))
             .addMoreInfo("http://developer.android.com/design/patterns/actionbar.html"); //$NON-NLS-1$
 
@@ -101,12 +100,6 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
     @Override
     public boolean appliesTo(@NonNull ResourceFolderType folderType) {
         return folderType == ResourceFolderType.MENU;
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
     }
 
     @Override
@@ -164,8 +157,10 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
                             location.setSecondary(next);
                         }
                     }
-                    context.report(ISSUE, location,
-                            "Prefer \"`ifRoom`\" instead of \"`always`\"");
+                    if (location != null) {
+                        context.report(ISSUE, location,
+                                "Prefer \"`ifRoom`\" instead of \"`always`\"");
+                    }
                 }
             }
         }
@@ -198,45 +193,29 @@ public class AlwaysShowActionDetector extends ResourceXmlDetector implements Uas
 
     // ---- Implements UastScanner ----
 
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
-        return new FieldAccessChecker(context);
+    public List<String> getApplicableReferenceNames() {
+        return Arrays.asList("SHOW_AS_ACTION_IF_ROOM", "SHOW_AS_ACTION_ALWAYS");
     }
 
-    private class FieldAccessChecker extends AbstractUastVisitor {
-        private final UastAndroidContext mContext;
-
-        public FieldAccessChecker(UastAndroidContext context) {
-            mContext = context;
-        }
-
-        @Override
-        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            UElement selector = node.getSelector();
-            if (!(selector instanceof USimpleReferenceExpression)) {
-                return false;
-            }
-
-            String description = ((USimpleReferenceExpression)selector).getIdentifier();
-            boolean isIfRoom = description.equals("SHOW_AS_ACTION_IF_ROOM"); //$NON-NLS-1$
-            boolean isAlways = description.equals("SHOW_AS_ACTION_ALWAYS");  //$NON-NLS-1$
-            if ((isIfRoom || isAlways)
-                && UastUtils.endsWithQualified(node.getReceiver(), "MenuItem")) { //$NON-NLS-1$
-                if (isAlways) {
-                    JavaContext lintContext = mContext.getLintContext();
-                    if (lintContext.getDriver().isSuppressed(lintContext, ISSUE, node)) {
-                        return super.visitQualifiedExpression(node);
-                    }
-                    if (mAlwaysFields == null) {
-                        mAlwaysFields = new ArrayList<Location>();
-                    }
-                    mAlwaysFields.add(mContext.getLocation(node));
-                } else {
-                    mHasIfRoomRefs = true;
+    @Override
+    public void visitReference(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UReferenceExpression reference, @NonNull PsiElement resolved) {
+        if (resolved instanceof PsiField
+                && JavaEvaluator.isMemberInClass((PsiField) resolved,
+                "android.view.MenuItem")) {
+            if ("SHOW_AS_ACTION_ALWAYS".equals(((PsiField) resolved).getName())) {
+                if (context.getDriver().isSuppressed(context, ISSUE, reference)) {
+                    return;
                 }
+                if (mAlwaysFields == null) {
+                    mAlwaysFields = new ArrayList<Location>();
+                }
+                mAlwaysFields.add(context.getUastLocation(reference));
+            } else {
+                mHasIfRoomRefs = true;
             }
-
-            return super.visitQualifiedExpression(node);
         }
     }
 }

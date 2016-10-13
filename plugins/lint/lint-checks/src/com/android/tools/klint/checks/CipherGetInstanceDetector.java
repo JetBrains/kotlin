@@ -17,39 +17,44 @@
 package com.android.tools.klint.checks;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.google.common.collect.Sets;
+
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.ULiteralExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
-
 /**
  * Ensures that Cipher.getInstance is not called with AES as the parameter.
  */
-public class CipherGetInstanceDetector extends Detector implements UastScanner {
+public class CipherGetInstanceDetector extends Detector implements Detector.UastScanner {
     public static final Issue ISSUE = Issue.create(
             "GetInstance", //$NON-NLS-1$
             "Cipher.getInstance with ECB",
-            "`Cipher#getInstance` should not be called with ECB as the cipher mode or without "
-                    + "setting the cipher mode because the default mode on android is ECB, which "
-                    + "is insecure.",
+            "`Cipher#getInstance` should not be called with ECB as the cipher mode or without " +
+            "setting the cipher mode because the default mode on android is ECB, which " +
+            "is insecure.",
             Category.SECURITY,
             9,
             Severity.WARNING,
             new Implementation(
                     CipherGetInstanceDetector.class,
-                    Scope.SOURCE_FILE_SCOPE));
+                    Scope.JAVA_FILE_SCOPE));
 
     private static final String CIPHER = "javax.crypto.Cipher"; //$NON-NLS-1$
     private static final String GET_INSTANCE = "getInstance"; //$NON-NLS-1$
@@ -57,62 +62,44 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
             Sets.newHashSet("AES", "DES", "DESede"); //$NON-NLS-1$
     private static final String ECB = "ECB"; //$NON-NLS-1$
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
+    @Nullable
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList(GET_INSTANCE);
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UClass containingClass = UastUtils.getContainingClass(node);
-        if (containingClass == null || !containingClass.isSubclassOf(CIPHER)) {
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression node, @NonNull UMethod method) {
+        if (!context.getEvaluator().isMemberInSubClassOf(method, CIPHER, false)) {
             return;
         }
-
-        List<UExpression> argumentList = node.getValueArguments();
-        if (argumentList.size() == 1) {
-            UExpression expression = argumentList.get(0);
-            if (expression instanceof ULiteralExpression) {
-                ULiteralExpression argument = (ULiteralExpression)expression;
-                String parameter = argument.renderString();
-                checkParameter(context, node, argument, parameter, false);
-            } else if (expression instanceof UResolvable) {
-                UDeclaration declaration = ((UResolvable)expression).resolve(context);
-                if (declaration instanceof UVariable) {
-                    UVariable field = (UVariable) declaration;
-                    UExpression initializer = field.getInitializer();
-                    if (initializer != null) {
-                        Object value = initializer.evaluate();
-                        if (value instanceof String) {
-                            checkParameter(context, node, expression, (String)value, true);
-                        }
-                    }
-                }
+        List<UExpression> arguments = node.getValueArguments();
+        if (arguments.size() == 1) {
+            UExpression expression = arguments.get(0);
+            Object value = ConstantEvaluator.evaluate(context, expression);
+            if (value instanceof String) {
+                checkParameter(context, node, expression, (String)value,
+                        !(expression instanceof ULiteralExpression));
             }
         }
     }
 
-    private static void checkParameter(@NonNull UastAndroidContext context,
-                                       @NonNull UCallExpression call, @NonNull UExpression arg, @NonNull String value,
-                                       boolean includeValue) {
+    private static void checkParameter(@NonNull JavaContext context,
+            @NonNull UCallExpression call, @NonNull UElement node, @NonNull String value,
+            boolean includeValue) {
         if (ALGORITHM_ONLY.contains(value)) {
             String message = "`Cipher.getInstance` should not be called without setting the"
                     + " encryption mode and padding";
-            context.report(ISSUE, call, context.getLocation(arg), message);
+            context.report(ISSUE, call, context.getUastLocation(node), message);
         } else if (value.contains(ECB)) {
             String message = "ECB encryption mode should not be used";
             if (includeValue) {
                 message += " (was \"" + value + "\")";
             }
-            context.report(ISSUE, call, context.getLocation(arg), message);
+            context.report(ISSUE, call, context.getUastLocation(node), message);
         }
     }
 }

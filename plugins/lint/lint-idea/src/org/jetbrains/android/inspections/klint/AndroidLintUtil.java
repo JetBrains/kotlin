@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Eugene.Kudelevsky
+ */
 public class AndroidLintUtil {
   @NonNls static final String ATTR_VALUE_VERTICAL = "vertical";
   @NonNls static final String ATTR_VALUE_WRAP_CONTENT = "wrap_content";
@@ -38,7 +41,14 @@ public class AndroidLintUtil {
 
     final InspectionProfile profile = InspectionProjectProfileManager.getInstance(context.getProject()).getInspectionProfile();
     if (!profile.isToolEnabled(key, context)) {
-      return null;
+      if (!issue.isEnabledByDefault()) {
+        // Lint will skip issues (and not report them) for issues that have been disabled,
+        // except for those issues that are explicitly enabled via Gradle. Therefore, if
+        // we get this far, lint has found this issue to be explicitly enabled, so we let
+        // that setting override a local enabled/disabled state in the IDE profile.
+      } else {
+        return null;
+      }
     }
 
     final AndroidLintInspectionBase inspection = (AndroidLintInspectionBase)profile.getUnwrappedTool(inspectionShortName, context);

@@ -17,14 +17,13 @@ package org.jetbrains.android.inspections.klint;
 
 import com.android.annotations.NonNull;
 import com.android.tools.klint.checks.*;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.*;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+
+import static org.jetbrains.android.inspections.klint.IntellijLintProject.*;
 
 /**
  * Custom version of the {@link BuiltinIssueRegistry}. This
@@ -34,6 +33,26 @@ import java.util.List;
  * of some issues with IDEA specific ones.
  */
 public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
+  private static final Implementation DUMMY_IMPLEMENTATION = new Implementation(Detector.class,
+                                                                                EnumSet.noneOf(Scope.class));
+
+  private static final String CUSTOM_EXPLANATION =
+    "When custom (third-party) lint rules are integrated in the IDE, they are not available as native IDE inspections, " +
+    "so the explanation text (which must be statically registered by a plugin) is not available. As a workaround, run the " +
+    "lint target in Gradle instead; the HTML report will include full explanations.";
+
+  /**
+   * Issue reported by a custom rule (3rd party detector). We need a placeholder issue to reference for inspections, which
+   * have to be registered statically (can't load these on the fly from custom jars the way lint does)
+   */
+  @NonNull
+  public static final Issue CUSTOM_WARNING = Issue.create(
+    "CustomWarning", "Warning from Custom Rule", CUSTOM_EXPLANATION, Category.CORRECTNESS, 5, Severity.WARNING, DUMMY_IMPLEMENTATION);
+
+  @NonNull
+  public static final Issue CUSTOM_ERROR = Issue.create(
+    "CustomError", "Error from Custom Rule", CUSTOM_EXPLANATION, Category.CORRECTNESS, 5, Severity.ERROR, DUMMY_IMPLEMENTATION);
+
   private static List<Issue> ourFilteredIssues;
 
   public IntellijLintIssueRegistry() {
@@ -56,7 +75,7 @@ public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
             scope.contains(Scope.ALL_CLASS_FILES) ||
             scope.contains(Scope.JAVA_LIBRARIES)) {
           //noinspection ConstantConditions
-          assert !IntellijLintProject.SUPPORT_CLASS_FILES; // When enabled, adjust this to include class detector based issues
+          assert !SUPPORT_CLASS_FILES; // When enabled, adjust this to include class detector based issues
 
           boolean isOk = false;
           for (EnumSet<Scope> analysisScope : implementation.getAnalysisScopes()) {

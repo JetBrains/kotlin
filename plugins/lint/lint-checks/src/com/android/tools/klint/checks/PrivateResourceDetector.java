@@ -46,20 +46,20 @@ import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Project;
 import com.android.tools.klint.detector.api.ResourceXmlDetector;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 
 import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,15 +73,16 @@ import java.util.List;
 /**
  * Check which looks for access of private resources.
  */
-public class PrivateResourceDetector extends ResourceXmlDetector implements UastScanner {
+public class PrivateResourceDetector extends ResourceXmlDetector implements
+        Detector.UastScanner {
     /** Attribute for overriding a resource */
     private static final String ATTR_OVERRIDE = "override";
 
     @SuppressWarnings("unchecked")
     private static final Implementation IMPLEMENTATION = new Implementation(
             PrivateResourceDetector.class,
-            Scope.SOURCE_AND_RESOURCE_FILES,
-            Scope.SOURCE_FILE_SCOPE,
+            Scope.JAVA_AND_RESOURCE_FILES,
+            Scope.JAVA_FILE_SCOPE,
             Scope.RESOURCE_FILE_SCOPE);
 
     /** The main issue discovered by this detector */
@@ -103,12 +104,6 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
     public PrivateResourceDetector() {
     }
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements UastScanner ----
 
     @Override
@@ -117,21 +112,15 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
     }
 
     @Override
-    public void visitResourceReference(
-            UastAndroidContext uastContext,
-            UElement element,
-            String type,
-            String name,
-            boolean isFramework
-    ) {
-        Context context = uastContext.getLintContext();
-        Project project = context.getProject();
-        if (project.isGradleProject() && !isFramework) {
+    public void visitResourceReference(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UElement node, @NonNull ResourceType resourceType, @NonNull String name,
+            boolean isFramework) {
+        if (context.getProject().isGradleProject() && !isFramework) {
+            Project project = context.getProject();
             if (project.getGradleProjectModel() != null && project.getCurrentVariant() != null) {
-                ResourceType resourceType = ResourceType.getEnum(type);
-                if (resourceType != null && isPrivate(context, resourceType, name)) {
+                if (isPrivate(context, resourceType, name)) {
                     String message = createUsageErrorMessage(context, resourceType, name);
-                    uastContext.report(ISSUE, element, uastContext.getLocation(element), message);
+                    context.report(ISSUE, node, context.getUastLocation(node), message);
                 }
             }
         }
@@ -211,6 +200,15 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
     }
 
     private static boolean isPrivate(Context context, ResourceType type, String name) {
+        if (type == ResourceType.ID) {
+            // No need to complain about "overriding" id's. There's no harm
+            // in doing so. (This avoids warning about cases like for example
+            // appcompat's (private) @id/title resource, which would otherwise
+            // flag any attempt to create a resource named title in the user's
+            // project.
+            return false;
+        }
+
         if (context.getProject().isGradleProject()) {
             ResourceVisibilityLookup lookup = context.getProject().getResourceVisibility();
             return lookup.isPrivate(type, name);
@@ -286,9 +284,9 @@ public class PrivateResourceDetector extends ResourceXmlDetector implements Uast
             context.report(ISSUE, location, message);
         }
     }
-
+    
     private static String createOverrideErrorMessage(@NonNull Context context,
-                                                     @NonNull ResourceType type, @NonNull String name) {
+            @NonNull ResourceType type, @NonNull String name) {
         String libraryName = getLibraryName(context, type, name);
         return String.format("Overriding `@%1$s/%2$s` which is marked as private in %3$s. If "
                         + "deliberate, use tools:override=\"true\", otherwise pick a "

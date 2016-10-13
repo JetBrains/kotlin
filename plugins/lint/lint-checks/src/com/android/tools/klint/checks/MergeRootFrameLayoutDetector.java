@@ -21,37 +21,45 @@ import static com.android.SdkConstants.ATTR_BACKGROUND;
 import static com.android.SdkConstants.ATTR_FOREGROUND;
 import static com.android.SdkConstants.ATTR_LAYOUT;
 import static com.android.SdkConstants.ATTR_LAYOUT_GRAVITY;
-import static com.android.SdkConstants.DOT_JAVA;
 import static com.android.SdkConstants.FRAME_LAYOUT;
 import static com.android.SdkConstants.LAYOUT_RESOURCE_PREFIX;
-import static com.android.SdkConstants.R_LAYOUT_RESOURCE_PREFIX;
 import static com.android.SdkConstants.VIEW_INCLUDE;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.resources.ResourceType;
+import com.android.tools.klint.client.api.AndroidReference;
+import com.android.tools.klint.client.api.UastLintUtils;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LayoutDetector;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Location.Handle;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.android.utils.Pair;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiReferenceExpression;
 
-import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UQualifiedExpression;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UQualifiedReferenceExpression;
+import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,7 +72,7 @@ import java.util.Set;
 /**
  * Checks whether a root FrameLayout can be replaced with a {@code <merge>} tag.
  */
-public class MergeRootFrameLayoutDetector extends LayoutDetector implements UastScanner {
+public class MergeRootFrameLayoutDetector extends LayoutDetector implements Detector.UastScanner {
     /**
      * Set of layouts that we want to enable the warning for. We only warn for
      * {@code <FrameLayout>}'s that are the root of a layout included from
@@ -95,23 +103,12 @@ public class MergeRootFrameLayoutDetector extends LayoutDetector implements Uast
             Severity.WARNING,
             new Implementation(
                     MergeRootFrameLayoutDetector.class,
-                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.SOURCE_FILE)))
+                    EnumSet.of(Scope.ALL_RESOURCE_FILES, Scope.JAVA_FILE)))
             .addMoreInfo(
             "http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"); //$NON-NLS-1$
 
     /** Constructs a new {@link MergeRootFrameLayoutDetector} */
     public MergeRootFrameLayoutDetector() {
-    }
-
-    @Override
-    @NonNull
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
-    @Override
-    public boolean appliesTo(@NonNull Context context, @NonNull File file) {
-        return LintUtils.isXmlFile(file) || LintUtils.endsWith(file.getName(), DOT_JAVA);
     }
 
     @Override
@@ -188,27 +185,26 @@ public class MergeRootFrameLayoutDetector extends LayoutDetector implements Uast
         mWhitelistedLayouts.add(layout);
     }
 
-    // Implements UastScanner
-
+    // Implements JavaScanner
 
     @Override
-    public List<String> getApplicableFunctionNames() {
+    public List<String> getApplicableMethodNames() {
         return Collections.singletonList("setContentView"); //$NON-NLS-1$
     }
 
     @Override
-    public void visitCall(UastAndroidContext context, UCallExpression node) {
-        if (node.getValueArgumentCount() != 1) {
-            return;
-        }
+    public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
+            @NonNull UCallExpression call, @NonNull UMethod method) {
+        List<UExpression> expressions = call.getValueArguments();
+        
+        if (expressions.size() == 1) {
+            AndroidReference androidReference =
+                    UastLintUtils.toAndroidReferenceViaResolve(expressions.get(0));
 
-        List<UExpression> argumentList = node.getValueArguments();
-        UExpression argument = argumentList.get(0);
-        if (argument instanceof UQualifiedExpression) {
-            String expression = argument.renderString();
-            if (expression.startsWith(R_LAYOUT_RESOURCE_PREFIX)) {
-                whiteListLayout(expression.substring(R_LAYOUT_RESOURCE_PREFIX.length()));
+            if (androidReference != null && androidReference.getType() == ResourceType.LAYOUT) {
+                whiteListLayout(androidReference.getName());
             }
         }
+
     }
 }

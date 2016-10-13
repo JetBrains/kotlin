@@ -203,7 +203,7 @@ sealed class KtLightMethodImpl(
             delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass
     ) : KtLightMethodImpl(delegate, origin, containingClass)
 
-    private class KtLightAnnotationMethod(
+    class KtLightAnnotationMethod(
             override val clsDelegate: PsiAnnotationMethod,
             origin: LightMemberOrigin?,
             containingClass: KtLightClass

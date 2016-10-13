@@ -16,6 +16,41 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
+import static com.android.SdkConstants.ANDROID_PREFIX;
+import static com.android.SdkConstants.ANDROID_URI;
+import static com.android.SdkConstants.ATTR_LOCALE;
+import static com.android.SdkConstants.BIN_FOLDER;
+import static com.android.SdkConstants.DOT_GIF;
+import static com.android.SdkConstants.DOT_JPEG;
+import static com.android.SdkConstants.DOT_JPG;
+import static com.android.SdkConstants.DOT_PNG;
+import static com.android.SdkConstants.DOT_WEBP;
+import static com.android.SdkConstants.DOT_XML;
+import static com.android.SdkConstants.FN_BUILD_GRADLE;
+import static com.android.SdkConstants.ID_PREFIX;
+import static com.android.SdkConstants.NEW_ID_PREFIX;
+import static com.android.SdkConstants.TOOLS_URI;
+import static com.android.SdkConstants.UTF_8;
+import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
+import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_CHAR;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_CHARACTER_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_INTEGER_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG_WRAPPER;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT;
+import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT_WRAPPER;
+
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.AndroidProject;
@@ -38,32 +73,45 @@ import com.android.tools.klint.client.api.LintClient;
 import com.android.utils.PositionXmlParser;
 import com.android.utils.SdkUtils;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.jetbrains.uast.UFile;
-import org.jetbrains.uast.UImportStatement;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.ClassNode;
-import org.jetbrains.org.objectweb.asm.tree.FieldNode;
+import com.intellij.psi.CommonClassNames;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiImportStatement;
+import com.intellij.psi.PsiLiteral;
+import com.intellij.psi.PsiParenthesizedExpression;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiWhiteSpace;
+
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UParenthesizedExpression;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static com.android.SdkConstants.*;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
-import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
+import lombok.ast.ImportDeclaration;
+
 
 /**
  * Useful utility methods related to lint.
@@ -236,6 +284,22 @@ public class LintUtils {
      */
     public static boolean isRootElement(Element element) {
         return element == element.getOwnerDocument().getDocumentElement();
+    }
+
+    /**
+     * Returns the corresponding R field name for the given XML resource name
+     * @param styleName the XML name
+     * @return the corresponding R field name
+     */
+    public static String getFieldName(@NonNull String styleName) {
+        for (int i = 0, n = styleName.length(); i < n; i++) {
+            char c = styleName.charAt(i);
+            if (c == '.' || c == '-' || c == ':') {
+                return styleName.replace('.', '_').replace('-', '_').replace(':', '_');
+            }
+        }
+
+        return styleName;
     }
 
     /**
@@ -559,7 +623,7 @@ public class LintUtils {
             text = new String(data, offset, length, charset);
         } catch (UnsupportedEncodingException e) {
             try {
-                if (charset != defaultCharset) {
+                if (!charset.equals(defaultCharset)) {
                     text = new String(data, offset, length, defaultCharset);
                 }
             } catch (UnsupportedEncodingException u) {
@@ -771,9 +835,12 @@ public class LintUtils {
      * @param fullyQualifiedName the fully qualified class name
      * @return true if the given imported name refers to the given fully
      *         qualified name
+     * @deprecated Use PSI element hierarchies instead where type resolution is more directly
+     *  available (call {@link PsiImportStatement#resolve()})
      */
+    @Deprecated
     public static boolean isImported(
-            @Nullable UFile compilationUnit,
+            @Nullable lombok.ast.Node compilationUnit,
             @NonNull String fullyQualifiedName) {
         if (compilationUnit == null) {
             return false;
@@ -782,27 +849,26 @@ public class LintUtils {
         int dotLength = fullyQualifiedName.length() - dotIndex;
 
         boolean imported = false;
-        for (UImportStatement importStatement : compilationUnit.getImportStatements()) {
-            String fqn = importStatement.getFqNameToImport();
-            if (fqn == null) {
-                continue;
-            }
-
-            if (fqn.equals(fullyQualifiedName)) {
-                return true;
-            } else if (fullyQualifiedName.regionMatches(dotIndex, fqn,
-                                                        fqn.length() - dotLength, dotLength)) {
-                // This import is importing the class name using some other prefix, so there
-                // fully qualified class name cannot be imported under that name
-                return false;
-            } else if (importStatement.isStarImport()
-                       && fqn.regionMatches(0, fqn, 0, dotIndex + 1)) {
-                imported = true;
-                // but don't break -- keep searching in case there's a non-wildcard
-                // import of the specific class name, e.g. if we're looking for
-                // android.content.SharedPreferences.Editor, don't match on the following:
-                //   import android.content.SharedPreferences.*;
-                //   import foo.bar.Editor;
+        for (lombok.ast.Node rootNode : compilationUnit.getChildren()) {
+            if (rootNode instanceof ImportDeclaration) {
+                ImportDeclaration importDeclaration = (ImportDeclaration) rootNode;
+                String fqn = importDeclaration.asFullyQualifiedName();
+                if (fqn.equals(fullyQualifiedName)) {
+                    return true;
+                } else if (fullyQualifiedName.regionMatches(dotIndex, fqn,
+                        fqn.length() - dotLength, dotLength)) {
+                    // This import is importing the class name using some other prefix, so there
+                    // fully qualified class name cannot be imported under that name
+                    return false;
+                } else if (importDeclaration.astStarImport()
+                        && fqn.regionMatches(0, fqn, 0, dotIndex + 1)) {
+                    imported = true;
+                    // but don't break -- keep searching in case there's a non-wildcard
+                    // import of the specific class name, e.g. if we're looking for
+                    // android.content.SharedPreferences.Editor, don't match on the following:
+                    //   import android.content.SharedPreferences.*;
+                    //   import foo.bar.Editor;
+                }
             }
         }
 
@@ -1045,7 +1111,7 @@ public class LintUtils {
         }
         return new AndroidVersion(api.getApiLevel(), null);
     }
-
+    
     /**
      * Looks for a certain string within a larger string, which should immediately follow
      * the given prefix and immediately precede the given suffix.
@@ -1131,40 +1197,6 @@ public class LintUtils {
     }
 
     /**
-     * Escapes the given property file value (right hand side of property assignment)
-     * as required by the property file format (e.g. escapes colons and backslashes)
-     *
-     * @param value the value to be escaped
-     * @return the escaped value
-     */
-    @NonNull
-    public static String escapePropertyValue(@NonNull String value) {
-        // Slow, stupid implementation, but is 100% compatible with Java's property file
-        // implementation
-        Properties properties = new Properties();
-        properties.setProperty("k", value); // key doesn't matter
-        StringWriter writer = new StringWriter();
-        try {
-            properties.store(writer, null);
-            String s = writer.toString();
-            int end = s.length();
-
-            // Writer inserts trailing newline
-            String lineSeparator = SdkUtils.getLineSeparator();
-            if (s.endsWith(lineSeparator)) {
-                end -= lineSeparator.length();
-            }
-
-            int start = s.indexOf('=');
-            assert start != -1 : s;
-            return s.substring(start + 1, end);
-        }
-        catch (IOException e) {
-            return value; // shouldn't happen; we're not going to disk
-        }
-    }
-
-    /**
      * Returns the locale for the given parent folder.
      *
      * @param parent the name of the parent folder
@@ -1215,5 +1247,141 @@ public class LintUtils {
         } else {
             return "en".equals(locale.getLanguage());  //$NON-NLS-1$
         }
+    }
+
+    /**
+     * Create a {@link Location} for an error in the top level build.gradle file.
+     * This is necessary when we're doing an analysis based on the Gradle interpreted model,
+     * not from parsing Gradle files - and the model doesn't provide source positions.
+     * @param project the project containing the gradle file being analyzed
+     * @return location for the top level gradle file if it exists, otherwise fall back to
+     *     the project directory.
+     */
+    public static Location guessGradleLocation(@NonNull Project project) {
+        File dir = project.getDir();
+        Location location;
+        File topLevel = new File(dir, FN_BUILD_GRADLE);
+        if (topLevel.exists()) {
+            location = Location.create(topLevel);
+        } else {
+            location = Location.create(dir);
+        }
+        return location;
+    }
+
+    /**
+     * Returns true if the given element is the null literal
+     *
+     * @param element the element to check
+     * @return true if the element is "null"
+     */
+    public static boolean isNullLiteral(@Nullable PsiElement element) {
+        return element instanceof PsiLiteral && "null".equals(element.getText());
+    }
+
+    public static boolean isTrueLiteral(@Nullable PsiElement element) {
+        return element instanceof PsiLiteral && "true".equals(element.getText());
+    }
+
+    public static boolean isFalseLiteral(@Nullable PsiElement element) {
+        return element instanceof PsiLiteral && "false".equals(element.getText());
+    }
+
+    @Nullable
+    public static PsiElement skipParentheses(@Nullable PsiElement element) {
+        while (element instanceof PsiParenthesizedExpression) {
+            element = element.getParent();
+        }
+
+        return element;
+    }
+
+    @Nullable
+    public static UElement skipParentheses(@Nullable UElement element) {
+        while (element instanceof UParenthesizedExpression) {
+            element = element.getContainingElement();
+        }
+
+        return element;
+    }
+
+    @Nullable
+    public static PsiElement nextNonWhitespace(@Nullable PsiElement element) {
+        if (element != null) {
+            element = element.getNextSibling();
+            while (element instanceof PsiWhiteSpace) {
+                element = element.getNextSibling();
+            }
+        }
+
+        return element;
+    }
+
+    @Nullable
+    public static PsiElement prevNonWhitespace(@Nullable PsiElement element) {
+        if (element != null) {
+            element = element.getPrevSibling();
+            while (element instanceof PsiWhiteSpace) {
+                element = element.getPrevSibling();
+            }
+        }
+
+        return element;
+    }
+
+    public static boolean isString(@NonNull PsiType type) {
+        if (type instanceof PsiClassType) {
+            final String shortName = ((PsiClassType)type).getClassName();
+            if (!Objects.equal(shortName, CommonClassNames.JAVA_LANG_STRING_SHORT)) {
+                return false;
+            }
+        }
+        return CommonClassNames.JAVA_LANG_STRING.equals(type.getCanonicalText());
+    }
+
+    @Nullable
+    public static String getAutoBoxedType(@NonNull String primitive) {
+        if (TYPE_INT.equals(primitive)) {
+            return TYPE_INTEGER_WRAPPER;
+        } else if (TYPE_LONG.equals(primitive)) {
+            return TYPE_LONG_WRAPPER;
+        } else if (TYPE_CHAR.equals(primitive)) {
+            return TYPE_CHARACTER_WRAPPER;
+        } else if (TYPE_FLOAT.equals(primitive)) {
+            return TYPE_FLOAT_WRAPPER;
+        } else if (TYPE_DOUBLE.equals(primitive)) {
+            return TYPE_DOUBLE_WRAPPER;
+        } else if (TYPE_BOOLEAN.equals(primitive)) {
+            return TYPE_BOOLEAN_WRAPPER;
+        } else if (TYPE_SHORT.equals(primitive)) {
+            return TYPE_SHORT_WRAPPER;
+        } else if (TYPE_BYTE.equals(primitive)) {
+            return TYPE_BYTE_WRAPPER;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static String getPrimitiveType(@NonNull String autoBoxedType) {
+        if (TYPE_INTEGER_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_INT;
+        } else if (TYPE_LONG_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_LONG;
+        } else if (TYPE_CHARACTER_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_CHAR;
+        } else if (TYPE_FLOAT_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_FLOAT;
+        } else if (TYPE_DOUBLE_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_DOUBLE;
+        } else if (TYPE_BOOLEAN_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_BOOLEAN;
+        } else if (TYPE_SHORT_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_SHORT;
+        } else if (TYPE_BYTE_WRAPPER.equals(autoBoxedType)) {
+            return TYPE_BYTE;
+        }
+
+        return null;
     }
 }

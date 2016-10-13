@@ -16,17 +16,27 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.SdkConstants.ANDROID_URI;
+import static com.android.SdkConstants.ATTR_LAYOUT_HEIGHT;
+import static com.android.SdkConstants.ATTR_LAYOUT_WIDTH;
+import static com.android.SdkConstants.ATTR_PADDING;
+import static com.android.SdkConstants.ATTR_PADDING_BOTTOM;
+import static com.android.SdkConstants.ATTR_PADDING_LEFT;
+import static com.android.SdkConstants.ATTR_PADDING_RIGHT;
+import static com.android.SdkConstants.ATTR_PADDING_TOP;
+import static com.android.SdkConstants.VALUE_FILL_PARENT;
+import static com.android.SdkConstants.VALUE_MATCH_PARENT;
+
 import com.android.annotations.NonNull;
 import com.android.resources.ResourceFolderType;
 import com.google.common.annotations.Beta;
-import org.w3c.dom.Element;
 
-import static com.android.SdkConstants.*;
+import org.w3c.dom.Element;
 
 /**
  * Abstract class specifically intended for layout detectors which provides some
  * common utility methods shared by layout detectors.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */

@@ -23,21 +23,23 @@ import static com.android.SdkConstants.TAG_ACTIVITY;
 import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
+import com.android.tools.klint.detector.api.Detector.XmlScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 
 import org.jetbrains.uast.UClass;
-import org.jetbrains.uast.UFunction;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
 import org.w3c.dom.Element;
 
 import java.util.Collection;
@@ -51,7 +53,7 @@ import java.util.Map;
  * Ensures that PreferenceActivity and its subclasses are never exported.
  */
 public class PreferenceActivityDetector extends Detector
-        implements Detector.XmlScanner, UastScanner {
+        implements XmlScanner, Detector.UastScanner {
     public static final Issue ISSUE = Issue.create(
             "ExportedPreferenceActivity", //$NON-NLS-1$
             "PreferenceActivity should not be exported",
@@ -62,7 +64,7 @@ public class PreferenceActivityDetector extends Detector
             Severity.WARNING,
             new Implementation(
                     PreferenceActivityDetector.class,
-                    EnumSet.of(Scope.MANIFEST, Scope.SOURCE_FILE)))
+                    EnumSet.of(Scope.MANIFEST, Scope.JAVA_FILE)))
             .addMoreInfo("http://securityintelligence.com/"
                     + "new-vulnerability-android-framework-fragment-injection");
     private static final String PREFERENCE_ACTIVITY = "android.preference.PreferenceActivity"; //$NON-NLS-1$
@@ -71,13 +73,8 @@ public class PreferenceActivityDetector extends Detector
     private final Map<String, Location.Handle> mExportedActivities =
             new HashMap<String, Location.Handle>();
 
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.FAST;
-    }
-
     // ---- Implements XmlScanner ----
+
     @Override
     public Collection<String> getApplicableElements() {
         return Collections.singletonList(TAG_ACTIVITY);
@@ -91,7 +88,7 @@ public class PreferenceActivityDetector extends Detector
                 if (fqcn.equals(PREFERENCE_ACTIVITY) &&
                         !context.getDriver().isSuppressed(context, ISSUE, element)) {
                     String message = "`PreferenceActivity` should not be exported";
-                    context.report(ISSUE, context.getLocation(element), message);
+                    context.report(ISSUE, element, context.getLocation(element), message);
                 }
                 mExportedActivities.put(fqcn, context.createLocationHandle(element));
             }
@@ -122,41 +119,42 @@ public class PreferenceActivityDetector extends Detector
 
     // ---- Implements UastScanner ----
 
-
+    @Nullable
     @Override
-    public List<String> getApplicableSuperClasses() {
+    public List<String> applicableSuperClasses() {
         return Collections.singletonList(PREFERENCE_ACTIVITY);
     }
 
     @Override
-    public void visitClass(UastAndroidContext context, UClass node) {
-        if (!context.getLintContext().getProject().getReportIssues()) {
+    public void checkClass(@NonNull JavaContext context, @NonNull UClass declaration) {
+        if (!context.getProject().getReportIssues()) {
             return;
         }
-        String className = node.getName();
-        if (node.isSubclassOf(PREFERENCE_ACTIVITY)
-            && mExportedActivities.containsKey(className)) {
-
+        JavaEvaluator evaluator = context.getEvaluator();
+        String className = declaration.getQualifiedName();
+        if (evaluator.extendsClass(declaration, PREFERENCE_ACTIVITY, false)
+                && mExportedActivities.containsKey(className)) {
             // Ignore the issue if we target an API greater than 19 and the class in
             // question specifically overrides isValidFragment() and thus knowingly white-lists
             // valid fragments.
-            if (context.getLintContext().getMainProject().getTargetSdk() >= 19
-                && overridesIsValidFragment(node)) {
+            if (context.getMainProject().getTargetSdk() >= 19
+                    && overridesIsValidFragment(evaluator, declaration)) {
                 return;
             }
 
             String message = String.format(
-              "`PreferenceActivity` subclass `%1$s` should not be exported",
-              className);
-            context.report(ISSUE, node, mExportedActivities.get(className).resolve(), message);
+                    "`PreferenceActivity` subclass `%1$s` should not be exported",
+                    className);
+            Location location = mExportedActivities.get(className).resolve();
+            context.reportUast(ISSUE, declaration, location, message);
         }
     }
 
-    private static boolean overridesIsValidFragment(UClass resolvedClass) {
-        List<UFunction> functions = UastUtils.findFunctions(resolvedClass, IS_VALID_FRAGMENT);
-        for (UFunction func : functions) {
-            if (func.getValueParameterCount() == 1
-                    && func.getValueParameters().get(0).getType().matchesFqName(TYPE_STRING)) {
+    private static boolean overridesIsValidFragment(
+            @NonNull JavaEvaluator evaluator,
+            @NonNull PsiClass resolvedClass) {
+        for (PsiMethod method : resolvedClass.findMethodsByName(IS_VALID_FRAGMENT, false)) {
+            if (evaluator.parametersMatch(method, TYPE_STRING)) {
                 return true;
             }
         }

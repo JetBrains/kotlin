@@ -16,7 +16,10 @@
 
 package com.android.tools.klint.detector.api;
 
+import static com.android.tools.klint.detector.api.TextFormat.RAW;
+
 import com.android.annotations.NonNull;
+import com.android.tools.klint.client.api.Configuration;
 import com.google.common.annotations.Beta;
 
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ import java.util.List;
  * multiple different issues as it's analyzing code, and we want to be able to
  * different severities for different issues, the ability to suppress one but
  * not other issues from the same detector, and so on.
- * <p/>
+ * <p>
  * <b>NOTE: This is not a public or final API; if you rely on this be prepared
  * to adjust your code for the next tools release.</b>
  */
@@ -139,7 +142,7 @@ public final class Issue implements Comparable<Issue> {
      */
     @NonNull
     public String getBriefDescription(@NonNull TextFormat format) {
-        return TextFormat.RAW.convertTo(mBriefDescription, format);
+        return RAW.convertTo(mBriefDescription, format);
     }
 
     /**
@@ -153,7 +156,7 @@ public final class Issue implements Comparable<Issue> {
      */
     @NonNull
     public String getExplanation(@NonNull TextFormat format) {
-        return TextFormat.RAW.convertTo(mExplanation, format);
+        return RAW.convertTo(mExplanation, format);
     }
 
     /**

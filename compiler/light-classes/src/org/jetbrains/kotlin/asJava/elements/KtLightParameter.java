@@ -184,4 +184,9 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
         }
         return super.isEquivalentTo(another);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PsiElement && isEquivalentTo((PsiElement) obj);
+    }
 }

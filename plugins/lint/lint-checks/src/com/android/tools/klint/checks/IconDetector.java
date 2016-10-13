@@ -34,9 +34,6 @@ import static com.android.SdkConstants.DRAWABLE_PREFIX;
 import static com.android.SdkConstants.DRAWABLE_XHDPI;
 import static com.android.SdkConstants.DRAWABLE_XXHDPI;
 import static com.android.SdkConstants.DRAWABLE_XXXHDPI;
-import static com.android.SdkConstants.MENU_TYPE;
-import static com.android.SdkConstants.R_CLASS;
-import static com.android.SdkConstants.R_DRAWABLE_PREFIX;
 import static com.android.SdkConstants.TAG_ACTIVITY;
 import static com.android.SdkConstants.TAG_APPLICATION;
 import static com.android.SdkConstants.TAG_ITEM;
@@ -49,30 +46,49 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.ProductFlavor;
 import com.android.builder.model.ProductFlavorContainer;
+import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.Density;
 import com.android.resources.ResourceFolderType;
+import com.android.resources.ResourceType;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.LintUtils;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Project;
+import com.android.tools.klint.detector.api.ResourceEvaluator;
 import com.android.tools.klint.detector.api.ResourceXmlDetector;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
 import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.psi.JavaRecursiveElementVisitor;
+import com.intellij.psi.PsiAnonymousClass;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.util.PsiTreeUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.uast.*;
-import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.UAnonymousClass;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.USimpleNameReferenceExpression;
+import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;
@@ -107,7 +123,7 @@ import javax.imageio.stream.ImageInputStream;
  * Checks for common icon problems, such as wrong icon sizes, placing icons in the
  * density independent drawable folder, etc.
  */
-public class IconDetector extends ResourceXmlDetector implements UastScanner {
+public class IconDetector extends ResourceXmlDetector implements Detector.UastScanner {
 
     private static final boolean INCLUDE_LDPI;
     static {
@@ -149,7 +165,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
      * the manifest, menu files etc to see how icons are used
      */
     private static final EnumSet<Scope> ICON_TYPE_SCOPE = EnumSet.of(Scope.ALL_RESOURCE_FILES,
-                                                                     Scope.SOURCE_FILE, Scope.MANIFEST);
+            Scope.JAVA_FILE, Scope.MANIFEST);
 
     private static final Implementation IMPLEMENTATION_JAVA = new Implementation(
             IconDetector.class,
@@ -371,12 +387,6 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
 
     /** Constructs a new {@link IconDetector} check */
     public IconDetector() {
-    }
-
-    @NonNull
-    @Override
-    public Speed getSpeed() {
-        return Speed.SLOW;
     }
 
     @Override
@@ -697,7 +707,9 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                             String message = String.format(
                                 "The `%1$s` icon has identical contents in the following configuration folders: %2$s",
                                         lastName, sb.toString());
+                            if (location != null) {
                                 context.report(DUPLICATES_CONFIGURATIONS, location, message);
+                            }
                         } else {
                             StringBuilder sb = new StringBuilder(sameFiles.size() * 16);
                             for (File file : sameFiles) {
@@ -911,7 +923,9 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                         "The image `%1$s` varies significantly in its density-independent (dip) " +
                         "size across the various density versions: %2$s",
                             name, sb.toString());
-                    context.report(ICON_DIP_SIZE, location, message);
+                    if (location != null) {
+                        context.report(ICON_DIP_SIZE, location, message);
+                    }
                 }
             }
         }
@@ -1958,108 +1972,97 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
 
     // ---- Implements UastScanner ----
 
-    private static final String NOTIFICATION_CLASS = "Notification";              //$NON-NLS-1$
-    private static final String NOTIFICATION_COMPAT_CLASS = "NotificationCompat"; //$NON-NLS-1$
+    private static final String NOTIFICATION_CLASS = "Notification";
+    private static final String NOTIFICATION_BUILDER_CLASS = "Notification.Builder";
+    private static final String NOTIFICATION_COMPAT_BUILDER_CLASS = "NotificationCompat.Builder";
+    private static final String SET_SMALL_ICON = "setSmallIcon";
+    private static final String ON_CREATE_OPTIONS_MENU = "onCreateOptionsMenu";
 
-    private static final String NOTIFICATION_CLASS_FQNAME =
-            "android.app.Notification";                                           //$NON-NLS-1$
-
-    private static final String NOTIFICATION_COMPAT_CLASS_FQNAME =
-            "android.support.v4.app.NotificationCompat";                          //$NON-NLS-1$
-
-    private static final String BUILDER_CLASS = "Builder";                        //$NON-NLS-1$
-    private static final String SET_SMALL_ICON = "setSmallIcon";                  //$NON-NLS-1$
-    private static final String ON_CREATE_OPTIONS_MENU = "onCreateOptionsMenu";   //$NON-NLS-1$
-
+    @Nullable
     @Override
-    public UastVisitor createUastVisitor(UastAndroidContext context) {
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
+        List<Class<? extends UElement>> types = new ArrayList<Class<? extends UElement>>(2);
+        types.add(UCallExpression.class);
+        types.add(UMethod.class);
+        return types;
+    }
+
+    @Nullable
+    @Override
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         return new NotificationFinder(context);
     }
 
     private final class NotificationFinder extends AbstractUastVisitor {
-        private UastAndroidContext mContext;
+        private final JavaContext mContext;
 
-        public NotificationFinder(UastAndroidContext mContext) {
-            this.mContext = mContext;
+        private NotificationFinder(JavaContext context) {
+            mContext = context;
         }
 
         @Override
-        public boolean visitFunction(@NotNull UFunction node) {
-            if (node.matchesName(ON_CREATE_OPTIONS_MENU)) {
+        public boolean visitMethod(UMethod method) {
+            if (ON_CREATE_OPTIONS_MENU.equals(method.getName())) {
                 // Gather any R.menu references found in this method
-                node.accept(new MenuFinder());
+                method.accept(new MenuFinder());
             }
-
-            return super.visitFunction(node);
+            return super.visitMethod(method);
         }
 
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            if (node.getKind() == UastCallKind.CONSTRUCTOR_CALL) {
-                visitConstructorInvocation(node);
+        public boolean visitCallExpression(UCallExpression node) {
+            if (UastExpressionUtils.isConstructorCall(node)) {
+                visitConstructorCall(node);
             }
-
             return super.visitCallExpression(node);
         }
 
-        private void visitConstructorInvocation(UCallExpression node) {
-            USimpleReferenceExpression reference = node.getClassReference();
-            if (reference == null) {
+        private void visitConstructorCall(UCallExpression node) {
+            UReferenceExpression classReference = node.getClassReference();
+            if (classReference == null) {
                 return;
             }
-
-            List<String> parts = UastUtils.asQualifiedIdentifiers(UastUtils.getQualifiedCallElement(node));
-
-            String typeName = reference.getIdentifier();
+            PsiElement resolved = classReference.resolve();
+            if (!(resolved instanceof PsiClass)) {
+                return;
+            }
+            String typeName = ((PsiClass) resolved).getName();
             if (NOTIFICATION_CLASS.equals(typeName)) {
                 List<UExpression> args = node.getValueArguments();
                 if (args.size() == 3) {
-                    if (args.get(0) instanceof UQualifiedExpression
-                            && handleSelect((UQualifiedExpression) args.get(0))) {
+                    if (args.get(0) instanceof UReferenceExpression && handleSelect(args.get(0))) {
                         return;
                     }
 
-                    UFunction method = UastUtils.getContainingFunction(node);
-                    if (method != null) {
-                        // Must track local types
-                        String name = StringFormatDetector.getResourceForFirstArg(method, node);
-                        if (name != null) {
-                            if (mNotificationIcons == null) {
-                                mNotificationIcons = Sets.newHashSet();
-                            }
-                            mNotificationIcons.add(name);
+                    ResourceUrl url = ResourceEvaluator.getResource(mContext, args.get(0));
+                    if (url != null
+                            && (url.type == ResourceType.DRAWABLE
+                            || url.type == ResourceType.COLOR
+                            || url.type == ResourceType.MIPMAP)) {
+                        if (mNotificationIcons == null) {
+                            mNotificationIcons = Sets.newHashSet();
                         }
+                        mNotificationIcons.add(url.name);
                     }
                 }
-            } else if (BUILDER_CLASS.equals(typeName)) {
-                boolean isBuilder = false;
-                if (parts != null && parts.size() == 1) {
-                    isBuilder = true;
-                } else if (parts != null && parts.size() == 2) {
-                    String clz = parts.get(0);
-                    if (NOTIFICATION_CLASS.equals(clz) || NOTIFICATION_COMPAT_CLASS_FQNAME.equals(clz)) {
-                        isBuilder = true;
-                    }
-                }
-
-                if (isBuilder) {
-                    UFunction method = UastUtils.getContainingFunction(node);
-                    if (method != null) {
-                        SetIconFinder finder = new SetIconFinder();
-                        method.accept(finder);
-                    }
+            } else if (NOTIFICATION_BUILDER_CLASS.equals(typeName)
+                    || NOTIFICATION_COMPAT_BUILDER_CLASS.equals(typeName)) {
+                UMethod method = UastUtils.getParentOfType(node, UMethod.class, true);
+                if (method != null) {
+                    SetIconFinder finder = new SetIconFinder();
+                    method.accept(finder);
                 }
             }
         }
     }
 
-    private boolean handleSelect(UQualifiedExpression select) {
-        if (select.renderString().startsWith(R_DRAWABLE_PREFIX)) {
-            String name = select.getSelector().renderString();
+    private boolean handleSelect(UElement select) {
+        ResourceUrl url = ResourceEvaluator.getResourceConstant(select);
+        if (url != null && url.type == ResourceType.DRAWABLE && !url.framework) {
             if (mNotificationIcons == null) {
                 mNotificationIcons = Sets.newHashSet();
             }
-            mNotificationIcons.add(name);
+            mNotificationIcons.add(url.name);
 
             return true;
         }
@@ -2068,46 +2071,47 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
     }
 
     private final class SetIconFinder extends AbstractUastVisitor {
+
         @Override
-        public boolean visitCallExpression(@NotNull UCallExpression node) {
-            if (SET_SMALL_ICON.equals(node.getFunctionName())) {
-                List<UExpression> args = node.getValueArguments();
-                if (args.size() == 1 && args.get(0) instanceof UQualifiedExpression) {
-                    handleSelect((UQualifiedExpression) args.get(0));
+        public boolean visitCallExpression(UCallExpression expression) {
+            if (UastExpressionUtils.isMethodCall(expression)) {
+                if (SET_SMALL_ICON.equals(expression.getMethodName())) {
+                    List<UExpression> arguments = expression.getValueArguments();
+                    if (arguments.size() == 1 && arguments.get(0) instanceof UReferenceExpression) {
+                        handleSelect(arguments.get(0));
+                    }
                 }
             }
+            return super.visitCallExpression(expression);
+        }
 
-            return super.visitCallExpression(node);
+        @Override
+        public boolean visitClass(UClass node) {
+            if (node instanceof UAnonymousClass) {
+                return true;
+            }
+            return super.visitClass(node);
         }
     }
 
     private final class MenuFinder extends AbstractUastVisitor {
         @Override
-        public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            // R.type.name
-            if (node.getReceiver() instanceof UQualifiedExpression) {
-                UQualifiedExpression select = (UQualifiedExpression) node.getReceiver();
-                if (select.getReceiver() instanceof USimpleReferenceExpression) {
-                    USimpleReferenceExpression reference = (USimpleReferenceExpression) select.getReceiver();
-                    if (R_CLASS.equals(reference.getIdentifier())) {
-                        if (select.selectorMatches(MENU_TYPE)) {
-                            String name = node.getSelector().renderString();
-                            // Reclassify icons in the given menu as action bar icons
-                            if (mMenuToIcons != null) {
-                                Collection<String> icons = mMenuToIcons.get(name);
-                                if (icons != null) {
-                                    if (mActionBarIcons == null) {
-                                        mActionBarIcons = Sets.newHashSet();
-                                    }
-                                    mActionBarIcons.addAll(icons);
-                                }
-                            }
+        public boolean visitSimpleNameReferenceExpression(USimpleNameReferenceExpression node) {
+            ResourceUrl url = ResourceEvaluator.getResourceConstant(node);
+            if (url != null && url.type == ResourceType.MENU && !url.framework) {
+                // Reclassify icons in the given menu as action bar icons
+                if (mMenuToIcons != null) {
+                    Collection<String> icons = mMenuToIcons.get(url.name);
+                    if (icons != null) {
+                        if (mActionBarIcons == null) {
+                            mActionBarIcons = Sets.newHashSet();
                         }
+                        mActionBarIcons.addAll(icons);
                     }
                 }
             }
 
-            return super.visitQualifiedExpression(node);
+            return super.visitSimpleNameReferenceExpression(node);
         }
     }
 }
