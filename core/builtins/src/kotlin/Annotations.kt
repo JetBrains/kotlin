@@ -74,7 +74,7 @@ public annotation class ExtensionFunctionType
 /**
  * Annotates type arguments of functional type and holds corresponding parameter name specified by the user in type declaration (if any).
  */
-@Target(TYPE_PARAMETER)
+@Target(TYPE)
 @MustBeDocumented
 @SinceKotlin("1.1")
 public annotation class ParameterName(val name: String)
