@@ -429,8 +429,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static FqName getFunctionFqName(int parameterCount) {
-        return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(getFunctionName(parameterCount)));
+    public static ClassId getFunctionClassId(int parameterCount) {
+        return new ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)));
     }
 
     @NotNull

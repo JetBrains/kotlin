@@ -38,45 +38,50 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getF
 public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
-    private final Map<FqNameUnsafe, FqName> javaToKotlin = new HashMap<FqNameUnsafe, FqName>();
+    private final Map<FqNameUnsafe, ClassId> javaToKotlin = new HashMap<FqNameUnsafe, ClassId>();
     private final Map<FqNameUnsafe, ClassId> kotlinToJava = new HashMap<FqNameUnsafe, ClassId>();
 
     private final Map<FqNameUnsafe, FqName> mutableToReadOnly = new HashMap<FqNameUnsafe, FqName>();
     private final Map<FqNameUnsafe, FqName> readOnlyToMutable = new HashMap<FqNameUnsafe, FqName>();
 
     private JavaToKotlinClassMap() {
-        add(Object.class, FQ_NAMES.any);
-        add(String.class, FQ_NAMES.string);
-        add(CharSequence.class, FQ_NAMES.charSequence);
-        add(Throwable.class, FQ_NAMES.throwable);
-        add(Cloneable.class, FQ_NAMES.cloneable);
-        add(Number.class, FQ_NAMES.number);
-        add(Comparable.class, FQ_NAMES.comparable);
-        add(Enum.class, FQ_NAMES._enum);
-        add(Annotation.class, FQ_NAMES.annotation);
+        addTopLevel(Object.class, FQ_NAMES.any);
+        addTopLevel(String.class, FQ_NAMES.string);
+        addTopLevel(CharSequence.class, FQ_NAMES.charSequence);
+        addTopLevel(Throwable.class, FQ_NAMES.throwable);
+        addTopLevel(Cloneable.class, FQ_NAMES.cloneable);
+        addTopLevel(Number.class, FQ_NAMES.number);
+        addTopLevel(Comparable.class, FQ_NAMES.comparable);
+        addTopLevel(Enum.class, FQ_NAMES._enum);
+        addTopLevel(Annotation.class, FQ_NAMES.annotation);
 
-        add(Iterable.class, FQ_NAMES.iterable, FQ_NAMES.mutableIterable);
-        add(Iterator.class, FQ_NAMES.iterator, FQ_NAMES.mutableIterator);
-        add(Collection.class, FQ_NAMES.collection, FQ_NAMES.mutableCollection);
-        add(List.class, FQ_NAMES.list, FQ_NAMES.mutableList);
-        add(Set.class, FQ_NAMES.set, FQ_NAMES.mutableSet);
-        add(Map.class, FQ_NAMES.map, FQ_NAMES.mutableMap);
-        add(Map.Entry.class, FQ_NAMES.mapEntry, FQ_NAMES.mutableMapEntry);
-        add(ListIterator.class, FQ_NAMES.listIterator, FQ_NAMES.mutableListIterator);
+        addMutableReadOnlyPair(Iterable.class, ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable);
+        addMutableReadOnlyPair(Iterator.class, ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator);
+        addMutableReadOnlyPair(Collection.class, ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection);
+        addMutableReadOnlyPair(List.class, ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList);
+        addMutableReadOnlyPair(Set.class, ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet);
+        addMutableReadOnlyPair(ListIterator.class, ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator);
+
+        ClassId mapClassId = ClassId.topLevel(FQ_NAMES.map);
+        addMutableReadOnlyPair(Map.class, mapClassId, FQ_NAMES.mutableMap);
+        addMutableReadOnlyPair(Map.Entry.class, mapClassId.createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry);
 
         for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
-            add(ClassId.topLevel(jvmType.getWrapperFqName()), KotlinBuiltIns.getPrimitiveFqName(jvmType.getPrimitiveType()));
+            add(
+                    ClassId.topLevel(jvmType.getWrapperFqName()),
+                    ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.getPrimitiveType()))
+            );
         }
 
-        for (FqName fqName : CompanionObjectMapping.INSTANCE.allClassesWithIntrinsicCompanions()) {
+        for (ClassId classId : CompanionObjectMapping.INSTANCE.allClassesWithIntrinsicCompanions()) {
             add(ClassId.topLevel(
-                    new FqName("kotlin.jvm.internal." + fqName.shortName().asString() + "CompanionObject")),
-                    fqName.child(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT));
+                    new FqName("kotlin.jvm.internal." + classId.getShortClassName().asString() + "CompanionObject")),
+                    classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT));
         }
 
         // TODO: support also functions with >= 23 parameters
         for (int i = 0; i < 23; i++) {
-            add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), KotlinBuiltIns.getFunctionFqName(i));
+            add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), KotlinBuiltIns.getFunctionClassId(i));
 
             FunctionClassDescriptor.Kind kFunction = FunctionClassDescriptor.Kind.KFunction;
             String kFun = kFunction.getPackageFqName() + "." + kFunction.getClassNamePrefix();
@@ -97,9 +102,14 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
      * kotlin.jvm.functions.Function3 -> kotlin.Function3
      */
     @Nullable
+    public ClassId mapJavaToKotlin(@NotNull FqName fqName) {
+        return javaToKotlin.get(fqName.toUnsafe());
+    }
+
+    @Nullable
     public ClassDescriptor mapJavaToKotlin(@NotNull FqName fqName, @NotNull KotlinBuiltIns builtIns) {
-        FqName kotlinFqName = javaToKotlin.get(fqName.toUnsafe());
-        return kotlinFqName != null ? builtIns.getBuiltInClassByFqName(kotlinFqName) : null;
+        ClassId kotlinClassId = mapJavaToKotlin(fqName);
+        return kotlinClassId != null ? builtIns.getBuiltInClassByFqName(kotlinClassId.asSingleFqName()) : null;
     }
 
     /**
@@ -117,35 +127,36 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return kotlinToJava.get(kotlinFqName);
     }
 
-    private void add(
+    private void addMutableReadOnlyPair(
             @NotNull Class<?> javaClass,
-            @NotNull FqName kotlinReadOnlyFqName,
+            @NotNull ClassId kotlinReadOnlyClassId,
             @NotNull FqName kotlinMutableFqName
     ) {
         ClassId javaClassId = classId(javaClass);
 
-        add(javaClassId, kotlinReadOnlyFqName);
+        add(javaClassId, kotlinReadOnlyClassId);
         addKotlinToJava(kotlinMutableFqName, javaClassId);
 
+        FqName kotlinReadOnlyFqName = kotlinReadOnlyClassId.asSingleFqName();
         mutableToReadOnly.put(kotlinMutableFqName.toUnsafe(), kotlinReadOnlyFqName);
         readOnlyToMutable.put(kotlinReadOnlyFqName.toUnsafe(), kotlinMutableFqName);
     }
 
-    private void add(@NotNull ClassId javaClassId, @NotNull FqName kotlinFqName) {
-        addJavaToKotlin(javaClassId, kotlinFqName);
-        addKotlinToJava(kotlinFqName, javaClassId);
+    private void add(@NotNull ClassId javaClassId, @NotNull ClassId kotlinClassId) {
+        addJavaToKotlin(javaClassId, kotlinClassId);
+        addKotlinToJava(kotlinClassId.asSingleFqName(), javaClassId);
     }
 
-    private void add(@NotNull Class<?> javaClass, @NotNull FqNameUnsafe kotlinFqName) {
-        add(javaClass, kotlinFqName.toSafe());
+    private void addTopLevel(@NotNull Class<?> javaClass, @NotNull FqNameUnsafe kotlinFqName) {
+        addTopLevel(javaClass, kotlinFqName.toSafe());
     }
 
-    private void add(@NotNull Class<?> javaClass, @NotNull FqName kotlinFqName) {
-        add(classId(javaClass), kotlinFqName);
+    private void addTopLevel(@NotNull Class<?> javaClass, @NotNull FqName kotlinFqName) {
+        add(classId(javaClass), ClassId.topLevel(kotlinFqName));
     }
 
-    private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull FqName kotlinFqName) {
-        javaToKotlin.put(javaClassId.asSingleFqName().toUnsafe(), kotlinFqName);
+    private void addJavaToKotlin(@NotNull ClassId javaClassId, @NotNull ClassId kotlinClassId) {
+        javaToKotlin.put(javaClassId.asSingleFqName().toUnsafe(), kotlinClassId);
     }
 
     private void addKotlinToJava(@NotNull FqName kotlinFqNameUnsafe, @NotNull ClassId javaClassId) {
