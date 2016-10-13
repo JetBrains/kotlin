@@ -14,10 +14,12 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                     name = functionName,
                     returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter == NativeGetterOrSetter.GETTER) mapped.toNullableIfNonPrimitive() else mapped },
                     arguments = function.parameters.map {
+                        val mappedType = mapType(repository, it.type)
+
                         GenerateAttribute(
                                 name = it.name,
-                                type = mapType(repository, it.type),
-                                initializer = it.defaultValue,
+                                type = mappedType,
+                                initializer = mapLiteral(it.defaultValue, mappedType),
                                 getterSetterNoImpl = false,
                                 override = false,
                                 kind = AttributeKind.ARGUMENT,
@@ -67,7 +69,7 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
 fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute): GenerateAttribute =
         GenerateAttribute(attribute.name,
                 type = mapType(repository, attribute.type),
-                initializer = attribute.defaultValue,
+                initializer = mapLiteral(attribute.defaultValue, mapType(repository, attribute.type)),
                 getterSetterNoImpl = putNoImpl,
                 kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
                 override = false,
@@ -214,4 +216,14 @@ fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<Typede
             anonymousUnionsMap = anonymousUnionsMap,
             typedefsMarkersMap = typedefsMarkersMap
     )
+}
+
+private fun mapLiteral(literal: String?, expectedType: Type = DynamicType) = when (literal) {
+    "[]" -> when {
+        expectedType == DynamicType -> "arrayOf<dynamic>()"
+        expectedType is AnyType -> "arrayOf<dynamic>()"
+        expectedType is UnionType -> "arrayOf<dynamic>()"
+        else -> "arrayOf()"
+    }
+    else -> literal
 }
