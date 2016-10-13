@@ -412,6 +412,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("assignmentAsExpression.java")
+        public void testAssignmentAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignmentAsExpression.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("divideAssign.java")
         public void testDivideAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/divideAssign.java");
@@ -1743,8 +1749,7 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
 
         @TestMetadata("escapedCharactersInCodeQuote.java")
         public void testEscapedCharactersInCodeQuote() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/escapedCharactersInCodeQuote.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/escapedCharactersInCodeQuote.java");
             doTest(fileName);
         }
 
