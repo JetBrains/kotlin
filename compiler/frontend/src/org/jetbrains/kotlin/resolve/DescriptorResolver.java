@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
+import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyTypeAliasDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.*;
@@ -304,14 +305,23 @@ public class DescriptorResolver {
             destructuringVariables = null;
         }
 
+        Name parameterName;
+
+        if (destructuringDeclaration == null) {
+            parameterName = UnderscoreUtilKt.isSingleUnderscore(valueParameter)
+                            ? Name.special("<anonymous parameter " + index + ">")
+                            : KtPsiUtil.safeName(valueParameter.getName());
+        }
+        else {
+            parameterName = Name.special("<name for destructuring parameter " + index + ">");
+        }
+
         ValueParameterDescriptorImpl valueParameterDescriptor = ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                 owner,
                 null,
                 index,
                 valueParameterAnnotations,
-                destructuringVariables == null
-                ? KtPsiUtil.safeName(valueParameter.getName())
-                : Name.special("<name for destructuring parameter " + index + ">"),
+                parameterName,
                 variableType,
                 valueParameter.hasDefaultValue(),
                 valueParameter.hasModifier(CROSSINLINE_KEYWORD),

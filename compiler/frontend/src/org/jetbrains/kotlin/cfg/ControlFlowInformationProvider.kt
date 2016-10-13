@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -572,7 +573,7 @@ class ControlFlowInformationProvider private constructor(
                     val element = instruction.variableDeclarationElement as? KtNamedDeclaration ?: return@traverse
                     element.nameIdentifier ?: return@traverse
                     if (!VariableUseState.isUsed(variableUseState)) {
-                        if (KtPsiUtil.isRemovableVariableDeclaration(element)) {
+                        if (!element.isSingleUnderscore && KtPsiUtil.isRemovableVariableDeclaration(element)) {
                             report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
                         }
                         else if (element is KtParameter) {
