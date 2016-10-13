@@ -6,4 +6,4 @@ data class A2(val <!REDECLARATION!>x<!>: Int, val y: String) {
     val <!REDECLARATION!>x<!> = ""
 }
 
-data class A3(<!REDECLARATION, REDECLARATION, REDECLARATION!>val<!SYNTAX!><!> :Int<!>, <!REDECLARATION, REDECLARATION, REDECLARATION!>val<!SYNTAX!><!> : Int<!>)
+data class A3(<!REDECLARATION!>val<!SYNTAX!><!> :Int<!>, <!REDECLARATION!>val<!SYNTAX!><!> : Int<!>)

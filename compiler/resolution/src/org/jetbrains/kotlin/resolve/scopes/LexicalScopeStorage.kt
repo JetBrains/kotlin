@@ -57,6 +57,8 @@ abstract class LexicalScopeStorage(
         val name = descriptor.name
         val descriptorIndex = addDescriptor(descriptor)
 
+        if (name.isSpecial) return
+
         if (variablesAndClassifiersByName == null) {
             variablesAndClassifiersByName = HashMap()
         }
