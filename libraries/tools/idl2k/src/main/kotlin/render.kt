@@ -41,6 +41,10 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, modali
 private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, modality: MemberModality, commented: Boolean, level: Int, omitDefaults: Boolean = false) {
     indent(commented, level)
 
+    if (arg.name in keywords) {
+        append("@native(\"${arg.name}\") ")
+    }
+
     renderAttributeDeclaration(arg, modality, omitDefaults)
 
     appendln()
@@ -54,7 +58,7 @@ private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribu
     }
 }
 
-private val keywords = setOf("interface")
+private val keywords = setOf("interface", "is", "as")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
 private fun String.replaceWrongConstants(type: Type) = when {
@@ -160,7 +164,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     iface.memberAttributes
         .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
         .map { it.dynamicIfUnknownType(allTypes.keys) }
-        .groupBy { it.signature }.reduceValues().values.forEach { arg ->
+        .groupBy { it.name }.reduceValues(::merge).values.forEach { arg ->
             val modality = when {
                 arg.signature in superSignatures -> MemberModality.OVERRIDE
                 iface.kind == GenerateDefinitionKind.CLASS && arg.isVal -> MemberModality.OPEN
@@ -246,7 +250,27 @@ fun betterFunction(f1: GenerateFunction, f2: GenerateFunction): GenerateFunction
 
 private fun <F, T> Pair<F, F>.map(block: (F) -> T) = block(first) to block(second)
 private fun Pair<Type, Type>.betterType() = if (first is DynamicType || first is AnyType) first else second
-private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() } + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
+private fun Pair<String, String>.betterName() = if (((0..9).map(Int::toString) + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
+
+private fun merge(a: GenerateAttribute, b: GenerateAttribute): GenerateAttribute {
+    require(a.name == b.name)
+
+    val type = when {
+        a.type.dropNullable() == b.type.dropNullable() -> a.type.withNullability(a.type.nullable || b.type.nullable)
+        else -> DynamicType
+    }
+
+    return GenerateAttribute(
+            a.name,
+            type,
+            a.initializer ?: b.initializer,
+            a.getterSetterNoImpl || b.getterSetterNoImpl,
+            a.kind,
+            a.override,
+            a.vararg,
+            a.static
+    )
+}
 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
 
