@@ -1,6 +1,16 @@
+import java.util.*
+import java.io.File
 
 extra["kotlinVersion"] = file("kotlin-version-for-gradle.txt").readText().trim()
 extra["repo"] = "https://repo.gradle.org/gradle/repo"
+extra["build.number"] = "1.1-SNAPSHOT"
+Properties().apply {
+    load(File("resources/kotlinManifest.properties").reader())
+    forEach { k: Any?, v: Any? ->
+        if (k != null && k is String)
+            extra[k] = v
+    }
+}
 
 //buildscript {
 //    //extra["kotlinVersion"] = "1.1-M01"
@@ -32,4 +42,8 @@ tasks.matching { task ->
 
 task("update-dependencies") {
     dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
+}
+
+allprojects {
+    setBuildDir("$rootDir/build/${project.name}")
 }
