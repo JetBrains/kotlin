@@ -41,6 +41,8 @@ kotlinNativeInterop {
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
+     compilerOpts '-fPIC'
+     linkerOpts '-fPIC'
      linker 'clang++'
      linkOutputs ':common:compileHash'
 
