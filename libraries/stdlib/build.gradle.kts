@@ -31,9 +31,9 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs =
-            listOf("-XallowKotlinPackage",
+            listOf("-Xallow-kotlin-package",
                     "moduleName", "kotlin-stdlib",
-                    "-XinheritMultifileParts",
-                    "-XdeclarationsOutputPath", File(buildDir, "declarations/stdlib-declarations.json").canonicalPath)
+                    "-Xmultifile-parts-inherit",
+                    "-Xdump-declarations-to", File(buildDir, "declarations/stdlib-declarations.json").canonicalPath)
 }
 

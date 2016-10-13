@@ -33,6 +33,6 @@ configure<JavaPluginConvention> {
 //}
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-XallowKotlinPackage", "moduleName", "kotlin-builtins")
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "moduleName", "kotlin-builtins")
 }
 

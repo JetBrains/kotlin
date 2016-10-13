@@ -49,7 +49,7 @@ configure<JavaPluginConvention> {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-XallowKotlinPackage")
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
 }
 
 //tasks.withType<Jar> {
