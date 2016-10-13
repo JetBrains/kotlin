@@ -10,7 +10,7 @@
 
     <properties>
         <kotlin.version>0.1-SNAPSHOT</kotlin.version>
-        <antlr.version>4.5</antlr.version>
+        <antlr.version>4.5.3</antlr.version>
     </properties>
 
     <dependencies>
