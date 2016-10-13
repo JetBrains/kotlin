@@ -42,6 +42,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
 import java.io.File
+import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URLEncoder
@@ -234,7 +235,15 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
             override fun run(indicator: ProgressIndicator) {
                 var installed = false
-                if (pluginDownloader.prepareToInstall(indicator)) {
+                val prepareResult = try {
+                    pluginDownloader.prepareToInstall(indicator)
+                }
+                catch (e: IOException) {
+                    LOG.info(e)
+                    false
+                }
+
+                if (prepareResult) {
                     val pluginDescriptor = pluginDownloader.descriptor
                     if (pluginDescriptor != null) {
                         installed = true
