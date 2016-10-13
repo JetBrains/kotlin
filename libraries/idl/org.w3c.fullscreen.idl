@@ -1,18 +1,22 @@
 namespace org.w3c.fullscreen;
 
 
-// Downloaded from https://raw.githubusercontent.com/whatwg/fullscreen/master/Overview.src.html
+// Downloaded from https://raw.githubusercontent.com/whatwg/fullscreen/master/fullscreen.html
 partial interface Element {
-  void requestFullscreen();
+  Promise<void> requestFullscreen();
 };
 
 partial interface Document {
-  readonly attribute boolean fullscreenEnabled;
-  readonly attribute Element? fullscreenElement;
+  [LenientSetter] readonly attribute boolean fullscreenEnabled;
+  [LenientSetter] readonly attribute boolean fullscreen; // historical
 
-  void exitFullscreen();
+  Promise<void> exitFullscreen();
 
   attribute EventHandler onfullscreenchange;
   attribute EventHandler onfullscreenerror;
+};
+
+partial interface DocumentOrShadowRoot {
+  [LenientSetter] readonly attribute Element? fullscreenElement;
 };
 

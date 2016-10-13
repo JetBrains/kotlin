@@ -11,11 +11,11 @@ interface XMLSerializer {
  DOMString serializeToString (Node root);
 };
 partial interface Element {
- [TreatNullAs=EmptyString] attribute DOMString innerHTML;
- [TreatNullAs=EmptyString] attribute DOMString outerHTML;
- void insertAdjacentHTML (DOMString position, DOMString text);
+ [CEReactions, TreatNullAs=EmptyString] attribute DOMString innerHTML;
+ [CEReactions, TreatNullAs=EmptyString] attribute DOMString outerHTML;
+ [CEReactions] void insertAdjacentHTML (DOMString position, DOMString text);
 };
 partial interface Range {
- [NewObject] DocumentFragment createContextualFragment (DOMString fragment);
+ [CEReactions, NewObject] DocumentFragment createContextualFragment (DOMString fragment);
 };
 

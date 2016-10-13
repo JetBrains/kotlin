@@ -2,19 +2,14 @@ namespace org.w3c.dom.url;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/url/master/url.html
-[Constructor(USVString url, optional USVString base), Exposed=(Window,Worker)]
+[Constructor(USVString url, optional USVString base),
+ Exposed=(Window,Worker)]
 interface URL {
   static USVString domainToASCII(USVString domain);
   static USVString domainToUnicode(USVString domain);
-};
-URL implements URLUtils;
 
-[NoInterfaceObject,
- Exposed=(Window,Worker)]
-interface URLUtils {
   stringifier attribute USVString href;
   readonly attribute USVString origin;
-
            attribute USVString protocol;
            attribute USVString username;
            attribute USVString password;
@@ -23,25 +18,11 @@ interface URLUtils {
            attribute USVString port;
            attribute USVString pathname;
            attribute USVString search;
-           attribute URLSearchParams searchParams;
+  readonly attribute URLSearchParams searchParams;
            attribute USVString hash;
 };
-
-[NoInterfaceObject,
+[Constructor(optional (USVString or URLSearchParams) init = ""),
  Exposed=(Window,Worker)]
-interface URLUtilsReadOnly {
-  stringifier readonly attribute USVString href;
-  readonly attribute USVString origin;
-
-  readonly attribute USVString protocol;
-  readonly attribute USVString host;
-  readonly attribute USVString hostname;
-  readonly attribute USVString port;
-  readonly attribute USVString pathname;
-  readonly attribute USVString search;
-  readonly attribute USVString hash;
-};
-[Constructor(optional (USVString or URLSearchParams) init = ""), Exposed=(Window,Worker)]
 interface URLSearchParams {
   void append(USVString name, USVString value);
   void delete(USVString name);
@@ -52,19 +33,14 @@ interface URLSearchParams {
   iterable<USVString, USVString>;
   stringifier;
 };
-[Constructor(USVString url, optional USVString base), Exposed=(Window,Worker)]
+[Constructor(USVString url, optional USVString base),
+ Exposed=(Window,Worker)]
 interface URL {
   static USVString domainToASCII(USVString domain);
   static USVString domainToUnicode(USVString domain);
-};
-URL implements URLUtils;
 
-[NoInterfaceObject,
- Exposed=(Window,Worker)]
-interface URLUtils {
   stringifier attribute USVString href;
   readonly attribute USVString origin;
-
            attribute USVString protocol;
            attribute USVString username;
            attribute USVString password;
@@ -73,25 +49,12 @@ interface URLUtils {
            attribute USVString port;
            attribute USVString pathname;
            attribute USVString search;
-           attribute URLSearchParams searchParams;
+  readonly attribute URLSearchParams searchParams;
            attribute USVString hash;
 };
 
-[NoInterfaceObject,
+[Constructor(optional (USVString or URLSearchParams) init = ""),
  Exposed=(Window,Worker)]
-interface URLUtilsReadOnly {
-  stringifier readonly attribute USVString href;
-  readonly attribute USVString origin;
-
-  readonly attribute USVString protocol;
-  readonly attribute USVString host;
-  readonly attribute USVString hostname;
-  readonly attribute USVString port;
-  readonly attribute USVString pathname;
-  readonly attribute USVString search;
-  readonly attribute USVString hash;
-};
-[Constructor(optional (USVString or URLSearchParams) init = ""), Exposed=(Window,Worker)]
 interface URLSearchParams {
   void append(USVString name, USVString value);
   void delete(USVString name);

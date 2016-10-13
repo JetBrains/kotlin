@@ -3,9 +3,20 @@ namespace org.w3c.performance;
 
 // Downloaded from http://www.w3.org/TR/hr-time/
 typedef double DOMHighResTimeStamp;
-partial interface Performance {
-  DOMHighResTimeStamp now();
+[Exposed=(Window,Worker)]
+interface Performance : EventTarget {
+ DOMHighResTimeStamp now();
+ serializer = {attribute};
 };
+[NoInterfaceObject,
+ Exposed=(Window,Worker)]
+interface GlobalPerformance {
+ [Replaceable] readonly attribute Performance performance;
+};
+
+Window implements GlobalPerformance;
+
+WorkerGlobalScope implements GlobalPerformance;
 // Downloaded from http://www.w3.org/TR/2012/REC-navigation-timing-20121217/
 interface PerformanceTiming {
   readonly attribute unsigned long long navigationStart;
