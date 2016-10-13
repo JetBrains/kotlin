@@ -17,7 +17,7 @@
 
     <properties>
         <kotlin.version>${project.version}</kotlin.version>
-        <antlr.version>4.5</antlr.version>
+        <antlr.version>4.5.3</antlr.version>
     </properties>
 
     <dependencies>
