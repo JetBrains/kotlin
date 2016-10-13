@@ -76,6 +76,7 @@
           <element id="module-output" name="uast-android" />
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-daemon-client.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-script-runtime.jar" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
