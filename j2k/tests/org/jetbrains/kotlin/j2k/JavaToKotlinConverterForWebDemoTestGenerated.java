@@ -1719,6 +1719,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DocComments extends AbstractJavaToKotlinConverterForWebDemoTest {
+        @TestMetadata("aWithoutHref.java")
+        public void testAWithoutHref() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/aWithoutHref.java");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInDocComments() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/docComments"), Pattern.compile("^(.+)\\.java$"), true);
         }
@@ -1732,6 +1738,13 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("docCommentWithParamTag.java")
         public void testDocCommentWithParamTag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/docCommentWithParamTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("escapedCharactersInCodeQuote.java")
+        public void testEscapedCharactersInCodeQuote() throws Exception {
+            String fileName =
+                    KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/escapedCharactersInCodeQuote.java");
             doTest(fileName);
         }
 
@@ -1762,6 +1775,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("onlyDeprecatedDocTag.java")
         public void testOnlyDeprecatedDocTag() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/onlyDeprecatedDocTag.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("preserveUnknownTags.java")
+        public void testPreserveUnknownTags() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/preserveUnknownTags.java");
             doTest(fileName);
         }
 
