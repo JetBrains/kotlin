@@ -129,9 +129,10 @@ val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 
 const val inlineExposedAnnotationName = "kotlin/internal/InlineExposed"
-fun ClassNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
-fun MethodNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
-fun FieldNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, includeInvisible = true)
+fun ClassNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
+fun MethodNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
+fun FieldNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
+
 
 private object KotlinClassKind {
     const val FILE = 2
@@ -146,20 +147,13 @@ fun ClassNode.isDefaultImpls() = isInner() && name.endsWith("\$DefaultImpls") &&
 
 
 val ClassNode.kotlinClassKind: Int?
-    get() = visibleAnnotations
-            ?.filter { it.desc == "Lkotlin/Metadata;" }
-            ?.map { (it.values.annotationValue("k") as? Int) }
-            ?.firstOrNull()
+    get() = findAnnotation("kotlin/Metadata", false)?.get("k") as Int?
 
-fun ClassNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun MethodNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun FieldNode.hasAnnotation(annotationName: String, includeInvisible: Boolean = false) = hasAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun MethodNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
+fun FieldNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) = findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
 
-private fun hasAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean)
-        = "L$annotationName;".let { desc ->
-            (visibleAnnotations?.any { it.desc == desc } ?: false)
-            || (includeInvisible && (invisibleAnnotations?.any { it.desc == desc } ?: false))
-        }
+operator fun AnnotationNode.get(key: String): Any? = values.annotationValue(key)
 
 private fun List<Any>.annotationValue(key: String): Any? {
     for (index in (0 .. size / 2 - 1)) {
@@ -168,3 +162,9 @@ private fun List<Any>.annotationValue(key: String): Any? {
     }
     return null
 }
+
+private fun findAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean): AnnotationNode? =
+        visibleAnnotations?.firstOrNull { it.refersToName(annotationName) } ?:
+        if (includeInvisible) invisibleAnnotations?.firstOrNull { it.refersToName(annotationName) } else null
+
+fun AnnotationNode.refersToName(name: String) = desc.startsWith('L') && desc.endsWith(';') && desc.regionMatches(1, name, 0, name.length)
