@@ -767,38 +767,37 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assignToLoopParameter();
             v.mark(loopParameterStartLabel);
 
-            KtDestructuringDeclaration multiParameter = forExpression.getDestructuringDeclaration();
-            if (multiParameter != null) {
-                generateMultiVariables(multiParameter.getEntries());
+            KtDestructuringDeclaration destructuringDeclaration = forExpression.getDestructuringDeclaration();
+            if (destructuringDeclaration != null) {
+                generateDestructuringDeclaration(destructuringDeclaration);
             }
         }
 
-        private void generateMultiVariables(List<KtDestructuringDeclarationEntry> entries) {
-            for (KtDestructuringDeclarationEntry variableDeclaration : entries) {
+        private void generateDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
+            final Label destructuringStartLabel = new Label();
+            for (KtDestructuringDeclarationEntry variableDeclaration : destructuringDeclaration.getEntries()) {
                 final VariableDescriptor componentDescriptor = bindingContext.get(VARIABLE, variableDeclaration);
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
                 final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
-                final Label variableStartLabel = new Label();
                 scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
                         v.visitLocalVariable(componentDescriptor.getName().asString(),
                                              componentAsmType.getDescriptor(), null,
-                                             variableStartLabel, bodyEnd,
+                                             destructuringStartLabel, bodyEnd,
                                              componentVarIndex);
                     }
                 });
-
-                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
-                assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-                Call call = makeFakeCall(new TransientReceiver(elementType));
-
-                StackValue value = invokeFunction(call, resolvedCall, StackValue.local(loopParameterVar, asmElementType));
-                StackValue.local(componentVarIndex, componentAsmType).store(value, v);
-                v.visitLabel(variableStartLabel);
             }
+
+            v.visitLabel(destructuringStartLabel);
+
+            initializeDestructuringDeclarationVariables(
+                    destructuringDeclaration,
+                    new TransientReceiver(elementType),
+                    StackValue.local(loopParameterVar, asmElementType));
         }
 
         protected abstract void assignToLoopParameter();
