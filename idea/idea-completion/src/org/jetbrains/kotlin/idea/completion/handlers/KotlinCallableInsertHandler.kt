@@ -59,7 +59,10 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
 
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
 
-                context.document.deleteString(context.tailOffset - 1, context.tailOffset) // delete space
+                // delete space
+                if (context.document.isTextAt(context.tailOffset - 1, " ")) { // sometimes space can be lost because of reformatting
+                    context.document.deleteString(context.tailOffset - 1, context.tailOffset)
+                }
             }
         }
     }
