@@ -35,14 +35,13 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         val unchangedTxt = File(foo, "unchanged.txt").apply { writeText("unchanged") }
         val changedTxt = File(foo, "changed.txt").apply { writeText("changed") }
 
-        val snapshotProvider = SimpleFileSnapshotProviderImpl()
-        val diff1 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"), snapshotProvider)
+        val diff1 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"))
 
         assertArrayEquals("diff1.removed",
                 diff1.removed.toSortedPaths(),
                 emptyArray<String>())
         assertArrayEquals("diff1.newOrModified",
-                diff1.newOrModified.toSortedPaths(),
+                diff1.modified.toSortedPaths(),
                 listOf(removedTxt, unchangedTxt, changedTxt).toSortedPaths())
 
         removedTxt.delete()
@@ -50,12 +49,12 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         changedTxt.writeText("degnahc")
         val newTxt = File(foo, "new.txt").apply { writeText("new") }
 
-        val diff2 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"), snapshotProvider)
+        val diff2 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"))
         assertArrayEquals("diff2.removed",
                 diff2.removed.toSortedPaths(),
                 listOf(removedTxt).toSortedPaths())
         assertArrayEquals("diff2.newOrModified",
-                diff2.newOrModified.toSortedPaths(),
+                diff2.modified.toSortedPaths(),
                 listOf(newTxt, changedTxt).toSortedPaths())
     }
 

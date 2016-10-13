@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.snapshots
 
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import java.io.File
@@ -25,7 +26,8 @@ internal class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>
     override fun dumpValue(value: FileSnapshot): String =
             value.toString()
 
-    fun compareAndUpdate(newFiles: Iterable<File>, snapshotProvider: FileSnapshotProvider): FileCollectionDiff {
+    fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.Known {
+        val snapshotProvider = SimpleFileSnapshotProviderImpl()
         val newOrModified = ArrayList<File>()
         val removed = ArrayList<File>()
 
@@ -48,8 +50,6 @@ internal class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>
             }
         }
 
-        return FileCollectionDiff(newOrModified, removed)
+        return ChangedFiles.Known(newOrModified, removed)
     }
 }
-
-internal class FileCollectionDiff(val newOrModified: Iterable<File>, val removed: Iterable<File>)

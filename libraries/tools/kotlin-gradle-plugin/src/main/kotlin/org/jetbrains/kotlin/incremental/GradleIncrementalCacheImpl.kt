@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.snapshots.FileCollectionDiff
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
-import org.jetbrains.kotlin.incremental.snapshots.SimpleFileSnapshotProviderImpl
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
@@ -30,16 +28,15 @@ import java.io.File
 internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, target: TargetId) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
     companion object {
         private val SOURCES_TO_CLASSFILES = "sources-to-classfiles"
-        private val FILE_SNAPSHOT = "file-snapshot"
+        private val GENERATED_SOURCE_SNAPSHOTS = "generated-source-snapshot"
+        private val SOURCE_SNAPSHOTS = "source-snapshot"
     }
 
     private val log = org.gradle.api.logging.Logging.getLogger(this.javaClass)
 
-    private val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(GradleIncrementalCacheImpl.Companion.SOURCES_TO_CLASSFILES.storageFile))
-    private val fileSnapshotMap = registerMap(FileSnapshotMap(FILE_SNAPSHOT.storageFile))
-
-    fun compareAndUpdateFileSnapshots(files: Iterable<File>): FileCollectionDiff =
-            fileSnapshotMap.compareAndUpdate(files, SimpleFileSnapshotProviderImpl())
+    internal val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
+    internal val generatedSourceSnapshotMap = registerMap(FileSnapshotMap(GENERATED_SOURCE_SNAPSHOTS.storageFile))
+    internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile))
 
     fun removeClassfilesBySources(sources: Iterable<File>): Unit =
             sources.forEach { sourceToClassfilesMap.remove(it) }

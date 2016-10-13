@@ -16,11 +16,18 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 abstract class IncReporter {
     abstract fun report(message: ()->String)
-    abstract fun pathsAsString(files: Iterable<File>): String
+
+    // used in Gradle plugin
+    @Suppress("unused")
+    open fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {}
+
+    open fun pathsAsString(files: Iterable<File>): String =
+            files.map { it.canonicalPath }.joinToString()
 
     fun pathsAsString(vararg files: File): String =
             pathsAsString(files.toList())
