@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -434,5 +434,8 @@ class QuickFixRegistrar : QuickFixContributor {
         UNUSED_VALUE.registerFactory(RemoveUnusedValueFix)
 
         ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE.registerFactory(AddNewLineAfterAnnotationsFix)
+
+        INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(ChangeVariableMutabilityFix.LATEINIT_VAL_FACTORY)
+        INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveNullableFix.LATEINIT_FACTORY)
     }
 }

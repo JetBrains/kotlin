@@ -1,0 +1,5 @@
+// "Make variable mutable" "true"
+
+class A() {
+    <caret>lateinit var foo: String
+}
