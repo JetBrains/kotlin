@@ -470,6 +470,7 @@ nonAnyType
 	| 'Date' typeSuffix
 	| 'RegExp' typeSuffix
 	| 'DOMException' typeSuffix
+	| IDENTIFIER_WEBIDL '<' type '>' null_
 ;
 
 constType
