@@ -1,2 +1,2 @@
-//expression
+//statement
 x <<= 2
