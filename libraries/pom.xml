@@ -91,7 +91,7 @@
 
         <module>tools/binary-compatibility-validator</module>
 
-        <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-->
+        <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-integration-tests-->
         <!--because it is used in tests but cannot be added as test-dependency-->
         <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
         <module>tools/idl2k</module>
@@ -99,14 +99,14 @@
         <module>tools/kotlin-js-tests</module>
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kotlin-annotation-processing</module>
-        <module>examples/annotation-processor-example</module>
+
         <module>tools/kotlin-gradle-plugin</module>
-        <module>tools/kotlin-gradle-plugin-integration-tests</module>
         <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-extensions</module>
         <module>tools/kotlin-maven-plugin-test</module>
         <module>tools/kotlin-script-util</module>
 
+        <module>examples/annotation-processor-example</module>
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
         <module>examples/kotlin-js-library-example</module>
@@ -116,6 +116,8 @@
         <module>examples/kotlin-jsr223-local-example</module>
         <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
         <module>examples/kotlin-jsr223-daemon-remote-eval-example</module>
+
+        <module>tools/kotlin-gradle-plugin-integration-tests</module>
     </modules>
 
     <dependencies>
