@@ -3,6 +3,8 @@ package org.jetbrains.kotlin
 import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.file.AbstractFileCollection
 import org.gradle.api.tasks.JavaExec
@@ -22,6 +24,8 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
     private List<String> compilerOpts = []
     private List<String> linkerOpts = []
+    private FileCollection linkFiles;
+    private List<String> linkTasks = []
 
     void defFile(String value) {
         defFile = value
@@ -34,6 +38,45 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
     void linkerOpts(String... values) {
         linkerOpts.addAll(values)
+    }
+
+    void dependsOn(Object... deps) {
+        // TODO: add all files to inputs
+        genTask.dependsOn(deps)
+    }
+
+    private void dependsOnFiles(FileCollection files) {
+        dependsOn(files)
+        genTask.inputs.files(files)
+    }
+
+    void link(FileCollection files) {
+        linkFiles = linkFiles + files
+        dependsOnFiles(files)
+    }
+
+    void linkOutputs(Task task) {
+        linkOutputs(task.name)
+    }
+
+    void linkOutputs(String task) {
+        linkTasks += task
+        dependsOn(task)
+
+        final Project prj;
+        final String taskName;
+        int index = task.lastIndexOf(':')
+        if (index != -1) {
+            prj = project.project(task.substring(0, index))
+            taskName = task.substring(index + 1)
+        } else {
+            prj = project
+            taskName = task
+        }
+
+        prj.tasks.matching { it.name == taskName }.all { // TODO: it is a hack
+            this.dependsOnFiles(it.outputs.files)
+        }
     }
 
     void includeDirs(String... values) {
@@ -51,6 +94,8 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
     NamedNativeInteropConfig(Project project, String name) {
         this.name = name
         this.project = project
+
+        this.linkFiles = project.files()
 
         interopStubs = project.sourceSets.create(name + "InteropStubs")
         genTask = project.task(interopStubs.getTaskName("gen", ""), type: JavaExec)
@@ -88,6 +133,12 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
             // defer as much as possible
             doFirst {
+                linkTasks.each {
+                    linkerOpts += project.tasks.getByPath(it).outputs.files.files
+                }
+
+                linkerOpts += linkFiles.files
+
                 args = [generatedSrcDir, nativeLibsDir, project.file(defFile)]
 
                 args compilerOpts.collect { "-copt:$it" }
