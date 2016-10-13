@@ -78,7 +78,7 @@ class MultifileClassCodegen(
             state.fileClassesProvider.getFileClassInfo(this).fileClassFqName
 
     private val shouldGeneratePartHierarchy =
-            state.inheritMultifileParts // TODO support incremental compilation
+            state.inheritMultifileParts
 
     private val partInternalNamesSorted = run {
         val partInternalNamesSet = hashSetOf<String>()
