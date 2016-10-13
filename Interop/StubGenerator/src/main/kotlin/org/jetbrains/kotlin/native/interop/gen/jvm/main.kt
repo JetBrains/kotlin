@@ -1,33 +1,25 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import kotlin_native.interop.Ref.to
 import org.jetbrains.kotlin.native.interop.indexer.NativeIndex
 import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
-import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val llvmInstallPath = System.getProperty("llvmInstallPath")!!
 
     val ktGenRoot = args[0]
     val nativeLibsDir = args[1]
-    val ktSrcRoots = args.drop(2)
+    val otherArgs = args.drop(2)
+
     // TODO: remove OSX defaults.
     val substitutions = mapOf(
             "arch" to (System.getenv("TARGET_ARCH") ?: "x86-64"),
             "os" to (System.getenv("TARGET_OS") ?: detectHost())
     )
 
-
-    ktSrcRoots.forEach { ktSrcRoot ->
-        val defFiles = File(ktSrcRoot).walk().filter { it.name.endsWith(".def") }
-
-        defFiles.forEach { defFile ->
-            processDefFile(ktSrcRoot, defFile, ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions)
-        }
-    }
+    processLib(ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions, otherArgs)
 }
 
 private fun detectHost():String {
@@ -63,26 +55,75 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
     }
 }
 
-private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, nativeLibsDir: String, llvmInstallPath: String, substitutions: Map<String, String>) {
+private fun getArgPrefix(arg: String): String? {
+    val index = arg.indexOf(':')
+    if (index == -1) {
+        return null
+    } else {
+        return arg.substring(0, index)
+    }
+}
+
+private fun dropPrefix(arg: String): String? {
+    val index = arg.indexOf(':')
+    if (index == -1) {
+        return null
+    } else {
+        return arg.substring(index + 1)
+    }
+}
+
+private fun ProcessBuilder.runExpectingSuccess() {
+    println(this.command().joinToString(" "))
+
+    val res = this.start().waitFor()
+    if (res != 0) {
+        throw Error("Process finished with non-zero exit code: $res")
+    }
+}
+
+private fun Properties.getSpaceSeparated(name: String): List<String> {
+    return this.getProperty(name)?.split(' ') ?: emptyList()
+}
+
+private fun processLib(ktGenRoot: String,
+                       nativeLibsDir: String,
+                       llvmInstallPath: String,
+                       substitutions: Map<String, String>,
+                       additionalArgs: List<String>) {
+
+    val args = additionalArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
+
+    val defFile = args["-def"]?.single()?.let { File(it) }
+
     val config = Properties()
-    defFile.bufferedReader().use { reader ->
+    defFile?.bufferedReader()?.use { reader ->
         config.load(reader)
     }
     substitute(config, substitutions)
 
-    val headerFiles = config.getProperty("headers").split(' ')
-    val compilerOpts = config.getProperty("compilerOpts").split(' ')
-    val compiler = config.getProperty("compiler")
-    val libName = config.getProperty("libName")
-    val linkerOpts = config.getProperty("linkerOpts").split(' ').toTypedArray()
-    val linker = config.getProperty("linker")
-    val excludedFunctions = config.getProperty("excludedFunctions")?.split(' ')?.toSet() ?: emptySet()
+    val additionalHeaders = args["-h"].orEmpty()
+    val additionalCompilerOpts = args["-copt"].orEmpty()
+    val additionalLinkerOpts = args["-lopt"].orEmpty()
 
+    val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
+    val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
+    val compiler = config.getProperty("compiler") ?: "clang"
+    val linkerOpts = config.getSpaceSeparated("linkerOpts").toTypedArray() + additionalLinkerOpts
+    val linker = config.getProperty("linker") ?: "clang"
+    val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
-    val defFileRelative = defFile.relativeTo(File(ktSrcRoot))
-    val outKtFile = File(ktGenRoot, defFileRelative.toString().substringBeforeLast(".def") + ".kt")
-    val outKtPkg = defFileRelative.parentFile?.path?.replace(File.separatorChar, '.') ?: ""
+    val fqParts = args["-pkg"]?.singleOrNull()?.let {
+        it.split('.')
+    } ?: defFile!!.name.split('.').reversed().drop(1)
 
+    val outKtFileName = fqParts.last() + ".kt"
+
+    val outKtPkg = fqParts.joinToString(".")
+    val outKtFileRelative = (fqParts + outKtFileName).joinToString("/")
+    val outKtFile = File(ktGenRoot, outKtFileRelative)
+
+    val libName = fqParts.joinToString("") + "stubs"
 
     val nativeIndex = buildNativeIndex(headerFiles, compilerOpts)
 
@@ -113,16 +154,12 @@ private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, 
             *compilerArgsForJniIncludes,
             "-c", outCFile.path, "-o", outOFile.path)
 
-    println(compilerCmd.joinToString(" "))
+    val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
-    val compilerRes = ProcessBuilder(*compilerCmd)
+    ProcessBuilder(*compilerCmd)
+            .directory(workDir)
             .inheritIO()
-            .start()
-            .waitFor()
-
-    if (compilerRes != 0) {
-        exitProcess(compilerRes)
-    }
+            .runExpectingSuccess()
 
     File(nativeLibsDir).mkdirs()
 
@@ -131,16 +168,10 @@ private fun processDefFile(ktSrcRoot: String, defFile: File, ktGenRoot: String, 
     val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
             "-Wl,-flat_namespace,-undefined,dynamic_lookup")
 
-    println(linkerCmd.joinToString(" "))
-
-    val linkerRes = ProcessBuilder(*linkerCmd)
+    ProcessBuilder(*linkerCmd)
+            .directory(workDir)
             .inheritIO()
-            .start()
-            .waitFor()
-
-    if (linkerRes != 0) {
-        exitProcess(linkerRes)
-    }
+            .runExpectingSuccess()
 
     outCFile.delete()
     outOFile.delete()

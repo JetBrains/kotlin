@@ -1,9 +1,4 @@
-libName = llvmbridge
-
-headers = llvm-c/Core.h llvm-c/ExecutionEngine.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h
-
-
-compiler = clang
+headers = llvm-c/Core.h llvm-c/ExecutionEngine.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h llvm-c/BitReader.h
 
 compilerOpts = -std=c99 -fPIC \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wmissing-field-initializers \
@@ -13,29 +8,28 @@ compilerOpts = -std=c99 -fPIC \
 
 linker = clang++
 
-linkerOpts = -Wall
-
-linkerOpts.osx = -stdlib=libc++ -fPIC -Wl,-search_paths_first \
-    -Wl,-headerpad_max_install_names -fvisibility-inlines-hidden \
+linkerOpts = -stdlib=libc++ -fPIC -fvisibility-inlines-hidden \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++11 \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
+
+linkerOpts.osx = \
+    -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
     -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter \
     -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
     -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
-    -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport
+    -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
+    -lpthread -lz -lm  -lcurses -lffi
 
-linkerOpts.linux = -Wl,-z,noexecstack -fvisibility=default \
+linkerOpts.linux=\
     -Wl,--whole-archive \
-    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen \
-    -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler \
-    -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
-    -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation \
-    -lLLVMProfileData -lLLVMTransformUtils -lLLVMBitWriter \
-    -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld \
-    -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore \
-    -lLLVMSupport \
+    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter \
+    -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMInterpreter \
+    -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
+    -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
+    -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
     -Wl,--no-whole-archive \
-    -lrt -ldl -ltinfo -lpthread -lz -lm -lffi
+    -lrt -ldl -ltinfo -lpthread -lz -lm -lffi \
+    -Wl,-z,noexecstack

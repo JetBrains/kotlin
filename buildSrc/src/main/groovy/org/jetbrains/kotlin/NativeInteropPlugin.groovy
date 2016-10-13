@@ -1,13 +1,214 @@
 package org.jetbrains.kotlin
 
+import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.AbstractNamedDomainObjectContainer
+import org.gradle.api.internal.file.AbstractFileCollection
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskDependency
+import org.gradle.internal.reflect.Instantiator
+
+class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
+
+    private final Project project
+    final String name
+
+    private final SourceSet interopStubs
+    private final JavaExec genTask
+
+    private String defFile
+
+    private String pkg;
+
+    private List<String> compilerOpts = []
+    private FileCollection headers;
+    private List<String> linkerOpts = []
+    private FileCollection linkFiles;
+    private List<String> linkTasks = []
+
+    void defFile(String value) {
+        defFile = value
+        genTask.inputs.file(project.file(defFile))
+    }
+
+    void pkg(String value) {
+        pkg = value
+    }
+
+    void compilerOpts(String... values) {
+        compilerOpts.addAll(values)
+    }
+
+    void headers(FileCollection files) {
+        dependsOnFiles(files)
+        headers = headers + files
+    }
+
+    void linkerOpts(String... values) {
+        linkerOpts.addAll(values)
+    }
+
+    void dependsOn(Object... deps) {
+        // TODO: add all files to inputs
+        genTask.dependsOn(deps)
+    }
+
+    private void dependsOnFiles(FileCollection files) {
+        dependsOn(files)
+        genTask.inputs.files(files)
+    }
+
+    void link(FileCollection files) {
+        linkFiles = linkFiles + files
+        dependsOnFiles(files)
+    }
+
+    void linkOutputs(Task task) {
+        linkOutputs(task.name)
+    }
+
+    void linkOutputs(String task) {
+        linkTasks += task
+        dependsOn(task)
+
+        final Project prj;
+        final String taskName;
+        int index = task.lastIndexOf(':')
+        if (index != -1) {
+            prj = project.project(task.substring(0, index))
+            taskName = task.substring(index + 1)
+        } else {
+            prj = project
+            taskName = task
+        }
+
+        prj.tasks.matching { it.name == taskName }.all { // TODO: it is a hack
+            this.dependsOnFiles(it.outputs.files)
+        }
+    }
+
+    void includeDirs(String... values) {
+        compilerOpts.addAll(values.collect {"-I$it"})
+    }
+
+    private File getNativeLibsDir() {
+        return new File(project.buildDir, "nativelibs")
+    }
+
+    private File getGeneratedSrcDir() {
+        return new File(project.buildDir, "nativeInteropStubs/$name/kotlin")
+    }
+
+    NamedNativeInteropConfig(Project project, String name) {
+        this.name = name
+        this.project = project
+
+        this.headers = project.files()
+        this.linkFiles = project.files()
+
+        interopStubs = project.sourceSets.create(name + "InteropStubs")
+        genTask = project.task(interopStubs.getTaskName("gen", ""), type: JavaExec)
+
+        this.configure()
+    }
+
+    private void configure() {
+        project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
+            dependsOn genTask
+        }
+
+        interopStubs.kotlin.srcDirs generatedSrcDir
+
+        project.dependencies {
+            add interopStubs.getCompileConfigurationName(), project(path: ':Interop:Runtime')
+        }
+
+        genTask.configure {
+            classpath = project.configurations.interopStubGenerator
+            main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
+            jvmArgs '-ea'
+
+            systemProperties "java.library.path" : project.files(
+                    new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
+                    new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
+            ).asPath
+            systemProperties "llvmInstallPath" : project.llvmInstallPath
+            environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
+            environment "DYLD_LIBRARY_PATH": "${project.llvmInstallPath}/lib"
+            environment "LD_LIBRARY_PATH": "${project.llvmInstallPath}/lib"
+
+            outputs.dir generatedSrcDir
+            outputs.dir nativeLibsDir
+
+            // defer as much as possible
+            doFirst {
+                linkTasks.each {
+                    linkerOpts += project.tasks.getByPath(it).outputs.files.files
+                }
+
+                linkerOpts += linkFiles.files
+
+                args = [generatedSrcDir, nativeLibsDir]
+                if (defFile != null) {
+                    args "-def:" + project.file(defFile)
+                }
+
+                if (pkg != null) {
+                    args "-pkg:" + pkg
+                }
+
+                args compilerOpts.collect { "-copt:$it" }
+                args linkerOpts.collect { "-lopt:$it" }
+
+                headers.files.each {
+                    args "-h:$it"
+                }
+            }
+        }
+    }
+
+    @Override
+    String getDisplayName() {
+        return "Native interop config $name"
+    }
+
+    @Override
+    Set<File> getFiles() {
+        return interopStubs.output.getFiles() +
+                interopStubs.compileClasspath.files // TODO: workaround to add Interop:Runtime
+    }
+
+    @Override
+    TaskDependency getBuildDependencies() {
+        return interopStubs.output.getBuildDependencies()
+    }
+}
+
+class NativeInteropExtension extends AbstractNamedDomainObjectContainer<NamedNativeInteropConfig> {
+
+    private final Project project
+
+    protected NativeInteropExtension(Project project) {
+        super(NamedNativeInteropConfig, project.gradle.services.get(Instantiator))
+        this.project = project
+    }
+
+    @Override
+    protected NamedNativeInteropConfig doCreate(String name) {
+        return new NamedNativeInteropConfig(project, name)
+    }
+}
 
 class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))
+
         def runtimeNativeLibsDir = new File(prj.findProject(':Interop:Runtime').buildDir, 'nativelibs')
 
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
@@ -18,49 +219,6 @@ class NativeInteropPlugin implements Plugin<Project> {
 
         prj.dependencies {
             interopStubGenerator project(path: ":Interop:StubGenerator")
-        }
-
-        prj.sourceSets.all { sourceSet ->
-            def generatedSrcDir = new File(prj.buildDir, "nativeInteropStubs/${sourceSet.name}/kotlin")
-
-            prj.dependencies {
-                add sourceSet.getCompileConfigurationName(), project(path: ':Interop:Runtime')
-            }
-
-            def genStubsTask = prj.task(sourceSet.getTaskName("gen", "interopStubs"), type: JavaExec) {
-                classpath = prj.configurations.interopStubGenerator
-                main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-                jvmArgs '-ea'
-
-
-                systemProperties "java.library.path" : prj.files(
-                        new File(prj.findProject(":Interop:Indexer").buildDir, "nativelibs"),
-                        runtimeNativeLibsDir
-                ).asPath
-                systemProperties "llvmInstallPath" : prj.llvmInstallPath
-                environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
-                environment "DYLD_LIBRARY_PATH": "${prj.llvmInstallPath}/lib"
-
-                outputs.dir generatedSrcDir
-                outputs.dir nativeLibsDir
-
-                args = [generatedSrcDir, nativeLibsDir]
-
-                prj.afterEvaluate { // FIXME: it is a hack
-                    sourceSet.kotlin.srcDirs.each { srcDir ->
-                        if (srcDir != generatedSrcDir) {
-                            args srcDir
-                            inputs.files prj.fileTree(srcDir.path).include('**/*.def')
-                        }
-                    }
-                }
-            }
-
-            sourceSet.kotlin.srcDirs generatedSrcDir
-
-            prj.tasks.getByName(sourceSet.getTaskName("compile", "Kotlin")) {
-                dependsOn genStubsTask
-            }
         }
 
         // FIXME: choose tasks more wisely

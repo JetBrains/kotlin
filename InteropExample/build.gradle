@@ -16,16 +16,18 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+kotlinNativeInterop {
+    llvm {
+        defFile '../backend.native/llvm.def'
+        compilerOpts "-I$llvmInstallPath/include"
+        linkerOpts "-L$llvmInstallPath/lib"
+    }
+
 }
 
-genInteropStubs {
-    // these variables will be passed to native toolchain used by stub generator:
-    environment 'CPATH'        : "$llvmInstallPath/include"
-    environment 'LIBRARY_PATH' : "$llvmInstallPath/lib"
-    //environment 'LD_DEBUG' : "all"
-    environment 'LD_LIBRARY_PATH' : "$llvmInstallPath/lib"
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile kotlinNativeInterop['llvm']
 }
 
 mainClassName = 'MainKt'
