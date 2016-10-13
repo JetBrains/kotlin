@@ -133,6 +133,11 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         if (original is ValueParameterDescriptor) {
             val callable = original.containingDeclaration
             val callableDeclaration = getDeclarationForDescriptor(callable, file) as? KtCallableDeclaration ?: return null
+            if (original.index >= callableDeclaration.valueParameters.size) {
+                LOG.error("Parameter count mismatch for ${DescriptorRenderer.DEBUG_TEXT.render(callable)}[${original.index}] vs " +
+                     callableDeclaration.valueParameterList?.text)
+                return null
+            }
             return callableDeclaration.valueParameters[original.index]
         }
 
