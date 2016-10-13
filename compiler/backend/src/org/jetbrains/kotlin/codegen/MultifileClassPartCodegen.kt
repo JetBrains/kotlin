@@ -114,6 +114,8 @@ class MultifileClassPartCodegen(
                     visitMaxs(1, 0)
                     visitEnd()
                 }
+
+                writeSyntheticClassMetadata(this)
             }
         }
     }
