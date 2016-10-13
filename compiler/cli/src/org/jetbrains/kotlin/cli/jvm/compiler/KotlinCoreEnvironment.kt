@@ -287,7 +287,7 @@ class KotlinCoreEnvironment private constructor(
 
     companion object {
         init {
-            setCompatibleBuild()
+            System.getProperties().setProperty("idea.plugins.compatible.build", "161.9999")
         }
 
         private val APPLICATION_LOCK = Object()
@@ -320,11 +320,6 @@ class KotlinCoreEnvironment private constructor(
                 ourProjectCount++
             }
             return environment
-        }
-
-        @JvmStatic
-        private fun setCompatibleBuild() {
-            System.getProperties().setProperty("idea.plugins.compatible.build", "162.9999")
         }
 
         @TestOnly
