@@ -20,4 +20,4 @@ public final annotation class NoTarget : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-@NoTarget() @IrrelevantTarget() @TypealiasTarget() public typealias Test = kotlin.String
+@NoTarget @IrrelevantTarget @TypealiasTarget public typealias Test = kotlin.String
