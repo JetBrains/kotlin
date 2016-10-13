@@ -1,4 +1,5 @@
 <project name="Kotlin" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <import file="common.xml" optional="false"/>
     <property file="resources/kotlinManifest.properties"/>
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
@@ -18,8 +19,6 @@
     <property name="bootstrap.script.runtime" value="${bootstrap.compiler.home}/lib/kotlin-script-runtime.jar"/>
     <property name="bootstrap.kotlin.test" value="${bootstrap.compiler.home}/lib/kotlin-test.jar" />
 
-    <property name="output" value="${basedir}/dist"/>
-    <property name="js.stdlib.output.dir" value="${output}/js"/>
     <property name="intermediate-sources" value="out/src" />
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
@@ -30,8 +29,6 @@
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
 
     <property name="java.target" value="1.6"/>
-
-    <property name="dependencies.dir" value="${basedir}/dependencies"/>
 
     <condition property="bootstrap.or.local.build" value="true">
         <or>
@@ -72,9 +69,9 @@
         <pathelement location="${protobuf.jar}"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-        <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
-        <fileset dir="${dependencies.dir}" includes="jline.jar"/>
-        <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.2.jar"/>
+        <fileset dir="${dependencies}" includes="jansi.jar"/>
+        <fileset dir="${dependencies}" includes="jline.jar"/>
+        <fileset dir="${dependencies}" includes="cli-parser-1.1.2.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
@@ -341,7 +338,7 @@
 
         <taskdef name="closure-compiler"
                  classname="com.google.javascript.jscomp.ant.CompileTask"
-                 classpath="${dependencies.dir}/closure-compiler.jar"/>
+                 classpath="${dependencies}/closure-compiler.jar"/>
 
         <closure-compiler
             compilationLevel="${compilationLevel}"
@@ -532,8 +529,8 @@
                 <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
-                <zipfileset src="${dependencies.dir}/jline.jar"/>
-                <zipfileset src="${dependencies.dir}/cli-parser-1.1.2.jar"/>
+                <zipfileset src="${dependencies}/jline.jar"/>
+                <zipfileset src="${dependencies}/cli-parser-1.1.2.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>
@@ -566,8 +563,8 @@
     <target name="compiler">
         <taskdef resource="proguard/ant/task.properties">
             <classpath>
-                <pathelement path="${dependencies.dir}/proguard.jar"/>
-                <pathelement path="${dependencies.dir}/proguard-anttask.jar"/>
+                <pathelement path="${dependencies}/proguard.jar"/>
+                <pathelement path="${dependencies}/proguard-anttask.jar"/>
             </classpath>
         </taskdef>
 
@@ -726,13 +723,13 @@
             </src>
             <classpath>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${dependencies.dir}/native-platform-uberjar.jar"/>
+                <pathelement path="${dependencies}/native-platform-uberjar.jar"/>
             </classpath>
         </kotlinc>
 
         <jar destfile="${kotlin-home}/lib/kotlin-daemon-client.jar">
             <fileset dir="${output}/classes/daemon-client"/>
-            <zipfileset src="${dependencies.dir}/native-platform-uberjar.jar" includes="**" />
+            <zipfileset src="${dependencies}/native-platform-uberjar.jar" includes="**" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
@@ -847,7 +844,7 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <pathelement location="${dependencies.dir}/ant-1.8/lib/ant.jar"/>
+                <pathelement location="${dependencies}/ant-1.8/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
         </javac2>

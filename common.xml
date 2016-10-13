@@ -1,0 +1,29 @@
+<project name="Commons">
+    <condition property="isWindows">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="isMac">
+        <os family="mac"/>
+    </condition>
+
+    <condition property="isLinux">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
+
+    <property name="dependencies" value="${basedir}/dependencies"/>
+
+    <property name="output" value="${basedir}/dist"/>
+    <property name="js.stdlib.output.dir" value="${output}/js"/>
+
+
+    <target name="make-dependency-dirs">
+        <mkdir dir="${dependencies}"/>
+        <mkdir dir="${dependencies}/download"/>
+    </target>
+</project>
