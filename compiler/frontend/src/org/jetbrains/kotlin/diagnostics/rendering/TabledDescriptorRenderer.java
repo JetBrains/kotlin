@@ -204,9 +204,14 @@ public class TabledDescriptorRenderer {
         result.append("(");
         for (Iterator<KotlinType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             KotlinType argumentType = iterator.next();
-            String renderedArgument = getTypeRenderer().render(argumentType, context);
+            if (argumentType == null) {
+                result.append("<unknown>");
+            }
+            else {
+                String renderedArgument = getTypeRenderer().render(argumentType, context);
+                result.append(renderedArgument);
+            }
 
-            result.append(renderedArgument);
             if (iterator.hasNext()) {
                 result.append(",");
             }
