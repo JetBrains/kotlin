@@ -14,6 +14,8 @@ fun main(args: Array<String>) {
     }
 
     val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory || it.extension == "idl" }.asSequence().filter { it.isFile }.toList().sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+        System.err.flush()
+        System.err.println("Parsing ${e.absolutePath}")
         val fileRepository = parseIDL(ANTLRFileStream(e.absolutePath, "UTF-8"))
 
         Repository(
@@ -23,6 +25,8 @@ fun main(args: Array<String>) {
                 enums = acc.enums + fileRepository.enums
         )
     }
+
+    println("Generating...")
 
     val repository = repositoryPre.copy(typeDefs = repositoryPre.typeDefs.mapValues { it.value.copy(mapType(repositoryPre, it.value.types)) })
 
@@ -43,6 +47,8 @@ fun main(args: Array<String>) {
 
     allPackages.forEach { pkg ->
         File(outDir, pkg + ".kt").bufferedWriter().use { w ->
+            println("Generating for package $pkg...")
+
             w.appendln("/*")
             w.appendln(" * Generated file")
             w.appendln(" * DO NOT EDIT")
