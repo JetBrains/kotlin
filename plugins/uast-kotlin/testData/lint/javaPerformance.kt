@@ -73,7 +73,7 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
 
         // This one should not be reported:
         @SuppressLint("UseSparseArrays")
-        val myOtherMap = HashMap<Int, Any>()
+        val myOtherMap = <warning descr="Use `new SparseArray<Object>(...)` instead for better performance">HashMap<Int, Any>()</warning>
     }
 
     protected fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int,
@@ -120,8 +120,8 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
         val layoutHeight = height
         if (mAllowCrop && (mOverlay == null || mOverlay!!.width != layoutWidth ||
                            mOverlay!!.height != layoutHeight)) {
-            mOverlay = Bitmap.<warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">createBitmap(layoutWidth, layoutHeight, Bitmap.Config.ARGB_8888)</warning>
-            mOverlayCanvas = <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">Canvas(mOverlay!!)</warning>
+            mOverlay = Bitmap.createBitmap(layoutWidth, layoutHeight, Bitmap.Config.ARGB_8888)
+            mOverlayCanvas = Canvas(mOverlay!!)
         }
 
         if (widthMeasureSpec == 42) {

@@ -55,7 +55,7 @@ class RecyclerViewScrollPosition(val position: Int, val topOffset: Int): Parcela
     }
 }
 
-class <error>RecyclerViewScrollPositionWithoutJvmF</error>(val position: Int, val topOffset: Int): Parcelable {
+class RecyclerViewScrollPositionWithoutJvmF(val position: Int, val topOffset: Int): Parcelable {
     override fun describeContents(): Int = 0
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeInt(position)

@@ -24,7 +24,7 @@ class ToastTest(context: Context) : Activity() {
         }
 
         Runnable {
-            Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText(context, "foo", Toast.LENGTH_LONG)</warning>
+            Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
         }
     }
 
@@ -45,13 +45,13 @@ class ToastTest(context: Context) : Activity() {
 
     private fun broken(context: Context) {
         // Errors
-        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText(context, "foo", Toast.LENGTH_LONG)</warning>
-        val toast = Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText(context, R.string.app_name, <warning descr="Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom duration value is not supported">5000</warning>)</warning>
+        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
+        val toast = Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, R.string.app_name, <warning descr="Expected duration `Toast.LENGTH_SHORT` or `Toast.LENGTH_LONG`, a custom duration value is not supported">5000</warning>)
         toast.duration
     }
 
     init {
-        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?"><warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText(context, "foo", Toast.LENGTH_LONG)</warning></warning>
+        Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(context, "foo", Toast.LENGTH_LONG)
     }
 
     @android.annotation.SuppressLint("ShowToast")
@@ -61,7 +61,7 @@ class ToastTest(context: Context) : Activity() {
 
     private fun checkSuppress2(context: Context) {
         @android.annotation.SuppressLint("ShowToast")
-        val toast = Toast.makeText(this, "MyToast", Toast.LENGTH_LONG)
+        val toast = Toast.<warning descr="Toast created but not shown: did you forget to call `show()` ?">makeText</warning>(this, "MyToast", Toast.LENGTH_LONG)
     }
 
     class R {

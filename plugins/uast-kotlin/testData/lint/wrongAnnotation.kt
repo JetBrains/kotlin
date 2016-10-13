@@ -13,13 +13,13 @@ class WrongAnnotation2 {
 
     companion object {
         @SuppressLint("NewApi") // Valid: class-file check on method
-        fun foobar(view: View, <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> foo: Int) {
+        fun foobar(view: View, @SuppressLint("NewApi") foo: Int) {
             // Invalid: class-file check
-            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> // Invalid
+            @SuppressLint("NewApi") // Invalid
             val a: Boolean
-            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("SdCardPath", "NewApi")</error> // Invalid: class-file based check on local variable
+            @SuppressLint("SdCardPath", "NewApi") // Invalid: class-file based check on local variable
             val b: Boolean
-            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@android.annotation.SuppressLint("SdCardPath", "NewApi")</error> // Invalid (FQN)
+            @android.annotation.SuppressLint("SdCardPath", "NewApi") // Invalid (FQN)
             val c: Boolean
             @SuppressLint("SdCardPath") // Valid: AST-based check
             val d: Boolean
@@ -27,7 +27,7 @@ class WrongAnnotation2 {
 
         init {
             // Local variable outside method: invalid
-            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method"><error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error></error>
+            @SuppressLint("NewApi")
             val localvar = 5
         }
 
