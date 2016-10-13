@@ -41,7 +41,7 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
                 it.isEffectivelyPublic(classAccess, classVisibility)
             }
 
-            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic(classVisibility), isFileOrMultipartFacade())
+            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic(classVisibility), isFileOrMultipartFacade() || isDefaultImpls())
         }}
         .asIterable()
         .sortedBy { it.name }
@@ -74,7 +74,7 @@ fun List<ClassBinarySignature>.filterOutNonPublic(): List<ClassBinarySignature> 
 
     return filter { it.isPublicAndAccessible() }
             .map { it.flattenNonPublicBases() }
-            .filterNot { it.isFileOrMultipartFacade && it.memberSignatures.isEmpty()}
+            .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty()}
 }
 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
