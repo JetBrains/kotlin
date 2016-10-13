@@ -287,7 +287,7 @@ class KotlinCoreEnvironment private constructor(
 
     companion object {
         init {
-            System.getProperties().setProperty("idea.plugins.compatible.build", "162.9999")
+            System.getProperties().setProperty("idea.plugins.compatible.build", "161.9999")
         }
 
         private val APPLICATION_LOCK = Object()
