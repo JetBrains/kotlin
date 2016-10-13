@@ -81,6 +81,8 @@ private fun extractIDLText(url: String, out: Appendable) {
         }
     }
 
+    soup.select(".dfn-panel").remove()
+
     soup.select("pre.idl").filter {!it.hasClass("extract")}.forEach(::append)
     soup.select("code.idl-code").forEach(::append)
     soup.select("spec-idl").forEach(::append)
