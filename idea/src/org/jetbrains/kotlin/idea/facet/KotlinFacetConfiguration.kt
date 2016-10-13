@@ -21,8 +21,10 @@ import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
 import com.intellij.facet.ui.FacetValidatorsManager
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.util.Key
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.DescriptionAware
+import java.util.*
 
 class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<KotlinFacetConfiguration.Settings> {
     enum class LanguageLevel(override val description: String) : DescriptionAware {
@@ -62,5 +64,9 @@ class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<Ko
     override fun createEditorTabs(
             editorContext: FacetEditorContext,
             validatorsManager: FacetValidatorsManager
-    ): Array<FacetEditorTab> = arrayOf(KotlinFacetEditorTab(this, editorContext, validatorsManager))
+    ): Array<FacetEditorTab> {
+        val tabs = arrayListOf<FacetEditorTab>(KotlinFacetEditorTab(this, editorContext, validatorsManager))
+        KotlinFacetConfigurationExtension.EP_NAME.extensions.flatMapTo(tabs) { it.createEditorTabs(editorContext, validatorsManager) }
+        return tabs.toTypedArray()
+    }
 }

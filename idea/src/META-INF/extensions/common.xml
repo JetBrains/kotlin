@@ -34,5 +34,7 @@
         <extensionPoint name="scriptTemplatesProvider"
                         interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="facetConfigurationExtension"
+                        interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
     </extensionPoints>
 </idea-plugin>

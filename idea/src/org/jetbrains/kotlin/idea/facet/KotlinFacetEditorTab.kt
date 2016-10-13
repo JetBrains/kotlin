@@ -146,7 +146,7 @@ class KotlinFacetEditorTab(
         configuration.state.targetPlatformKind = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
     }
 
-    override fun getDisplayName() = "Kotlin"
+    override fun getDisplayName() = "General"
 
     override fun createComponent(): JComponent {
        val mainPanel = JPanel(BorderLayout())
