@@ -16,14 +16,19 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiWhileStatement
+import com.intellij.psi.impl.source.tree.ChildRole
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UWhileExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUWhileExpression(
         override val psi: PsiWhileStatement,
-        override val parent: UElement
-) : JavaAbstractUElement(), UWhileExpression, PsiElementBacked {
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UWhileExpression, PsiElementBacked {
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val whileIdentifier: UIdentifier
+        get() = UIdentifier(psi.getChildByRole(ChildRole.WHILE_KEYWORD), this)
 }

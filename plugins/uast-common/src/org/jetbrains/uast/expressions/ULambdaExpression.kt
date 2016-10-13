@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -24,7 +26,7 @@ interface ULambdaExpression : UExpression {
     /**
      * Returns the list of lambda value parameters.
      */
-    val valueParameters: List<UVariable>
+    val valueParameters: List<UParameter>
 
     /**
      * Returns the lambda body expression.
@@ -38,13 +40,14 @@ interface ULambdaExpression : UExpression {
         visitor.afterVisitLambdaExpression(this)
     }
 
-    override fun logString() = log("ULambdaExpression", valueParameters, body)
-    override fun renderString(): String {
+    override fun asLogString() = log("ULambdaExpression", valueParameters, body)
+    
+    override fun asRenderString(): String {
         val renderedValueParameters = if (valueParameters.isEmpty())
             ""
         else
-            valueParameters.joinToString { it.renderString() } + " ->\n"
+            valueParameters.joinToString { it.asRenderString() } + " ->" + LINE_SEPARATOR
 
-        return "{ " + renderedValueParameters + body.renderString().withMargin + "\n}"
+        return "{ " + renderedValueParameters + body.asRenderString().withMargin + LINE_SEPARATOR + "}"
     }
 }

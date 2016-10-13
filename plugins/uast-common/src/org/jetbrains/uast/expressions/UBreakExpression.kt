@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,6 @@ interface UBreakExpression : UExpression {
         visitor.afterVisitBreakExpression(this)
     }
 
-    override fun logString() = "UBreakExpression (" + (label ?: "<no label>") + ")"
-    override fun renderString() = label?.let { "break@$it" } ?: "break"
+    override fun asLogString() = "UBreakExpression (" + (label ?: "<no label>") + ")"
+    override fun asRenderString() = label?.let { "break@$it" } ?: "break"
 }

@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -27,14 +28,26 @@ interface UBinaryExpression : UExpression {
     val leftOperand: UExpression
 
     /**
+     * Returns the right operand.
+     */
+    val rightOperand: UExpression
+
+    /**
      * Returns the binary operator.
      */
     val operator: UastBinaryOperator
 
     /**
-     * Returns the right operand.
+     * Returns the operator identifier.
      */
-    val rightOperand: UExpression
+    val operatorIdentifier: UIdentifier?
+
+    /**
+     * Resolve the operator method.
+     * 
+     * @return the resolved method, or null if the method can't be resolved, or if the expression is not a method call.
+     */
+    fun resolveOperator(): PsiMethod?
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitBinaryExpression(this)) return
@@ -43,8 +56,10 @@ interface UBinaryExpression : UExpression {
         visitor.afterVisitBinaryExpression(this)
     }
 
-    override fun logString() =
-            "UBinaryExpression (${operator.text})\n" + leftOperand.logString().withMargin + "\n" + rightOperand.logString().withMargin
+    override fun asLogString() =
+            "UBinaryExpression (${operator.text})" + LINE_SEPARATOR +
+            leftOperand.asLogString().withMargin + LINE_SEPARATOR +
+            rightOperand.asLogString().withMargin
 
-    override fun renderString() = leftOperand.renderString() + ' ' + operator.text + ' ' + rightOperand.renderString()
+    override fun asRenderString() = leftOperand.asRenderString() + ' ' + operator.text + ' ' + rightOperand.asRenderString()
 }

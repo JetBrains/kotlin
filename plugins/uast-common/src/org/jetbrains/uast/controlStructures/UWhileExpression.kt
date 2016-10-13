@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -32,6 +33,11 @@ interface UWhileExpression : ULoopExpression {
      */
     val condition: UExpression
 
+    /**
+     * Returns an identifier for the 'while' keyword.
+     */
+    val whileIdentifier: UIdentifier
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitWhileExpression(this)) return
         condition.accept(visitor)
@@ -39,10 +45,10 @@ interface UWhileExpression : ULoopExpression {
         visitor.afterVisitWhileExpression(this)
     }
 
-    override fun renderString() = buildString {
-        append("while (${condition.renderString()}) ")
-        append(body.renderString())
+    override fun asRenderString() = buildString {
+        append("while (${condition.asRenderString()}) ")
+        append(body.asRenderString())
     }
 
-    override fun logString() = log("UWhileExpression", condition, body)
+    override fun asLogString() = log("UWhileExpression", condition, body)
 }

@@ -16,13 +16,13 @@
 package org.jetbrains.uast
 
 /**
- * Uast operator base inteface.
+ * Uast operator base interface.
  *
  * @see [UastPrefixOperator], [UastPostfixOperator], [UastBinaryOperator]
  */
 interface UastOperator {
     /**
-     * Returns the operator text to render in [UElement.renderString].
+     * Returns the operator text to render in [UElement.asRenderString].
      */
     val text: String
 }

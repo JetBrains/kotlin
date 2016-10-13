@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.uast
 
-import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
@@ -28,7 +27,7 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
     override fun setUp() {
         super.setUp()
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
-        AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
+        // AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
     }
 
     override fun tearDown() {
@@ -46,28 +45,29 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
             inspectionClassNames += className
         }
 
-        myFixture.enableInspections(*inspectionClassNames.map { className ->
-            val inspectionClass = Class.forName(className)
-            inspectionClass.newInstance() as AndroidLintInspectionBase
-        }.toTypedArray())
+        //TODO
+//        myFixture.enableInspections(*inspectionClassNames.map { className ->
+//            val inspectionClass = Class.forName(className)
+//            inspectionClass.newInstance() as AndroidLintInspectionBase
+//        }.toTypedArray())
 
-        val additionalResourcesDir = File(ktFile.parentFile, getTestName(true))
-        if (additionalResourcesDir.exists()) {
-            for (file in additionalResourcesDir.listFiles()) {
-                if (file.isFile) {
-                    myFixture.copyFileToProject(file.absolutePath, file.name)
-                }
-                else if (file.isDirectory) {
-                    myFixture.copyDirectoryToProject(file.absolutePath, file.name)
-                }
-            }
-        }
-
-        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/" + getTestName(true) + ".kt")
-        myFixture.configureFromExistingVirtualFile(virtualFile)
-
-        myFixture.doHighlighting()
-        myFixture.checkHighlighting(true, false, false)
+//        val additionalResourcesDir = File(ktFile.parentFile, getTestName(true))
+//        if (additionalResourcesDir.exists()) {
+//            for (file in additionalResourcesDir.listFiles()) {
+//                if (file.isFile) {
+//                    myFixture.copyFileToProject(file.absolutePath, file.name)
+//                }
+//                else if (file.isDirectory) {
+//                    myFixture.copyDirectoryToProject(file.absolutePath, file.name)
+//                }
+//            }
+//        }
+//
+//        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/" + getTestName(true) + ".kt");
+//        myFixture.configureFromExistingVirtualFile(virtualFile)
+//
+//        myFixture.doHighlighting()
+//        myFixture.checkHighlighting(true, false, false)
     }
 
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/plugins/uast-kotlin/testData/lint/"

@@ -16,7 +16,7 @@
 package org.jetbrains.uast
 
 /**
- * Access types of [UQualifiedExpression].
+ * Access types of [UQualifiedReferenceExpression].
  * Additional type examples: Kotlin safe call (?.).
  */
 open class UastQualifiedExpressionAccessType(val name: String) {

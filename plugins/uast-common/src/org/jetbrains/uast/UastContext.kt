@@ -1,50 +1,73 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jetbrains.uast
 
-/**
- * Interface for the Uast context.
- *
- * Context is needed for resolution, cause the reference can point to the element of the different language.
- */
-interface UastContext {
-    /**
-     * Returns all active language plugins.
-     */
-    val languagePlugins: List<UastLanguagePlugin>
+import com.intellij.lang.Language
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiVariable
+import org.jetbrains.uast.psi.PsiElementBacked
 
-    /**
-     * Convert an element of some language-specific AST to Uast element.
-     * If two or more language plugins can convert the given [element] type,
-     *  the first converter in the [languagePlugins] list will be chosen.
-     *
-     * @param element the language-specific AST element
-     * @return [UElement] instance, or null if [element] type is not supported by any of the provided language plugins.
-     */
-    fun convert(element: Any?): UElement? {
-        if (element == null) {
-            return null
-        }
+class UastContext(override val project: Project) : UastLanguagePlugin {
+    private companion object {
+        private val CONTEXT_LANGUAGE = object : Language("UastContextLanguage") {}
+    }
 
-        for (plugin in languagePlugins) {
-            val uelement = plugin.converter.convertWithParent(element)
-            if (uelement != null) {
-                return uelement
-            }
+    override val language: Language
+        get() = CONTEXT_LANGUAGE
+
+    override val priority: Int
+        get() = 0
+
+    val languagePlugins: Collection<UastLanguagePlugin>
+        get() = UastLanguagePlugin.getInstances(project)
+
+    fun findPlugin(element: PsiElement): UastLanguagePlugin? {
+        val language = element.language
+        return languagePlugins.firstOrNull { it.language == language }
+    }
+
+    override fun isFileSupported(fileName: String) = languagePlugins.any { it.isFileSupported(fileName) }
+
+    fun getMethod(method: PsiMethod): UMethod = convertWithParent<UMethod>(method)!!
+
+    fun getVariable(variable: PsiVariable): UVariable = convertWithParent<UVariable>(variable)!!
+
+    fun getClass(clazz: PsiClass): UClass = convertWithParent<UClass>(clazz)!!
+
+    override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
+        return findPlugin(element)?.convertElement(element, parent, requiredType)
+    }
+
+    override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
+        return findPlugin(element)?.convertElementWithParent(element, requiredType)
+    }
+
+    override fun getMethodCallExpression(
+            element: PsiElement,
+            containingClassFqName: String?,
+            methodName: String
+    ): UastLanguagePlugin.ResolvedMethod? {
+        return findPlugin(element)?.getMethodCallExpression(element, containingClassFqName, methodName)
+    }
+
+    override fun getConstructorCallExpression(
+            element: PsiElement,
+            fqName: String
+    ): UastLanguagePlugin.ResolvedConstructor? {
+        return findPlugin(element)?.getConstructorCallExpression(element, fqName)
+    }
+
+    override fun isExpressionValueUsed(element: UExpression): Boolean {
+        val language = element.getLanguage()
+        return (languagePlugins.firstOrNull { it.language == language })?.isExpressionValueUsed(element) ?: false
+    }
+
+    private tailrec fun UElement.getLanguage(): Language {
+        if (this is PsiElementBacked) {
+            psi?.language?.let { return it }
         }
-        return null
+        val containingElement = this.containingElement ?: throw IllegalStateException("At least UFile should have a language")
+        return containingElement.getLanguage()
     }
 }

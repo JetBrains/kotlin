@@ -19,10 +19,8 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
-    <orderEntry type="module" module-name="uast-android" />
-    <orderEntry type="module" module-name="lint-api" scope="TEST" />
-    <orderEntry type="module" module-name="lint-checks" scope="TEST" />
-    <orderEntry type="module" module-name="lint-idea" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
+    <orderEntry type="module" module-name="light-classes" />
+    <orderEntry type="module" module-name="util.runtime" />
   </component>
 </module>

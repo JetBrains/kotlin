@@ -18,23 +18,25 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiLambdaExpression
-import org.jetbrains.uast.EmptyUExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULambdaExpression
+import org.jetbrains.uast.UastEmptyExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaULambdaExpression(
         override val psi: PsiLambdaExpression,
-        override val parent: UElement
-) : JavaAbstractUElement(), ULambdaExpression, PsiElementBacked, JavaUElementWithType {
-    override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convert(it, this) } }
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), ULambdaExpression, PsiElementBacked {
+    override val valueParameters by lz {
+        psi.parameterList.parameters.map { JavaUParameter(it, this) }
+    }
 
     override val body by lz {
         val b = psi.body
         when (b) {
-            is PsiCodeBlock -> JavaConverter.convert(b, this)
-            is PsiExpression -> JavaConverter.convert(b, this)
-            else -> EmptyUExpression(this)
+            is PsiCodeBlock -> JavaConverter.convertBlock(b, this)
+            is PsiExpression -> JavaConverter.convertExpression(b, this)
+            else -> UastEmptyExpression
         }
     }
 }

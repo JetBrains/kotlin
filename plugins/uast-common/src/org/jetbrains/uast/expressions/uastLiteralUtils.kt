@@ -24,6 +24,27 @@ package org.jetbrains.uast
 fun UElement.isNullLiteral(): Boolean = this is ULiteralExpression && this.isNull
 
 /**
+ * Checks if the [UElement] is a boolean literal.
+ *
+ * @return true if the receiver is a boolean literal, false otherwise.
+ */
+fun UElement.isBooleanLiteral(): Boolean = this is ULiteralExpression && this.isBoolean
+
+/**
+ * Checks if the [UElement] is a `true` boolean literal.
+ *
+ * @return true if the receiver is a `true` boolean literal, false otherwise.
+ */
+fun UElement.isTrueLiteral(): Boolean = this is ULiteralExpression && this.isBoolean && this.value == true
+
+/**
+ * Checks if the [UElement] is a `false` boolean literal.
+ *
+ * @return true if the receiver is a `false` boolean literal, false otherwise.
+ */
+fun UElement.isFalseLiteral(): Boolean = this is ULiteralExpression && this.isBoolean && this.value == false
+
+/**
  * Checks if the [UElement] is a [String] literal.
  *
  * @return true if the receiver is a [String] literal, false otherwise.

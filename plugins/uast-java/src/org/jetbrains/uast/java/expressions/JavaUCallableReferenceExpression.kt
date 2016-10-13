@@ -16,20 +16,20 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiMethodReferenceExpression
+import com.intellij.psi.PsiType
 import org.jetbrains.uast.UCallableReferenceExpression
-import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUCallableReferenceExpression(
         override val psi: PsiMethodReferenceExpression,
-        override val parent: UElement
-) : JavaAbstractUElement(), UCallableReferenceExpression, PsiElementBacked, JavaUElementWithType {
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UCallableReferenceExpression, PsiElementBacked {
     override val qualifierExpression by lz { JavaConverter.convertOrNull(psi.qualifierExpression, this) }
-    override val qualifierType by lz { JavaConverter.convert(psi.qualifierType?.type, this) }
+    
+    override val qualifierType: PsiType?
+            get() = psi.qualifierType?.type
+    
     override val callableName: String
         get() = psi.referenceName.orAnonymous()
-
-    override fun resolve(context: UastContext) = context.convert(psi.resolve()) as? UDeclaration
 }

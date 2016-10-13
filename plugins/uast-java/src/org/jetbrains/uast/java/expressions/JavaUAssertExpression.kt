@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,31 +17,34 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiAssertStatement
+import com.intellij.psi.PsiType
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UReferenceExpression
 import org.jetbrains.uast.psi.PsiElementBacked
+
 
 class JavaUAssertExpression(
         override val psi: PsiAssertStatement,
-        override val parent: UElement
-) : JavaAbstractUElement(), UCallExpression, PsiElementBacked {
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     val condition: UExpression by lz { JavaConverter.convertOrEmpty(psi.assertCondition, this) }
     val message: UExpression? by lz { JavaConverter.convertOrNull(psi.assertDescription, this) }
+    
+    override val methodIdentifier: UIdentifier?
+        get() = null
 
-    override val receiverType: UType?
+    override val classReference: UReferenceExpression?
+        get() = null
+
+    override val methodName: String
+        get() = "assert"
+
+    override val receiver: UExpression?
+        get() = null
+
+    override val receiverType: PsiType?
         get() = null
     
-    override val functionReference: USimpleReferenceExpression?
-        get() = null
-
-    override val classReference: USimpleReferenceExpression?
-        get() = null
-
-    override val functionName: String?
-        get() = "<assert>"
-
-    override val functionNameElement: UElement?
-        get() = null
-
     override val valueArgumentCount: Int
         get() = if (message != null) 2 else 1
 
@@ -52,11 +55,15 @@ class JavaUAssertExpression(
 
     override val typeArgumentCount: Int
         get() = 0
-    override val typeArguments: List<UType>
+    
+    override val typeArguments: List<PsiType>
         get() = emptyList()
 
+    override val returnType: PsiType
+        get() = PsiType.VOID
+    
     override val kind: UastCallKind
         get() = JavaUastCallKinds.ASSERT
 
-    override fun resolve(context: UastContext) = null
+    override fun resolve() = null
 }

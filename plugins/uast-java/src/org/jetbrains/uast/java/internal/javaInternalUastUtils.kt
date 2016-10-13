@@ -15,59 +15,31 @@
  */
 package org.jetbrains.uast.java
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.*
+import com.intellij.openapi.util.Key
+import com.intellij.psi.JavaTokenType
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.impl.source.tree.CompositeElement
+import com.intellij.psi.impl.source.tree.java.PsiDoWhileStatementImpl
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UDeclaration
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UastBinaryOperator
+import java.lang.ref.WeakReference
 
-private val MODIFIER_MAP = mapOf(
-        UastModifier.ABSTRACT to PsiModifier.ABSTRACT,
-        UastModifier.FINAL to PsiModifier.FINAL,
-        UastModifier.STATIC to PsiModifier.STATIC
-)
-
-internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
-    if (modifier == UastModifier.JVM_FIELD && this is PsiField) {
-        return true
-    }
-    if (modifier == UastModifier.OVERRIDE && this is PsiAnnotationOwner) {
-        return this.annotations.any { it.qualifiedName == "java.lang.Override" }
-    }
-    if (modifier == UastModifier.VARARG && this is PsiParameter) {
-        return this.isVarArgs
-    }
-    if (modifier == UastModifier.IMMUTABLE && this is PsiVariable) {
-        return this.hasModifierProperty(PsiModifier.FINAL)
-    }
-    if (modifier == UastModifier.FINAL && this is PsiVariable) {
-        return false
-    }
-    val javaModifier = MODIFIER_MAP[modifier] ?: return false
-    return hasModifierProperty(javaModifier)
-}
-
-internal fun PsiAnnotationOwner?.getAnnotations(owner: UElement): List<UAnnotation> {
-    if (this == null) return emptyList()
-    return annotations.map { JavaConverter.convert(it, owner) }
-}
-
-internal fun PsiModifierListOwner.getVisibility(): UastVisibility {
-    if (hasModifierProperty(PsiModifier.PUBLIC)) return UastVisibility.PUBLIC
-    if (hasModifierProperty(PsiModifier.PROTECTED)) return UastVisibility.PROTECTED
-    if (hasModifierProperty(PsiModifier.PRIVATE)) return UastVisibility.PRIVATE
-    if (this is PsiLocalVariable) return UastVisibility.LOCAL
-    return JavaUastVisibilities.PACKAGE_LOCAL
-}
+internal val JAVA_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("cached-java-uelement")
 
 internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.EQ -> UastBinaryOperator.ASSIGN
     JavaTokenType.PLUS -> UastBinaryOperator.PLUS
     JavaTokenType.MINUS -> UastBinaryOperator.MINUS
-    JavaTokenType.ASTERISK -> UastBinaryOperator.MULT
+    JavaTokenType.ASTERISK -> UastBinaryOperator.MULTIPLY
     JavaTokenType.DIV -> UastBinaryOperator.DIV
     JavaTokenType.PERC -> UastBinaryOperator.MOD
     JavaTokenType.OR -> UastBinaryOperator.BITWISE_OR
     JavaTokenType.AND -> UastBinaryOperator.BITWISE_AND
+    JavaTokenType.XOR -> UastBinaryOperator.BITWISE_XOR
     JavaTokenType.EQEQ -> UastBinaryOperator.IDENTITY_EQUALS
     JavaTokenType.NE -> UastBinaryOperator.IDENTITY_NOT_EQUALS
     JavaTokenType.GT -> UastBinaryOperator.GREATER
@@ -88,7 +60,7 @@ internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.LTLTEQ -> UastBinaryOperator.SHIFT_LEFT_ASSIGN
     JavaTokenType.GTGTEQ -> UastBinaryOperator.SHIFT_RIGHT_ASSIGN
     JavaTokenType.GTGTGTEQ -> UastBinaryOperator.UNSIGNED_SHIFT_RIGHT_ASSIGN
-    else -> UastBinaryOperator.UNKNOWN
+    else -> UastBinaryOperator.OTHER
 }
 
 internal fun <T> singletonListOrEmpty(element: T?) = if (element != null) listOf(element) else emptyList<T>()
@@ -98,8 +70,15 @@ internal inline fun String?.orAnonymous(kind: String = ""): String {
     return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 }
 
-internal fun <T> runReadAction(action: () -> T): T {
-    return ApplicationManager.getApplication().runReadAction<T>(action)
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+
+val PsiModifierListOwner.annotations: Array<PsiAnnotation>
+    get() = modifierList?.annotations ?: emptyArray()
+
+internal inline fun <reified T : UDeclaration, reified P : PsiElement> unwrap(element: P): P {
+    val unwrapped = if (element is T) element.psi else element
+    assert(unwrapped !is UElement)
+    return unwrapped as P
 }
 
-internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+internal fun PsiElement.getChildByRole(role: Int) = (this as? CompositeElement)?.findChildByRoleAsPsiElement(role)

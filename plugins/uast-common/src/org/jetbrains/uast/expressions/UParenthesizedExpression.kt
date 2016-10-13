@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -34,6 +35,6 @@ interface UParenthesizedExpression : UExpression {
 
     override fun evaluate() = expression.evaluate()
 
-    override fun logString() = log("UParenthesizedExpression", expression)
-    override fun renderString() = '(' + expression.renderString() + ')'
+    override fun asLogString() = log("UParenthesizedExpression", expression)
+    override fun asRenderString() = '(' + expression.asRenderString() + ')'
 }

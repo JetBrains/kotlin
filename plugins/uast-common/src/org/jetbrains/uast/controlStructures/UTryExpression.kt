@@ -15,6 +15,11 @@
  */
 package org.jetbrains.uast
 
+import com.intellij.psi.PsiResourceListElement
+import com.intellij.psi.PsiType
+import org.jetbrains.uast.expressions.UTypeReferenceExpression
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -39,9 +44,14 @@ import org.jetbrains.uast.visitor.UastVisitor
  */
 interface UTryExpression : UExpression {
     /**
+     * Returns `true` if the try expression is a try-with-resources expression.
+     */
+    val isResources: Boolean
+
+    /**
      * Returns the list of try resources, or null if this expression is not a `try-with-resources` expression.
      */
-    val resources: List<UElement>?
+    val resources: List<PsiResourceListElement>?
 
     /**
      * Returns the `try` clause expression.
@@ -58,26 +68,32 @@ interface UTryExpression : UExpression {
      */
     val finallyClause: UExpression?
 
+    /**
+     * Returns an identifier for the 'try' keyword.
+     */
+    val tryIdentifier: UIdentifier
+
+    /**
+     * Returns an identifier for the 'finally' keyword, or null if the 'try' expression has not a 'finally' clause.
+     */
+    val finallyIdentifier: UIdentifier?
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitTryExpression(this)) return
-        resources?.acceptList(visitor)
         tryClause.accept(visitor)
         catchClauses.acceptList(visitor)
         finallyClause?.accept(visitor)
         visitor.afterVisitTryExpression(this)
     }
 
-    override fun renderString() = buildString {
+    override fun asRenderString() = buildString {
         append("try ")
-        appendln(tryClause.renderString().trim('\n'))
-        catchClauses.forEach { appendln(it.renderString().trim('\n')) }
-        finallyClause?.let { append("finally ").append(it.renderString().trim('\n')) }
+        appendln(tryClause.asRenderString().trim('\n', '\r'))
+        catchClauses.forEach { appendln(it.asRenderString().trim('\n', '\r')) }
+        finallyClause?.let { append("finally ").append(it.asRenderString().trim('\n', '\r')) }
     }
 
-    override fun logString() = "UTryExpression\n" +
-            tryClause.logString().withMargin +
-            catchClauses.joinToString("\n") { it.logString().withMargin } +
-            (finallyClause?.let { it.logString().withMargin } ?: "<no finally clause>" )
+    override fun asLogString() = log("UTryExpression", tryClause, catchClauses, finallyClause)
 }
 
 /**
@@ -92,21 +108,25 @@ interface UCatchClause : UElement {
     /**
      * Returns the exception parameter variables for this `catch` clause.
      */
-    val parameters: List<UVariable>
+    val parameters: List<UParameter>
 
     /**
-     * Returns the exception types for this `catch` clause.
+     * Returns the exception type references for this `catch` clause.
      */
-    val types: List<UType>
+    val typeReferences: List<UTypeReferenceExpression>
+
+    /**
+     * Returns the expression types for this `catch` clause.
+     */
+    val types: List<PsiType>
+        get() = typeReferences.map { it.type }
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCatchClause(this)) return
         body.accept(visitor)
-        parameters.acceptList(visitor)
-        types.acceptList(visitor)
         visitor.afterVisitCatchClause(this)
     }
 
-    override fun logString() = log("UCatchClause", body)
-    override fun renderString() = "catch (e) " + body.renderString()
+    override fun asLogString() = log("UCatchClause", body)
+    override fun asRenderString() = "catch (e) " + body.asRenderString()
 }

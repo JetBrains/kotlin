@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -41,43 +42,53 @@ interface UIfExpression : UExpression {
     /**
      * Returns the expression which is executed if the condition is true, or null if the expression is empty.
      */
-    val thenBranch: UExpression?
+    val thenExpression: UExpression?
 
     /**
      * Returns the expression which is executed if the condition is false, or null if the expression is empty.
      */
-    val elseBranch: UExpression?
+    val elseExpression: UExpression?
 
     /**
      * Returns true if the expression is ternary (condition ? trueExpression : falseExpression).
      */
     val isTernary: Boolean
 
+    /**
+     * Returns an identifier for the 'if' keyword.
+     */
+    val ifIdentifier: UIdentifier
+
+    /**
+     * Returns an identifier for the 'else' keyword, or null if the conditional expression has not the 'else' part.
+     */
+    val elseIdentifier: UIdentifier?
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitIfExpression(this)) return
         condition.accept(visitor)
-        thenBranch?.accept(visitor)
-        elseBranch?.accept(visitor)
+        thenExpression?.accept(visitor)
+        elseExpression?.accept(visitor)
         visitor.afterVisitIfExpression(this)
     }
 
-    override fun logString() = log("UIfExpression", condition, thenBranch, elseBranch)
+    override fun asLogString() = log("UIfExpression", condition, thenExpression, elseExpression)
 
-    override fun renderString() = buildString {
+    override fun asRenderString() = buildString {
         if (isTernary) {
-            append("(" + condition.renderString() + ")")
+            append("(" + condition.asRenderString() + ")")
             append(" ? ")
-            append("(" + (thenBranch?.renderString() ?: "<noexpr>") + ")")
+            append("(" + (thenExpression?.asRenderString() ?: "<noexpr>") + ")")
             append(" : ")
-            append("(" + (elseBranch?.renderString() ?: "<noexpr>") + ")")
+            append("(" + (elseExpression?.asRenderString() ?: "<noexpr>") + ")")
         } else {
-            append("if (${condition.renderString()}) ")
-            thenBranch?.let { append(it.renderString()) }
-            val elseBranch = elseBranch
-            if (elseBranch != null && elseBranch !is EmptyUExpression) {
-                if (thenBranch !is UBlockExpression) append(" ")
+            append("if (${condition.asRenderString()}) ")
+            thenExpression?.let { append(it.asRenderString()) }
+            val elseBranch = elseExpression
+            if (elseBranch != null && elseBranch !is UastEmptyExpression) {
+                if (thenExpression !is UBlockExpression) append(" ")
                 append("else ")
-                append(elseBranch.renderString())
+                append(elseBranch.asRenderString())
             }
         }
     }

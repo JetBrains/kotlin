@@ -16,7 +16,7 @@
 package org.jetbrains.uast
 
 /**
- * Represents the loop expression.
+ * Represents a loop expression.
  */
 interface ULoopExpression : UExpression {
     /**

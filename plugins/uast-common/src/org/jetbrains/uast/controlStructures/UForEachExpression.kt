@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -30,29 +31,33 @@ interface UForEachExpression : ULoopExpression {
     /**
      * Returns the loop variable.
      */
-    val variable: UVariable
+    val variable: UParameter
 
     /**
      * Returns the iterated value (collection, sequence, iterable etc.)
      */
     val iteratedValue: UExpression
 
+    /**
+     * Returns the identifier for the 'for' ('foreach') keyword.
+     */
+    val forIdentifier: UIdentifier
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitForEachExpression(this)) return
-        variable.accept(visitor)
         iteratedValue.accept(visitor)
         body.accept(visitor)
         visitor.afterVisitForEachExpression(this)
     }
 
-    override fun renderString() = buildString {
+    override fun asRenderString() = buildString {
         append("for (")
         append(variable.name)
         append(" : ")
-        append(iteratedValue.renderString())
+        append(iteratedValue.asRenderString())
         append(") ")
-        append(body.renderString())
+        append(body.asRenderString())
     }
 
-    override fun logString() = log("UForEachExpression", variable, iteratedValue, body)
+    override fun asLogString() = log("UForEachExpression", variable, iteratedValue, body)
 }

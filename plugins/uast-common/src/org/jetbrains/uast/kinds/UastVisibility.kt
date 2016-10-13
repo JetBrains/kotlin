@@ -15,24 +15,26 @@
  */
 package org.jetbrains.uast
 
-/**
- * Uast visibility list.
- */
-open class UastVisibility(val name: String) {
+import com.intellij.psi.PsiLocalVariable
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierListOwner
+
+enum class UastVisibility(val text: String) {
+    PUBLIC("public"),
+    PRIVATE("private"),
+    PROTECTED("protected"), 
+    PACKAGE_LOCAL("packageLocal"), 
+    LOCAL("local");
+
+    override fun toString() = text
+    
     companion object {
-        @JvmField
-        val PUBLIC = UastVisibility("public")
-        @JvmField
-        val PRIVATE = UastVisibility("private")
-        @JvmField
-        val PROTECTED = UastVisibility("protected")
-        @JvmField
-        val LOCAL = UastVisibility("local")
-    }
-
-    fun isPublic() = this == PUBLIC
-
-    override fun toString(): String {
-        return "UastVisibility(name='$name')"
+        operator fun get(declaration: PsiModifierListOwner): UastVisibility {
+            if (declaration.hasModifierProperty(PsiModifier.PUBLIC)) return UastVisibility.PUBLIC
+            if (declaration.hasModifierProperty(PsiModifier.PROTECTED)) return UastVisibility.PROTECTED
+            if (declaration.hasModifierProperty(PsiModifier.PRIVATE)) return UastVisibility.PRIVATE
+            if (declaration is PsiLocalVariable) return UastVisibility.LOCAL
+            return UastVisibility.PACKAGE_LOCAL
+        }
     }
 }

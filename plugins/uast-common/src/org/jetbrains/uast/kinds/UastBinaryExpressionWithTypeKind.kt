@@ -35,7 +35,3 @@ open class UastBinaryExpressionWithTypeKind(val name: String) {
         val UNKNOWN = UastBinaryExpressionWithTypeKind("<unknown>")
     }
 }
-
-fun UElement.isTypeCast() = this is UBinaryExpressionWithType && this.operationKind is UastBinaryExpressionWithTypeKind.TypeCast
-
-fun UElement.isInstanceCheck() = this is UBinaryExpressionWithType && this.operationKind is UastBinaryExpressionWithTypeKind.InstanceCheck

@@ -19,14 +19,19 @@ import com.intellij.psi.PsiPolyadicExpression
 import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaSeparatedPolyadicUBinaryExpression(
         override val psi: PsiPolyadicExpression,
-        override val parent: UElement
-) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
+        override val containingElement: UElement?
+) : JavaAbstractUExpression(), UBinaryExpression, PsiElementBacked {
     override lateinit var leftOperand: UExpression
     override lateinit var rightOperand: UExpression
-
     override val operator = psi.operationTokenType.getOperatorType()
+    
+    override val operatorIdentifier: UIdentifier?
+        get() = null
+
+    override fun resolveOperator() = null
 }

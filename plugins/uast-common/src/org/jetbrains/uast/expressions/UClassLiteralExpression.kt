@@ -15,22 +15,31 @@
  */
 package org.jetbrains.uast
 
+
+import com.intellij.psi.PsiType
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents the class literal expression, e.g. `Clazz.class`.
  */
 interface UClassLiteralExpression : UExpression {
-    override fun logString() = "UClassLiteralExpression"
-    override fun renderString() = type?.name.orEmpty() + "::class"
+    override fun asLogString() = "UClassLiteralExpression"
+    override fun asRenderString() = (type?.name) ?: "(${expression?.asRenderString() ?: "<no expression>"})" + "::class"
 
     /**
-     * Returns the type for this class literal expression.
+     * Returns a type of this class literal, or null if the type can't be determined in a compile-time.
      */
-    val type: UType?
+    val type: PsiType?
 
+    /**
+     * Returns an expression for this class literal expression.
+     * Might be null if the [type] is specified.
+     */
+    val expression: UExpression?
+    
     override fun accept(visitor: UastVisitor) {
         visitor.visitClassLiteralExpression(this)
+        expression?.accept(visitor)
         visitor.afterVisitClassLiteralExpression(this)
     }
 }

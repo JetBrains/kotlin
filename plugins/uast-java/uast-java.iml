@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="uast-common" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
   </component>
 </module>

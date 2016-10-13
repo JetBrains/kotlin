@@ -21,8 +21,8 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaDumbUElement(
         override val psi: PsiElement?,
-        override val parent: UElement
+        override val containingElement: UElement?
 ) : JavaAbstractUElement(), UElement, PsiElementBacked {
-    override fun logString() = "JavaDumbUElement"
-    override fun renderString() = "<stub@$psi>"
+    override fun asLogString() = "JavaDumbUElement"
+    override fun asRenderString() = "<stub@$psi>"
 }
