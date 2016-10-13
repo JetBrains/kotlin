@@ -34,6 +34,7 @@ import com.android.tools.klint.detector.api.Severity;
 import com.android.tools.klint.detector.api.TextFormat;
 import com.intellij.psi.PsiMethod;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UMethod;
@@ -124,8 +125,8 @@ public class AppCompatCallDetector extends Detector implements Detector.UastScan
             // we don't want to flag these calls if they are in non-appcompat activities
             // such as PreferenceActivity (see b.android.com/58512)
             UClass cls = UastUtils.getParentOfType(node, UClass.class, true);
-            return cls != null && evaluator.extendsClass(cls,
-                    "android.support.v7.app.ActionBarActivity", false);
+            return cls != null && InheritanceUtil.isInheritor(
+                    cls, false, "android.support.v7.app.ActionBarActivity");
         }
         return false;
     }

@@ -39,6 +39,7 @@ import com.android.tools.klint.detector.api.XmlContext;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UClass;
 import org.w3c.dom.Element;
 
@@ -132,8 +133,8 @@ public class PreferenceActivityDetector extends Detector
         }
         JavaEvaluator evaluator = context.getEvaluator();
         String className = declaration.getQualifiedName();
-        if (evaluator.extendsClass(declaration, PREFERENCE_ACTIVITY, false)
-                && mExportedActivities.containsKey(className)) {
+        if (InheritanceUtil.isInheritor(declaration, false, PREFERENCE_ACTIVITY)
+                            && mExportedActivities.containsKey(className)) {
             // Ignore the issue if we target an API greater than 19 and the class in
             // question specifically overrides isValidFragment() and thus knowingly white-lists
             // valid fragments.

@@ -46,6 +46,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiVariable;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UBinaryExpression;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UDoWhileExpression;
@@ -244,18 +245,18 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
         }
         JavaEvaluator evaluator = context.getEvaluator();
         if ((OBTAIN.equals(name) || OBTAIN_NO_HISTORY.equals(name)) &&
-                evaluator.extendsClass(containingClass, MOTION_EVENT_CLS, false)) {
+                InheritanceUtil.isInheritor(containingClass, false, MOTION_EVENT_CLS)) {
             checkRecycled(context, node, MOTION_EVENT_CLS, RECYCLE);
-        } else if (OBTAIN.equals(name) && evaluator.extendsClass(containingClass, PARCEL_CLS, false)) {
+        } else if (OBTAIN.equals(name) && InheritanceUtil.isInheritor(containingClass, false, PARCEL_CLS)) {
             checkRecycled(context, node, PARCEL_CLS, RECYCLE);
         } else if (OBTAIN.equals(name) &&
-                evaluator.extendsClass(containingClass, VELOCITY_TRACKER_CLS, false)) {
+                   InheritanceUtil.isInheritor(containingClass, false, VELOCITY_TRACKER_CLS)) {
             checkRecycled(context, node, VELOCITY_TRACKER_CLS, RECYCLE);
         } else if ((OBTAIN_STYLED_ATTRIBUTES.equals(name)
                 || OBTAIN_ATTRIBUTES.equals(name)
                 || OBTAIN_TYPED_ARRAY.equals(name)) &&
-                (evaluator.extendsClass(containingClass, CLASS_CONTEXT, false) ||
-                        evaluator.extendsClass(containingClass, SdkConstants.CLASS_RESOURCES, false))) {
+                (InheritanceUtil.isInheritor(containingClass, false, CLASS_CONTEXT) ||
+                 InheritanceUtil.isInheritor(containingClass, false, SdkConstants.CLASS_RESOURCES))) {
             PsiType returnType = method.getReturnType();
             if (returnType instanceof PsiClassType) {
                 PsiClass cls = ((PsiClassType)returnType).resolve();
@@ -263,17 +264,17 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                     checkRecycled(context, node, "android.content.res.TypedArray", RECYCLE);
                 }
             }
-        } else if (ACQUIRE_CPC.equals(name) && evaluator.extendsClass(containingClass,
-                CONTENT_RESOLVER_CLS, false)) {
+        } else if (ACQUIRE_CPC.equals(name) && InheritanceUtil.isInheritor(containingClass,
+                false, CONTENT_RESOLVER_CLS)) {
             checkRecycled(context, node, CONTENT_PROVIDER_CLIENT_CLS, RELEASE);
         } else if ((QUERY.equals(name)
                 || RAW_QUERY.equals(name)
                 || QUERY_WITH_FACTORY.equals(name)
                 || RAW_QUERY_WITH_FACTORY.equals(name))
-                && (evaluator.extendsClass(containingClass, SQLITE_DATABASE_CLS, false) ||
-                    evaluator.extendsClass(containingClass, CONTENT_RESOLVER_CLS, false) ||
-                    evaluator.extendsClass(containingClass, CLASS_CONTENTPROVIDER, false) ||
-                    evaluator.extendsClass(containingClass, CONTENT_PROVIDER_CLIENT_CLS, false))) {
+                && (InheritanceUtil.isInheritor(containingClass, false, SQLITE_DATABASE_CLS) ||
+                    InheritanceUtil.isInheritor(containingClass, false, CONTENT_RESOLVER_CLS) ||
+                    InheritanceUtil.isInheritor(containingClass, false, CLASS_CONTENTPROVIDER) ||
+                    InheritanceUtil.isInheritor(containingClass, false, CONTENT_PROVIDER_CLIENT_CLS))) {
             // Other potential cursors-returning methods that should be tracked:
             //    android.app.DownloadManager#query
             //    android.content.ContentProviderClient#query
@@ -313,7 +314,7 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                 PsiMethod method = call.resolve();
                 if (method != null) {
                     PsiClass containingClass = method.getContainingClass();
-                    if (mContext.getEvaluator().extendsClass(containingClass, recycleType, false)) {
+                    if (InheritanceUtil.isInheritor(containingClass, false, recycleType)) {
                         // Yes, called the right recycle() method; now make sure
                         // we're calling it on the right variable
                         UExpression operand = call.getReceiver();
@@ -478,8 +479,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
         if (method != null) {
             PsiClass containingClass = method.getContainingClass();
             JavaEvaluator evaluator = context.getEvaluator();
-            return evaluator.extendsClass(containingClass, fragmentClass, false) ||
-                    evaluator.extendsClass(containingClass, v4FragmentClass, false);
+            return InheritanceUtil.isInheritor(containingClass, false, fragmentClass) ||
+                   InheritanceUtil.isInheritor(containingClass, false, v4FragmentClass);
         } else {
             // If we *can't* resolve the method call, caller can decide
             // whether to consider the method called or not
@@ -561,8 +562,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
         if (EDIT.equals(methodName)) {
             PsiClass containingClass = method.getContainingClass();
             JavaEvaluator evaluator = context.getEvaluator();
-            return evaluator.extendsClass(containingClass, ANDROID_CONTENT_SHARED_PREFERENCES,
-                    false);
+            return InheritanceUtil.isInheritor(
+                    containingClass, false, ANDROID_CONTENT_SHARED_PREFERENCES);
         }
 
         return false;
@@ -593,8 +594,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
             if (method != null) {
                 PsiClass containingClass = method.getContainingClass();
                 JavaEvaluator evaluator = context.getEvaluator();
-                if (evaluator.extendsClass(containingClass,
-                        ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR, false)) {
+                if (InheritanceUtil.isInheritor(containingClass, false,
+                        ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR)) {
                     suggestApplyIfApplicable(context, call);
                     return true;
                 }
@@ -612,8 +613,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
             if (method != null) {
                 PsiClass containingClass = method.getContainingClass();
                 JavaEvaluator evaluator = context.getEvaluator();
-                return evaluator.extendsClass(containingClass,
-                        ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR, false);
+                return InheritanceUtil.isInheritor(containingClass, false,
+                        ANDROID_CONTENT_SHARED_PREFERENCES_EDITOR);
             }
         }
 
@@ -717,8 +718,8 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
         if (BEGIN_TRANSACTION.equals(methodName)) {
             PsiClass containingClass = method.getContainingClass();
             JavaEvaluator evaluator = context.getEvaluator();
-            if (evaluator.extendsClass(containingClass, FRAGMENT_MANAGER_CLS, false)
-                    || evaluator.extendsClass(containingClass, FRAGMENT_MANAGER_V4_CLS, false)) {
+            if (InheritanceUtil.isInheritor(containingClass, false, FRAGMENT_MANAGER_CLS)
+                    || InheritanceUtil.isInheritor(containingClass, false, FRAGMENT_MANAGER_V4_CLS)) {
                 return true;
             }
         }

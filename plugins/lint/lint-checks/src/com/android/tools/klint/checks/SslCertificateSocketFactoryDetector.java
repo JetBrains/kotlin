@@ -28,6 +28,7 @@ import com.android.tools.klint.detector.api.Severity;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UMethod;
@@ -99,8 +100,8 @@ public class SslCertificateSocketFactoryDetector extends Detector implements Det
                     PsiType type = args.get(0).getExpressionType();
                     if (type != null
                             && (INET_ADDRESS_CLASS.equals(type.getCanonicalText())
-                            || context.getEvaluator().extendsClass(((PsiClassType)type).resolve(),
-                            INET_ADDRESS_CLASS, false))) {
+                                || InheritanceUtil.isInheritor(((PsiClassType)type).resolve(), false,
+                                                                                       INET_ADDRESS_CLASS))) {
                         context.report(CREATE_SOCKET, call, context.getUastLocation(call),
                                 "Use of `SSLCertificateSocketFactory.createSocket()` " +
                                         "with an InetAddress parameter can cause insecure " +

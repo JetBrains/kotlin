@@ -50,6 +50,7 @@ import com.android.utils.SdkUtils;
 import com.google.common.collect.Maps;
 import com.intellij.psi.PsiClass;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UClass;
 import org.w3c.dom.Element;
 
@@ -184,7 +185,7 @@ public class RegistrationDetector extends LayoutDetector implements Detector.Uas
             String framework = mManifestRegistrations.get(className);
             if (framework == null) {
                 reportMissing(context, cls, className, rightTag);
-            } else if (!evaluator.extendsClass(cls, framework, false)) {
+            } else if (!InheritanceUtil.isInheritor(cls, false, framework)) {
                 reportWrongTag(context, cls, rightTag, className, framework);
             }
         } else {
@@ -266,7 +267,7 @@ public class RegistrationDetector extends LayoutDetector implements Detector.Uas
     private static String getTag(@NonNull JavaEvaluator evaluator, @NonNull PsiClass cls) {
         String tag = null;
         for (String s : sClasses) {
-            if (evaluator.extendsClass(cls, s, false)) {
+            if (InheritanceUtil.isInheritor(cls, false, s)) {
                 tag = classToTag(s);
                 break;
             }

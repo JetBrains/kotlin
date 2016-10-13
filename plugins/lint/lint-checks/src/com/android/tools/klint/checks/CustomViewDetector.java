@@ -33,6 +33,7 @@ import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import org.jetbrains.uast.UCallExpression;
@@ -122,7 +123,7 @@ public class CustomViewDetector extends Detector implements Detector.UastScanner
             }
 
             String className = cls.getName();
-            if (context.getEvaluator().extendsClass(cls, CLASS_VIEW, false)) {
+            if (InheritanceUtil.isInheritor(cls, false, CLASS_VIEW)) {
                 if (!styleableName.equals(className)) {
                     String message = String.format(
                             "By convention, the custom view (`%1$s`) and the declare-styleable (`%2$s`) "
@@ -131,8 +132,8 @@ public class CustomViewDetector extends Detector implements Detector.UastScanner
                             className, styleableName);
                     context.report(ISSUE, node, context.getUastLocation(expression), message);
                 }
-            } else if (context.getEvaluator().extendsClass(cls,
-                    CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS, false)) {
+            } else if (InheritanceUtil.isInheritor(cls, false,
+                    CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS)) {
                 PsiClass outer = PsiTreeUtil.getParentOfType(cls, PsiClass.class, true);
                 if (outer == null) {
                     return;

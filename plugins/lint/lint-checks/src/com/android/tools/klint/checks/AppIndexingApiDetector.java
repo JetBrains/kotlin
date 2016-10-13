@@ -61,6 +61,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UElement;
@@ -234,7 +235,7 @@ public class AppIndexingApiDetector extends Detector implements XmlScanner, Dete
         }
 
         // In case linting the base class itself.
-        if (!context.getEvaluator().extendsClass(declaration, CLASS_ACTIVITY, true)) {
+        if (!InheritanceUtil.isInheritor(declaration, true, CLASS_ACTIVITY)) {
             return;
         }
 

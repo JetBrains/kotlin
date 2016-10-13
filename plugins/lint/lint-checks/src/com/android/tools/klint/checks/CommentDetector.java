@@ -184,7 +184,7 @@ public class CommentDetector extends Detector implements Detector.UastScanner {
                 // TODO: Only flag this issue in release mode??
                 Location location;
                 if (node != null) {
-                    location = context.getLocation(node);
+                    location = context.getUastLocation(node);
                 } else {
                     location = Location.create(context.file, source,
                                                offset + i - 1, offset + i - 1 + STOPSHIP_COMMENT.length());

@@ -34,6 +34,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
 
+import com.intellij.psi.util.InheritanceUtil;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UMethod;
@@ -111,9 +112,9 @@ public class ViewTagDetector extends Detector implements Detector.UastScanner {
         }
 
         String objectType;
-        if (evaluator.extendsClass(typeClass, CLASS_VIEW, false)) {
+        if (InheritanceUtil.isInheritor(typeClass, false, CLASS_VIEW)) {
             objectType = "views";
-        } else if (evaluator.implementsInterface(typeClass, CURSOR_CLS, false)) {
+        } else if (InheritanceUtil.isInheritor(typeClass, false, CURSOR_CLS)) {
             objectType = "cursors";
         } else if (typeClass.getName() != null && typeClass.getName().endsWith("ViewHolder")) {
             objectType = "view holders";
