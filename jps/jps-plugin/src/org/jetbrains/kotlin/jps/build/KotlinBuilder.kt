@@ -794,9 +794,6 @@ private class JpsIncReporter : IncReporter() {
             KotlinBuilder.LOG.debug(message())
         }
     }
-
-    override fun pathsAsString(files: Iterable<File>): String =
-            files.map { it.canonicalPath }.joinToString()
 }
 
 private fun CompilationResult.doProcessChangesUsingLookups(
