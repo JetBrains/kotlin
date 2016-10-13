@@ -73,7 +73,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
         return this
     }
 
-    private fun convertInlineDocTag(tag: PsiInlineDocTag) = when(tag.name) {
+    private fun convertInlineDocTag(tag: PsiInlineDocTag) = when (tag.name) {
         "code", "literal" -> {
             val text = tag.dataElements.joinToString("") { it.text }
             val escaped = StringUtil.escapeXml(text.trimStart())
@@ -92,10 +92,16 @@ object IdeaDocCommentConverter : DocCommentConverter {
     }
 
     private fun convertJavadocLink(link: String?): String =
-        if (link != null) link.substringBefore('(').replace('#', '.') else ""
+            if (link != null) link.substringBefore('(').replace('#', '.') else ""
 
     private fun PsiDocTag.linkElement(): PsiElement? =
             valueElement ?: dataElements.firstOrNull { it !is PsiWhiteSpace }
+
+    private fun XmlTag.attributesAsString() =
+            if (attributes.isNotEmpty())
+                attributes.joinToString(separator = " ", prefix = " ") { it.text }
+            else
+                ""
 
     private class HtmlToMarkdownConverter() : XmlRecursiveElementVisitor() {
         private enum class ListType { Ordered, Unordered; }
@@ -105,6 +111,9 @@ object IdeaDocCommentConverter : DocCommentConverter {
 
                 fun wrap(text: String) = MarkdownSpan(text, text)
                 fun prefix(text: String) = MarkdownSpan(text, "")
+
+                fun preserveTag(tag: XmlTag) =
+                        MarkdownSpan("<${tag.name}${tag.attributesAsString()}>", "</${tag.name}>")
             }
         }
 
@@ -142,7 +151,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
                 XmlTokenType.XML_CHAR_ENTITY_REF -> {
                     appendPendingText()
                     val grandParent = element.parent.parent
-                    if(grandParent is HtmlTag && (grandParent.name == "code" || grandParent.name == "literal"))
+                    if (grandParent is HtmlTag && (grandParent.name == "code" || grandParent.name == "literal"))
                         markdownBuilder.append(StringUtil.unescapeXml(element.text))
                     else
                         markdownBuilder.append(element.text)
@@ -183,7 +192,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
             }
         }
 
-        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): MarkdownSpan = when(tag.name) {
+        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): MarkdownSpan = when (tag.name) {
             "b", "strong" -> MarkdownSpan.wrap("**")
 
             "p" -> if (atLineStart) MarkdownSpan.prefix("\n * ") else MarkdownSpan.prefix("\n *\n *")
@@ -200,22 +209,29 @@ object IdeaDocCommentConverter : DocCommentConverter {
                     val innerText = tag.value.text
                     if (docRef == innerText) MarkdownSpan("[", "]") else MarkdownSpan("[", "][$docRef]")
                 }
+                else if (tag.getAttributeValue("href") != null) {
+                    MarkdownSpan("[", "](${tag.getAttributeValue("href") ?: ""})")
+                }
                 else {
-                    MarkdownSpan("[", "](${tag.getAttributeValue("href")})")
+                    MarkdownSpan.preserveTag(tag)
                 }
             }
 
-            "ul" -> { currentListType = ListType.Unordered; MarkdownSpan.Empty }
+            "ul" -> {
+                currentListType = ListType.Unordered; MarkdownSpan.Empty
+            }
 
-            "ol" -> { currentListType = ListType.Ordered; MarkdownSpan.Empty }
+            "ol" -> {
+                currentListType = ListType.Ordered; MarkdownSpan.Empty
+            }
 
             "li" -> if (currentListType == ListType.Unordered) MarkdownSpan.prefix(" * ") else MarkdownSpan.prefix(" 1. ")
 
-            else -> MarkdownSpan.Empty
+            else -> MarkdownSpan.preserveTag(tag)
         }
 
         private fun appendPendingText() {
-            if (afterLineBreak ) {
+            if (afterLineBreak) {
                 markdownBuilder.append(" * ")
                 afterLineBreak = false
             }
