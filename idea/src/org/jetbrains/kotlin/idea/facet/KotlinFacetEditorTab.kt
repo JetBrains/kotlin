@@ -17,21 +17,17 @@
 package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
-import com.intellij.facet.ui.FacetEditorContext
-import com.intellij.facet.ui.FacetEditorTab
-import com.intellij.facet.ui.FacetValidatorsManager
+import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.framework.library.LibraryVersionProperties
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.LibraryPresentationProvider
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import com.intellij.util.text.VersionComparatorUtil
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
-import org.jetbrains.kotlin.idea.framework.getLibraryProperties
+import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.DescriptionAware
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import java.awt.BorderLayout
@@ -51,6 +47,18 @@ class KotlinFacetEditorTab(
         }
     }
 
+    inner class VersionValidator : FacetEditorValidator() {
+        override fun check(): ValidationResult {
+            val apiLevel = apiVersionComboBox.selectedItem as? KotlinFacetConfiguration.LanguageLevel? ?: return ValidationResult.OK
+            val languageLevel = languageVersionComboBox.selectedItem as? KotlinFacetConfiguration.LanguageLevel? ?: return ValidationResult.OK
+            val libraryLevel = getLibraryLanguageLevel()
+            if (languageLevel < apiLevel || libraryLevel < apiLevel) {
+                return ValidationResult("Language version/Runtime version may not be less than API version", null)
+            }
+            return ValidationResult.OK
+        }
+    }
+
     private val KotlinFacetConfiguration.TargetPlatform.libraryDescription: CustomLibraryDescription
         get() {
             return when (this) {
@@ -66,27 +74,31 @@ class KotlinFacetEditorTab(
                 setRenderer(DescriptionListCellRenderer())
             }
 
+    private val apiVersionComboBox =
+            JComboBox<KotlinFacetConfiguration.LanguageLevel>(KotlinFacetConfiguration.LanguageLevel.values()).apply {
+                setRenderer(DescriptionListCellRenderer())
+            }
+
     private val targetPlatformComboBox =
             JComboBox<KotlinFacetConfiguration.TargetPlatform>(KotlinFacetConfiguration.TargetPlatform.values()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
-    private val validator: FrameworkLibraryValidator
+    private val libraryValidator: FrameworkLibraryValidator
+    private val versionValidator = VersionValidator()
 
-    private fun getRuntimeLibraryVersions(
-            libToProperties: Library.() -> LibraryVersionProperties?
-    ): List<String> {
+    private fun getRuntimeLibraryVersions(presentationProvider: LibraryPresentationProvider<LibraryVersionProperties>): List<String> {
         return editorContext
                 .rootModel
                 .orderEntries
                 .asSequence()
                 .filterIsInstance<LibraryOrderEntry>()
-                .mapNotNull { it.library?.libToProperties()?.versionString }
+                .mapNotNull { it.library?.let { getLibraryProperties(presentationProvider, it) }?.versionString }
                 .toList()
     }
 
     private fun getDefaultTargetPlatform(): KotlinFacetConfiguration.TargetPlatform {
-        getRuntimeLibraryVersions { getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), this) }.firstOrNull()?.let { javaLib ->
+        getRuntimeLibraryVersions(JSLibraryStdPresentationProvider.getInstance()).firstOrNull()?.let {
             return KotlinFacetConfiguration.TargetPlatform.JS
         }
 
@@ -98,21 +110,36 @@ class KotlinFacetEditorTab(
         }
     }
 
-    private fun getDefaultLanguageLevel(): KotlinFacetConfiguration.LanguageLevel {
-        val libVersion = bundledRuntimeVersion()
+    private fun getDefaultLanguageLevel(libraryVersion: String? = null): KotlinFacetConfiguration.LanguageLevel {
+        val libVersion = libraryVersion ?: bundledRuntimeVersion()
         return when {
             libVersion.startsWith("1.0") -> KotlinFacetConfiguration.LanguageLevel.KOTLIN_1_0
             else -> KotlinFacetConfiguration.LanguageLevel.KOTLIN_1_1
         }
     }
 
+    private fun getLibraryLanguageLevel(): KotlinFacetConfiguration.LanguageLevel {
+        val presentationProvider = when (targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?) {
+            KotlinFacetConfiguration.TargetPlatform.JS ->
+                JSLibraryStdPresentationProvider.getInstance()
+            KotlinFacetConfiguration.TargetPlatform.JVM_1_6,
+            KotlinFacetConfiguration.TargetPlatform.JVM_1_8,
+            null ->
+                JavaRuntimePresentationProvider.getInstance()
+        }
+        val minVersion = getRuntimeLibraryVersions(presentationProvider).minWith(VersionComparatorUtil.COMPARATOR)
+        return getDefaultLanguageLevel(minVersion)
+    }
+
     init {
-        validator = FrameworkLibraryValidatorWithDynamicDescription(
+        libraryValidator = FrameworkLibraryValidatorWithDynamicDescription(
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
         ) { (targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform).libraryDescription }
-        validatorsManager.registerValidator(validator)
+
+        validatorsManager.registerValidator(libraryValidator)
+        validatorsManager.registerValidator(versionValidator)
 
         targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
@@ -126,6 +153,10 @@ class KotlinFacetEditorTab(
             if (languageLevel == null) {
                 languageLevel = getDefaultLanguageLevel()
             }
+
+            if (apiLevel == null) {
+                apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel())
+            }
         }
 
         reset()
@@ -134,16 +165,19 @@ class KotlinFacetEditorTab(
     override fun isModified(): Boolean {
         return languageVersionComboBox.selectedItem != configuration.state.languageLevel
                || targetPlatformComboBox.selectedItem != configuration.state.targetPlatformKind
+               || apiVersionComboBox.selectedItem != configuration.state.apiLevel
     }
 
     override fun reset() {
         languageVersionComboBox.selectedItem = configuration.state.languageLevel
         targetPlatformComboBox.selectedItem = configuration.state.targetPlatformKind
+        apiVersionComboBox.selectedItem = configuration.state.apiLevel
     }
 
     override fun apply() {
         configuration.state.languageLevel = languageVersionComboBox.selectedItem as KotlinFacetConfiguration.LanguageLevel?
         configuration.state.targetPlatformKind = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
+        configuration.state.apiLevel = apiVersionComboBox.selectedItem as KotlinFacetConfiguration.LanguageLevel?
     }
 
     override fun getDisplayName() = "General"
@@ -153,6 +187,7 @@ class KotlinFacetEditorTab(
        val contentPanel = FormBuilder
                .createFormBuilder()
                .addLabeledComponent("&Language version: ", languageVersionComboBox)
+               .addLabeledComponent("&Standard library API version: ", apiVersionComboBox)
                .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
                .panel
         mainPanel.add(contentPanel, BorderLayout.NORTH)

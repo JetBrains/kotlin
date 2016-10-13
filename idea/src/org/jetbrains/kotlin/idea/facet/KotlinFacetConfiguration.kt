@@ -40,6 +40,7 @@ class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<Ko
 
     class Settings {
         var languageLevel: LanguageLevel? = null
+        var apiLevel: LanguageLevel? = null
         var targetPlatformKind: TargetPlatform? = null
     }
 
