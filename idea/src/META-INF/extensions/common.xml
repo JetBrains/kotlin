@@ -31,5 +31,7 @@
         <extensionPoint name="storageComponentContainerContributor"
                         interface="org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="facetConfigurationExtension"
+                        interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
     </extensionPoints>
 </idea-plugin>
