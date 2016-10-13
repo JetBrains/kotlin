@@ -504,6 +504,17 @@ public class UElementVisitor {
     }
 
     private class DispatchPsiVisitor extends AbstractUastVisitor {
+
+        @Override
+        public boolean visitAnnotation(UAnnotation node) {
+            List<VisitingDetector> list = mNodePsiTypeDetectors.get(UAnnotation.class);
+            if (list != null) {
+                for (VisitingDetector v : list) {
+                    v.getVisitor().visitAnnotation(node);
+                }
+            }
+            return super.visitAnnotation(node);
+        }
         
         @Override
         public boolean visitCatchClause(UCatchClause node) {

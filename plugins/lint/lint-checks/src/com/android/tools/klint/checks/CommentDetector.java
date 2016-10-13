@@ -20,17 +20,18 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Implementation;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.JavaContext;
 import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Scope;
 import com.android.tools.klint.detector.api.Severity;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLiteralExpression;
+
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UComment;
+import org.jetbrains.uast.UFile;
+import org.jetbrains.uast.visitor.AbstractUastVisitor;
+import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * Looks for issues in Java comments
  */
-public class CommentDetector extends Detector implements JavaPsiScanner {
+public class CommentDetector extends Detector implements Detector.UastScanner {
     private static final String STOPSHIP_COMMENT = "STOPSHIP"; //$NON-NLS-1$
 
     private static final Implementation IMPLEMENTATION = new Implementation(
@@ -75,7 +76,7 @@ public class CommentDetector extends Detector implements JavaPsiScanner {
     private static final String ESCAPE_STRING = "\\u002a\\u002f"; //$NON-NLS-1$
 
     /** The current AST only passes comment nodes for Javadoc so I need to do manual token scanning
-         instead */
+     instead */
     private static final boolean USE_AST = false;
 
 
@@ -83,20 +84,20 @@ public class CommentDetector extends Detector implements JavaPsiScanner {
     public CommentDetector() {
     }
 
+    @Nullable
     @Override
-    public List<Class<? extends PsiElement>> getApplicablePsiTypes() {
+    public List<Class<? extends UElement>> getApplicableUastTypes() {
         if (USE_AST) {
-            return Collections.<Class<? extends PsiElement>>singletonList(
-                    PsiLiteralExpression.class);
+            return Collections.<Class<? extends UElement>>singletonList(
+                    UFile.class);
         } else {
             return null;
         }
     }
 
+    @Nullable
     @Override
-    public JavaElementVisitor createPsiVisitor(@NonNull JavaContext context) {
-        // Lombok does not generate comment nodes for block and line comments, only for
-        // javadoc comments!
+    public UastVisitor createUastVisitor(@NonNull JavaContext context) {
         if (USE_AST) {
             return new CommentChecker(context);
         } else {
@@ -135,7 +136,7 @@ public class CommentDetector extends Detector implements JavaPsiScanner {
         }
     }
 
-    private static class CommentChecker extends JavaElementVisitor {
+    private static class CommentChecker extends AbstractUastVisitor {
         private final JavaContext mContext;
 
         public CommentChecker(JavaContext context) {
@@ -143,16 +144,19 @@ public class CommentDetector extends Detector implements JavaPsiScanner {
         }
 
         @Override
-        public void visitComment(PsiComment comment) {
-            String contents = comment.getText();
-            checkComment(mContext, comment, contents, comment.getTextRange().getStartOffset(), 0,
-                    contents.length());
+        public boolean visitFile(UFile node) {
+            for (UComment comment : node.getAllCommentsInFile()) {
+                String contents = comment.getText();
+                checkComment(mContext, comment, contents,
+                             comment.getPsi().getTextRange().getStartOffset(), 0, contents.length());
+            }
+            return super.visitFile(node);
         }
     }
 
     private static void checkComment(
             @NonNull JavaContext context,
-            @Nullable PsiComment node,
+            @Nullable UComment node,
             @NonNull String source,
             int offset,
             int start,
@@ -164,24 +168,31 @@ public class CommentDetector extends Detector implements JavaPsiScanner {
             if (prev == '\\') {
                 if (c == 'u' || c == 'U') {
                     if (source.regionMatches(true, i - 1, ESCAPE_STRING,
-                            0, ESCAPE_STRING.length())) {
+                                             0, ESCAPE_STRING.length())) {
                         Location location = Location.create(context.file, source,
-                                offset + i - 1, offset + i - 1 + ESCAPE_STRING.length());
+                                                            offset + i - 1, offset + i - 1 + ESCAPE_STRING.length());
                         context.report(EASTER_EGG, node, location,
-                                "Code might be hidden here; found unicode escape sequence " +
-                                "which is interpreted as comment end, compiled code follows");
+                                       "Code might be hidden here; found unicode escape sequence " +
+                                       "which is interpreted as comment end, compiled code follows");
                     }
                 } else {
                     i++;
                 }
             } else if (prev == 'S' && c == 'T' &&
-                    source.regionMatches(i - 1, STOPSHIP_COMMENT, 0, STOPSHIP_COMMENT.length())) {
+                       source.regionMatches(i - 1, STOPSHIP_COMMENT, 0, STOPSHIP_COMMENT.length())) {
+
                 // TODO: Only flag this issue in release mode??
-                Location location = Location.create(context.file, source,
-                        offset + i - 1, offset + i - 1 + STOPSHIP_COMMENT.length());
+                Location location;
+                if (node != null) {
+                    location = context.getLocation(node);
+                } else {
+                    location = Location.create(context.file, source,
+                                               offset + i - 1, offset + i - 1 + STOPSHIP_COMMENT.length());
+                }
+
                 context.report(STOP_SHIP, node, location,
-                        "`STOPSHIP` comment found; points to code which must be fixed prior " +
-                        "to release");
+                               "`STOPSHIP` comment found; points to code which must be fixed prior " +
+                               "to release");
             }
         }
     }

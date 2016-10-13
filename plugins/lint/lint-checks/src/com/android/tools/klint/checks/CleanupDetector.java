@@ -346,8 +346,7 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                     recycleName);
         }
 
-        UElement locationNode = node instanceof UCallExpression ?
-                                ((UCallExpression) node).getMethodIdentifier() : node;
+        UElement locationNode = node.getMethodIdentifier();
         if (locationNode == null) {
             locationNode = node;
         }
@@ -507,7 +506,12 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                     protected boolean isCleanupCall(@NonNull UCallExpression call) {
                         if (isEditorApplyMethodCall(mContext, call)
                                 || isEditorCommitMethodCall(mContext, call)) {
-                            UExpression operand = call.getReceiver();
+                            List<UExpression> chain = getQualifiedChain(getOutermostQualified(call));
+                            if (chain.isEmpty()) {
+                                return false;
+                            }
+
+                            UExpression operand = chain.get(0);
                             if (operand != null) {
                                 PsiElement resolved = UastUtils.tryResolve(operand);
                                 //noinspection SuspiciousMethodCalls
@@ -515,7 +519,7 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
                                     return true;
                                 } else if (resolved instanceof PsiMethod
                                         && operand instanceof UCallExpression
-                                        && isCommittedInChainedCalls(mContext,
+                                        && isEditorCommittedInChainedCalls(mContext,
                                         (UCallExpression) operand)) {
                                     // Check that the target of the committed chains is the
                                     // right variable!

@@ -46,6 +46,7 @@ import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
 import static com.android.tools.klint.detector.api.ResourceEvaluator.COLOR_INT_ANNOTATION;
 import static com.android.tools.klint.detector.api.ResourceEvaluator.PX_ANNOTATION;
 import static com.android.tools.klint.detector.api.ResourceEvaluator.RES_SUFFIX;
+import static org.jetbrains.uast.UastUtils.getQualifiedParentOrThis;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
@@ -54,6 +55,7 @@ import com.android.sdklib.AndroidVersion;
 import com.android.tools.klint.checks.PermissionFinder.Operation;
 import com.android.tools.klint.checks.PermissionFinder.Result;
 import com.android.tools.klint.checks.PermissionHolder.SetPermissionLookup;
+import com.android.tools.klint.client.api.ExternalReferenceExpression;
 import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.LintClient;
 import com.android.tools.klint.client.api.UastLintUtils;
@@ -91,26 +93,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiVariable;
 
-import org.jetbrains.uast.UAnonymousClass;
-import org.jetbrains.uast.UBinaryExpression;
-import org.jetbrains.uast.UBinaryExpressionWithType;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UCatchClause;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UEnumConstant;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UField;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UParenthesizedExpression;
-import org.jetbrains.uast.UPrefixExpression;
-import org.jetbrains.uast.UTryExpression;
-import org.jetbrains.uast.UVariable;
-import org.jetbrains.uast.UastBinaryOperator;
-import org.jetbrains.uast.UastOperator;
-import org.jetbrains.uast.UastPrefixOperator;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
@@ -288,6 +271,8 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
     public static final String ATTR_ALL_OF = "allOf";
     public static final String ATTR_ANY_OF = "anyOf";
     public static final String ATTR_CONDITIONAL = "conditional";
+
+    public static final String SECURITY_EXCEPTION = "java.lang.SecurityException";
 
     /**
      * Constructs a new {@link SupportAnnotationDetector} check
@@ -557,8 +542,8 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
             if (tryCatch == null) {
                 break;
             } else {
-                for (UCatchClause psiCatchSection : tryCatch.getCatchClauses()) {
-                    if (isSecurityException(psiCatchSection.getTypes())) {
+                for (UCatchClause catchClause : tryCatch.getCatchClauses()) {
+                    if (containsSecurityException(catchClause.getTypes())) {
                         return true;
                     }
                 }
@@ -572,7 +557,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
         UMethod declaration = UastUtils.getParentOfType(parent, UMethod.class, false);
         if (declaration != null) {
             PsiClassType[] thrownTypes = declaration.getThrowsList().getReferencedTypes();
-            if (isSecurityException(Arrays.<PsiType>asList(thrownTypes))) {
+            if (containsSecurityException(Arrays.asList(thrownTypes))) {
                 return true;
             }
         }
@@ -685,8 +670,8 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
         }
     }
 
-    private static boolean isSecurityException(
-            @NonNull List<PsiType> types) {
+    private static boolean containsSecurityException(
+            @NonNull List<? extends PsiType> types) {
         for (PsiType type : types) {
             if (type instanceof PsiClassType) {
                 PsiClass cls = ((PsiClassType) type).resolve();
@@ -694,7 +679,9 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
                 // any super type as well, however that probably hides warnings in cases where
                 // users don't want that; see http://b.android.com/182165
                 //return context.getEvaluator().extendsClass(cls, "java.lang.SecurityException", false);
-                return cls != null && "java.lang.SecurityException".equals(cls.getQualifiedName());
+                if (cls != null && SECURITY_EXCEPTION.equals(cls.getQualifiedName())) {
+                    return true;
+                }
             }
         }
 
@@ -773,7 +760,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
     
     private static void checkResult(@NonNull JavaContext context, @NonNull UCallExpression node,
             @NonNull PsiMethod method, @NonNull PsiAnnotation annotation) {
-        if (context.getUastContext().isExpressionValueUsed(UastUtils.getQualifiedParentOrThis(node))) {
+        if (isExpressionValueUnused(node)) {
             String methodName = JavaContext.getMethodName(node);
             String suggested = getAnnotationStringValue(annotation, ATTR_SUGGEST);
 
@@ -807,6 +794,11 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
             }
             context.report(issue, node, context.getUastLocation(node), message);
         }
+    }
+
+    private static boolean isExpressionValueUnused(UExpression expression) {
+        return getQualifiedParentOrThis(expression).getContainingElement()
+                instanceof UBlockExpression;
     }
 
     private static void checkThreading(
@@ -1150,7 +1142,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
      */
     public static boolean typeArrayFromArrayLiteral(
             @Nullable UElement node, @NonNull JavaContext context) {
-        if (UastExpressionUtils.isMethodCall(node)) {
+        if (isMethodCall(node)) {
             UCallExpression expression = (UCallExpression) node;
             assert expression != null;
             String name = expression.getMethodName();
@@ -1211,6 +1203,24 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
         }
 
         return false;
+    }
+
+    private static boolean isMethodCall(UElement node) {
+        if (node instanceof UQualifiedReferenceExpression) {
+            UExpression last = getLastInQualifiedChain((UQualifiedReferenceExpression) node);
+            return UastExpressionUtils.isMethodCall(last);
+        }
+
+        return UastExpressionUtils.isMethodCall(node);
+    }
+
+    @NonNull
+    private static UExpression getLastInQualifiedChain(@NonNull UQualifiedReferenceExpression node) {
+        UExpression last = node.getSelector();
+        while (last instanceof UQualifiedReferenceExpression) {
+            last = ((UQualifiedReferenceExpression) last).getSelector();
+        }
+        return last;
     }
 
     private static void checkIntRange(
@@ -1630,6 +1640,12 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
                     if (value.equals(((PsiLiteral)expression).getValue())) {
                         return;
                     }
+                } else if (expression instanceof ExternalReferenceExpression) {
+                    PsiElement resolved = UastLintUtils.resolve(
+                            (ExternalReferenceExpression) expression, argument);
+                    if (resolved != null && resolved.equals(value)) {
+                        return;
+                    }
                 } else if (expression instanceof PsiReference) {
                     PsiElement resolved = ((PsiReference) expression).resolve();
                     if (resolved != null && resolved.equals(value)) {
@@ -1677,7 +1693,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
             return;
         }
 
-        String values = listAllowedValues(allowedValues);
+        String values = listAllowedValues(node, allowedValues);
         String message;
         if (flag) {
             message = "Must be one or more of: " + values;
@@ -1709,22 +1725,29 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
         return null;
     }
 
-    private static String listAllowedValues(@NonNull PsiAnnotationMemberValue[] allowedValues) {
+    private static String listAllowedValues(@NonNull UElement context,
+            @NonNull PsiAnnotationMemberValue[] allowedValues) {
         StringBuilder sb = new StringBuilder();
         for (PsiAnnotationMemberValue allowedValue : allowedValues) {
             String s = null;
-            if (allowedValue instanceof PsiReference) {
-                PsiElement resolved = ((PsiReference) allowedValue).resolve();
-                if (resolved instanceof PsiField) {
-                    PsiField field = (PsiField) resolved;
-                    String containingClassName = field.getContainingClass() != null
-                            ? field.getContainingClass().getName() : null;
-                    if (containingClassName == null) {
-                        continue;
-                    }
-                    s = containingClassName + "." + field.getName();
-                }
+            PsiElement resolved = null;
+            if (allowedValue instanceof ExternalReferenceExpression) {
+                resolved = UastLintUtils.resolve(
+                        (ExternalReferenceExpression) allowedValue, context);
+            } else if (allowedValue instanceof PsiReference) {
+                resolved = ((PsiReference) allowedValue).resolve();
             }
+
+            if (resolved instanceof PsiField) {
+                PsiField field = (PsiField) resolved;
+                String containingClassName = field.getContainingClass() != null
+                                             ? field.getContainingClass().getName() : null;
+                if (containingClassName == null) {
+                    continue;
+                }
+                s = containingClassName + "." + field.getName();
+            }
+
             if (s == null) {
                 s = allowedValue.getText();
             }
@@ -1768,7 +1791,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
 
     @NonNull
     static PsiAnnotation[] filterRelevantAnnotations(
-            @NonNull PsiAnnotation[] annotations) {
+            @NonNull JavaEvaluator evaluator, @NonNull PsiAnnotation[] annotations) {
         List<PsiAnnotation> result = null;
         int length = annotations.length;
         if (length == 0) {
@@ -1812,33 +1835,31 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
                 continue;
             }
             PsiClass cls = (PsiClass)resolved;
-            PsiModifierList modifierList = cls.getModifierList();
-            if (modifierList != null) {
-                PsiAnnotation[] innerAnnotations = modifierList.getAnnotations();
-                for (int j = 0; j < innerAnnotations.length; j++) {
-                    PsiAnnotation inner = innerAnnotations[j];
-                    String a = inner.getQualifiedName();
-                    if (a == null) {
-                        continue;
+            PsiAnnotation[] innerAnnotations = evaluator.getAllAnnotations(cls);
+            for (int j = 0; j < innerAnnotations.length; j++) {
+                PsiAnnotation inner = innerAnnotations[j];
+                String a = inner.getQualifiedName();
+                if (a == null || a.startsWith("java.")) {
+                    // @Override, @SuppressWarnings etc. Ignore
+                    continue;
+                }
+                if (a.equals(INT_DEF_ANNOTATION)
+                    || a.equals(PERMISSION_ANNOTATION)
+                    || a.equals(INT_RANGE_ANNOTATION)
+                    || a.equals(STRING_DEF_ANNOTATION)) {
+                    if (length == 1 && j == innerAnnotations.length - 1 && result == null) {
+                        return innerAnnotations;
                     }
-                    if (a.equals(INT_DEF_ANNOTATION)
-                            || a.equals(PERMISSION_ANNOTATION)
-                            || a.equals(INT_RANGE_ANNOTATION)
-                            || a.equals(STRING_DEF_ANNOTATION)) {
-                        if (length == 1 && j == innerAnnotations.length - 1) {
-                            return innerAnnotations;
-                        }
-                        if (result == null) {
-                            result = new ArrayList<PsiAnnotation>(2);
-                        }
-                        result.add(inner);
+                    if (result == null) {
+                        result = new ArrayList<PsiAnnotation>(2);
                     }
+                    result.add(inner);
                 }
             }
         }
 
         return result != null
-                ? result.toArray(PsiAnnotation.EMPTY_ARRAY) : PsiAnnotation.EMPTY_ARRAY;
+               ? result.toArray(PsiAnnotation.EMPTY_ARRAY) : PsiAnnotation.EMPTY_ARRAY;
     }
 
     // ---- Implements UastScanner ----
@@ -1849,9 +1870,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
     public List<Class<? extends UElement>> getApplicableUastTypes() {
         List<Class<? extends UElement>> types = new ArrayList<Class<? extends UElement>>(3);
         types.add(UCallExpression.class);
-        //types.add(PsiMethodCallExpression.class);
-        //types.add(PsiNewExpression.class);
-        types.add(UField.class);
+        types.add(UVariable.class);
         return types;
     }
 
@@ -1886,33 +1905,33 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
             }
             return super.visitVariable(node);
         }
-        
+
         public void checkCall(PsiMethod method, UCallExpression call) {
             JavaEvaluator evaluator = mContext.getEvaluator();
 
-            PsiAnnotation[] methodAnnotations = evaluator.getAllAnnotations(method, true);
-            methodAnnotations = filterRelevantAnnotations(methodAnnotations);
+            PsiAnnotation[] methodAnnotations = evaluator.getAllAnnotations(method);
+            methodAnnotations = filterRelevantAnnotations(evaluator, methodAnnotations);
 
             // Look for annotations on the class as well: these trickle
             // down to all the methods in the class
             PsiClass containingClass = method.getContainingClass();
             PsiAnnotation[] classAnnotations;
             if (containingClass != null) {
-                classAnnotations = evaluator.getAllAnnotations(containingClass, true);
-                classAnnotations = filterRelevantAnnotations(classAnnotations);
+                classAnnotations = evaluator.getAllAnnotations(containingClass);
+                classAnnotations = filterRelevantAnnotations(evaluator, classAnnotations);
             } else {
                 classAnnotations = PsiAnnotation.EMPTY_ARRAY;
             }
 
             for (PsiAnnotation annotation : methodAnnotations) {
                 checkMethodAnnotation(mContext, method, call, annotation, methodAnnotations,
-                        classAnnotations);
+                                      classAnnotations);
             }
 
             if (classAnnotations.length > 0) {
                 for (PsiAnnotation annotation : classAnnotations) {
                     checkMethodAnnotation(mContext, method, call, annotation, methodAnnotations,
-                            classAnnotations);
+                                          classAnnotations);
                 }
             }
 
@@ -1921,12 +1940,12 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
             PsiParameter[] parameters = parameterList.getParameters();
             PsiAnnotation[] annotations = null;
             for (int i = 0, n = Math.min(parameters.length, arguments.size());
-                    i < n;
-                    i++) {
+                 i < n;
+                 i++) {
                 UExpression argument = arguments.get(i);
                 PsiParameter parameter = parameters[i];
-                annotations = evaluator.getAllAnnotations(parameter, true);
-                annotations = filterRelevantAnnotations(annotations);
+                annotations = evaluator.getAllAnnotations(parameter);
+                annotations = filterRelevantAnnotations(evaluator, annotations);
                 checkParameterAnnotations(mContext, argument, call, method, annotations);
             }
             if (annotations != null) {

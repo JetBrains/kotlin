@@ -58,22 +58,9 @@ import com.android.sdklib.SdkVersionInfo;
 import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.LintDriver;
 import com.android.tools.klint.client.api.UastLintUtils;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.ClassContext;
-import com.android.tools.klint.detector.api.Context;
-import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.*;
 import com.android.tools.klint.detector.api.Detector.ClassScanner;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.LintUtils;
-import com.android.tools.klint.detector.api.Location;
 import com.android.tools.klint.detector.api.Location.SearchHints;
-import com.android.tools.klint.detector.api.ResourceXmlDetector;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.TextFormat;
-import com.android.tools.klint.detector.api.XmlContext;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -148,6 +135,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -310,6 +298,8 @@ public class ApiDetector extends ResourceXmlDetector
 
     private static final String SDK_INT = "SDK_INT";
     private static final String ANDROID_OS_BUILD_VERSION = "android/os/Build$VERSION";
+    private static final String REFLECTIVE_OPERATION_EXCEPTION
+            = "java.lang.ReflectiveOperationException";
 
     protected ApiLookup mApiDatabase;
     private boolean mWarnedMissingDb;
@@ -863,33 +853,6 @@ public class ApiDetector extends ResourceXmlDetector
             if (!checkCalls) {
                 continue;
             }
-
-            List tryCatchBlocks = method.tryCatchBlocks;
-            // single-catch blocks are already handled by an AST level check in ApiVisitor
-            if (tryCatchBlocks.size() > 1) {
-                List<String> checked = Lists.newArrayList();
-                for (Object o : tryCatchBlocks) {
-                    TryCatchBlockNode tryCatchBlock = (TryCatchBlockNode) o;
-                    String className = tryCatchBlock.type;
-                    if (className == null || checked.contains(className)) {
-                        continue;
-                    }
-
-                    int api = mApiDatabase.getClassVersion(className);
-                    if (api > minSdk) {
-                        // Find instruction node
-                        LabelNode label = tryCatchBlock.handler;
-                        String fqcn = getFqcn(className);
-                        String message = String.format(
-                                "Class requires API level %1$d (current min is %2$d): `%3$s`",
-                                api, minSdk, fqcn);
-                        report(context, message, label, method,
-                                className.substring(className.lastIndexOf('/') + 1), null,
-                                SearchHints.create(EOL_NEAREST).matchJavaSymbol());
-                    }
-                }
-            }
-
 
             if (CHECK_DECLARATIONS) {
                 // Check types in parameter list and types of local variables
@@ -1493,7 +1456,7 @@ public class ApiDetector extends ResourceXmlDetector
 
         return -1;
     }
-    
+
     private static void report(final ClassContext context, String message, AbstractInsnNode node,
             MethodNode method, String patternStart, String patternEnd, SearchHints hints) {
         int lineNumber = node != null ? ClassContext.findLineNumber(node) : -1;
@@ -1647,7 +1610,7 @@ public class ApiDetector extends ResourceXmlDetector
                     checkField(statement, (PsiField)resolved);
                 }
             }
-            
+
             return super.visitImportStatement(statement);
         }
 
@@ -1657,7 +1620,7 @@ public class ApiDetector extends ResourceXmlDetector
             if (resolved instanceof PsiField) {
                 checkField(node, (PsiField)resolved);
             }
-            
+
             return super.visitSimpleNameReferenceExpression(node);
         }
 
@@ -1666,16 +1629,16 @@ public class ApiDetector extends ResourceXmlDetector
             if (UastExpressionUtils.isTypeCast(node)) {
                 visitTypeCastExpression(node);
             }
-            
+
             return super.visitBinaryExpressionWithType(node);
         }
 
         private void visitTypeCastExpression(UBinaryExpressionWithType expression) {
             UExpression operand = expression.getOperand();
-            
+
             PsiType operandType = operand.getExpressionType();
             PsiType castType = expression.getType();
-            
+
             if (castType.equals(operandType)) {
                 return;
             }
@@ -1690,7 +1653,7 @@ public class ApiDetector extends ResourceXmlDetector
             checkCast(expression, classType, interfaceType);
         }
 
-        private void checkCast(@NonNull UElement node, @NonNull PsiClassType classType, 
+        private void checkCast(@NonNull UElement node, @NonNull PsiClassType classType,
                 @NonNull PsiClassType interfaceType) {
             if (classType.equals(interfaceType)) {
                 return;
@@ -1737,7 +1700,7 @@ public class ApiDetector extends ResourceXmlDetector
                     mContext.reportUast(UNSUPPORTED, method, location, message);
                 }
             }
-            
+
             return super.visitMethod(method);
         }
 
@@ -1777,7 +1740,7 @@ public class ApiDetector extends ResourceXmlDetector
                     }
                 }
             }
-            
+
             return super.visitClass(aClass);
         }
 
@@ -1840,7 +1803,7 @@ public class ApiDetector extends ResourceXmlDetector
                     }
                 }
             }
-            
+
             return super.visitCallExpression(expression);
         }
 
@@ -1908,7 +1871,7 @@ public class ApiDetector extends ResourceXmlDetector
             if (UastExpressionUtils.isAssignment(node)) {
                 visitAssignmentExpression(node);
             }
-            
+
             return super.visitBinaryExpression(node);
         }
 
@@ -1951,12 +1914,73 @@ public class ApiDetector extends ResourceXmlDetector
             }
 
             for (UCatchClause catchClause : statement.getCatchClauses()) {
+
+                // Special case reflective operation exception which can be implicitly used
+                // with multi-catches: see issue 153406
+                int minSdk = getMinSdk(mContext);
+                if(minSdk < 19 && isMultiCatchReflectiveOperationException(catchClause)) {
+                    String message = String.format("Multi-catch with these reflection exceptions requires API level 19 (current min is %d) " +
+                                                   "because they get compiled to the common but new super type `ReflectiveOperationException`. " +
+                                                   "As a workaround either create individual catch statements, or catch `Exception`.",
+                                                   minSdk);
+
+                    mContext.report(UNSUPPORTED, getCatchParametersLocation(mContext, catchClause), message);
+                    continue;
+                }
+
                 for (UTypeReferenceExpression typeReference : catchClause.getTypeReferences()) {
                     checkCatchTypeElement(statement, typeReference, typeReference.getType());
                 }
             }
-            
+
             return super.visitTryExpression(statement);
+        }
+
+        private Location getCatchParametersLocation(JavaContext context, UCatchClause catchClause) {
+            List<UTypeReferenceExpression> types = catchClause.getTypeReferences();
+            if (types.isEmpty()) {
+                return Location.NONE;
+            }
+
+            Location first = context.getUastLocation(types.get(0));
+            if (types.size() < 2) {
+                return first;
+            }
+
+            Location last = context.getUastLocation(types.get(types.size() - 1));
+            File file = first.getFile();
+            Position start = first.getStart();
+            Position end = last.getEnd();
+
+            if (start == null) {
+                return Location.create(file);
+            }
+
+            return Location.create(file, start, end);
+        }
+
+        private boolean isMultiCatchReflectiveOperationException(UCatchClause catchClause) {
+            List<PsiType> types = catchClause.getTypes();
+            if (types.size() < 2) {
+                return false;
+            }
+
+            for (PsiType t : types) {
+                if(!isSubclassOfReflectiveOperationException(t)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private boolean isSubclassOfReflectiveOperationException(PsiType type) {
+            for (PsiType t : type.getSuperTypes()) {
+                if (REFLECTIVE_OPERATION_EXCEPTION.equals(t.getCanonicalText())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void checkCatchTypeElement(@NonNull UTryExpression statement,
@@ -1981,19 +2005,10 @@ public class ApiDetector extends ResourceXmlDetector
                     return;
                 }
 
-                Location location;
-                location = mContext.getUastLocation(typeReference);
+                Location location = mContext.getUastLocation(typeReference);
                 String fqcn = resolved.getQualifiedName();
-                String message = String.format("Class requires API level %1$d (current min is %2$d): %3$s", api, minSdk, fqcn);
-
-                // Special case reflective operation exception which can be implicitly used
-                // with multi-catches: see issue 153406
-                if (api == 19 && "ReflectiveOperationException".equals(fqcn)) {
-                    message = String.format("Multi-catch with these reflection exceptions requires API level 19 (current min is %2$d) " +
-                                    "because they get compiled to the common but new super type `ReflectiveOperationException`. " +
-                                    "As a workaround either create individual catch statements, or catch `Exception`.",
-                            api, minSdk);
-                }
+                String message = String.format("Class requires API level %1$d (current min is %2$d): %3$s",
+                                               api, minSdk, fqcn);
                 mContext.report(UNSUPPORTED, location, message);
             }
         }
@@ -2356,55 +2371,97 @@ public class ApiDetector extends ResourceXmlDetector
         }
     }
 
-    private static boolean isPrecededByVersionCheckExit(
-            UElement element, int api, JavaContext context) {
-        UElement current = UastUtils.getParentOfType(element, UExpression.class);
-        if (current != null) {
-            UElement prev = getPreviousStatement(current);
-            if (prev == null) {
-                //noinspection unchecked
-                current = UastUtils.getParentOfType(current, UExpression.class, true,
-                        UMethod.class, UClass.class);
-            } else {
-                current = prev;
-            }
+    private static class VersionCheckWithExitFinder extends AbstractUastVisitor {
+        private final UExpression mExpression;
+        private final UElement mEndElement;
+        private final int mApi;
+        private final JavaContext mContext;
+
+        private boolean mFound = false;
+        private boolean mDone = false;
+
+        public VersionCheckWithExitFinder(UExpression expression, UElement endElement,
+                int api, JavaContext context) {
+            mExpression = expression;
+
+            mEndElement = endElement;
+            mApi = api;
+            mContext = context;
         }
-        while (current != null) {
-            if (current instanceof UIfExpression) {
-                UIfExpression ifStatement = (UIfExpression)current;
-                UExpression thenBranch = ifStatement.getThenExpression();
-                UExpression elseBranch = ifStatement.getElseExpression();
-                if (thenBranch != null) {
-                    Boolean level = isVersionCheckConditional(api, thenBranch, ifStatement, context);
-                    //noinspection VariableNotUsedInsideIf
-                    if (level != null) {
-                        // See if the body does an immediate return
-                        if (isUnconditionalReturn(thenBranch)) {
-                            return true;
-                        }
-                    }
-                }
-                if (elseBranch != null) {
-                    Boolean level = isVersionCheckConditional(api, elseBranch, ifStatement, context);
-                    //noinspection VariableNotUsedInsideIf
-                    if (level != null) {
-                        if (isUnconditionalReturn(elseBranch)) {
-                            return true;
-                        }
+
+        @Override
+        public boolean visitElement(UElement node) {
+            if (mDone) {
+                return true;
+            }
+
+            if (node.equals(mEndElement)) {
+                mDone = true;
+            }
+
+            return mDone || !mExpression.equals(node);
+        }
+
+        @Override
+        public boolean visitIfExpression(UIfExpression ifStatement) {
+
+            if (mDone) {
+                return true;
+            }
+
+            UExpression thenBranch = ifStatement.getThenExpression();
+            UExpression elseBranch = ifStatement.getElseExpression();
+
+            if (thenBranch != null) {
+                Boolean level = isVersionCheckConditional(mApi, thenBranch, ifStatement, mContext);
+                //noinspection VariableNotUsedInsideIf
+                if (level != null) {
+                    // See if the body does an immediate return
+                    if (isUnconditionalReturn(thenBranch)) {
+                        mFound = true;
+                        mDone = true;
                     }
                 }
             }
-            UElement prev = getPreviousStatement(current);
-            if (prev == null) {
-                //noinspection unchecked
-                current = UastUtils.getParentOfType(current, UExpression.class, true,
-                        UMethod.class, UClass.class);
-                if (current == null) {
-                    return false;
+
+            if (elseBranch != null) {
+                Boolean level = isVersionCheckConditional(mApi, elseBranch, ifStatement, mContext);
+                //noinspection VariableNotUsedInsideIf
+                if (level != null) {
+                    if (isUnconditionalReturn(elseBranch)) {
+                        mFound = true;
+                        mDone = true;
+                    }
                 }
-            } else {
-                current = prev;
             }
+
+            return true;
+        }
+
+        public boolean found() {
+            return mFound;
+        }
+    }
+
+    private static boolean isPrecededByVersionCheckExit(UElement element, int api,
+            JavaContext context) {
+        //noinspection unchecked
+        UExpression currentExpression = UastUtils.getParentOfType(element, UExpression.class,
+                                                                  true, UMethod.class, UClass.class);
+
+        while(currentExpression != null) {
+            VersionCheckWithExitFinder visitor = new VersionCheckWithExitFinder(
+                    currentExpression, element, api, context);
+            currentExpression.accept(visitor);
+
+            if (visitor.found()) {
+                return true;
+            }
+
+            element = currentExpression;
+            //noinspection unchecked
+            currentExpression = UastUtils.getParentOfType(currentExpression, UExpression.class,
+                                                          true, UMethod.class, UClass.class);
         }
 
         return false;
@@ -2418,16 +2475,6 @@ public class ApiDetector extends ResourceXmlDetector
             }
         }
         return statement instanceof UReturnExpression;
-    }
-
-
-    @Nullable
-    public static UElement getPreviousStatement(UElement element) {
-        //TODO
-        return null;
-        //final PsiElement prevStatement = PsiTreeUtil.skipSiblingsBackward(element,
-        //        PsiWhiteSpace.class, PsiComment.class);
-        //return prevStatement instanceof PsiStatement ? (PsiStatement)prevStatement : null;
     }
 
     public static boolean isWithinVersionCheckConditional(
@@ -2453,7 +2500,7 @@ public class ApiDetector extends ResourceXmlDetector
 
     @Nullable
     private static Boolean isVersionCheckConditional(
-            int api, 
+            int api,
             UElement prev,
             UIfExpression ifStatement,
             @NonNull JavaContext context) {
@@ -2543,7 +2590,7 @@ public class ApiDetector extends ResourceXmlDetector
                             // if (SDK_INT < ICE_CREAM_SANDWICH) { ... } else { <call> }
                             return level >= api && fromElse;
                         }
-                        else if (tokenType == UastBinaryOperator.EQUALS 
+                        else if (tokenType == UastBinaryOperator.EQUALS
                                 || tokenType == UastBinaryOperator.IDENTITY_EQUALS) {
                             // if (SDK_INT == ICE_CREAM_SANDWICH) { <call> } else {  }
                             return level >= api && fromThen;
@@ -2553,7 +2600,7 @@ public class ApiDetector extends ResourceXmlDetector
                     }
                 }
             }
-        } else if (tokenType == UastBinaryOperator.LOGICAL_AND 
+        } else if (tokenType == UastBinaryOperator.LOGICAL_AND
                 && (ifStatement != null && prev == ifStatement.getThenExpression())) {
             if (isAndedWithConditional(ifStatement.getCondition(), api, prev)) {
                 return true;

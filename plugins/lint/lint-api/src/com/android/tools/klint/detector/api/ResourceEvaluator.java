@@ -589,7 +589,7 @@ public class ResourceEvaluator {
         if (mEvaluator == null) {
             return null;
         }
-        for (PsiAnnotation annotation : mEvaluator.getAllAnnotations(owner, true)) {
+        for (PsiAnnotation annotation : mEvaluator.getAllAnnotations(owner)) {
             String signature = annotation.getQualifiedName();
             if (signature == null) {
                 continue;

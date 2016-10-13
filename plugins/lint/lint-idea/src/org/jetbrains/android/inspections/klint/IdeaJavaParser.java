@@ -183,7 +183,7 @@ public class IdeaJavaParser extends JavaParser {
 
         @NonNull
         @Override
-        public PsiAnnotation[] getAllAnnotations(@NonNull PsiModifierListOwner owner, boolean inHierarchy) {
+        public PsiAnnotation[] getAllAnnotations(@NonNull PsiModifierListOwner owner) {
             return AnnotationUtil.getAllAnnotations(owner, inHierarchy, null, true);
         }
 

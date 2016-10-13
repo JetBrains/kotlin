@@ -34,15 +34,7 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiVariable;
 
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UQualifiedReferenceExpression;
-import org.jetbrains.uast.UResolvable;
-import org.jetbrains.uast.USimpleNameReferenceExpression;
-import org.jetbrains.uast.UVariable;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.java.JavaAbstractUExpression;
 import org.jetbrains.uast.java.JavaUVariableDeclarationsExpression;
@@ -51,6 +43,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class UastLintUtils {
+    @Nullable
+    public static PsiElement resolve(ExternalReferenceExpression expression, UElement context) {
+        UDeclaration declaration = UastUtils.getParentOfType(context, UDeclaration.class);
+        if (declaration == null) {
+            return null;
+        }
+
+        return expression.resolve(declaration.getPsi());
+    }
+
     @NonNull
     public static String getClassName(PsiClassType type) {
         PsiClass psiClass = type.resolve();
@@ -88,10 +90,8 @@ public class UastLintUtils {
                 (variable instanceof PsiLocalVariable || variable instanceof PsiParameter)) {
             UMethod containingFunction = UastUtils.getContainingUMethod(call);
             if (containingFunction != null) {
-                ConstantEvaluator.LastAssignmentFinder
-                        finder = new ConstantEvaluator.LastAssignmentFinder(
-                        variable, call, context, null,
-                        (variable instanceof PsiParameter) ? 1 : 0);
+                ConstantEvaluator.LastAssignmentFinder finder =
+                        new ConstantEvaluator.LastAssignmentFinder(variable, call, context, null, -1);
                 containingFunction.accept(finder);
                 lastAssignment = finder.getLastAssignment();
             }

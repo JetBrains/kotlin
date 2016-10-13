@@ -478,7 +478,12 @@ public class JavaContext extends Context {
     }
 
     public boolean isSuppressedWithComment(@NonNull UElement scope, @NonNull Issue issue) {
-        return false;
+        if (!(scope instanceof PsiElementBacked)) {
+            return false;
+        }
+        PsiElement psi = ((PsiElementBacked) scope).getPsi();
+        return psi != null && isSuppressedWithComment(psi, issue);
+
     }
     
     public boolean isSuppressedWithComment(@NonNull PsiElement scope, @NonNull Issue issue) {
