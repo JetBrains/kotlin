@@ -42,14 +42,14 @@ import java.util.*
 
 internal class IncrementalJvmCompilerRunner(
         workingDir: File,
-        private var kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
-        private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
-        private val sourceAnnotationsRegistry: SourceAnnotationsRegistry?,
         private val javaSourceRoots: Set<File>,
-        private val kapt2GeneratedSourcesDir: File,
-        private val artifactFile: File?,
         private val cacheVersions: List<CacheVersion>,
-        private val reporter: IncReporter
+        private val reporter: IncReporter,
+        private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
+        private val sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null,
+        private val kapt2GeneratedSourcesDir: File? = null,
+        private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
+        private val artifactFile: File? = null
 ) {
     var anyClassesCompiled: Boolean = false
             private set
@@ -273,7 +273,7 @@ internal class IncrementalJvmCompilerRunner(
 
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
-            val generatedJavaFiles = kapt2GeneratedSourcesDir.walk().filter { it.isJavaFile() }.toList()
+            val generatedJavaFiles = (kapt2GeneratedSourcesDir?.walk() ?: emptySequence<File>()).filter(File::isJavaFile).toList()
             val generatedJavaFilesDiff = caches.incrementalCache.compareAndUpdateFileSnapshots(generatedJavaFiles)
 
             if (compilationMode is CompilationMode.Rebuild) {

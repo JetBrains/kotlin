@@ -184,14 +184,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val messageCollector = GradleMessageCollector(logger)
         val compiler = IncrementalJvmCompilerRunner(
                 taskBuildDirectory,
-                kaptAnnotationsFileUpdater,
-                artifactDifferenceRegistryProvider,
-                sourceAnnotationsRegistry,
                 getJavaSourceRoots(),
-                kapt2GeneratedSourcesDir,
-                artifactFile,
                 cacheVersions,
-                reporter)
+                reporter,
+                kaptAnnotationsFileUpdater,
+                sourceAnnotationsRegistry,
+                kapt2GeneratedSourcesDir,
+                artifactDifferenceRegistryProvider,
+                artifactFile
+        )
         args.classpathAsList = classpath.toList()
         args.destinationAsFile = destinationDir
         compiler.compile(allKotlinSources, changedFiles, args, messageCollector)
