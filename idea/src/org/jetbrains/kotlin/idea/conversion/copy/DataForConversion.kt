@@ -20,11 +20,13 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.psi.psiUtil.*
-import java.util.ArrayList
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import java.util.*
 
 data class DataForConversion private constructor(
         val elementsAndTexts: Collection<Any> /* list consisting of PsiElement's to convert and plain String's */,
@@ -243,9 +245,7 @@ data class DataForConversion private constructor(
                         else {
                             val fqName = FqNameUnsafe(qualifiedName)
                             // skip explicit imports of platform classes mapped into Kotlin classes
-                            if (fqName.isSafe
-                                    && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(
-                                    fqName.toSafe(), DefaultBuiltIns.Instance).isNotEmpty()) continue
+                            if (fqName.isSafe && JavaToKotlinClassMap.INSTANCE.isJavaPlatformClass(fqName.toSafe())) continue
                             append("import $qualifiedName\n")
                         }
                     }

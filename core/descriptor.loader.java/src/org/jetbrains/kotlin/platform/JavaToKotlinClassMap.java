@@ -172,6 +172,10 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
                : classId(outer).createNestedClassId(Name.identifier(clazz.getSimpleName()));
     }
 
+    public boolean isJavaPlatformClass(@NotNull FqName fqName) {
+        return mapJavaToKotlin(fqName) != null;
+    }
+
     @NotNull
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName, @NotNull KotlinBuiltIns builtIns) {
         ClassDescriptor kotlinAnalog = mapJavaToKotlin(fqName, builtIns);

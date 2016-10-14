@@ -154,11 +154,11 @@ class JavaTypeResolver(
             attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
             attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
 
-        // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
-        // not mapped, we don't care about being marked mutable/read-only
-            javaToKotlin.mapPlatformClass(fqName, c.module.builtIns).isEmpty() -> attr.howThisTypeIsUsed
+            // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
+            // not mapped, we don't care about being marked mutable/read-only
+            !javaToKotlin.isJavaPlatformClass(fqName) -> attr.howThisTypeIsUsed
 
-        // Read (possibly external) annotations
+            // Read (possibly external) annotations
             else -> attr.howThisTypeIsUsedAccordingToAnnotations
         }
 

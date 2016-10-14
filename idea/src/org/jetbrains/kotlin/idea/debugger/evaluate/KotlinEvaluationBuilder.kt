@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.Type
@@ -549,8 +550,10 @@ fun Type.getClassDescriptor(scope: GlobalSearchScope): ClassDescriptor? {
 
     val jvmName = JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
 
-    val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName, DefaultBuiltIns.Instance)
-    if (platformClasses.isNotEmpty()) return platformClasses.first()
+    // TODO: use the correct built-ins from the module instead of DefaultBuiltIns here
+    JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(jvmName)?.let(
+            DefaultBuiltIns.Instance.builtInsModule::findClassAcrossModuleDependencies
+    )?.let { return it }
 
     return runReadAction {
         val classes = JavaPsiFacade.getInstance(scope.project).findClasses(jvmName.asString(), scope)
