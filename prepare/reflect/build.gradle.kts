@@ -31,36 +31,19 @@ apply { plugin("com.github.johnrengelman.shadow") }
 // Set to false to prevent relocation and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection
 val obfuscateReflect = true
 
-val packRuntimeCfg = configurations.create("packed-runtime")
 val packReflectCfg = configurations.create("packed-reflect")
 
-val outputRuntimeJarFileBase = "$buildDir/libs/kotlin-runtime"
 val outputReflectJarFileBase = "$buildDir/libs/kotlin-reflect"
 
-artifacts.add("packed-runtime", File(outputRuntimeJarFileBase + ".jar"))
 artifacts.add("packed-reflect", File(outputReflectJarFileBase + ".jar"))
 
 dependencies {
-    "packed-runtime"(project(":core.builtins")) { isTransitive = false }
-    "packed-runtime"(project(":libraries:stdlib")) { isTransitive = false }
-    "packed-runtime"(project(":core.builtins.serialized", configuration = "default"))
     "packed-reflect"(project(":core")) { isTransitive = false }
     "packed-reflect"(project(":core.reflection")) { isTransitive = false }
     "packed-reflect"(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
     "packed-reflect"("javax.inject:javax.inject:1")
+    "packed-reflect"(project(":prepare:build.version", configuration = "default"))
 }
-
-task<ShadowJar>("pack-runtime") {
-    classifier = outputRuntimeJarFileBase
-    configurations = listOf(packRuntimeCfg)
-    from(packRuntimeCfg.files)
-}
-
-//task<Jar>("aa") {
-//    from(project(":core").file("descriptor.loader.java/src")) {
-//        include("META-INF/services/**")
-//    }
-//}
 
 val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     classifier = if (obfuscateReflect) outputReflectJarFileBase + "_beforeStrip" else outputReflectJarFileBase
@@ -137,5 +120,5 @@ task("pack-reflect") {
     }
 }
 
-defaultTasks("pack-runtime", "pack-reflect")
+defaultTasks("pack-reflect")
 

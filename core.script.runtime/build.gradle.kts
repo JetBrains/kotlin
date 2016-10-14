@@ -1,4 +1,6 @@
 
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -23,7 +25,19 @@ fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
         put("Implementation-Title", implementationTitle)
         put("Implementation-Version", rootProject.extra["build.number"])
     }
-//    from(file(""))
+    from(configurations.getByName("buildVersionCfg").files).into("META-INF")
+}
+
+fun DependencyHandler.buildVersion(): Dependency {
+    configurations.create("buildVersionCfg")
+    return add("buildVersionCfg", project(":prepare:build.version", configuration = "default"))
+}
+
+// TODO: move most of the code above to the root or utility script
+
+dependencies {
+    compile(project(":core.builtins"))
+    buildVersion()
 }
 
 configure<JavaPluginConvention> {
@@ -33,10 +47,6 @@ configure<JavaPluginConvention> {
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
     }
-}
-
-dependencies {
-    compile(project(":core.builtins"))
 }
 
 tasks.withType<KotlinCompile> {

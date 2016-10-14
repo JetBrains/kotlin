@@ -7,7 +7,9 @@ include "core.script.runtime"
 include "custom-dependencies:protobuf-lite"
 include "libraries:stdlib"
 include "libraries:kotlin.test"
-include "runtime"
+include "prepare:build.version"
+include "prepare:runtime"
+include "prepare:reflect"
 
 rootProject.name = "kotlin"
 

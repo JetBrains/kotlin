@@ -4,6 +4,7 @@ import java.io.File
 extra["kotlinVersion"] = file("kotlin-version-for-gradle.txt").readText().trim()
 extra["repo"] = "https://repo.gradle.org/gradle/repo"
 extra["build.number"] = "1.1-SNAPSHOT"
+extra["distDir"] = "$rootDir/dist"
 Properties().apply {
     load(File("resources/kotlinManifest.properties").reader())
     forEach { k: Any?, v: Any? ->
