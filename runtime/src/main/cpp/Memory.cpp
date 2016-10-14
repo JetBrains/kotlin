@@ -1,10 +1,9 @@
 #include <stdlib.h>
 
-#include <cassert>
-
 #include "Memory.h"
 
 void FreeObject(ContainerHeader* header) {
+  header->ref_count_ = CONTAINER_TAG_INVALID;
   free(header);
 }
 

@@ -18,6 +18,8 @@ typedef enum {
   CONTAINER_TAG_NOCOUNT = 1,
   // Container shall be atomically refcounted.
   CONTAINER_TAG_SHARED = 2,
+  // Container is no longer valid.
+  CONTAINER_TAG_INVALID = 3,
   // Actual value to increment/decrement conatiner by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << 2,
   //
@@ -67,6 +69,9 @@ inline void AddRef(ContainerHeader* header) {
     case CONTAINER_TAG_SHARED:
       __sync_fetch_and_add(&header->ref_count_, CONTAINER_TAG_INCREMENT);
       break;
+    case CONTAINER_TAG_INVALID:
+      RuntimeAssert(false, "trying to addref invalid container");
+      break;
   }
 }
 
@@ -81,11 +86,27 @@ inline void Release(ContainerHeader* header) {
       break;
     case CONTAINER_TAG_NOCOUNT:
       break;
+    // Note that shared containers have potentially subtle race, if object holds a
+    // reference to another object, stored in shorter living container. In this
+    // case there's unlikely, but possible case, where one mutator takes reference,
+    // from the field, but not yet AddRef'ed it, while another mutator updates
+    // field with another value, and thus Release's same field.
+    // If those two updates happens concurrently - it may lead to dereference of stale
+    // pointer.
+    // It seems not a very big issue as:
+    //  - if objects stored in the same container, race will never happen
+    //  - if concurrent field access is under lock, race will never happen
+    //  - container likely groups multiple objects, so object release will lead to
+    //    container release only in relatively few cases, which will decrease race
+    //    probability even further.
     case CONTAINER_TAG_SHARED:
       if (__sync_sub_and_fetch(
               &header->ref_count_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
         FreeObject(header);
       }
+      break;
+    case CONTAINER_TAG_INVALID:
+      RuntimeAssert(false, "trying to release invalid container");
       break;
   }
 }
