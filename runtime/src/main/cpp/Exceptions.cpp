@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 void ThrowNullPointerException() {
-  void* pc = __builtin_return_address(1);
+  void* pc = __builtin_return_address(0);
   char message[100];
   snprintf(message, sizeof(message), "NullPointerException at %p", pc);
   fprintf(stderr, "%s\n", message);
@@ -16,7 +16,7 @@ void ThrowNullPointerException() {
 }
 
 void ThrowArrayIndexOutOfBoundsException() {
-  void* pc = __builtin_return_address(1);
+  void* pc = __builtin_return_address(0);
   char message[100];
   snprintf(message, sizeof(message), "ArrayIndexOutOfBoundsException at %p", pc);
   fprintf(stderr, "%s\n", message);
