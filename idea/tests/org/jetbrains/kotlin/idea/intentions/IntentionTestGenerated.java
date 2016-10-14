@@ -10446,6 +10446,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeEmptyClassBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("anonymousInterfaceObject.kt")
+        public void testAnonymousInterfaceObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/anonymousInterfaceObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/anonymousObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyClass.kt")
         public void testEmptyClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/emptyClass.kt");
@@ -10464,9 +10476,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("innerClass.kt")
+        public void testInnerClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/innerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedAnonymous.kt")
+        public void testNestedAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/nestedAnonymous.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noneEmptyClass.kt")
         public void testNoneEmptyClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/noneEmptyClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/object.kt");
             doTest(fileName);
         }
     }

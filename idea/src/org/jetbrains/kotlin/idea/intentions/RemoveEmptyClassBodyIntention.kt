@@ -21,6 +21,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveEmptyClassBodyInspection : IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
     override val problemHighlightType: ProblemHighlightType
@@ -30,5 +32,10 @@ class RemoveEmptyClassBodyInspection : IntentionBasedInspection<KtClassBody>(Rem
 class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Remove empty class body") {
     override fun applyTo(element: KtClassBody, editor: Editor?) = element.delete()
 
-    override fun isApplicableTo(element: KtClassBody) = element.text.replace("{", "").replace("}", "").isBlank()
+    override fun isApplicableTo(element: KtClassBody): Boolean {
+        element.getStrictParentOfType<KtObjectDeclaration>()?.let {
+            if (it.isObjectLiteral()) return false
+        }
+        return element.text.replace("{", "").replace("}", "").isBlank()
+    }
 }
