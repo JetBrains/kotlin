@@ -47,6 +47,12 @@ public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToK
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionalInterfaceAcceptor")
+    public void testFunctionalInterfaceAcceptor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FunctionalInterfaceAcceptor/");
+        doTest(fileName);
+    }
+
     @TestMetadata("GetterAndSetterUsages")
     public void testGetterAndSetterUsages() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/GetterAndSetterUsages/");
