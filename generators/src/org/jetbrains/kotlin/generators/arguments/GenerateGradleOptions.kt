@@ -39,14 +39,14 @@ interface AdditionalGradleProperties {
     object EmptyList : DefaultValues("emptyList()")
 }
 
-fun main(args: Array<String>) {
+fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()->Unit)->Unit) {
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
     val additionalGradleOptions = gradleOptions<AdditionalGradleProperties>()
 
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
     val optionsFromK2JVMCompilerArguments = gradleOptions<K2JVMCompilerArguments>()
-    File(srcDir, jvmInterfaceFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jvmInterfaceFqName)) {
         generateInterface(jvmInterfaceFqName,
                           optionsFromK2JVMCompilerArguments + additionalGradleOptions)
     }
@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
     // generate jvm impl
     val k2JvmCompilerArgumentsFqName = FqName(K2JVMCompilerArguments::class.qualifiedName!!)
     val jvmImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsBase")
-    File(srcDir, jvmImplFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jvmImplFqName)) {
         generateImpl(jvmImplFqName,
                      jvmInterfaceFqName,
                      k2JvmCompilerArgumentsFqName,
@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
     val optionsFromK2JSCompilerArguments = gradleOptions<K2JSCompilerArguments>()
-    File(srcDir, jsInterfaceFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jsInterfaceFqName)) {
         generateInterface(jsInterfaceFqName,
                           optionsFromK2JSCompilerArguments +
                           additionalGradleOptions)
@@ -72,12 +72,27 @@ fun main(args: Array<String>) {
 
     val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
     val jsImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsBase")
-    File(srcDir, jsImplFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jsImplFqName)) {
         generateImpl(jsImplFqName,
                      jsInterfaceFqName,
                      k2JsCompilerArgumentsFqName,
                      optionsFromK2JSCompilerArguments)
     }
+}
+
+fun main(args: Array<String>) {
+    fun getPrinter(file: File, fn: Printer.()->Unit) {
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            file.createNewFile()
+        }
+        PrintStream(file.outputStream()).use {
+            val printer = Printer(it)
+            printer.fn()
+        }
+    }
+
+    generateKotlinGradleOptions(::getPrinter)
 }
 
 private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
@@ -86,17 +101,6 @@ private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
 private fun File(baseDir: File, fqName: FqName): File {
     val fileRelativePath = fqName.asString().replace(".", "/") + ".kt"
     return File(baseDir, fileRelativePath)
-}
-
-private inline fun File.usePrinter(fn: Printer.()->Unit) {
-    if (!exists()) {
-        parentFile.mkdirs()
-        createNewFile()
-    }
-    PrintStream(outputStream()).use {
-        val printer = Printer(it)
-        printer.fn()
-    }
 }
 
 private fun Printer.generateInterface(type: FqName, properties: List<KProperty1<*, *>>) {
