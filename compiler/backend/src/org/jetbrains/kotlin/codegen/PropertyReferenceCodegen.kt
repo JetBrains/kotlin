@@ -181,7 +181,7 @@ class PropertyReferenceCodegen(
                 if (KotlinBuiltIns.isUnit(key)) {
                     return TypeProjectionImpl(key)
                 }
-                return TypeProjectionImpl(key.builtIns.anyType)
+                return TypeProjectionImpl(key.builtIns.nullableAnyType)
             }
         })
 
