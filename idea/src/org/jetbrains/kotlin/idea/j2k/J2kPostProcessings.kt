@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
 interface J2kPostProcessing {
@@ -48,6 +49,12 @@ object J2KPostProcessingRegistrar {
 
     val processings: Collection<J2kPostProcessing>
         get() = _processings
+
+    private val processingsToPriorityMap = HashMap<J2kPostProcessing, Int>()
+
+    fun priority(processing: J2kPostProcessing): Int {
+        return processingsToPriorityMap[processing]!!
+    }
 
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
@@ -111,18 +118,13 @@ object J2KPostProcessingRegistrar {
                 }
             }
         }
-    }
 
-    private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention
-    ) {
-        //TODO: replace with optional argument when supported for inline functions
-        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true })
+        processingsToPriorityMap.putAll(_processings.mapToIndex())
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean
+            noinline additionalChecker: (TElement) -> Boolean = { true }
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {

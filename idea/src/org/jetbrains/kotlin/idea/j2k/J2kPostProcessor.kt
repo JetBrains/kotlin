@@ -21,9 +21,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
@@ -54,14 +51,12 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         while (elementToActions.isNotEmpty()) {
             var modificationStamp: Long? = file.modificationStamp
 
-            for ((element, actions) in elementToActions) {
-                for ((action, processing) in actions) {
-                    if (element.isValid) {
-                        action()
-                    }
-                    else {
-                        modificationStamp = null
-                    }
+            for ((element, action, processing) in elementToActions) {
+                if (element.isValid) {
+                    action()
+                }
+                else {
+                    modificationStamp = null
                 }
             }
 
@@ -83,14 +78,14 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         }
     }
 
-    private data class ActionData(val action: () -> Unit, val processing: J2kPostProcessing)
+    private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int)
 
-    private fun collectAvailableActions(file: KtFile, rangeMarker: RangeMarker?): LinkedHashMap<KtElement, SmartList<ActionData>> {
+    private fun collectAvailableActions(file: KtFile, rangeMarker: RangeMarker?): List<ActionData> {
         val diagnostics = analyzeFileRange(file, rangeMarker)
 
-        val elementToActions = LinkedHashMap<KtElement, SmartList<ActionData>>()
+        val availableActions = ArrayList<ActionData>()
 
-        file.accept(object : PsiRecursiveElementVisitor(){
+        file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (element is KtElement) {
                     val rangeResult = rangeFilter(element, rangeMarker)
@@ -102,15 +97,15 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                         J2KPostProcessingRegistrar.processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
-                                elementToActions.getOrPut(element) { SmartList() }.add(ActionData(action, processing))
+                                availableActions.add(ActionData(element, action, J2KPostProcessingRegistrar.priority(processing)))
                             }
                         }
                     }
                 }
             }
         })
-
-        return elementToActions
+        availableActions.sortBy { it.priority }
+        return availableActions
     }
 
     private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?): Diagnostics {
