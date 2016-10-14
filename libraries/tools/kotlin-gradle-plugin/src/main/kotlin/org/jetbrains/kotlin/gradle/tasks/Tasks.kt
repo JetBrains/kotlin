@@ -120,8 +120,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     private val sourceRoots = HashSet<File>()
 
-    // lazy because name is probably not available when constructor is called
-    internal val taskBuildDirectory: File by lazy { File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() } }
+    internal val taskBuildDirectory: File
+        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
     private val cacheDirectory: File by lazy { File(taskBuildDirectory, CACHES_DIR_NAME) }
     private val dirtySourcesSinceLastTimeFile: File by lazy { File(taskBuildDirectory, DIRTY_SOURCES_FILE_NAME) }
     private val lastBuildInfoFile: File by lazy { File(taskBuildDirectory, LAST_BUILD_INFO_FILE_NAME) }

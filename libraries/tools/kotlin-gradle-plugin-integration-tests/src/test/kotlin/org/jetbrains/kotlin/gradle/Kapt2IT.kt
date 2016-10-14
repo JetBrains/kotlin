@@ -74,7 +74,7 @@ class Kapt2IT: BaseGradleIT() {
         val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
         val classesDir = File(project.projectDir, "build/classes")
 
-        project.build("build", options = options) {
+        project.build("clean", "build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertContains(":compileKotlin")
