@@ -1267,6 +1267,18 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCast.kt")
+        public void testSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/smartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastNotNull.kt")
+        public void testSmartCastNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/smartCastNotNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("sumByDouble.kt")
         public void testSumByDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/sum/sumByDouble.kt");

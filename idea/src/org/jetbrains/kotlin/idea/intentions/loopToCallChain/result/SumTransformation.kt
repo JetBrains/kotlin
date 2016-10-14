@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -66,7 +67,7 @@ abstract class SumTransformationBase(
 
             val value = statement.right ?: return null
 
-            val valueType = value.analyze(BodyResolveMode.PARTIAL).getType(value)?.toSupportedType() ?: return null
+            val valueType = value.typeWithSmartCast()?.toSupportedType() ?: return null
             val sumType = (variableInitialization.variable.resolveToDescriptorIfAny() as? VariableDescriptor)?.type?.toSupportedType() ?: return null
 
             val conversionFunctionName = when (sumType) {
@@ -139,6 +140,12 @@ abstract class SumTransformationBase(
                 KotlinBuiltIns.isFloat(this) -> SupportedType.FLOAT
                 else -> null
             }
+        }
+
+        private fun KtExpression.typeWithSmartCast(): KotlinType? {
+            val bindingContext = analyze(BodyResolveMode.PARTIAL)
+            return bindingContext[BindingContext.SMARTCAST, this]?.defaultType
+                   ?: bindingContext.getType(this)
         }
     }
 }
