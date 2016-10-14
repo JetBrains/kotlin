@@ -37,7 +37,10 @@ class FileDeclarationVisitor(private val context: TranslationContext) : Abstract
         val backingFieldRequired = context.bindingContext()[BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor] ?: false
         if (backingFieldRequired || expression.delegateExpression != null) {
             val initializer = expression.delegateExpressionOrInitializer?.let { Translation.translateAsExpression(it, context) }
-            context.addRootStatement(JsAstUtils.newVar(innerName, initializer))
+            context.addDeclarationStatement(JsAstUtils.newVar(innerName, null))
+            if (initializer != null) {
+                context.addTopLevelStatement(JsAstUtils.assignment(innerName.makeRef(), initializer).makeStmt())
+            }
         }
 
         super.visitProperty(expression, context)
@@ -71,10 +74,10 @@ class FileDeclarationVisitor(private val context: TranslationContext) : Abstract
         when (expression) {
             is JsFunction -> {
                 expression.name = name
-                context.addRootStatement(expression.makeStmt())
+                context.addDeclarationStatement(expression.makeStmt())
             }
             else -> {
-                context.addRootStatement(JsAstUtils.newVar(name, expression))
+                context.addDeclarationStatement(JsAstUtils.newVar(name, expression))
             }
         }
         return name

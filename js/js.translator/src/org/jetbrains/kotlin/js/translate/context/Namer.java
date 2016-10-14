@@ -56,8 +56,8 @@ public final class Namer {
 
     public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getAny(), "equals");
     public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getComparable(), "compareTo");
-    public static final String NUMBER_RANGE = "NumberRange";
-    public static final String CHAR_RANGE = "CharRange";
+    public static final String INT_RANGE = "kotlin.ranges.IntRange";
+    public static final String CHAR_RANGE = "kotlin.ranges.CharRange";
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
@@ -378,11 +378,6 @@ public final class Namer {
         JsInvocation result = new JsInvocation(kotlin(isTypeName), instance, type);
         MetadataProperties.setSideEffects(result, SideEffectKind.PURE);
         return result;
-    }
-
-    @NotNull
-    /*package*/ JsObjectScope getKotlinScope() {
-        return kotlinScope;
     }
 
     @NotNull

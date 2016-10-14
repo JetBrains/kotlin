@@ -263,7 +263,9 @@ public final class Translation {
         PackageDeclarationTranslator.translateFiles(files, context);
         staticContext.postProcess();
         statements.add(0, program.getStringLiteral("use strict").makeStmt());
-        defineModule(context, statements, config.getModuleId());
+        if (!staticContext.isBuiltinModule()) {
+            defineModule(context, statements, config.getModuleId());
+        }
 
         mayBeGenerateTests(files, config, rootBlock, context);
 

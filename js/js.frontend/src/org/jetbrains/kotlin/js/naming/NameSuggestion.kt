@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.js.naming
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -197,6 +198,13 @@ class NameSuggestion {
             // If declaration is marked with either @native, @library or @JsName, return its stable name as is.
             val nativeName = getNameForAnnotatedObject(overriddenDescriptor)
             if (nativeName != null) return NameAndStability(nativeName, true)
+
+            if (overriddenDescriptor is FunctionDescriptor) {
+                when (overriddenDescriptor.fqNameUnsafe.asString()) {
+                    "kotlin.CharSequence.subSequence" -> return NameAndStability("substring", true)
+                    "kotlin.CharSequence.get" -> return NameAndStability("charAt", true)
+                }
+            }
 
             return mangleRegularNameIfNecessary(baseName, overriddenDescriptor)
         }

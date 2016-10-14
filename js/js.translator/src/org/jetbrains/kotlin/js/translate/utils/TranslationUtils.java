@@ -154,7 +154,7 @@ public final class TranslationUtils {
 
         if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor)) {
             JsName backingFieldMangledName = context.getNameForBackingField(descriptor);
-            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName.getIdent(), false);
+            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName.getIdent());
         }
 
         JsExpression receiver;

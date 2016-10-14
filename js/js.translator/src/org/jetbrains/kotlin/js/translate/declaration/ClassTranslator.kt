@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
@@ -62,15 +63,11 @@ class ClassTranslator private constructor(
     private lateinit var cachedInstanceName: JsName
     private val metadataLiteral = JsObjectLiteral(true)
 
-    private fun translate() {
-        generateClassCreateInvocationArguments()
-    }
-
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
 
     private fun isAnnotation(): Boolean = descriptor.kind == ClassKind.ANNOTATION_CLASS
 
-    private fun generateClassCreateInvocationArguments() {
+    private fun translate() {
         val scope = context().getScopeForDescriptor(descriptor)
         val context = context().newDeclaration(descriptor)
 
@@ -91,10 +88,6 @@ class ClassTranslator private constructor(
         context.addClass(descriptor)
         addSuperclassReferences()
         classDeclaration.getSecondaryConstructors().forEach { generateSecondaryConstructor(context, it) }
-
-        if (descriptor.kind != ClassKind.INTERFACE) {
-            addInterfaceDefaultMembers()
-        }
 
         generatedBridgeMethods()
 
@@ -148,7 +141,7 @@ class ClassTranslator private constructor(
     }
 
     private fun addMetadataObject() {
-        context().addRootStatement(JsAstUtils.assignment(createMetadataRef(), metadataLiteral).makeStmt())
+        context().addDeclarationStatement(JsAstUtils.assignment(createMetadataRef(), metadataLiteral).makeStmt())
     }
 
     private fun createMetadataRef() = JsNameRef(Namer.METADATA, context().getInnerReference(descriptor))
@@ -247,6 +240,10 @@ class ClassTranslator private constructor(
         }
 
         secondaryConstructors += ConstructorInfo(constructorInitializer, context, constructorDescriptor, compositeSuperCallGenerator)
+
+        if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
+            context.export(constructorDescriptor)
+        }
     }
 
     private val allConstructors: Sequence<ConstructorInfo>
@@ -378,58 +375,13 @@ class ClassTranslator private constructor(
         }
     }
 
-    private fun addInterfaceDefaultMembers() {
-        val members = descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
-                .mapNotNull { it as? CallableMemberDescriptor }
-        for (member in members) {
-            if (member.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
-            if (member.modality == Modality.ABSTRACT || member.overriddenDescriptors.size != 1) continue
-
-            val overriddenFunction = generateSequence(member) { it.overriddenDescriptors.firstOrNull() }
-                    .drop(1)
-                    .dropWhile { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                                 DescriptorUtils.isInterface(it.containingDeclaration) }
-                    .firstOrNull() ?: continue
-
-            val interfaceDescriptor = overriddenFunction.containingDeclaration as ClassDescriptor
-            if (interfaceDescriptor.kind != ClassKind.INTERFACE) continue
-
-            when (member) {
-                is FunctionDescriptor -> addDefaultMethodFromInterface(member, interfaceDescriptor)
-                is PropertyDescriptor -> addDefaultPropertyFromInterface(member, interfaceDescriptor)
-            }
-        }
-    }
-
-    private fun addDefaultMethodFromInterface(function: FunctionDescriptor, interfaceDescriptor: ClassDescriptor) {
-        val classPrototype = JsAstUtils.prototypeOf(context().getInnerReference(descriptor))
-        val interfacePrototype = JsAstUtils.prototypeOf(context().getInnerReference(interfaceDescriptor))
-        val functionName = context().getNameForDescriptor(function)
-        val classFunction = JsNameRef(functionName, classPrototype)
-        val interfaceFunction = JsNameRef(functionName, interfacePrototype)
-        context().addRootStatement(JsAstUtils.assignment(classFunction, interfaceFunction).makeStmt())
-    }
-
-    private fun addDefaultPropertyFromInterface(property: PropertyDescriptor, interfaceDescriptor: ClassDescriptor) {
-        val classPrototype = JsAstUtils.prototypeOf(context().getInnerReference(descriptor))
-        val interfacePrototype = JsAstUtils.prototypeOf(context().getInnerReference(interfaceDescriptor))
-        val functionName = context().getNameForDescriptor(property)
-        val nameLiteral = context().program().getStringLiteral(functionName.ident)
-
-        val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), interfacePrototype, nameLiteral)
-        val defineProperty = JsAstUtils.defineProperty(classPrototype, functionName.ident, getPropertyDescriptor, context().program())
-
-        context().addRootStatement(defineProperty.makeStmt())
-    }
-
     private fun addObjectCache(statements: MutableList<JsStatement>) {
         cachedInstanceName = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
         statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).makeStmt()
     }
 
     private fun addObjectMethods() {
-        context().addRootStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
+        context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
 
         val instanceFun = JsFunction(context().rootFunction.scope, JsBlock(), "Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
@@ -444,7 +396,7 @@ class ClassTranslator private constructor(
 
         instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef())
 
-        context().addRootStatement(instanceFun.makeStmt())
+        context().addDeclarationStatement(instanceFun.makeStmt())
     }
 
     private fun generatedBridgeMethods() {
@@ -498,6 +450,61 @@ class ClassTranslator private constructor(
     companion object {
         @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext) {
             return ClassTranslator(classDeclaration, context).translate()
+        }
+
+        @JvmStatic fun addInterfaceDefaultMembers(descriptor: ClassDescriptor, context: StaticContext) {
+            val members = descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+                    .mapNotNull { it as? CallableMemberDescriptor }
+            for (member in members) {
+                if (member.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
+                if (member.modality == Modality.ABSTRACT || member.overriddenDescriptors.size != 1) continue
+
+                val overriddenFunction = generateSequence(member) { it.overriddenDescriptors.firstOrNull() }
+                                                 .drop(1)
+                                                 .dropWhile { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                                                              DescriptorUtils.isInterface(it.containingDeclaration) }
+                                                 .firstOrNull() ?: continue
+
+                val interfaceDescriptor = overriddenFunction.containingDeclaration as ClassDescriptor
+                if (interfaceDescriptor.kind != ClassKind.INTERFACE) continue
+
+                when (member) {
+                    is FunctionDescriptor -> addDefaultMethodFromInterface(member, interfaceDescriptor, descriptor, context)
+                    is PropertyDescriptor -> addDefaultPropertyFromInterface(member, interfaceDescriptor,  descriptor, context)
+                }
+            }
+        }
+
+        private fun addDefaultMethodFromInterface(
+                function: FunctionDescriptor,
+                interfaceDescriptor: ClassDescriptor,
+                descriptor: ClassDescriptor,
+                context: StaticContext
+        ) {
+            val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
+            val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
+            val functionName = context.getNameForDescriptor(function)
+            val classFunction = JsNameRef(functionName, classPrototype)
+            val interfaceFunction = JsNameRef(functionName, interfacePrototype)
+            context.declarationStatements += JsAstUtils.assignment(classFunction, interfaceFunction).makeStmt()
+        }
+
+        private fun addDefaultPropertyFromInterface(
+                property: PropertyDescriptor,
+                interfaceDescriptor: ClassDescriptor,
+                descriptor: ClassDescriptor,
+                context: StaticContext
+        ) {
+            val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
+            val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
+            val functionName = context.getNameForDescriptor(property)
+            val nameLiteral = context.program.getStringLiteral(functionName.ident)
+
+            val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), interfacePrototype, nameLiteral)
+            val defineProperty = JsAstUtils.defineProperty(classPrototype, functionName.ident, getPropertyDescriptor, context.program)
+
+            context.declarationStatements += defineProperty.makeStmt()
         }
     }
 

@@ -107,7 +107,7 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsName
 fun TranslationContext.addFunctionToPrototype(classDescriptor: ClassDescriptor, descriptor: FunctionDescriptor, function: JsExpression) {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(classDescriptor))
     val functionRef = JsNameRef(getNameForDescriptor(descriptor), prototypeRef)
-    addRootStatement(JsAstUtils.assignment(functionRef, function).makeStmt())
+    addDeclarationStatement(JsAstUtils.assignment(functionRef, function).makeStmt())
 }
 
 fun TranslationContext.addAccessorsToPrototype(
@@ -118,5 +118,5 @@ fun TranslationContext.addAccessorsToPrototype(
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(containingClass))
     val propertyName = getNameForDescriptor(propertyDescriptor)
     val defineProperty = JsAstUtils.defineProperty(prototypeRef, propertyName.ident, literal, program())
-    addRootStatement(defineProperty.makeStmt())
+    addDeclarationStatement(defineProperty.makeStmt())
 }

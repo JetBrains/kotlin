@@ -67,14 +67,14 @@ class DeclarationBodyVisitor(
 
             val enumInstanceFunction = context.createTopLevelAnonymousFunction(descriptor)
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
-            context.addRootStatement(enumInstanceFunction.makeStmt())
+            context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 
             val classRef = context.getInnerReference(descriptor.containingDeclaration)
             val enumExtName = context.getNameForDescriptor(descriptor)
             val enumExtFq = JsNameRef(enumExtName, classRef)
-            context.addRootStatement(JsAstUtils.assignment(enumExtFq, enumInstanceFunction.name.makeRef()).makeStmt())
+            context.addDeclarationStatement(JsAstUtils.assignment(enumExtFq, enumInstanceFunction.name.makeRef()).makeStmt())
 
-            context.addRootStatement(JsAstUtils.newVar(enumInstanceName, jsEnumEntryCreation))
+            context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, jsEnumEntryCreation))
             enumInstanceFunction.body.statements.add(JsReturn(enumInstanceName.makeRef()))
         }
 

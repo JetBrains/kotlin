@@ -35,9 +35,11 @@ import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
+import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -65,11 +67,8 @@ public final class StaticContext {
             @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
-        Intrinsics intrinsics = new Intrinsics();
-        StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
-        return new StaticContext(program, rootFunction, bindingTrace, namer, intrinsics, standardClasses, program.getRootScope(), config,
-                                 moduleDescriptor);
+        return new StaticContext(program, rootFunction, bindingTrace, namer, program.getRootScope(), config, moduleDescriptor);
     }
 
     @NotNull
@@ -82,9 +81,6 @@ public final class StaticContext {
 
     @NotNull
     private final Intrinsics intrinsics;
-
-    @NotNull
-    private final StandardClasses standardClasses;
 
     @NotNull
     private final JsScope rootScope;
@@ -140,6 +136,9 @@ public final class StaticContext {
     private final List<JsStatement> declarationStatements = new ArrayList<JsStatement>();
 
     @NotNull
+    private final List<JsStatement> topLevelStatements = new ArrayList<JsStatement>();
+
+    @NotNull
     private final List<JsStatement> importStatements = new ArrayList<JsStatement>();
 
     @NotNull
@@ -160,8 +159,6 @@ public final class StaticContext {
             @NotNull JsFunction rootFunction,
             @NotNull BindingTrace bindingTrace,
             @NotNull Namer namer,
-            @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses,
             @NotNull JsScope rootScope,
             @NotNull JsConfig config,
             @NotNull ModuleDescriptor moduleDescriptor
@@ -170,9 +167,8 @@ public final class StaticContext {
         this.rootFunction = rootFunction;
         this.bindingTrace = bindingTrace;
         this.namer = namer;
-        this.intrinsics = intrinsics;
+        this.intrinsics = new Intrinsics(this);
         this.rootScope = rootScope;
-        this.standardClasses = standardClasses;
         this.config = config;
         this.currentModule = moduleDescriptor;
         this.rootFunction = rootFunction;
@@ -247,8 +243,14 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isAny((ClassDescriptor) descriptor)) {
-            return new JsNameRef("Object");
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (KotlinBuiltIns.isAny(classDescriptor)) {
+                return pureFqn("Object", null);
+            }
+            if (DescriptorUtils.getFqName(classDescriptor).asString().equals("kotlin.Throwable")) {
+                return pureFqn("Error", null);
+            }
         }
 
         SuggestedName suggested = nameSuggestion.suggest(descriptor);
@@ -259,26 +261,20 @@ public final class StaticContext {
         }
 
         JsExpression expression;
-        List<JsName> partNames;
-        if (standardClasses.isStandardObject(suggested.getDescriptor())) {
+        List<JsName> partNames = getActualNameFromSuggested(suggested);
+        if (isLibraryObject(suggested.getDescriptor())) {
             expression = Namer.kotlinObject();
-            partNames = Collections.singletonList(standardClasses.getStandardObjectName(suggested.getDescriptor()));
+        }
+        // Don't generate qualifier for top-level native declarations
+        // Don't generate qualifier for local declarations
+        else if (isNativeObject(suggested.getDescriptor()) && !isNativeObject(suggested.getScope()) ||
+                 suggested.getDescriptor() instanceof CallableDescriptor && suggested.getScope() instanceof FunctionDescriptor) {
+            expression = null;
         }
         else {
-            partNames = getActualNameFromSuggested(suggested);
-            if (isLibraryObject(suggested.getDescriptor())) {
-                expression = Namer.kotlinObject();
-            }
-            // Don't generate qualifier for top-level native declarations
-            // Don't generate qualifier for local declarations
-            else if (isNativeObject(suggested.getDescriptor()) && !isNativeObject(suggested.getScope()) ||
-                     suggested.getDescriptor() instanceof CallableDescriptor && suggested.getScope() instanceof FunctionDescriptor) {
-                expression = null;
-            }
-            else {
-                expression = getQualifiedExpression(suggested.getScope());
-            }
+            expression = getQualifiedExpression(suggested.getScope());
         }
+
         for (JsName partName : partNames) {
             expression = new JsNameRef(partName, expression);
             applySideEffects(expression, suggested.getDescriptor());
@@ -406,6 +402,13 @@ public final class StaticContext {
     @NotNull
     public JsConfig getConfig() {
         return config;
+    }
+
+    @NotNull
+    public JsName importDeclaration(@NotNull String suggestedName, @NotNull JsExpression declaration) {
+        JsName result = rootFunction.getScope().declareFreshName(suggestedName);
+        importStatements.add(JsAstUtils.newVar(result, declaration));
+        return result;
     }
 
     private final class InnerNameGenerator extends Generator<JsName> {
@@ -643,12 +646,13 @@ public final class StaticContext {
     }
 
     @NotNull
-    public List<JsStatement> getDeclarationStatements() {
-        return declarationStatements;
+    public List<JsStatement> getTopLevelStatements() {
+        return topLevelStatements;
     }
 
-    public void addRootStatement(@NotNull JsStatement statement) {
-        declarationStatements.add(statement);
+    @NotNull
+    public List<JsStatement> getDeclarationStatements() {
+        return declarationStatements;
     }
 
     public void addClass(@NotNull ClassDescriptor classDescriptor) {
@@ -690,9 +694,11 @@ public final class StaticContext {
     }
 
     public void postProcess() {
+        addInterfaceDefaultMethods();
         rootFunction.getBody().getStatements().addAll(importStatements);
         addClassPrototypes();
         rootFunction.getBody().getStatements().addAll(declarationStatements);
+        rootFunction.getBody().getStatements().addAll(topLevelStatements);
 
         JsName rootPackageName = rootFunction.getScope().declareName(Namer.getRootPackageName());
         rootFunction.getBody().getStatements().add(JsAstUtils.newVar(rootPackageName, exportObject));
@@ -725,6 +731,24 @@ public final class StaticContext {
             JsExpression constructorRef = new JsNameRef("constructor", prototype.deepCopy());
             statements.add(JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt());
         }
+    }
+
+    private void addInterfaceDefaultMethods() {
+        for (ClassDescriptor classDescriptor : classes) {
+            if (classDescriptor.getKind() != ClassKind.INTERFACE) {
+                ClassTranslator.addInterfaceDefaultMembers(classDescriptor, this);
+            }
+        }
+    }
+
+    public boolean isBuiltinModule() {
+        for (ClassDescriptor cls : classes) {
+            FqNameUnsafe fqn = DescriptorUtils.getFqName(cls);
+            if ("kotlin.Enum".equals(fqn.asString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class ExportedPackage {

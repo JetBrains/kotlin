@@ -172,24 +172,6 @@ public final class JsAstUtils {
         return invokeKotlinFunction(Namer.PRIMITIVE_COMPARE_TO, left, right);
     }
 
-    @NotNull
-    private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        JsNameRef expr = pureFqn(rangeClassName, Namer.kotlinObject());
-        JsNew numberRangeConstructorInvocation = new JsNew(expr);
-        setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);
-        return numberRangeConstructorInvocation;
-    }
-
-    @NotNull
-    public static JsExpression numberRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        return rangeTo(Namer.NUMBER_RANGE, rangeStart, rangeEnd);
-    }
-
-    @NotNull
-    public static JsExpression charRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
-        return rangeTo(Namer.CHAR_RANGE, rangeStart, rangeEnd);
-    }
-
     public static JsExpression newLong(long value, @NotNull TranslationContext context) {
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             int low = (int) value;

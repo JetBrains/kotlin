@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FqnCallIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
@@ -61,24 +63,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     }
 
     @NotNull
-    private static final BinaryOperationIntrinsicBase RANGE_TO_INTRINSIC = new BinaryOperationIntrinsicBase() {
-        @NotNull
-        @Override
-        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            //TODO: add tests and correct expression for reversed ranges.
-            return JsAstUtils.numberRangeTo(left, right);
-        }
-    };
+    private static final FunctionIntrinsic RANGE_TO_INTRINSIC = new FqnCallIntrinsic("IntRange", Namer.INT_RANGE, true, true);
 
     @NotNull
-    private static final BinaryOperationIntrinsicBase CHAR_RANGE_TO_INTRINSIC = new BinaryOperationIntrinsicBase() {
-        @NotNull
-        @Override
-        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            //TODO: add tests and correct expression for reversed ranges.
-            return JsAstUtils.charRangeTo(left, right);
-        }
-    };
+    private static final FunctionIntrinsic CHAR_RANGE_TO_INTRINSIC = new FqnCallIntrinsic("CharRange", Namer.CHAR_RANGE, true, true);
 
     @NotNull
     private static final BinaryOperationIntrinsicBase INTEGER_DIVISION_INTRINSIC = new BinaryOperationIntrinsicBase() {

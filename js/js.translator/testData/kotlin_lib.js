@@ -17,8 +17,6 @@
 (function (Kotlin) {
     "use strict";
 
-    var CharSequence = Kotlin.createTraitNow(null);
-
     // Shims for String
     if (typeof String.prototype.startsWith === "undefined") {
         String.prototype.startsWith = function(searchString, position) {
@@ -197,58 +195,22 @@
     };
 
     Kotlin.intUpto = function (from, to) {
-        return new Kotlin.NumberRange(from, to);
+        return new Kotlin.kotlin.ranges.IntRange(from, to);
     };
 
     Kotlin.intDownto = function (from, to) {
-        return new Kotlin.Progression(from, to, -1);
+        return new Kotlin.kotlin.ranges.IntProgression(from, to, -1);
     };
 
     Kotlin.Throwable = Error;
 
-
-    function createClassNowWithMessage(base) {
-        return Kotlin.createClassNow(base,
-                   /** @constructs */
-                   function (message) {
-                       this.message = (message !== void 0) ? message : null;
-                   }
-               );
-    }
-
-    Kotlin.Error = createClassNowWithMessage(Kotlin.Throwable);
-    Kotlin.Exception = createClassNowWithMessage(Kotlin.Throwable);
-    Kotlin.RuntimeException = createClassNowWithMessage(Kotlin.Exception);
-    Kotlin.NullPointerException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.NoSuchElementException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.IllegalArgumentException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.IllegalStateException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.ConcurrentModificationException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.ClassCastException = createClassNowWithMessage(Kotlin.RuntimeException);
-    Kotlin.AssertionError = createClassNowWithMessage(Kotlin.Error);
-
     Kotlin.throwNPE = function (message) {
-        throw new Kotlin.NullPointerException(message);
+        throw new Kotlin.kotlin.ranges.NullPointerException(message);
     };
 
     Kotlin.throwCCE = function () {
-        throw new Kotlin.ClassCastException("Illegal cast");
+        throw new Kotlin.kotlin.ClassCastException("Illegal cast");
     };
-
-    function throwAbstractFunctionInvocationError(funName) {
-        return function () {
-            var message;
-            if (funName !== void 0) {
-                message = "Function " + funName + " is abstract";
-            }
-            else {
-                message = "Function is abstract";
-            }
-            throw new TypeError(message);
-        };
-    }
 
     /** @const */
     var POW_2_32 = 4294967296;
@@ -273,87 +235,11 @@
         return hash;
     }
 
-    var lazyInitClasses = {};
-
-    /**
-     * @class
-     * @implements {Kotlin.Iterator.<T>}
-     *
-     * @constructor
-     * @param {Array.<T>} array
-     * @template T
-     */
-    lazyInitClasses.ArrayIterator = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.collections.MutableIterator];
-        },
-        /** @constructs */
-        function (array) {
-            this.array = array;
-            this.index = 0;
-        },
-        /** @lends {ArrayIterator.prototype} */
-        {
-            next: function () {
-                return this.array[this.index++];
-            },
-            hasNext: function () {
-                return this.index < this.array.length;
-            },
-            remove: function () {
-                if (this.index < 0 || this.index > this.array.length) throw new RangeError();
-                this.index--;
-                this.array.splice(this.index, 1);
-            }
-    });
-
-    lazyInitClasses.Enum = Kotlin.createClass(
-        function() {
-            return [Kotlin.Comparable];
-        },
-        function () {
-            this.name$ = void 0;
-            this.ordinal$ = void 0;
-        }, {
-            name: {
-                get: function () {
-                    return this.name$;
-                }
-            },
-            ordinal: {
-                get: function () {
-                    return this.ordinal$;
-                }
-            },
-            equals_za3rmp$: function (o) {
-                return this === o;
-            },
-            hashCode: function () {
-                return getObjectHashCode(this);
-            },
-            compareTo_za3rmp$: function (o) {
-                return this.ordinal$ < o.ordinal$ ? -1 : this.ordinal$ > o.ordinal$ ? 1 : 0;
-            },
-            toString: function () {
-                return this.name;
-            }
-        }
-    );
-
     Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
         function (name) {
             this.name = name;
         }
     );
-
-
-    Kotlin.Comparable = Kotlin.createTraitNow(null, null, {
-        compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
-    });
-
-    Kotlin.Appendable = Kotlin.createTraitNow(null, null, {
-        append: throwAbstractFunctionInvocationError("Appendable#append")
-    });
 
     Kotlin.safeParseInt = function (str) {
         var r = parseInt(str, 10);
@@ -502,306 +388,21 @@
         Kotlin.out.print(s);
     };
 
-    lazyInitClasses.RangeIterator = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.collections.Iterator];
-        },
-        function (start, end, step) {
-            this.start = start;
-            this.end = end;
-            this.step = step;
-            this.i = start;
-        }, {
-            next: function () {
-                var value = this.i;
-                this.i = this.i + this.step;
-                return value;
-            },
-            hasNext: function () {
-                if (this.step > 0)
-                    return this.i <= this.end;
-                else
-                    return this.i >= this.end;
+    Kotlin.collectionsMax = function (c, comp) {
+        if (c.isEmpty()) {
+            //TODO: which exception?
+            throw new Error();
+        }
+        var it = c.iterator();
+        var max = it.next();
+        while (it.hasNext()) {
+            var el = it.next();
+            if (comp.compare(max, el) < 0) {
+                max = el;
             }
-    });
-
-    function isSameNotNullRanges(other) {
-        var classObject = this.constructor;
-        if (this instanceof classObject && other instanceof classObject) {
-            return this.isEmpty() && other.isEmpty() ||
-                (this.first === other.first && this.last === other.last && this.step === other.step);
         }
-        return false;
-    }
-
-    function isSameLongRanges(other) {
-        var classObject = this.constructor;
-        if (this instanceof classObject && other instanceof classObject) {
-            return this.isEmpty() && other.isEmpty() ||
-                   (this.first.equals_za3rmp$(other.first) && this.last.equals_za3rmp$(other.last) && this.step.equals_za3rmp$(other.step));
-        }
-        return false;
-    }
-
-    // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
-    function getProgressionFinalElement(start, end, step) {
-        function mod(a, b) {
-            var mod = a % b;
-            return mod >= 0 ? mod : mod + b;
-        }
-        function differenceModulo(a, b, c) {
-            return mod(mod(a, c) - mod(b, c), c);
-        }
-
-        if (step > 0) {
-            return end - differenceModulo(end, start, step);
-        }
-        else if (step < 0) {
-            return end + differenceModulo(start, end, -step);
-        }
-        else {
-            throw new Kotlin.IllegalArgumentException('Step is zero.');
-        }
-    }
-
-    // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
-    function getProgressionFinalElementLong(start, end, step) {
-        function mod(a, b) {
-            var mod = a.modulo(b);
-            return !mod.isNegative() ? mod : mod.add(b);
-        }
-        function differenceModulo(a, b, c) {
-            return mod(mod(a, c).subtract(mod(b, c)), c);
-        }
-
-        var diff;
-        if (step.compareTo_za3rmp$(Kotlin.Long.ZERO) > 0) {
-            diff = differenceModulo(end, start, step);
-            return diff.isZero() ? end : end.subtract(diff);
-        }
-        else if (step.compareTo_za3rmp$(Kotlin.Long.ZERO) < 0) {
-            diff = differenceModulo(start, end, step.unaryMinus());
-            return diff.isZero() ? end : end.add(diff);
-        }
-        else {
-            throw new Kotlin.IllegalArgumentException('Step is zero.');
-        }
-    }
-
-    lazyInitClasses.NumberProgression = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.collections.Iterable];
-        },
-        function (start, end, step) {
-            this.first = start;
-            this.last = getProgressionFinalElement(start, end, step);
-            this.step = step;
-            if (this.step === 0)
-                throw new Kotlin.IllegalArgumentException('Step must be non-zero');
-        }, {
-            iterator: function () {
-                return new Kotlin.RangeIterator(this.first, this.last, this.step);
-            },
-            isEmpty: function () {
-                return this.step > 0 ? this.first > this.last : this.first < this.last;
-            },
-            hashCode: function () {
-                return this.isEmpty() ? -1 : 31 * (31 * this.first + this.last) + this.step;
-            },
-            equals_za3rmp$: isSameNotNullRanges,
-            toString: function () {
-                return this.step > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.step;
-            }
-        });
-
-    lazyInitClasses.NumberRange = Kotlin.createClass(
-        function() {
-            return [Kotlin.kotlin.ranges.ClosedRange, Kotlin.NumberProgression]
-        },
-        function $fun(start, endInclusive) {
-            $fun.baseInitializer.call(this, start, endInclusive, 1);
-            this.start = start;
-            this.endInclusive = endInclusive;
-        }, {
-            contains_htax2k$: function (item) {
-                return this.start <= item && item <= this.endInclusive;
-            },
-            isEmpty: function () {
-                return this.start > this.endInclusive;
-            },
-            hashCode: function () {
-                return this.isEmpty() ? -1 : 31 * this.start + this.endInclusive;
-            },
-            equals_za3rmp$: isSameNotNullRanges,
-            toString: function () {
-                return this.start.toString() + '..' + this.endInclusive;
-            }
-        }, {
-            Companion: Kotlin.createObject(null, function () {
-                this.EMPTY = new Kotlin.NumberRange(1, 0);
-            })
-        });
-
-
-
-    lazyInitClasses.LongRangeIterator = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.collections.Iterator];
-        },
-         function (start, end, step) {
-             this.start = start;
-             this.end = end;
-             this.step = step;
-             this.i = start;
-         }, {
-             next: function () {
-                 var value = this.i;
-                 this.i = this.i.add(this.step);
-                 return value;
-             },
-             hasNext: function () {
-                 if (this.step.isNegative())
-                     return this.i.compare(this.end) >= 0;
-                 else
-                     return this.i.compare(this.end) <= 0;
-             }
-         });
-
-    lazyInitClasses.LongProgression = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.collections.Iterable];
-        },
-        function (start, end, step) {
-            this.first = start;
-            this.last = getProgressionFinalElementLong(start, end, step);
-            this.step = step;
-            if (this.step.isZero())
-                throw new Kotlin.IllegalArgumentException('Step must be non-zero');
-        }, {
-            iterator: function () {
-                return new Kotlin.LongRangeIterator(this.first, this.last, this.step);
-            },
-            isEmpty: function() {
-                return this.step.isNegative() ? this.first.compare(this.last) < 0 : this.first.compare(this.last) > 0;
-            },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * (31 * this.first.toInt() + this.last.toInt()) + this.step.toInt());
-            },
-            equals_za3rmp$: isSameLongRanges,
-            toString: function () {
-                return !this.step.isNegative() ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + this.step.unaryMinus();
-            }
-        });
-
-    lazyInitClasses.LongRange = Kotlin.createClass(
-        function () {
-            return [Kotlin.kotlin.ranges.ClosedRange, Kotlin.LongProgression];
-        },
-        function $fun(start, endInclusive) {
-            $fun.baseInitializer.call(this, start, endInclusive, Kotlin.Long.ONE);
-            this.start = start;
-            this.endInclusive = endInclusive;
-        }, {
-            contains_htax2k$: function (item) {
-                return this.start.compareTo_za3rmp$(item) <= 0 && item.compareTo_za3rmp$(this.endInclusive) <= 0;
-            },
-            isEmpty: function () {
-                return this.start.compare(this.endInclusive) > 0;
-            },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * this.start.toInt() + this.endInclusive.toInt());
-            },
-            equals_za3rmp$: isSameLongRanges,
-            toString: function () {
-                return this.start.toString() + '..' + this.endInclusive;
-            }
-        }, {
-            Companion: Kotlin.createObject(null, function () {
-                this.EMPTY = new Kotlin.LongRange(Kotlin.Long.ONE, Kotlin.Long.ZERO);
-            })
-        });
-
-
-
-    lazyInitClasses.CharRangeIterator = Kotlin.createClass(
-        function () {
-            return [Kotlin.RangeIterator];
-        },
-        function (start, end, step) {
-            Kotlin.RangeIterator.call(this, start, end, step);
-        }, {
-            next: function () {
-                var value = this.i;
-                this.i = this.i + this.step;
-                return String.fromCharCode(value);
-            }
-    });
-
-    lazyInitClasses.CharProgression = Kotlin.createClassNow(
-        function () {
-            return [Kotlin.kotlin.collections.Iterable];
-        },
-        function (start, end, step) {
-            this.first = start;
-            this.startCode = start.charCodeAt(0);
-            this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), step);
-            this.last = String.fromCharCode(this.endCode);
-            this.step = step;
-            if (this.step === 0)
-                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
-        }, {
-            iterator: function () {
-                return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.step);
-            },
-            isEmpty: function() {
-                return this.step > 0 ? this.startCode > this.endCode : this.startCode < this.endCode;
-            },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.step|0);
-            },
-            equals_za3rmp$: isSameNotNullRanges,
-            toString: function () {
-                return this.step > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.step;
-            }
-    });
-
-
-    lazyInitClasses.CharRange = Kotlin.createClass(
-        function() {
-            return [Kotlin.kotlin.ranges.ClosedRange, Kotlin.CharProgression]
-        },
-        function $fun(start, endInclusive) {
-            $fun.baseInitializer.call(this, start, endInclusive, 1);
-            this.start = start;
-            this.endInclusive = endInclusive;
-        }, {
-            contains_htax2k$: function (item) {
-                return this.start <= item && item <= this.endInclusive;
-            },
-            isEmpty: function () {
-                return this.start > this.endInclusive;
-            },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * this.startCode|0 + this.endCode|0);
-            },
-            equals_za3rmp$: isSameNotNullRanges,
-            toString: function () {
-                return this.start.toString() + '..' + this.endInclusive;
-            }
-        }, {
-            Companion: Kotlin.createObject(null, function () {
-                this.EMPTY = new Kotlin.CharRange(Kotlin.toChar(1), Kotlin.toChar(0));
-            })
-        });
-
-
-    /**
-     * @interface
-     * @template T
-     */
-    Kotlin.Comparator = Kotlin.createClassNow(null, null, {
-        compare: throwAbstractFunctionInvocationError("Comparator#compare")
-    });
+        return max;
+    };
 
     Kotlin.collectionsSort = function (mutableList, comparator) {
         var boundComparator = void 0;
@@ -838,42 +439,6 @@
 
         return array;
     };
-
-
-    Kotlin.StringBuilder = Kotlin.createClassNow([CharSequence],
-        function (content) {
-            this.string = typeof(content) == "string" ? content : "";
-        }, {
-        length: {
-            get: function() {
-                return this.string.length;
-            }
-        },
-        substring: function(start, end) {
-            return this.string.substring(start, end);
-        },
-        charAt: function(index) {
-            return this.string.charAt(index);
-        },
-        append: function (obj, from, to) {
-            if (from == void 0 && to == void 0) {
-                this.string = this.string + obj.toString();
-            } else if (to == void 0) {
-                this.string = this.string + obj.toString().substring(from);
-            } else {
-                this.string = this.string + obj.toString().substring(from, to);
-            }
-
-            return this;
-        },
-        reverse: function () {
-            this.string = this.string.split("").reverse().join("");
-            return this;
-        },
-        toString: function () {
-            return this.string;
-        }
-    });
 
     Kotlin.splitString = function (str, regex, limit) {
         return str.split(new RegExp(regex), limit);
@@ -920,10 +485,6 @@
         return result;
     };
 
-    Kotlin.arrayIterator = function (array) {
-        return new Kotlin.ArrayIterator(array);
-    };
-
     Kotlin.deleteProperty = function (object, property) {
         delete object[property];
     };
@@ -936,7 +497,5 @@
         }
         return obj1;
     };
-
-    Kotlin.createDefinition(lazyInitClasses, Kotlin);
 })(Kotlin);
 

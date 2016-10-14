@@ -63,7 +63,7 @@ public class TranslationContext {
             @NotNull StaticContext staticContext,
             @NotNull JsFunction rootFunction
     ) {
-        JsBlock block = new JsBlock(staticContext.getDeclarationStatements());
+        JsBlock block = new JsBlock(staticContext.getTopLevelStatements());
         DynamicContext rootDynamicContext = DynamicContext.rootContext(rootFunction.getScope(), block);
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
         return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
@@ -178,6 +178,11 @@ public class TranslationContext {
         return this.innerWithAliasingContext(aliasingContext.withDescriptorsAliased(aliases));
     }
 
+    @NotNull
+    public JsName importDeclaration(@NotNull String suggestedName, @NotNull JsExpression declaration) {
+        return staticContext.importDeclaration(suggestedName, declaration);
+    }
+
     @Nullable
     private JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableDescriptor) {
@@ -225,8 +230,8 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
-        return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, fresh);
+    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name) {
+        return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, false);
     }
 
     @NotNull
@@ -235,13 +240,13 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsNameRef getInnerReference(@NotNull DeclarationDescriptor descriptor) {
-        return JsAstUtils.pureFqn(getInnerNameForDescriptor(descriptor), null);
+    public JsNameRef getQualifiedReference(@NotNull FqName fqName) {
+        return staticContext.getQualifiedReference(fqName);
     }
 
     @NotNull
-    public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
-        return staticContext.getQualifiedReference(packageFqName);
+    public JsNameRef getInnerReference(@NotNull DeclarationDescriptor descriptor) {
+        return JsAstUtils.pureFqn(getInnerNameForDescriptor(descriptor), null);
     }
 
     @NotNull
@@ -567,14 +572,18 @@ public class TranslationContext {
         return staticContext.getRootFunction();
     }
 
-    public void addRootStatement(@NotNull JsStatement statement) {
-        staticContext.addRootStatement(statement);
+    public void addDeclarationStatement(@NotNull JsStatement statement) {
+        staticContext.getDeclarationStatements().add(statement);
+    }
+
+    public void addTopLevelStatement(@NotNull JsStatement statement) {
+        staticContext.getTopLevelStatements().add(statement);
     }
 
     @NotNull
     public JsFunction defineTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
         JsFunction function = createTopLevelFunction(descriptor);
-        addRootStatement(function.makeStmt());
+        addDeclarationStatement(function.makeStmt());
         return function;
     }
 
@@ -584,7 +593,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsFunction createTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
+    private JsFunction createTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
         JsFunction function = createTopLevelAnonymousFunction(descriptor);
         function.setName(staticContext.getInnerNameForDescriptor(descriptor));
         return function;
@@ -605,5 +614,15 @@ public class TranslationContext {
 
     public boolean isFromCurrentModule(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getCurrentModule() == DescriptorUtilsKt.getModule(descriptor);
+    }
+
+    @NotNull
+    public ModuleDescriptor getCurrentModule() {
+        return staticContext.getCurrentModule();
+    }
+
+    @Nullable
+    public TranslationContext getParent() {
+        return parent;
     }
 }

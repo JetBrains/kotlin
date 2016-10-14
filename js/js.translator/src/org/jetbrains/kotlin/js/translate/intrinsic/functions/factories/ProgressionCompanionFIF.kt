@@ -21,24 +21,23 @@ import com.google.dart.compiler.backend.js.ast.JsNew
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FqnCallIntrinsic
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 
 
 object ProgressionCompanionFIF : CompositeFIF() {
     init {
-        val numberProgressionConstructor = CallProgressionConstructorIntrinsic("NumberProgression")
-        for (type in arrayOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT)) {
+        val numberProgressionConstructor = FqnCallIntrinsic("IntProgression", "kotlin.ranges.IntProgression", isConstructor = true,
+                                                            receiverAsArgument = false)
+        for (type in arrayOf(PrimitiveType.INT)) {
             add(methodPattern("${type.typeName}Progression"), numberProgressionConstructor)
         }
-        add(methodPattern("LongProgression"), CallProgressionConstructorIntrinsic("LongProgression"))
-        add(methodPattern("CharProgression"), CallProgressionConstructorIntrinsic("CharProgression"))
+        add(methodPattern("LongProgression"), FqnCallIntrinsic("LongProgression", "kotlin.ranges.LongProgression", isConstructor = true,
+                                                               receiverAsArgument = false))
+        add(methodPattern("CharProgression"), FqnCallIntrinsic("CharProgression", "kotlin.ranges.CharProgression", isConstructor = true,
+                                                               receiverAsArgument = false))
     }
 
-    private fun methodPattern(builtinProgressionName: String) = pattern("kotlin.ranges", builtinProgressionName, "Companion", "fromClosedRange")
-
-    private class CallProgressionConstructorIntrinsic(val libraryProgressionName: String) : FunctionIntrinsic() {
-        override fun apply(receiver: JsExpression?, arguments: MutableList<JsExpression>, context: TranslationContext): JsExpression
-                = JsNew(context.namer().kotlin(libraryProgressionName), arguments)
-    }
-
+    private fun methodPattern(builtinProgressionName: String) =
+            pattern("kotlin.ranges", builtinProgressionName, "Companion", "fromClosedRange")
 }

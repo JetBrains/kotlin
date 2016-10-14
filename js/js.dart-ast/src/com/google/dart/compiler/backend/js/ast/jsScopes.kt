@@ -100,7 +100,11 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
                 "NaN", "Infinity", "undefined",
 
                 // the special Kotlin object
-                "Kotlin"
+                "Kotlin",
+
+                "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
+
+                "require", "define", "module", "window", "self"
         )
     }
 }

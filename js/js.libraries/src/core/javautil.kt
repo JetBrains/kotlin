@@ -16,12 +16,11 @@
 
 package java.util
 
-@library
-public interface Comparator<T> {
-    public fun compare(a: T, b: T): Int
+interface Comparator<T> {
+    @JsName("compare") fun compare(a: T, b: T): Int
 }
 
-public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {
+inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {
     override fun compare(a: T, b: T): Int = comparison(a, b)
 }
 
