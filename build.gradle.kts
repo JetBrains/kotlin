@@ -7,9 +7,10 @@ extra["build.number"] = "1.1-SNAPSHOT"
 extra["distDir"] = "$rootDir/dist"
 Properties().apply {
     load(File("resources/kotlinManifest.properties").reader())
-    forEach { k: Any?, v: Any? ->
-        if (k != null && k is String)
-            extra[k] = v
+    forEach {
+        val key = it.key
+        if (key != null && key is String)
+            extra[key] = it.value
     }
 }
 
