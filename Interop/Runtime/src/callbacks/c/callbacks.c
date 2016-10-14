@@ -101,6 +101,8 @@ JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypePointer(J
 JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeStruct0(JNIEnv *env, jclass cls, jlong elements) {
     ffi_type* res = malloc(sizeof(ffi_type));
     if (res != NULL) {
+        res->size = 0;
+        res->alignment = 0;
         res->elements = (ffi_type**) elements;
         res->type = FFI_TYPE_STRUCT;
     }
