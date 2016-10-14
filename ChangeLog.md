@@ -162,6 +162,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-9950`](https://youtrack.jetbrains.com/issue/KT-9950) Auto-import now offers to import extension method when an instance method has the same name but a mismatched signature
 - [`KT-14342`](https://youtrack.jetbrains.com/issue/KT-14342) Add quickfixes for `lateinit` errors
 - [`KT-14199`](https://youtrack.jetbrains.com/issue/KT-14199) Add Library: Fix exception due to resolution being run in the "dumb mode"
+- Convert Receiver to Parameter: Fix this replacement
 
 ##### Issues fixed
 
