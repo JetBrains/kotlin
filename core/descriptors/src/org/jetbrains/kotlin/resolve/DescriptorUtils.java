@@ -49,9 +49,10 @@ public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
-    public static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
-    public static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
-    public static final FqName CONTINUATION_INTERFACE_FQ_NAME = new FqName("kotlin.coroutines.Continuation");
+    private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
+    private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
+    public static final FqName CONTINUATION_INTERFACE_FQ_NAME =
+            KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"));
 
     private DescriptorUtils() {
     }

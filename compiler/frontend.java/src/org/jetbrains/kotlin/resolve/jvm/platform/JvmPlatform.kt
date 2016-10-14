@@ -31,7 +31,6 @@ object JvmPlatform : TargetPlatform("JVM") {
 
         add(ImportPath("java.lang.*"))
         add(ImportPath("kotlin.jvm.*"))
-        add(ImportPath("kotlin.coroutines.*"))
         add(ImportPath("kotlin.io.*"))
 
         fun addAllClassifiersFromScope(scope: MemberScope) {

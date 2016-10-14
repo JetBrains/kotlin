@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.coroutines.isValidContinuation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -23,14 +24,15 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.sure
 
 object SuspendModifierChecker : SimpleDeclarationChecker {
-    private val ALLOW_SUSPEND_EXTENSIONS_ANNOTATION_FQ_NAME = FqName("kotlin.coroutines.AllowSuspendExtensions")
+    private val ALLOW_SUSPEND_EXTENSIONS_ANNOTATION_FQ_NAME =
+            KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("AllowSuspendExtensions"))
 
     override fun check(
             declaration: KtDeclaration,

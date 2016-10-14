@@ -50,6 +50,7 @@ public abstract class KotlinBuiltIns {
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     private static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
     public static final FqName COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"));
+    public static final FqName COROUTINES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("coroutines"));
     public static final FqName RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"));
     public static final FqName TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"));
 
@@ -59,7 +60,7 @@ public abstract class KotlinBuiltIns {
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
-            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("coroutines")),
+            COROUTINES_PACKAGE_FQ_NAME,
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
@@ -106,6 +107,7 @@ public abstract class KotlinBuiltIns {
         collectionsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
         rangesPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
         annotationPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, ANNOTATION_PACKAGE_FQ_NAME);
+        createPackage(packageFragmentProvider, packageNameToPackageFragment, COROUTINES_PACKAGE_FQ_NAME);
 
         builtInsPackageFragments = new LinkedHashSet<PackageFragmentDescriptor>(packageNameToPackageFragment.values());
 
