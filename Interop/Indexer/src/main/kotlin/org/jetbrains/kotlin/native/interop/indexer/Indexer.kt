@@ -105,7 +105,7 @@ private class NativeIndexImpl : NativeIndex() {
             CXCursorKind.CXCursor_UnionDecl -> return false
 
             CXCursorKind.CXCursor_StructDecl -> {
-                val hasAttributes = malloc(Int32Box)
+                val hasAttributes = arena.alloc(Int32Box)
                 hasAttributes.value = 0
                 clang_visitChildren(structDefCursor, { cursor, parent, clientData ->
                     if (clang_isAttribute(cursor.kind.value) != 0) {
@@ -264,6 +264,7 @@ fun CXString.convertAndDispose(): String {
 }
 
 fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
+    // TODO: dispose all allocated memory and resources
     val args1 = args.map { CString.fromString(it)!!.asCharPtr() }.toTypedArray()
 
     val index = clang_createIndex(0, 0)
