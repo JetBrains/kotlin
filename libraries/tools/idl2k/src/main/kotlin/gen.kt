@@ -95,8 +95,7 @@ private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
     val superClasses = iface.superTypes
-            .map { repository.interfaces[it] }
-            .filterNotNull()
+            .mapNotNull { repository.interfaces[it] }
             .filter {
                 when (resolveDefinitionKind(repository, it)) {
                     GenerateDefinitionKind.CLASS,
@@ -111,7 +110,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
     val declaredConstructors = iface.findConstructors()
     val entityKind = resolveDefinitionKind(repository, iface, declaredConstructors)
-    val extensions = repository.externals[iface.name]?.map { repository.interfaces[it] }?.filterNotNull() ?: emptyList()
+    val extensions = repository.externals[iface.name]?.mapNotNull { repository.interfaces[it] } ?: emptyList()
 
     val primaryConstructor = when {
         declaredConstructors.size == 1 -> declaredConstructors.single()
@@ -141,9 +140,9 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
         ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor, initCall)
     }
 
-    return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, iface.superTypes,
-            memberAttributes = (iface.mapAttributes(repository) + extensions.flatMap { it.mapAttributes(repository) }).distinct().toList(),
-            memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
+    return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
+            memberAttributes = iface.mapAttributes(repository),
+            memberFunctions = iface.mapOperations(repository),
             constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
             primaryConstructor = primaryConstructorWithCall,
             secondaryConstructors = secondaryConstructorsWithCall,

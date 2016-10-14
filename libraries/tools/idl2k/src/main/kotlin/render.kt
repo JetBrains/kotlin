@@ -131,10 +131,11 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
     }
 
+    val superTypesExclude = inheritanceExclude[iface.name] ?: emptySet()
     val superCallName = primary?.initTypeCall?.name
     val superTypesWithCalls =
             (primary?.initTypeCall?.let { listOf(renderCall(it)) } ?: emptyList()) +
-                    iface.superTypes.filter { it != superCallName && it in allSuperTypesNames } +
+                    iface.superTypes.filter { it != superCallName && it in allSuperTypesNames }.filter { it !in superTypesExclude } +
                     (typeNamesToUnions[iface.name] ?: emptyList())
 
     if (superTypesWithCalls.isNotEmpty()) {
@@ -164,22 +165,33 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     iface.memberAttributes
         .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
         .map { it.dynamicIfUnknownType(allTypes.keys) }
-        .groupBy { it.name }.reduceValues(::merge).values.forEach { arg ->
+        .groupBy { it.name }
+        .reduceValues(::merge).values.forEach { attribute ->
             val modality = when {
-                arg.signature in superSignatures -> MemberModality.OVERRIDE
-                iface.kind == GenerateDefinitionKind.CLASS && arg.isVal -> MemberModality.OPEN
+                attribute.signature in superSignatures -> MemberModality.OVERRIDE
+                iface.kind == GenerateDefinitionKind.CLASS && attribute.isVal -> MemberModality.OPEN
                 iface.kind == GenerateDefinitionKind.ABSTRACT_CLASS -> when {
-                    arg.initializer != null || arg.getterSetterNoImpl -> MemberModality.OPEN
+                    attribute.initializer != null || attribute.getterSetterNoImpl -> MemberModality.OPEN
                     else -> MemberModality.ABSTRACT
                 }
                 else -> MemberModality.FINAL
             }
-            renderAttributeDeclarationAsProperty(arg,
-                modality = modality,
-                commented = arg.isCommented(iface.name),
-                omitDefaults = iface.kind == GenerateDefinitionKind.INTERFACE,
-                level = 1
-        )
+
+            if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
+                System.err.println("Property ${iface.name}.${attribute.name} has different type in super type(s) so will not be generated: ")
+                for ((superTypeName, attributes) in allSuperTypes.map { it.name to it.memberAttributes.filter { it.name == attribute.name }.distinct() }) {
+                    for (superAttribute in attributes) {
+                        System.err.println("  $superTypeName.${attribute.name}: ${superAttribute.type.render()}")
+                    }
+                }
+            } else {
+                renderAttributeDeclarationAsProperty(attribute,
+                        modality = modality,
+                        commented = attribute.isCommented(iface.name),
+                        omitDefaults = iface.kind == GenerateDefinitionKind.INTERFACE,
+                        level = 1
+                )
+            }
     }
     iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keys) }.groupBy { it.signature }.reduceValues(::betterFunction).values.forEach {
         renderFunctionDeclaration(it.fixRequiredArguments(iface.name), it.signature in superSignatures, commented = it.isCommented(iface.name))

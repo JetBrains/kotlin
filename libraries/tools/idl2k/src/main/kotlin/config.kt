@@ -73,3 +73,7 @@ val requiredArguments = setOf(
         "DOMPoint.constructor.point",
         "DOMQuad.constructor.rect"
 )
+
+val inheritanceExclude = mapOf(
+        "SVGAElement" to setOf("HTMLHyperlinkElementUtils")
+)
