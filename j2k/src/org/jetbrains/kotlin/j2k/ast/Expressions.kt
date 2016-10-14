@@ -145,20 +145,6 @@ class QualifiedExpression(val qualifier: Expression, val identifier: Expression,
     }
 }
 
-class PolyadicExpression(val expressions: List<Expression>, val operators: List<Operator>) : Expression() {
-    override fun generateCode(builder: CodeBuilder) {
-        assert(expressions.size == operators.size + 1)
-        for ((i, expression) in expressions.withIndex()) {
-            builder.append(expression)
-            if (i < operators.size) {
-                builder.append(" ")
-                builder.append(operators[i])
-                builder.append(" ")
-            }
-        }
-    }
-}
-
 open class Operator(val operatorType: IElementType): Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(asString(operatorType))
@@ -176,8 +162,21 @@ open class Operator(val operatorType: IElementType): Expression() {
         }
     }
 
+    val precedence: Int
+        get() = when (this.operatorType) {
+            JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
+            JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
+            KtTokens.ELVIS -> 7
+            JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE -> 9
+            JavaTokenType.EQEQ, JavaTokenType.NE, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> 10
+            JavaTokenType.ANDAND -> 11
+            JavaTokenType.OROR -> 12
+            JavaTokenType.GTGTGT, JavaTokenType.GTGT, JavaTokenType.LTLT -> 7
+            else -> 6 /* simple name */
+        }
+
     private fun asString(tokenType: IElementType): String {
-        return when(tokenType) {
+        return when (tokenType) {
             JavaTokenType.EQ -> "="
             JavaTokenType.EQEQ -> "=="
             JavaTokenType.NE -> "!="
