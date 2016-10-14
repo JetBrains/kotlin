@@ -7991,6 +7991,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("KT14191.kt")
+        public void testKT14191() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/KT14191.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lastOrNull_ifAssign.kt")
         public void testLastOrNull_ifAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/lastOrNull_ifAssign.kt");
@@ -8143,9 +8149,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/count"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
-            @TestMetadata("KT14191.kt")
-            public void testKT14191() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count/KT14191.kt");
+            @TestMetadata("countIsInstance.kt")
+            public void testCountIsInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count/countIsInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("countNotNull.kt")
+            public void testCountNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count/countNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("countSomethingAndNotNull.kt")
+            public void testCountSomethingAndNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count/countSomethingAndNotNull.kt");
                 doTest(fileName);
             }
 
