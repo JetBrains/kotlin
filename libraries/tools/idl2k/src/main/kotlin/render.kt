@@ -119,7 +119,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     when (iface.kind) {
         GenerateDefinitionKind.CLASS -> append("open class ")
         GenerateDefinitionKind.ABSTRACT_CLASS -> append("abstract class ")
-        GenerateDefinitionKind.TRAIT -> append("interface ")
+        GenerateDefinitionKind.INTERFACE -> append("interface ")
     }
 
     val allSuperTypes = iface.allSuperTypes(allTypes)
@@ -177,7 +177,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             renderAttributeDeclarationAsProperty(arg,
                 modality = modality,
                 commented = arg.isCommented(iface.name),
-                omitDefaults = iface.kind == GenerateDefinitionKind.TRAIT,
+                omitDefaults = iface.kind == GenerateDefinitionKind.INTERFACE,
                 level = 1
         )
     }
