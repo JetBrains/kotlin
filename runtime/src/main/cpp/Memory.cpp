@@ -12,7 +12,7 @@ ArenaContainer::ArenaContainer(uint32_t size) {
     ArenaContainerHeader* header = reinterpret_cast<ArenaContainerHeader*>(
         calloc(size + sizeof(ArenaContainerHeader), 1));
     header_ = header;
-    header->ref_count_ = 1;
+    header->ref_count_ = CONTAINER_TAG_INCREMENT;
     header->current_ = reinterpret_cast<uint8_t*>(header_) + sizeof(ArenaContainerHeader);
     header->end_ = header->current_ + size;
 }
@@ -21,7 +21,7 @@ void ObjectContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   header_ = reinterpret_cast<ContainerHeader*>(
       calloc(sizeof(ContainerHeader) + sizeof(ObjHeader) +
              type_info->size_ * elements, 1));
-  header_->ref_count_ = 1;
+  header_->ref_count_ = CONTAINER_TAG_INCREMENT;
   SetMeta(GetPlace(), type_info);
 }
 
