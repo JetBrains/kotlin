@@ -23,19 +23,16 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import java.util.*
 
-class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtDotQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
+class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
+class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtQualifiedExpression>(KtQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
 
     private val targetClassMap = mapOf("toList()" to List::class.qualifiedName,
                                        "toSet()" to Set::class.qualifiedName,
@@ -55,11 +52,12 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
                                        "toByte()" to Byte::class.qualifiedName)
 
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
+    override fun applyTo(element: KtQualifiedExpression, editor: Editor?) {
         element.replaced(element.receiverExpression)
     }
 
-    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
+    override fun applicabilityRange(element: KtQualifiedExpression): TextRange? {
+        if (element !is KtDotQualifiedExpression && element !is KtSafeQualifiedExpression) return null
         val selectorExpression = element.selectorExpression ?: return null
         val selectorExpressionText = selectorExpression.text
         val qualifiedName = targetClassMap[selectorExpressionText] ?: return null

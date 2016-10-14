@@ -10943,6 +10943,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("safeSortedMap.kt")
+        public void testSafeSortedMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeSortedMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeString.kt")
+        public void testSafeString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/set.kt");
