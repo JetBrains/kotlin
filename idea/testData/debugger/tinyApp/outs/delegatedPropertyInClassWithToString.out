@@ -1,0 +1,36 @@
+LineBreakpoint created at delegatedPropertyInClassWithToString.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClassWithToString.DelegatedPropertyInClassWithToStringKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+delegatedPropertyInClassWithToString.kt:8
+package delegatedPropertyInClassWithToString
+
+import kotlin.reflect.KProperty
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    args.size
+}
+
+class A {
+    val prop by MyDelegate()
+
+    override fun toString(): String = "KotlinTest"
+}
+
+class MyDelegate {
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
+}
+
+// PRINT_FRAME
+
+Compile bytecode for args.size
+ frame    = main:8, DelegatedPropertyInClassWithToStringKt {delegatedPropertyInClassWithToString}
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWithToString.kt, 5)
+   local    = a: delegatedPropertyInClassWithToString.A = {delegatedPropertyInClassWithToString.A@uniqueID}KotlinTest (sp = delegatedPropertyInClassWithToString.kt, 6)
+     field    = prop$delegate: delegatedPropertyInClassWithToString.MyDelegate = {delegatedPropertyInClassWithToString.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWithToString.kt, 12)
+                - Class has no fields
+     field    = prop: int = 1 (sp = delegatedPropertyInClassWithToString.kt, 12)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
