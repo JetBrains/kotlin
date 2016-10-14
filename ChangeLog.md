@@ -180,6 +180,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13974`](https://youtrack.jetbrains.com/issue/KT-13974) Enable use of intention to convert `contains` to `in` for `CharSequence` arguments
 - [`KT-13719`](https://youtrack.jetbrains.com/issue/KT-13719) Highlighting range for "`var` can be `val`" no longer includes preceding annotations
 - [`KT-13884`](https://youtrack.jetbrains.com/issue/KT-13884) Fix exception "Invalid root block PSI element" on replacing trivial when-expression to if
+- [`KT-13882`](https://youtrack.jetbrains.com/issue/KT-13882) Convert Receiver to Parameter: Fix AssertionError
 
 #### Debugger
 

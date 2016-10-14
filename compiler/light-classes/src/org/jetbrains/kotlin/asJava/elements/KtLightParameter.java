@@ -20,6 +20,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -144,7 +145,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @Override
     public SearchScope getUseScope() {
         KtParameter origin = getKotlinOrigin();
-        return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
+        return origin != null ? origin.getUseScope() : new LocalSearchScope(this);
     }
 
     public KtLightMethod getMethod() {
