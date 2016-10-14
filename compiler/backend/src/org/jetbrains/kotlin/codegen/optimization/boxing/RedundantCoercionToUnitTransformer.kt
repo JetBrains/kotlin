@@ -27,6 +27,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
+import java.util.*
 
 class RedundantCoercionToUnitTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -55,13 +56,15 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
 
         private val insns = insnList.toArray()
 
-        private val dontTouchInsns = hashSetOf<AbstractInsnNode>()
+        private val dontTouchInsnIndices = BitSet(insns.size)
         private val transformations = hashMapOf<AbstractInsnNode, Transformation>()
         private val removableNops = hashSetOf<InsnNode>()
 
-        private val frames: Array<out Frame<SourceValue>?> = analyzeMethodBody()
+        private val frames by lazy { analyzeMethodBody() }
 
         fun transform() {
+            if (!insns.any { it.isUnitOrNull() }) return
+
             computeTransformations()
             for ((insn, transformation) in transformations.entries) {
                 transformation.apply(insn)
@@ -73,34 +76,40 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                 Analyzer<SourceValue>(object : SourceInterpreter() {
                     override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
                         for (value in values) {
-                            dontTouchInsns.addAll(value.insns)
+                            value.insns.markAsDontTouch()
                         }
                         return super.naryOperation(insn, values)
                     }
 
                     override fun copyOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
-                        dontTouchInsns.addAll(value.insns)
+                        value.insns.markAsDontTouch()
                         return super.copyOperation(insn, value)
                     }
 
                     override fun unaryOperation(insn: AbstractInsnNode, value: SourceValue): SourceValue {
                         if (insn.opcode != Opcodes.CHECKCAST) {
-                            dontTouchInsns.addAll(value.insns)
+                            value.insns.markAsDontTouch()
                         }
                         return super.unaryOperation(insn, value)
                     }
 
                     override fun binaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue): SourceValue {
-                        dontTouchInsns.addAll(value1.insns)
-                        dontTouchInsns.addAll(value2.insns)
+                        value1.insns.markAsDontTouch()
+                        value2.insns.markAsDontTouch()
                         return super.binaryOperation(insn, value1, value2)
                     }
 
                     override fun ternaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue, value3: SourceValue): SourceValue {
-                        dontTouchInsns.addAll(value1.insns)
-                        dontTouchInsns.addAll(value2.insns)
-                        dontTouchInsns.addAll(value3.insns)
+                        value1.insns.markAsDontTouch()
+                        value2.insns.markAsDontTouch()
+                        value3.insns.markAsDontTouch()
                         return super.ternaryOperation(insn, value1, value2, value3)
+                    }
+
+                    private fun Collection<AbstractInsnNode>.markAsDontTouch() {
+                        forEach {
+                            dontTouchInsnIndices[insnList.indexOf(it)] = true
+                        }
                     }
                 }).analyze("fake", methodNode)
 
@@ -108,7 +117,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
         private fun computeTransformations() {
             transformations.clear()
 
-            for (i in 0..insns.lastIndex) {
+            for (i in insns.indices) {
                 if (frames[i] == null) continue
                 val insn = insns[i]
 
@@ -226,7 +235,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                 insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isUnitOrNull()
 
         private fun isDontTouch(insn: AbstractInsnNode) =
-                insn in dontTouchInsns
+                dontTouchInsnIndices[insnList.indexOf(insn)]
     }
 
 }
