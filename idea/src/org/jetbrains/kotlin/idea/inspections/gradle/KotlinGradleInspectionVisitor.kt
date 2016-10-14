@@ -23,6 +23,8 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
@@ -54,10 +56,11 @@ abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
     }
 }
 
-fun getResolvedKotlinGradleVersion(file: PsiFile): String? {
-    val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
-    val projectStructureNode = findGradleProjectStructure(file) ?: return null
+fun getResolvedKotlinGradleVersion(file: PsiFile) =
+        ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { getResolvedKotlinGradleVersion(it) }
 
+fun getResolvedKotlinGradleVersion(module: Module): String? {
+    val projectStructureNode = findGradleProjectStructure(module) ?: return null
     for (moduleData in projectStructureNode.findAll(ProjectKeys.MODULE).filter { it.data.internalName == module.name }) {
         val buildScriptClasspathData = moduleData.node.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data ?: continue
         val kotlinPluginVersion = findKotlinPluginVersion(buildScriptClasspathData)
@@ -95,11 +98,11 @@ fun <T: Any> DataNode<*>.findAll(key: Key<T>): List<NodeWithData<T>> {
     }
 }
 
-fun findGradleProjectStructure(file: PsiFile): DataNode<ProjectData>? {
-    val project = file.project
-    val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
-    val externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
+fun findGradleProjectStructure(file: PsiFile) =
+        ModuleUtilCore.findModuleForFile(file.virtualFile, file.project)?.let { findGradleProjectStructure(it) }
 
-    val projectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GRADLE_SYSTEM_ID, externalProjectPath) ?: return null
+fun findGradleProjectStructure(module: Module): DataNode<ProjectData>? {
+    val externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
+    val projectInfo = ExternalSystemUtil.getExternalProjectInfo(module.project, GRADLE_SYSTEM_ID, externalProjectPath) ?: return null
     return projectInfo.externalProjectStructure
 }

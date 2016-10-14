@@ -24,18 +24,23 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
+import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
+import java.util.*
 
 class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
-    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor()
+    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor("kotlin-stdlib")
 
     override fun buildErrorString(vararg args: Any) =
             "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
 
-    private inner class MyVisitor : KotlinGradleInspectionVisitor() {
+    private abstract class VersionFinder(private val libraryId: String) : KotlinGradleInspectionVisitor() {
+        protected abstract fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression)
+
         override fun visitClosure(closure: GrClosableBlock) {
             super.visitClosure(closure)
 
@@ -47,7 +52,13 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
             val stdlibStatement = findLibraryStatement(closure, "org.jetbrains.kotlin", "kotlin-stdlib") ?: return
             val stdlibVersion = getResolvedKotlinStdlibVersion(closure.containingFile, "org.jetbrains.kotlin:kotlin-stdlib:") ?: return
 
-            val gradlePluginVersion = getResolvedKotlinGradleVersion(closure.containingFile)
+            onFound(stdlibVersion, stdlibStatement)
+        }
+    }
+
+    private inner class MyVisitor(libraryId: String): VersionFinder(libraryId) {
+        override fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression) {
+            val gradlePluginVersion = getResolvedKotlinGradleVersion(stdlibStatement.containingFile)
 
             if (stdlibVersion != gradlePluginVersion) {
                 registerError(stdlibStatement, gradlePluginVersion, stdlibVersion)
@@ -57,6 +68,21 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 
     companion object {
         val COMPILE_DEPENDENCY_STATEMENTS = listOf("classpath", "compile")
+
+        fun getKotlinStdlibVersions(gradleFile: GroovyFileBase, libraryId: String): Collection<String> {
+            val versions = LinkedHashSet<String>()
+            val visitor = object : VersionFinder(libraryId) {
+                override fun visitElement(element: GroovyPsiElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression) {
+                    versions += stdlibVersion
+                }
+            }
+            gradleFile.accept(visitor)
+            return versions
+        }
 
         private fun findLibraryStatement(closure: GrClosableBlock, libraryGroup: String, libraryId: String): GrCallExpression? {
             val applicationStatements = closure.getChildrenOfType<GrCallExpression>()

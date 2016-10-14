@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.facet
 import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
-import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.util.DescriptionAware
 import java.awt.BorderLayout
 import java.awt.Component
@@ -54,15 +51,7 @@ class KotlinFacetEditorTab(
         }
     }
 
-    private val KotlinFacetConfiguration.TargetPlatform.libraryDescription: CustomLibraryDescription
-        get() {
-            return when (this) {
-                KotlinFacetConfiguration.TargetPlatform.JVM_1_6, KotlinFacetConfiguration.TargetPlatform.JVM_1_8 ->
-                    JavaRuntimeLibraryDescription(editorContext.project)
-                KotlinFacetConfiguration.TargetPlatform.JS ->
-                    JSLibraryStdDescription(editorContext.project)
-            }
-        }
+
 
     private val languageVersionComboBox =
             JComboBox<KotlinFacetConfiguration.LanguageLevel>(KotlinFacetConfiguration.LanguageLevel.values()).apply {
@@ -87,7 +76,7 @@ class KotlinFacetEditorTab(
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { (targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform).libraryDescription }
+        ) { targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform }
 
         validatorsManager.registerValidator(libraryValidator)
         validatorsManager.registerValidator(versionValidator)
