@@ -8983,6 +8983,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/maxMin"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("KT14210.kt")
+            public void testKT14210() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/maxMin/KT14210.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("max1.kt")
             public void testMax1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/maxMin/max1.kt");
