@@ -285,6 +285,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
             val document = psiDocumentManager.getDocument(file)
             if (document != null) {
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
+                psiDocumentManager.commitDocument(document)
             }
             CodeStyleManager.getInstance(project).adjustLineIndent(file, resultElements.textRange)
         }
