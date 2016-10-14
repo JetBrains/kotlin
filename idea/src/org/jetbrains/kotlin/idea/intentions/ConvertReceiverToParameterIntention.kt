@@ -100,7 +100,13 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                                 val newName = addedParameter.name
                                 revertChanges()
                                 if (!brokenOff) {
-                                    runChangeSignature(element.project, descriptor, configureChangeSignature(newName), function.receiverTypeReference!!, text)
+                                    runChangeSignature(
+                                            element.project,
+                                            function.resolveToDescriptor() as FunctionDescriptor,
+                                            configureChangeSignature(newName),
+                                            function.receiverTypeReference!!,
+                                            text
+                                    )
                                 }
                             }
 
