@@ -1,6 +1,6 @@
 package test
 
-@field:test.Anno() public var property: kotlin.Int
+@field:test.Anno public var property: kotlin.Int
     public fun <get-property>(): kotlin.Int
     public fun <set-property>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 

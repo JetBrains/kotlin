@@ -188,14 +188,14 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             @NotNull File output,
             @NotNull File... classpath
     ) {
-        return compileKotlin(fileName, output, false, classpath);
+        return compileKotlin(fileName, output, Collections.<String>emptyList(), classpath);
     }
 
     @NotNull
     private Pair<String, ExitCode> compileKotlin(
             @NotNull String fileName,
             @NotNull File output,
-            boolean jvm8Target,
+            List<String> additionalOptions,
             @NotNull File... classpath
     ) {
         List<String> args = new ArrayList<String>();
@@ -208,10 +208,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         }
         args.add("-d");
         args.add(output.getPath());
-        if (jvm8Target) {
-            args.add("-jvm-target");
-            args.add("1.8");
-        }
+        args.addAll(additionalOptions);
 
         return AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), args);
     }
@@ -427,9 +424,17 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private void target6Inheritance() {
         compileKotlin("target6.kt", tmpdir);
 
-        compileKotlin("main.kt", tmpdir, true, tmpdir);
+        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, Arrays.asList("-jvm-target", "1.8"), tmpdir);
 
-        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, true, tmpdir);
+        KotlinTestUtils.assertEqualsToFile(
+                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
+        );
+    }
+
+    public void testTypeAliasesAreInvisibleInCompatibilityMode() {
+        compileKotlin("typeAliases.kt", tmpdir);
+
+        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, Arrays.asList("-language-version", "1.0"), tmpdir);
 
         KotlinTestUtils.assertEqualsToFile(
                 new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)

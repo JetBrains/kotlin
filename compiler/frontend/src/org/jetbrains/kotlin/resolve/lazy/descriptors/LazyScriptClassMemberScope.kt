@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.script.getScriptParameters
 
 class LazyScriptClassMemberScope(
         resolveSession: ResolveSession,
@@ -48,9 +49,9 @@ class LazyScriptClassMemberScope(
     }
 
     private fun createScriptParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
-        return scriptDescriptor.scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, scriptParameter ->
+        return scriptDescriptor.scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, (name, type) ->
             ValueParameterDescriptorImpl(
-                    constructor, null, index, Annotations.EMPTY, scriptParameter.name, scriptParameter.type,
+                    constructor, null, index, Annotations.EMPTY, name, type,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,

@@ -236,9 +236,9 @@ class ResolveElementCache(
                 element,
                 KtNamedFunction::class.java,
                 KtAnonymousInitializer::class.java,
+                KtPrimaryConstructor::class.java,
                 KtSecondaryConstructor::class.java,
                 KtProperty::class.java,
-                KtParameter::class.java,
                 KtSuperTypeList::class.java,
                 KtInitializerList::class.java,
                 KtImportList::class.java,
@@ -264,15 +264,6 @@ class ResolveElementCache(
             }
 
             is KtPackageDirective -> return element
-
-            is KtParameter -> {
-                val klass = elementOfAdditionalResolve.getParentOfType<KtClass>(strict = true)
-                if (klass != null && elementOfAdditionalResolve.getParent() == klass.getPrimaryConstructorParameterList()) {
-                    return klass
-                }
-
-                return elementOfAdditionalResolve
-            }
 
             is KtDeclaration -> {
                 if (element is KtParameter && !KtPsiUtil.isLocal(element)) {
@@ -316,6 +307,8 @@ class ResolveElementCache(
 
             is KtAnonymousInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter(), bodyResolveMode.bindingTraceFilter)
 
+            is KtPrimaryConstructor -> constructorAdditionalResolve(resolveSession, resolveElement.parent as KtClass, file, bodyResolveMode.bindingTraceFilter)
+
             is KtSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter(), bodyResolveMode.bindingTraceFilter)
 
             is KtProperty -> propertyAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter(), bodyResolveMode.bindingTraceFilter)
@@ -341,8 +334,6 @@ class ResolveElementCache(
             }
 
             is KtAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
-
-            is KtClass -> constructorAdditionalResolve(resolveSession, resolveElement, file, bodyResolveMode.bindingTraceFilter)
 
             is KtTypeAlias -> typealiasAdditionalResolve(resolveSession, resolveElement, bodyResolveMode.bindingTraceFilter)
 
@@ -548,8 +539,13 @@ class ResolveElementCache(
                                     ?: error("Can't get primary constructor for descriptor '$classDescriptor' " +
                                              "in from class '${klass.getElementTextWithContext()}'")
 
-        val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
-        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(DataFlowInfo.EMPTY, trace, klass, constructorDescriptor, scope)
+        val primaryConstructor = klass.getPrimaryConstructor()
+        if (primaryConstructor != null) {
+            val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
+            bodyResolver.resolveConstructorParameterDefaultValues(DataFlowInfo.EMPTY, trace, primaryConstructor, constructorDescriptor, scope)
+
+            forceResolveAnnotationsInside(primaryConstructor)
+        }
 
         return trace
     }

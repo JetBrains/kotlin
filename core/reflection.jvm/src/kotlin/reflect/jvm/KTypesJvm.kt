@@ -26,6 +26,7 @@ import kotlin.reflect.jvm.internal.KTypeImpl
 /**
  * Returns the [KClass] instance representing the runtime class to which this type is erased to on JVM.
  */
+@SinceKotlin("1.1")
 val KType.jvmErasure: KClass<*>
     get() = classifier?.jvmErasure ?: throw KotlinReflectionInternalError("Cannot calculate JVM erasure for type: $this")
 

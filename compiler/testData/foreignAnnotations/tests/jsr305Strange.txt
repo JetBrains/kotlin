@@ -5,7 +5,7 @@ public fun main(/*0*/ a: A): kotlin.Unit
 public open class A {
     public constructor A()
     @javax.annotation.Nonnull(when = When.UNKNOWN) public final var field: kotlin.String?
-    @javax.annotation.Nonnull() public open fun bar(): kotlin.String
+    @javax.annotation.Nonnull public open fun bar(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @javax.annotation.Nonnull(when = When.MAYBE) public open fun foo(/*0*/ @javax.annotation.Nonnull(when = When.ALWAYS) x: kotlin.String, /*1*/ @javax.annotation.Nonnull(when = When.NEVER) y: kotlin.CharSequence?): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

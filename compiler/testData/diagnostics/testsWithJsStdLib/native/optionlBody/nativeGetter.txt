@@ -1,12 +1,12 @@
 package
 
-@kotlin.js.nativeGetter() public fun kotlin.String.bar(/*0*/ n: kotlin.Int): kotlin.Int?
-@kotlin.js.nativeGetter() public fun kotlin.String.foo(/*0*/ n: kotlin.Int): kotlin.Int?
+@kotlin.js.nativeGetter public fun kotlin.String.bar(/*0*/ n: kotlin.Int): kotlin.Int?
+@kotlin.js.nativeGetter public fun kotlin.String.foo(/*0*/ n: kotlin.Int): kotlin.Int?
 
-@kotlin.js.native() public interface T {
-    @kotlin.js.nativeGetter() public open fun bar(/*0*/ d: kotlin.Double): kotlin.String?
+@kotlin.js.native public interface T {
+    @kotlin.js.nativeGetter public open fun bar(/*0*/ d: kotlin.Double): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.js.nativeGetter() public abstract fun foo(/*0*/ d: kotlin.Double): kotlin.String?
+    @kotlin.js.nativeGetter public abstract fun foo(/*0*/ d: kotlin.Double): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

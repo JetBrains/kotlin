@@ -2,5 +2,5 @@ package test
 
 public open class NotNullField {
     public constructor NotNullField()
-    @org.jetbrains.annotations.NotNull() public final var hi: kotlin.String
+    @org.jetbrains.annotations.NotNull public final var hi: kotlin.String
 }

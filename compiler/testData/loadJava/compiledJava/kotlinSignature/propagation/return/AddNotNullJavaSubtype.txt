@@ -4,7 +4,7 @@ public interface AddNotNullJavaSubtype {
 
     public interface Sub : test.AddNotNullJavaSubtype.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        @org.jetbrains.annotations.NotNull() public abstract override /*1*/ fun foo(): kotlin.String
+        @org.jetbrains.annotations.NotNull public abstract override /*1*/ fun foo(): kotlin.String
     }
 
     public interface Super {

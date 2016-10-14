@@ -1,0 +1,2 @@
+<!-- typeMismatchWithFunctionalType1 -->
+Type mismatch: inferred type is (String) -> Unit but (Int) -> Unit was expected

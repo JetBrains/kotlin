@@ -67,7 +67,7 @@ import org.jetbrains.kotlin.psi.moduleInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.repl.ReplState
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import java.awt.Color
 import java.awt.Font
@@ -124,7 +124,7 @@ class KotlinConsoleRunner(
     val executor = CommandExecutor(this)
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
-    private val consoleScriptDefinition = object : KotlinScriptDefinitionFromTemplate(Any::class) {
+    private val consoleScriptDefinition = object : KotlinScriptDefinition(Any::class) {
         override val name = "Kotlin REPL"
         override fun <TF> isScript(file: TF): Boolean {
             val vf = when (file) {

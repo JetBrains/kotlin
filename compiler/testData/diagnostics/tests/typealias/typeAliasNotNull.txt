@@ -1,5 +1,5 @@
 package
 
-public fun x(/*0*/ handler: Handler /* = (kotlin.String) -> Processor? /* = ((kotlin.Int) -> kotlin.Unit)? */ */): kotlin.Unit
+public fun x(/*0*/ handler: Handler /* = (kotlin.String) -> Processor? /* = ((number: kotlin.Int) -> kotlin.Unit)? */ */): kotlin.Unit
 public typealias Handler = (kotlin.String) -> Processor?
-public typealias Processor = (kotlin.Int) -> kotlin.Unit
+public typealias Processor = (number: kotlin.Int) -> kotlin.Unit

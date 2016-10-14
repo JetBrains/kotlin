@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -61,9 +62,9 @@ class NewResolutionOldInference(
         private val resolutionResultsHandler: ResolutionResultsHandler,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val syntheticScopes: SyntheticScopes,
-        private val syntheticConstructorsProvider: SyntheticConstructorsProvider
+        private val syntheticConstructorsProvider: SyntheticConstructorsProvider,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
-
     sealed class ResolutionKind<D : CallableDescriptor> {
         abstract internal fun createTowerProcessor(
                 outer: NewResolutionOldInference,
@@ -178,7 +179,7 @@ class NewResolutionOldInference(
             val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
             val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
 
-            if (candidate.descriptor.isHiddenInResolution(basicCallContext.isSuperCall)) {
+            if (candidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
                 return@mapNotNull MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
             }
 
@@ -334,7 +335,7 @@ class NewResolutionOldInference(
                 return MyCandidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
             }
 
-            if (towerCandidate.descriptor.isHiddenInResolution(basicCallContext.isSuperCall)) {
+            if (towerCandidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
                 return MyCandidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), candidateCall)
             }
 

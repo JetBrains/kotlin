@@ -2,10 +2,10 @@ package
 
 public var bar: kotlin.Int
 public val x: (kotlin.Int) -> kotlin.Int
-public fun foo(/*0*/ @test() f: kotlin.Int): kotlin.Unit
+public fun foo(/*0*/ @test f: kotlin.Int): kotlin.Unit
 
 public final class Hello {
-    public constructor Hello(/*0*/ @test() args: kotlin.Any)
+    public constructor Hello(/*0*/ @test args: kotlin.Any)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

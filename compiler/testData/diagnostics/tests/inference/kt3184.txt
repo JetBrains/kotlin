@@ -3,7 +3,7 @@ package
 package a {
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
     public fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
-    private fun </*0*/ T> test(/*0*/ value: T, /*1*/ extf: kotlin.String.(T) -> kotlin.Unit): kotlin.Unit
+    private fun </*0*/ T> test(/*0*/ value: T, /*1*/ extf: kotlin.String.(value: T) -> kotlin.Unit): kotlin.Unit
     public fun tests(): kotlin.Unit
     public operator fun </*0*/ K, /*1*/ V> kotlin.collections.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
 }

@@ -1,4 +1,4 @@
-// "Change 'foo' function return type to '([ERROR : NoSuchType]) -> Int'" "false"
+// "Change 'foo' function return type to '(x: [ERROR : NoSuchType]) -> Int'" "false"
 // ACTION: Create annotation 'NoSuchType'
 // ACTION: Create class 'NoSuchType'
 // ACTION: Create enum 'NoSuchType'

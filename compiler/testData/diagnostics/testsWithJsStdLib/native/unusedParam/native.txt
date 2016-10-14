@@ -1,9 +1,9 @@
 package
 
-@kotlin.js.native() public fun foo(/*0*/ a: kotlin.String): kotlin.Int
-@kotlin.js.native() public fun kotlin.Int.foo(/*0*/ a: kotlin.String): kotlin.Int
+@kotlin.js.native public fun foo(/*0*/ a: kotlin.String): kotlin.Int
+@kotlin.js.native public fun kotlin.Int.foo(/*0*/ a: kotlin.String): kotlin.Int
 
-@kotlin.js.native() public final class Bar {
+@kotlin.js.native public final class Bar {
     public constructor Bar(/*0*/ b: kotlin.Int, /*1*/ c: kotlin.Char)
     public final fun baz(/*0*/ d: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -11,7 +11,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.js.native() public object Obj {
+@kotlin.js.native public object Obj {
     private constructor Obj()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

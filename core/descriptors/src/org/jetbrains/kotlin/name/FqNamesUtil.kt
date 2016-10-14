@@ -24,6 +24,8 @@ fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     }
 }
 
+fun FqName.isChildOf(packageName: FqName): Boolean = parentOrNull() == packageName
+
 private fun isSubpackageOf(subpackageNameStr: String, packageNameStr: String): Boolean {
     return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length] == '.'
 }

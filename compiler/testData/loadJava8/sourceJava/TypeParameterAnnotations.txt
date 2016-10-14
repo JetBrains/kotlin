@@ -8,7 +8,7 @@ public open class TypeParameterAnnotations {
         public final val value: kotlin.String
     }
 
-    public/*package*/ interface G</*0*/ @test.TypeParameterAnnotations.A() T : kotlin.Any!> {
+    public/*package*/ interface G</*0*/ @test.TypeParameterAnnotations.A T : kotlin.Any!> {
         public abstract fun </*0*/ @test.TypeParameterAnnotations.A(value = "abc") R : kotlin.Any!> foo(/*0*/ r: R!): kotlin.Unit
     }
 }

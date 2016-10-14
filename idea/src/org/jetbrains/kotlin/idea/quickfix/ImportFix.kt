@@ -25,18 +25,23 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.packageDependencies.DependencyValidationManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.actions.createGroupedImportsAction
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
@@ -45,14 +50,26 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.isSelectorInQualified
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
+import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
@@ -63,8 +80,10 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
-        KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
+internal abstract class ImportFixBase<T : KtExpression> protected constructor(
+        expression: T,
+        private val factory: Factory
+) : KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
 
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
 
@@ -73,8 +92,9 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
             timestampCalculator = { PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount }
     )
 
+    protected open fun getSupportedErrors() = factory.supportedErrors
+
     protected abstract val importNames: Collection<Name>
-    protected abstract fun getSupportedErrors(): Collection<DiagnosticFactory<*>>
     protected abstract fun getCallTypeAndReceiver(): CallTypeAndReceiver<*, *>
 
     override fun showHint(editor: Editor): Boolean {
@@ -123,22 +143,18 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
         }
     }
 
-    private fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>):
-            Collection<DeclarationDescriptor> {
+    private fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<DeclarationDescriptor> {
         val nameStr = name.asString()
         if (nameStr.isEmpty()) return emptyList()
 
-        val file = element.containingFile as KtFile
+        val file = element.getContainingKtFile()
+
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        if (!checkErrorStillPresent(bindingContext)) return emptyList()
 
         val searchScope = getResolveScope(file)
 
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-
-        val diagnostics = bindingContext.diagnostics.forElement(element)
-
-        if (!diagnostics.any { it.factory in getSupportedErrors() }) return emptyList()
-
-        val resolutionFacade = element.getResolutionFacade()
+        val resolutionFacade = file.getResolutionFacade()
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is DeclarationDescriptorWithVisibility) {
@@ -166,6 +182,14 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
             result
     }
 
+    private fun checkErrorStillPresent(bindingContext: BindingContext): Boolean {
+        return elementsToCheckDiagnostics()
+                .flatMap { bindingContext.diagnostics.forElement(it) }
+                .any { diagnostic -> diagnostic.factory in getSupportedErrors() }
+    }
+
+    protected open fun elementsToCheckDiagnostics(): Collection<PsiElement> = listOf(element)
+
     abstract fun fillCandidates(
             name: String,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
@@ -182,9 +206,15 @@ internal abstract class ImportFixBase<T : KtExpression>(expression: T) :
             validationManager.getViolatorDependencyRules(file, targetFile).isEmpty()
         }
     }
+
+    abstract class Factory : KotlinSingleIntentionActionFactory() {
+        val supportedErrors: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
+
+        override fun isApplicableForCodeFragment() = true
+    }
 }
 
-internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) : ImportFixBase<T>(expression) {
+internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, factory: Factory) : ImportFixBase<T>(expression, factory) {
     override fun fillCandidates(
             name: String,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
@@ -196,7 +226,7 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) :
         val expression = element
 
         if (expression is KtSimpleNameExpression) {
-            if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
+            if (!expression.isImportDirectiveExpression() && !isSelectorInQualified(expression)) {
                 val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
                 if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
@@ -215,76 +245,42 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T) :
         result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression, bindingContext) { it == name })
         return result
     }
-
 }
 
-internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
-    override val importNames: Collection<Name> = run {
-        if (element.getIdentifier() == null) {
-            val conventionName = KtPsiUtil.getConventionName(element)
-            if (conventionName != null) {
-                if (element is KtOperationReferenceExpression) {
-                    val elementType = element.firstChild.node.elementType
-                    if (elementType in OperatorConventions.ASSIGNMENT_OPERATIONS) {
-                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[elementType]
-                        val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES[counterpart]
-                        if (counterpartName != null) {
-                            return@run listOf(conventionName, counterpartName)
-                        }
-                    }
-                }
+    override val importNames = element.mainReference.resolvesByNames
 
-                return@run conventionName.singletonOrEmptyList()
-            }
-        }
-        else if (Name.isValidIdentifier(element.getReferencedName())) {
-            return@run Name.identifier(element.getReferencedName()).singletonOrEmptyList()
-        }
-
-        emptyList<Name>()
-    }
-
-
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtSimpleNameExpression)?.let { ImportFix(it) }
-
-        override fun isApplicableForCodeFragment() = true
-
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-
-internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression) {
+internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression, MyFactory) {
     override val importNames = OperatorNameConventions.INVOKE.singletonList()
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtExpression)?.let { InvokeImportFix(it) }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal open class ArrayAccessorImportFix(element: KtArrayAccessExpression, override val importNames: Collection<Name>, private val showHint: Boolean) :
-        OrdinaryImportFixBase<KtArrayAccessExpression>(element) {
+internal open class ArrayAccessorImportFix(
+        element: KtArrayAccessExpression,
+        override val importNames: Collection<Name>,
+        private val showHint: Boolean
+) : OrdinaryImportFixBase<KtArrayAccessExpression>(element, MyFactory) {
+
     override fun getCallTypeAndReceiver() =
             CallTypeAndReceiver.OPERATOR(element.arrayExpression!!)
 
-    override fun getSupportedErrors() = ERRORS
-
     override fun showHint(editor: Editor) = showHint && super.showHint(editor)
 
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importName(diagnostic: Diagnostic): Name {
             return when (diagnostic.factory) {
                 Errors.NO_GET_METHOD -> OperatorNameConventions.GET
@@ -304,14 +300,15 @@ internal open class ArrayAccessorImportFix(element: KtArrayAccessExpression, ove
 
             return null
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
 internal class DelegateAccessorsImportFix(
-        element: KtExpression, override val importNames: Collection<Name>, private val solveSeveralProblems: Boolean) :
-        OrdinaryImportFixBase<KtExpression>(element) {
+        element: KtExpression,
+        override val importNames: Collection<Name>,
+        private val solveSeveralProblems: Boolean
+) : OrdinaryImportFixBase<KtExpression>(element, MyFactory) {
+
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.DELEGATE(element)
 
     override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
@@ -322,9 +319,7 @@ internal class DelegateAccessorsImportFix(
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importNames(diagnostics: Collection<Diagnostic>): Collection<Name> {
             return diagnostics.map {
                 val missingMethodSignature = Errors.DELEGATE_SPECIAL_FUNCTION_MISSING.cast(it).a
@@ -346,13 +341,15 @@ internal class DelegateAccessorsImportFix(
             val names = importNames(sameTypeDiagnostics)
             return (element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) }.singletonOrEmptyList()
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class ComponentsImportFix(element: KtExpression, override val importNames: Collection<Name>, private val solveSeveralProblems: Boolean) :
-        OrdinaryImportFixBase<KtExpression>(element) {
+internal class ComponentsImportFix(
+        element: KtExpression,
+        override val importNames: Collection<Name>,
+        private val solveSeveralProblems: Boolean
+) : OrdinaryImportFixBase<KtExpression>(element, MyFactory) {
+
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
     override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
@@ -363,9 +360,7 @@ internal class ComponentsImportFix(element: KtExpression, override val importNam
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
-
-    companion object : KotlinSingleIntentionActionFactory() {
+    companion object MyFactory : Factory() {
         private fun importNames(diagnostics: Collection<Diagnostic>) =
                 diagnostics.map { Name.identifier(Errors.COMPONENT_FUNCTION_MISSING.cast(it).a.identifier) }
 
@@ -381,12 +376,10 @@ internal class ComponentsImportFix(element: KtExpression, override val importNam
             val solveSeveralProblems = sameTypeDiagnostics.size > 1
             return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
         }
-
-        private val ERRORS by lazy { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
 
-internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression) {
+internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
 
     override fun getText() = "Import member"
 
@@ -397,20 +390,17 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
             indicesHelper: KotlinIndicesHelper
     ): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
-        val expression = element
-        if (expression is KtSimpleNameExpression) {
-            if (!expression.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(expression)) {
-                val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+        if (!element.isImportDirectiveExpression() && !isSelectorInQualified(element)) {
+            val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-                indicesHelper.getKotlinCallablesByName(name)
-                        .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
+            indicesHelper.getKotlinCallablesByName(name)
+                    .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
+                    .filterTo(result, filterByCallType)
+
+            if (!ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())) {
+                indicesHelper.getJvmCallablesByName(name)
+                        .filter { it.canBeReferencedViaImport() }
                         .filterTo(result, filterByCallType)
-
-                if (!ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
-                    indicesHelper.getJvmCallablesByName(name)
-                            .filter { it.canBeReferencedViaImport() }
-                            .filterTo(result, filterByCallType)
-                }
             }
         }
         return result
@@ -425,20 +415,92 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
                 return@run Name.identifier(name).singletonList()
             }
         }
-        return@run emptyList<Name>()
+        return@run emptyList()
     }
 
-    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
+    companion object MyFactory : Factory() {
+        override fun createAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
+    }
+}
 
-    companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
+internal class ImportForMismatchingArgumentsFix(
+        expression: KtSimpleNameExpression
+) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
+    override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
-        override fun isApplicableForCodeFragment() = true
+    override val importNames = element.mainReference.resolvesByNames
 
-        private val ERRORS: Collection<DiagnosticFactory<*>> by lazy { QuickFixes.getInstance().getDiagnostics(this) }
+    override fun elementsToCheckDiagnostics(): Collection<PsiElement> {
+        val callExpression = element.parent as? KtCallExpression ?: return emptyList()
+        return callExpression.valueArguments +
+               callExpression.valueArguments.mapNotNull { it.getArgumentExpression() } +
+               callExpression.valueArguments.mapNotNull { it.getArgumentName()?.referenceExpression } +
+               callExpression.valueArgumentList.singletonOrEmptyList()
     }
 
+    override fun fillCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            bindingContext: BindingContext,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor> {
+        if (!Name.isValidIdentifier(name)) return emptyList()
+        val identifier = Name.identifier(name)
+
+        val call = element.getParentCall(bindingContext) ?: return emptyList()
+        val callElement = call.callElement as? KtExpression ?: return emptyList()
+        if (callElement.anyDescendantOfType<PsiErrorElement>()) return emptyList() // incomplete call
+        val elementToAnalyze = callElement.getQualifiedExpressionForSelectorOrThis()
+
+        val file = element.getContainingKtFile()
+        val resolutionFacade = file.getResolutionFacade()
+        val resolutionScope = elementToAnalyze.getResolutionScope(bindingContext, resolutionFacade)
+
+        fun filterFunction(descriptor: FunctionDescriptor): Boolean {
+            if (!callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor)) return false
+
+            if (descriptor in resolutionScope.collectFunctions(identifier, NoLookupLocation.FROM_IDE)) return false // already imported
+
+            // check that this function matches all arguments
+            val resolutionScopeWithAddedImport = resolutionScope.addImportingScope(ExplicitImportsScope(listOf(descriptor)))
+            val dataFlowInfo = bindingContext.getDataFlowInfo(elementToAnalyze)
+            val newBindingContext = elementToAnalyze.analyzeInContext(
+                    resolutionScopeWithAddedImport,
+                    dataFlowInfo = dataFlowInfo,
+                    contextDependency = ContextDependency.DEPENDENT // to not check complete inference
+            )
+            return newBindingContext.diagnostics.none { it.severity == Severity.ERROR }
+        }
+
+        val result = ArrayList<FunctionDescriptor>()
+
+        fun processDescriptor(descriptor: CallableDescriptor) {
+            if (descriptor is FunctionDescriptor && filterFunction(descriptor)) {
+                result.add(descriptor)
+            }
+        }
+
+        indicesHelper
+                .getCallableTopLevelExtensions(callTypeAndReceiver, element, bindingContext) { it == name }
+                .forEach(::processDescriptor)
+
+        if (!isSelectorInQualified(element)) {
+            indicesHelper
+                    .getTopLevelCallablesByName(name)
+                    .forEach(::processDescriptor)
+        }
+
+        return result
+    }
+
+    companion object MyFactory : Factory() {
+        override fun createAction(diagnostic: Diagnostic): ImportForMismatchingArgumentsFix? {
+            //TODO: not only KtCallExpression
+            val callExpression = diagnostic.psiElement.getStrictParentOfType<KtCallExpression>() ?: return null
+            val nameExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
+            return ImportForMismatchingArgumentsFix(nameExpression)
+        }
+    }
 }
 
 object ImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {

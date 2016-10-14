@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun </*0*/ E : kotlin.Any!> EventListener(/*0*/ function: (kotlin.String!) -> E!): EventListener<E>
+public /*synthesized*/ fun </*0*/ E : kotlin.Any!> EventListener(/*0*/ function: (x: kotlin.String!) -> E!): EventListener<E>
 public fun main(): kotlin.Unit
 
 public open class A {
@@ -11,9 +11,9 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ fun bar(/*0*/ l: ((kotlin.String!) -> kotlin.Any!)!): kotlin.Unit
+    public final /*synthesized*/ fun bar(/*0*/ l: ((x: kotlin.String!) -> kotlin.Any!)!): kotlin.Unit
     public open fun bar(/*0*/ l: EventListener<*>!): kotlin.Unit
-    public final /*synthesized*/ fun baz(/*0*/ l: ((kotlin.String!) -> kotlin.CharSequence!)!): kotlin.Unit
+    public final /*synthesized*/ fun baz(/*0*/ l: ((x: kotlin.String!) -> kotlin.CharSequence!)!): kotlin.Unit
     public open fun baz(/*0*/ l: EventListener<out kotlin.CharSequence!>!): kotlin.Unit
 }
 

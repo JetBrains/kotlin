@@ -5,6 +5,13 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsOptions {
 
     /**
+     * Allow to use declarations only from the specified version of bundled libraries
+     * Possible values: "1.0", "1.1"
+     * Default value: "1.1"
+     */
+     var apiVersion: kotlin.String
+
+    /**
      * Generate kjsm-files (for creating libraries)
      * Default value: true
      */
@@ -62,7 +69,7 @@ interface KotlinJsOptions {
      var suppressWarnings: kotlin.Boolean
 
     /**
-     * Generate JS files for specific ECMA version)
+     * Generate JS files for specific ECMA version
      * Possible values: "v5"
      * Default value: "v5"
      */

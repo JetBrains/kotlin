@@ -2,10 +2,10 @@ package
 
 public fun main(): kotlin.Unit
 
-@missing.Ann() /* annotation class not found */ public open class A {
+@missing.Ann /* annotation class not found */ public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @missing.Ann() /* annotation class not found */ public open fun foo(): kotlin.String!
+    @missing.Ann /* annotation class not found */ public open fun foo(): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

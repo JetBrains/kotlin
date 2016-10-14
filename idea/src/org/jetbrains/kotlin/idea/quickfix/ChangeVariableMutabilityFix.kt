@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val makeVar: Boolean) : KotlinQuickFixAction<KtValVarKeywordOwner>(element) {
@@ -79,6 +80,15 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val element = diagnostic.psiElement as KtParameter
                 return ChangeVariableMutabilityFix(element, false)
+            }
+        }
+
+        val LATEINIT_VAL_FACTORY = object: KotlinSingleIntentionActionFactory() {
+            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                val lateinitElement = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement
+                val property = lateinitElement.getStrictParentOfType<KtProperty>() ?: return null
+                if (property.valOrVarKeyword.text != "val") return null
+                return ChangeVariableMutabilityFix(property, makeVar = true)
             }
         }
     }

@@ -1,6 +1,7 @@
 package test
 
 import dependency.*
+import kotlin.annotation.AnnotationTarget
 
 class Outer<E, F> {
     inner class Inner<G> {
@@ -8,7 +9,9 @@ class Outer<E, F> {
     }
 }
 
+@Target(AnnotationTarget.TYPEALIAS)
 annotation class Ann(val value: String)
+
 class TypeAliases {
 
     typealias B = (A) -> Unit

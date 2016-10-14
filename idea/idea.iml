@@ -54,5 +54,6 @@
     <orderEntry type="library" name="java-decompiler-plugin" level="project" />
     <orderEntry type="module" module-name="formatter" />
     <orderEntry type="module" module-name="idea-maven" />
+    <orderEntry type="library" scope="TEST" name="native-platform-uberjar" level="project" />
   </component>
 </module>

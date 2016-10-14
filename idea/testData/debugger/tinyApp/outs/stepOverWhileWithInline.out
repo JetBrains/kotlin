@@ -5,8 +5,6 @@ stepOverWhileWithInline.kt:5
 stepOverWhileWithInline.kt:7
 stepOverWhileWithInline.kt:8
 stepOverWhileWithInline.kt:9
-stepOverWhileWithInline.kt:41
-stepOverWhileWithInline.kt:9
 stepOverWhileWithInline.kt:7
 stepOverWhileWithInline.kt:13
 stepOverWhileWithInline.kt:14
@@ -18,18 +16,7 @@ stepOverWhileWithInline.kt:21
 stepOverWhileWithInline.kt:24
 stepOverWhileWithInline.kt:25
 stepOverWhileWithInline.kt:26
-stepOverWhileWithInline.kt:28
-stepOverWhileWithInline.kt:30
-stepOverWhileWithInline.kt:41
-stepOverWhileWithInline.kt:30
-stepOverWhileWithInline.kt:31
-stepOverWhileWithInline.kt:30
-stepOverWhileWithInline.kt:41
-stepOverWhileWithInline.kt:30
-stepOverWhileWithInline.kt:35
-stepOverWhileWithInline.kt:41
-stepOverWhileWithInline.kt:35
-stepOverWhileWithInline.kt:38
+stepOverWhileWithInline.kt:27
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

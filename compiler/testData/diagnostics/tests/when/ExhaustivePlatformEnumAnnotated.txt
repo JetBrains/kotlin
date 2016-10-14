@@ -19,7 +19,7 @@ public final enum class J : kotlin.Enum<J!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @org.jetbrains.annotations.NotNull() public open fun create(): J
+    @org.jetbrains.annotations.NotNull public open fun create(): J
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): J
     public final /*synthesized*/ fun values(): kotlin.Array<J>
 }

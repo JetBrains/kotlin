@@ -1,0 +1,16 @@
+package
+
+package foo {
+    public var xx: kotlin.Int
+    public var foo.A.ext: kotlin.Int
+
+    public final class A {
+        public constructor A()
+        public final var x: kotlin.Int
+        public final var y: kotlin.Int
+        public final var z: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -19,7 +19,7 @@ package backend {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             // Static members
-            @org.jetbrains.annotations.NotNull() public open fun doSmth(/*0*/ s: kotlin.String!): kotlin.String
+            @org.jetbrains.annotations.NotNull public open fun doSmth(/*0*/ s: kotlin.String!): kotlin.String
         }
     }
 }

@@ -46,6 +46,13 @@ internal class DescriptorRendererImpl(
         assert(options.isLocked)
     }
 
+    private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
+        this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) } as DescriptorRendererImpl
+    }
+    private val functionTypeParameterTypesRenderer: DescriptorRenderer by lazy {
+        this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.parameterName) }
+    }
+
     /* FORMATTING */
     private fun renderKeyword(keyword: String): String {
         when (textFormat) {
@@ -175,6 +182,7 @@ internal class DescriptorRendererImpl(
             }
             return
         }
+
         if (type.isError) {
             renderDefaultType(type)
             return
@@ -227,7 +235,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun StringBuilder.renderDefaultType(type: KotlinType) {
-        renderAnnotations(type, this)
+        this.renderAnnotations(type)
 
         if (type.isError) {
             append(type.constructor.toString()) // Debug name of an error type is more informative
@@ -292,10 +300,28 @@ internal class DescriptorRendererImpl(
     }
 
     private fun StringBuilder.renderFunctionType(type: KotlinType) {
-        val isNullable = type.isMarkedNullable
-        if (isNullable) append("(")
+        val lengthBefore = length
+        // we need special renderer to skip @ExtensionFunctionType
+        with(functionTypeAnnotationsRenderer) {
+            renderAnnotations(type)
+        }
+        val hasAnnotations = length != lengthBefore
 
-        val receiverType = getReceiverTypeFromFunctionType(type)
+        val isNullable = type.isMarkedNullable
+        val receiverType = type.getReceiverTypeFromFunctionType()
+
+        val needParenthesis = isNullable || (hasAnnotations && receiverType != null)
+
+        if (needParenthesis && hasAnnotations) {
+            assert(last() == ' ')
+            if (get(lastIndex - 1) != ')') {
+                // last annotation rendered without parenthesis - need to add them otherwise parsing will be incorrect
+                insert(lastIndex, "()")
+            }
+        }
+
+        if (needParenthesis) append("(")
+
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
             if (surroundReceiver) {
@@ -309,11 +335,26 @@ internal class DescriptorRendererImpl(
         }
 
         append("(")
-        appendTypeProjections(getValueParameterTypesFromFunctionType(type))
-        append(") ").append(arrow()).append(" ")
-        renderNormalizedType(getReturnTypeFromFunctionType(type))
 
-        if (isNullable) append(")?")
+        val parameterTypes = type.getValueParameterTypesFromFunctionType()
+        for ((index, typeProjection) in parameterTypes.withIndex()) {
+            if (index > 0) append(", ")
+
+            val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
+            if (name != null) {
+                append(renderName(name))
+                append(": ")
+            }
+
+            append(functionTypeParameterTypesRenderer.renderTypeProjection(typeProjection))
+        }
+
+        append(") ").append(arrow()).append(" ")
+        renderNormalizedType(type.getReturnTypeFromFunctionType())
+
+        if (needParenthesis) append(")")
+
+        if (isNullable) append("?")
     }
 
 
@@ -334,27 +375,24 @@ internal class DescriptorRendererImpl(
             append(if (fqName.isRoot) "root package" else renderFqName(fqName))
         }
     }
-    private fun renderAnnotations(annotated: Annotated, builder: StringBuilder) {
+
+    private fun StringBuilder.renderAnnotations(annotated: Annotated) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
-        val annotationsBuilder = StringBuilder().apply {
-            // Sort is needed just to fix some order when annotations resolved from modifiers
-            // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
-            // This hack can be removed when modifiers will be resolved without annotations
+        // Sort is needed just to fix some order when annotations resolved from modifiers
+        // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
+        // This hack can be removed when modifiers will be resolved without annotations
 
-            val sortedAnnotations = annotated.annotations.getAllAnnotations()
-            for ((annotation, target) in sortedAnnotations) {
-                val annotationClass = annotation.type.constructor.declarationDescriptor as ClassDescriptor
+        val sortedAnnotations = annotated.annotations.getAllAnnotations()
+        for ((annotation, target) in sortedAnnotations) {
+            val annotationClass = annotation.type.constructor.declarationDescriptor as ClassDescriptor
 
-                if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                    append(renderAnnotation(annotation, target)).append(" ")
-                }
+            if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
+                append(renderAnnotation(annotation, target)).append(" ")
             }
         }
-
-        builder.append(annotationsBuilder)
     }
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
@@ -365,11 +403,16 @@ internal class DescriptorRendererImpl(
             }
             val annotationType = annotation.type
             append(renderType(annotationType))
-            if (verbose) {
-                renderAndSortAnnotationArguments(annotation).joinTo(this, ", ", "(", ")")
-                if (annotationType.isError || annotationType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
-                    append(" /* annotation class not found */")
+
+            if (includeAnnotationArguments) {
+                val arguments = renderAndSortAnnotationArguments(annotation)
+                if (arguments.isNotEmpty()) {
+                    arguments.joinTo(this, ", ", "(", ")")
                 }
+            }
+
+            if (verbose && (annotationType.isError || annotationType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor)) {
+                append(" /* annotation class not found */")
             }
         }
     }
@@ -514,7 +557,7 @@ internal class DescriptorRendererImpl(
             builder.append(renderKeyword(variance)).append(" ")
         }
 
-        renderAnnotations(typeParameter, builder)
+        builder.renderAnnotations(typeParameter)
 
         renderName(typeParameter, builder)
         val upperBoundsCount = typeParameter.upperBounds.size
@@ -576,7 +619,7 @@ internal class DescriptorRendererImpl(
     /* FUNCTIONS */
     private fun renderFunction(function: FunctionDescriptor, builder: StringBuilder) {
         if (!startFromName) {
-            renderAnnotations(function, builder)
+            builder.renderAnnotations(function)
             renderVisibility(function.visibility, builder)
             renderModalityForCallable(function, builder)
 
@@ -638,7 +681,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderConstructor(constructor: ConstructorDescriptor, builder: StringBuilder) {
-        renderAnnotations(constructor, builder)
+        builder.renderAnnotations(constructor)
         renderVisibility(constructor.visibility, builder)
         renderMemberKind(constructor, builder)
 
@@ -712,7 +755,7 @@ internal class DescriptorRendererImpl(
             builder.append("/*").append(valueParameter.index).append("*/ ")
         }
 
-        renderAnnotations(valueParameter, builder)
+        builder.renderAnnotations(valueParameter)
 
         if (valueParameter.isCrossinline) {
             builder.append("crossinline ")
@@ -769,7 +812,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
-            renderAnnotations(property, builder)
+            builder.renderAnnotations(property)
             renderVisibility(property.visibility, builder)
 
             if (property.isConst) {
@@ -804,7 +847,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderTypeAlias(typeAlias: TypeAliasDescriptor, builder: StringBuilder) {
-        renderAnnotations(typeAlias, builder)
+        builder.renderAnnotations(typeAlias)
         renderVisibility(typeAlias.visibility, builder)
         builder.append(renderKeyword("typealias")).append(" ")
         renderName(typeAlias, builder)
@@ -831,7 +874,7 @@ internal class DescriptorRendererImpl(
         val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
 
         if (!startFromName) {
-            renderAnnotations(klass, builder)
+            builder.renderAnnotations(klass)
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }
@@ -862,7 +905,7 @@ internal class DescriptorRendererImpl(
             val primaryConstructor = klass.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
                 builder.append(" ")
-                renderAnnotations(primaryConstructor, builder)
+                builder.renderAnnotations(primaryConstructor)
                 renderVisibility(primaryConstructor.visibility, builder)
                 builder.append("constructor")
                 renderValueParameters(primaryConstructor.valueParameters, primaryConstructor.hasSynthesizedParameterNames(), builder)

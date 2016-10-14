@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
@@ -72,7 +73,7 @@ fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
         generateSetter: () -> JsPropertyInitializer
 ) {
     val to: MutableList<JsPropertyInitializer>
-    if (!descriptor.isExtension) {
+    if (!descriptor.isExtension && !TranslationUtils.shouldGenerateAccessors(descriptor)) {
         to = SmartList<JsPropertyInitializer>()
         this.add(JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
     }
@@ -178,8 +179,7 @@ private class PropertyTranslator(
     }
 
     private fun generateDefaultSetterFunction(setterDescriptor: VariableAccessorDescriptor): JsFunction {
-        val containingScope = context().getScopeForDescriptor(setterDescriptor.containingDeclaration)
-        val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
+        val function = JsFunction(context().program().rootScope, JsBlock(), accessorDescription(setterDescriptor))
 
         assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.correspondingVariable.name.asString()

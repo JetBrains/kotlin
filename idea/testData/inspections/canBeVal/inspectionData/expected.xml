@@ -70,4 +70,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' is never modified and can be declared as 'val'</problem_class>
         <description>Variable is never modified and can be declared immutable using 'val'</description>
     </problem>
+
+    <problem>
+        <file>withAnnotation.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="withAnnotation.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Local 'var' is never modified and can be declared as 'val'</problem_class>
+        <description>Variable is never modified and can be declared immutable using 'val'</description>
+    </problem>
 </problems>

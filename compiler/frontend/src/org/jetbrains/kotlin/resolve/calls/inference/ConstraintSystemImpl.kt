@@ -160,14 +160,14 @@ internal class ConstraintSystemImpl(
         fun KotlinType.substitute(): KotlinType? = substitutor.substitute(this, Variance.INVARIANT)
 
         return initialConstraints.all {
-            constraint ->
-            val resultSubType = constraint.subtype.substitute()?.let {
+            (kind, subtype, superType, position) ->
+            val resultSubType = subtype.substitute()?.let {
                 // the call might be done via safe access, so we check for notNullable receiver type;
                 // 'unsafe call' error is reported otherwise later
-                if (constraint.position.kind != ConstraintPositionKind.RECEIVER_POSITION) it else it.makeNotNullable()
+                if (position.kind != ConstraintPositionKind.RECEIVER_POSITION) it else it.makeNotNullable()
             } ?: return false
-            val resultSuperType = constraint.superType.substitute() ?: return false
-            when (constraint.kind) {
+            val resultSuperType = superType.substitute() ?: return false
+            when (kind) {
                 SUB_TYPE -> KotlinTypeChecker.DEFAULT.isSubtypeOf(resultSubType, resultSuperType)
                 EQUAL -> KotlinTypeChecker.DEFAULT.equalTypes(resultSubType, resultSuperType)
             }

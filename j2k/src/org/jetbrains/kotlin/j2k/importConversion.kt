@@ -156,7 +156,7 @@ private fun convertNonStaticImport(fqName: FqName, isOnDemand: Boolean, target: 
 private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
         = if (isOnDemand) fqName.render() + ".*" else fqName.render()
 
-private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultModuleParameters.defaultImports
+private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultImports
         .filter { it.isAllUnder }
         .map { it.fqnPart() }
         .toSet()

@@ -80,9 +80,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<Module>> MODULES =
             CompilerConfigurationKey.create("module data");
 
-    public static final CompilerConfigurationKey<Boolean> LOAD_SCRIPT_CONFIGS =
-            CompilerConfigurationKey.create("Load script configuration files from project directory tree");
-
     public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
             CompilerConfigurationKey.create("friend module paths");
 }

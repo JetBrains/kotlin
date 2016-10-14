@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.imports
 
 import org.jetbrains.kotlin.AbstractImportsTest
+import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
@@ -33,4 +34,10 @@ abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
 
     override val nameCountToUseStarImportDefault: Int
         get() = Integer.MAX_VALUE
+}
+
+abstract class AbstractJvmOptimizeImportsTest : AbstractOptimizeImportsTest()
+
+abstract class AbstractJsOptimizeImportsTest : AbstractOptimizeImportsTest() {
+    override fun getProjectDescriptor() = KotlinStdJSProjectDescriptor.instance
 }

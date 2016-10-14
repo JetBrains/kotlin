@@ -4,18 +4,18 @@ public fun test(/*0*/ n: J?, /*1*/ nn: J): kotlin.Unit
 
 public open class J {
     public constructor J()
-    public constructor J(/*0*/ @org.jetbrains.annotations.NotNull() nn: J, /*1*/ @org.jetbrains.annotations.Nullable() n: J?, /*2*/ j: J!)
+    public constructor J(/*0*/ @org.jetbrains.annotations.NotNull nn: J, /*1*/ @org.jetbrains.annotations.Nullable n: J?, /*2*/ j: J!)
     public final var j: J!
-    @org.jetbrains.annotations.Nullable() public final var n: J?
-    @org.jetbrains.annotations.NotNull() public final var nn: J
+    @org.jetbrains.annotations.Nullable public final var n: J?
+    @org.jetbrains.annotations.NotNull public final var nn: J
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open operator fun set(/*0*/ @org.jetbrains.annotations.NotNull() nn: J, /*1*/ @org.jetbrains.annotations.Nullable() n: J?, /*2*/ j: J!): kotlin.Unit
+    public open operator fun set(/*0*/ @org.jetbrains.annotations.NotNull nn: J, /*1*/ @org.jetbrains.annotations.Nullable n: J?, /*2*/ j: J!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
     public final var staticJ: J!
-    @org.jetbrains.annotations.Nullable() public final var staticN: J?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J
-    public open fun staticSet(/*0*/ @org.jetbrains.annotations.NotNull() nn: J, /*1*/ @org.jetbrains.annotations.Nullable() n: J?, /*2*/ j: J!): kotlin.Unit
+    @org.jetbrains.annotations.Nullable public final var staticN: J?
+    @org.jetbrains.annotations.NotNull public final var staticNN: J
+    public open fun staticSet(/*0*/ @org.jetbrains.annotations.NotNull nn: J, /*1*/ @org.jetbrains.annotations.Nullable n: J?, /*2*/ j: J!): kotlin.Unit
 }

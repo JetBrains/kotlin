@@ -40,11 +40,11 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
         }
         catch (e: NoClassDefFoundError) {
             // TODO: consider displaying the warning to the user
-            Logger.getInstance(GradleScriptTemplatesProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
+            Logger.getInstance(GradleScriptTemplatesProvider::class.java).warn("[kts] Cannot get gradle execution settings", e)
             null
         }
         catch (e: ClassNotFoundException) {
-            Logger.getInstance(GradleScriptTemplatesProvider::class.java).error("[kts] Cannot get gradle execution settings", e)
+            Logger.getInstance(GradleScriptTemplatesProvider::class.java).warn("[kts] Cannot get gradle execution settings", e)
             null // see todo above
         }
     }

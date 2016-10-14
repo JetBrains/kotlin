@@ -22,8 +22,10 @@ import java.util.*
 
 val DEX_BEFORE_PATCH_EXTENSION = "before_dex"
 
+fun String.needDexPatch() = split('.').any { it.endsWith("Dex") }
+
 fun patchDexTests(dir: File) {
-    dir.listFiles({ file -> file.isDirectory && file.name.startsWith("dex") }).forEach { dir ->
+    dir.listFiles({ file -> file.isDirectory && file.name.needDexPatch() }).forEach { dir ->
         dir.listFiles { testOutputFile -> testOutputFile.extension == "class" }.forEach(::applyDexLikePatch)
     }
 }

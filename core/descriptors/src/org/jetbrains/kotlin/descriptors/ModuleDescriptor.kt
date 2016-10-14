@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
+interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     val builtIns: KotlinBuiltIns
@@ -41,16 +41,11 @@ interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
+    val defaultImports: List<ImportPath>
+
+    val effectivelyExcludedImports: List<FqName>
+
     fun <T> getCapability(capability: Capability<T>): T?
 
     class Capability<T>(val name: String)
-}
-
-interface ModuleParameters {
-    val defaultImports: List<ImportPath>
-    val excludedImports: List<FqName> get() = emptyList()
-
-    object Empty : ModuleParameters {
-        override val defaultImports: List<ImportPath> = emptyList()
-    }
 }

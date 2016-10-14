@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: sumEven
+// CHECK_CONTAINS_NO_CALLS: sumEven_0
 
 internal inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, reduceFun: (Int, Int) -> Int): Int {
     var result = 0

@@ -251,6 +251,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("typeMismatchWithFunctionalType.kt")
+    public void testTypeMismatchWithFunctionalType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithFunctionalType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("typeMismatchWithNothing.kt")
     public void testTypeMismatchWithNothing() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");

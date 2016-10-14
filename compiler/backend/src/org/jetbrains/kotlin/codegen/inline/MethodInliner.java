@@ -219,6 +219,12 @@ public class MethodInliner {
                     int valueParamShift = Math.max(getNextLocalIndex(), markerShift);//NB: don't inline cause it changes
                     putStackValuesIntoLocals(info.getInvokeParamsWithoutCaptured(), valueParamShift, this, desc);
 
+                    if (invokeCall.lambdaInfo.getFunctionDescriptor().getValueParameters().isEmpty()) {
+                        // There won't be no parameters processing and line call can be left without actual instructions.
+                        // Note: if function is called on the line with other instructions like 1 + foo() no will still be generated.
+                        visitInsn(Opcodes.NOP);
+                    }
+
                     addInlineMarker(this, true);
                     Parameters lambdaParameters = info.addAllParameters(nodeRemapper);
 

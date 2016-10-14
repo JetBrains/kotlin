@@ -1,4 +1,4 @@
-// "Suppress 'IfNullToElvis' for fun foo" "true"
+// "Suppress 'FoldInitializerAndIfToElvis' for fun foo" "true"
 
 fun foo(p: List<String?>, b: Boolean) {
     var v = p[0]
@@ -6,4 +6,4 @@ fun foo(p: List<String?>, b: Boolean) {
     if (b) v = null
 }
 
-// TOOL: org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection
+// TOOL: org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisInspection

@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+class Foo(var bar: Bar)
+class Bar(var baz: Int)
+
+fun test() {
+    val foo = Foo(Bar(1))
+    val message = foo.bar
+    println(message)
+    message.baz = message.baz + 1
+}

@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A(/*0*/ z: kotlin.Int)
-    @kotlin.jvm.JvmStatic() public final val z: kotlin.Int
+    @kotlin.jvm.JvmStatic public final val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

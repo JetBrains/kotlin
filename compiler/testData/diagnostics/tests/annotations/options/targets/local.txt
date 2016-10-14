@@ -1,12 +1,12 @@
 package
 
-@base() public val z: kotlin.Int = 0
-@base() public fun foo(/*0*/ @base() y: @base() kotlin.Int): kotlin.Int
+@base public val z: kotlin.Int = 0
+@base public fun foo(/*0*/ @base y: @base kotlin.Int): kotlin.Int
 
-@base() public final enum class My : kotlin.Enum<My> {
-    @base() enum entry FIRST
+@base public final enum class My : kotlin.Enum<My> {
+    @base enum entry FIRST
 
-    @base() enum entry SECOND
+    @base enum entry SECOND
 
     private constructor My()
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
@@ -31,16 +31,16 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@base() public final class correct {
-    @base() public constructor correct()
+@base public final class correct {
+    @base public constructor correct()
     public constructor correct(/*0*/ x: kotlin.Int)
-    @base() public final val x: kotlin.Int
+    @base public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@base() public final annotation class derived : kotlin.Annotation {
+@base public final annotation class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

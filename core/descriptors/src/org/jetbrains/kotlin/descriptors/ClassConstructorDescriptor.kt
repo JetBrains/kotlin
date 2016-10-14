@@ -24,7 +24,7 @@ interface ClassConstructorDescriptor : ConstructorDescriptor {
 
     override fun getOriginal(): ClassConstructorDescriptor
 
-    override fun substitute(substitutor: TypeSubstitutor): ClassConstructorDescriptor
+    override fun substitute(substitutor: TypeSubstitutor): ClassConstructorDescriptor?
 
     override fun copy(
             newOwner: DeclarationDescriptor,

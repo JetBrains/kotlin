@@ -3,7 +3,7 @@ package
 public inline fun bar(/*0*/ block: () -> kotlin.Int): kotlin.Int
 public fun foo(): kotlin.Unit
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class Ann : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ x: kotlin.Int = ...)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

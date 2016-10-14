@@ -19,8 +19,8 @@ package kotlin.js
 import kotlin.annotation.AnnotationTarget.*
 
 @native
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER)
-public annotation class native(public val name: String = "")
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
+public annotation class native(@Deprecated public val name: String = "")
 
 @native
 @Target(FUNCTION)
@@ -47,3 +47,7 @@ public annotation class enumerable()
 @Target(CLASS)
 @Deprecated("Do not use this annotation: it is for internal use only")
 public annotation class marker
+
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+annotation class JsName(val name: String)

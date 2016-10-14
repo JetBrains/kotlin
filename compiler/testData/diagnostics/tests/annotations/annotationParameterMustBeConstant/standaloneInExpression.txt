@@ -27,28 +27,28 @@ public final enum class MyEnum : kotlin.Enum<MyEnum> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
 
-@AnnE() public final class Test {
+@AnnE public final class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnE() public final class Test2 {
+@AnnE public final class Test2 {
     public constructor Test2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnE() public final class Test3 {
+@AnnE public final class Test3 {
     public constructor Test3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@AnnE() public final class Test4 {
+@AnnE public final class Test4 {
     public constructor Test4()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

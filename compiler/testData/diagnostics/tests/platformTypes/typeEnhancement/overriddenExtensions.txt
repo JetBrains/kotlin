@@ -14,8 +14,8 @@ public/*package*/ open class B : A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String?.bar(/*0*/ y: kotlin.String): kotlin.Int
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String.foo(/*0*/ y: kotlin.String?): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String?.bar(/*0*/ y: kotlin.String): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String.foo(/*0*/ y: kotlin.String?): kotlin.Int
 }
 
 public open class B1 : A {
@@ -23,8 +23,8 @@ public open class B1 : A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @java.lang.Override() public open override /*1*/ fun kotlin.String?.bar(/*0*/ y: kotlin.String): kotlin.Int
-    @java.lang.Override() public open override /*1*/ fun kotlin.String.foo(/*0*/ y: kotlin.String?): kotlin.Int
+    @java.lang.Override public open override /*1*/ fun kotlin.String?.bar(/*0*/ y: kotlin.String): kotlin.Int
+    @java.lang.Override public open override /*1*/ fun kotlin.String.foo(/*0*/ y: kotlin.String?): kotlin.Int
 }
 
 public/*package*/ open class C : A {
@@ -32,8 +32,8 @@ public/*package*/ open class C : A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String!.bar(/*0*/ @org.jetbrains.annotations.Nullable() y: kotlin.String!): kotlin.Int
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String!.foo(/*0*/ @org.jetbrains.annotations.NotNull() y: kotlin.String!): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String!.bar(/*0*/ @org.jetbrains.annotations.Nullable y: kotlin.String!): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String!.foo(/*0*/ @org.jetbrains.annotations.NotNull y: kotlin.String!): kotlin.Int
 }
 
 public/*package*/ open class D : B {
@@ -41,8 +41,8 @@ public/*package*/ open class D : B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String!.bar(/*0*/ @org.jetbrains.annotations.NotNull() y: kotlin.String): kotlin.Int
-    @java.lang.Override() public/*package*/ open override /*1*/ fun kotlin.String!.foo(/*0*/ @org.jetbrains.annotations.Nullable() y: kotlin.String?): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String!.bar(/*0*/ @org.jetbrains.annotations.NotNull y: kotlin.String): kotlin.Int
+    @java.lang.Override public/*package*/ open override /*1*/ fun kotlin.String!.foo(/*0*/ @org.jetbrains.annotations.Nullable y: kotlin.String?): kotlin.Int
 }
 
 public final class E : B1 {

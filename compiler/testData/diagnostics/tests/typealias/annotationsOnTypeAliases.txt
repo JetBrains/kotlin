@@ -1,0 +1,23 @@
+package
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class IrrelevantTarget : kotlin.Annotation {
+    public constructor IrrelevantTarget()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class NoTarget : kotlin.Annotation {
+    public constructor NoTarget()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPEALIAS}) public final annotation class TypealiasTarget : kotlin.Annotation {
+    public constructor TypealiasTarget()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+@NoTarget @IrrelevantTarget @TypealiasTarget public typealias Test = kotlin.String

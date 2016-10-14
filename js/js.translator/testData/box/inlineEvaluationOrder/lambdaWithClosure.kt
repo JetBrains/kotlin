@@ -23,9 +23,9 @@ package foo
    Thus, we need to be sure, that foo$() is not extracted to some temporary var.
  */
 
-// CHECK_NOT_CALLED: max
-// CHECK_NOT_CALLED: box$f
+// CHECK_NOT_CALLED: max_0
 // CHECK_NOT_CALLED: box$f_0
+// CHECK_NOT_CALLED: box$f_1
 
 inline fun max(getA: ()->Int, b: Int): Int {
     val a = getA()

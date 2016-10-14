@@ -48,13 +48,13 @@ interface ScriptTemplatesProvider {
 
 fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
                                                   errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
-): List<KotlinScriptDefinitionFromTemplate> =
+): List<KotlinScriptDefinitionFromAnnotatedTemplate> =
         makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                              errorsHandler)
 
 fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
                                          errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
-): List<KotlinScriptDefinitionFromTemplate> {
+): List<KotlinScriptDefinitionFromAnnotatedTemplate> {
     val idToVersion = hashMapOf<String, Int>()
     return providers.filter { it.isValid }.sortedByDescending { it.version }.flatMap { provider ->
         try {
@@ -65,12 +65,12 @@ fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProv
             provider.templateClassNames.map {
                 val cl = loader.loadClass(it)
                 idToVersion.put(provider.id, provider.version)
-                KotlinScriptDefinitionFromTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
+                KotlinScriptDefinitionFromAnnotatedTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
             }
         }
         catch (ex: Exception) {
             errorsHandler(provider, ex)
-            emptyList<KotlinScriptDefinitionFromTemplate>()
+            emptyList<KotlinScriptDefinitionFromAnnotatedTemplate>()
         }
     }
 }

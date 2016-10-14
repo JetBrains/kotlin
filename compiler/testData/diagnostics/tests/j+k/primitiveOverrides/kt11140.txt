@@ -40,7 +40,7 @@ public open class A : java.util.HashMap<kotlin.Int!, kotlin.Double!>, B<kotlin.I
     invisible_fake open override /*1*/ /*fake_override*/ fun newKeyIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Int!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun newValueIterator(): kotlin.collections.(Mutable)Iterator<kotlin.Double!>!
     public open override /*1*/ fun put(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Double): kotlin.Double
-    @java.lang.Override() public open override /*2*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
+    @java.lang.Override public open override /*2*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putAllForCreate(/*0*/ p0: (kotlin.collections.MutableMap<out kotlin.Int!, out kotlin.Double!>..kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>?)): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putForCreate(/*0*/ p0: kotlin.Int!, /*1*/ p1: kotlin.Double!): kotlin.Unit

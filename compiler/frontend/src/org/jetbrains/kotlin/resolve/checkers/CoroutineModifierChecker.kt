@@ -56,7 +56,7 @@ object CoroutineModifierChecker : SimpleDeclarationChecker {
                 continue
             }
 
-            val returnType = getReturnTypeFromFunctionType(parameterDescriptor.type)
+            val returnType = parameterDescriptor.type.getReturnTypeFromFunctionType()
 
             if (returnType.isMarkedNullable || !returnType.isValidContinuation() || !returnType.arguments.single().type.isUnit()) {
                 report("parameter should have function type like 'Controller.() -> Continuation<Unit>' (Continuation<Unit> for return type is necessary)")
@@ -68,7 +68,7 @@ object CoroutineModifierChecker : SimpleDeclarationChecker {
                 continue
             }
 
-            val controller = getReceiverTypeFromFunctionType(parameterDescriptor.type)!!
+            val controller = parameterDescriptor.type.getReceiverTypeFromFunctionType()!!
 
             val handleResultFunctions =
                     controller.memberScope

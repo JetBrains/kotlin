@@ -1,4 +1,5 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <import file="common.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
     <property name="ideaVersion" value="162.1812.17"/>
@@ -26,28 +27,10 @@
     -->
     <!--<property name="override.version.disabled" value="true"/>-->
 
-    <condition property="isWindows">
-        <os family="windows"/>
-    </condition>
-
-    <condition property="isMac">
-        <os family="mac"/>
-    </condition>
-
-    <condition property="isLinux">
-        <and>
-            <os family="unix"/>
-            <not>
-                <os family="mac"/>
-            </not>
-        </and>
-    </condition>
-
     <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
         <os family="windows"/>
     </condition>
 
-    <property name="dependencies" value="${basedir}/dependencies"/>
     <property name="generators" value="${basedir}/generators"/>
 
     <property name="idea.dir" value="ideaSDK"/>
@@ -184,12 +167,6 @@
             <zipfileset src="${download}/${common.name}-freebsd-amd64.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-freebsd-i386.jar" includes="**" />
         </jar>
-
-    </target>
-
-    <target name="make-dependency-dirs">
-        <mkdir dir="${dependencies}"/>
-        <mkdir dir="${dependencies}/download"/>
     </target>
 
     <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">

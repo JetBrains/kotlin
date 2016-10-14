@@ -1,6 +1,6 @@
 package test
 
-@test.Anno() public fun function(): kotlin.Unit
+@test.Anno public fun function(): kotlin.Unit
 
 public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()

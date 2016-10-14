@@ -7,7 +7,7 @@ class C {
 }
 
 fun test1(c: C) {
-    val (<!UNUSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>) = c
+    val (a, <!UNUSED_VARIABLE!>b<!>) = c
 }
 
 fun test2(c: C) {
@@ -16,7 +16,7 @@ fun test2(c: C) {
 }
 
 fun test3(c: C) {
-    var (<!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>) = c
+    var (a, <!UNUSED_VARIABLE!>b<!>) = c
     <!UNUSED_VALUE!>a =<!> 3
 }
 

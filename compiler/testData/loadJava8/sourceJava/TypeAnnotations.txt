@@ -15,7 +15,7 @@ public open class TypeAnnotations {
     }
 
     public interface MyClass</*0*/ TT : kotlin.Any!> {
-        public abstract fun f(/*0*/ p: test.TypeAnnotations.G2<@test.TypeAnnotations.A() kotlin.String!, @test.TypeAnnotations.A(value = "abc") kotlin.Int!>!): kotlin.Unit
-        public abstract fun f(/*0*/ p: test.TypeAnnotations.G<@test.TypeAnnotations.A() kotlin.String!>!): kotlin.Unit
+        public abstract fun f(/*0*/ p: test.TypeAnnotations.G2<@test.TypeAnnotations.A kotlin.String!, @test.TypeAnnotations.A(value = "abc") kotlin.Int!>!): kotlin.Unit
+        public abstract fun f(/*0*/ p: test.TypeAnnotations.G<@test.TypeAnnotations.A kotlin.String!>!): kotlin.Unit
     }
 }

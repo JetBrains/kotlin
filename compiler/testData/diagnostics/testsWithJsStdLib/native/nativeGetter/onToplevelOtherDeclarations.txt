@@ -1,9 +1,9 @@
 package
 
-@kotlin.js.nativeGetter() public val toplevelVal: kotlin.Int = 0
-@kotlin.js.nativeGetter() public fun toplevelFun(): kotlin.Any
+@kotlin.js.nativeGetter public val toplevelVal: kotlin.Int = 0
+@kotlin.js.nativeGetter public fun toplevelFun(): kotlin.Any
 
-@kotlin.js.nativeGetter() public final class Foo {
+@kotlin.js.nativeGetter public final class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

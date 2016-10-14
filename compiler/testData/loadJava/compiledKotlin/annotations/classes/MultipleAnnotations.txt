@@ -12,6 +12,6 @@ public final annotation class A3 : kotlin.Annotation {
     /*primary*/ public constructor A3()
 }
 
-@test.A1() @test.A2() @test.A3() public final class Class {
+@test.A1 @test.A2 @test.A3 public final class Class {
     /*primary*/ public constructor Class()
 }

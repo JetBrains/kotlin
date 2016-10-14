@@ -2,7 +2,7 @@
 
 val foo: dynamic = 1
 
-fun foo() {
+fun bar() {
     class C {
         val foo: dynamic = 1
     }

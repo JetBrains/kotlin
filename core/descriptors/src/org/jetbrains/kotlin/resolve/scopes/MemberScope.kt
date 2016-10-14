@@ -114,6 +114,7 @@ class DescriptorKindFilter(
     private fun DeclarationDescriptor.kind(): Int {
         return when (this) {
             is ClassDescriptor -> if (this.kind.isSingleton) SINGLETON_CLASSIFIERS_MASK else NON_SINGLETON_CLASSIFIERS_MASK
+            is TypeAliasDescriptor -> TYPE_ALIASES_MASK
             is ClassifierDescriptor -> NON_SINGLETON_CLASSIFIERS_MASK
             is PackageFragmentDescriptor, is PackageViewDescriptor -> PACKAGES_MASK
             is FunctionDescriptor -> FUNCTIONS_MASK
@@ -123,14 +124,18 @@ class DescriptorKindFilter(
     }
 
     companion object {
-        val NON_SINGLETON_CLASSIFIERS_MASK: Int = 0x01
-        val SINGLETON_CLASSIFIERS_MASK: Int = 0x02
-        val PACKAGES_MASK: Int = 0x04
-        val FUNCTIONS_MASK: Int = 0x08
-        val VARIABLES_MASK: Int = 0x10
+        private var nextMaskValue: Int = 0x01
+        private fun nextMask() = nextMaskValue.apply { nextMaskValue = nextMaskValue shl 1 }
 
-        val ALL_KINDS_MASK: Int = 0x1F
-        val CLASSIFIERS_MASK: Int = NON_SINGLETON_CLASSIFIERS_MASK or SINGLETON_CLASSIFIERS_MASK
+        val NON_SINGLETON_CLASSIFIERS_MASK: Int = nextMask()
+        val SINGLETON_CLASSIFIERS_MASK: Int = nextMask()
+        val TYPE_ALIASES_MASK: Int = nextMask()
+        val PACKAGES_MASK: Int = nextMask()
+        val FUNCTIONS_MASK: Int = nextMask()
+        val VARIABLES_MASK: Int = nextMask()
+
+        val ALL_KINDS_MASK: Int = nextMask() - 1
+        val CLASSIFIERS_MASK: Int = NON_SINGLETON_CLASSIFIERS_MASK or SINGLETON_CLASSIFIERS_MASK or TYPE_ALIASES_MASK
         val VALUES_MASK: Int = SINGLETON_CLASSIFIERS_MASK or FUNCTIONS_MASK or VARIABLES_MASK
         val CALLABLES_MASK: Int = FUNCTIONS_MASK or VARIABLES_MASK
 
@@ -138,6 +143,7 @@ class DescriptorKindFilter(
         @JvmField val CALLABLES: DescriptorKindFilter = DescriptorKindFilter(CALLABLES_MASK)
         @JvmField val NON_SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(NON_SINGLETON_CLASSIFIERS_MASK)
         @JvmField val SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(SINGLETON_CLASSIFIERS_MASK)
+        @JvmField val TYPE_ALIASES: DescriptorKindFilter = DescriptorKindFilter(TYPE_ALIASES_MASK)
         @JvmField val CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(CLASSIFIERS_MASK)
         @JvmField val PACKAGES: DescriptorKindFilter = DescriptorKindFilter(PACKAGES_MASK)
         @JvmField val FUNCTIONS: DescriptorKindFilter = DescriptorKindFilter(FUNCTIONS_MASK)

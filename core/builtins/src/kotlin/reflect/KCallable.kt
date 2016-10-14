@@ -47,6 +47,7 @@ public interface KCallable<out R> : KAnnotatedElement {
     /**
      * The list of type parameters of this callable.
      */
+    @SinceKotlin("1.1")
     public val typeParameters: List<KTypeParameter>
 
     /**
@@ -66,20 +67,24 @@ public interface KCallable<out R> : KAnnotatedElement {
     /**
      * Visibility of this callable, or `null` if its visibility cannot be represented in Kotlin.
      */
+    @SinceKotlin("1.1")
     public val visibility: KVisibility?
 
     /**
      * `true` if this callable is `final`.
      */
+    @SinceKotlin("1.1")
     public val isFinal: Boolean
 
     /**
      * `true` if this callable is `open`.
      */
+    @SinceKotlin("1.1")
     public val isOpen: Boolean
 
     /**
      * `true` if this callable is `abstract`.
      */
+    @SinceKotlin("1.1")
     public val isAbstract: Boolean
 }

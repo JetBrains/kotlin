@@ -22,9 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
-import org.jetbrains.kotlin.script.GetScriptDefinitionKt;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt;
 
 import java.util.List;
 
@@ -36,9 +35,10 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
     // make it a simple lazy value after converting to kotlin
     private KotlinScriptDefinition getKotlinScriptDefinition() {
         if (!kotlinScriptDefinitionInitialized) {
-            kotlinScriptDefinitionField = GetScriptDefinitionKt.getScriptDefinition(getContainingKtFile());
+            KtFile ktFile = getContainingKtFile();
+            kotlinScriptDefinitionField = KotlinScriptDefinitionProviderKt.getScriptDefinition(ktFile);
             kotlinScriptDefinitionInitialized = true;
-            assert kotlinScriptDefinitionField != null : "Should not parse a script without definition";
+            assert kotlinScriptDefinitionField != null : "Should not parse a script without definition: " + ktFile.toString();
         }
         return kotlinScriptDefinitionField;
     }

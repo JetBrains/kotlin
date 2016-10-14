@@ -115,8 +115,8 @@ public interface KtNodeTypes {
     KtNodeType BREAK                     = new KtNodeType("BREAK", KtBreakExpression.class);
     KtNodeType IF                        = new KtNodeType("IF", KtIfExpression.class);
     KtNodeType CONDITION                 = new KtNodeType("CONDITION", KtContainerNode.class);
-    KtNodeType THEN                      = new KtNodeType("THEN", KtContainerNode.class);
-    KtNodeType ELSE                      = new KtNodeType("ELSE", KtContainerNode.class);
+    KtNodeType THEN                      = new KtNodeType("THEN", KtContainerNodeForControlStructureBody.class);
+    KtNodeType ELSE                      = new KtNodeType("ELSE", KtContainerNodeForControlStructureBody.class);
     KtNodeType TRY                       = new KtNodeType("TRY", KtTryExpression.class);
     KtNodeType CATCH                     = new KtNodeType("CATCH", KtCatchClause.class);
     KtNodeType FINALLY                   = new KtNodeType("FINALLY", KtFinallySection.class);
@@ -124,7 +124,7 @@ public interface KtNodeTypes {
     KtNodeType WHILE                     = new KtNodeType("WHILE", KtWhileExpression.class);
     KtNodeType DO_WHILE                  = new KtNodeType("DO_WHILE", KtDoWhileExpression.class);
     KtNodeType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
-    KtNodeType BODY                      = new KtNodeType("BODY", KtContainerNode.class);
+    KtNodeType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
     KtNodeType BLOCK                     = new KtNodeType("BLOCK", KtBlockExpression.class);
 
     IElementType LAMBDA_EXPRESSION = new IErrorCounterReparseableElementType("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE) {

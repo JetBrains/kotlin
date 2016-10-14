@@ -22,7 +22,7 @@ public final annotation class A : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@A() public final class MyClass3 {
+@A public final class MyClass3 {
     public constructor MyClass3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

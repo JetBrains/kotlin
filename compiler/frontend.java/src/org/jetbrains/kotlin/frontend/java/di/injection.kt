@@ -74,6 +74,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useInstance(InternalFlexibleTypeTransformer)
 
     useInstance(languageVersionSettings)
+    useImpl<CompilerDeserializationConfiguration>()
 }
 
 fun createContainerForLazyResolveWithJava(

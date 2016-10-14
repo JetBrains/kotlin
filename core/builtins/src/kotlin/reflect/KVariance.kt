@@ -26,6 +26,7 @@ package kotlin.reflect
  * @see [KTypeParameter.variance]
  * @see [KTypeProjection]
  */
+@SinceKotlin("1.1")
 enum class KVariance {
     /**
      * The affected type parameter or type is *invariant*, which means it has no variance applied to it.

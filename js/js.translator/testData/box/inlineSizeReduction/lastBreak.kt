@@ -1,8 +1,8 @@
 package foo
 
-// CHECK_NOT_CALLED: f1
-// CHECK_NOT_CALLED: f2
-// CHECK_BREAKS_COUNT: function=test count=3
+// CHECK_NOT_CALLED: f1_0
+// CHECK_NOT_CALLED: f2_0
+// CHECK_BREAKS_COUNT: function=test_0 count=3
 
 internal var even = arrayListOf<Int>()
 internal var odd = arrayListOf<Int>()

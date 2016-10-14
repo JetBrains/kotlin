@@ -28,7 +28,4 @@ public class CommonConfigurationKeys {
 
     public static final CompilerConfigurationKey<String> MODULE_NAME =
             CompilerConfigurationKey.create("module name");
-
-    public static final CompilerConfigurationKey<Boolean> REPL_MODE =
-            CompilerConfigurationKey.create("REPL mode");
 }

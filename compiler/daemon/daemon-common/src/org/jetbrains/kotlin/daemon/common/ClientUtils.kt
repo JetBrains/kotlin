@@ -67,7 +67,7 @@ fun walkDaemons(registryDir: File,
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
 
     try {
-        val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port)
+        val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port, LoopbackNetworkInterface.clientLoopbackSocketFactory)
                 ?.lookup(COMPILER_SERVICE_RMI_NAME)
         when (daemon) {
             null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
@@ -79,4 +79,12 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
         report(DaemonReportCategory.EXCEPTION, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown error"))
     }
     return null
+}
+
+
+fun makeAutodeletingFlagFile(keyword: String = "compiler-client"): File {
+    val validChars = "^a-zA-Z0-9-_"
+    val flagFile = File.createTempFile("kotlin-${keyword.filter { validChars.contains(it) }}-", "-is-running")
+    flagFile.deleteOnExit()
+    return flagFile
 }

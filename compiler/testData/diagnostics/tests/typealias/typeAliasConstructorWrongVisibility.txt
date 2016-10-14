@@ -21,7 +21,7 @@ public final class MyDerived : MyClass {
     public constructor MyDerived()
     public final val test4: [ERROR : Type for MyAlias(1)]
     public final val test4a: [ERROR : Type for MyClass(1)]
-    public final val test5: [ERROR : Type for MyAlias("")]
+    public final val test5: MyClass
     public final val test5a: MyClass
     public final val test6: MyClass
     public final val test6a: MyClass

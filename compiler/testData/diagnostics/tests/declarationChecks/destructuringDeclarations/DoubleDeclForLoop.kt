@@ -8,7 +8,7 @@ class C {
 }
 
 fun test() {
-    for ((x, y) in C()) {
+    for ((x, <!UNUSED_VARIABLE!>y<!>) in C()) {
 
     }
 }

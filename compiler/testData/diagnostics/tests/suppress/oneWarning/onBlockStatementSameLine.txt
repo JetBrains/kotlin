@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ T : kotlin.CharSequence> foo(/*0*/ x: kotlin.Array<kotlin.Any>, /*1*/ block: (T, kotlin.Int) -> kotlin.Int): kotlin.Unit

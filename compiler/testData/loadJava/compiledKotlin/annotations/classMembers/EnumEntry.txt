@@ -13,11 +13,11 @@ public final annotation class Bnno : kotlin.Annotation {
 }
 
 public final enum class Eee : kotlin.Enum<test.Eee> {
-    @test.Anno() enum entry Entry1
+    @test.Anno enum entry Entry1
 
     enum entry Entry2
 
-    @test.Anno(value = "3") @test.Bnno() enum entry Entry3
+    @test.Anno(value = "3") @test.Bnno enum entry Entry3
 
     @test.Anno(value = "4", x = 4) enum entry Entry4
 

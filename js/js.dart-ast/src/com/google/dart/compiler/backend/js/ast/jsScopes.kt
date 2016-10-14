@@ -32,8 +32,6 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
     private val topLabelScope: LabelScope?
         get() = if (labelScopes.isNotEmpty()) labelScopes.peek() else null
 
-    override fun declareName(identifier: String): JsName = super.declareFreshName(identifier)
-
     override fun hasOwnName(name: String): Boolean = RESERVED_WORDS.contains(name) || super.hasOwnName(name)
 
     open fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)

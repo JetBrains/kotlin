@@ -1,0 +1,26 @@
+package
+
+@kotlin.SinceKotlin(version = "") public fun f01(): kotlin.Unit
+@kotlin.SinceKotlin(version = "x") public fun f02(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1") public fun f03(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1,0") public fun f04(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1,0,1") public fun f05(): kotlin.Unit
+@kotlin.SinceKotlin(version = "a.b") public fun f06(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.a") public fun f07(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.0.a") public fun f08(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.0-beta") public fun f09(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1.0-dev-1111") public fun f10(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1.0+rc") public fun f11(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.5.3.7") public fun f12(): kotlin.Unit
+@kotlin.SinceKotlin(version = "01.1") public fun f13(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.01") public fun f14(): kotlin.Unit
+@kotlin.SinceKotlin(version = "-1.0") public fun f15(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.-1.0") public fun f16(): kotlin.Unit
+@kotlin.SinceKotlin(version = "0.00.1") public fun f17(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1..0") public fun f18(): kotlin.Unit
+@kotlin.SinceKotlin(version = " 1.0") public fun f19(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.0 ") public fun f20(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1") public fun ok1(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1.0") public fun ok2(): kotlin.Unit
+@kotlin.SinceKotlin(version = "0.0.0") public fun ok3(): kotlin.Unit
+@kotlin.SinceKotlin(version = "123456789012345678901234567890.123456789012345678901234567890.123456789012345678901234567890") public fun ok4(): kotlin.Unit

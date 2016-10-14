@@ -4,7 +4,7 @@ package
 public fun block(): kotlin.Unit
 public fun expression(): UsefulClass
 public fun invoker(): kotlin.Unit
-public fun reflection(): kotlin.reflect.KFunction1<kotlin.Int, UsefulClass>
+public fun reflection(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "param") kotlin.Int, UsefulClass>
 public fun reflection2(): kotlin.reflect.KFunction1<UsefulClass, kotlin.Unit>
 @kotlin.Deprecated(message = "does nothing good") public fun kotlin.Any.doNothing(): kotlin.String
 

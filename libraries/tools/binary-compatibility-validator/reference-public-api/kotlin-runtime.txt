@@ -30,9 +30,17 @@ public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
 	public fun <init> (Ljava/lang/Throwable;)V
 }
 
+public abstract interface annotation class kotlin/ParameterName : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
 public abstract interface annotation class kotlin/ReplaceWith : java/lang/annotation/Annotation {
 	public abstract fun expression ()Ljava/lang/String;
 	public abstract fun imports ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/SinceKotlin : java/lang/annotation/Annotation {
+	public abstract fun version ()Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
@@ -80,6 +88,7 @@ public final class kotlin/annotation/AnnotationTarget : java/lang/Enum {
 	public static final field PROPERTY_GETTER Lkotlin/annotation/AnnotationTarget;
 	public static final field PROPERTY_SETTER Lkotlin/annotation/AnnotationTarget;
 	public static final field TYPE Lkotlin/annotation/AnnotationTarget;
+	public static final field TYPEALIAS Lkotlin/annotation/AnnotationTarget;
 	public static final field TYPE_PARAMETER Lkotlin/annotation/AnnotationTarget;
 	public static final field VALUE_PARAMETER Lkotlin/annotation/AnnotationTarget;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/annotation/AnnotationTarget;
@@ -1273,11 +1282,6 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static final field PUBLIC Lkotlin/reflect/KVisibility;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVisibility;
 	public static fun values ()[Lkotlin/reflect/KVisibility;
-}
-
-public abstract class kotlin/script/StandardScriptTemplate {
-	public fun <init> ([Ljava/lang/String;)V
-	public final fun getArgs ()[Ljava/lang/String;
 }
 
 public abstract interface annotation class org/jetbrains/annotations/Mutable : java/lang/annotation/Annotation {

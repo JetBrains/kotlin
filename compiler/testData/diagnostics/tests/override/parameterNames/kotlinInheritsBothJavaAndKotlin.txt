@@ -1,6 +1,6 @@
 package
 
-public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
+public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (javaName: kotlin.Int) -> kotlin.Unit): JavaInterface
 
 public final class BothTraitsSubclass : JavaInterface, KotlinTrait {
     public constructor BothTraitsSubclass()

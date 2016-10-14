@@ -106,7 +106,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
         return (ClassConstructorDescriptor) super.getOriginal();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ClassConstructorDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
         return (ClassConstructorDescriptor) super.substitute(originalSubstitutor);

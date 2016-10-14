@@ -57,7 +57,7 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
         return end + differenceModulo(start, end, -step)
     }
     else {
-        throw IllegalArgumentException("Step is zero.")
+        throw kotlin.IllegalArgumentException("Step is zero.")
     }
 }
 
@@ -82,6 +82,6 @@ internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long
         return end + differenceModulo(start, end, -step)
     }
     else {
-        throw IllegalArgumentException("Step is zero.")
+        throw kotlin.IllegalArgumentException("Step is zero.")
     }
 }

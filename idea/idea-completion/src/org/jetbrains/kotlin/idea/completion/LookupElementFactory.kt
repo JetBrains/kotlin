@@ -153,7 +153,7 @@ class LookupElementFactory(
                 //TODO: order for them
                 val fuzzyParameterType = parameterType.toFuzzyType(descriptor.typeParameters)
                 for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
-                    val substitutedDescriptor = descriptor.substitute(substitutor)
+                    val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
                     add(createFunctionCallElementWithArguments(substitutedDescriptor, variable.name.render(), useReceiverTypes))
                 }
             }
@@ -167,7 +167,7 @@ class LookupElementFactory(
         val lambdaPresentation = lambdaPresentation(if (explicitLambdaParameters) parameterType else null)
 
         // render only the last parameter because all other should be optional and will be omitted
-        var parametersRenderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES
+        var parametersRenderer = BasicLookupElementFactory.SHORT_NAMES_RENDERER
         if (descriptor.valueParameters.size > 1) {
             parametersRenderer = parametersRenderer.withOptions {
                 valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by this.valueParametersHandler {

@@ -33,6 +33,7 @@ import kotlin.reflect.jvm.internal.KTypeImpl
  * the list should follow with arguments for the type parameters of its outer class, and so forth until a class is
  * not `inner`, or is declared on the top level.
  */
+@SinceKotlin("1.1")
 fun KClassifier.createType(
         arguments: List<KTypeProjection> = emptyList(),
         nullable: Boolean = false,
@@ -81,6 +82,7 @@ private fun createKotlinType(
  *
  * @see [KClassifier.createType]
  */
+@SinceKotlin("1.1")
 val KClassifier.starProjectedType: KType
     get() {
         val descriptor = (this as? KClassifierImpl)?.descriptor

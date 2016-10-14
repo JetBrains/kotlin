@@ -12,5 +12,8 @@
     <orderEntry type="module" module-name="idea-completion" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="daemon-common" />
+    <orderEntry type="module" module-name="daemon-client" />
   </component>
 </module>

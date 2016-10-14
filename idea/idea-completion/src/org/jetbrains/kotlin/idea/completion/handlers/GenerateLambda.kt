@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.util.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -53,11 +55,11 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
     context.setLaterRunnable {
         context.project.executeWriteCommand(commandName, groupId = commandGroupId) {
             try {
-                if (rangeMarker.isValid()) {
-                    context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-                    context.getEditor().getCaretModel().moveToOffset(rangeMarker.getStartOffset())
-                    val template = buildTemplate(lambdaType, explicitParameterTypes, context.getProject())
-                    TemplateManager.getInstance(context.getProject()).startTemplate(context.getEditor(), template)
+                if (rangeMarker.isValid) {
+                    context.document.deleteString(rangeMarker.startOffset, rangeMarker.endOffset)
+                    context.editor.caretModel.moveToOffset(rangeMarker.startOffset)
+                    val template = buildTemplate(lambdaType, explicitParameterTypes, context.project)
+                    TemplateManager.getInstance(context.project).startTemplate(context.editor, template)
                 }
             }
             finally {
@@ -70,7 +72,11 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 fun lambdaPresentation(lambdaType: KotlinType?): String {
     if (lambdaType == null) return "{...}"
     val parameterTypes = functionParameterTypes(lambdaType)
-    val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
+    val parametersPresentation = parameterTypes
+            .map {
+                it.extractParameterNameFromFunctionTypeArgument() ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it)
+            }
+            .joinToString(", ")
     return "{ $parametersPresentation -> ... }"
 }
 
@@ -109,7 +115,25 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
             template.addTextSegment(", ")
         }
         //TODO: check for names in scope
-        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p").toTypedArray()), true)
+        val parameterName = parameterType.extractParameterNameFromFunctionTypeArgument()?.render()
+        val nameExpression =  if (parameterName != null) {
+            object : Expression() {
+                override fun calculateResult(context: ExpressionContext?) = TextResult(parameterName)
+                override fun calculateQuickResult(context: ExpressionContext?): Result? = TextResult(parameterName)
+                override fun calculateLookupItems(context: ExpressionContext?) = emptyArray<LookupElement>()
+            }
+        }
+        else {
+            val nameSuggestions = KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p").toTypedArray()
+            object : Expression() {
+                override fun calculateResult(context: ExpressionContext?) = TextResult(nameSuggestions[0])
+                override fun calculateQuickResult(context: ExpressionContext?): Result? = null
+                override fun calculateLookupItems(context: ExpressionContext?)
+                        = nameSuggestions.map { LookupElementBuilder.create(it) }.toTypedArray()
+            }
+        }
+        template.addVariable(nameExpression, true)
+
         if (explicitParameterTypes) {
             template.addTextSegment(": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameterType))
         }
@@ -121,14 +145,6 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
     return template
 }
 
-private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expression() {
-    override fun calculateResult(context: ExpressionContext?) = TextResult(nameSuggestions[0])
-
-    override fun calculateQuickResult(context: ExpressionContext?): Result? = null
-
-    override fun calculateLookupItems(context: ExpressionContext?)
-            = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
+private fun functionParameterTypes(functionType: KotlinType): List<KotlinType> {
+    return functionType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType)
 }
-
-fun functionParameterTypes(functionType: KotlinType): List<KotlinType> =
-        getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)

@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add
+// CHECK_CONTAINS_NO_CALLS: add_0
 
 internal data class State(var count: Int = 0)
 

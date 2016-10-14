@@ -10,6 +10,6 @@ public open class J {
 
     // Static members
     public final var staticJ: kotlin.IntArray!
-    @org.jetbrains.annotations.Nullable() public final var staticN: kotlin.IntArray?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: kotlin.IntArray
+    @org.jetbrains.annotations.Nullable public final var staticN: kotlin.IntArray?
+    @org.jetbrains.annotations.NotNull public final var staticNN: kotlin.IntArray
 }

@@ -20,6 +20,7 @@
 
 package kotlin.collections
 
+@SinceKotlin("1.1")
 public abstract class AbstractList<out E> protected constructor() : AbstractCollection<E>(), List<E> {
     abstract override val size: Int
     abstract override fun get(index: Int): E

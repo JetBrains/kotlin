@@ -1,6 +1,6 @@
 package
 
-public final class NestedInnerClass : kotlin.script.StandardScriptTemplate {
+public final class NestedInnerClass : kotlin.script.templates.standard.ScriptTemplateWithArgs {
     public constructor NestedInnerClass(/*0*/ args: kotlin.Array<kotlin.String>)
     public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
     public final val property: kotlin.String = ""

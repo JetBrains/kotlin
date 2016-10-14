@@ -22,14 +22,14 @@ public final annotation class Second : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@property:Ann() public final class SomeClass {
-    @property:Ann() public constructor SomeClass(/*0*/ s: kotlin.String)
-    @property:Ann() protected final val p1: kotlin.String = ""
-    @property:Ann() @property:Second() protected final val p2: kotlin.String = ""
-    @property:Ann() protected final var p3: kotlin.String
-    @property:Ann() protected final val p4: kotlin.String
-    @property:Ann() public final var propertyWithCustomSetter: kotlin.Int
-    @property:Ann() public final fun anotherFun(): kotlin.Unit
+@property:Ann public final class SomeClass {
+    @property:Ann public constructor SomeClass(/*0*/ s: kotlin.String)
+    @property:Ann protected final val p1: kotlin.String = ""
+    @property:Ann @property:Second protected final val p2: kotlin.String = ""
+    @property:Ann protected final var p3: kotlin.String
+    @property:Ann protected final val p4: kotlin.String
+    @property:Ann public final var propertyWithCustomSetter: kotlin.Int
+    @property:Ann public final fun anotherFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

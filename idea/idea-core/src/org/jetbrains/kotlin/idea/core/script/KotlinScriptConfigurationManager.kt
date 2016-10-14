@@ -35,8 +35,10 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
+import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.makeScriptDefsFromTemplatesProviderExtensions
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -48,10 +50,6 @@ class KotlinScriptConfigurationManager(
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
         private val scriptExternalImportsProvider: KotlinScriptExternalImportsProvider
 ) {
-
-    private val kotlinEnvVars: Map<String, List<String>> by lazy {
-        generateKotlinScriptClasspathEnvVarsFromPaths(project, PathUtil.getKotlinPathsForIdeaPlugin())
-    }
 
     init {
         reloadScriptDefinitions()
@@ -102,8 +100,7 @@ class KotlinScriptConfigurationManager(
     fun getAllLibrarySourcesScope() = NonClasspathDirectoriesScope(getAllLibrarySources())
 
     private fun reloadScriptDefinitions() {
-        (makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) }) +
-         loadScriptConfigsFromProjectRoot(File(project.basePath ?: "")).map { KotlinConfigurableScriptDefinition(it, kotlinEnvVars) }).let {
+        makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) }).let {
             if (it.isNotEmpty()) {
                 scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
             }

@@ -16,29 +16,29 @@ public final class A {
         public final class C {
             public constructor C()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            @kotlin.js.nativeInvoke() public final fun foo(): kotlin.Unit
+            @kotlin.js.nativeInvoke public final fun foo(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            @kotlin.js.nativeInvoke() public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
+            @kotlin.js.nativeInvoke public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            @kotlin.js.nativeInvoke() public final fun kotlin.Int.ext(): kotlin.Int
-            @kotlin.js.nativeInvoke() public final fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
+            @kotlin.js.nativeInvoke public final fun kotlin.Int.ext(): kotlin.Int
+            @kotlin.js.nativeInvoke public final fun kotlin.Int.invoke(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Int): kotlin.String
         }
 
         public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            @kotlin.js.nativeInvoke() public final fun foo(): kotlin.Unit
+            @kotlin.js.nativeInvoke public final fun foo(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            @kotlin.js.nativeInvoke() public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
+            @kotlin.js.nativeInvoke public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
         public object obj {
             private constructor obj()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            @kotlin.js.nativeInvoke() public final fun foo(): kotlin.Unit
+            @kotlin.js.nativeInvoke public final fun foo(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            @kotlin.js.nativeInvoke() public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
+            @kotlin.js.nativeInvoke public final fun invoke(/*0*/ a: kotlin.String): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }

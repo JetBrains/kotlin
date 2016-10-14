@@ -7,13 +7,13 @@ public final annotation class AAA : kotlin.Annotation {
 public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
-    private constructor MyEnum(/*0*/ @test.AAA() kotlin.Int)
+    private constructor MyEnum(/*0*/ @test.AAA kotlin.Int)
     public final /*fake_override*/ val name: kotlin.String
     @kotlin.Deprecated(message = "") public final val ord: kotlin.Int
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
-    public final fun f(/*0*/ @java.lang.Deprecated() kotlin.Int): kotlin.Unit
+    public final fun f(/*0*/ @java.lang.Deprecated kotlin.Int): kotlin.Unit
     protected/*protected and package*/ final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
     public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyEnum!>!
 

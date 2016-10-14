@@ -129,7 +129,7 @@ class FindImplicitNothingAction : AnAction() {
 
     private fun KotlinType.isNothingOrNothingFunctionType(): Boolean {
         return KotlinBuiltIns.isNothing(this) ||
-               (isFunctionType && getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType())
+               (isFunctionType && this.getReturnTypeFromFunctionType().isNothingOrNothingFunctionType())
     }
 
     override fun update(e: AnActionEvent) {

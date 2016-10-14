@@ -56,14 +56,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(defaultValue = "${project.artifactId}-test", required = true, readonly = true)
     protected String testModuleName;
 
-    @Parameter(property = "kotlin.compiler.languageVersion", required = false, readonly = false)
-    protected String languageVersion;
-
     @Parameter(property = "kotlin.compiler.jvmTarget", required = false, readonly = false)
     protected String jvmTarget;
 
     @Parameter(property = "kotlin.compiler.jdkHome", required = false, readonly = false)
     protected String jdkHome;
+
+    @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
+    protected List<String> scriptTemplates;
 
     @NotNull
     @Override
@@ -107,12 +107,15 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().info("Optimization is turned off");
         }
 
-        arguments.languageVersion = languageVersion;
         arguments.jvmTarget = jvmTarget;
 
         if (jdkHome != null) {
             getLog().info("Overriding JDK home path with: " + jdkHome);
             arguments.jdkHome = jdkHome;
+        }
+
+        if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
+            arguments.scriptTemplates = scriptTemplates.toArray(new String[0]);
         }
     }
 }

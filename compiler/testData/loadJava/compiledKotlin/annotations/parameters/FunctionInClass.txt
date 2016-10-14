@@ -6,5 +6,5 @@ public final annotation class Anno : kotlin.Annotation {
 
 public final class Class {
     /*primary*/ public constructor Class()
-    public final fun foo(/*0*/ @test.Anno() x: kotlin.String): kotlin.Unit
+    public final fun foo(/*0*/ @test.Anno x: kotlin.String): kotlin.Unit
 }

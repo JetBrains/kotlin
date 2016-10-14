@@ -1,6 +1,6 @@
 package
 
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes() T> assertEquals1(/*0*/ t1: T, /*1*/ t2: T): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> assertEquals1(/*0*/ t1: T, /*1*/ t2: T): kotlin.Unit
 public fun test(): kotlin.Unit
 
 public open class Foo {

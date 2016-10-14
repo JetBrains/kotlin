@@ -4,43 +4,43 @@ fun main(args: Array<String>) {
     try {
         bar()
     }
-    catch(e: Exception) {
-        val a = 1
+    catch(e: Exception) {                                                          // 13
+        val a = 1                                                                  // 14
     }
-}
+}                                                                                  // 15
 
 fun bar() {
     //Breakpoint!
-    val prop = 1
+    val prop = 1                                                                   // 1
     // Try
-    try {
-        foo { test(1) }
+    try {                                                                          // 2
+        foo { test(1) }                                                            // 3
     }
     catch(e: Exception) {
         foo { test(1) }
     }
 
     // Many catch clauses
-    try {
-        throw IllegalStateException()
+    try {                                                                          // 4
+        throw IllegalStateException()                                              // 5
     }
-    catch(e: IllegalStateException) {
-        foo { test(1) }
+    catch(e: IllegalStateException) {                                              // 6
+        foo { test(1) }                                                            // 7
     }
     catch(e: Exception) {
         foo { test(1) }
     }
 
     // exception in lambda
-    try {
-        foo { throw IllegalStateException() }
+    try {                                                                          // 8
+        foo { throw IllegalStateException() }                                      // 9
     }
-    catch(e: Exception) {
-        foo { test(1) }
+    catch(e: Exception) {                                                          // 10
+        foo { test(1) }                                                            // 11
     }
 
     // Exception without catch
-    foo { throw IllegalStateException() }
+    foo { throw IllegalStateException() }                                          // 12
     val prop2 = 1
 }
 
@@ -51,4 +51,4 @@ inline fun foo(f: () -> Int): Int {
 
 fun test(i: Int) = 1
 
-// STEP_OVER: 20
+// STEP_OVER: 15

@@ -1,6 +1,6 @@
 package
 
-public fun foo(/*0*/ @delegate:Field() @delegate:Prop() x: kotlin.Int): kotlin.Int
+public fun foo(/*0*/ @delegate:Field @delegate:Prop x: kotlin.Int): kotlin.Int
 
 public final class CustomDelegate {
     public constructor CustomDelegate()
@@ -24,19 +24,19 @@ public final class CustomDelegate {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@delegate:Field() public final class SomeClass {
-    @delegate:Field() public constructor SomeClass()
-    @delegate:Field() @delegate:Prop() protected final val delegatedProperty: kotlin.String
-    @delegate:Field() @delegate:Prop() public final val propertyWithCustomGetter: kotlin.Int
-    @delegate:Field() @delegate:Prop() protected final val simpleProperty: kotlin.String = "text"
+@delegate:Field public final class SomeClass {
+    @delegate:Field public constructor SomeClass()
+    @delegate:Field @delegate:Prop protected final val delegatedProperty: kotlin.String
+    @delegate:Field @delegate:Prop public final val propertyWithCustomGetter: kotlin.Int
+    @delegate:Field @delegate:Prop protected final val simpleProperty: kotlin.String = "text"
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class WithPrimaryConstructor {
-    public constructor WithPrimaryConstructor(/*0*/ a: kotlin.String, /*1*/ @param:Field() @param:Prop() b: kotlin.String)
-    @delegate:Field() @delegate:Prop() public final val a: kotlin.String
+    public constructor WithPrimaryConstructor(/*0*/ a: kotlin.String, /*1*/ @param:Field @param:Prop b: kotlin.String)
+    @delegate:Field @delegate:Prop public final val a: kotlin.String
     public final val b: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -64,7 +64,7 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public List<FqName> getExcludedImports() {
+            public List<FqName> getEffectivelyExcludedImports() {
                 return emptyList();
             }
 

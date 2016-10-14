@@ -1,13 +1,13 @@
 package
 
-@kotlin.annotation.MustBeDocumented() public final annotation class DocAnn : kotlin.Annotation {
+@kotlin.annotation.MustBeDocumented public final annotation class DocAnn : kotlin.Annotation {
     public constructor DocAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@DocAnn() public final class My {
+@DocAnn public final class My {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -21,7 +21,7 @@ public final annotation class NotDocAnn : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@NotDocAnn() public final class Your {
+@NotDocAnn public final class Your {
     public constructor Your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

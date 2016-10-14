@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add
+// CHECK_CONTAINS_NO_CALLS: add_0
 
 internal data class IntPair(public var fst: Int, public var snd: Int) {
     inline public fun getFst(): Int { return fst }

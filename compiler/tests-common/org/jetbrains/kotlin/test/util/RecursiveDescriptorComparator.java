@@ -56,6 +56,7 @@ public class RecursiveDescriptorComparator {
                     options.setIncludePropertyConstant(true);
                     options.setClassifierNamePolicy(ClassifierNamePolicy.FULLY_QUALIFIED.INSTANCE);
                     options.setVerbose(true);
+                    options.setIncludeAnnotationArguments(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;
                 }

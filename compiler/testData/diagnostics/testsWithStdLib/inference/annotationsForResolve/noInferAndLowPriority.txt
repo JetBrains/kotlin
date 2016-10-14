@@ -1,5 +1,5 @@
 package
 
 public fun test(): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "containsAny") @kotlin.internal.LowPriorityInOverloadResolution() public fun </*0*/ T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Int
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.jvm.JvmName(name = "containsAny") @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Int
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Boolean

@@ -10,7 +10,7 @@ public val a7: kotlin.Int
 public val a8: kotlin.Int
 public val a9: kotlin.Int
 public val b1: kotlin.Byte
-@Ann() public val b2: kotlin.Int = 1
+@Ann public val b2: kotlin.Int = 1
 
 public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ i: kotlin.Int)

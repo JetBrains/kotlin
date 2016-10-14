@@ -1,8 +1,8 @@
 package test
 
 public interface LoadIterableWithNullability</*0*/ T> {
-    @org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.collections.MutableIterable<T>
-    @org.jetbrains.annotations.ReadOnly() public abstract fun getReadOnlyIterable(): kotlin.collections.Iterable<T>
-    public abstract fun setIterable(/*0*/ @org.jetbrains.annotations.Mutable() p0: kotlin.collections.MutableIterable<T>): kotlin.Unit
-    public abstract fun setReadOnlyIterable(/*0*/ @org.jetbrains.annotations.ReadOnly() p0: kotlin.collections.Iterable<T>): kotlin.Unit
+    @org.jetbrains.annotations.Mutable public abstract fun getIterable(): kotlin.collections.MutableIterable<T>
+    @org.jetbrains.annotations.ReadOnly public abstract fun getReadOnlyIterable(): kotlin.collections.Iterable<T>
+    public abstract fun setIterable(/*0*/ @org.jetbrains.annotations.Mutable p0: kotlin.collections.MutableIterable<T>): kotlin.Unit
+    public abstract fun setReadOnlyIterable(/*0*/ @org.jetbrains.annotations.ReadOnly p0: kotlin.collections.Iterable<T>): kotlin.Unit
 }

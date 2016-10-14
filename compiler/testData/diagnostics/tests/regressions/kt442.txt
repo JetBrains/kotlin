@@ -2,7 +2,7 @@ package
 
 public fun box(): kotlin.String
 public fun </*0*/ T> funny(/*0*/ f: () -> T): T
-public fun </*0*/ T> funny2(/*0*/ f: (T) -> T): T
+public fun </*0*/ T> funny2(/*0*/ f: (t: T) -> T): T
 public fun </*0*/ T> generic_invoker(/*0*/ gen: (kotlin.String) -> T): T
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 public fun testFunny(): kotlin.Unit

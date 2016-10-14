@@ -101,6 +101,30 @@ public class SuperTestGenerated extends AbstractSuperTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kt14243.kt")
+    public void testKt14243() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt14243.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt14243_2.kt")
+    public void testKt14243_2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt14243_2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt14243_class.kt")
+    public void testKt14243_class() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt14243_class.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt14243_prop.kt")
+    public void testKt14243_prop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt14243_prop.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt3492ClassFun.kt")
     public void testKt3492ClassFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt3492ClassFun.kt");

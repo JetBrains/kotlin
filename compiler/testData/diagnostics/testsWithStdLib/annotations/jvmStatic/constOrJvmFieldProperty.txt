@@ -8,8 +8,8 @@ public final class A {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() @kotlin.jvm.JvmField() public final val x: kotlin.Int = 1
-        @kotlin.jvm.JvmStatic() public const final val z: kotlin.Int = 1
+        @kotlin.jvm.JvmStatic @kotlin.jvm.JvmField public final val x: kotlin.Int = 1
+        @kotlin.jvm.JvmStatic public const final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -18,8 +18,8 @@ public final class A {
 
 public object B {
     private constructor B()
-    @kotlin.jvm.JvmStatic() @kotlin.jvm.JvmField() public final val x: kotlin.Int = 1
-    @kotlin.jvm.JvmStatic() public const final val z: kotlin.Int = 1
+    @kotlin.jvm.JvmStatic @kotlin.jvm.JvmField public final val x: kotlin.Int = 1
+    @kotlin.jvm.JvmStatic public const final val z: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

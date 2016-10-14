@@ -1,0 +1,59 @@
+package
+
+public /*synthesized*/ fun J(/*0*/ function: () -> kotlin.Unit): J
+public fun f1(/*0*/ x: I10): kotlin.Unit
+public fun f2(/*0*/ x: I11): [ERROR : Error function type]
+public fun f3(/*0*/ x: J): kotlin.Unit
+public fun f4(/*0*/ x: BothI1): kotlin.Unit
+public fun f5(/*0*/ x: BothI2): kotlin.Unit
+public fun f6(/*0*/ x: JAndI10): kotlin.Unit
+public fun f7(/*0*/ x: JAndI11): kotlin.Unit
+
+public interface BothI1 : I10, I11 {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.0") public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface BothI2 : I11, I10 {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.1") public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I10 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.0") public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I11 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.1") public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface J {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JAndI10 : J, I10 {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JAndI11 : J, I11 {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -8,7 +8,7 @@ public interface Trait {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        @test.Anno() public final val property: kotlin.Int
+        @test.Anno public final val property: kotlin.Int
             public final fun <get-property>(): kotlin.Int
     }
 }

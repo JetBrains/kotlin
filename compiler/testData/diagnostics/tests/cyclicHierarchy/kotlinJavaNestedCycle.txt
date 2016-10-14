@@ -5,7 +5,7 @@ public interface ExceptionTracker {
 
 public/*package*/ open class LockBasedStorageManager {
     public/*package*/ constructor LockBasedStorageManager()
-    @java.lang.Override() public/*package*/ open fun foo(): kotlin.Unit
+    @java.lang.Override public/*package*/ open fun foo(): kotlin.Unit
 
     public/*package*/ interface ExceptionHandlingStrategy {
         public abstract fun bar(): kotlin.Unit

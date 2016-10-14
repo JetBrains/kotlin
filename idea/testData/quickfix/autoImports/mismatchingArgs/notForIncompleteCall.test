@@ -1,0 +1,26 @@
+// FILE: first.before.kt
+// "Import" "false"
+// ERROR: Type mismatch: inferred type is Int but String was expected
+// ACTION: Add 'toString()' call
+// ACTION: Change parameter 'p' type of function 'main.X.foo' to 'Int'
+// ACTION: Convert to expression body
+// ACTION: Create function 'foo'
+
+package main
+
+class X {
+    fun foo(p: String) {
+    }
+
+    fun f(p: Int) {
+        foo(<caret>p, )
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p: Int) {
+}

@@ -86,15 +86,14 @@ public class OptimizationBasicInterpreter extends BasicInterpreter {
     public BasicValue merge(
             @NotNull BasicValue v, @NotNull BasicValue w
     ) {
+        if (v.equals(w)) return v;
+
         if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
             return BasicValue.UNINITIALIZED_VALUE;
         }
-        // Objects must be equal, others can just have the same sort
-        if (v.getType().getSort() == w.getType().getSort() && (v.getType().getSort() != Type.OBJECT || v.equals(w))) {
-            return v;
-        }
 
         // if merge of two references then `lub` is java/lang/Object
+        // arrays also are BasicValues with reference type's
         if (isReference(v) && isReference(w)) {
             return BasicValue.REFERENCE_VALUE;
         }

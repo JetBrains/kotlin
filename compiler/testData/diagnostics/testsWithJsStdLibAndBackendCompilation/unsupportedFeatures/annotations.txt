@@ -23,25 +23,25 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @foo.AnnotationWithBinaryRetention() public final class TestBinary {
+    @foo.AnnotationWithBinaryRetention public final class TestBinary {
         public constructor TestBinary()
-        @foo.AnnotationWithBinaryRetention() public final fun baz(/*0*/ @foo.AnnotationWithBinaryRetention() foo: kotlin.Int): kotlin.Int
+        @foo.AnnotationWithBinaryRetention public final fun baz(/*0*/ @foo.AnnotationWithBinaryRetention foo: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @foo.AnnotationWithRuntimeRetention() public final class TestRuntime {
+    @foo.AnnotationWithRuntimeRetention public final class TestRuntime {
         public constructor TestRuntime()
-        @foo.AnnotationWithRuntimeRetention() public final fun baz(/*0*/ @foo.AnnotationWithRuntimeRetention() foo: kotlin.Int): kotlin.Int
+        @foo.AnnotationWithRuntimeRetention public final fun baz(/*0*/ @foo.AnnotationWithRuntimeRetention foo: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @foo.AnnotationWithSourceRetention() public final class TestSource {
+    @foo.AnnotationWithSourceRetention public final class TestSource {
         public constructor TestSource()
-        @foo.AnnotationWithSourceRetention() public final fun baz(/*0*/ @foo.AnnotationWithSourceRetention() foo: kotlin.Int): kotlin.Int
+        @foo.AnnotationWithSourceRetention public final fun baz(/*0*/ @foo.AnnotationWithSourceRetention foo: kotlin.Int): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

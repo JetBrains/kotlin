@@ -4,10 +4,10 @@ public fun main(/*0*/ a: A): kotlin.Unit
 
 public open class A {
     public constructor A()
-    @edu.umd.cs.findbugs.annotations.Nullable() public final var field: kotlin.String?
-    @edu.umd.cs.findbugs.annotations.NonNull() public open fun bar(): kotlin.String
+    @edu.umd.cs.findbugs.annotations.Nullable public final var field: kotlin.String?
+    @edu.umd.cs.findbugs.annotations.NonNull public open fun bar(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @edu.umd.cs.findbugs.annotations.PossiblyNull() public open fun foo(/*0*/ @edu.umd.cs.findbugs.annotations.NonNull() x: kotlin.String, /*1*/ @edu.umd.cs.findbugs.annotations.UnknownNullness() y: kotlin.CharSequence!): kotlin.String?
+    @edu.umd.cs.findbugs.annotations.PossiblyNull public open fun foo(/*0*/ @edu.umd.cs.findbugs.annotations.NonNull x: kotlin.String, /*1*/ @edu.umd.cs.findbugs.annotations.UnknownNullness y: kotlin.CharSequence!): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

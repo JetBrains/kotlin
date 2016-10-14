@@ -352,7 +352,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         }
 
         override fun substitute(originalSubstitutor: TypeSubstitutor): PropertyDescriptor? {
-            val descriptor = super.substitute(originalSubstitutor) as MyPropertyDescriptor
+            val descriptor = super.substitute(originalSubstitutor) as MyPropertyDescriptor? ?: return null
             if (descriptor == this) return descriptor
 
             val classTypeParameters = (getMethod.containingDeclaration as ClassDescriptor).typeConstructor.parameters
@@ -362,9 +362,12 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                 substitutionMap[classTypeParameter.typeConstructor] = typeProjection
 
             }
-            val classParametersSubstitutor = TypeSubstitutor.create(substitutionMap)
+            val classParametersSubstitutor = TypeConstructorSubstitution.createByConstructorsMap(
+                    substitutionMap,
+                    approximateCapturedTypes = true
+            ).buildSubstitutor()
 
-            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)
+            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor) ?: return null
             descriptor.setMethod = setMethod?.substitute(classParametersSubstitutor)
             return descriptor
         }

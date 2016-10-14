@@ -24,6 +24,9 @@ import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.extractSuperclass.JavaExtractSuperBaseDialog
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.RefactoringMessageUtil
+import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -37,10 +40,8 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesD
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
-import javax.swing.Box
-import javax.swing.JComponent
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.*
+import javax.swing.event.DocumentEvent
 
 abstract class KotlinExtractSuperDialogBase(
         protected val originalClass: KtClassOrObject,
@@ -71,6 +72,10 @@ abstract class KotlinExtractSuperDialogBase(
     val targetFileName: String
         get() = fileNameField.text
 
+    private fun resetFileNameField() {
+        fileNameField.text = "$extractedSuperName.${KotlinFileType.EXTENSION}"
+    }
+
     protected abstract fun createMemberInfoModel(): MemberInfoModelBase
 
     override fun getDocCommentPanelName() = "KDoc for abstracts"
@@ -79,7 +84,36 @@ abstract class KotlinExtractSuperDialogBase(
 
     override fun createActionComponent() = Box.createHorizontalBox()!!
 
-    override fun createDestinationRootPanel() = if (targetParent is PsiDirectory) super.createDestinationRootPanel() else null
+    override fun createExtractedSuperNameField(): JTextField {
+        return super.createExtractedSuperNameField().apply {
+            document.addDocumentListener(
+                    object : DocumentAdapter() {
+                        override fun textChanged(e: DocumentEvent?) {
+                            resetFileNameField()
+                        }
+                    }
+            )
+        }
+    }
+
+    override fun createDestinationRootPanel(): JPanel? {
+        if (targetParent !is PsiDirectory) return null
+
+        val targetDirectoryPanel = super.createDestinationRootPanel()
+        val targetFileNamePanel = JPanel(BorderLayout()).apply {
+            border = BorderFactory.createEmptyBorder(10, 0, 0, 0)
+            val label = JBLabel("Target file name:")
+            add(label, BorderLayout.NORTH)
+            label.labelFor = fileNameField
+            add(fileNameField, BorderLayout.CENTER)
+        }
+
+        return FormBuilder
+                .createFormBuilder()
+                .addComponent(targetDirectoryPanel)
+                .addComponent(targetFileNamePanel)
+                .panel
+    }
 
     override fun createNorthPanel(): JComponent? {
         return super.createNorthPanel().apply {
@@ -112,7 +146,7 @@ abstract class KotlinExtractSuperDialogBase(
     override fun init() {
         super.init()
 
-        fileNameField.text = "$extractedSuperName.${KotlinFileType.EXTENSION}"
+        resetFileNameField()
     }
 
     override fun preparePackage() {

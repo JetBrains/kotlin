@@ -16,19 +16,25 @@
 
 package org.jetbrains.kotlin.daemon
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
-import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
+import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.daemon.client.*
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.test.fail
@@ -79,7 +85,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
             var daemonShotDown = false
 
@@ -95,9 +101,9 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 logFile.reader().useLines {
                     it.ifNotContainsSequence(LinePattern("Kotlin compiler daemon version"),
                                              LinePattern("Starting compilation with args: "),
-                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime1 = it }; true }),
+                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime1 = it }; true }),
                                              LinePattern("Starting compilation with args: "),
-                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime2 = it }; true }),
+                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime2 = it }; true }),
                                              LinePattern("Shutdown complete"))
                     { unmatchedPattern, lineNo ->
                         fail("pattern not found in the input: " + unmatchedPattern.regex +
@@ -157,11 +163,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val logFile1 = createTempFile("kotlin-daemon1-test", ".log")
             val logFile2 = createTempFile("kotlin-daemon2-test", ".log")
             val daemonJVMOptions1 =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile1.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemonJVMOptions2 =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile2.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
@@ -196,7 +202,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -223,7 +229,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -232,7 +238,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val jar = tmpdir.absolutePath + File.separator + "hello1.jar"
             val strm = ByteArrayOutputStream()
             val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar), strm)
-            assertEquals("compilation failed:\n${strm.toString()}", 0, code)
+            assertEquals("compilation failed:\n$strm", 0, code)
 
             logFile.assertLogContainsSequence("Starting compilation with args: ")
 
@@ -255,7 +261,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -302,7 +308,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
                 File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
-                "-D${COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY}",
+                "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
                 "-cp",
                 daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
                 KotlinCompilerClient::class.qualifiedName!!) +
@@ -353,7 +359,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = false)
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
             assertNotNull("failed to connect daemon", daemon)
 
@@ -428,7 +434,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -458,14 +464,163 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                               RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
                                               null).get()
 
+            TestCase.assertEquals(0, code)
+
             val compilerOutput = strm.toString()
-            assertTrue("Expecting cancelation message in:\n$compilerOutput", compilerOutput.contains("Compilation was canceled"))
+            assertTrue("Expecting cancellation message in:\n$compilerOutput", compilerOutput.contains("Compilation was canceled"))
             logFile.assertLogContainsSequence("error communicating with host, assuming compilation canceled")
 
             logFile.delete()
         }
     }
+
+    fun testDaemonReplLocalEvalNoParams() {
+        withDaemon { daemon ->
+            withDisposable { disposable ->
+                val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                    classpathFromClassloader(),
+                                                    ScriptWithNoParam::class.qualifiedName!!,
+                                                    System.err)
+
+                val localEvaluator = GenericReplCompiledEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
+
+                doReplTestWithLocalEval(repl, localEvaluator)
+            }
+        }
+    }
+
+    fun testDaemonReplLocalEvalStandardTemplate() {
+        withDaemon { daemon ->
+            withDisposable { disposable ->
+                val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                    classpathFromClassloader(),
+                                                    "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+                                                    System.err)
+
+                val localEvaluator = GenericReplCompiledEvaluator(emptyList(),
+                                                                  Thread.currentThread().contextClassLoader,
+                                                                  arrayOf(emptyArray<String>()))
+
+                doReplTestWithLocalEval(repl, localEvaluator)
+            }
+        }
+    }
+
+    private fun doReplTestWithLocalEval(repl: KotlinRemoteReplCompiler, localEvaluator: GenericReplCompiledEvaluator) {
+        val res0 = repl.check(ReplCodeLine(0, "val x ="), emptyList())
+        TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
+
+        val codeLine1 = ReplCodeLine(1, "val lst = listOf(1)\nval x = 5")
+        val res1 = repl.compile(codeLine1, emptyList())
+        val res1c = res1 as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+
+        val res11 = localEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.newClasspath)
+        val res11e = res11 as? ReplEvalResult.UnitResult
+        TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
+
+        val codeLine2 = ReplCodeLine(2, "x + 2")
+        val res2x = repl.compile(codeLine2, listOf(codeLine2))
+        TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplCompileResult.HistoryMismatch)
+
+        val res2 = repl.compile(codeLine2, listOf(codeLine1))
+        val res2c = res2 as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
+
+        val res21 = localEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.newClasspath)
+        val res21e = res21 as? ReplEvalResult.ValueResult
+        TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
+        TestCase.assertEquals(7, res21e!!.value)
+    }
+
+    fun testDaemonReplRemoteEval() {
+        withDaemon { daemon ->
+            withDisposable { disposable ->
+
+                val evalOut = ByteArrayOutputStream()
+                val evalErr = ByteArrayOutputStream()
+                val evalIn = ByteArrayInputStream("42\n".toByteArray())
+
+                val repl = KotlinRemoteReplEvaluator(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                     listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+                                                     "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+                                                     arrayOf(emptyArray<String>()), null,
+                                                     System.err, evalOut, evalErr, evalIn)
+
+                val res0 = repl.check(ReplCodeLine(0, "val x ="), emptyList())
+                TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
+
+                val codeLine1 = ReplCodeLine(1, "val x = 5")
+                val res1 = repl.eval(codeLine1, emptyList())
+                val res1e = res1 as? ReplEvalResult.UnitResult
+                TestCase.assertNotNull("Unexpected eval result: $res1", res1e)
+
+                val codeLine2 = ReplCodeLine(2, "x + 2")
+                val res2x = repl.eval(codeLine2, listOf(codeLine2))
+                TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplEvalResult.HistoryMismatch)
+
+                val res2 = repl.eval(codeLine2, listOf(codeLine1))
+                val res2e = res2 as? ReplEvalResult.ValueResult
+                TestCase.assertNotNull("Unexpected eval result: $res2", res2e)
+                TestCase.assertEquals(7, res2e!!.value)
+            }
+        }
+    }
+
+    fun testDaemonReplAutoshutdownOnIdle() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, autoshutdownUnusedSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+
+            val logFile = createTempFile("kotlin-daemon-test", ".log")
+            val daemonJVMOptions =
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+            assertNotNull("failed to connect daemon", daemon)
+
+            val disposable = Disposer.newDisposable()
+            val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                classpathFromClassloader(),
+                                                ScriptWithNoParam::class.qualifiedName!!,
+                                                System.err)
+
+            // use repl compiler for >> 1s, making sure that idle/unused timeouts are not firing
+            for (attempts in 1..10) {
+                val codeLine1 = ReplCodeLine(1, "3 + 5")
+                val res1 = repl.compile(codeLine1, emptyList())
+                val res1c = res1 as? ReplCompileResult.CompiledClasses
+                TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+                Thread.sleep(200)
+            }
+
+            // wait up to 4s (more than 1s idle timeout)
+            for (attempts in 1..20) {
+                if (logFile.isLogContainsSequence("Idle timeout exceeded 1s")) break
+                Thread.sleep(200)
+            }
+            Disposer.dispose(disposable)
+
+            Thread.sleep(200)
+            logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
+                                              "Shutdown complete")
+            logFile.delete()
+        }
+    }
+
+    internal fun withDaemon(body: (CompileService) -> Unit) {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+            val daemon: CompileService? = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+            assertNotNull("failed to connect daemon", daemon)
+
+            body(daemon!!)
+        }
+    }
 }
+
 
 // stolen from CompilerFileLimitTest
 internal fun generateLargeKotlinFile(size: Int): String {
@@ -529,6 +684,16 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
     }
 }
 
+internal inline fun withDisposable(body: (Disposable) -> Unit) {
+    val disposable = Disposer.newDisposable()
+    try {
+        body(disposable)
+    }
+    finally {
+        Disposer.dispose(disposable)
+    }
+}
+
 // java.util.Logger used in the daemon silently forgets to log into a file specified in the config on Windows,
 // if file path is given in windows form (using backslash as a separator); the reason is unknown
 // this function makes a path with forward slashed, that works on windows too
@@ -536,3 +701,37 @@ private val File.loggerCompatiblePath: String
     get() =
         if (OSKind.current == OSKind.Windows) absolutePath.replace('\\', '/')
         else absolutePath
+
+open class TestKotlinScriptDummyDependenciesResolver : ScriptDependenciesResolver {
+
+    override fun resolve(script: ScriptContents,
+                         environment: Map<String, Any?>?,
+                         report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+                         previousDependencies: KotlinScriptExternalDependencies?
+    ): Future<KotlinScriptExternalDependencies?>
+    {
+        return object : KotlinScriptExternalDependencies {
+            override val classpath: Iterable<File> = classpathFromClassloader()
+            override val imports: Iterable<String> = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
+        }.asFuture()
+    }
+}
+
+@ScriptTemplateDefinition(resolver = TestKotlinScriptDummyDependenciesResolver::class)
+abstract class ScriptWithNoParam()
+
+internal fun classpathFromClassloader(): List<File> =
+        (TestKotlinScriptDummyDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
+                ?.mapNotNull(URL::toFile)
+                ?.filter { it.path.contains("out") && it.path.contains("test") }
+        ?: emptyList()
+
+internal fun URL.toFile() =
+        try {
+            File(toURI().schemeSpecificPart)
+        }
+        catch (e: java.net.URISyntaxException) {
+            if (protocol != "file") null
+            else File(file)
+        }
+

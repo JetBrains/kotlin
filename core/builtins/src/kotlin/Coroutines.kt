@@ -19,6 +19,7 @@ package kotlin.coroutines
 /**
  * Interface representing a continuation after a suspension point that returns value of type `P`
  */
+@SinceKotlin("1.1")
 public interface Continuation<in P> {
     /**
      * Resumes the execution of the corresponding coroutine passing `data` as the return value of the last suspension point
@@ -36,6 +37,7 @@ public interface Continuation<in P> {
 /**
  * Specifies that suspend extensions with a receiver based on corresponding controller class are allowed to be declared
  */
+@SinceKotlin("1.1")
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 public annotation class AllowSuspendExtensions

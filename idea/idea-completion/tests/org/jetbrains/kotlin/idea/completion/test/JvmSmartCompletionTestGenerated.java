@@ -874,6 +874,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("StarProjection1.kt")
+        public void testStarProjection1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/StarProjection1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StarProjection2.kt")
+        public void testStarProjection2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/StarProjection2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("WithParameters.kt")
         public void testWithParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/WithParameters.kt");

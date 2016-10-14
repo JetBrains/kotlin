@@ -30,17 +30,44 @@ internal class ComponentRegistry {
         return registrationMap
     }
 
-    private var registrationMap = MultiMap.createLinkedSet<Type, ComponentDescriptor>()
+    private val registrationMap = hashMapOf<Type, Any>()
 
     fun addAll(descriptors: Collection<ComponentDescriptor>) {
-        registrationMap.putAllValues(buildRegistrationMap(descriptors))
+        val newRegistrationMap = buildRegistrationMap(descriptors)
+        for (entry in newRegistrationMap.entrySet()) {
+            val oldEntries = registrationMap[entry.key]
+            if (oldEntries != null || entry.value.size > 1) {
+                val list = mutableListOf<ComponentDescriptor>()
+                if (oldEntries is Collection<*>) {
+                    @Suppress("UNCHECKED_CAST")
+                    list.addAll(oldEntries as Collection<ComponentDescriptor>)
+                }
+                else if (oldEntries != null) {
+                    list.add(oldEntries as ComponentDescriptor)
+                }
+                list.addAll(entry.value)
+                registrationMap[entry.key] = list.singleOrNull() ?: list
+            }
+            else {
+                registrationMap[entry.key] = entry.value.single()
+            }
+        }
     }
 
     fun tryGetEntry(request: Type): Collection<ComponentDescriptor> {
-        return registrationMap.get(request)
+        val value = registrationMap[request]
+        @Suppress("UNCHECKED_CAST")
+        return when(value) {
+            is Collection<*> -> value as Collection<ComponentDescriptor>
+            null -> emptyList()
+            else -> listOf(value as ComponentDescriptor)
+        }
     }
 
     fun addAll(other: ComponentRegistry) {
-        registrationMap.putAllValues(other.registrationMap)
+        if (!registrationMap.isEmpty()) {
+            throw IllegalStateException("Can only copy entries from another component registry into an empty component registry")
+        }
+        registrationMap += other.registrationMap
     }
 }

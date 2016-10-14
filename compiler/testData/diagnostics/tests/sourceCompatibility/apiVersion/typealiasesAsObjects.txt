@@ -1,0 +1,13 @@
+package
+
+public val test1: [ERROR : Type for Since_1_1_Alias]
+public val test2: kotlin.Int = 42
+
+@kotlin.SinceKotlin(version = "1.1") public object Since_1_1 {
+    private constructor Since_1_1()
+    public final val x: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Since_1_1_Alias = Since_1_1

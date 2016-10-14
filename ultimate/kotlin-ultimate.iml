@@ -14,6 +14,7 @@
     <orderEntry type="library" scope="TEST" name="main-project-tests" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" name="kotlin-script-runtime" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="css-support" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="database-support" level="project" />

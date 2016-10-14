@@ -16,23 +16,22 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 
-import java.util.List;
-import java.util.Set;
-
 public final class AnnotationsUtils {
+    private static final String JS_NAME = "kotlin.js.JsName";
 
     private AnnotationsUtils() {
     }
@@ -73,36 +72,19 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static String getNameForAnnotatedObjectWithOverrides(@NotNull DeclarationDescriptor declarationDescriptor) {
-        List<DeclarationDescriptor> descriptors;
-
-        if (declarationDescriptor instanceof CallableMemberDescriptor &&
-            DescriptorUtils.isOverride((CallableMemberDescriptor) declarationDescriptor)) {
-
-            Set<CallableMemberDescriptor> overriddenDeclarations =
-                    DescriptorUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
-
-            descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
-                @Override
-                public DeclarationDescriptor fun(CallableMemberDescriptor descriptor) {
-                    return DescriptorUtils.isOverride(descriptor) ? null : descriptor;
-                }
-            });
-        }
-        else {
-            descriptors = ContainerUtil.newArrayList(declarationDescriptor);
-        }
-
-        for (DeclarationDescriptor descriptor : descriptors) {
-            for (PredefinedAnnotation annotation : PredefinedAnnotation.Companion.getWITH_CUSTOM_NAME()) {
-                if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
-                    continue;
-                }
-                String name = getNameForAnnotatedObject(descriptor, annotation);
-                return name != null ? name : descriptor.getName().asString();
+    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor descriptor) {
+        for (PredefinedAnnotation annotation : PredefinedAnnotation.Companion.getWITH_CUSTOM_NAME()) {
+            if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                continue;
             }
+            String name = getNameForAnnotatedObject(descriptor, annotation);
+            if (name == null) {
+                name = getJsName(descriptor);
+            }
+            return name != null ? name : descriptor.getName().asString();
         }
-        return null;
+
+        return getJsName(descriptor);
     }
 
     @Nullable
@@ -115,15 +97,41 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
-        return descriptor.getAnnotations().findAnnotation(fqName);
+        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(descriptor.getAnnotations(), (fqName));
+        return annotationWithTarget != null ? annotationWithTarget.getAnnotation() : null;
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
-        return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE);
+        if (hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE)) return true;
+
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor accessor = (PropertyAccessorDescriptor) descriptor;
+            return hasAnnotationOrInsideAnnotatedClass(accessor.getCorrespondingProperty(), PredefinedAnnotation.NATIVE);
+        }
+
+        return false;
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.LIBRARY);
+    }
+
+    @Nullable
+    public static String getJsName(@NotNull DeclarationDescriptor descriptor) {
+        AnnotationDescriptor annotation = getJsNameAnnotation(descriptor);
+        if (annotation == null) return null;
+
+        ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
+        assert value != null : "JsName annotation should always declare string parameter";
+
+        Object result = value.getValue();
+        assert result instanceof String : "Parameter of JsName annotation should be string";
+        return (String) result;
+    }
+
+    @Nullable
+    public static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        return getAnnotationByName(descriptor, new FqName(JS_NAME));
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
@@ -148,5 +156,12 @@ public final class AnnotationsUtils {
         }
         ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
         return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqName);
+    }
+
+    public static boolean hasJsNameInAccessors(@NotNull PropertyDescriptor property) {
+        for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
+            if (getJsName(accessor) != null) return true;
+        }
+        return false;
     }
 }

@@ -1,0 +1,18 @@
+package
+
+public fun bar(): kotlin.Int
+public fun foo(): kotlin.Int
+
+public final data class D {
+    public constructor D(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int)
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    public final val z: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Int
+    public final operator /*synthesized*/ fun component3(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ z: kotlin.Int = ...): D
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

@@ -11,6 +11,7 @@ package kotlin
  * @param block a function to process this [AutoCloseable] resource.
  * @return the result of [block] function invoked on this resource.
  */
+@SinceKotlin("1.1")
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
@@ -33,6 +34,7 @@ public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
  * Closes this [AutoCloseable] suppressing possible exception or error thrown by [AutoCloseable.close] function.
  * The suppressed exception is added to the list of suppressed exceptions of [cause] exception.
  */
+@SinceKotlin("1.1")
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineExposed
 internal fun AutoCloseable.closeSuppressed(cause: Throwable) {

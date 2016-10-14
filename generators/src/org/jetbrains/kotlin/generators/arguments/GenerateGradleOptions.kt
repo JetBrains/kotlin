@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import com.sampullara.cli.Argument
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -24,23 +25,28 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.io.PrintStream
-import kotlin.reflect.*
+import kotlin.reflect.KAnnotatedElement
+import kotlin.reflect.KProperty1
+import kotlin.reflect.memberProperties
 
 // Additional properties that should be included in interface
+@Suppress("unused")
 interface AdditionalGradleProperties {
-    @GradleOption(defaultValue = "emptyList()")
+    @GradleOption(EmptyList::class)
     @Argument(description = "A list of additional compiler arguments")
     var freeCompilerArgs: List<String>
+
+    object EmptyList : DefaultValues("emptyList()")
 }
 
-fun main(args: Array<String>) {
+fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()->Unit)->Unit) {
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
     val additionalGradleOptions = gradleOptions<AdditionalGradleProperties>()
 
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
     val optionsFromK2JVMCompilerArguments = gradleOptions<K2JVMCompilerArguments>()
-    File(srcDir, jvmInterfaceFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jvmInterfaceFqName)) {
         generateInterface(jvmInterfaceFqName,
                           optionsFromK2JVMCompilerArguments + additionalGradleOptions)
     }
@@ -48,7 +54,7 @@ fun main(args: Array<String>) {
     // generate jvm impl
     val k2JvmCompilerArgumentsFqName = FqName(K2JVMCompilerArguments::class.qualifiedName!!)
     val jvmImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsBase")
-    File(srcDir, jvmImplFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jvmImplFqName)) {
         generateImpl(jvmImplFqName,
                      jvmInterfaceFqName,
                      k2JvmCompilerArgumentsFqName,
@@ -58,7 +64,7 @@ fun main(args: Array<String>) {
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
     val optionsFromK2JSCompilerArguments = gradleOptions<K2JSCompilerArguments>()
-    File(srcDir, jsInterfaceFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jsInterfaceFqName)) {
         generateInterface(jsInterfaceFqName,
                           optionsFromK2JSCompilerArguments +
                           additionalGradleOptions)
@@ -66,12 +72,27 @@ fun main(args: Array<String>) {
 
     val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
     val jsImplFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsBase")
-    File(srcDir, jsImplFqName).usePrinter {
+    withPrinterToFile(File(srcDir, jsImplFqName)) {
         generateImpl(jsImplFqName,
                      jsInterfaceFqName,
                      k2JsCompilerArgumentsFqName,
                      optionsFromK2JSCompilerArguments)
     }
+}
+
+fun main(args: Array<String>) {
+    fun getPrinter(file: File, fn: Printer.()->Unit) {
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            file.createNewFile()
+        }
+        PrintStream(file.outputStream()).use {
+            val printer = Printer(it)
+            printer.fn()
+        }
+    }
+
+    generateKotlinGradleOptions(::getPrinter)
 }
 
 private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
@@ -80,17 +101,6 @@ private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
 private fun File(baseDir: File, fqName: FqName): File {
     val fileRelativePath = fqName.asString().replace(".", "/") + ".kt"
     return File(baseDir, fileRelativePath)
-}
-
-private inline fun File.usePrinter(fn: Printer.()->Unit) {
-    if (!exists()) {
-        parentFile.mkdirs()
-        createNewFile()
-    }
-    PrintStream(outputStream()).use {
-        val printer = Printer(it)
-        printer.fn()
-    }
 }
 
 private fun Printer.generateInterface(type: FqName, properties: List<KProperty1<*, *>>) {
@@ -173,12 +183,12 @@ private fun Printer.generatePropertyDeclaration(property: KProperty1<*, *>, modi
 
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.findAnnotation<Argument>()!!.description
-    val possibleValues = property.gradlePossibleValues
+    val possibleValues = property.gradleValues.possibleValues
     val defaultValue = property.gradleDefaultValue
 
     println("/**")
     println(" * $description")
-    if (possibleValues.isNotEmpty()) {
+    if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
     println(" * Default value: $defaultValue")
@@ -191,11 +201,11 @@ private inline fun Printer.withIndent(fn: Printer.()->Unit) {
     popIndent()
 }
 
-private val KProperty1<*, *>.gradlePossibleValues: Array<String>
-        get() = findAnnotation<GradleOption>()!!.possibleValues
+private val KProperty1<*, *>.gradleValues: DefaultValues
+        get() = findAnnotation<GradleOption>()!!.value.objectInstance!!
 
 private val KProperty1<*, *>.gradleDefaultValue: String
-        get() = findAnnotation<GradleOption>()!!.defaultValue
+        get() = gradleValues.defaultValue
 
 private val KProperty1<*, *>.gradleReturnType: String
         get() {

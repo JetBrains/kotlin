@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
@@ -49,19 +51,23 @@ class TypeAliasExpander(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        return if (withAbbreviatedType) {
-            val abbreviatedType = KotlinTypeFactory.simpleType(annotations,
-                                                               typeAliasExpansion.descriptor.typeConstructor,
-                                                               typeAliasExpansion.arguments,
-                                                               originalProjection.type.isMarkedNullable,
-                                                               MemberScope.Empty)
+        val expandedTypeWithExtraAnnotations = expandedType.replace(
+                newAnnotations = CompositeAnnotations(listOf(annotations, expandedType.annotations)))
 
-            expandedType.withAbbreviation(abbreviatedType)
-        }
-        else {
-            expandedType
-        }
+        return if (withAbbreviatedType)
+            expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(originalProjection, annotations))
+        else
+            expandedTypeWithExtraAnnotations
     }
+
+    private fun TypeAliasExpansion.createAbbreviation(originalProjection: TypeProjection, annotations: Annotations) =
+            KotlinTypeFactory.simpleType(
+                    annotations,
+                    descriptor.typeConstructor,
+                    arguments,
+                    originalProjection.type.isMarkedNullable,
+                    MemberScope.Empty
+            )
 
     private fun expandTypeProjection(
             originalProjection: TypeProjection,

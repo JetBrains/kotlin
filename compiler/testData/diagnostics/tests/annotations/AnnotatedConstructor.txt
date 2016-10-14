@@ -1,7 +1,7 @@
 package
 
 public final class Annotated {
-    public constructor Annotated(/*0*/ @ann() x: kotlin.Int)
+    public constructor Annotated(/*0*/ @ann x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

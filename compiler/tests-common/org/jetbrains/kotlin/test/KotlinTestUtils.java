@@ -110,7 +110,7 @@ public class KotlinTestUtils {
      * Several files may follow one module
      */
     public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:, [\\w\\d_\\-]+)*\\))?\\s*)?" +
+            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:,\\s*[\\w\\d_\\-]+)*\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
@@ -468,10 +468,12 @@ public class KotlinTestUtils {
 
         if (configurationKind.getWithRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
         }
         else if (configurationKind.getWithMockRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.mockRuntimeJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
         }
         if (configurationKind.getWithReflection()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
@@ -959,9 +961,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull TargetPlatform platform, KotlinBuiltIns builtIns) {
-        return new ModuleDescriptorImpl(
-                Name.special(name), LockBasedStorageManager.NO_LOCKS, platform.getDefaultModuleParameters(), builtIns
-        );
+        return new ModuleDescriptorImpl(Name.special(name), LockBasedStorageManager.NO_LOCKS, platform.getDefaultImports(), builtIns);
     }
 
     @NotNull

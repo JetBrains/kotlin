@@ -1,6 +1,6 @@
 package
 
-public fun foo(/*0*/ @ann() x: kotlin.Int): kotlin.Int
+public fun foo(/*0*/ @ann x: kotlin.Int): kotlin.Int
 
 public final annotation class ann : kotlin.Annotation {
     public constructor ann(/*0*/ x: kotlin.Int)

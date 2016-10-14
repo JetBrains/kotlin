@@ -29,11 +29,10 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -256,20 +255,6 @@ fun <D : CallableDescriptor> D.overriddenTreeUniqueAsSequence(useOriginal: Boole
     return doBuildOverriddenTreeAsSequence()
 }
 
-fun ClassDescriptor.getConstructorByParams(params: List<KotlinType>): ConstructorDescriptor? =
-    getConstructors().firstOrNull {
-        when {
-            it.valueParameters.isEmpty() && params.isEmpty() -> true
-            it.valueParameters.size != params.size -> false
-            else -> it.valueParameters.zip(params) { ctorP, p -> ctorP.type == p }.all { it }
-        }
-    }
-
-// TODO: inline and remove as soon as all usage sies are converted to kotlin
-fun getConstructorByParamsMap(classDescriptor: ClassDescriptor, params: List<Pair<Name, KotlinType>>): ConstructorDescriptor? =
-        classDescriptor.getConstructorByParams(params.map { it.second })
-
-
 fun CallableDescriptor.varargParameterPosition() =
         valueParameters.indexOfFirst { it.varargElementType != null }
 
@@ -323,6 +308,17 @@ private fun ClassDescriptor.getAllSuperClassesTypesIncludeItself(): List<KotlinT
 
     return result
 }
+
+fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
+    val methodTypeParameters = valueParameters
+    val nullableString = builtIns.stringType.makeNullable()
+    return DescriptorUtils.ENUM_VALUE_OF == name
+           && methodTypeParameters.size == 1
+           && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
+}
+
+val DeclarationDescriptor.isExtensionProperty: Boolean
+    get() = this is PropertyDescriptor && extensionReceiverParameter != null
 
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
         generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())

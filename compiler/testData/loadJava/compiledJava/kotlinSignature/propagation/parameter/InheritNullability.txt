@@ -9,6 +9,6 @@ public interface InheritNullability {
 
     public interface Super {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull() p0: kotlin.String): kotlin.Unit
+        public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull p0: kotlin.String): kotlin.Unit
     }
 }

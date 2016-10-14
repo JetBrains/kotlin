@@ -309,9 +309,9 @@ class Converter private constructor(
         val setMethod = propertyInfo.setMethod
 
         //TODO: annotations from getter/setter?
-        val annotations = field?.let { convertAnnotations(it) + specialAnnotationPropertyCases(it) } ?: Annotations.Empty
+        val annotations = field?.let { convertAnnotations(it) } ?: Annotations.Empty
 
-        val modifiers = propertyInfo.modifiers
+        val modifiers = (propertyInfo.modifiers + (field?.let{ specialModifiersCase(field) } ?: Modifiers.Empty))
 
         val name = propertyInfo.identifier
         if (field is PsiEnumConstant) {
@@ -432,21 +432,19 @@ class Converter private constructor(
     }
 
 
-    private fun specialAnnotationPropertyCases(field: PsiField): Annotations {
+    private fun specialModifiersCase(field: PsiField): Modifiers {
         val javaSerializableInterface = JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_IO_SERIALIZABLE, field.resolveScope)
-        val output = mutableListOf<Annotation>()
+        val output = mutableListOf<Modifier>()
         if (javaSerializableInterface != null &&
             field.name == "serialVersionUID" &&
             field.hasModifierProperty(PsiModifier.FINAL) &&
             field.hasModifierProperty(PsiModifier.STATIC) &&
             field.containingClass?.isInheritor(javaSerializableInterface, false) ?: false
         ) {
-            output.add(Annotation(Identifier.withNoPrototype("JvmStatic"),
-                                  listOf(),
-                                  newLineAfter = false).assignNoPrototype())
+            output.add(Modifier.CONST)
         }
 
-        return Annotations(output)
+        return Modifiers(output)
     }
 
     private fun combinedNullability(vararg psiElements: PsiElement?): Nullability {

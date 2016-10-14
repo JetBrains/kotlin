@@ -276,34 +276,13 @@ public class KtPsiUtil {
         }
     }
 
-    public static boolean isVariableNotParameterDeclaration(@NotNull KtDeclaration declaration) {
+    public static boolean isRemovableVariableDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
         assert declaration instanceof KtDestructuringDeclarationEntry;
-        KtDestructuringDeclarationEntry multiDeclarationEntry = (KtDestructuringDeclarationEntry) declaration;
-        return !(multiDeclarationEntry.getParent().getParent().getParent() instanceof KtForExpression);
-    }
-
-    @Nullable
-    public static Name getConventionName(@NotNull KtSimpleNameExpression simpleNameExpression) {
-        if (simpleNameExpression.getIdentifier() != null) {
-            return simpleNameExpression.getReferencedNameAsName();
-        }
-
-        PsiElement firstChild = simpleNameExpression.getFirstChild();
-        if (firstChild != null) {
-            IElementType elementType = firstChild.getNode().getElementType();
-            if (elementType instanceof KtToken) {
-                KtToken jetToken = (KtToken) elementType;
-                boolean isPrefixExpression = simpleNameExpression.getParent() instanceof KtPrefixExpression;
-                if (isPrefixExpression) {
-                    return OperatorConventions.getNameForOperationSymbol(jetToken, true, false);
-                }
-                return OperatorConventions.getNameForOperationSymbol(jetToken);
-            }
-        }
-
-        return null;
+        KtDestructuringDeclaration parentDeclaration = (KtDestructuringDeclaration) declaration.getParent();
+        List<KtDestructuringDeclarationEntry> entries = parentDeclaration.getEntries();
+        return entries.size() > 1 && entries.get(entries.size() - 1) == declaration;
     }
 
     @Nullable

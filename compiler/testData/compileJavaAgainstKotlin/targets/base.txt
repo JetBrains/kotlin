@@ -1,8 +1,8 @@
 package test
 
-@test.base() public/*package*/ open class My {
+@test.base public/*package*/ open class My {
     public/*package*/ constructor My()
-    @test.base() public/*package*/ open fun foo(/*0*/ @test.base() kotlin.Int): kotlin.Int
+    @test.base public/*package*/ open fun foo(/*0*/ @test.base kotlin.Int): kotlin.Int
 }
 
 public final annotation class base : kotlin.Annotation {

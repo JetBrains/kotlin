@@ -157,13 +157,8 @@ object KotlinCompilerRunner {
                 val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
                 profiler.withMeasure(null) {
-                    fun newFlagFile(): File {
-                        val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running")
-                        flagFile.deleteOnExit()
-                        return flagFile
-                    }
                     val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?: CompileService.NO_SESSION)
+                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(makeAutodeletingFlagFile("compiler-jps-session").absolutePath)?.get() ?: CompileService.NO_SESSION)
                 }
 
                 for (msg in daemonReportMessages) {

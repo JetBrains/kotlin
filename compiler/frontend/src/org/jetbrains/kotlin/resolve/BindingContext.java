@@ -222,7 +222,7 @@ public interface BindingContext {
      */
     WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.createSimpleSlice();
     WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.createSimpleSlice();
-    WritableSlice<ConstructorDescriptor, ResolvedCall<ClassConstructorDescriptor>> CONSTRUCTOR_RESOLVED_DELEGATION_CALL =
+    WritableSlice<ConstructorDescriptor, ResolvedCall<ConstructorDescriptor>> CONSTRUCTOR_RESOLVED_DELEGATION_CALL =
             Slices.createSimpleSlice();
     WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.createSimpleSlice();
     WritableSlice<KtParameter, VariableDescriptor> VALUE_PARAMETER = Slices.createSimpleSlice();

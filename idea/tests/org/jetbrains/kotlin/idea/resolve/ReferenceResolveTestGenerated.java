@@ -395,6 +395,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/TypeAliasAsSupertypeConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeAliasRHS.kt")
     public void testTypeAliasRHS() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/TypeAliasRHS.kt");

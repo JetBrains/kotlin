@@ -22,14 +22,15 @@ import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -64,14 +65,14 @@ val VariableAccessInfo.variableName: JsName
 
 fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 
-fun VariableAccessInfo.getAccessFunctionName(): String {
+fun VariableAccessInfo.getAccessDescriptor(): DeclarationDescriptor {
     val descriptor = variableDescriptor
-    if (descriptor is PropertyDescriptor && descriptor.isExtension) {
+    if (descriptor is PropertyDescriptor && (descriptor.isExtension || TranslationUtils.shouldGenerateAccessors(descriptor))) {
         val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getter else descriptor.setter
-        return context.getNameForDescriptor(propertyAccessorDescriptor!!).ident
+        return propertyAccessorDescriptor!!
     }
     else {
-        return Namer.getNameForAccessor(variableName.ident, isGetAccess(), false)
+        return variableDescriptor
     }
 }
 

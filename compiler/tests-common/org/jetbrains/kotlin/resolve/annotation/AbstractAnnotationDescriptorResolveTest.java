@@ -62,6 +62,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setVerbose(true);
+                    options.setIncludeAnnotationArguments(true);
                     options.setClassifierNamePolicy(ClassifierNamePolicy.SHORT.INSTANCE);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;

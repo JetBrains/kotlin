@@ -1,5 +1,5 @@
 public final class kotlin/ExceptionsKt {
-	public static final synthetic fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
+	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
 }
 
 public abstract interface class kotlin/Lazy {

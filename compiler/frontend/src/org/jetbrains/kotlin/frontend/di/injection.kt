@@ -142,6 +142,7 @@ fun createContainerForLazyResolve(
     useInstance(languageVersionSettings)
 
     useImpl<FileScopeProviderImpl>()
+    useImpl<CompilerDeserializationConfiguration>()
     targetEnvironment.configure(this)
 
     useImpl<LazyResolveToken>()

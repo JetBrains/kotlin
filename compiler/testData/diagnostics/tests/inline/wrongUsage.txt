@@ -1,8 +1,8 @@
 package
 
-public inline fun inlineFunNoInline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunNoInline(/*0*/ noinline ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWrongUsage(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWrongUsageExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWrongUsageInClosure(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFunWrongUsageInClosureExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunNoInline(/*0*/ noinline s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunNoInline(/*0*/ noinline ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWrongUsage(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWrongUsageExt(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWrongUsageInClosure(/*0*/ s: (p: kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWrongUsageInClosureExt(/*0*/ ext: kotlin.Int.(p: kotlin.Int) -> kotlin.Unit): kotlin.Unit

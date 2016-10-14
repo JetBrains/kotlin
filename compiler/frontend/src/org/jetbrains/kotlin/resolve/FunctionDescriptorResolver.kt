@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -48,9 +52,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
 class FunctionDescriptorResolver(
@@ -195,12 +199,13 @@ class FunctionDescriptorResolver(
             expectedFunctionType: KotlinType
     ): List<ValueParameterDescriptor> {
         val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
+        val expectedParameterTypes = expectedValueParameters?.map { it.type.removeParameterNameAnnotation() }
         if (expectedValueParameters != null) {
             if (expectedValueParameters.size == 1 && function is KtFunctionLiteral && function.getValueParameterList() == null) {
                 // it parameter for lambda
-                val valueParameterDescriptor = expectedValueParameters.first()
+                val valueParameterDescriptor = expectedValueParameters.single()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                                                      valueParameterDescriptor.type, valueParameterDescriptor.declaresDefaultValue(),
+                                                      expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
                                                       valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                                                       valueParameterDescriptor.isCoroutine,
                                                       valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE)
@@ -208,8 +213,7 @@ class FunctionDescriptorResolver(
                 return listOf(it)
             }
             if (function.valueParameters.size != expectedValueParameters.size) {
-                val expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters)
-                trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes.size, expectedParameterTypes))
+                trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes!!.size, expectedParameterTypes))
             }
         }
 
@@ -220,17 +224,23 @@ class FunctionDescriptorResolver(
                 innerScope,
                 function.valueParameters,
                 trace,
-                expectedValueParameters
+                expectedParameterTypes
         )
+    }
+
+    private fun KotlinType.removeParameterNameAnnotation(): KotlinType {
+        if (this is TypeUtils.SpecialType) return this
+        val parameterNameAnnotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return this
+        return replaceAnnotations(AnnotationsImpl(annotations.filter { it != parameterNameAnnotation }))
     }
 
     private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionType
     private fun KotlinType.getReceiverType(): KotlinType? =
-            if (functionTypeExpected()) getReceiverTypeFromFunctionType(this) else null
+            if (functionTypeExpected()) this.getReceiverTypeFromFunctionType() else null
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
             if (functionTypeExpected()) {
-                createValueParametersForInvokeInFunctionType(owner, getValueParameterTypesFromFunctionType(this))
+                createValueParametersForInvokeInFunctionType(owner, this.getValueParameterTypesFromFunctionType())
             }
             else null
 
@@ -310,14 +320,14 @@ class FunctionDescriptorResolver(
             parameterScope: LexicalWritableScope,
             valueParameters: List<KtParameter>,
             trace: BindingTrace,
-            expectedValueParameters: List<ValueParameterDescriptor>?
+            expectedParameterTypes: List<KotlinType>?
     ): List<ValueParameterDescriptor> {
         val result = ArrayList<ValueParameterDescriptor>()
 
         for (i in valueParameters.indices) {
             val valueParameter = valueParameters[i]
             val typeReference = valueParameter.typeReference
-            val expectedType = expectedValueParameters?.let { if (i < it.size) it[i].type else null }
+            val expectedType = expectedParameterTypes?.let { if (i < it.size) it[i] else null }
 
             val type: KotlinType
             if (typeReference != null) {

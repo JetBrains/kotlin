@@ -26,7 +26,7 @@ import kotlin.annotation.AnnotationTarget.*
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
-@Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER)
+@Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
 public annotation class Deprecated(
         val message: String,
@@ -72,11 +72,19 @@ public enum class DeprecationLevel {
 public annotation class ExtensionFunctionType
 
 /**
+ * Annotates type arguments of functional type and holds corresponding parameter name specified by the user in type declaration (if any).
+ */
+@Target(TYPE)
+@MustBeDocumented
+@SinceKotlin("1.1")
+public annotation class ParameterName(val name: String)
+
+/**
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */
 @Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
-        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
+        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE, TYPEALIAS)
 @Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)
 
@@ -87,3 +95,15 @@ public annotation class Suppress(vararg val names: String)
 @Retention(SOURCE)
 @MustBeDocumented
 public annotation class UnsafeVariance
+
+/**
+ * Specifies the first version of Kotlin where a declaration has appeared.
+ * Using the declaration and specifying an older API version (via the `-api-version` command line option) will result in an error.
+ *
+ * @property version the version in the following formats: `<major>.<minor>` or `<major>.<minor>.<patch>`, where major, minor and patch
+ * are non-negative integer numbers without leading zeros.
+ */
+@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+public annotation class SinceKotlin(val version: String)

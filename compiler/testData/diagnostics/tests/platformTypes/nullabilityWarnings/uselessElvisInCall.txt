@@ -18,5 +18,5 @@ public open class J {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J
+    @org.jetbrains.annotations.NotNull public final var staticNN: J
 }

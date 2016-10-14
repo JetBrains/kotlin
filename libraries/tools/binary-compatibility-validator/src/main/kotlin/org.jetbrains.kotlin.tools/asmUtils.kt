@@ -23,7 +23,7 @@ data class ClassBinarySignature(
         val memberSignatures: List<MemberBinarySignature>,
         val access: AccessFlags,
         val isEffectivelyPublic: Boolean,
-        val isFileOrMultipartFacade: Boolean) {
+        val isNotUsedWhenEmpty: Boolean) {
 
     val signature: String
         get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else " : ${supertypes.joinToString()}"
@@ -121,6 +121,7 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
 
 val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
 fun ClassNode.isLocal() = innerClassNode?.run { innerName == null && outerName == null} ?: false
+fun ClassNode.isInner() = innerClassNode != null
 fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
 
 val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
@@ -134,12 +135,14 @@ fun FieldNode.isInlineExposed() = hasAnnotation(inlineExposedAnnotationName, inc
 
 private object KotlinClassKind {
     const val FILE = 2
+    const val SYNTHETIC_CLASS = 3
     const val MULTIPART_FACADE = 4
 
     val FILE_OR_MULTIPART_FACADE_KINDS = listOf(FILE, MULTIPART_FACADE)
 }
 
 fun ClassNode.isFileOrMultipartFacade() = kotlinClassKind.let { it != null && it in KotlinClassKind.FILE_OR_MULTIPART_FACADE_KINDS }
+fun ClassNode.isDefaultImpls() = isInner() && name.endsWith("\$DefaultImpls") && kotlinClassKind == KotlinClassKind.SYNTHETIC_CLASS
 
 
 val ClassNode.kotlinClassKind: Int?

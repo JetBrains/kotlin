@@ -38,11 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
-import static org.jetbrains.kotlin.js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject;
 
 public final class TranslationUtils {
@@ -54,7 +52,10 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (DescriptorUtils.isExtension(descriptor)) {
+        if (DescriptorUtils.isExtension(descriptor) ||
+            descriptor instanceof PropertyAccessorDescriptor &&
+            shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
+        ) {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {
@@ -149,13 +150,8 @@ public final class TranslationUtils {
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
         if(!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
-            String backingFieldMangledName;
-            if (!Visibilities.isPrivate(descriptor.getVisibility())) {
-                backingFieldMangledName = getMangledName(descriptor, getKotlinBackingFieldName(backingFieldName.getIdent()));
-            } else {
-                backingFieldMangledName = getKotlinBackingFieldName(backingFieldName.getIdent());
-            }
-            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName, false);
+            JsName backingFieldMangledName = context.getNameForBackingField(descriptor);
+            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName.getIdent(), false);
         }
 
         DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
@@ -298,5 +294,25 @@ public final class TranslationUtils {
         }
         DeclarationDescriptor descriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, ((KtSimpleNameExpression) expression));
         return !(descriptor instanceof LocalVariableDescriptor) || !((LocalVariableDescriptor) descriptor).isDelegated();
+    }
+
+    public static boolean shouldGenerateAccessors(@NotNull CallableDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return shouldGenerateAccessors((PropertyDescriptor) descriptor);
+        }
+        else if (descriptor instanceof PropertyAccessorDescriptor) {
+            return shouldGenerateAccessors(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static boolean shouldGenerateAccessors(@NotNull PropertyDescriptor property) {
+        if (AnnotationsUtils.hasJsNameInAccessors(property)) return true;
+        for (PropertyDescriptor overriddenProperty : property.getOverriddenDescriptors()) {
+            if (shouldGenerateAccessors(overriddenProperty)) return true;
+        }
+        return false;
     }
 }

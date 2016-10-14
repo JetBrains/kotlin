@@ -2,5 +2,5 @@ package test
 
 public open class NotNullObjectArray {
     public constructor NotNullObjectArray()
-    @org.jetbrains.annotations.NotNull() public open fun hi(): kotlin.Array<(out) kotlin.Any!>
+    @org.jetbrains.annotations.NotNull public open fun hi(): kotlin.Array<(out) kotlin.Any!>
 }

@@ -1,0 +1,41 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: No value passed for parameter p
+// ERROR: Type mismatch: inferred type is Unit but String was expected
+
+package main
+
+class X {
+    fun foo(p: Int) {
+    }
+
+    fun f(): String {
+        return foo(<caret>)
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun <T> X.foo(): T = TODO()
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: No value passed for parameter p
+// ERROR: Type mismatch: inferred type is Unit but String was expected
+
+package main
+
+import other.foo
+
+class X {
+    fun foo(p: Int) {
+    }
+
+    fun f(): String {
+        return foo(<caret>)
+    }
+}
+

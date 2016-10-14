@@ -35,18 +35,18 @@ public abstract class XXX {
 
 public abstract class YYY {
     public constructor YYY()
-    public final val a11: ((kotlin.Int) -> kotlin.Int)? = null
-    public final val a12: ((kotlin.Int) -> kotlin.Int)? = null
-    public abstract val a13: kotlin.Int.(kotlin.Int) -> kotlin.Int
-    public abstract val a14: n.B.(kotlin.Int) -> kotlin.Int
-    public abstract val a15: kotlin.Int?.(kotlin.Int) -> kotlin.Int
-    public abstract val a152: kotlin.Int?.(kotlin.Int) -> kotlin.Int
-    public abstract val a16: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
-    public abstract val a17: ((kotlin.Int) -> kotlin.Int).(kotlin.Int) -> kotlin.Int
-    public abstract val a18: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
-    public abstract val a19: ((kotlin.Int) -> kotlin.Int) -> kotlin.Int
-    public abstract val a7: (A) -> n.B
-    public abstract val a8: (A, n.B) -> n.B
+    public final val a11: ((a: kotlin.Int) -> kotlin.Int)? = null
+    public final val a12: ((a: kotlin.Int) -> kotlin.Int)? = null
+    public abstract val a13: kotlin.Int.(a: kotlin.Int) -> kotlin.Int
+    public abstract val a14: n.B.(a: kotlin.Int) -> kotlin.Int
+    public abstract val a15: kotlin.Int?.(a: kotlin.Int) -> kotlin.Int
+    public abstract val a152: kotlin.Int?.(a: kotlin.Int) -> kotlin.Int
+    public abstract val a16: (a: kotlin.Int) -> (a: kotlin.Int) -> kotlin.Int
+    public abstract val a17: ((a: kotlin.Int) -> kotlin.Int).(a: kotlin.Int) -> kotlin.Int
+    public abstract val a18: (a: kotlin.Int) -> (a: kotlin.Int) -> kotlin.Int
+    public abstract val a19: (b: (a: kotlin.Int) -> kotlin.Int) -> kotlin.Int
+    public abstract val a7: (a: A) -> n.B
+    public abstract val a8: (a: A, b: n.B) -> n.B
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

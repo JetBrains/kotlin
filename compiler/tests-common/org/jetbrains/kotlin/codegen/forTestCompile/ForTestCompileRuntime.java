@@ -52,6 +52,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File scriptRuntimeJarForTests() {
+        return assertExists(new File("dist/kotlinc/lib/kotlin-script-runtime.jar"));
+    }
+
+    @NotNull
     private static File assertExists(@NotNull File file) {
         if (!file.exists()) {
             throw new IllegalStateException(file + " does not exist. Run 'ant dist'");
@@ -63,7 +68,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), kotlinTestJarForTests());
+            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), scriptRuntimeJarForTests(), kotlinTestJarForTests());
             reflectJarClassLoader = new SoftReference<ClassLoader>(loader);
         }
         return loader;
@@ -73,7 +78,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeJarClassLoader() {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests());
+            loader = createClassLoader(runtimeJarForTests(), scriptRuntimeJarForTests());
             runtimeJarClassLoader = new SoftReference<ClassLoader>(loader);
         }
         return loader;

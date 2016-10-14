@@ -1,6 +1,6 @@
 package
 
-public /*synthesized*/ fun Bar(/*0*/ function: (Foo<(raw) kotlin.CharSequence!>!) -> kotlin.Unit): Bar
+public /*synthesized*/ fun Bar(/*0*/ function: (f: Foo<(raw) kotlin.CharSequence!>!) -> kotlin.Unit): Bar
 
 public interface Bar {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

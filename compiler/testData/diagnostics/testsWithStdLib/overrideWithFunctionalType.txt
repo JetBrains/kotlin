@@ -12,7 +12,7 @@ public interface Base {
 public open class Derived : Base {
     public constructor Derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun </*0*/ V : kotlin.Any!> foo(/*0*/ @org.jetbrains.annotations.NotNull() compute: () -> V?): kotlin.Unit
+    @java.lang.Override public open override /*1*/ fun </*0*/ V : kotlin.Any!> foo(/*0*/ @org.jetbrains.annotations.NotNull compute: () -> V?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -4,10 +4,10 @@ public final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 
-public interface Foo</*0*/ T : @test.A() kotlin.Number> : @test.A() kotlin.CharSequence {
+public interface Foo</*0*/ T : @test.A kotlin.Number> : @test.A kotlin.CharSequence {
     public abstract override /*1*/ /*fake_override*/ val length: kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun <get-length>(): kotlin.Int
-    public abstract fun </*0*/ E, /*1*/ F : @test.A() E> bar(): kotlin.Unit
+    public abstract fun </*0*/ E, /*1*/ F : @test.A E> bar(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 }

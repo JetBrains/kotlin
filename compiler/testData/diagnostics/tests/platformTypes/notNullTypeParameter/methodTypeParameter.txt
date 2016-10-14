@@ -9,6 +9,6 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun </*0*/ T : kotlin.Any!> bar(/*0*/ @org.jetbrains.annotations.NotNull() x: T, /*1*/ y: T!): kotlin.Unit
+    public open fun </*0*/ T : kotlin.Any!> bar(/*0*/ @org.jetbrains.annotations.NotNull x: T, /*1*/ y: T!): kotlin.Unit
     public open fun platformString(): kotlin.String!
 }

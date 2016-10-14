@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.method
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -172,6 +174,17 @@ class PropertyReferenceCodegen(
     }
 
     companion object {
+
+        @JvmField
+        val ANY_SUBSTITUTOR = TypeSubstitutor.create(object : TypeSubstitution() {
+            override fun get(key: KotlinType): TypeProjection? {
+                if (KotlinBuiltIns.isUnit(key)) {
+                    return TypeProjectionImpl(key)
+                }
+                return TypeProjectionImpl(key.builtIns.nullableAnyType)
+            }
+        })
+
         @JvmStatic
         fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
             val accessor = when (callable) {
@@ -208,7 +221,8 @@ class PropertyReferenceCodegen(
 
         @JvmStatic
         fun createFakeOpenDescriptor(getFunction: FunctionDescriptor, classDescriptor: ClassDescriptor): FunctionDescriptor {
-            return getFunction.original.copy(classDescriptor, Modality.OPEN, getFunction.visibility, getFunction.kind, false)
+            val copy = getFunction.original.copy(classDescriptor, Modality.OPEN, getFunction.visibility, getFunction.kind, false)
+            return copy.substitute(ANY_SUBSTITUTOR)!!
         }
 
         @JvmStatic

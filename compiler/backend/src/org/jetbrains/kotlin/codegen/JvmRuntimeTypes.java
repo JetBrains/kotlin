@@ -101,11 +101,13 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
         //noinspection ConstantConditions
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
         KotlinType functionType = FunctionTypeResolveUtilsKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
-                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(parameters),
+                null,
                 descriptor.getReturnType()
         );
 
@@ -128,11 +130,13 @@ public class JvmRuntimeTypes {
                 extensionReceiver != null ? extensionReceiver.getType() : dispatchReceiver != null ? dispatchReceiver.getType() : null;
 
         //noinspection ConstantConditions
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
         KotlinType functionType = FunctionTypeResolveUtilsKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 isBound ? null : receiverType,
-                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(parameters),
+                null,
                 descriptor.getReturnType()
         );
 

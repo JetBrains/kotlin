@@ -1,0 +1,4 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLine("[INFO] BUILD FAILURE");
+assertBuildLogHasLineThatContains("Unresolved reference: toMutableMap");

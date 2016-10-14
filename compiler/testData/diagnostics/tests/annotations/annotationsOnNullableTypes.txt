@@ -1,21 +1,21 @@
 package
 
-public val baz: @a() kotlin.Int? = 1
+public val baz: @a kotlin.Int? = 1
 public val baz1: @b(i = 1) kotlin.Int? = 1
-public val baz2: @a() @b(i = 1) kotlin.Int? = 1
-public val baz3: @c() kotlin.Int? = 1
-public fun foo(/*0*/ i: @a() kotlin.Int?): kotlin.Unit
-public fun foo(/*0*/ l: kotlin.collections.List<@a() kotlin.Int?>): kotlin.Unit
+public val baz2: @a @b(i = 1) kotlin.Int? = 1
+public val baz3: @c kotlin.Int? = 1
+public fun foo(/*0*/ i: @a kotlin.Int?): kotlin.Unit
+public fun foo(/*0*/ l: kotlin.collections.List<@a kotlin.Int?>): kotlin.Unit
 public fun foo1(/*0*/ i: @b(i = 1) kotlin.Int?): kotlin.Unit
 public fun foo1(/*0*/ l: kotlin.collections.List<@b(i = 1) kotlin.Int?>): kotlin.Unit
-public fun foo2(/*0*/ i: @a() @b(i = 1) kotlin.Int?): kotlin.Unit
-public fun foo2(/*0*/ l: kotlin.collections.List<@a() @b(i = 1) kotlin.Int?>): kotlin.Unit
-public fun foo3(/*0*/ i: @c() kotlin.Int?): kotlin.Unit
-public fun foo3(/*0*/ l: kotlin.collections.List<@c() kotlin.Int?>): kotlin.Unit
-public fun @a() kotlin.Int?.bar(): kotlin.Unit
+public fun foo2(/*0*/ i: @a @b(i = 1) kotlin.Int?): kotlin.Unit
+public fun foo2(/*0*/ l: kotlin.collections.List<@a @b(i = 1) kotlin.Int?>): kotlin.Unit
+public fun foo3(/*0*/ i: @c kotlin.Int?): kotlin.Unit
+public fun foo3(/*0*/ l: kotlin.collections.List<@c kotlin.Int?>): kotlin.Unit
+public fun @a kotlin.Int?.bar(): kotlin.Unit
 public fun @b(i = 1) kotlin.Int?.bar1(): kotlin.Unit
-public fun @a() @b(i = 1) kotlin.Int?.bar2(): kotlin.Unit
-public fun @c() kotlin.Int?.bar3(): kotlin.Unit
+public fun @a @b(i = 1) kotlin.Int?.bar2(): kotlin.Unit
+public fun @c kotlin.Int?.bar3(): kotlin.Unit
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class a : kotlin.Annotation {
     public constructor a()

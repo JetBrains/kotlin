@@ -1,0 +1,9 @@
+package
+
+public val v1: kotlin.String
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public val v2: kotlin.String = ""
+public var v3: kotlin.String
+public var v4: kotlin.String
+public var v5: kotlin.String
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public var v6: kotlin.String
+public fun test(): kotlin.Unit

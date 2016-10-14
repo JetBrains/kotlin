@@ -4,5 +4,5 @@ public class TestingUse {
 }
 
 fun main() {
-    val funcInfunc = TestingUse().test6({ f: (Int) -> Int -> f(5) > 20}, { x -> x + 2})
+    val funcInfunc = TestingUse().test6({ f: (x: Int) -> Int -> f(5) > 20}, { x -> x + 2})
 }

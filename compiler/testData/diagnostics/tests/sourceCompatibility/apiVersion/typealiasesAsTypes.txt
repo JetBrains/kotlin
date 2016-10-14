@@ -1,0 +1,23 @@
+package
+
+public fun test1(/*0*/ x: Since_1_1_Alias /* = Since_1_1 */): Since_1_1_Alias /* = Since_1_1 */
+public fun test2(/*0*/ x: C_1_1_Alias /* = C */): C_1_1_Alias /* = C */
+public fun test3(/*0*/ x: kotlin.collections.List<C_1_1_Alias /* = C */>): kotlin.collections.List<C_1_1_Alias /* = C */>
+public fun test4(/*0*/ x: L /* = kotlin.collections.List<Since_1_1> */): L /* = kotlin.collections.List<Since_1_1> */
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.SinceKotlin(version = "1.1") public final class Since_1_1 {
+    public constructor Since_1_1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+@kotlin.SinceKotlin(version = "1.1") public typealias C_1_1_Alias = C
+public typealias L = kotlin.collections.List<Since_1_1>
+public typealias Since_1_1_Alias = Since_1_1

@@ -28,6 +28,7 @@ enum class Modifier(private val str: String) {
     OPEN("open"),
     OVERRIDE("override"),
     EXTERNAL("external"),
+    CONST("const"),
     INNER("inner");
 
     fun toKotlin(): String = str
@@ -65,6 +66,10 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
     val isPrivate: Boolean get() = contains(Modifier.PRIVATE)
 
     fun accessModifier(): Modifier? = modifiers.firstOrNull { it in ACCESS_MODIFIERS }
+
+    operator fun plus(other: Modifiers): Modifiers {
+        return Modifiers(this.modifiers + other.modifiers).assignPrototypesFrom(this)
+    }
 
     companion object {
         val Empty = Modifiers(listOf())

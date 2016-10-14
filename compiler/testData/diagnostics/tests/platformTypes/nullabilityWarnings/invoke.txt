@@ -17,7 +17,7 @@ public open class J {
 
     // Static members
     public final var staticJ: J.Invoke!
-    @org.jetbrains.annotations.Nullable() public final var staticN: J.Invoke?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: J.Invoke
+    @org.jetbrains.annotations.Nullable public final var staticN: J.Invoke?
+    @org.jetbrains.annotations.NotNull public final var staticNN: J.Invoke
     public final /*synthesized*/ fun Invoke(/*0*/ function: () -> kotlin.Unit): J.Invoke
 }

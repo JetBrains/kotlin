@@ -178,6 +178,7 @@ interface DescriptorRendererOptions {
     var textFormat: RenderingFormat
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
+    var includeAnnotationArguments: Boolean
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
@@ -193,6 +194,7 @@ interface DescriptorRendererOptions {
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
+    var parameterNamesInFunctionalTypes: Boolean
 }
 
 object ExcludedTypeAnnotations {
@@ -221,7 +223,8 @@ object ExcludedTypeAnnotations {
 
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact"))
+            FqName("kotlin.internal.Exact")
+    )
 }
 
 enum class RenderingFormat {

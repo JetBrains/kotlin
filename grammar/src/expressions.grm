@@ -172,7 +172,11 @@ declaration
 
 statement
   : declaration
-  : annotations expression
+  : blockLevelExpression
+  ;
+
+blockLevelExpression
+  : annotations ("\n")+ expression
   ;
 
 multiplicativeOperation

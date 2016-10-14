@@ -1,10 +1,10 @@
 package test
 
-@test.DoubleAnno() public val kotlin.Double.extension: kotlin.Int
+@test.DoubleAnno public val kotlin.Double.extension: kotlin.Int
     public fun kotlin.Double.<get-extension>(): kotlin.Int
-@test.IntAnno() public val kotlin.Int.extension: kotlin.Int
+@test.IntAnno public val kotlin.Int.extension: kotlin.Int
     public fun kotlin.Int.<get-extension>(): kotlin.Int
-@test.StringAnno() public val kotlin.String.extension: kotlin.String
+@test.StringAnno public val kotlin.String.extension: kotlin.String
     public fun kotlin.String.<get-extension>(): kotlin.String
 
 public final annotation class DoubleAnno : kotlin.Annotation {

@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: squareMultipliedByTwo
+// CHECK_CONTAINS_NO_CALLS: squareMultipliedByTwo_0
 
 internal inline fun inline1(a: Int): Int {
     return a

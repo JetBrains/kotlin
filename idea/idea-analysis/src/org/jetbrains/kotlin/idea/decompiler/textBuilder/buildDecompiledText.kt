@@ -40,6 +40,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     modifiers = DescriptorRendererModifier.ALL
     excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
     alwaysRenderModifiers = true
+    parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
 }
 
 fun buildDecompiledText(

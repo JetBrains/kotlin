@@ -287,6 +287,153 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Name extends AbstractDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classAndFunction.kt")
+        public void testClassAndFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classAndTypealias.kt")
+        public void testClassAndTypealias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndTypealias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classLevelMethodAndProperty.kt")
+        public void testClassLevelMethodAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/classLevelMethodAndProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conflictingNamesFromSuperclass.kt")
+        public void testConflictingNamesFromSuperclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/conflictingNamesFromSuperclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionPropertyAndMethod.kt")
+        public void testExtensionPropertyAndMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameAndNamedNative.kt")
+        public void testJsNameAndNamedNative() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndNamedNative.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameAndOverridden.kt")
+        public void testJsNameAndOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndOverridden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameClash.kt")
+        public void testJsNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameClashWithDefault.kt")
+        public void testJsNameClashWithDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClashWithDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameMissingOnAccessors.kt")
+        public void testJsNameMissingOnAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameMissingOnAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameOnAccessors.kt")
+        public void testJsNameOnAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameOnOverride.kt")
+        public void testJsNameOnOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameOnPropertyAndAccessor.kt")
+        public void testJsNameOnPropertyAndAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnPropertyAndAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNamePrihibitedOnPrimaryConstructor.kt")
+        public void testJsNamePrihibitedOnPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNamePrihibitedOnPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameProhibitedOnExtensionProperty.kt")
+        public void testJsNameProhibitedOnExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameProhibitedOnExtensionProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsNameUseTargetOnProperty.kt")
+        public void testJsNameUseTargetOnProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameUseTargetOnProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodAndMethod.kt")
+        public void testMethodAndMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndMethod.kt")
+        public void testPackageAndMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageAndProperty.kt")
+        public void testPackageAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateJsNameClash.kt")
+        public void testPrivateJsNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/privateJsNameClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAndMethodInSubclass.kt")
+        public void testPropertyAndMethodInSubclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelMethodAndJsNameConstructor.kt")
+        public void testTopLevelMethodAndJsNameConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndJsNameConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelMethodAndProperty.kt")
+        public void testTopLevelMethodAndProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

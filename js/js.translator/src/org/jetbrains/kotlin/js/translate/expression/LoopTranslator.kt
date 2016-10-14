@@ -19,25 +19,23 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.CompositeFIF
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getHasNextCallable
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getIteratorFunction
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getNextFunction
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtWhileExpressionBase
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
@@ -83,19 +81,16 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
     fun isForOverRange(): Boolean {
-        //TODO: better check
         //TODO: long range?
-        return getClassDescriptorForType(rangeType).name.asString() == "IntRange"
+        val fqn = rangeType.constructor.declarationDescriptor?.fqNameSafe ?: return false
+        return fqn.asString() == "kotlin.ranges.IntRange"
     }
 
     fun isForOverRangeLiteral(): Boolean =
             loopRange is KtBinaryExpression && loopRange.operationToken == KtTokens.RANGE && isForOverRange()
 
    fun isForOverArray(): Boolean {
-        //TODO: better check
-        //TODO: IMPORTANT!
-        return getClassDescriptorForType(rangeType).name.asString() == "Array" ||
-               getClassDescriptorForType(rangeType).name.asString() == "IntArray"
+        return KotlinBuiltIns.isArray(rangeType) || KotlinBuiltIns.isPrimitiveArray(rangeType)
     }
 
 

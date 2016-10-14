@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
@@ -98,9 +100,12 @@ class DoubleColonExpressionResolver(
     }
 
     private fun checkClassLiteral(c: ExpressionTypingContext, expression: KtClassLiteralExpression, result: DoubleColonLHS) {
-        if (result !is DoubleColonLHS.Type) return
+        if (result is DoubleColonLHS.Expression) {
+            if (!result.isObject) reportUnsupportedIfNeeded(expression, c)
+            return
+        }
 
-        val type = result.type
+        val type = (result as DoubleColonLHS.Type).type
         val reportError: Boolean
         if (result.possiblyBareType.isBare) {
             val descriptor = type.constructor.declarationDescriptor
@@ -132,7 +137,7 @@ class DoubleColonExpressionResolver(
                 !isWithoutValueArguments
             is KtDotQualifiedExpression ->
                 receiverExpression.canBeConsideredProperExpression() &&
-                selectorExpression?.let { it.canBeConsideredProperExpression() } ?: false
+                selectorExpression?.canBeConsideredProperExpression() ?: false
             else -> true
         }
     }
@@ -150,9 +155,6 @@ class DoubleColonExpressionResolver(
     }
 
     private fun shouldTryResolveLHSAsExpression(expression: KtDoubleColonExpression): Boolean {
-        // TODO: improve diagnostic when bound callable references are disabled
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return false
-
         val lhs = expression.receiverExpression ?: return false
         return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarks /* TODO: test this */
     }
@@ -160,6 +162,12 @@ class DoubleColonExpressionResolver(
     private fun shouldTryResolveLHSAsType(expression: KtDoubleColonExpression): Boolean {
         val lhs = expression.receiverExpression
         return lhs != null && lhs.canBeConsideredProperType()
+    }
+
+    private fun reportUnsupportedIfNeeded(expression: KtDoubleColonExpression, c: ExpressionTypingContext) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) {
+            c.trace.report(UNSUPPORTED_FEATURE.on(expression.receiverExpression!!, LanguageFeature.BoundCallableReferences))
+        }
     }
 
     private fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
@@ -432,6 +440,10 @@ class DoubleColonExpressionResolver(
                 if (expression.isEmptyLHS) null
                 else resolveDoubleColonLHS(expression, context)
 
+        if (lhsResult is DoubleColonLHS.Expression) {
+            reportUnsupportedIfNeeded(expression, context)
+        }
+
         val resolutionResults =
                 resolveCallableReferenceRHS(expression, lhsResult, context, resolveArgumentsMode)
 
@@ -524,8 +536,10 @@ class DoubleColonExpressionResolver(
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     val returnType = descriptor.returnType ?: return null
-                    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
-                    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
+                    val parametersTypes = descriptor.valueParameters.map { it.type }
+                    val parametersNames = descriptor.valueParameters.map { it.name }
+                    return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType,
+                                                            parametersTypes, parametersNames, returnType, descriptor.builtIns)
                 }
                 is PropertyDescriptor -> {
                     val mutable = descriptor.isVar && run {

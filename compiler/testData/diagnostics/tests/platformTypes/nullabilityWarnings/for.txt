@@ -10,6 +10,6 @@ public open class J {
 
     // Static members
     public final var staticJ: kotlin.collections.(Mutable)List<kotlin.String!>!
-    @org.jetbrains.annotations.Nullable() public final var staticN: kotlin.collections.(Mutable)List<kotlin.String!>?
-    @org.jetbrains.annotations.NotNull() public final var staticNN: kotlin.collections.(Mutable)List<kotlin.String!>
+    @org.jetbrains.annotations.Nullable public final var staticN: kotlin.collections.(Mutable)List<kotlin.String!>?
+    @org.jetbrains.annotations.NotNull public final var staticNN: kotlin.collections.(Mutable)List<kotlin.String!>
 }

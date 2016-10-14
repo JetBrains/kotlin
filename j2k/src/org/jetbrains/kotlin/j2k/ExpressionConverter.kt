@@ -232,29 +232,19 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val operand = expression.operand
+        val type = converter.convertTypeElement(operand, Nullability.NotNull)
         val typeName = operand.type.canonicalText
         val primitiveType = JvmPrimitiveType.values().firstOrNull { it.javaKeywordName == typeName }
-        val wrapperTypeName = if (primitiveType != null) {
-            primitiveType.wrapperFqName
-        }
-        else if (typeName == "void") { // by unknown reason it's not in JvmPrimitiveType enum
-            FqName("java.lang.Void")
-        }
-        else {
-            val type = converter.convertTypeElement(operand, Nullability.NotNull)
-            result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype("java"), null)
+        if (typeName == "void") {
+            result = QualifiedExpression(Identifier("Void", false).assignNoPrototype(), Identifier.withNoPrototype("TYPE", isNullable = false), null)
             return
         }
-
-        //TODO: need more correct way to detect if short name is ok
-        val qualifiedName = wrapperTypeName.asString()
-        val classNameToUse = if (qualifiedName in needQualifierNameSet)
-            qualifiedName
-        else
-            wrapperTypeName.shortName().asString()
-        result = QualifiedExpression(Identifier(classNameToUse, false).assignPrototype(operand),
-                                     Identifier.withNoPrototype("TYPE", isNullable = false),
-                                     null)
+        val name = if (primitiveType != null) {
+            "javaPrimitiveType"
+        } else {
+            "java"
+        }
+        result = QualifiedExpression(ClassLiteralExpression(type).assignNoPrototype(), Identifier.withNoPrototype(name), null)
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -283,15 +273,16 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         if (type != null) {
             val typeStr = type.canonicalText
             if (typeStr == "double") {
-                text = text.replace("D", "").replace("d", "")
-                if (!text.contains(".")) {
-                    text += ".0"
+                text = text.replace("d", "", true)
+                if (!text.contains(".") && !text.contains("e", true))
+                    text += "."
+                if (text.endsWith(".")) {
+                    text += "0"
                 }
-
             }
 
             if (typeStr == "float") {
-                text = text.replace("F", "f")
+                text = text.replace(".f", "f", true).replace("F", "f")
             }
 
             if (typeStr == "long") {
@@ -311,6 +302,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val toIntIsNeeded = value != null && value.toString().toInt() < 0 && !isLongField(expression.parent)
                 text = if (value != null && !isHexLiteral(text)) value.toString() else text + (if (toIntIsNeeded) ".toInt()" else "")
             }
+            if (typeStr == "java.lang.String" || typeStr == "char")
+                text = text.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
+                    String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
+                }
 
             if (typeStr == "java.lang.String") {
                 text = text.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0")
@@ -541,7 +536,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             return
         }
 
-        val referenceName = expression.referenceName!!
+        val referenceName = expression.referenceName ?: run {
+            result = LiteralExpression(expression.text).assignNoPrototype()
+            return
+        }
+
         val target = expression.resolve()
 
         val isNullable = target is PsiVariable && isNullable(target)
@@ -907,9 +906,5 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitExpression(expression: PsiExpression) {
         result = DummyStringExpression(expression.text)
-    }
-
-    companion object {
-        private val needQualifierNameSet = setOf("java.lang.Byte", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short")
     }
 }

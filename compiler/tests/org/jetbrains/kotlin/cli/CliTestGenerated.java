@@ -37,6 +37,36 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), false);
         }
 
+        @TestMetadata("apiVersion.args")
+        public void testApiVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersion.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("apiVersionAndSinceNewerKotlin.args")
+        public void testApiVersionAndSinceNewerKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionAndSinceNewerKotlin.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("apiVersionGreaterThanLanguage.args")
+        public void testApiVersionGreaterThanLanguage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionGreaterThanLanguage.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("apiVersionInvalid.args")
+        public void testApiVersionInvalid() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionInvalid.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("apiVersionLessThanLanguage.args")
+        public void testApiVersionLessThanLanguage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionLessThanLanguage.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("classAndFileClassClash.args")
         public void testClassAndFileClassClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/classAndFileClassClash.args");
@@ -268,6 +298,12 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("unknownExtraFlags.args")
         public void testUnknownExtraFlags() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/unknownExtraFlags.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("unsupportedTypeAlias.args")
+        public void testUnsupportedTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/unsupportedTypeAlias.args");
             doJvmTest(fileName);
         }
 

@@ -4,7 +4,7 @@ public suspend fun notMember(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>
 public suspend fun Controller.correctExtension(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
 public suspend fun kotlin.String.wrongExtension(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
 
-@kotlin.coroutines.AllowSuspendExtensions() public final class Controller {
+@kotlin.coroutines.AllowSuspendExtensions public final class Controller {
     public constructor Controller()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

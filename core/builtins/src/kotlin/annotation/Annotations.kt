@@ -47,7 +47,9 @@ public enum class AnnotationTarget {
     /** Any expression */
     EXPRESSION,
     /** File */
-    FILE
+    FILE,
+    /** Type alias */
+    TYPEALIAS
 }
 
 /**

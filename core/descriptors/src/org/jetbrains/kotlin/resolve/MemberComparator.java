@@ -39,6 +39,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
                     options.setVerbose(true);
+                    options.setIncludeAnnotationArguments(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;
                 }

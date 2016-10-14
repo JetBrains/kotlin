@@ -16,7 +16,7 @@ public abstract class B : (kotlin.Int) -> kotlin.Unit {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class C : (kotlin.Int) -> kotlin.Unit {
+public final class C : (x: kotlin.Int) -> kotlin.Unit {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

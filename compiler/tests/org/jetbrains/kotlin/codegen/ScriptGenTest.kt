@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.ScriptTemplateDefinition
 import org.jetbrains.kotlin.scripts.ScriptWithIntParam
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -32,8 +33,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
-        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromTemplate(ScriptWithIntParam::class, scriptFilePattern = ".*\\.lang\\.kt")
-        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromTemplate(Any::class, scriptFilePattern = ".*\\.kts")
+        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class, providedScriptFilePattern = ".*\\.lang\\.kt")
+        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(Any::class, providedScriptFilePattern = ".*\\.kts")
     }
 
     override fun setUp() {

@@ -4,7 +4,7 @@ public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
-    @kotlin.jvm.JvmOverloads() public final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmOverloads public final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

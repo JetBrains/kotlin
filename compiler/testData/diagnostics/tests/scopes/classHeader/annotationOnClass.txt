@@ -1,6 +1,6 @@
 package
 
-@Ann() public final class A {
+@Ann public final class A {
     public constructor A()
     public final val a: kotlin.Int = 1
     public final fun b(): kotlin.Int

@@ -95,6 +95,30 @@ public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstruc
         doTest(fileName);
     }
 
+    @TestMetadata("callFromLocalSubClass.kt")
+    public void testCallFromLocalSubClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromLocalSubClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("callFromPrimaryWithNamedArgs.kt")
+    public void testCallFromPrimaryWithNamedArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromPrimaryWithNamedArgs.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("callFromPrimaryWithOptionalArgs.kt")
+    public void testCallFromPrimaryWithOptionalArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromPrimaryWithOptionalArgs.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("callFromSubClass.kt")
+    public void testCallFromSubClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/callFromSubClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("clashingDefaultConstructors.kt")
     public void testClashingDefaultConstructors() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/clashingDefaultConstructors.kt");

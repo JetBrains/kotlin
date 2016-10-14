@@ -1,0 +1,10 @@
+package
+
+@kotlin.SinceKotlin(version = "0.9") public fun ok1(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.0") public fun ok2(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.1") public fun ok3(): kotlin.Unit
+@kotlin.SinceKotlin(version = "0.9.9") public fun ok4(): kotlin.Unit
+public fun t1(): kotlin.Unit
+public fun t2(): kotlin.Unit
+public fun t3(): kotlin.Unit
+public fun t4(): kotlin.Unit

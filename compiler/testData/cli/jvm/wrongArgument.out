@@ -16,6 +16,7 @@ where possible options include:
   -module-name               Module name
   -jvm-target <version>      Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
   -language-version <version> Provide source compatibility with specified language version
+  -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version

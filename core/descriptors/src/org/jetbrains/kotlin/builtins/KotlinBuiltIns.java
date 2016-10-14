@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
@@ -51,6 +52,7 @@ public abstract class KotlinBuiltIns {
     private static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
     public static final FqName COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"));
     public static final FqName RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"));
+    public static final FqName TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"));
 
     public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
             BUILT_INS_PACKAGE_FQ_NAME,
@@ -80,9 +82,7 @@ public abstract class KotlinBuiltIns {
 
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
-        builtInsModule = new ModuleDescriptorImpl(
-                BUILTINS_MODULE_NAME, storageManager, ModuleParameters.Empty.INSTANCE, this
-        );
+        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, Collections.<ImportPath>emptyList(), this);
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
@@ -185,6 +185,7 @@ public abstract class KotlinBuiltIns {
         public final FqName deprecated = fqName("Deprecated");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
+        public final FqName parameterName = fqName("ParameterName");
         public final FqName annotation = fqName("Annotation");
         public final FqName target = annotationName("Target");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
@@ -401,8 +402,8 @@ public abstract class KotlinBuiltIns {
     public Set<DeclarationDescriptor> getIntegralRanges() {
         return SetsKt.<DeclarationDescriptor>setOf(
                 getBuiltInClassByName("CharRange", rangesPackageFragment),
-                getBuiltInClassByName("IntRange", rangesPackageFragment)
-                // TODO: contains in LongRange should be optimized too
+                getBuiltInClassByName("IntRange", rangesPackageFragment),
+                getBuiltInClassByName("LongRange", rangesPackageFragment)
         );
     }
 

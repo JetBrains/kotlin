@@ -1,0 +1,71 @@
+// -- Module: <m1> --
+package
+
+package p1 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "1") public final class A {
+        public constructor A(/*0*/ v1: kotlin.Unit)
+        public final val v1: kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package p2 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "2") public final class A {
+        public constructor A(/*0*/ v2: kotlin.Unit)
+        public final val v2: kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m3> --
+package
+
+package p3 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "3") public final class A {
+        public constructor A(/*0*/ v3: kotlin.Unit)
+        public final val v3: kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <m4> --
+package
+
+public fun test(/*0*/ a: [ERROR : A]): kotlin.Unit
+public fun test(/*0*/ a: p2.A): kotlin.Unit
+
+package p1 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "1") public final class A {
+        // -- Module: <m1> --
+    }
+}
+
+package p2 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "2") public final class A {
+        // -- Module: <m2> --
+    }
+}
+
+package p3 {
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "3") public final class A {
+        // -- Module: <m3> --
+    }
+}

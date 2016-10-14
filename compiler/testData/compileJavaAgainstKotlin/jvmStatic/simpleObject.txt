@@ -5,10 +5,10 @@ public fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
 public object A {
     private constructor A()
     public final val b: kotlin.String
-    @kotlin.jvm.JvmStatic() public final fun test1(): kotlin.Unit
-    @kotlin.jvm.JvmStatic() public final fun test2(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final fun test1(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final fun test2(): kotlin.Unit
     public final fun test3(): kotlin.Unit
-    @kotlin.jvm.JvmStatic() public final fun kotlin.String.test4(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final fun kotlin.String.test4(): kotlin.Unit
 }
 
 public/*package*/ open class Test {

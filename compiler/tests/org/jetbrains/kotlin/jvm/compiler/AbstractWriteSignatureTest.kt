@@ -59,12 +59,18 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         val psiFile = KotlinTestUtils.createFile(ktFile.name, text, environment!!.project)
 
-        GenerationUtils.compileFileTo(psiFile, environment!!, tmpdir)
+        val fileFactory = GenerationUtils.compileFileTo(psiFile, environment!!, tmpdir)
 
         Disposer.dispose(myTestRootDisposable)
 
         val expectations = parseExpectations(ktFile)
-        expectations.check()
+        try {
+            expectations.check()
+        }
+        catch (e: Throwable) {
+            println(fileFactory.createText())
+            throw e
+        }
     }
 
     private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {

@@ -4,6 +4,11 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions {
 
+    private var apiVersionField: kotlin.String? = null
+    override var apiVersion: kotlin.String
+        get() = apiVersionField ?: "1.1"
+        set(value) { apiVersionField = value }
+
     private var kjsmField: kotlin.Boolean? = null
     override var kjsm: kotlin.Boolean
         get() = kjsmField ?: true
@@ -60,6 +65,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         set(value) { verboseField = value }
 
     open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
+        apiVersionField?.let { args.apiVersion = it }
         kjsmField?.let { args.kjsm = it }
         languageVersionField?.let { args.languageVersion = it }
         mainField?.let { args.main = it }
@@ -75,6 +81,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fillDefaultValues() {
+    apiVersion = "1.1"
     kjsm = true
     languageVersion = "1.1"
     main = "noCall"

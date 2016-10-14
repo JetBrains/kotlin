@@ -1,20 +1,20 @@
 package
 
-@base() public final class Outer {
+@base public final class Outer {
     public constructor Outer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @base() @meta() public final annotation class Annotated : kotlin.Annotation {
+    @base @meta public final annotation class Annotated : kotlin.Annotation {
         public constructor Annotated()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @base() @meta() public final class Nested {
+    @base @meta public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -4,7 +4,7 @@ public /*synthesized*/ fun </*0*/ T : kotlin.Any!> Provider(/*0*/ function: () -
 public fun foo(/*0*/ javaInterface: JavaInterface): kotlin.Unit
 
 public interface JavaInterface {
-    @org.jetbrains.annotations.Nullable() public abstract fun </*0*/ T : kotlin.Any!> compute(/*0*/ @org.jetbrains.annotations.NotNull() provider: Provider<T!>): kotlin.String?
+    @org.jetbrains.annotations.Nullable public abstract fun </*0*/ T : kotlin.Any!> compute(/*0*/ @org.jetbrains.annotations.NotNull provider: Provider<T!>): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

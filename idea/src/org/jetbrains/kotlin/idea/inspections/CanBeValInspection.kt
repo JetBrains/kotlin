@@ -127,9 +127,10 @@ class CanBeValInspection : AbstractKotlinInspection() {
             }
 
             private fun reportCanBeVal(declaration: KtValVarKeywordOwner) {
+                val keyword = declaration.valOrVarKeyword!!
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                        declaration,
-                        declaration.valOrVarKeyword!!,
+                        keyword,
+                        keyword,
                         "Variable is never modified and can be declared immutable using 'val'",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         isOnTheFly,

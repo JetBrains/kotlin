@@ -5,20 +5,20 @@ public fun test(/*0*/ x: CollectionStringImpl): kotlin.Unit
 public open class CollectionStringImpl : kotlin.collections.MutableCollection<kotlin.String!> {
     public constructor CollectionStringImpl()
     public open override /*1*/ val size: kotlin.Int
-    @java.lang.Override() public open override /*1*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun clear(): kotlin.Unit
-    @java.lang.Override() public open override /*1*/ /*isHiddenToOvercomeSignatureClash*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun clear(): kotlin.Unit
+    @java.lang.Override public open override /*1*/ /*isHiddenToOvercomeSignatureClash*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
     public open operator fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @java.lang.Override() public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun iterator(): kotlin.collections.MutableIterator<kotlin.String!>
-    @java.lang.Override() public open override /*1*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    @java.lang.Override() public open override /*1*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    @java.lang.Override() public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    @java.lang.Override() public open fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    @java.lang.Override public open override /*1*/ fun isEmpty(): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun iterator(): kotlin.collections.MutableIterator<kotlin.String!>
+    @java.lang.Override public open override /*1*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @java.lang.Override public open override /*1*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @java.lang.Override public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+    @java.lang.Override public open fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

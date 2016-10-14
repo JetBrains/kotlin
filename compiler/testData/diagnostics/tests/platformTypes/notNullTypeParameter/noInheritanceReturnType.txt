@@ -4,7 +4,7 @@ public fun test(): kotlin.Unit
 
 public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
-    @org.jetbrains.annotations.NotNull() public open fun bar(): T
+    @org.jetbrains.annotations.NotNull public open fun bar(): T
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

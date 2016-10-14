@@ -19,13 +19,15 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
 
@@ -39,14 +41,14 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
             if (!element.leftCurlyBrace.textRange.containsOffset(caretOffset)) return false
         }
 
-        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, element.functionLiteral] ?: return false
+        val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, element.functionLiteral] ?: return false
         return functionDescriptor.valueParameters.none { it.type.isError }
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val psiFactory = KtPsiFactory(element)
         val functionLiteral = element.functionLiteral
-        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, functionLiteral]!!
+        val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
 
         val parameterString = functionDescriptor.valueParameters
                 .map { "${it.name}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)}" }

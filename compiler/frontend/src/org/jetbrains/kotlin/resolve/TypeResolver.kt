@@ -213,7 +213,10 @@ class TypeResolver(
                                  else moduleDescriptor.builtIns.unitType
 
                 result = type(createFunctionType(
-                        moduleDescriptor.builtIns, annotations, receiverType, parameterDescriptors.map { it.type }, returnType
+                        moduleDescriptor.builtIns, annotations, receiverType,
+                        parameterDescriptors.map { it.type },
+                        parameterDescriptors.map { it.name },
+                        returnType
                 ))
             }
 
@@ -456,7 +459,7 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
         if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
-            c.trace.report(UNSUPPORTED_TYPEALIAS.on(type))
+            c.trace.report(UNSUPPORTED_FEATURE.on(type, LanguageFeature.TypeAliases))
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
@@ -623,9 +626,9 @@ class TypeResolver(
                         Math.min(classifierChainLastIndex + 1, reversedQualifierParts.size),
                         reversedQualifierParts.size)
 
-        for (qualifierPart in nonClassQualifierParts) {
-            if (qualifierPart.typeArguments != null) {
-                c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(qualifierPart.typeArguments, "here"))
+        for ((name, expression, typeArguments) in nonClassQualifierParts) {
+            if (typeArguments != null) {
+                c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(typeArguments, "here"))
                 return null
             }
         }

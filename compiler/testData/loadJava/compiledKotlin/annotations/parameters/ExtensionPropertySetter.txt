@@ -8,5 +8,5 @@ public final class Class {
     /*primary*/ public constructor Class()
     public final var kotlin.Int.foo: kotlin.Int
         public final fun kotlin.Int.<get-foo>(): kotlin.Int
-        public final fun kotlin.Int.<set-foo>(/*0*/ @test.A() value: kotlin.Int): kotlin.Unit
+        public final fun kotlin.Int.<set-foo>(/*0*/ @test.A value: kotlin.Int): kotlin.Unit
 }

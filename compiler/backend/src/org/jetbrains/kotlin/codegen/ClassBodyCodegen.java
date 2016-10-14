@@ -120,8 +120,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
     }
 
     protected void generateDeclaration(KtDeclaration declaration) {
-        if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
-            genFunctionOrProperty(declaration);
+        if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
+            genSimpleMember(declaration);
         }
         else if (declaration instanceof KtClassOrObject) {
             if (declaration instanceof KtEnumEntry && !enumEntryNeedSubclass(bindingContext, (KtEnumEntry) declaration)) {

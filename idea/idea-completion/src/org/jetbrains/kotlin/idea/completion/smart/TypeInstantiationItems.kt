@@ -210,8 +210,8 @@ class TypeInstantiationItems(
                 1 -> {
                     val constructor = visibleConstructors.single()
                     val substitutor = TypeSubstitutor.create(fuzzyType.presentationType())
-                    val substitutedConstructor = constructor.substitute(substitutor)
-                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(substitutedConstructor)
+                    val substitutedConstructor = constructor.substitute(substitutor) ?: constructor // render original signature if failed to substitute
+                    BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderFunctionParameters(substitutedConstructor)
                 }
 
                 else -> "(...)"

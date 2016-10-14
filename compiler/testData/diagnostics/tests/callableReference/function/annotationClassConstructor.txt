@@ -1,7 +1,7 @@
 package
 
 public val annClassRef: kotlin.reflect.KClass<Ann>
-public val annCtorRef: kotlin.reflect.KFunction1<kotlin.String, Ann>
+public val annCtorRef: kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "prop") kotlin.String, Ann>
 public val annPropRef: kotlin.reflect.KProperty1<Ann, kotlin.String>
 
 public final annotation class Ann : kotlin.Annotation {

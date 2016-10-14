@@ -1,7 +1,7 @@
 package
 
-public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (T) -> U): kotlin.Unit
-public inline fun </*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W> inlineFunWithInvoke(/*0*/ s: (T, U) -> V, /*1*/ ext: T.(U, V) -> W): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (p: T) -> U): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W> inlineFunWithInvoke(/*0*/ s: (p: T, l: U) -> V, /*1*/ ext: T.(p: U, l: V) -> W): kotlin.Unit
 public operator inline fun </*0*/ T, /*1*/ U> ((T) -> U).compareTo(/*0*/ p: (T) -> U): kotlin.Int
 public operator fun </*0*/ T, /*1*/ U, /*2*/ V> ((T, U) -> V).compareTo(/*0*/ index: (T, U) -> V): kotlin.Int
 public operator fun </*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W> (T.(U, V) -> W).compareTo(/*0*/ index: T.(U, V) -> W): kotlin.Int

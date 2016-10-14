@@ -7,7 +7,7 @@ public final class A {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() public final val b: kotlin.String
+        @kotlin.jvm.JvmStatic public final val b: kotlin.String
         public final var test.A.c: kotlin.String
     }
 }

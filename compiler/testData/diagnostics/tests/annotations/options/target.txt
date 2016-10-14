@@ -1,6 +1,6 @@
 package
 
-@base() public final data class My {
+@base public final data class My {
     public constructor My(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int

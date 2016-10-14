@@ -2,12 +2,12 @@ package
 
 package foo {
     public fun f(): kotlin.Int.() -> kotlin.Unit
-    public fun foo2(): (() -> kotlin.Unit) -> kotlin.Unit
+    public fun foo2(): (i: () -> kotlin.Unit) -> kotlin.Unit
     public fun </*0*/ T> fooT1(/*0*/ t: T): () -> T
-    public fun </*0*/ T> fooT2(): (T) -> T
+    public fun </*0*/ T> fooT2(): (t: T) -> T
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
     public fun main1(): kotlin.Unit
     public fun test(): kotlin.Unit
     public fun kotlin.Any.foo(): () -> kotlin.Unit
-    public fun kotlin.Any.foo1(): (kotlin.Int) -> kotlin.Unit
+    public fun kotlin.Any.foo1(): (i: kotlin.Int) -> kotlin.Unit
 }

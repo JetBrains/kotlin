@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
+// TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = (ANNOTATIONS_COPIED_TO_TYPES + KotlinBuiltIns.FQ_NAMES.parameterName).toSet()
+
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, type: Type) {
@@ -49,7 +52,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
             val isTopLevelClass = !it.isNestedClass
-            isTopLevelClass && it.asSingleFqName() in ANNOTATIONS_COPIED_TO_TYPES
+            isTopLevelClass && it.asSingleFqName() in ANNOTATIONS_NOT_LOADED_FOR_TYPES
         }
 
         val effectiveParent =

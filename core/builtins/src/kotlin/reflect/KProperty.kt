@@ -30,6 +30,7 @@ public interface KProperty<out R> : KCallable<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/properties.html#late-initialized-properties)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isLateinit: Boolean
 
     /**
@@ -37,6 +38,7 @@ public interface KProperty<out R> : KCallable<R> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/properties.html#compile-time-constants)
      * for more information.
      */
+    @SinceKotlin("1.1")
     public val isConst: Boolean
 
     /** The getter of this property, used to obtain the value of the property. */

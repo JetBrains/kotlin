@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -45,9 +45,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
         fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val builtIns = JvmBuiltIns(storageManager)
-            val module = ModuleDescriptorImpl(
-                    Name.special("<runtime module for $classLoader>"), storageManager, ModuleParameters.Empty, builtIns
-            )
+            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, emptyList(), builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
@@ -72,8 +70,9 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
                     module, notFoundClasses, storageManager, reflectKotlinClassFinder
             )
             val deserializationComponentsForJava = DeserializationComponentsForJava(
-                    storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader,
-                    lazyJavaPackageFragmentProvider, notFoundClasses, RuntimeErrorReporter, LookupTracker.DO_NOTHING
+                    storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
+                    binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
+                    RuntimeErrorReporter, LookupTracker.DO_NOTHING
             )
 
             singleModuleClassResolver.resolver = javaDescriptorResolver

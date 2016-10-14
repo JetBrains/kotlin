@@ -2,8 +2,8 @@ package
 
 package aa {
     public fun test(): kotlin.Unit
-    public fun aa.SomeTemplate.query(/*0*/ f: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
-    public fun aa.SomeTemplate.query1(/*0*/ f: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
+    public fun aa.SomeTemplate.query(/*0*/ f: (i: kotlin.Int) -> kotlin.Unit): (i: kotlin.Int) -> kotlin.Unit
+    public fun aa.SomeTemplate.query1(/*0*/ f: (i: kotlin.Int) -> kotlin.Unit): (i: kotlin.Int) -> kotlin.Unit
 
     public final class Some</*0*/ T> {
         public constructor Some</*0*/ T>()

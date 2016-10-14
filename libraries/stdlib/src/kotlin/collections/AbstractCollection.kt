@@ -15,6 +15,7 @@
  */
 package kotlin.collections
 
+@SinceKotlin("1.1")
 public abstract class AbstractCollection<out E> protected constructor() : Collection<E> {
     abstract override val size: Int
     abstract override fun iterator(): Iterator<E>

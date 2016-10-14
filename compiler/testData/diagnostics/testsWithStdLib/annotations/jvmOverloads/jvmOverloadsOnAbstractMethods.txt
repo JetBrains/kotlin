@@ -3,14 +3,14 @@ package
 public abstract class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmOverloads() public abstract fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmOverloads public abstract fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface T {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmOverloads() public abstract fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmOverloads public abstract fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

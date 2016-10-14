@@ -1,11 +1,11 @@
 package
 
 package a {
-    @java.lang.Deprecated() @java.lang.SuppressWarnings(value = {}) public val s: kotlin.String = ""
-    @java.lang.Deprecated() @java.lang.SuppressWarnings(value = {}) public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    @java.lang.Deprecated @java.lang.SuppressWarnings(value = {}) public val s: kotlin.String = ""
+    @java.lang.Deprecated @java.lang.SuppressWarnings(value = {}) public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
     public final class Test {
-        public constructor Test(/*0*/ @java.lang.Deprecated() s: kotlin.String, /*1*/ @java.lang.SuppressWarnings(value = {}) x: kotlin.Int)
+        public constructor Test(/*0*/ @java.lang.Deprecated s: kotlin.String, /*1*/ @java.lang.SuppressWarnings(value = {}) x: kotlin.Int)
         public final val s: kotlin.String
         public final val x: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

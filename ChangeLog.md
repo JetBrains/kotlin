@@ -107,6 +107,12 @@
 - [`KT-13955`](https://youtrack.jetbrains.com/issue/KT-13955) Find Usages: Add special type for usages inside of type aliases
 - [`KT-13479`](https://youtrack.jetbrains.com/issue/KT-13479) Support navigation to type aliases from binaries
 
+### Scripting
+
+- A new library `kotlin-script-util` containing utilities for implementing kotlin script support  
+- [`KT-7880`](https://youtrack.jetbrains.com/issue/KT-7880) Experimental support for JSR 223 Scripting API
+- Implement support for custom template-based scripts in command-line compiler, maven and gradle plugins
+
 ## 1.1-M01 (EAP-1)
 
 ### Language features
@@ -201,6 +207,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-12398`](https://youtrack.jetbrains.com/issue/KT-12398) Call Hierarchy: Show Kotlin usages of Java methods
 - [`KT-13976`](https://youtrack.jetbrains.com/issue/KT-13976) Search Everywhere: Render function parameter types
 - [`KT-13977`](https://youtrack.jetbrains.com/issue/KT-13977) Search Everywhere: Render extension type in prefix position
+- Implement Kotlin facet
 
 #### Intention actions, inspections and quickfixes
 
@@ -219,6 +226,8 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-11525`](https://youtrack.jetbrains.com/issue/KT-11525) Implement "Create type parameter" quickfix
 - [`KT-9931`](https://youtrack.jetbrains.com/issue/KT-9931) Implement "Remove unused assignment" quickfix
+- [`KT-14245`](https://youtrack.jetbrains.com/issue/KT-14245) Implement "Convert enum to sealed class" intention
+- [`KT-14245`](https://youtrack.jetbrains.com/issue/KT-14245) Implement "Convert sealed class to enum" intention
 
 #### Refactorings
 
@@ -243,6 +252,8 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-6199`](https://youtrack.jetbrains.com/issue/KT-6199) Rename: Replace non-code class occurrences with new qualified name
 - [`KT-14182`](https://youtrack.jetbrains.com/issue/KT-14182) Move: Show error message on applying to enum entries
 - Extract Function: Support implicit abnormal exits via Nothing-typed expressions
+- [`KT-14285`](https://youtrack.jetbrains.com/issue/KT-14285) Rename: Forbid on backing field reference
+- [`KT-14240`](https://youtrack.jetbrains.com/issue/KT-14240) Introduce Variable: Do not replace assignment left-hand sides
 
 ##### New features
 

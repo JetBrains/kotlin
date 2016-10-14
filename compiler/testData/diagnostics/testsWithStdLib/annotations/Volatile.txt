@@ -2,10 +2,10 @@ package
 
 public final class My {
     public constructor My()
-    @field:kotlin.jvm.Volatile() public final val w: kotlin.Int = 2
-    @kotlin.jvm.Volatile() public final val x: kotlin.Int = 0
-    @kotlin.jvm.Volatile() public final var y: kotlin.Int
-    @delegate:kotlin.jvm.Volatile() public final var z: kotlin.String
+    @field:kotlin.jvm.Volatile public final val w: kotlin.Int = 2
+    @kotlin.jvm.Volatile public final val x: kotlin.Int = 0
+    @kotlin.jvm.Volatile public final var y: kotlin.Int
+    @delegate:kotlin.jvm.Volatile public final var z: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

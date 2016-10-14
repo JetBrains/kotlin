@@ -12,8 +12,8 @@ when
 
 // TODO : consider empty after ->
 whenEntry
-  : whenCondition{","} "->" expression SEMI
-  : "else" "->" expression SEMI
+  : whenCondition{","} "->" controlStructureBody SEMI
+  : "else" "->" controlStructureBody SEMI
   ;
 
 whenCondition

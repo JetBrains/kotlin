@@ -1,13 +1,12 @@
 // KT-2995 creating factory methods to simulate overloaded constructors don't work in JavaScript
-
 package foo
 
 class Foo(val name: String)
 
-fun Foo() = Foo("<default-name>")
+fun Foo(x: Int) = Foo("<$x>")
 
 fun box(): String {
-    assertEquals("<default-name>", Foo().name)
+    assertEquals("<123>", Foo(123).name)
     assertEquals("BarBaz", Foo("BarBaz").name)
 
     return "OK"

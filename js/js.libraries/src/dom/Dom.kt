@@ -45,6 +45,7 @@ val Element?.elements: List<Element>
     get() = this?.elements() ?: emptyList()
 
 @Deprecated("Use non-nullable receiver version elements()", ReplaceWith("this?.elements(localName) ?: emptyList()"))
+@JsName("deprecated_elements")
 fun Element?.elements(localName: String): List<Element> = this?.elements(localName) ?: emptyList()
 
 /** Returns all the descendant elements given the local element name */
@@ -53,11 +54,13 @@ fun Element.elements(localName: String = "*"): List<Element> {
 }
 
 /** Returns all the descendant elements given the local element name */
+@JsName("deprecated_document_elements")
 fun Document?.elements(localName: String = "*"): List<Element> {
     return this?.getElementsByTagName(localName)?.asElementList() ?: emptyList()
 }
 
 @Deprecated("Use non-nullable elements function instead", ReplaceWith("this?.elements(namespaceUri, localName) ?: emptyList()"))
+@JsName("deprecated_elements_2")
 fun Element?.elements(namespaceUri: String, localName: String): List<Element> = this?.elements(namespaceUri, localName) ?: emptyList()
 
 /** Returns all the descendant elements given the namespace URI and local element name */
@@ -71,6 +74,7 @@ fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
 }
 
 @Deprecated("Use non-null function instead with elvis", ReplaceWith("this?.asList() ?: emptyList()"))
+@JsName("deprecated_asList")
 fun NodeList?.asList(): List<Node> = this?.asList() ?: emptyList()
 
 fun NodeList.asList(): List<Node> = NodeListAsList(this)

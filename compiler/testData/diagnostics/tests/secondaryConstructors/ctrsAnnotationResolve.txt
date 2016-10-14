@@ -1,8 +1,8 @@
 package
 
 public final class A {
-    @Ann1() public constructor A()
-    @Ann2() public constructor A(/*0*/ x1: kotlin.Int)
+    @Ann1 public constructor A()
+    @Ann2 public constructor A(/*0*/ x1: kotlin.Int)
     @Ann2(x = 2) public constructor A(/*0*/ x1: kotlin.Int, /*1*/ x2: kotlin.Int)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

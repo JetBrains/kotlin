@@ -12,10 +12,10 @@ public abstract class A {
 
 public object B : A {
     private constructor B()
-    @kotlin.jvm.JvmStatic() public open override /*1*/ fun a(): kotlin.Unit
-    @kotlin.jvm.JvmStatic() public open override /*1*/ fun b(): kotlin.Unit
-    @kotlin.jvm.JvmStatic() public final override /*1*/ fun c(): kotlin.Unit
-    @kotlin.jvm.JvmStatic() public open fun d(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public open override /*1*/ fun a(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public open override /*1*/ fun b(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final override /*1*/ fun c(): kotlin.Unit
+    @kotlin.jvm.JvmStatic public open fun d(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -29,10 +29,10 @@ public final class C {
 
     public companion object Companion : A {
         private constructor Companion()
-        @kotlin.jvm.JvmStatic() public open override /*1*/ fun a(): kotlin.Unit
-        @kotlin.jvm.JvmStatic() public open override /*1*/ fun b(): kotlin.Unit
-        @kotlin.jvm.JvmStatic() public final override /*1*/ fun c(): kotlin.Unit
-        @kotlin.jvm.JvmStatic() public open fun d(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public open override /*1*/ fun a(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public open override /*1*/ fun b(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public final override /*1*/ fun c(): kotlin.Unit
+        @kotlin.jvm.JvmStatic public open fun d(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

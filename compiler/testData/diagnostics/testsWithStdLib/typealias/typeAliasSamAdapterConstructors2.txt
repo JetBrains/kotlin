@@ -34,8 +34,8 @@ public open class JHost {
     }
 
     // Static members
-    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> Consumer(/*0*/ function: (T!) -> kotlin.Unit): JHost.Consumer<T>
-    public final /*synthesized*/ fun </*0*/ T1 : kotlin.Any!, /*1*/ T2 : kotlin.Any!> Consumer2(/*0*/ function: (T1!, T2!) -> kotlin.Unit): JHost.Consumer2<T1, T2>
+    public final /*synthesized*/ fun </*0*/ T : kotlin.Any!> Consumer(/*0*/ function: (x: T!) -> kotlin.Unit): JHost.Consumer<T>
+    public final /*synthesized*/ fun </*0*/ T1 : kotlin.Any!, /*1*/ T2 : kotlin.Any!> Consumer2(/*0*/ function: (x1: T1!, x2: T2!) -> kotlin.Unit): JHost.Consumer2<T1, T2>
     public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): JHost.Runnable
 }
 public typealias C</*0*/ T>  = JHost.Consumer<T>

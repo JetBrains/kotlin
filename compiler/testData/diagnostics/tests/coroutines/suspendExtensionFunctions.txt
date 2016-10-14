@@ -10,7 +10,7 @@ public suspend fun Controller.severalParams(/*0*/ x: kotlin.String, /*1*/ y: kot
 public suspend fun kotlin.String.wrongReceiver(/*0*/ y: kotlin.Int, /*1*/ machine: kotlin.coroutines.Continuation<kotlin.Double>): kotlin.Unit
 public suspend fun Controller.yieldString(/*0*/ value: kotlin.String, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Unit
 
-@kotlin.coroutines.AllowSuspendExtensions() public final class Controller {
+@kotlin.coroutines.AllowSuspendExtensions public final class Controller {
     public constructor Controller()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

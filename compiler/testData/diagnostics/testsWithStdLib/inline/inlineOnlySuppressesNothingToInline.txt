@@ -1,8 +1,8 @@
 package
 
-@kotlin.internal.InlineOnly() public inline fun test(): kotlin.Unit
-@kotlin.internal.InlineOnly() public inline fun test2(/*0*/ s: ((kotlin.Int) -> kotlin.Int)?): kotlin.Unit
-@kotlin.internal.InlineOnly() public inline fun test3(/*0*/ noinline s: (kotlin.Int) -> kotlin.Int): kotlin.Unit
-@kotlin.internal.InlineOnly() public inline fun test4(/*0*/ noinline s: kotlin.Int.() -> kotlin.Int): kotlin.Unit
-@kotlin.internal.InlineOnly() public inline fun ((kotlin.Int) -> kotlin.Int)?.test5(): kotlin.Unit
-@kotlin.internal.InlineOnly() public inline fun ((kotlin.Int) -> kotlin.Int)?.test6(): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun test(): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun test2(/*0*/ s: ((kotlin.Int) -> kotlin.Int)?): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun test3(/*0*/ noinline s: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun test4(/*0*/ noinline s: kotlin.Int.() -> kotlin.Int): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun ((kotlin.Int) -> kotlin.Int)?.test5(): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun ((kotlin.Int) -> kotlin.Int)?.test6(): kotlin.Unit

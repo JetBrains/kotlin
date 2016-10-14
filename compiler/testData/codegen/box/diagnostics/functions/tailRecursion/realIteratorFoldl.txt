@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-public tailrec fun </*0*/ T, /*1*/ A> kotlin.collections.Iterator<T>.foldl(/*0*/ acc: A, /*1*/ foldFunction: (T, A) -> A): A
+public tailrec fun </*0*/ T, /*1*/ A> kotlin.collections.Iterator<T>.foldl(/*0*/ acc: A, /*1*/ foldFunction: (e: T, acc: A) -> A): A

@@ -178,7 +178,7 @@ public class AsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
-               AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
+               CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
@@ -198,7 +198,7 @@ public class AsmUtil {
             flags |= Opcodes.ACC_NATIVE;
         }
 
-        if (AnnotationUtilKt.isPlatformStaticInCompanionObject(functionDescriptor)) {
+        if (CodegenUtilKt.isJvmStaticInCompanionObject(functionDescriptor)) {
             // Native method will be a member of the class, the companion object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
         }
@@ -231,15 +231,14 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isHiddenInResolution(functionDescriptor)
+        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isHiddenInResolution(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isDeprecatedHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
     }
 
-    //TODO: move mapping logic to front-end java
     public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
         Integer specialCase = specialCaseVisibility(descriptor);
         if (specialCase != null) {
@@ -636,7 +635,7 @@ public class AsmUtil {
     ) {
         KotlinType type = parameter.getReturnType();
         if (type == null || isNullableType(type)) return;
-        
+
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {

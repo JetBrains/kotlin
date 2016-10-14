@@ -4,11 +4,11 @@ public fun main(/*0*/ a: A<kotlin.String>, /*1*/ a1: A<kotlin.String?>): kotlin.
 
 public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
-    @org.eclipse.jdt.annotation.Nullable() public final var field: kotlin.String?
-    @org.eclipse.jdt.annotation.NonNull() public open fun bar(): kotlin.String
-    @org.eclipse.jdt.annotation.Nullable() public open fun baz(/*0*/ @org.eclipse.jdt.annotation.NonNull() x: T): T?
+    @org.eclipse.jdt.annotation.Nullable public final var field: kotlin.String?
+    @org.eclipse.jdt.annotation.NonNull public open fun bar(): kotlin.String
+    @org.eclipse.jdt.annotation.Nullable public open fun baz(/*0*/ @org.eclipse.jdt.annotation.NonNull x: T): T?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.eclipse.jdt.annotation.Nullable() public open fun foo(/*0*/ @org.eclipse.jdt.annotation.NonNull() x: kotlin.String, /*1*/ @org.eclipse.jdt.annotation.Nullable() y: kotlin.CharSequence?): kotlin.String?
+    @org.eclipse.jdt.annotation.Nullable public open fun foo(/*0*/ @org.eclipse.jdt.annotation.NonNull x: kotlin.String, /*1*/ @org.eclipse.jdt.annotation.Nullable y: kotlin.CharSequence?): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

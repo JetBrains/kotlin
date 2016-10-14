@@ -57,7 +57,7 @@ object DeprecatedCallChecker : CallChecker {
 
     private val PROPERTY_SET_OPERATIONS = TokenSet.create(*KtTokens.ALL_ASSIGNMENTS.types, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
-    private fun shouldCheckPropertyGetter(expression: PsiElement): Boolean {
+    internal fun shouldCheckPropertyGetter(expression: PsiElement): Boolean {
         // property getters do not come as callable yet, so we analyse surroundings to check for deprecation annotation on getter
         val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, KtBinaryExpression::class.java)
         if (binaryExpression != null) {

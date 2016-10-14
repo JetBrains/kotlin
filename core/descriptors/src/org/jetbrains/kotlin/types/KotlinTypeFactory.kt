@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import java.lang.IllegalStateException
 
 object KotlinTypeFactory {
     private fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {

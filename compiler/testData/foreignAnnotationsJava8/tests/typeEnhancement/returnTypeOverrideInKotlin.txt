@@ -6,7 +6,7 @@ public fun bar2(): Derived<kotlin.String?>
 public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.checkerframework.checker.nullness.qual.Nullable() public/*package*/ open fun foo(): Base<kotlin.String>?
+    @org.checkerframework.checker.nullness.qual.Nullable public/*package*/ open fun foo(): Base<kotlin.String>?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

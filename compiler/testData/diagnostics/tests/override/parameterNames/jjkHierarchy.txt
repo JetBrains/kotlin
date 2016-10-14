@@ -1,7 +1,7 @@
 package
 
-public/*package*/ /*synthesized*/ fun Sub(/*0*/ function: (kotlin.Long) -> kotlin.Unit): Sub
-public/*package*/ /*synthesized*/ fun Super(/*0*/ function: (kotlin.Long) -> kotlin.Unit): Super
+public/*package*/ /*synthesized*/ fun Sub(/*0*/ function: (superName: kotlin.Long) -> kotlin.Unit): Sub
+public/*package*/ /*synthesized*/ fun Super(/*0*/ function: (superName: kotlin.Long) -> kotlin.Unit): Super
 
 public/*package*/ interface Sub : Super {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

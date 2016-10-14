@@ -2,7 +2,7 @@ package
 
 public val q: A
 @Ann(x = 1) public fun main1(): kotlin.Unit
-@Ann() public fun main2(): kotlin.Unit
+@Ann public fun main2(): kotlin.Unit
 @Ann(x = 3) public fun main3(): kotlin.Unit
 
 public open class A {

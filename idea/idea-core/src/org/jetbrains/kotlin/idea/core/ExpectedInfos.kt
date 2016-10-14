@@ -497,7 +497,7 @@ class ExpectedInfos(
                     .mapNotNull { it.fuzzyType }
                     .filter { it.type.isFunctionType }
                     .map {
-                        val returnType = getReturnTypeFromFunctionType(it.type)
+                        val returnType = it.type.getReturnTypeFromFunctionType()
                         ExpectedInfo(returnType.toFuzzyType(it.freeParameters), null, Tail.RBRACE)
                     }
         }

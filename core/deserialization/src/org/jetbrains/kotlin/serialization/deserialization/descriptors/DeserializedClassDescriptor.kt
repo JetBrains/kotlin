@@ -50,6 +50,8 @@ class DeserializedClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.fqName).shortClassName
 ) {
+    private val classId = nameResolver.getClassId(classProto.fqName)
+
     private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.flags))
     private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.flags))
     private val kind = Deserialization.classKind(Flags.CLASS_KIND.get(classProto.flags))
@@ -59,13 +61,11 @@ class DeserializedClassDescriptor(
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
     private val memberScope = DeserializedClassMemberScope()
-    private val nestedClasses = if (classProto.nestedClassNameCount > 0) NestedClassDescriptors() else null
     private val enumEntries = if (kind == ClassKind.ENUM_CLASS) EnumEntryClassDescriptors() else null
 
     private val containingDeclaration = outerContext.containingDeclaration
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
-    private val nestedTypeAliases = c.storageManager.createLazyValue { NestedTypeAliases() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
@@ -124,11 +124,6 @@ class DeserializedClassDescriptor(
                 c.memberDeserializer.loadConstructor(it, false)
             }
 
-    private fun computeTypeAliases(): List<TypeAliasDescriptor> =
-            classProto.typeAliasList.map {
-                c.memberDeserializer.loadTypeAlias(it)
-            }
-
     override fun getConstructors() = constructors()
 
     private fun computeCompanionObjectDescriptor(): ClassDescriptor? {
@@ -140,11 +135,10 @@ class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    internal fun hasNestedClass(name: Name): Boolean {
-        return nestedClasses != null && name in nestedClasses.nestedClassNames
-    }
+    internal fun hasNestedClass(name: Name): Boolean =
+            name in memberScope.classNames
 
-    override fun toString() = "deserialized class ${getName().toString()}" // not using descriptor render to preserve laziness
+    override fun toString() = "deserialized class $name" // not using descriptor render to preserve laziness
 
     override fun getSource() = sourceElement
 
@@ -184,7 +178,7 @@ class DeserializedClassDescriptor(
 
         override val annotations: Annotations get() = Annotations.EMPTY // TODO
 
-        override fun toString() = getName().toString()
+        override fun toString() = name.toString()
 
         override val supertypeLoopChecker: SupertypeLoopChecker
             // TODO: inject implementation
@@ -192,9 +186,11 @@ class DeserializedClassDescriptor(
     }
 
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(
-            c, classProto.functionList, classProto.propertyList, classProto.typeAliasList
+            c, classProto.functionList, classProto.propertyList, classProto.typeAliasList,
+            classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
     ) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
+
         private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
@@ -265,15 +261,11 @@ class DeserializedClassDescriptor(
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             recordLookup(name, location)
-            return classDescriptor.enumEntries?.findEnumEntry(name) ?:
-                   classDescriptor.nestedClasses?.findNestedClass(name) ?:
-                   classDescriptor.nestedTypeAliases().findTypeAlias(name)
+            classDescriptor.enumEntries?.findEnumEntry(name)?.let { return it }
+            return super.getContributedClassifier(name, location)
         }
 
-        override fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
-            result.addAll(classDescriptor.nestedClasses?.all().orEmpty())
-            result.addAll(classDescriptor.nestedTypeAliases().all())
-        }
+        override fun createClassId(name: Name) = classId.createNestedClassId(name)
 
         override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
@@ -282,34 +274,6 @@ class DeserializedClassDescriptor(
         private fun recordLookup(name: Name, from: LookupLocation) {
             c.components.lookupTracker.record(from, classDescriptor, name)
         }
-    }
-
-    private inner class NestedClassDescriptors {
-        private val classId = c.nameResolver.getClassId(classProto.fqName)
-
-        internal val nestedClassNames = classProto.nestedClassNameList.map { c.nameResolver.getName(it) }.toSet()
-
-        private val nestedClassByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
-            name ->
-            if (name in nestedClassNames) {
-                c.components.deserializeClass(classId.createNestedClassId(name))
-            }
-            else null
-        }
-
-        fun findNestedClass(name: Name): ClassDescriptor? = nestedClassByName(name)
-
-        fun all(): Collection<ClassDescriptor> =
-                nestedClassNames.mapNotNull { name -> nestedClassByName(name) }
-    }
-
-    private inner class NestedTypeAliases {
-        private val nestedTypeAliases = computeTypeAliases()
-        private val nestedTypeAliasesByName = nestedTypeAliases.associateBy { it.name }
-
-        fun all() = nestedTypeAliases
-
-        fun findTypeAlias(name: Name): TypeAliasDescriptor? = nestedTypeAliasesByName[name]
     }
 
     private inner class EnumEntryClassDescriptors {

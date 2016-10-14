@@ -8,7 +8,7 @@ public open class Impl : test.Trait {
 
 public open class Subclass : test.Impl {
     public constructor Subclass()
-    @java.lang.Override() public open override /*1*/ fun bar(): kotlin.String
+    @java.lang.Override public open override /*1*/ fun bar(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
 }
 

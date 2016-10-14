@@ -2,5 +2,5 @@ package test
 
 public interface ReadOnlyExtendsWildcard {
     public abstract fun bar(): kotlin.Unit
-    public abstract fun foo(/*0*/ @org.jetbrains.annotations.ReadOnly() p0: kotlin.collections.List<kotlin.CharSequence!>!, /*1*/ @org.jetbrains.annotations.NotNull() p1: kotlin.Comparable<kotlin.String!>): kotlin.Unit
+    public abstract fun foo(/*0*/ @org.jetbrains.annotations.ReadOnly p0: kotlin.collections.List<kotlin.CharSequence!>!, /*1*/ @org.jetbrains.annotations.NotNull p1: kotlin.Comparable<kotlin.String!>): kotlin.Unit
 }

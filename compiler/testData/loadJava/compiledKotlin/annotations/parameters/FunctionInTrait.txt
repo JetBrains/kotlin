@@ -5,5 +5,5 @@ public final annotation class Anno : kotlin.Annotation {
 }
 
 public interface Trait {
-    public open fun foo(/*0*/ @test.Anno() x: kotlin.String): kotlin.Int
+    public open fun foo(/*0*/ @test.Anno x: kotlin.String): kotlin.Int
 }

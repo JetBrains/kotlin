@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
@@ -71,7 +68,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);
         if (explicitLanguageVersion != null) {
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, new LanguageVersionSettingsImpl(explicitLanguageVersion));
+            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
+                              new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.LATEST));
         }
         return new LibrarySourcesConfig(getProject(), configuration);
     }

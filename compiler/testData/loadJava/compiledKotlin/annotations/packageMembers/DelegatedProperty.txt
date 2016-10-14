@@ -1,6 +1,6 @@
 package test
 
-@test.Anno() public val x: kotlin.Int
+@test.Anno public val x: kotlin.Int
     public fun <get-x>(): kotlin.Int
 
 public final annotation class Anno : kotlin.Annotation {

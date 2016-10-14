@@ -1,6 +1,6 @@
 package test
 
-@kotlin.jvm.JvmOverloads() public fun one(/*0*/ kotlin.Int = ...): kotlin.Unit
+@kotlin.jvm.JvmOverloads public fun one(/*0*/ kotlin.Int = ...): kotlin.Unit
 
 public final class E1 : kotlin.Exception /* = java.lang.Exception */ {
     public constructor E1()

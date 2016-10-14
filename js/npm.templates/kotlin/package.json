@@ -1,0 +1,23 @@
+{
+  "name": "kotlin",
+  "version": "1.0.0",
+  "description": "Standard Library for Kotlin Applications",
+  "main": "kotlin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://git@github.com/JetBrains/kotlin.git"
+  },
+  "keywords": [
+    "Kotlin",
+    "Language",
+    "Runtime",
+    "JavaScript",
+    "JetBrains"
+  ],
+  "author": "JetBrains",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "kotl.in/issue"
+  },
+  "homepage": "kotlinlang.org"
+}

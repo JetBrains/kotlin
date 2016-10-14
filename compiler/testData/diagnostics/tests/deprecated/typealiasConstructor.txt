@@ -1,0 +1,34 @@
+package
+
+@kotlin.Deprecated(message = "Deprecated class") public open class DeprecatedClass {
+    public constructor DeprecatedClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test1 : DeprecatedClassAlias /* = DeprecatedClass */ {
+    public constructor Test1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test2 : WithDeprecatedCtorAlias /* = WithDeprecatedCtor */ {
+    public constructor Test2()
+    public final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class WithDeprecatedCtor {
+    @kotlin.Deprecated(message = "Deprecated constructor") public constructor WithDeprecatedCtor()
+    public constructor WithDeprecatedCtor(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias DeprecatedClassAlias = DeprecatedClass
+public typealias WithDeprecatedCtorAlias = WithDeprecatedCtor

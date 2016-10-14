@@ -42,7 +42,7 @@ class AbbreviatedType(override val delegate: SimpleType, val abbreviation: Simpl
     override val isError: Boolean get() = false
 }
 
-fun KotlinType.getAbbreviatedType(): AbbreviatedType? = (unwrap() as? AbbreviatedType)
+fun KotlinType.getAbbreviatedType(): AbbreviatedType? = unwrap() as? AbbreviatedType
 
 fun SimpleType.withAbbreviation(abbreviatedType: SimpleType): SimpleType {
     if (isError) return this

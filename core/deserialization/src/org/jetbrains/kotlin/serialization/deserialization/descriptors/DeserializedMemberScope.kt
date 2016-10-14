@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.MemberComparator
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compactIfPossible
 import java.util.*
 
@@ -37,7 +36,8 @@ abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
         propertyList: Collection<ProtoBuf.Property>,
-        typeAliasList: Collection<ProtoBuf.TypeAlias>
+        typeAliasList: Collection<ProtoBuf.TypeAlias>,
+        classNames: () -> Collection<Name>
 ) : MemberScopeImpl() {
 
     private val functionProtos by
@@ -50,7 +50,9 @@ abstract class DeserializedMemberScope protected constructor(
             }
     private val typeAliasProtos by
             c.storageManager.createLazyValue {
-                typeAliasList.groupByName { it.name }
+                if (c.components.configuration.typeAliasesAllowed)
+                    typeAliasList.groupByName { it.name }
+                else emptyMap()
             }
 
     private val functions =
@@ -68,7 +70,9 @@ abstract class DeserializedMemberScope protected constructor(
         propertyProtos.keys + getNonDeclaredVariableNames()
     }
 
-    protected val typeAliasNames: Set<Name> get() = typeAliasProtos.keys
+    private val typeAliasNames: Set<Name> get() = typeAliasProtos.keys
+
+    internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }
 
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = variableNamesLazy
@@ -128,13 +132,6 @@ abstract class DeserializedMemberScope protected constructor(
         return properties(name)
     }
 
-    protected fun getTypeAlias(name: Name): TypeAliasDescriptor? {
-        if (name !in typeAliasNames) return null
-        return typeAliasByName(name)
-    }
-
-    protected abstract fun addClassifierDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
-
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
@@ -151,7 +148,19 @@ abstract class DeserializedMemberScope protected constructor(
         addFunctionsAndProperties(result, kindFilter, nameFilter, location)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addClassifierDescriptors(result, nameFilter)
+            for (className in classNames) {
+                if (nameFilter(className)) {
+                    result.addIfNotNull(deserializeClass(className))
+                }
+            }
+        }
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.TYPE_ALIASES_MASK)) {
+            for (typeAliasName in typeAliasNames) {
+                if (nameFilter(typeAliasName)) {
+                    result.addIfNotNull(typeAliasByName(typeAliasName))
+                }
+            }
         }
 
         return result.compactIfPossible()
@@ -196,6 +205,21 @@ abstract class DeserializedMemberScope protected constructor(
         subResult.sortWith(MemberComparator.INSTANCE)
         result.addAll(subResult)
     }
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+            when {
+                hasClass(name) -> deserializeClass(name)
+                name in typeAliasNames -> typeAliasByName(name)
+                else -> null
+            }
+
+    private fun deserializeClass(name: Name): ClassDescriptor? =
+            c.components.deserializeClass(createClassId(name))
+
+    protected open fun hasClass(name: Name): Boolean =
+            name in classNames
+
+    protected abstract fun createClassId(name: Name): ClassId
 
     protected abstract fun getNonDeclaredFunctionNames(): Set<Name>
     protected abstract fun getNonDeclaredVariableNames(): Set<Name>

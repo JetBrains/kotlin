@@ -71,6 +71,7 @@ val KClass<*>.defaultType: KType
  * Returns all functions and properties declared in this class.
  * Does not include members declared in supertypes.
  */
+@SinceKotlin("1.1")
 val KClass<*>.declaredMembers: Collection<KCallable<*>>
     get() = (this as KClassImpl).data().declaredMembers
 
@@ -161,6 +162,7 @@ private val KCallableImpl<*>.isNotExtension: Boolean
  * Immediate superclasses of this class, in the order they are listed in the source code.
  * Includes superclasses and superinterfaces of the class, but does not include the class itself.
  */
+@SinceKotlin("1.1")
 val KClass<*>.superclasses: List<KClass<*>>
     get() = supertypes.mapNotNull { it.classifier as? KClass<*> }
 
@@ -168,6 +170,7 @@ val KClass<*>.superclasses: List<KClass<*>>
  * All supertypes of this class, including indirect ones, in no particular order.
  * There is not more than one type in the returned collection that has any given classifier.
  */
+@SinceKotlin("1.1")
 val KClass<*>.allSupertypes: Collection<KType>
     get() = DFS.dfs(
             supertypes,
@@ -201,6 +204,7 @@ val KClass<*>.allSupertypes: Collection<KType>
  * Includes superclasses and superinterfaces of the class, but does not include the class itself.
  * The returned collection does not contain more than one instance of any given class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.allSuperclasses: Collection<KClass<*>>
     get() = allSupertypes.map { supertype ->
         supertype.classifier as? KClass<*> ?: throw KotlinReflectionInternalError("Supertype not a class: $supertype")
@@ -209,6 +213,7 @@ val KClass<*>.allSuperclasses: Collection<KClass<*>>
 /**
  * Returns `true` if `this` class is the same or is a (possibly indirect) subclass of [base], `false` otherwise.
  */
+@SinceKotlin("1.1")
 fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
         this == base ||
         DFS.ifAny(listOf(this), KClass<*>::superclasses) { it == base }
@@ -216,6 +221,7 @@ fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
 /**
  * Returns `true` if `this` class is the same or is a (possibly indirect) superclass of [derived], `false` otherwise.
  */
+@SinceKotlin("1.1")
 fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
         derived.isSubclassOf(this)
 
@@ -227,6 +233,7 @@ fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
  * @see [KClass.isInstance]
  * @see [KClass.safeCast]
  */
+@SinceKotlin("1.1")
 fun <T : Any> KClass<T>.cast(value: Any?): T {
     if (!isInstance(value)) throw TypeCastException("Value cannot be cast to $qualifiedName")
     return value as T
@@ -239,6 +246,7 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
  * @see [KClass.isInstance]
  * @see [KClass.cast]
  */
+@SinceKotlin("1.1")
 fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return if (isInstance(value)) value as T else null
 }
@@ -248,6 +256,7 @@ fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
  * Creates a new instance of the class, calling a constructor which either has no parameters or all parameters of which are optional
  * (see [KParameter.isOptional]). If there are no or many such constructors, an exception is thrown.
  */
+@SinceKotlin("1.1")
 fun <T : Any> KClass<T>.createInstance(): T {
     // TODO: throw a meaningful exception
     val noArgsConstructor = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) }

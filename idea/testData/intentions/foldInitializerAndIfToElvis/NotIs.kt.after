@@ -1,0 +1,3 @@
+fun foo(arg: Any?) {
+    val n = arg as? Int ?: return
+}

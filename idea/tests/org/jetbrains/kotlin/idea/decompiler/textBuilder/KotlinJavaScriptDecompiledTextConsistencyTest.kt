@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.idea.decompiler.js.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -52,8 +53,9 @@ class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() 
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
         assert(metadata.size == 1)
 
-        val provider = KotlinJavascriptSerializationUtil.readModule(metadata[0].body, LockBasedStorageManager(), module).data
-                .sure { "No package fragment provider was created" }
+        val provider = KotlinJavascriptSerializationUtil.readModule(
+                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default
+        ).data.sure { "No package fragment provider was created" }
 
         module.initialize(provider)
         module.setDependencies(module, module.builtIns.builtInsModule)

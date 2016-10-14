@@ -1,0 +1,509 @@
+JetFile: blockLevelExpressionsNoNewLine.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann0')
+        PsiWhiteSpace(' ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x0')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo0')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann1')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x1')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo1')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann2')
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann22')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x2')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUSEQ)('+=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo2')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('100')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n        ')
+            BINARY_EXPRESSION
+              ANNOTATED_EXPRESSION
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('ann3')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x3')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUSEQ)('+=')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo3')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+            PsiWhiteSpace('\n    ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('100')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n        ')
+        BODY
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann4')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x4')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo4')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n        ')
+        THEN
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann41')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x41')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo41')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('4')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n        ')
+        THEN
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann42')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo42')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        PsiElement(else)('else')
+        PsiWhiteSpace('\n        ')
+        ELSE
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann43')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x43')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo43')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      WHILE
+        PsiElement(while)('while')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n        ')
+        BODY
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann44')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x44')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo44')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      DO_WHILE
+        PsiElement(do)('do')
+        PsiWhiteSpace('\n        ')
+        BODY
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x45')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo45')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        PsiElement(while)('while')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace('\n            ')
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ann46')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x46')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo46')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n        ')
+                BLOCK
+                  BINARY_EXPRESSION
+                    ANNOTATED_EXPRESSION
+                      ANNOTATION_ENTRY
+                        PsiElement(AT)('@')
+                        CONSTRUCTOR_CALLEE
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('ann5')
+                      PsiWhiteSpace(' ')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x5')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUSEQ)('+=')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo5')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                PsiWhiteSpace('\n    ')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann6')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x6')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(ELVIS)('?:')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x7')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('infix')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x9')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('10')
+      PsiWhiteSpace('\n\n    ')
+      ANNOTATED_EXPRESSION
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ann7')
+        PsiWhiteSpace(' ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_WITH_TYPE
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ann8')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Type')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

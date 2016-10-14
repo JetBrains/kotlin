@@ -38,8 +38,8 @@ class OverloadResolver(
     fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClassesAndTypeAliases(c)
 
-        for (entry in c.declaredClasses.entries) {
-            checkOverloadsInClass(entry.value, inClasses.get(entry.value))
+        for ((key, value) in c.declaredClasses) {
+            checkOverloadsInClass(value, inClasses.get(value))
         }
         checkOverloadsInPackages(c)
     }

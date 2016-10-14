@@ -5,11 +5,11 @@ public final annotation class AnnotationArray : kotlin.Annotation {
     public final val annotationArray: kotlin.Array<test.JustAnnotation>
 }
 
-@test.JustAnnotation(annotation = test.Empty()) @test.AnnotationArray(annotationArray = {}) public final class C1 {
+@test.JustAnnotation(annotation = test.Empty) @test.AnnotationArray(annotationArray = {}) public final class C1 {
     public constructor C1()
 }
 
-@test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty()), test.JustAnnotation(annotation = test.Empty())}) public final class C2 {
+@test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty), test.JustAnnotation(annotation = test.Empty)}) public final class C2 {
     public constructor C2()
 }
 

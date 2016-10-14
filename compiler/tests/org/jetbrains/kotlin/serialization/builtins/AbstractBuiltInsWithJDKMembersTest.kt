@@ -51,6 +51,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                     withDefinedIn = false
                     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
                     verbose = true
+                    includeAnnotationArguments = true
                     modifiers = DescriptorRendererModifier.ALL
                 })
 

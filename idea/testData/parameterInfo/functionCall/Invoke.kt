@@ -1,7 +1,7 @@
 package test
 
 class A {
-    fun invoke(i: Int) {
+    operator fun invoke(i: Int) {
     }
 }
 

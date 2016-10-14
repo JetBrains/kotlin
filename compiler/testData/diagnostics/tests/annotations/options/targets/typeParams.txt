@@ -1,11 +1,11 @@
 package
 
-public val </*0*/ @A() @B(i = 3) T> T.topProp: kotlin.Int
-@A() public fun foo(): kotlin.Unit
-public fun foo(/*0*/ i: @A() kotlin.Int): kotlin.Unit
-public fun </*0*/ T> test(/*0*/ t: @A() T): T
-public fun </*0*/ @C() T> test2(/*0*/ t: T): T
-public fun </*0*/ @A() @B(i = 3) T> topFun(): kotlin.Int
+public val </*0*/ @A @B(i = 3) T> T.topProp: kotlin.Int
+@A public fun foo(): kotlin.Unit
+public fun foo(/*0*/ i: @A kotlin.Int): kotlin.Unit
+public fun </*0*/ T> test(/*0*/ t: @A T): T
+public fun </*0*/ @C T> test2(/*0*/ t: T): T
+public fun </*0*/ @A @B(i = 3) T> topFun(): kotlin.Int
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
     public constructor A()
@@ -34,19 +34,19 @@ public final class Class1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun </*0*/ @A() @B(i = 3) T> method(): kotlin.Int
+    public final fun </*0*/ @A @B(i = 3) T> method(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class Class2 {
     public constructor Class2()
-    public final val </*0*/ @A() @B(i = 3) T> T.field: kotlin.Int
+    public final val </*0*/ @A @B(i = 3) T> T.field: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@A() public final class D {
+@A public final class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

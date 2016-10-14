@@ -35,4 +35,4 @@ fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 //public interface Bar defined in rendererTest
 //public fun <P : rendererTest.Foo> funTypeParameterWithTwoUpperBounds(): kotlin.Int where P : rendererTest.Bar defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
-//@kotlin.Deprecated public fun deprecatedFun(): kotlin.Unit defined in rendererTest
+//@kotlin.Deprecated(message = "") public fun deprecatedFun(): kotlin.Unit defined in rendererTest

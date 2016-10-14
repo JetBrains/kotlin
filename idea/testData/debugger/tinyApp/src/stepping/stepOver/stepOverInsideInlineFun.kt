@@ -9,8 +9,11 @@ fun main(args: Array<String>) {
 inline fun bar(f: (Int) -> Unit) {
     //Breakpoint!
     val a = 1
+    foo()
     val f = f(1)
     val c = 1
 }
 
-// STEP_OVER: 3
+fun foo() {}
+
+// STEP_OVER: 4

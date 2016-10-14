@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -59,7 +60,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -591,6 +591,37 @@ public class KotlinTypeMapper {
         return Variance.OUT_VARIANCE;
     }
 
+    //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride
+    private FunctionDescriptor findSuperDeclaration(@NotNull FunctionDescriptor descriptor, boolean isSuperCall) {
+        while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            Collection<? extends FunctionDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            if (overridden.isEmpty()) {
+                throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
+            }
+
+            FunctionDescriptor classCallable = null;
+            for (FunctionDescriptor overriddenFunction : overridden) {
+                if (!isInterface(overriddenFunction.getContainingDeclaration())) {
+                    classCallable = overriddenFunction;
+                    break;
+                }
+            }
+
+            if (classCallable != null) {
+                //prefer class callable cause of else branch
+                descriptor = classCallable;
+                continue;
+            }
+            else if (isSuperCall && !isJvm8Target && !isInterface(descriptor.getContainingDeclaration())) {
+                //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated for target 1.6
+                return descriptor;
+            }
+
+            descriptor = overridden.iterator().next();
+        }
+        return descriptor;
+    }
+
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
         if (descriptor instanceof ConstructorDescriptor) {
@@ -609,7 +640,7 @@ public class KotlinTypeMapper {
 
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
-        FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
+        FunctionDescriptor functionDescriptor = findSuperDeclaration(descriptor.getOriginal(), superCall);
 
         JvmMethodSignature signature;
         Type owner;
@@ -652,7 +683,7 @@ public class KotlinTypeMapper {
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
                                              isStaticAccessor(functionDescriptor) ||
-                                             AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
+                                             CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
                 if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                 }
@@ -903,6 +934,9 @@ public class KotlinTypeMapper {
     ) {
         if (f instanceof FunctionImportedFromObject) {
             return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject(), kind, skipGenericSignature);
+        }
+        else if (f instanceof TypeAliasConstructorDescriptor) {
+            return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, valueParameters, skipGenericSignature);
         }
 
         checkOwnerCompatibility(f);
@@ -1242,7 +1276,7 @@ public class KotlinTypeMapper {
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
         if (classBuilderMode.generateBodies) {
-            ResolvedCall<ClassConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
+            ResolvedCall<ConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
             if (superCall == null) return;
             writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);
         }
@@ -1251,7 +1285,7 @@ public class KotlinTypeMapper {
     private void writeSuperConstructorCallParameters(
             @NotNull JvmSignatureWriter sw,
             @NotNull ClassConstructorDescriptor descriptor,
-            @NotNull ResolvedCall<ClassConstructorDescriptor> superCall,
+            @NotNull ResolvedCall<ConstructorDescriptor> superCall,
             boolean hasOuter
     ) {
         ConstructorDescriptor superDescriptor = SamCodegenUtil.resolveSamAdapter(superCall.getResultingDescriptor());
@@ -1290,13 +1324,13 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private ResolvedCall<ClassConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ClassConstructorDescriptor descriptor) {
-        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+    private ResolvedCall<ConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ConstructorDescriptor descriptor) {
+        ClassifierDescriptorWithTypeParameters constructorOwner = descriptor.getContainingDeclaration();
         while (true) {
-            ResolvedCall<ClassConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
+            ResolvedCall<ConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
             if (next == null) return null;
             descriptor = next.getResultingDescriptor();
-            if (descriptor.getContainingDeclaration() != classDescriptor) return next;
+            if (descriptor.getContainingDeclaration() != constructorOwner) return next;
         }
     }
 

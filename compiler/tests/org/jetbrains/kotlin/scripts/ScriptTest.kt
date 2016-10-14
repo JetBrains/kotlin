@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.tryConstructScriptClass
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -42,16 +43,22 @@ class ScriptTest : KtUsefulTestCase() {
     fun testStandardScriptWithParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, listOf("4", "comment"))
-        Assert.assertNotNull(anObj)
+        val out = captureOut {
+            val anObj = tryConstructScriptClass(aClass!!, listOf("4", "comment"))
+            Assert.assertNotNull(anObj)
+        }
+        assertEqualsTrimmed(NUM_4_LINE + " (comment)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
     fun testStandardScriptWithoutParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
-        Assert.assertNotNull(anObj)
+        val out = captureOut {
+            val anObj = tryConstructScriptClass(aClass!!, emptyList())
+            Assert.assertNotNull(anObj)
+        }
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
     @Test
@@ -60,13 +67,19 @@ class ScriptTest : KtUsefulTestCase() {
         tmpdir.mkdirs()
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition, saveClassesDir = tmpdir)
         Assert.assertNotNull(aClass)
-        val anObj = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClass!!, emptyList())
-        Assert.assertNotNull(anObj)
-        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass.classLoader)
+        val out1 = captureOut {
+            val anObj = tryConstructScriptClass(aClass!!, emptyList())
+            Assert.assertNotNull(anObj)
+        }
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out1)
+        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass!!.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         Assert.assertNotNull(aClassSaved)
-        val anObjSaved = KotlinToJVMBytecodeCompiler.tryConstructClassPub(aClassSaved!!, emptyList())
-        Assert.assertNotNull(anObjSaved)
+        val out2 = captureOut {
+            val anObjSaved = tryConstructScriptClass(aClassSaved!!, emptyList())
+            Assert.assertNotNull(anObjSaved)
+        }
+        assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out2)
     }
 
     private fun compileScript(
@@ -91,7 +104,7 @@ class ScriptTest : KtUsefulTestCase() {
 
         val rootDisposable = Disposer.newDisposable()
         try {
-            val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
+            val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
@@ -122,4 +135,4 @@ class ScriptTest : KtUsefulTestCase() {
     }
 }
 
-class TestParamClass(val memberNum: Int)
+class TestParamClass(@Suppress("unused") val memberNum: Int)

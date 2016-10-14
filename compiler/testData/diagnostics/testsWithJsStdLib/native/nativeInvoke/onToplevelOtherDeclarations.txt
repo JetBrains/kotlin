@@ -1,9 +1,9 @@
 package
 
-@kotlin.js.nativeInvoke() public val toplevelVal: kotlin.Int = 0
-@kotlin.js.nativeInvoke() public fun toplevelFun(): kotlin.Unit
+@kotlin.js.nativeInvoke public val toplevelVal: kotlin.Int = 0
+@kotlin.js.nativeInvoke public fun toplevelFun(): kotlin.Unit
 
-@kotlin.js.nativeInvoke() public final class Foo {
+@kotlin.js.nativeInvoke public final class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

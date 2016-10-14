@@ -9,7 +9,7 @@ public interface SubclassFromGenericAndNot {
 
     public interface NonGeneric {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull() p0: kotlin.String): kotlin.Unit
+        public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull p0: kotlin.String): kotlin.Unit
     }
 
     public interface Sub : test.SubclassFromGenericAndNot.NonGeneric, test.SubclassFromGenericAndNot.Generic<kotlin.String!> {

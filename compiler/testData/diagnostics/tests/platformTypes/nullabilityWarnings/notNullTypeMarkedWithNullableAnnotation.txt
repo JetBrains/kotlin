@@ -6,6 +6,6 @@ public open class J {
     public constructor J()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @org.jetbrains.annotations.Nullable() public open fun n(): kotlin.collections.(Mutable)List<kotlin.String!>?
+    @org.jetbrains.annotations.Nullable public open fun n(): kotlin.collections.(Mutable)List<kotlin.String!>?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -21,26 +21,21 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
-import org.jetbrains.kotlin.script.KotlinConfigurableScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromTemplate
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.getScriptDefinition
-import kotlin.script.StandardScriptTemplate
 
 class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
-        val scriptDefinition = getScriptDefinition(file, project) ?: return null
-
-        // This is a workaround for completion in scripts and REPL to provide module dependencies
-        if (scriptDefinition == StandardScriptDefinition || scriptDefinition.template == Any::class) {
-            return null
-        }
-
+        val scriptDefinition = getScriptDefinition(file, project)
         // TODO: this should get this particular scripts dependencies
-        if (scriptDefinition is KotlinConfigurableScriptDefinition || scriptDefinition is KotlinScriptDefinitionFromTemplate) {
-            // TODO: should include the file itself
-            return KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+        return when {
+            scriptDefinition == null -> null
+            // This is a workaround for completion in scripts and REPL to provide module dependencies
+            scriptDefinition == StandardScriptDefinition || scriptDefinition.template == Any::class -> null
+            scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate -> // TODO: should include the file itself
+                KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+            else -> null
         }
-        return null
     }
 }
