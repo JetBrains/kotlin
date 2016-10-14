@@ -56,15 +56,17 @@ interface ClassifierUsageChecker {
 
                     val target = getReferencedClassifier(expression) ?: return
 
-                    for (checker in checkers) {
-                        checker.check(target, trace, expression, languageVersionSettings)
-                    }
+                    runCheckersWithTarget(target, expression)
 
                     if (isReferenceToCompanionViaOuterClass(expression, target)) {
                         val outerClass = target.containingDeclaration as ClassDescriptor
-                        for (checker in checkers) {
-                            checker.check(outerClass, trace, expression, languageVersionSettings)
-                        }
+                        runCheckersWithTarget(outerClass, expression)
+                    }
+                }
+
+                private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtReferenceExpression) {
+                    for (checker in checkers) {
+                        checker.check(target, trace, expression, languageVersionSettings)
                     }
                 }
 

@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -65,6 +67,13 @@ fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location:
     return getPackage(topLevelClassFqName.parent()).memberScope.getContributedClassifier(topLevelClassFqName.shortName(), location) as? ClassDescriptor
 }
 
+val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescriptor?
+    get() = when (this) {
+        is ClassDescriptor -> this
+        is TypeAliasDescriptor -> classDescriptor
+        else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
+    }
+
 val ClassDescriptor.classId: ClassId
     get() {
         val owner = containingDeclaration
@@ -77,23 +86,31 @@ val ClassDescriptor.classId: ClassId
         throw IllegalStateException("Illegal container: $owner")
     }
 
-val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectDescriptor != null
+val ClassifierDescriptorWithTypeParameters.hasCompanionObject: Boolean
+    get() = denotedClassDescriptor?.companionObjectDescriptor != null
 
 val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
 
-val ClassDescriptor.classValueDescriptor: ClassDescriptor?
-    get() = if (kind.isSingleton) this else companionObjectDescriptor
+val ClassifierDescriptorWithTypeParameters.classValueDescriptor: ClassDescriptor?
+    get() = denotedClassDescriptor?.let {
+        if (it.kind.isSingleton)
+            it
+        else
+            it.companionObjectDescriptor
+    }
 
-val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
-    get() = when (kind) {
-        OBJECT -> this
-        ENUM_ENTRY -> {
-            // enum entry has the type of enum class
-            val container = this.containingDeclaration
-            assert(container is ClassDescriptor && container.kind == ENUM_CLASS)
-            container as ClassDescriptor
+val ClassifierDescriptorWithTypeParameters.classValueTypeDescriptor: ClassDescriptor?
+    get() = denotedClassDescriptor?.let {
+        when (it.kind) {
+            OBJECT -> it
+            ENUM_ENTRY -> {
+                // enum entry has the type of enum class
+                val container = this.containingDeclaration
+                assert(container is ClassDescriptor && container.kind == ENUM_CLASS)
+                container as ClassDescriptor
+            }
+            else -> it.companionObjectDescriptor
         }
-        else -> companionObjectDescriptor
     }
 
 /** If a literal of this class can be used as a value, returns the type of this value */

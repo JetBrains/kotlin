@@ -117,8 +117,8 @@ public interface BindingContext {
     WritableSlice<KtReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
             new BasicWritableSlice<KtReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     // if 'A' really means 'A.Companion' then this slice stores class descriptor for A, REFERENCE_TARGET stores descriptor Companion in this case
-    WritableSlice<KtReferenceExpression, ClassDescriptor> SHORT_REFERENCE_TO_COMPANION_OBJECT =
-            new BasicWritableSlice<KtReferenceExpression, ClassDescriptor>(DO_NOTHING);
+    WritableSlice<KtReferenceExpression, ClassifierDescriptorWithTypeParameters> SHORT_REFERENCE_TO_COMPANION_OBJECT =
+            new BasicWritableSlice<KtReferenceExpression, ClassifierDescriptorWithTypeParameters>(DO_NOTHING);
 
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<Call, ResolvedCall<?>>(DO_NOTHING);
     WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();

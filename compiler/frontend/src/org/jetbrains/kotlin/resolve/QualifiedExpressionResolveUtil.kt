@@ -89,7 +89,7 @@ private fun resolveQualifierReferenceTarget(
     }
 
     // TODO make decisions about short reference to companion object somewhere else
-    if (qualifier is ClassQualifier) {
+    if (qualifier is ClassifierQualifier) {
         val classifier = qualifier.descriptor
         val selectorIsCallable = selector is CallableDescriptor &&
                                  (selector.dispatchReceiverParameter != null || selector.extensionReceiverParameter != null)

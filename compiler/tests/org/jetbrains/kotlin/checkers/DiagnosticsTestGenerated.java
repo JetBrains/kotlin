@@ -19574,6 +19574,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("typealiasesAsCompanionObjects.kt")
+                public void testTypealiasesAsCompanionObjects() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesAsCompanionObjects.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("typealiasesAsConstructors.kt")
                 public void testTypealiasesAsConstructors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion/typealiasesAsConstructors.kt");

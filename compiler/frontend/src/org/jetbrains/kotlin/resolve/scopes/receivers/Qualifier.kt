@@ -53,7 +53,9 @@ class TypeParameterQualifier(
     override fun toString() = "TypeParameter{$descriptor}"
 }
 
-interface ClassifierQualifier : Qualifier
+interface ClassifierQualifier : Qualifier {
+    override val descriptor: ClassifierDescriptorWithTypeParameters
+}
 
 class ClassQualifier(
         override val referenceExpression: KtSimpleNameExpression,
