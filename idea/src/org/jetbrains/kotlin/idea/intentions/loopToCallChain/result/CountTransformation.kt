@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformationBase
 import org.jetbrains.kotlin.psi.*
 
 class CountTransformation(
@@ -31,10 +31,13 @@ class CountTransformation(
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
-        if (previousTransformation !is FilterTransformation) return null
+        if (previousTransformation !is FilterTransformationBase) return null
         if (previousTransformation.indexVariable != null) return null
-        assert(filter == null) { "Should not happen because no 2 consecutive FilterTransformation's possible"}
-        return CountTransformation(loop, previousTransformation.inputVariable, initialization, previousTransformation.effectiveCondition())
+        val newFilter = if (filter == null)
+            previousTransformation.effectiveCondition
+        else
+            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition, filter)
+        return CountTransformation(loop, previousTransformation.inputVariable, initialization, newFilter)
     }
 
     override val presentation: String
