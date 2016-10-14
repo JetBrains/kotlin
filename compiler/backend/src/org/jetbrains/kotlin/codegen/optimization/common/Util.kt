@@ -42,11 +42,7 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
 }
 
 fun MethodNode.prepareForEmitting() {
-    tryCatchBlocks = tryCatchBlocks.filter { tcb ->
-        InsnSequence(tcb.start, tcb.end).any { insn ->
-            insn.isMeaningful
-        }
-    }
+    removeEmptyCatchBlocks()
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
@@ -66,6 +62,14 @@ fun MethodNode.prepareForEmitting() {
         }
 
         current = prev
+    }
+}
+
+internal fun MethodNode.removeEmptyCatchBlocks() {
+    tryCatchBlocks = tryCatchBlocks.filter { tcb ->
+        InsnSequence(tcb.start, tcb.end).any { insn ->
+            insn.isMeaningful
+        }
     }
 }
 

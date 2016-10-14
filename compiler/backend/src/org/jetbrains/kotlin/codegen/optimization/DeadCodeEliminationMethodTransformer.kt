@@ -20,6 +20,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
 
 class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -28,10 +29,12 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
         val insnsArray = insnList.toArray()
 
         // Do not remove not meaningful nodes (labels/linenumbers) because they can be referred
-        // by try/catch blocks or local variables table
-        // We remove unneeded ones further after all optimizations by calling CommonPackage.prepareForEmitting(methodNode)
+        // by try/catch blocks or local variables table.
         insnsArray.zip(frames).filter {
             it.second == null && it.first.isMeaningful
         }.forEach { insnList.remove(it.first) }
+
+        // Remove empty try-catch blocks to make sure we don't break data flow analysis invariants by dead code elimination.
+        methodNode.removeEmptyCatchBlocks()
     }
 }

@@ -42,9 +42,9 @@ public class OptimizationMethodVisitor extends MethodVisitor {
     private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
             new RedundantNullCheckMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
+            new RedundantCoercionToUnitTransformer(),
             new DeadCodeEliminationMethodTransformer(),
-            new RedundantGotoMethodTransformer(),
-            new RedundantCoercionToUnitTransformer()
+            new RedundantGotoMethodTransformer()
     };
 
     private final MethodNode methodNode;
