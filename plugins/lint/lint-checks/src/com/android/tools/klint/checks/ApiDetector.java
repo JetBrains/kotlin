@@ -63,10 +63,8 @@ import com.android.resources.ResourceType;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.tools.klint.client.api.IssueRegistry;
-import com.android.tools.klint.client.api.JavaEvaluator;
-import com.android.tools.klint.client.api.LintDriver;
-import com.android.tools.klint.client.api.UastLintUtils;
+import com.android.sdklib.repositoryv2.AndroidSdkHandler;
+import com.android.tools.klint.client.api.*;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Context;
@@ -339,68 +337,67 @@ public class ApiDetector extends ResourceXmlDetector
     @Override
     public void beforeCheckProject(@NonNull Context context) {
         if (mApiDatabase == null) {
-            //TODO
-            //mApiDatabase = ApiLookup.get(context.getClient());
-            //// We can't look up the minimum API required by the project here:
-            //// The manifest file hasn't been processed yet in the -before- project hook.
-            //// For now it's initialized lazily in getMinSdk(Context), but the
-            //// lint infrastructure should be fixed to parse manifest file up front.
-            //
-            //if (mApiDatabase == null && !mWarnedMissingDb) {
-            //    mWarnedMissingDb = true;
-            //    context.report(IssueRegistry.LINT_ERROR, Location.create(context.file),
-            //                   "Can't find API database; API check not performed");
-            //} else {
-            //    // See if you don't have at least version 23.0.1 of platform tools installed
-            //    AndroidSdkHandler sdk = context.getClient().getSdk();
-            //    if (sdk == null) {
-            //        return;
-            //    }
-            //    LocalPackage pkgInfo = sdk.getLocalPackage(SdkConstants.FD_PLATFORM_TOOLS,
-            //                                               context.getClient().getRepositoryLogger());
-            //    if (pkgInfo == null) {
-            //        return;
-            //    }
-            //    Revision revision = pkgInfo.getVersion();
-            //
-            //    // The platform tools must be at at least the same revision
-            //    // as the compileSdkVersion!
-            //    // And as a special case, for 23, they must be at 23.0.1
-            //    // because 23.0.0 accidentally shipped without Android M APIs.
-            //    int compileSdkVersion = context.getProject().getBuildSdk();
-            //    if (compileSdkVersion == 23) {
-            //        if (revision.getMajor() > 23 || revision.getMajor() == 23
-            //                                        && (revision.getMinor() > 0 || revision.getMicro() > 0)) {
-            //            return;
-            //        }
-            //    } else if (compileSdkVersion <= revision.getMajor()) {
-            //        return;
-            //    }
-            //
-            //    // Pick a location: when incrementally linting in the IDE, tie
-            //    // it to the current file
-            //    List<File> currentFiles = context.getProject().getSubset();
-            //    Location location;
-            //    if (currentFiles != null && currentFiles.size() == 1) {
-            //        File file = currentFiles.get(0);
-            //        String contents = context.getClient().readFile(file);
-            //        int firstLineEnd = contents.indexOf('\n');
-            //        if (firstLineEnd == -1) {
-            //            firstLineEnd = contents.length();
-            //        }
-            //        location = Location.create(file,
-            //                                   new DefaultPosition(0, 0, 0), new
-            //                                           DefaultPosition(0, firstLineEnd, firstLineEnd));
-            //    } else {
-            //        location = Location.create(context.file);
-            //    }
-            //    context.report(UNSUPPORTED,
-            //                   location,
-            //                   String.format("The SDK platform-tools version (%1$s) is too old "
-            //                                 + " to check APIs compiled with API %2$d; please update",
-            //                                 revision.toShortString(),
-            //                                 compileSdkVersion));
-            //}
+            mApiDatabase = ApiLookup.get(context.getClient());
+            // We can't look up the minimum API required by the project here:
+            // The manifest file hasn't been processed yet in the -before- project hook.
+            // For now it's initialized lazily in getMinSdk(Context), but the
+            // lint infrastructure should be fixed to parse manifest file up front.
+
+            if (mApiDatabase == null && !mWarnedMissingDb) {
+                mWarnedMissingDb = true;
+                context.report(IssueRegistry.LINT_ERROR, Location.create(context.file),
+                               "Can't find API database; API check not performed");
+            } else {
+                // See if you don't have at least version 23.0.1 of platform tools installed
+                AndroidSdkHandler sdk = context.getClient().getSdk();
+                if (sdk == null) {
+                    return;
+                }
+                LocalPackage pkgInfo = sdk.getLocalPackage(SdkConstants.FD_PLATFORM_TOOLS,
+                                                           context.getClient().getRepositoryLogger());
+                if (pkgInfo == null) {
+                    return;
+                }
+                Revision revision = pkgInfo.getVersion();
+
+                // The platform tools must be at at least the same revision
+                // as the compileSdkVersion!
+                // And as a special case, for 23, they must be at 23.0.1
+                // because 23.0.0 accidentally shipped without Android M APIs.
+                int compileSdkVersion = context.getProject().getBuildSdk();
+                if (compileSdkVersion == 23) {
+                    if (revision.getMajor() > 23 || revision.getMajor() == 23
+                                                    && (revision.getMinor() > 0 || revision.getMicro() > 0)) {
+                        return;
+                    }
+                } else if (compileSdkVersion <= revision.getMajor()) {
+                    return;
+                }
+
+                // Pick a location: when incrementally linting in the IDE, tie
+                // it to the current file
+                List<File> currentFiles = context.getProject().getSubset();
+                Location location;
+                if (currentFiles != null && currentFiles.size() == 1) {
+                    File file = currentFiles.get(0);
+                    String contents = context.getClient().readFile(file);
+                    int firstLineEnd = contents.indexOf('\n');
+                    if (firstLineEnd == -1) {
+                        firstLineEnd = contents.length();
+                    }
+                    location = Location.create(file,
+                                               new DefaultPosition(0, 0, 0), new
+                                                       DefaultPosition(0, firstLineEnd, firstLineEnd));
+                } else {
+                    location = Location.create(context.file);
+                }
+                context.report(UNSUPPORTED,
+                               location,
+                               String.format("The SDK platform-tools version (%1$s) is too old "
+                                             + " to check APIs compiled with API %2$d; please update",
+                                             revision.toShortString(),
+                                             compileSdkVersion));
+            }
         }
     }
 

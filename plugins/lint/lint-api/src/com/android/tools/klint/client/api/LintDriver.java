@@ -42,6 +42,7 @@ import com.android.ide.common.res2.ResourceItem;
 import com.android.resources.ResourceFolderType;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.IAndroidTarget;
+import com.android.sdklib.repositoryv2.AndroidSdkHandler;
 import com.android.tools.klint.client.api.LintListener.EventType;
 import com.android.tools.klint.detector.api.ClassContext;
 import com.android.tools.klint.detector.api.Context;
@@ -2129,7 +2130,7 @@ public class LintDriver {
 
         @Nullable
         @Override
-        public SdkWrapper getSdk() {
+        public AndroidSdkHandler getSdk() {
             return mDelegate.getSdk();
         }
 

@@ -48,6 +48,7 @@ import com.android.builder.model.AndroidProject;
 import com.android.builder.model.ProductFlavor;
 import com.android.builder.model.ProductFlavorContainer;
 import com.android.builder.model.Variant;
+import com.android.ide.common.repository.GradleVersion;
 import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.resources.Density;
 import com.android.resources.ResourceFolderType;
@@ -136,6 +137,7 @@ public class Project {
     protected Boolean mGradleProject;
     protected Boolean mSupportLib;
     protected Boolean mAppCompat;
+    protected GradleVersion mGradleVersion;
     private Map<String, String> mSuperClassMap;
     private ResourceVisibilityLookup mResourceVisibility;
     private BuildToolInfo mBuildTools;
@@ -189,6 +191,24 @@ public class Project {
     @Nullable
     public AndroidProject getGradleProjectModel() {
         return null;
+    }
+
+    /**
+     * If this is a Gradle project with a valid Gradle model, return the version
+     * of the model/plugin.
+     *
+     * @return the Gradle plugin version, or null if invalid or not a Gradle project
+     */
+    @Nullable
+    public GradleVersion getGradleModelVersion() {
+        if (mGradleVersion == null && isGradleProject()) {
+            AndroidProject gradleProjectModel = getGradleProjectModel();
+            if (gradleProjectModel != null) {
+                mGradleVersion = GradleVersion.tryParse(gradleProjectModel.getModelVersion());
+            }
+        }
+
+        return mGradleVersion;
     }
     
     /**

@@ -337,10 +337,6 @@ public class IntellijLintUtils {
     return true;
   }
 
-  public static AndroidModelFacade getModelFacade(AndroidFacet facet) {
-    return new AndroidModelFacade(facet);
-  }
-
   private static boolean appendJvmSignature(@NonNull StringBuilder buffer, @Nullable PsiType type) {
     if (type == null) {
       return false;

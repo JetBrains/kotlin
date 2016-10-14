@@ -7,10 +7,12 @@ import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
+import com.android.sdklib.repositoryv2.AndroidSdkHandler;
 import com.android.tools.idea.gradle.util.Projects;
 import com.android.tools.idea.rendering.AppResourceRepository;
 import com.android.tools.idea.rendering.LocalResourceRepository;
 import com.android.tools.idea.sdk.IdeSdks;
+import com.android.tools.idea.welcome.install.AndroidSdk;
 import com.android.tools.klint.checks.ApiLookup;
 import com.android.tools.klint.client.api.*;
 import com.android.tools.klint.detector.api.*;
@@ -332,10 +334,10 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @Nullable
   @Override
-  public SdkWrapper getSdk() {
+  public AndroidSdkHandler getSdk() {
     if (mSdk == null) {
       Module module = getModule();
-      SdkWrapper sdk = getLocalSdk(module);
+      AndroidSdkHandler sdk = getLocalSdk(module);
       if (sdk != null) {
         mSdk = sdk;
       } else {
@@ -357,11 +359,14 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Nullable
-  private static SdkWrapper getLocalSdk(@Nullable Module module) {
+  private static AndroidSdkHandler getLocalSdk(@Nullable Module module) {
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       if (facet != null) {
-        return IntellijLintUtils.getModelFacade(facet).getLocalSdk();
+        AndroidSdkData sdkData = facet.getSdkData();
+        if (sdkData != null) {
+          return sdkData.getSdkHandler();
+        }
       }
     }
 
