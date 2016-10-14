@@ -121,6 +121,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/any"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("anyNotNull.kt")
+        public void testAnyNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any/anyNotNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifAssign.kt")
         public void testIfAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any/ifAssign.kt");
