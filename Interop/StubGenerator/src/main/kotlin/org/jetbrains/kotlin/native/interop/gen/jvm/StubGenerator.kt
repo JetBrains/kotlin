@@ -374,7 +374,7 @@ class StubGenerator(
 
             is RecordType -> {
                 val refType = getKotlinTypeForRefTo(type)
-                InValueBinding(
+                return InValueBinding(
                         kotlinJniBridgeType = "Long",
                         conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
                         kotlinType = refType.typeName
@@ -386,6 +386,16 @@ class StubGenerator(
     }
 
     fun getCallbackParamBinding(type: Type): InValueBinding {
+        when (type) {
+            is RecordType -> {
+                val refType = getKotlinTypeForRefTo(type)
+                return InValueBinding(
+                        kotlinJniBridgeType = "Long",
+                        conv = { throw UnsupportedOperationException() },
+                        kotlinType = refType.typeName
+                )
+            }
+        }
         return getInValueBinding(type)
     }
 
