@@ -58,7 +58,7 @@ enum class NativeGetterOrSetter {
 }
 
 enum class GenerateDefinitionKind {
-    TRAIT,
+    INTERFACE,
     CLASS,
     ABSTRACT_CLASS
 }

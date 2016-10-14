@@ -80,10 +80,11 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
         when {
+            iface.extendedAttributes.any { it.call == "NoInterfaceObject" } -> GenerateDefinitionKind.INTERFACE
             constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS } -> {
                 GenerateDefinitionKind.CLASS
             }
-            iface.callback -> GenerateDefinitionKind.TRAIT
+            iface.callback -> GenerateDefinitionKind.INTERFACE
             else -> GenerateDefinitionKind.ABSTRACT_CLASS
         }
 
@@ -169,7 +170,7 @@ fun superOrPrimaryConstructorCall(constructorAsFunction: GenerateFunction, super
 fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         name = it.name,
         namespace = it.namespace,
-        kind = GenerateDefinitionKind.TRAIT,
+        kind = GenerateDefinitionKind.INTERFACE,
         superTypes = emptyList(),
         memberAttributes = emptyList(),
         memberFunctions = emptyList(),
@@ -182,7 +183,7 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
 fun generateUnionTypeTraits(allUnionTypes: Sequence<UnionType>): Sequence<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
-        definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
+        definitions.map { generateTrait(repository, it) }
 
 fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>): GenerateUnionTypes {
     val declaredTypes = ifaces.associateBy { it.name }
