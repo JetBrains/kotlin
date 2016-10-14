@@ -287,7 +287,7 @@ interface SVGUseElement : SVGGraphicsElement {
 };
 
 SVGUseElement implements SVGURIReference;
-interface SVGElementInstance : ShadowRoot {
+interface SVGUseElementShadowRoot : ShadowRoot {
 
 };
 [NoInterfaceObject]
@@ -915,7 +915,7 @@ interface SVGUseElement : SVGGraphicsElement {
 SVGUseElement implements SVGURIReference;
 
 
-interface SVGElementInstance : ShadowRoot {
+interface SVGUseElementShadowRoot : ShadowRoot {
 
 };
 
