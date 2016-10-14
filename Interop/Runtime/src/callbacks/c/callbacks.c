@@ -101,6 +101,8 @@ JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypePointer(J
 JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeStruct0(JNIEnv *env, jclass cls, jlong elements) {
     ffi_type* res = malloc(sizeof(ffi_type));
     if (res != NULL) {
+        res->size = 0;
+        res->alignment = 0;
         res->elements = (ffi_type**) elements;
         res->type = FFI_TYPE_STRUCT;
     }
@@ -164,7 +166,11 @@ static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
     static jmethodID ffiFunImpl0 = NULL;
     static jclass cls = NULL;
     if (ffiFunImpl0 == NULL) {
-        cls = (*env)->FindClass(env, "kotlin_native/interop/CallbacksKt");
+        jclass clsLocal = (*env)->FindClass(env, "kotlin_native/interop/CallbacksKt");
+        checkException(env);
+        assert(clsLocal != NULL);
+
+        cls = (jclass) (*env)->NewGlobalRef(env, clsLocal);
         checkException(env);
         assert(cls != NULL);
 

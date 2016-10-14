@@ -3570,7 +3570,7 @@ enum class CXIndexOptFlags(val value: Int) {
     }
 }
 
-object NativeFunctionType1 : NativeFunctionType<(CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Pointer), Struct(UInt32, SInt32, Pointer), Pointer) {
+object NativeFunctionType1 : NativeFunctionType<(CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
     override fun invoke(function: (CXCursor, CXCursor, NativePtr?) -> CXChildVisitResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
         val res = function(args[0].value.asRef(CXCursor)!!, args[1].value.asRef(CXCursor)!!, args[2].value.asRef(NativePtrBox)!!.value)
         CXChildVisitResult.ref.byPtr(ret).value = res
@@ -3589,14 +3589,14 @@ object NativeFunctionType3 : NativeFunctionType<(NativePtr?, CXSourceLocation?, 
     }
 }
 
-object NativeFunctionType4 : NativeFunctionType<(CXCursor, NativePtr?) -> CXVisitorResult>(UInt32, Struct(UInt32, SInt32, Pointer), Pointer) {
+object NativeFunctionType4 : NativeFunctionType<(CXCursor, NativePtr?) -> CXVisitorResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
     override fun invoke(function: (CXCursor, NativePtr?) -> CXVisitorResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
         val res = function(args[0].value.asRef(CXCursor)!!, args[1].value.asRef(NativePtrBox)!!.value)
         CXVisitorResult.ref.byPtr(ret).value = res
     }
 }
 
-object NativeFunctionType5 : NativeFunctionType<(NativePtr?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Pointer), Struct(Pointer, UInt32, UInt32)) {
+object NativeFunctionType5 : NativeFunctionType<(NativePtr?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(Struct(Pointer, Pointer), UInt32, UInt32)) {
     override fun invoke(function: (NativePtr?, CXCursor, CXSourceRange) -> CXVisitorResult, args: NativeArray<NativePtrBox>, ret: NativePtr) {
         val res = function(args[0].value.asRef(NativePtrBox)!!.value, args[1].value.asRef(CXCursor)!!, args[2].value.asRef(CXSourceRange)!!)
         CXVisitorResult.ref.byPtr(ret).value = res

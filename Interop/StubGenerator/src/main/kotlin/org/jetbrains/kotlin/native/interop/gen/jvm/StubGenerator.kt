@@ -374,7 +374,7 @@ class StubGenerator(
 
             is RecordType -> {
                 val refType = getKotlinTypeForRefTo(type)
-                InValueBinding(
+                return InValueBinding(
                         kotlinJniBridgeType = "Long",
                         conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
                         kotlinType = refType.typeName
@@ -386,6 +386,16 @@ class StubGenerator(
     }
 
     fun getCallbackParamBinding(type: Type): InValueBinding {
+        when (type) {
+            is RecordType -> {
+                val refType = getKotlinTypeForRefTo(type)
+                return InValueBinding(
+                        kotlinJniBridgeType = "Long",
+                        conv = { throw UnsupportedOperationException() },
+                        kotlinType = refType.typeName
+                )
+            }
+        }
         return getInValueBinding(type)
     }
 
@@ -578,6 +588,11 @@ class StubGenerator(
         out("}")
     }
 
+    private fun getFfiStructType(elementTypes: List<Type>) =
+            "Struct(" +
+                    elementTypes.map { getFfiType(it) }.joinToString(", ") +
+                    ")"
+
     private fun getFfiType(type: Type): String {
         return when(type) {
             is VoidType -> "Void"
@@ -588,29 +603,38 @@ class StubGenerator(
             is Int32Type -> "SInt32"
             is UInt32Type -> "UInt32"
             is IntPtrType, is UIntPtrType, // TODO
-            is PointerType, is ArrayType -> "Pointer"
+            is PointerType -> "Pointer"
+            is ConstArrayType -> getFfiStructType(
+                    Array(type.length.toInt(), { type.elemType }).toList()
+            )
             is EnumType -> getFfiType(type.def.baseType)
             is RecordType -> {
                 val def = type.decl.def!!
                 if (!def.hasNaturalLayout) {
                     throw NotImplementedError() // TODO: represent pointer to function as NativePtr instead
                 }
-                "Struct(" + def.fields.map {
-                    getFfiType(it.type)
-                }.joinToString(", ") + ")"
+                getFfiStructType(def.fields.map { it.type })
             }
             else -> throw NotImplementedError(type.toString())
         }
     }
 
+    private fun getArgFfiType(type: Type) = when (type) {
+        is ArrayType -> "Pointer"
+        else -> getFfiType(type)
+    }
+
+    private fun getRetValFfiType(type: Type) = getArgFfiType(type)
+
     private fun generateFunctionType(type: FunctionType, name: String) {
         val kotlinFunctionType = getKotlinFunctionType(type)
 
-        val constructorArgs = listOf(type.returnType, *type.parameterTypes.toTypedArray()).map {
-            getFfiType(it)
-        }.joinToString(", ")
+        val constructorArgs = listOf(getRetValFfiType(type.returnType)) +
+                type.parameterTypes.map { getArgFfiType(it) }
 
-        out("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgs) {")
+        val constructorArgsStr = constructorArgs.joinToString(", ")
+
+        out("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgsStr) {")
         indent {
             out("override fun invoke(function: $kotlinFunctionType, args: NativeArray<NativePtrBox>, ret: NativePtr) {")
             indent {

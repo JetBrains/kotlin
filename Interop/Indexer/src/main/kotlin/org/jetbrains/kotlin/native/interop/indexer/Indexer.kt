@@ -98,16 +98,27 @@ private class NativeIndexImpl : NativeIndex() {
      * Computes [StructDef.hasNaturalLayout] property.
      */
     fun structHasNaturalLayout(structDefCursor: CXCursor): Boolean {
-        val hasAttributes = malloc(Int32Box)
-        hasAttributes.value = 0
-        clang_visitChildren(structDefCursor, { cursor, parent, clientData ->
-            if (clang_isAttribute(cursor.kind.value) != 0) {
-                clientData.asRef(Int32Box)!!.value = 1
-            }
-            CXChildVisitResult.CXChildVisit_Continue
-        }, hasAttributes.ptr)
+        val defKind = structDefCursor.kind.value
 
-        return hasAttributes.value == 0
+        when (defKind) {
+
+            CXCursorKind.CXCursor_UnionDecl -> return false
+
+            CXCursorKind.CXCursor_StructDecl -> {
+                val hasAttributes = arena.alloc(Int32Box)
+                hasAttributes.value = 0
+                clang_visitChildren(structDefCursor, { cursor, parent, clientData ->
+                    if (clang_isAttribute(cursor.kind.value) != 0) {
+                        clientData.asRef(Int32Box)!!.value = 1
+                    }
+                    CXChildVisitResult.CXChildVisit_Continue
+                }, hasAttributes.ptr)
+
+                return hasAttributes.value == 0
+            }
+
+            else -> throw IllegalArgumentException(defKind.toString())
+        }
     }
 
     fun convertType(type: CXType): Type {
@@ -253,6 +264,7 @@ fun CXString.convertAndDispose(): String {
 }
 
 fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
+    // TODO: dispose all allocated memory and resources
     val args1 = args.map { CString.fromString(it)!!.asCharPtr() }.toTypedArray()
 
     val index = clang_createIndex(0, 0)
