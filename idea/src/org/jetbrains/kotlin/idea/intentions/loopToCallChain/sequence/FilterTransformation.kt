@@ -31,36 +31,6 @@ abstract class FilterTransformationBase : SequenceTransformation {
 
     override val affectsIndex: Boolean
         get() = true
-}
-
-class FilterTransformation(
-        override val loop: KtForExpression,
-        override val inputVariable: KtCallableDeclaration,
-        override val indexVariable: KtCallableDeclaration?,
-        val condition: KtExpression,
-        val isInverse: Boolean
-) : FilterTransformationBase() {
-
-    override val effectiveCondition: KtExpression by lazy {
-        if (isInverse) condition.negate() else condition
-    }
-
-    private val functionName = when {
-        indexVariable != null -> "filterIndexed"
-        isInverse -> "filterNot"
-        else -> "filter"
-    }
-
-    override val presentation: String
-        get() = "$functionName{}"
-
-    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = if (indexVariable != null)
-            generateLambda(inputVariable, indexVariable, effectiveCondition)
-        else
-            generateLambda(inputVariable, condition)
-        return chainedCallGenerator.generate("$0$1:'{}'", functionName, lambda)
-    }
 
     /**
      * Matches:
@@ -161,7 +131,7 @@ class FilterTransformation(
                 indexVariable: KtCallableDeclaration?,
                 condition: KtExpression,
                 isInverse: Boolean
-        ): SequenceTransformation {
+        ): FilterTransformationBase {
 
             val effectiveCondition = if (isInverse) condition.negate() else condition
 
@@ -189,6 +159,36 @@ class FilterTransformation(
 
             return FilterTransformation(loop, inputVariable, null, condition, isInverse)
         }
+    }
+}
+
+class FilterTransformation(
+        override val loop: KtForExpression,
+        override val inputVariable: KtCallableDeclaration,
+        override val indexVariable: KtCallableDeclaration?,
+        val condition: KtExpression,
+        val isInverse: Boolean
+) : FilterTransformationBase() {
+
+    override val effectiveCondition: KtExpression by lazy {
+        if (isInverse) condition.negate() else condition
+    }
+
+    private val functionName = when {
+        indexVariable != null -> "filterIndexed"
+        isInverse -> "filterNot"
+        else -> "filter"
+    }
+
+    override val presentation: String
+        get() = "$functionName{}"
+
+    override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val lambda = if (indexVariable != null)
+            generateLambda(inputVariable, indexVariable, effectiveCondition)
+        else
+            generateLambda(inputVariable, condition)
+        return chainedCallGenerator.generate("$0$1:'{}'", functionName, lambda)
     }
 }
 

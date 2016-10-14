@@ -47,7 +47,7 @@ object MatcherRegistrar {
             SumTransformationBase.Matcher,
             MaxOrMinTransformation.Matcher,
             IntroduceIndexMatcher,
-            FilterTransformation.Matcher,
+            FilterTransformationBase.Matcher,
             MapTransformation.Matcher,
             FlatMapTransformation.Matcher,
             ForEachTransformation.Matcher
