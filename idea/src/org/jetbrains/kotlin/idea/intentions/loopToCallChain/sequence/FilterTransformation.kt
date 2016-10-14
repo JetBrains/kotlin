@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.FindTransformationMatcher
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.MaxOrMinTransformation
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -68,6 +69,8 @@ abstract class FilterTransformationBase : SequenceTransformation {
             if (transformation is FilterTransformation) {
                 while (true) {
                     currentState = currentState.unwrapBlock()
+
+                    if (MaxOrMinTransformation.Matcher.match(currentState) != null) break // do not take 'if' which is required for min/max matcher
 
                     val (nextTransformation, nextState) = matchOneTransformation(currentState) ?: break
                     if (nextTransformation !is FilterTransformation) break
