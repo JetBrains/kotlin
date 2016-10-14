@@ -553,6 +553,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("lhsObjectPlusString.java")
+        public void testLhsObjectPlusString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/lhsObjectPlusString.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("minus.java")
         public void testMinus() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/minus.java");
