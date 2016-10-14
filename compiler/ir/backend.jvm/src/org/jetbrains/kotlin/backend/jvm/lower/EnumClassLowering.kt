@@ -64,7 +64,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private fun createArrayOfExpression(arrayElementType: KotlinType, arrayElements: List<IrExpression>): IrExpression {
         val typeParameter0 = unsubstitutedArrayOfFun.typeParameters[0]
         val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType)))
-        val substitutedArrayOfFun = unsubstitutedArrayOfFun.substitute(typeSubstitutor)
+        val substitutedArrayOfFun = unsubstitutedArrayOfFun.substitute(typeSubstitutor)!!
 
         val typeArguments = mapOf(typeParameter0 to arrayElementType)
 
@@ -448,7 +448,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val typeParameterT = unsubstitutedValueOf.typeParameters[0]
                 val enumClassType = irClass.descriptor.defaultType
                 val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
-                val substitutedValueOf = unsubstitutedValueOf.substitute(typeSubstitutor)
+                val substitutedValueOf = unsubstitutedValueOf.substitute(typeSubstitutor)!!
 
                 val irValueOfCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                 irValueOfCall.putValueArgument(

@@ -93,7 +93,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
         fun getSubstitutedRefConstructor(valueType: KotlinType): ClassConstructorDescriptor =
                 genericRefConstructor.substitute(TypeSubstitutor.create(
                         mapOf(constructorTypeParameter.typeConstructor to TypeProjectionImpl(Variance.INVARIANT, valueType))
-                ))
+                ))!!
 
         val genericElementField: PropertyDescriptor =
                 PropertyDescriptorImpl.create(
