@@ -74,16 +74,13 @@ val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescript
         else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
     }
 
-val ClassDescriptor.classId: ClassId
-    get() {
-        val owner = containingDeclaration
-        if (owner is PackageFragmentDescriptor) {
-            return ClassId(owner.fqName, name)
+val ClassDescriptor.classId: ClassId?
+    get() = containingDeclaration.let { owner ->
+        when (owner) {
+            is PackageFragmentDescriptor -> ClassId(owner.fqName, name)
+            is ClassDescriptor -> owner.classId?.createNestedClassId(name)
+            else -> null
         }
-        else if (owner is ClassDescriptor) {
-            return owner.classId.createNestedClassId(name)
-        }
-        throw IllegalStateException("Illegal container: $owner")
     }
 
 val ClassifierDescriptorWithTypeParameters.hasCompanionObject: Boolean

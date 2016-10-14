@@ -242,7 +242,7 @@ public class KotlinTypeMapper {
         }
 
         @NotNull
-        private static ContainingClassesInfo forClassMemberOrNull(@NotNull ClassId classId) {
+        private static ContainingClassesInfo forClassMember(@NotNull ClassId classId) {
             return new ContainingClassesInfo(classId, classId);
         }
     }
@@ -258,7 +258,7 @@ public class KotlinTypeMapper {
         }
         else {
             ClassId classId = getContainerClassIdForClassDescriptor((ClassDescriptor) parentDeclaration);
-            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(classId);
+            containingClassesInfo = ContainingClassesInfo.forClassMember(classId);
         }
         if (containingClassesInfo == null) {
             throw new IllegalStateException("Couldn't find container for " + deserializedDescriptor.getName());
@@ -269,11 +269,14 @@ public class KotlinTypeMapper {
     @NotNull
     private static ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
+        assert classId != null : "Deserialized class should have a ClassId: " + classDescriptor;
+
         if (isInterface(classDescriptor)) {
             FqName relativeClassName = classId.getRelativeClassName();
             //TODO test nested trait fun inlining
-            classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
+            return new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
         }
+
         return classId;
     }
 

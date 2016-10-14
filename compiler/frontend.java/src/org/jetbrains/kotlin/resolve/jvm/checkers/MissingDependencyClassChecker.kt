@@ -42,7 +42,7 @@ class MissingDependencyClassChecker : CallChecker {
 
         fun consider(classDescriptor: ClassDescriptor) {
             if (classDescriptor is NotFoundClasses.MockClassDescriptor) {
-                result.add(classDescriptor.classId)
+                result.add(classDescriptor.classId!!)
                 return
             }
             (classDescriptor.containingDeclaration as? ClassDescriptor)?.let(::consider)

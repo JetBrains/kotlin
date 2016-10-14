@@ -161,7 +161,7 @@ class DeserializedClassDescriptor(
             if (unresolved.isNotEmpty()) {
                 c.components.errorReporter.reportIncompleteHierarchy(
                         this@DeserializedClassDescriptor,
-                        unresolved.map { it.classId.asSingleFqName().asString() }
+                        unresolved.map { it.classId?.asSingleFqName()?.asString() ?: it.name.asString() }
                 )
             }
 

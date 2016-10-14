@@ -187,7 +187,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     private fun getFileName(classDescriptor: ClassDescriptor): String {
-        return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
+        return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId!!)
     }
 
     fun toContentMap(module: ModuleDescriptor): Map<String, ByteArray> {

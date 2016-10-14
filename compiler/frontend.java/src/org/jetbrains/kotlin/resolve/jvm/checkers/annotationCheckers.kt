@@ -73,11 +73,11 @@ object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
             fileAnnotationsToCheck.add(Pair(entry, classDescriptor))
         }
 
-        if (!fileAnnotationsToCheck.any { it.second.classId.asSingleFqName() == JvmFileClassUtil.JVM_MULTIFILE_CLASS }) return
+        if (!fileAnnotationsToCheck.any { it.second.classId?.asSingleFqName() == JvmFileClassUtil.JVM_MULTIFILE_CLASS }) return
 
         for ((entry, classDescriptor) in fileAnnotationsToCheck) {
-            val classFqName = classDescriptor.classId.asSingleFqName()
-            if (ALWAYS_APPLICABLE.contains(classFqName)) continue
+            val classFqName = classDescriptor.classId!!.asSingleFqName()
+            if (classFqName in ALWAYS_APPLICABLE) continue
             if (classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
                 trace.report(ErrorsJvm.ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES.on(entry, classFqName))
             }

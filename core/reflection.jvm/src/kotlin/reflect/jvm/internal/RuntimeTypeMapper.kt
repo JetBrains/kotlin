@@ -271,7 +271,7 @@ internal object RuntimeTypeMapper {
 
         val classId = klass.classId
         if (!classId.isLocal) {
-            JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName(), DefaultBuiltIns.Instance)?.let { return it.classId }
+            JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName(), DefaultBuiltIns.Instance)?.let { return it.classId!! }
         }
 
         return classId

@@ -81,10 +81,10 @@ private fun PsiMember.relativeClassName(): List<Name> {
 }
 
 private fun ClassDescriptor.relativeClassName(): List<Name> {
-    return classId.relativeClassName.pathSegments().drop(1).orEmpty()
+    return classId!!.relativeClassName.pathSegments().drop(1).orEmpty()
 }
 
-private fun ClassDescriptor.desc(): String = "L" + JvmClassName.byClassId(classId).internalName + ";"
+private fun ClassDescriptor.desc(): String = "L" + JvmClassName.byClassId(classId!!).internalName + ";"
 
 private object ByJvmSignatureIndexer : DecompiledTextIndexer<ClassNameAndSignature> {
     override fun indexDescriptor(descriptor: DeclarationDescriptor): Collection<ClassNameAndSignature> {
