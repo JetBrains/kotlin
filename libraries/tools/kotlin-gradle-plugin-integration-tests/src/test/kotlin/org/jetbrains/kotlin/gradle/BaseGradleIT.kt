@@ -73,7 +73,8 @@ abstract class BaseGradleIT {
             val daemonOptionSupported: Boolean = true,
             val incremental: Boolean? = null,
             val androidHome: File? = null,
-            val androidGradlePluginVersion: String? = null)
+            val androidGradlePluginVersion: String? = null,
+            val forceOutputToStdout: Boolean = false)
 
     open inner class Project(
             val projectName: String,
@@ -141,12 +142,15 @@ abstract class BaseGradleIT {
             setupWorkingDir()
         }
 
-        val result = runProcess(cmd, projectDir, env)
+        val result = runProcess(cmd, projectDir, env, options)
         try {
             CompiledProject(this, result.output, result.exitCode).check()
         }
         catch (t: Throwable) {
-            System.out.println(result.output)
+            // to prevent duplication of output
+            if (!options.forceOutputToStdout) {
+                System.out.println(result.output)
+            }
             throw t
         }
     }
