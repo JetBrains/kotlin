@@ -17,20 +17,17 @@
 package kotlin
 
 
-public typealias Error = java.lang.Error
-public typealias Exception = java.lang.Exception
-public typealias RuntimeException = java.lang.RuntimeException
-public typealias IllegalArgumentException = java.lang.IllegalArgumentException
-public typealias IllegalStateException = java.lang.IllegalStateException
-public typealias IndexOutOfBoundsException = java.lang.IndexOutOfBoundsException
-public typealias UnsupportedOperationException = java.lang.UnsupportedOperationException
+@SinceKotlin("1.1") public typealias Error = java.lang.Error
+@SinceKotlin("1.1") public typealias Exception = java.lang.Exception
+@SinceKotlin("1.1") public typealias RuntimeException = java.lang.RuntimeException
+@SinceKotlin("1.1") public typealias IllegalArgumentException = java.lang.IllegalArgumentException
+@SinceKotlin("1.1") public typealias IllegalStateException = java.lang.IllegalStateException
+@SinceKotlin("1.1") public typealias IndexOutOfBoundsException = java.lang.IndexOutOfBoundsException
+@SinceKotlin("1.1") public typealias UnsupportedOperationException = java.lang.UnsupportedOperationException
 
-public typealias NumberFormatException = java.lang.NumberFormatException
-public typealias NullPointerException = java.lang.NullPointerException
-public typealias ClassCastException = java.lang.ClassCastException
-public typealias AssertionError = java.lang.AssertionError
+@SinceKotlin("1.1") public typealias NumberFormatException = java.lang.NumberFormatException
+@SinceKotlin("1.1") public typealias NullPointerException = java.lang.NullPointerException
+@SinceKotlin("1.1") public typealias ClassCastException = java.lang.ClassCastException
+@SinceKotlin("1.1") public typealias AssertionError = java.lang.AssertionError
 
-public typealias NoSuchElementException = java.util.NoSuchElementException
-
-// NOTE: If you're adding type aliases to types from java.lang, do not forget to exclude aliased types from
-// imported by default java.lang package. See JvmPlatform.defaultModuleParameters.excludedImports property.
+@SinceKotlin("1.1") public typealias NoSuchElementException = java.util.NoSuchElementException
