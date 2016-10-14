@@ -16,12 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
+import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 
 /**
  * Base class for [ResultTransformation]'s that replaces the loop-expression with the result call chain
@@ -30,8 +36,9 @@ abstract class ReplaceLoopResultTransformation(final override val loop: KtForExp
 
     override val commentSavingRange = PsiChildRange.singleElement(loop.unwrapIfLabeled())
 
-    override val expressionToBeReplacedByResultCallChain: KtExpression
-        get() = loop.unwrapIfLabeled()
+    override fun generateExpressionToReplaceLoopAndCheckErrors(resultCallChain: KtExpression): KtExpression {
+        return resultCallChain
+    }
 
     override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         return loop.unwrapIfLabeled().replaced(resultCallChain)
@@ -48,8 +55,30 @@ abstract class AssignToVariableResultTransformation(
 
     override val commentSavingRange = PsiChildRange(initialization.initializationStatement, loop.unwrapIfLabeled())
 
-    override val expressionToBeReplacedByResultCallChain: KtExpression
-        get() = initialization.initializer
+    override fun generateExpressionToReplaceLoopAndCheckErrors(resultCallChain: KtExpression): KtExpression {
+        val psiFactory = KtPsiFactory(resultCallChain)
+        val initializationStatement = initialization.initializationStatement
+        if (initializationStatement is KtVariableDeclaration) {
+            val resolutionScope = loop.getResolutionScope()
+
+            fun isUniqueName(name: String): Boolean {
+                val identifier = Name.identifier(name)
+                return resolutionScope.findVariable(identifier, NoLookupLocation.FROM_IDE) == null
+                       && resolutionScope.findFunction(identifier, NoLookupLocation.FROM_IDE) == null
+                       && resolutionScope.findClassifier(identifier, NoLookupLocation.FROM_IDE) == null
+                       && resolutionScope.findPackage(identifier) == null
+            }
+            val uniqueName = KotlinNameSuggester.suggestNameByName("test", ::isUniqueName)
+
+            val copy = initializationStatement.copied()
+            copy.initializer!!.replace(resultCallChain)
+            copy.setName(uniqueName)
+            return copy
+        }
+        else {
+            return psiFactory.createExpressionByPattern("$0 = $1", initialization.variable.nameAsSafeName, resultCallChain)
+        }
+    }
 
     override fun convertLoop(resultCallChain: KtExpression, commentSavingRangeHolder: CommentSavingRangeHolder): KtExpression {
         initialization.initializer.replace(resultCallChain)

@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'map{}.map{}.filterTo(){}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.map{}.filterTo(){}'"
+fun foo(list: List<String>, o: Any, result: MutableCollection<Int>) {
+    if (o is CharSequence) {
+        list
+                .asSequence()
+                .map { it.length + (o as String).capitalize().hashCode() }
+                .map { it * o.length }
+                .filterTo(result) { it > 1000 }
+    }
+}

@@ -613,6 +613,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("KT14292.kt")
+        public void testKT14292() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull/KT14292.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("let.kt")
         public void testLet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull/let.kt");
@@ -1174,6 +1180,24 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCastNotBroken3.kt")
+        public void testSmartCastNotBroken3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastNotBroken3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastNotBroken4.kt")
+        public void testSmartCastNotBroken4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastNotBroken4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastNotBroken5.kt")
+        public void testSmartCastNotBroken5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastNotBroken5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastNotNullRequired.kt")
         public void testSmartCastNotNullRequired() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastNotNullRequired.kt");
@@ -1213,6 +1237,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
         @TestMetadata("smartCastRequired5.kt")
         public void testSmartCastRequired5() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastRequired5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastRequired6.kt")
+        public void testSmartCastRequired6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastRequired6.kt");
             doTest(fileName);
         }
 
