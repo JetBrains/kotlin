@@ -5079,6 +5079,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/deadCodeElimination/intersectingVariableRangeInFinally.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt14357.kt")
+        public void testKt14357() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/deadCodeElimination/kt14357.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/defaultArguments")
