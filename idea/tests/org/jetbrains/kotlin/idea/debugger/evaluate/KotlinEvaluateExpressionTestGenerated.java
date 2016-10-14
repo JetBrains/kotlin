@@ -564,6 +564,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("delegatedPropertyInClassWithToString.kt")
+            public void testDelegatedPropertyInClassWithToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassWithToString.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("delegatedPropertyInClassWoRenderer.kt")
             public void testDelegatedPropertyInClassWoRenderer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassWoRenderer.kt");

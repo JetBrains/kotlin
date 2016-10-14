@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.idea.debugger.render
 
+import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import com.intellij.debugger.ui.tree.DebuggerTreeNode
+import com.intellij.debugger.ui.tree.ValueDescriptor
 import com.intellij.debugger.ui.tree.render.ChildrenBuilder
 import com.intellij.debugger.ui.tree.render.ClassRenderer
+import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
 import com.intellij.xdebugger.settings.XDebuggerSettingsManager
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.ReferenceType
@@ -34,14 +38,35 @@ import java.util.*
 import com.sun.jdi.Type as JdiType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
-class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
-
+class KotlinClassWithDelegatedPropertyRenderer(val rendererSettings: NodeRendererSettings) : ClassRenderer() {
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
 
         if (jdiType !is ReferenceType) return false
 
         return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+    }
+
+    override fun calcLabel(descriptor: ValueDescriptor,
+                           evaluationContext: EvaluationContext,
+                           listener: DescriptorLabelListener): String {
+        val res = calcToStringLabel(descriptor, evaluationContext, listener)
+        if (res != null) {
+            return res
+        }
+
+        return super.calcLabel(descriptor, evaluationContext, listener)
+    }
+
+    private fun calcToStringLabel(descriptor: ValueDescriptor, evaluationContext: EvaluationContext,
+                                  listener: DescriptorLabelListener): String? {
+        val toStringRenderer = rendererSettings.toStringRenderer
+        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.isEvaluationPossible) {
+            if (toStringRenderer.isApplicable(descriptor.type)) {
+                return toStringRenderer.calcLabel(descriptor, evaluationContext, listener)
+            }
+        }
+        return null
     }
 
     override fun buildChildren(value: Value?, builder: ChildrenBuilder, context: EvaluationContext) {
