@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.util
 
+import org.jetbrains.kotlin.gradle.BaseGradleIT
 import java.io.File
-import java.io.StringWriter
 
 class ProcessRunResult(
         private val cmd: List<String>,
@@ -20,7 +20,12 @@ Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
 """
 }
 
-fun runProcess(cmd: List<String>, workingDir: File, environmentVariables: Map<String, String> = mapOf()): ProcessRunResult {
+fun runProcess(
+        cmd: List<String>,
+        workingDir: File,
+        environmentVariables: Map<String, String> = mapOf(),
+        options: BaseGradleIT.BuildOptions? = null
+): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)
     builder.directory(workingDir)
@@ -29,11 +34,16 @@ fun runProcess(cmd: List<String>, workingDir: File, environmentVariables: Map<St
 
     val process = builder.start()
     // important to read inputStream, otherwise the process may hang on some systems
-    val sw = StringWriter()
-    process.inputStream!!.bufferedReader().copyTo(sw)
+    val sb = StringBuilder()
+    process.inputStream!!.bufferedReader().forEachLine {
+        if (options?.forceOutputToStdout ?: false) {
+            System.out.println(it)
+        }
+        sb.appendln(it)
+    }
     val exitCode = process.waitFor()
 
-    return ProcessRunResult(cmd, workingDir, exitCode, sw.toString())
+    return ProcessRunResult(cmd, workingDir, exitCode, sb.toString())
 }
 
 fun createGradleCommand(tailParameters: List<String>): List<String> {
