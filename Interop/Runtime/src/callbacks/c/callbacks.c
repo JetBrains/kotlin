@@ -164,7 +164,11 @@ static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
     static jmethodID ffiFunImpl0 = NULL;
     static jclass cls = NULL;
     if (ffiFunImpl0 == NULL) {
-        cls = (*env)->FindClass(env, "kotlin_native/interop/CallbacksKt");
+        jclass clsLocal = (*env)->FindClass(env, "kotlin_native/interop/CallbacksKt");
+        checkException(env);
+        assert(clsLocal != NULL);
+
+        cls = (jclass) (*env)->NewGlobalRef(env, clsLocal);
         checkException(env);
         assert(cls != NULL);
 
