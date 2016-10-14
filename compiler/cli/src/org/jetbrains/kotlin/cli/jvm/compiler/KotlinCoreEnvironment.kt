@@ -120,8 +120,29 @@ class KotlinCoreEnvironment private constructor(
         override fun preregisterServices() {
             registerProjectExtensionPoints(Extensions.getArea(project))
         }
-    }
 
+        override fun registerJavaPsiFacade() {
+            with (project) {
+                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
+
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
+                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
+
+                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+
+                val area = Extensions.getArea(this)
+
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
+                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
+            }
+
+            super.registerJavaPsiFacade()
+        }
+    }
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
     private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
@@ -531,23 +552,11 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
-            with (projectEnvironment.project) {
-                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
+            /**
+             * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
+             * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
+             */
 
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
-                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
-
-                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
-                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
-
-                val area = Extensions.getArea(this)
-
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
-                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
-            }
         }
 
         private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
