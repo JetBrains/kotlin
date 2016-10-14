@@ -1,6 +1,8 @@
 <idea-plugin>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+
+        <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
     </extensions>
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>

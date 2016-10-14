@@ -33,5 +33,7 @@
                         area="IDEA_PROJECT"/>
         <extensionPoint name="facetConfigurationExtension"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
+        <extensionPoint name="versionInfoProvider"
+                        interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
     </extensionPoints>
 </idea-plugin>

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
+import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrVariableDeclaration
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
@@ -46,8 +48,8 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
         return "Kotlin version that is used for building with Gradle (${args[0]}) differs from the one bundled into the IDE plugin (${args[1]})"
     }
 
-    private inner class MyVisitor : KotlinGradleInspectionVisitor() {
-        private val idePluginVersion by lazy { bundledRuntimeVersion() }
+    private abstract class VersionFinder : KotlinGradleInspectionVisitor() {
+        protected abstract fun onFound(kotlinPluginVersion: String, kotlinPluginStatement: GrCallExpression)
 
         override fun visitClosure(closure: GrClosableBlock) {
             super.visitClosure(closure)
@@ -67,6 +69,14 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
                     getResolvedKotlinGradleVersion(closure.containingFile) ?:
                     return
 
+            onFound(kotlinPluginVersion, kotlinPluginStatement)
+        }
+    }
+
+    private inner class MyVisitor: VersionFinder() {
+        private val idePluginVersion by lazy { bundledRuntimeVersion() }
+
+        override fun onFound(kotlinPluginVersion: String, kotlinPluginStatement: GrCallExpression) {
             if (kotlinPluginVersion != idePluginVersion) {
                 registerError(kotlinPluginStatement, kotlinPluginVersion, testVersionMessage ?: idePluginVersion)
             }
@@ -74,6 +84,21 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection() {
     }
 
     companion object {
+        fun getKotlinPluginVersion(gradleFile: GroovyFileBase): String? {
+            var version: String? = null
+            val visitor = object : VersionFinder() {
+                override fun visitElement(element: GroovyPsiElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun onFound(kotlinPluginVersion: String, kotlinPluginStatement: GrCallExpression) {
+                    version = kotlinPluginVersion
+                }
+            }
+            gradleFile.accept(visitor)
+            return version
+        }
+
         private fun getHeuristicKotlinPluginVersion(classpathStatement: GrCallExpression): String? {
             val argumentList = when (classpathStatement) {
                 is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
