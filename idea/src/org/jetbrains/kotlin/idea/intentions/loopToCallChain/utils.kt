@@ -230,7 +230,7 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
 
 fun <TExpression : KtExpression> tryChangeAndCheckErrors(
         expressionToChange: TExpression,
-        scopeToExclude: KtElement,
+        scopeToExclude: KtElement? = null,
         performChange: (TExpression) -> Unit
 ): Boolean {
     val bindingContext = expressionToChange.analyze(BodyResolveMode.FULL)
@@ -246,19 +246,19 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
     val SCOPE_TO_EXCLUDE = Key<Unit>("SCOPE_TO_EXCLUDE")
 
     expressionToChange.putCopyableUserData(EXPRESSION, Unit)
-    scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
+    scopeToExclude?.putCopyableUserData(SCOPE_TO_EXCLUDE, Unit)
 
     val blockCopy = block.copied()
     val expressionCopy: TExpression
-    val scopeToExcludeCopy: KtElement
+    val scopeToExcludeCopy: KtElement?
     @Suppress("UNCHECKED_CAST")
     try {
         expressionCopy = blockCopy.findDescendantOfType<KtExpression> { it.getCopyableUserData(EXPRESSION) != null } as TExpression
-        scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }!!
+        scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }
     }
     finally {
         expressionToChange.putCopyableUserData(EXPRESSION, null)
-        scopeToExclude.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
+        scopeToExclude?.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
     }
 
     performChange(expressionCopy)

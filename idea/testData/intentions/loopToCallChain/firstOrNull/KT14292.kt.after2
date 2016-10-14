@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterNotNull().firstOrNull{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filterNotNull().firstOrNull{}'"
+
+fun getFirstValue() = "value"
+
+fun foo(list: List<String?>): String? {
+    val value = getFirstValue()
+    val <caret>found: String? = list
+            .asSequence()
+            .filterNotNull()
+            .firstOrNull { !it.startsWith("IMG:") && it.contains(value) }
+    return found
+}
