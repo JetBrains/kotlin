@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformationBase
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -61,7 +61,7 @@ object FindTransformationMatcher : TransformationMatcher {
         return matchWithFilterBefore(state, null)
     }
 
-    fun matchWithFilterBefore(state: MatchingState, filterTransformation: FilterTransformation?): TransformationMatch.Result? {
+    fun matchWithFilterBefore(state: MatchingState, filterTransformation: FilterTransformationBase?): TransformationMatch.Result? {
         matchReturn(state, filterTransformation)?.let { return it }
 
         when (state.statements.size) {
@@ -98,7 +98,7 @@ object FindTransformationMatcher : TransformationMatcher {
         return TransformationMatch.Result(transformation)
     }
 
-    private fun matchReturn(state: MatchingState, filterTransformation: FilterTransformation?): TransformationMatch.Result? {
+    private fun matchReturn(state: MatchingState, filterTransformation: FilterTransformationBase?): TransformationMatch.Result? {
         val returnInLoop = state.statements.singleOrNull() as? KtReturnExpression ?: return null
         val returnAfterLoop = state.outerLoop.nextStatement() as? KtReturnExpression ?: return null
         if (returnInLoop.getLabelName() != returnAfterLoop.getLabelName()) return null
@@ -216,7 +216,7 @@ object FindTransformationMatcher : TransformationMatcher {
             loop: KtForExpression,
             inputVariable: KtCallableDeclaration,
             indexVariable: KtCallableDeclaration?,
-            filterTransformation: FilterTransformation?,
+            filterTransformation: FilterTransformationBase?,
             valueIfFound: KtExpression,
             valueIfNotFound: KtExpression,
             findFirst: Boolean

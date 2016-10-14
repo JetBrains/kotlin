@@ -80,6 +80,9 @@ abstract class FilterTransformationBase : SequenceTransformation {
                     currentState = nextState
                 }
 
+            }
+
+            if (transformation is FilterTransformationBase) {
                 FindTransformationMatcher.matchWithFilterBefore(currentState, transformation)
                         ?.let { return it }
             }
