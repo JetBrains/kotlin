@@ -49,6 +49,9 @@ class ForEachTransformation(
         override val indexVariableAllowed: Boolean
             get() = true
 
+        override val shouldUseInputVariables: Boolean
+            get() = false
+
         override fun match(state: MatchingState): TransformationMatch.Result? {
             if (state.previousTransformations.isEmpty()) return null // do not suggest conversion to just ".forEach{}" or ".forEachIndexed{}"
 
