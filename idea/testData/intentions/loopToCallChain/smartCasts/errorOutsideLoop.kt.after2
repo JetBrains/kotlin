@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+// ERROR: Unresolved reference: unresolvedFun
+// INTENTION_TEXT: "Replace with 'map{}.map{}.firstOrNull{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.map{}.firstOrNull{}'"
+fun foo(list: List<String>, o: Any) {
+    if (o is CharSequence) {
+        unresolvedFun()
+
+        val result: Any? = list
+                .asSequence()
+                .map { it.length + (o as String).capitalize().hashCode() }
+                .map { it * o.length }
+                .firstOrNull { it > 1000 }
+    }
+}
