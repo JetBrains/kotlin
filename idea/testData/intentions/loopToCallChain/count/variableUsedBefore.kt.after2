@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filter{}.forEach{}'"
+// IS_APPLICABLE: false
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.forEach{}'"
 fun foo(list: List<String>): Int {
     var count = 0
