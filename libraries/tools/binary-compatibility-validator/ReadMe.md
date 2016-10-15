@@ -1,7 +1,20 @@
 # Kotlin Public API binary compatibility validation tool
 
 This tool allows to dump binary API of a Kotlin library that is public in sense of Kotlin visibilities
-and ensure that the binary API wasn't changed in a way that make this change binary incompatible.
+and ensure that the public binary API wasn't changed in a way that make this change binary incompatible.
+
+## How to run
+
+Compile and run tests. `CasesPublicAPITest` verifies the tool itself, 
+and `RuntimePublicAPITest` dumps the public API of `kotlin-runtime` and `kotlin-stdlib` jars, 
+which must be built beforehand with maven. 
+
+When substantial changes are made to the public API, it may be convenient to overwrite 
+the entire dump and compare changes later before commiting: pass `-Doverwrite.output=true` 
+property to the test to do so. 
+
+Also you can use shared run configuration "Binary compatibility tests", which also 
+overwrites the results when they differ.
 
 ## What constitutes the public API
 
