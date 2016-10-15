@@ -1168,6 +1168,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/smartCasts"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("errorOutsideLoop.kt")
+        public void testErrorOutsideLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/errorOutsideLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastNotBroken.kt")
         public void testSmartCastNotBroken() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCasts/smartCastNotBroken.kt");
