@@ -71,7 +71,7 @@ internal class KClassImpl<T : Any>(
     }
 
     override fun isInstance(value: Any?): Boolean {
-        TODO()
+        return js("Kotlin").isType(value, jClass)
     }
 
     override fun toString(): String {

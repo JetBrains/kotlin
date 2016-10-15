@@ -6259,6 +6259,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kClassIsInstance.kt")
+        public void testKClassIsInstance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassIsInstance.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kClassOnReifiedType.kt")
         public void testKClassOnReifiedType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassOnReifiedType.kt");

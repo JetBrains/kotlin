@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
+
 /**
  * Checks that there are no usages of reflection API which will fail at runtime.
  */
@@ -40,8 +42,6 @@ abstract class AbstractReflectionApiCallChecker(private val module: ModuleDescri
         val reflectionTypes = ReflectionTypes(module)
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
-
-    private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
 
     final override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (isWholeReflectionApiAvailable) return

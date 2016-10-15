@@ -19,6 +19,7 @@ fun box(): String {
     check(B::class, jsClassbyName("B"))
     check(O::class, jsClassbyName("O").constructor)
     check(I::class, jsClassbyName("I"))
+    check(R::class, jsClassbyName("Q"))
     check(E::class, jsClassbyName("E"))
     check(E.X::class, jsClassbyName("E").X.constructor)
     check(E.Y::class, jsClassbyName("E").Y.constructor)

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
+private val ALLOWED_KCLASS_MEMBERS = setOf("simpleName", "isInstance")
+
 class JsReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : AbstractReflectionApiCallChecker(module, storageManager) {
     override val isWholeReflectionApiAvailable: Boolean
         get() = false
@@ -40,5 +42,5 @@ class JsReflectionAPICallChecker(private val module: ModuleDescriptor, storageMa
 
     override fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean =
             super.isAllowedReflectionApi(descriptor, containingClass) ||
-            DescriptorUtils.isSubclass(containingClass, kClass) && descriptor.name.asString() == "simpleName"
+            DescriptorUtils.isSubclass(containingClass, kClass) && descriptor.name.asString() in ALLOWED_KCLASS_MEMBERS
 }
