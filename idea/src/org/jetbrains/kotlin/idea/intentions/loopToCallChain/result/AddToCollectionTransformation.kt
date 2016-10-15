@@ -185,6 +185,9 @@ class AddToCollectionTransformation(
             val currentType = (initialization.variable.resolveToDescriptor() as VariableDescriptor).type
             if ((currentType.constructor.declarationDescriptor as? ClassDescriptor)?.importableFqName == newTypeFqName) return true // already of the required type
 
+            // we do not change explicit type
+            if (initialization.variable.typeReference != null) return false
+
             if (initialization.initializationStatement != initialization.variable) return false
 
             val newTypeText = newTypeFqName.render() + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(currentType.arguments)
