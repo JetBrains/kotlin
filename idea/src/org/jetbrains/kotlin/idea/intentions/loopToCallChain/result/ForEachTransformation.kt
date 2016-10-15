@@ -17,9 +17,15 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtPsiUtil.isAssignment
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class ForEachTransformation(
         loop: KtForExpression,
@@ -57,9 +63,21 @@ class ForEachTransformation(
 
             val statement = state.statements.singleOrNull() ?: return null
 
-            // check if contains assignment to non-qualified variable - in this case only use of lazy sequence is correct
-            if (!state.lazySequence
-                && statement.anyDescendantOfType<KtBinaryExpression> { isAssignment(it) && it.left is KtNameReferenceExpression }) return null
+            if (!state.lazySequence) {
+                // check if it changes any variable that has other usages in the loop - then only lazy sequence is correct
+                val onlySequence = statement.anyDescendantOfType<KtNameReferenceExpression> { nameExpr ->
+                    if (nameExpr.getQualifiedExpressionForSelector() == null) {
+                        // we don't use resolve for write access detection because '+=' which modifies a collection is kind of write access too
+                        val isWrite = nameExpr.readWriteAccess(useResolveForReadWrite = false) != ReferenceAccess.READ
+                        if (isWrite) {
+                            val variable = nameExpr.mainReference.resolve() as? KtCallableDeclaration
+                            if (variable != null && variable.countUsages(state.outerLoop) > 1) return@anyDescendantOfType true
+                        }
+                    }
+                    false
+                }
+                if (onlySequence) return null
+            }
 
             //TODO: should we disallow it for complicated statements like loops, if, when?
             val transformation = ForEachTransformation(state.outerLoop, state.inputVariable, state.indexVariable, statement)
