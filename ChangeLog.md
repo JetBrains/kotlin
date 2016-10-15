@@ -61,22 +61,26 @@
 ### JS
 
 #### Bugfixes
-- [`KT-13544`](https://youtrack.jetbrains.com/issue/KT-13544) Support typealiases in JS
+- [`KT-13544`](https://youtrack.jetbrains.com/issue/KT-13544) Support type aliases in JS
+- [`KT-12707`](https://youtrack.jetbrains.com/issue/KT-12707) Subclasses call wrong super constructor
 - [`KT-13836`](https://youtrack.jetbrains.com/issue/KT-13836) Calling secondary constructor via type alias generates incorrect call in JS
 
 #### Library updates
-- [`KT-12386`](https://youtrack.jetbrains.com/issue/KT-12386) Rewrite JS collections Kotlin
-- [`KT-7473`](https://youtrack.jetbrains.com/issue/KT-7473) Make AbstractCollection.equals check object type
+- [`KT-18`](https://youtrack.jetbrains.com/issue/KT-18) Move exceptions from `java.lang` to `kotlin` package
+- [`KT-12386`](https://youtrack.jetbrains.com/issue/KT-12386) Rewrite JS collections in Kotlin, move them to `kotlin.collections` package
 - [`KT-7809`](https://youtrack.jetbrains.com/issue/KT-7809) Make Collection implementations conform to their declared interfaces
-- [`KT-9108`](https://youtrack.jetbrains.com/issue/KT-9108) Add toHashMap extension for Maps
+- [`KT-7473`](https://youtrack.jetbrains.com/issue/KT-7473) Make AbstractCollection.equals check object type
 - [`KT-13429`](https://youtrack.jetbrains.com/issue/KT-13429) Make 'remove' on fresh iterator throw exception  instead of removing last element
-- [`KT-13459`](https://youtrack.jetbrains.com/issue/KT-13459) Make JS implementation of ArrayList::add(ind, element) check range
+- [`KT-13459`](https://youtrack.jetbrains.com/issue/KT-13459) Make JS implementation of ArrayList::add(index, element) check the index is in valid range
 - [`KT-8724`](https://youtrack.jetbrains.com/issue/KT-8724) Fix MutableIterator.remove() for HashMap
-- [`KT-10786`](https://youtrack.jetbrains.com/issue/KT-10786) Make Map.keys return snapshot instead of view
+- [`KT-10786`](https://youtrack.jetbrains.com/issue/KT-10786) Make Map.keys return view of map keys instead of snapshot
 
 ### Standard Library
 
 #### Enhancements
+- [`KEEP-53`](https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/abstract-collections.md) Provide two distinct hierarchies of abstract collections: one for implementing read-only/immutable collections, and other for implementing mutable collections
+- [`KEEP-13`](https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/map-copying.md) Provide extension functions to copy maps
+- [`KT-18`](https://youtrack.jetbrains.com/issue/KT-18) Introduce type aliases for common exceptions from `java.lang` in `kotlin` package
 - [`KT-12762`](https://youtrack.jetbrains.com/issue/KT-12762) Make `kotlin.ranges.until` return an empty range for "illegal" 'to' parameter
 - [`KT-12894`](https://youtrack.jetbrains.com/issue/KT-12894) Allow nullable receiver for `use` extension
 
