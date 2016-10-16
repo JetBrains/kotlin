@@ -52,16 +52,16 @@ object MoveDeclarationsOutHelper {
             val scope = LocalSearchScope(container)
             val lastStatementOffset = statements[statements.size - 1].textRange.endOffset
 
-            for (statement in statements) {
+            statements.forEachIndexed { i, statement ->
                 if (needToDeclareOut(statement, lastStatementOffset, scope)) {
                     if (statement is KtProperty && statement.initializer != null) {
-                        var declaration = createVariableDeclaration(statement, generateDefaultInitializers)
+                        val isLastStatement = i == statements.size - 1
+                        var declaration = createVariableAssignment(statement, generateDefaultInitializers, isLastStatement)
                         declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
-                        propertiesDeclarations.add(declaration)
-                        container.addAfter(psiFactory.createNewLine(), declaration)
+                        addSymbolAfterDeclaration(container, declaration, isLastStatement)
 
-                        val assignment = createVariableAssignment(statement)
-                        resultStatements.add(statement.replace(assignment))
+                        propertiesDeclarations.add(declaration)
+                        addToResultStatements(statement, resultStatements, isLastStatement)
                     }
                     else {
                         val newStatement = container.addBefore(statement, dummyFirstStatement)
@@ -81,6 +81,35 @@ object MoveDeclarationsOutHelper {
         ShortenReferences.DEFAULT.process(propertiesDeclarations)
 
         return PsiUtilCore.toPsiElementArray(resultStatements)
+    }
+
+    private fun addSymbolAfterDeclaration(container: PsiElement, declaration: KtProperty, isLastStatemnt: Boolean) {
+        if (isLastStatemnt) {
+            container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
+        }
+        else {
+            container.addAfter(KtPsiFactory(declaration).createNewLine(), declaration)
+        }
+    }
+
+    private fun addToResultStatements(property: KtProperty, resultStatements: MutableList<PsiElement>, isLastStatemnt: Boolean) {
+        if (isLastStatemnt) {
+            val initializer = property.initializer
+            resultStatements.add(property.replace(initializer!!))
+        }
+        else {
+            val assignment = createVariableAssignment(property)
+            resultStatements.add(property.replace(assignment))
+        }
+    }
+
+    private fun createVariableAssignment(property: KtProperty, generateDefaultInitializers: Boolean, isLast: Boolean): KtProperty {
+        if (isLast) {
+            return KtPsiFactory(property).createProperty(property.name!!, null, property.isVar, null)
+        }
+        else {
+            return createVariableDeclaration(property, generateDefaultInitializers)
+        }
     }
 
     private fun createVariableAssignment(property: KtProperty): KtBinaryExpression {
