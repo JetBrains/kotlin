@@ -16,29 +16,26 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.surroundWith
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-
-import java.util.ArrayList
+import java.util.*
 
 object MoveDeclarationsOutHelper {
 
-    fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultInitializers: Boolean): Array<PsiElement> {
-        if (statements.size == 0) {
+    @JvmStatic fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultInitializers: Boolean): Array<PsiElement> {
+        if (statements.isEmpty()) {
             return statements
         }
 
@@ -113,14 +110,11 @@ object MoveDeclarationsOutHelper {
 
     private fun createProperty(property: KtProperty, propertyType: KotlinType, initializer: String?): KtProperty {
         val typeRef = property.typeReference
-        var typeString: String? = null
-        if (typeRef != null) {
-            typeString = typeRef.text
+        val typeString = when {
+            typeRef != null -> typeRef.text
+            !propertyType.isError -> IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
+            else -> null
         }
-        else if (!propertyType.isError) {
-            typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
-        }
-
         return KtPsiFactory(property).createProperty(property.name!!, typeString, property.isVar, initializer)
     }
 
@@ -130,7 +124,7 @@ object MoveDeclarationsOutHelper {
             element is KtFunction) {
 
             val refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY)
-            if (refs.size > 0) {
+            if (refs.isNotEmpty()) {
                 val lastRef = refs[refs.size - 1]
                 if (lastRef.element.textOffset > lastStatementOffset) {
                     return true
