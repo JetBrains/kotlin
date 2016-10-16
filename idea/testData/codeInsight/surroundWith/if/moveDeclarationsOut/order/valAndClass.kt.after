@@ -3,9 +3,9 @@ fun foo() {
         fun test() {}
     }
 
-    val d: A
+    val d =
     if (<caret>) {
-        d = A()
+        A()
     }
 
     d.test()

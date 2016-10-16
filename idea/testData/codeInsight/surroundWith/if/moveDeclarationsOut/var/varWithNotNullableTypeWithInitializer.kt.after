@@ -1,7 +1,6 @@
 fun foo() {
-    var a: String = ""
-    if () {
-        a = "aaa"
+    var a = if () {
+        "aaa"
     }
 
     a.charAt(1)

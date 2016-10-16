@@ -1,9 +1,8 @@
 fun foo() {
     val a: String
-    val b: String
-    <selection>run</selection> {
+    val b = <selection>run</selection> {
         a = "aaa"
-        b = "aaa"
+        "aaa"
     }
 
     a.charAt(1)
