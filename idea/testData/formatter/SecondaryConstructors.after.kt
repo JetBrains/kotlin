@@ -66,4 +66,16 @@ class A {
 
     constructor() : super() {
     }
+
+    constructor() :
+            this()
+
+    constructor()
+            : this()
+
+    constructor() :
+            super()
+
+    constructor()
+            : super()
 }
