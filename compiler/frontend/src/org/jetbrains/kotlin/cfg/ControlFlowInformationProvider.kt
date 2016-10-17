@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.TailRecursionKind.*
-import org.jetbrains.kotlin.cfg.VariableUseState.*
+import org.jetbrains.kotlin.cfg.VariableUseState.READ
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -571,56 +571,7 @@ class ControlFlowInformationProvider private constructor(
                 }
                 is VariableDeclarationInstruction -> {
                     val element = instruction.variableDeclarationElement as? KtNamedDeclaration ?: return@traverse
-                    element.nameIdentifier ?: return@traverse
-                    if (!VariableUseState.isUsed(variableUseState)) {
-                        if (!element.isSingleUnderscore && KtPsiUtil.isRemovableVariableDeclaration(element)) {
-                            report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
-                        }
-                        else if (element is KtParameter) {
-                            val owner = element.parent?.parent
-                            if (element.isSingleUnderscore) return@traverse
-                            when (owner) {
-                                is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
-                                    val containingClass = owner.getContainingClassOrObject()
-                                    val containingClassDescriptor = trace.get(
-                                            BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass)
-                                    if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
-                                        report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
-                                    }
-                                }
-                                is KtFunction -> {
-                                    val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
-                                    val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
-                                    val functionDescriptor =
-                                            trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
-                                            ?: throw AssertionError(owner.text)
-                                    val functionName = functionDescriptor.name.asString()
-                                    if (isMain
-                                        || functionDescriptor.isOverridableOrOverrides
-                                        || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                                        || "getValue" == functionName
-                                        || "setValue" == functionName
-                                        || "propertyDelegated" == functionName) {
-                                        return@traverse
-                                    }
-                                    report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
-                                }
-                            }
-                        }
-                    }
-                    else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isRemovableVariableDeclaration(element)) {
-                        report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
-                    }
-                    else if (variableUseState === WRITTEN_AFTER_READ && element is KtVariableDeclaration) {
-                        when (element) {
-                            is KtProperty ->
-                                element.initializer?.let {
-                                    report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(it, variableDescriptor), ctxt)
-                                }
-                            is KtDestructuringDeclarationEntry ->
-                                report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt)
-                        }
-                    }
+                    processUnusedDeclaration(element, variableDescriptor, ctxt, variableUseState)
                 }
             }
         }
@@ -639,6 +590,64 @@ class ControlFlowInformationProvider private constructor(
                         report(Errors.UNUSED_CHANGED_VALUE.on(expressionInQuestion, expressionInQuestion), ctxt)
                     }
                 }
+            }
+        }
+    }
+
+    private fun processUnusedDeclaration(
+            element: KtNamedDeclaration,
+            variableDescriptor: VariableDescriptor,
+            ctxt: VariableUseContext,
+            variableUseState: VariableUseState?
+    ) {
+        element.nameIdentifier ?: return
+        if (!VariableUseState.isUsed(variableUseState)) {
+            if (!element.isSingleUnderscore && KtPsiUtil.isRemovableVariableDeclaration(element)) {
+                report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+            }
+            else if (element is KtParameter) {
+                val owner = element.parent?.parent
+                if (element.isSingleUnderscore) return
+                when (owner) {
+                    is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
+                        val containingClass = owner.getContainingClassOrObject()
+                        val containingClassDescriptor = trace.get(
+                                BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass)
+                        if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
+                            report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                        }
+                    }
+                    is KtFunction -> {
+                        val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
+                        val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
+                        val functionDescriptor =
+                                trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
+                                ?: throw AssertionError(owner.text)
+                        val functionName = functionDescriptor.name.asString()
+                        if (isMain
+                            || functionDescriptor.isOverridableOrOverrides
+                            || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                            || "getValue" == functionName
+                            || "setValue" == functionName
+                            || "propertyDelegated" == functionName) {
+                            return
+                        }
+                        report(Errors.UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                    }
+                }
+            }
+        }
+        else if (variableUseState === org.jetbrains.kotlin.cfg.VariableUseState.ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isRemovableVariableDeclaration(element)) {
+            report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on(element, variableDescriptor), ctxt)
+        }
+        else if (variableUseState === org.jetbrains.kotlin.cfg.VariableUseState.WRITTEN_AFTER_READ && element is KtVariableDeclaration) {
+            when (element) {
+                is KtProperty ->
+                    element.initializer?.let {
+                        report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(it, variableDescriptor), ctxt)
+                    }
+                is KtDestructuringDeclarationEntry ->
+                    report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt)
             }
         }
     }
