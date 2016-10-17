@@ -1167,7 +1167,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                                 (PsiVariable) resolved);
                         if (initializer != null &&
                             (UastExpressionUtils.isNewArray(initializer) ||
-                             UastExpressionUtils.isNestedArrayInitializer(initializer))) {
+                             UastExpressionUtils.isArrayInitializer(initializer))) {
                             argWasReference = true;
                             // Now handled by check below
                             lastArg = initializer;
@@ -1176,11 +1176,11 @@ public class StringFormatDetector extends ResourceXmlDetector implements Detecto
                 }
 
                 if (UastExpressionUtils.isNewArray(lastArg) ||
-                    UastExpressionUtils.isNestedArrayInitializer(lastArg)) {
+                    UastExpressionUtils.isArrayInitializer(lastArg)) {
                     UCallExpression arrayInitializer = (UCallExpression) lastArg;
 
                     if (UastExpressionUtils.isNewArrayWithInitializer(lastArg) ||
-                        UastExpressionUtils.isNestedArrayInitializer(lastArg)) {
+                        UastExpressionUtils.isArrayInitializer(lastArg)) {
                         callCount = arrayInitializer.getValueArgumentCount();
                         knownArity = true;
                     } else if (UastExpressionUtils.isNewArrayWithDimensions(lastArg)) {

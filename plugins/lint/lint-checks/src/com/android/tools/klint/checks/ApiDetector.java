@@ -106,30 +106,10 @@ import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiResourceListElement;
 import com.intellij.psi.PsiType;
 
-import org.jetbrains.uast.UBinaryExpression;
-import org.jetbrains.uast.UBinaryExpressionWithType;
-import org.jetbrains.uast.UBlockExpression;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UCatchClause;
-import org.jetbrains.uast.UClass;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UFile;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.UImportStatement;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.ULocalVariable;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UReturnExpression;
-import org.jetbrains.uast.USimpleNameReferenceExpression;
-import org.jetbrains.uast.USwitchClauseExpression;
-import org.jetbrains.uast.UTryExpression;
-import org.jetbrains.uast.UVariable;
-import org.jetbrains.uast.UastBinaryOperator;
-import org.jetbrains.uast.UastOperator;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.expressions.UTypeReferenceExpression;
+import org.jetbrains.uast.java.JavaUAnnotation;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -1923,12 +1903,13 @@ public class ApiDetector extends ResourceXmlDetector
                 }
 
                 PsiModifierList modifierList = method.getModifierList();
-                if (!checkRequiresApi(expression, method, modifierList)) {
+                List<UAnnotation> annotations = JavaUAnnotation.wrap(modifierList.getAnnotations());
+                if (!checkRequiresApi(expression, method, annotations)) {
                     PsiClass containingClass = method.getContainingClass();
                     if (containingClass != null) {
                         modifierList = containingClass.getModifierList();
                         if (modifierList != null) {
-                            checkRequiresApi(expression, method, modifierList);
+                            checkRequiresApi(expression, method, annotations);
                         }
                     }
                 }
@@ -1938,9 +1919,11 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         // Look for @RequiresApi in modifier lists
-        private boolean checkRequiresApi(UCallExpression expression, PsiMethod method,
-                PsiModifierList modifierList) {
-            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
+        private boolean checkRequiresApi(
+                UCallExpression expression,
+                PsiMethod method,
+                List<UAnnotation> annotations) {
+            for (UAnnotation annotation : annotations) {
                 if (REQUIRES_API_ANNOTATION.equals(annotation.getQualifiedName())) {
                     int api = (int) SupportAnnotationDetector.getLongAttribute(annotation,
                                                                                ATTR_VALUE, -1);
@@ -1953,10 +1936,10 @@ public class ApiDetector extends ResourceXmlDetector
                     if (api > minSdk) {
                         int target = getTargetApi(expression);
                         if (target == -1 || api > target) {
-                            if (ApiDetector.isWithinVersionCheckConditional(expression, api, mContext)) {
+                            if (isWithinVersionCheckConditional(expression, api, mContext)) {
                                 return true;
                             }
-                            if (ApiDetector.isPrecededByVersionCheckExit(expression, api, mContext)) {
+                            if (isPrecededByVersionCheckExit(expression, api, mContext)) {
                                 return true;
                             }
 
@@ -2588,7 +2571,7 @@ public class ApiDetector extends ResourceXmlDetector
         }
     }
 
-    private static boolean isPrecededByVersionCheckExit(UElement element, int api,
+    protected static boolean isPrecededByVersionCheckExit(UElement element, int api,
             JavaContext context) {
         //noinspection unchecked
         UExpression currentExpression = UastUtils.getParentOfType(element, UExpression.class,
