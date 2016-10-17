@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.io.InputStream
 
 interface KotlinClassFinder {
     fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
 
     fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?
+
+    fun findBuiltInsData(packageFqName: FqName): InputStream?
 }

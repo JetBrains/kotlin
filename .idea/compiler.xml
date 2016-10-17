@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
     <option name="BUILD_PROCESS_HEAP_SIZE" value="2000" />
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/core/reflection.jvm" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/core/runtime.jvm" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/core/builtins" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/core/script.runtime" includeSubdirectories="true" />
     </excludeFromCompile>
-    <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
       <entry name="!?*.form" />
@@ -19,11 +18,6 @@
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
-    <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="android-studio" target="1.8" />
       <module name="idea" target="1.8" />

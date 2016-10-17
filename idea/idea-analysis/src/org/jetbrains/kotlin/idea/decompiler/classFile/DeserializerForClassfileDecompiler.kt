@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import java.io.InputStream
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
     val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
@@ -114,6 +115,9 @@ class DirectoryBasedClassFinder(
         }
         return null
     }
+
+    // TODO: load built-ins from packageDirectory?
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 }
 
 class DirectoryBasedDataFinder(

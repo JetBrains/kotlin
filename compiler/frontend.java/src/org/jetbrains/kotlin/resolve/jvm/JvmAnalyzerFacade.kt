@@ -89,6 +89,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
                 LanguageVersionSettingsImpl.DEFAULT, // TODO: see KT-12410
+                useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true
         )
         val resolveSession = container.get<ResolveSession>()

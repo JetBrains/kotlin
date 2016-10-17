@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-
+import java.io.InputStream
 
 private fun checkScopeForFinder(scope: GlobalSearchScope, logger: Logger) {
     if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.project == null) {
@@ -56,6 +56,8 @@ class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFi
 }
 
 class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
+    // TODO: load built-ins metadata from scope
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 
     init { checkScopeForFinder(scope, LOG) }
 
@@ -66,4 +68,3 @@ class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFil
         private val LOG = Logger.getInstance(JvmIDEVirtualFileFinder::class.java)
     }
 }
-

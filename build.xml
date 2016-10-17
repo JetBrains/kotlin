@@ -961,8 +961,8 @@
                 <include name="core/runtime.jvm/src"/>
             </src>
             <class-path>
-                <!-- Need something to pass to compiler's "-classpath" here -->
-                <pathelement location="core/builtins/src"/>
+                <!-- TODO: serialize and compile built-ins in one step here instead -->
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
     </target>
@@ -974,6 +974,7 @@
             </src>
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
     </target>
@@ -988,6 +989,7 @@
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
                 <pathelement path="libraries/lib/junit-4.11.jar"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
 
@@ -1012,6 +1014,7 @@
                 <pathelement path="${output}/classes/stdlib"/>
                 <pathelement path="${protobuf-lite.jar}"/>
                 <pathelement path="${javax.inject.jar}"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
     </target>
@@ -1026,6 +1029,7 @@
                 <pathelement path="${output}/classes/stdlib"/>
                 <pathelement path="${output}/classes/core"/>
                 <pathelement path="${protobuf-lite.jar}"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
     </target>
@@ -1060,7 +1064,7 @@
                 <fileset dir="${output}/classes/stdlib"/>
                 <zipfileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
-                    <!-- TODO: load metadata from @KotlinClass annotation in KotlinBuiltIns on JVM and restore this exclusion -->
+                    <!-- TODO: load metadata from @Metadata annotation in KotlinBuiltIns on JVM and restore this exclusion (also below in mock-runtime) -->
                     <!-- exclude name="kotlin/reflect/**"/ -->
                 </zipfileset>
             </jar-content>
@@ -1167,6 +1171,7 @@
             </src>
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
         <pack-runtime-jar jar-name="kotlin-script-runtime.jar" implementation-title="${manifest.impl.title.kotlin.script.runtime}">
@@ -1225,12 +1230,17 @@
             </src>
             <class-path>
                 <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="${output}/builtins"/>
             </class-path>
         </new-kotlinc>
 
         <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-mock-runtime-for-test.jar" implementation-title="Kotlin Mock Runtime">
             <jar-content>
                 <fileset dir="${output}/classes/mock-runtime"/>
+                <zipfileset dir="${output}/builtins">
+                    <include name="kotlin/**"/>
+                    <!-- exclude name="kotlin/reflect/**"/ -->
+                </zipfileset>
             </jar-content>
         </pack-runtime-jar>
     </target>

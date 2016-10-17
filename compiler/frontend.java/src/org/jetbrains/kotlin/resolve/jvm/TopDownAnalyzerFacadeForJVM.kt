@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -130,8 +131,11 @@ object TopDownAnalyzerFacadeForJVM {
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get<JavaDescriptorResolver>()
 
-            dependenciesContext.setDependencies(dependenciesContext.module, dependenciesContext.module.builtIns.builtInsModule)
-            dependenciesContext.initializeModuleContents(moduleClassResolver.compiledCodeResolver.packageFragmentProvider)
+            dependenciesContext.setDependencies(dependenciesContext.module)
+            dependenciesContext.initializeModuleContents(CompositePackageFragmentProvider(listOf(
+                    moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
+                    dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>()
+            )))
             dependenciesContext.module
         }
         else null
@@ -171,7 +175,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         // TODO: remove dependencyModule from friends
         module.setDependencies(ModuleDependenciesImpl(
-                listOfNotNull(module, dependencyModule, module.builtIns.builtInsModule),
+                listOfNotNull(module, dependencyModule),
                 if (dependencyModule != null) setOf(dependencyModule) else emptySet()
         ))
         module.initialize(CompositePackageFragmentProvider(

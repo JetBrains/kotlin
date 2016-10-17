@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 class JavaClassDataFinder(
-        private val kotlinClassFinder: KotlinClassFinder,
+        internal val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
