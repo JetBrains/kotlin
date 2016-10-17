@@ -328,7 +328,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     companion object {
-        private val ideaCompatibleBuildNumber = "171.9999"
+        private val ideaCompatibleBuildNumber = "163.9999"
 
         init {
             setCompatibleBuild()
