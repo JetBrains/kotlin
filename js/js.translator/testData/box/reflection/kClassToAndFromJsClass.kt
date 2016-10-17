@@ -6,10 +6,10 @@ fun check(k: KClass<*>, j: JsClass<*>) {
     assertNotEquals(null, k)
     assertNotEquals(null, j)
 
-    assertEquals(k.js, j)
-    assertEquals(k, j.kotlin)
-    assertEquals(j, j.kotlin.js)
-    assertEquals(k, k.js.kotlin)
+    assertSame(k.js, j)
+    assertSame(k, j.kotlin)
+    assertSame(j, j.kotlin.js)
+    assertSame(k, k.js.kotlin)
 }
 
 fun jsClassbyName(name: String) = js("JS_TESTS").foo[name]

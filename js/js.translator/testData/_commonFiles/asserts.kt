@@ -18,6 +18,13 @@ fun <T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     }
 }
 
+fun <T> assertSame(expected: T, actual: T, message: String? = null) {
+    if (expected !== actual) {
+        val msg = if (message == null) "" else (" message = '" + message + "',")
+        fail("Expected same instances, got expected = '$expected', actual = '$actual'")
+    }
+}
+
 fun <T> assertArrayEquals(expected: Array<out T>, actual: Array<out T>, message: String? = null) {
     if (!arraysEqual(expected, actual)) {
         val msg = if (message == null) "" else (" message = '" + message + "',")

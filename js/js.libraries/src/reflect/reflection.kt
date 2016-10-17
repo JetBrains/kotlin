@@ -20,9 +20,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.js.internal.KClassImpl
 
 @JsName("getKClass")
-private fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> = getOrCreateKClass(jClass)
+internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> = getOrCreateKClass(jClass)
 @JsName("getKClassFromExpression")
-private fun <T : Any> getKClassFromExpression(e: T): KClass<T> = getOrCreateKClass(e.jsClass)
+internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> = getOrCreateKClass(e.jsClass)
 
 private fun <T : Any> getOrCreateKClass(jClass: JsClass<T>): KClass<T> {
     val metadata = jClass.asDynamic().`$metadata$`
