@@ -17,10 +17,19 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiThisExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UThisExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUThisExpression(
         override val psi: PsiThisExpression,
         override val containingElement: UElement?
-) : JavaAbstractUExpression(), UThisExpression, PsiElementBacked
+) : JavaAbstractUExpression(), UThisExpression, PsiElementBacked {
+    override val label: String?
+        get() = psi.qualifier?.qualifiedName
+
+    override val labelIdentifier: UIdentifier?
+        get() = psi.qualifier?.let { UIdentifier(it, this) }
+
+    override fun resolve() = psi.qualifier?.resolve()
+}

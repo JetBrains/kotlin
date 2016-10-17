@@ -95,6 +95,8 @@ class KotlinUSwitchEntry(
                     get() = null
                 override val containingElement: UElement?
                     get() = this@KotlinUSwitchEntry
+                override val annotations: List<UAnnotation>
+                    get() = emptyList()
             }
         }
     }

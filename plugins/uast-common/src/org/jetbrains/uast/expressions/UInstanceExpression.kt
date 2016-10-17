@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.uast.UAnnotation
-import org.jetbrains.uast.UElement
+package org.jetbrains.uast.expressions
+
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.ULabeled
+import org.jetbrains.uast.UResolvable
 
-class UnknownJavaExpression(
-        override val psi: PsiElement,
-        override val containingElement: UElement?
-) : UExpression, PsiElementBacked {
-    override fun asLogString() = "[!] UnknownJavaExpression ($psi)"
-
-    override val annotations: List<UAnnotation>
-        get() = emptyList()
-}
+/**
+ * A common parent for "this" and "super" expressions.
+ */
+interface UInstanceExpression : UExpression, ULabeled, UResolvable

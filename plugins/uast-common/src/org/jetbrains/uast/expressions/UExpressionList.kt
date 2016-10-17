@@ -15,12 +15,14 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents a generic list of expressions.
  */
-interface USpecialExpressionList : UExpression {
+interface UExpressionList : UExpression {
     /**
      * Returns the list of expressions.
      */
@@ -32,13 +34,14 @@ interface USpecialExpressionList : UExpression {
     val kind: UastSpecialExpressionKind
 
     override fun accept(visitor: UastVisitor) {
-        if (visitor.visitSpecialExpressionList(this)) return
+        if (visitor.visitExpressionList(this)) return
+        annotations.acceptList(visitor)
         expressions.acceptList(visitor)
-        visitor.afterVisitSpecialExpressionList(this)
+        visitor.afterVisitExpressionList(this)
     }
 
     fun firstOrNull(): UExpression? = expressions.firstOrNull()
 
-    override fun logString() = log("USpecialExpressionList (${kind.name})", expressions)
-    override fun renderString() = kind.name + " " + expressions.joinToString(" : ") { it.renderString() }
+    override fun asLogString() = log("USpecialExpressionList (${kind.name})", expressions)
+    override fun asRenderString() = kind.name + " " + expressions.joinToString(" : ") { it.asRenderString() }
 }

@@ -29,7 +29,7 @@ abstract class AbstractJavaUVariable : PsiVariable, UVariable, JavaUElementWithC
         getLanguagePlugin().convertElement(initializer, this) as? UExpression
     }
 
-    override val uastAnnotations by lz { psi.annotations.map { SimpleUAnnotation(it, this) } }
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
     override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
     override val uastAnchor: UElement

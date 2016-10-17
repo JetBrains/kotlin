@@ -15,18 +15,21 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.expressions.UInstanceExpression
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents a `this` expression.
  * Qualified `this` is not supported at the moment.
  */
-interface UThisExpression : UExpression {
+interface UThisExpression : UInstanceExpression {
     override fun asLogString() = "UThisExpression"
     override fun asRenderString() = "this"
 
     override fun accept(visitor: UastVisitor) {
-        visitor.visitThisExpression(this)
+        if (visitor.visitThisExpression(this)) return
+        annotations.acceptList(visitor)
         visitor.afterVisitThisExpression(this)
     }
 }

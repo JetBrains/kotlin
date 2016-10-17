@@ -15,14 +15,13 @@
  */
 package org.jetbrains.uast
 
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiType
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents an expression or statement (which is considered as an expression in Uast).
  */
-interface UExpression : UElement {
+interface UExpression : UElement, UAnnotated {
     /**
      * Returns the expression value or null if the value can't be calculated.
      */
@@ -46,7 +45,7 @@ interface UAnnotated : UElement {
     /**
      * Returns the list of annotations applied to the current element.
      */
-    val annotations: List<PsiAnnotation>
+    val annotations: List<UAnnotation>
 
     /**
      * Looks up for annotation element using the annotation qualified name.
@@ -54,7 +53,22 @@ interface UAnnotated : UElement {
      * @param fqName the qualified name to search
      * @return the first annotation element with the specified qualified name, or null if there is no annotation with such name.
      */
-    fun findAnnotation(fqName: String): PsiAnnotation? = annotations.firstOrNull { it.qualifiedName == fqName }
+    fun findAnnotation(fqName: String): UAnnotation? = annotations.firstOrNull { it.qualifiedName == fqName }
+}
+
+/**
+ * Represents a labeled element.
+ */
+interface ULabeled : UElement {
+    /**
+     * Returns the label name, or null if the label is empty.
+     */
+    val label: String?
+
+    /**
+     * Returns the label identifier, or null if the label is empty.
+     */
+    val labelIdentifier: UIdentifier?
 }
 
 /**
@@ -68,6 +82,9 @@ interface UAnnotated : UElement {
 object UastEmptyExpression : UExpression {
     override val containingElement: UElement?
         get() = null
+
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
 
     override fun asLogString() = "EmptyExpression"
 }

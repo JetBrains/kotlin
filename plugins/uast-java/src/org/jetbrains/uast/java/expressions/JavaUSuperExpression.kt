@@ -17,10 +17,19 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiSuperExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.USuperExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUSuperExpression(
         override val psi: PsiSuperExpression,
         override val containingElement: UElement?
-) : JavaAbstractUExpression(), USuperExpression, PsiElementBacked
+) : JavaAbstractUExpression(), USuperExpression, PsiElementBacked {
+    override val label: String?
+        get() = psi.qualifier?.qualifiedName
+
+    override val labelIdentifier: UIdentifier?
+        get() = psi.qualifier?.let { UIdentifier(it, this) }
+
+    override fun resolve() = psi.qualifier?.resolve()
+}

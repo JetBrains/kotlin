@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 import com.intellij.psi.PsiType
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -49,6 +50,7 @@ interface UObjectLiteralExpression : UCallExpression {
     
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitObjectLiteralExpression(this)) return
+        annotations.acceptList(visitor)
         declaration.accept(visitor)
         visitor.afterVisitObjectLiteralExpression(this)
     }

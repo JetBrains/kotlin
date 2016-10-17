@@ -21,7 +21,6 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.impl.source.tree.CompositeElement
-import com.intellij.psi.impl.source.tree.java.PsiDoWhileStatementImpl
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement

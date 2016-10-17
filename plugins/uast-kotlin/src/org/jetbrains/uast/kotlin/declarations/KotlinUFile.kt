@@ -26,6 +26,9 @@ class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLan
     override val packageName: String
         get() = psi.packageFqName.asString()
 
+    override val annotations: List<UAnnotation>
+        get() = psi.annotationEntries.map { KotlinUAnnotation(it, this) }
+
     override val allCommentsInFile by lz {
         val comments = ArrayList<UComment>(0)
         psi.accept(object : PsiRecursiveElementWalkingVisitor() {

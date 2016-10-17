@@ -65,10 +65,12 @@ fun <T : UElement> UElement.getParentOfType(
 
 fun UElement.getContainingFile() = getParentOfType<UFile>(UFile::class.java)
 
+fun UElement.getContainingUClass() = getParentOfType<UClass>(UClass::class.java)
 fun UElement.getContainingUMethod() = getParentOfType<UMethod>(UMethod::class.java)
 fun UElement.getContainingUVariable() = getParentOfType<UVariable>(UVariable::class.java)
 
 fun UElement.getContainingMethod() = getContainingUMethod()?.psi
+fun UElement.getContainingClass() = getContainingUClass()?.psi
 fun UElement.getContainingVariable() = getContainingUVariable()?.psi
 
 fun PsiElement?.getContainingClass() = this?.let { PsiTreeUtil.getParentOfType(it, PsiClass::class.java) }

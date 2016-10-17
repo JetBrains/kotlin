@@ -109,7 +109,7 @@ class JavaUastLanguagePlugin(override val project: Project) : UastLanguagePlugin
             is PsiMethod -> el<UMethod> { JavaUMethod.create(element, this@JavaUastLanguagePlugin, parent) }
             is PsiClassInitializer -> el<UClassInitializer> { JavaUClassInitializer(element, parent) }
             is PsiVariable -> el<UVariable> { JavaUVariable.create(element, parent) }
-            is UAnnotation -> el<UAnnotation> { SimpleUAnnotation(element, parent) } //???
+            is PsiAnnotation -> el<UAnnotation> { JavaUAnnotation(element, parent) } //???
             else -> null
         }}
     }

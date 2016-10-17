@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 import org.jetbrains.uast.expressions.UReferenceExpression
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -42,6 +43,7 @@ interface UQualifiedReferenceExpression : UReferenceExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitQualifiedReferenceExpression(this)) return
+        annotations.acceptList(visitor)
         receiver.accept(visitor)
         selector.accept(visitor)
         visitor.afterVisitQualifiedReferenceExpression(this)

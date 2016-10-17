@@ -8,7 +8,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 /**
  * A [PsiElement] declaration wrapper.
  */
-interface UDeclaration : UElement, PsiElementBacked, PsiModifierListOwner {
+interface UDeclaration : UElement, PsiElementBacked, PsiModifierListOwner, UAnnotated {
     /**
      * Returns the original declaration (which is *always* unwrapped, never a [UDeclaration]).
      */
@@ -20,8 +20,6 @@ interface UDeclaration : UElement, PsiElementBacked, PsiModifierListOwner {
      * Returns the declaration name identifier, or null if the declaration is anonymous.
      */
     val uastAnchor: UElement?
-
-    val uastAnnotations: List<UAnnotation>
 
     /**
      * Returns `true` if this declaration has a [PsiModifier.STATIC] modifier.

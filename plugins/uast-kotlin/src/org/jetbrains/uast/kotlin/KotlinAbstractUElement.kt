@@ -16,8 +16,9 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.KtAnnotatedExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -32,4 +33,11 @@ abstract class KotlinAbstractUElement : UElement {
     }
 }
 
-abstract class KotlinAbstractUExpression : KotlinAbstractUElement(), UExpression
+abstract class KotlinAbstractUExpression : KotlinAbstractUElement(), UExpression {
+    override val annotations: List<UAnnotation>
+        get() {
+            val psi = (this as? PsiElementBacked)?.psi as? KtExpression ?: return emptyList()
+            val annotatedExpression = psi.parent as? KtAnnotatedExpression ?: return emptyList()
+            return annotatedExpression.annotationEntries.map { KotlinUAnnotation(it, this) }
+        }
+}

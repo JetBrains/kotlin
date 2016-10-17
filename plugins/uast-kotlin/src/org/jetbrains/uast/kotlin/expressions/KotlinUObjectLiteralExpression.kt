@@ -63,6 +63,9 @@ class KotlinUObjectLiteralExpression(
     ) : KotlinAbstractUElement(), USimpleNameReferenceExpression, PsiElementBacked {
         override fun resolve() = (psi.resolveCallToDeclaration(this) as? PsiMethod)?.containingClass
 
+        override val annotations: List<UAnnotation>
+            get() = emptyList()
+
         override val resolvedName: String?
             get() = identifier
         

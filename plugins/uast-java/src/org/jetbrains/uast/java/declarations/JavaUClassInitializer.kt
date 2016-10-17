@@ -33,7 +33,7 @@ class JavaUClassInitializer(
         getLanguagePlugin().convertElement(psi.body, this, null) as? UExpression ?: UastEmptyExpression
     }
 
-    override val uastAnnotations by lz { psi.annotations.map { SimpleUAnnotation(it, this) } }
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
 
     override fun equals(other: Any?) = this === other
     override fun hashCode() = psi.hashCode()

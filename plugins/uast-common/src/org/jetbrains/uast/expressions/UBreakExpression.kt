@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -28,7 +29,8 @@ interface UBreakExpression : UExpression {
     val label: String?
 
     override fun accept(visitor: UastVisitor) {
-        visitor.visitBreakExpression(this)
+        if (visitor.visitBreakExpression(this)) return
+        annotations.acceptList(visitor)
         visitor.afterVisitBreakExpression(this)
     }
 

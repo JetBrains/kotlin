@@ -109,6 +109,9 @@ open class KotlinUSimpleReferenceExpression(
                     null
             }
 
+        override val annotations: List<UAnnotation>
+            get() = emptyList()
+
         override val receiverType by lz {
             val type = (resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver)?.type ?: return@lz null
             type.toPsiType(this, psi, boxed = true)

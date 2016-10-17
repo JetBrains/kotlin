@@ -3,6 +3,7 @@ package org.jetbrains.uast.expressions
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.name
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -18,7 +19,8 @@ interface UTypeReferenceExpression : UExpression {
     fun getQualifiedName() = PsiTypesUtil.getPsiClass(type)?.qualifiedName
 
     override fun accept(visitor: UastVisitor) {
-        visitor.visitTypeReferenceExpression(this)
+        if (visitor.visitTypeReferenceExpression(this)) return
+        annotations.acceptList(visitor)
         visitor.afterVisitTypeReferenceExpression(this)
     }
 

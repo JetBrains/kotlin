@@ -20,7 +20,7 @@ interface UClassInitializer : UDeclaration, PsiClassInitializer {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitInitializer(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         uastBody.accept(visitor)
         visitor.afterVisitInitializer(this)
     }

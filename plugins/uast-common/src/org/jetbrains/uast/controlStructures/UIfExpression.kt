@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -66,6 +67,7 @@ interface UIfExpression : UExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitIfExpression(this)) return
+        annotations.acceptList(visitor)
         condition.accept(visitor)
         thenExpression?.accept(visitor)
         elseExpression?.accept(visitor)

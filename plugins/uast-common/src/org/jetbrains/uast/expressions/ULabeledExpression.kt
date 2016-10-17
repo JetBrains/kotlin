@@ -15,17 +15,18 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents an expression with the label specified.
  */
-interface ULabeledExpression : UExpression {
+interface ULabeledExpression : UExpression, ULabeled {
     /**
      * Returns the expression label.
      */
-    val label: String
+    override val label: String
 
     /**
      * Returns the expression itself.
@@ -34,6 +35,7 @@ interface ULabeledExpression : UExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitLabeledExpression(this)) return
+        annotations.acceptList(visitor)
         expression.accept(visitor)
         visitor.afterVisitLabeledExpression(this)
     }

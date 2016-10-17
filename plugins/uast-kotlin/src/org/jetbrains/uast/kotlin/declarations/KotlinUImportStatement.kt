@@ -16,7 +16,6 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
