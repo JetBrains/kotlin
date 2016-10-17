@@ -156,6 +156,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(RETURN_KEYWORD, LABEL_QUALIFIER, RETURN).spaces(0)
             afterInside(RETURN_KEYWORD, RETURN).spaces(1)
             afterInside(LABEL_QUALIFIER, RETURN).spaces(1)
+            betweenInside(LABEL_QUALIFIER, EOL_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+            betweenInside(LABEL_QUALIFIER, BLOCK_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+            afterInside(LABEL_QUALIFIER, LABELED_EXPRESSION).spaces(1)
 
             betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
             after(FUN_KEYWORD).spaces(1)
