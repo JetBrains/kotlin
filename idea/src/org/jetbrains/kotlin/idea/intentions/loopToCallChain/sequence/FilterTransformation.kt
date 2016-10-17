@@ -118,31 +118,39 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 conditions: List<AtomicCondition>,
                 restStatements: List<KtExpression>
         ): List<FilterTransformationBase> {
-            //TODO: indexVariable case
-
             if (conditions.size == 1) {
                 return createFilterTransformation(loop, inputVariable, indexVariable, conditions.single()).singletonList()
             }
 
-            val transformations = ArrayList<FilterTransformationBase>()
-            for (condition in conditions) {
-                val transformation = createFilterTransformation(loop, inputVariable, indexVariable, condition)
+            var transformations = conditions.map { createFilterTransformation(loop, inputVariable, indexVariable, it) }
+
+            val resultTransformations = ArrayList<FilterTransformationBase>()
+
+            val lastUseOfIndex = transformations.lastOrNull { it.indexVariable != null }
+            if (lastUseOfIndex != null) {
+                val index = transformations.indexOf(lastUseOfIndex)
+                val condition = CompositeCondition.create(conditions.take(index + 1))
+                resultTransformations.add(createFilterTransformation(loop, inputVariable, indexVariable, condition))
+                transformations = transformations.drop(index + 1)
+            }
+
+            for ((transformation, condition) in transformations.zip(conditions)) {
                 if (transformation !is FilterTransformation && isSmartCastUsed(inputVariable, restStatements)) { // filterIsInstance of filterNotNull
-                    transformations.add(transformation)
+                    resultTransformations.add(transformation)
                 }
                 else {
-                    val prevFilter = transformations.lastOrNull() as? FilterTransformation
+                    val prevFilter = resultTransformations.lastOrNull() as? FilterTransformation
                     if (prevFilter != null) {
                         val mergedCondition = CompositeCondition.create(prevFilter.effectiveCondition.toAtomicConditions() + transformation.effectiveCondition.toAtomicConditions())
                         val mergedTransformation = createFilterTransformation(loop, inputVariable, indexVariable, mergedCondition, onlyFilterOrFilterNot = true)
-                        transformations[transformations.lastIndex] = mergedTransformation
+                        resultTransformations[resultTransformations.lastIndex] = mergedTransformation
                     }
                     else {
-                        transformations.add(createFilterTransformation(loop, inputVariable, indexVariable, condition, onlyFilterOrFilterNot = true))
+                        resultTransformations.add(createFilterTransformation(loop, inputVariable, indexVariable, condition, onlyFilterOrFilterNot = true))
                     }
                 }
             }
-            return transformations
+            return resultTransformations
         }
 
         private fun matchOneTransformation(state: MatchingState): Pair<SequenceTransformation, MatchingState>? {
