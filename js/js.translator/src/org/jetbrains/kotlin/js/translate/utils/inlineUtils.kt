@@ -52,13 +52,13 @@ fun setInlineCallMetadata(
         "Expected descriptor of callable, that should be inlined, but got: $descriptor"
     }
 
-    val name = context.aliasedName(descriptor)
+    val candidateNames = setOf(context.aliasedName(descriptor), context.getInnerNameForDescriptor(descriptor))
 
     val visitor = object : RecursiveJsVisitor() {
         override fun visitInvocation(invocation: JsInvocation) {
             super.visitInvocation(invocation)
 
-            if (name == invocation.name) {
+            if (invocation.name in candidateNames) {
                 invocation.descriptor = descriptor
                 invocation.inlineStrategy = InlineStrategy.IN_PLACE
                 invocation.psiElement = psiElement

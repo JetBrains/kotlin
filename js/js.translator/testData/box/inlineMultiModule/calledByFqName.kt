@@ -9,7 +9,7 @@ public fun sum(x: Int, y: Int): Int =
 
 // MODULE: main(lib)
 // FILE: main.kt
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal fun test(x: Int, y: Int): Int = utils.sum(x, y)
 

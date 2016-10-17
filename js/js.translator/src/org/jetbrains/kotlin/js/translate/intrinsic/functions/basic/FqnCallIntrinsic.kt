@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.basic
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -43,7 +44,7 @@ class FqnCallIntrinsic(
             JsAstUtils.replaceRootReference(context.getQualifiedReference(fqn), Namer.kotlinObject())
         }
         else {
-            context.getInnerReference(descriptors.first())
+            ReferenceTranslator.translateAsValueReference(descriptors.first(), context)
         }
     }
 }

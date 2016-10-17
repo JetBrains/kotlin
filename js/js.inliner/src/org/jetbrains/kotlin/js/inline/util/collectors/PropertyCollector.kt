@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.util.collectors
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 import java.util.IdentityHashMap
 

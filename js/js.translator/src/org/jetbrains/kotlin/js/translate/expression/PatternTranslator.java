@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -169,7 +170,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
 
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
-        JsNameRef typeName = context().getInnerReference(referencedClass);
+        JsExpression typeName = ReferenceTranslator.translateAsTypeReference(referencedClass, context());
         return referencedClass.getKind() != ClassKind.OBJECT ? namer().isInstanceOf(typeName) : namer().isInstanceOfObject(typeName);
     }
 

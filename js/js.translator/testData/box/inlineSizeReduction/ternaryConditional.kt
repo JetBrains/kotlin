@@ -1,8 +1,8 @@
 package foo
 
-// CHECK_VARS_COUNT: function=test1_za3lpa$ count=0
-// CHECK_VARS_COUNT: function=test2_za3lpa$ count=1
-// CHECK_VARS_COUNT: function=test3_za3lpa$ count=0
+// CHECK_VARS_COUNT: function=test1 count=0
+// CHECK_VARS_COUNT: function=test2 count=1
+// CHECK_VARS_COUNT: function=test3 count=0
 
 inline fun a(x: Int) = b(x)
 

@@ -49,7 +49,7 @@ fun CallInfo.isSuperInvocation(): Boolean {
 val CallInfo.calleeOwner: JsExpression
     get() {
         val calleeOwner = resolvedCall.resultingDescriptor.containingDeclaration
-        return ReferenceTranslator.translateAsFQReference(calleeOwner, context)
+        return ReferenceTranslator.translateAsValueReference(calleeOwner, context)
     }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor

@@ -21,7 +21,6 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
-import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
 import org.jetbrains.kotlin.js.translate.context.hasCapturedExceptContaining
@@ -73,12 +72,14 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             if (!isRecursive) {
                 lambda.name = null
             }
+            lambdaCreator.name.staticRef = lambdaCreator
             return lambdaCreator.withCapturedParameters(functionContext, invokingContext)
         }
 
         lambda.isLocal = true
 
         context().addDeclarationStatement(lambda.makeStmt())
+        lambda.name.staticRef = lambda
         return lambda.name.makeRef().apply { sideEffects = SideEffectKind.PURE }
     }
 
@@ -92,10 +93,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     }
 }
 
-fun JsFunction.withCapturedParameters(
-        context: TranslationContext,
-        invokingContext: TranslationContext
-): JsExpression {
+fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext): JsExpression {
     context.addDeclarationStatement(makeStmt())
     val ref = name.makeRef().apply { sideEffects = SideEffectKind.PURE }
     val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }

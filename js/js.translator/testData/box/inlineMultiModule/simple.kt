@@ -13,7 +13,7 @@ public fun sum(x: Int, y: Int): Int =
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal fun test(x: Int, y: Int): Int = sum(x, y)
 

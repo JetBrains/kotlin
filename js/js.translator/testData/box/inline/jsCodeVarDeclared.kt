@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal inline fun sum(x: Int, y: Int): Int = js("var a = x; a + y")
 

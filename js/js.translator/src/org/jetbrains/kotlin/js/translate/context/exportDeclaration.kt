@@ -19,39 +19,81 @@ package org.jetbrains.kotlin.js.translate.context
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 
-fun StaticContext.exportDeclaration(declaration: DeclarationDescriptor, additionalStatements: MutableList<in JsStatement>): JsExpression? {
+// TODO: refactor
+fun StaticContext.exportDeclaration(declaration: MemberDescriptor, additionalStatements: MutableList<in JsStatement>): JsExpression? {
+    val scope = nameSuggestion.suggest(declaration)!!.scope
     return when {
-        declaration is ClassDescriptor && declaration.kind == ClassKind.OBJECT -> {
-            exportObject(declaration, additionalStatements)
-            null
+        declaration is ClassDescriptor -> when {
+            declaration.kind == ClassKind.OBJECT || declaration.kind == ClassKind.ENUM_ENTRY -> {
+                exportObject(declaration, scope, additionalStatements)
+                null
+            }
+            scope is ClassDescriptor -> {
+                exportNested(declaration, scope, additionalStatements)
+                null
+            }
+            else -> {
+                getInnerNameForDescriptor(declaration).makeRef()
+            }
         }
 
         declaration is PropertyDescriptor -> {
-            exportProperty(declaration, additionalStatements)
+            if (scope is PackageFragmentDescriptor) {
+                exportProperty(declaration, scope, additionalStatements)
+            }
             null
         }
 
-        else -> {
+        scope is PackageFragmentDescriptor -> {
             getInnerNameForDescriptor(declaration).makeRef()
         }
+
+        else -> null
     }
 }
 
-private fun StaticContext.exportObject(declaration: ClassDescriptor, additionalStatements: MutableList<in JsStatement>) {
-    val suggestedName = nameSuggestion.suggest(declaration)!!
-    val qualifier = getQualifiedReference(suggestedName.scope)
+fun MemberDescriptor.shouldBeExported(force: Boolean) =
+        force || isEffectivelyPublicApi || AnnotationsUtils.getJsNameAnnotation(this) != null
+
+private fun StaticContext.exportNested(
+        descriptor: ClassDescriptor,
+        scope: ClassDescriptor,
+        additionalStatements: MutableList<in JsStatement>
+) {
+    val qualifier = getBaseReference(scope)
+    val reference = JsAstUtils.pureFqn(getNameForDescriptor(descriptor), qualifier)
+    val instanceRef = JsAstUtils.pureFqn(getInnerNameForDescriptor(descriptor), null)
+    additionalStatements += JsAstUtils.assignment(reference, instanceRef).makeStmt()
+}
+
+private fun StaticContext.exportObject(
+        declaration: ClassDescriptor,
+        scope: DeclarationDescriptor,
+        additionalStatements: MutableList<in JsStatement>
+) {
+    val qualifier = getBaseReference(scope)
     val name = getNameForDescriptor(declaration)
     additionalStatements += JsAstUtils.defineGetter(program, qualifier, name.ident, getNameForObjectInstance(declaration).makeRef())
 }
 
-private fun StaticContext.exportProperty(declaration: PropertyDescriptor, additionalStatements: MutableList<in JsStatement>) {
+private fun StaticContext.getBaseReference(declaration: DeclarationDescriptor) = when (declaration) {
+    is PackageFragmentDescriptor -> getQualifiedReference(declaration)
+    else -> JsAstUtils.pureFqn(getInnerNameForDescriptor(declaration), null)
+}
+
+private fun StaticContext.exportProperty(
+        declaration: PropertyDescriptor,
+        scope: DeclarationDescriptor,
+        additionalStatements: MutableList<in JsStatement>
+) {
     val propertyLiteral = JsObjectLiteral(true)
 
-    val suggestedName = nameSuggestion.suggest(declaration)!!
-    val qualifier = getQualifiedReference(suggestedName.scope)
+    val qualifier = getBaseReference(scope)
     val name = getNameForDescriptor(declaration).ident
 
     val getterBody: JsExpression = if (JsDescriptorUtils.isSimpleFinalProperty(declaration)) {

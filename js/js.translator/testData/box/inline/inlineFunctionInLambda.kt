@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: doNothingNoInline_0
+// CHECK_CONTAINS_NO_CALLS: doNothingNoInline
 
 internal inline fun <T> doNothing1(a: T): T {
     return a

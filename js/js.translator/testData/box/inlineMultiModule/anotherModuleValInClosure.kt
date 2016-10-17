@@ -17,7 +17,7 @@ public fun log(s: String): String {
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal fun test(s: String): String = log(s + ";")
 

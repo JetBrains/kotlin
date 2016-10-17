@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
-import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsLocalNameReference;
+import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsValueReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
 public final class ReferenceAccessTranslator extends AbstractTranslator implements AccessTranslator {
@@ -42,7 +42,7 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
 
     private ReferenceAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        this.reference = translateAsLocalNameReference(descriptor, context());
+        this.reference = translateAsValueReference(descriptor, context());
     }
 
     @Override

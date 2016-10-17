@@ -18,6 +18,11 @@ package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -43,50 +48,83 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
-            @NotNull TranslationContext context) {
-        JsExpression alias = context.getAliasForDescriptor(referencedDescriptor);
+    public static JsExpression translateAsValueReference(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+        JsExpression alias = context.getAliasForDescriptor(descriptor);
         if (alias != null) return alias;
 
-        if (isLocalVarOrFunction(referencedDescriptor) ||
-            AnnotationsUtils.isNativeObject(referencedDescriptor) ||
-            AnnotationsUtils.isLibraryObject(referencedDescriptor)
-        ) {
-            return context.getQualifiedReference(referencedDescriptor);
+        if (shouldTranslateAsFQN(descriptor, context)) {
+            return context.getQualifiedReference(descriptor);
         }
 
-        return context.getInnerReference(referencedDescriptor);
-    }
-
-    private static boolean isLocalVarOrFunction(DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof FunctionDescriptor && !(descriptor instanceof ClassDescriptor);
-    }
-
-    @NotNull
-    public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor descriptor,
-            @NotNull TranslationContext context) {
-        if (descriptor instanceof FunctionDescriptor || descriptor instanceof VariableDescriptor) {
-            JsExpression alias = context.getAliasForDescriptor(descriptor);
-            if (alias != null) {
-                return alias;
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor property = (PropertyDescriptor) descriptor;
+            if (context.isFromCurrentModule(property)) {
+                return context.getInnerReference(property);
+            }
+            else {
+                JsExpression qualifier = context.getInnerReference(property.getContainingDeclaration());
+                JsName name = context.getNameForDescriptor(property);
+                return new JsNameRef(name, qualifier);
             }
         }
+
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
             if (AnnotationsUtils.isNativeObject(descriptor)) {
                 return context.getQualifiedReference(descriptor);
             }
             else if (!context.isFromCurrentModule(descriptor)) {
-                DeclarationDescriptor container = descriptor.getContainingDeclaration();
-                assert container != null : "Object must have containing declaration: " + descriptor;
-                JsExpression qualifier = context.getInnerReference(container);
-                return JsAstUtils.pureFqn(context.getNameForDescriptor(descriptor), qualifier);
+                return getLazyReferenceToObject((ClassDescriptor) descriptor, context);
             }
             else {
                 JsExpression functionRef = JsAstUtils.pureFqn(context.getNameForObjectInstance((ClassDescriptor) descriptor), null);
                 return new JsInvocation(functionRef);
             }
         }
+
         return context.getInnerReference(descriptor);
+    }
+
+    @NotNull
+    public static JsExpression translateAsTypeReference(@NotNull ClassDescriptor descriptor, @NotNull TranslationContext context) {
+        if (AnnotationsUtils.isNativeObject(descriptor)) {
+            return context.getQualifiedReference(descriptor);
+        }
+        if (!shouldTranslateAsFQN(descriptor, context)) {
+            if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
+                if (!context.isFromCurrentModule(descriptor)) {
+                    return getLazyReferenceToObject(descriptor, context);
+                }
+            }
+            return context.getInnerReference(descriptor);
+        }
+
+        JsExpression reference = context.getQualifiedReference(descriptor);
+        if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
+            JsNameRef getPrototypeRef = JsAstUtils.pureFqn("getPrototypeOf", JsAstUtils.pureFqn("Object", null));
+            JsInvocation getPrototypeInvocation = new JsInvocation(getPrototypeRef, reference);
+            MetadataProperties.setSideEffects(getPrototypeInvocation, SideEffectKind.PURE);
+            reference = JsAstUtils.pureFqn("constructor", getPrototypeInvocation);
+        }
+
+        return reference;
+    }
+
+    @NotNull
+    private static JsExpression getLazyReferenceToObject(@NotNull ClassDescriptor descriptor, @NotNull TranslationContext context) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        JsExpression qualifier = context.getInnerReference(container);
+        return JsAstUtils.pureFqn(context.getNameForDescriptor(descriptor), qualifier);
+    }
+
+    private static boolean shouldTranslateAsFQN(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+        return isLocalVarOrFunction(descriptor) ||
+                AnnotationsUtils.isNativeObject(descriptor) ||
+                AnnotationsUtils.isLibraryObject(descriptor) ||
+                context.isPublicInlineFunction();
+    }
+
+    private static boolean isLocalVarOrFunction(DeclarationDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() instanceof FunctionDescriptor && !(descriptor instanceof ClassDescriptor);
     }
 
     @NotNull

@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: sum_0
+// CHECK_CONTAINS_NO_CALLS: sum
 
 inline fun <T : Any, R> T.doLet(f: (T) -> R): R = f(this)
 

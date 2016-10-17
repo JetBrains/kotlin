@@ -16,9 +16,19 @@
 
 package kotlin
 
-open class Error(message: String? = null) : Throwable(message, null) {}
+open class Error(message: String? = null) : Throwable(message, null) {
+    init {
+        val self: dynamic = this
+        self.message = message
+    }
+}
 
-open class Exception(message: String? = null) : Throwable(message, null) {}
+open class Exception(message: String? = null) : Throwable(message, null) {
+    init {
+        val self: dynamic = this
+        self.message = message
+    }
+}
 
 open class RuntimeException(message: String? = null) : Exception(message) {}
 

@@ -13,7 +13,7 @@ public fun <T, R> apply(x: T, fn: T.()->R): R =
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test_0
+// CHECK_CONTAINS_NO_CALLS: test
 
 internal class A(val n: Int)
 

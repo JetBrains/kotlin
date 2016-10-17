@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
@@ -84,17 +85,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
             return JsInvocation(pureFqn(context.getNameForObjectInstance (descriptor.getReferencedObject()), null))
         }
 
-        val functionRef = context.aliasOrValue(callableDescriptor) {
-            if (context.isFromCurrentModule(variableDescriptor)) {
-                context.getInnerReference(variableDescriptor)
-            }
-            else {
-                val qualifier = context.getInnerReference(variableDescriptor.containingDeclaration)
-                val name = context.getNameForDescriptor(variableDescriptor)
-                JsNameRef(name, qualifier)
-            }
-        }
-
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         val ref = if (isVarCapturedInClosure(context.bindingContext(), callableDescriptor)) {
             getCapturedVarAccessor(functionRef)
         }
@@ -170,7 +161,8 @@ object SuperPropertyAccessCase : VariableAccessCase() {
 
         return if (descriptor is PropertyDescriptor && TranslationUtils.shouldAccessViaFunctions(descriptor)) {
             val accessor = getAccessDescriptorIfNeeded()
-            val prototype = pureFqn(Namer.getPrototypeName(), context.getInnerReference(descriptor.containingDeclaration))
+            val containingRef = ReferenceTranslator.translateAsValueReference(descriptor.containingDeclaration, context)
+            val prototype = pureFqn(Namer.getPrototypeName(), containingRef)
             val funRef = Namer.getFunctionCallRef(pureFqn(context.getNameForDescriptor(accessor), prototype))
             val arguments = listOf(dispatchReceiver!!) + additionalArguments
             JsInvocation(funRef, *arguments.toTypedArray())

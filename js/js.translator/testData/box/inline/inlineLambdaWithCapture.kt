@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: maxBySquare_0
+// CHECK_CONTAINS_NO_CALLS: maxBySquare
 
 internal data class Result(var value: Int = 0, var invocationCount: Int = 0)
 

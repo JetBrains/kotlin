@@ -21,6 +21,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -78,27 +79,21 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
     return result
 }
 
-fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsNameRef {
-    val referenceToJsClass: JsNameRef
-
+fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression {
     val classifierDescriptor = type.constructor.declarationDescriptor
 
-    if (classifierDescriptor is ClassDescriptor) {
-        val reference = context.getInnerReference(classifierDescriptor)
-        if (classifierDescriptor.kind == ClassKind.OBJECT) {
-            referenceToJsClass = JsAstUtils.pureFqn("constructor", JsInvocation(JsNameRef("getPrototypeOf", JsNameRef("Object")), reference))
+    val referenceToJsClass: JsExpression = when (classifierDescriptor) {
+        is ClassDescriptor -> {
+            ReferenceTranslator.translateAsTypeReference(classifierDescriptor, context)
         }
-        else {
-            referenceToJsClass = reference
-        }
-    }
-    else if (classifierDescriptor is TypeParameterDescriptor) {
-        assert(classifierDescriptor.isReified)
+        is TypeParameterDescriptor -> {
+            assert(classifierDescriptor.isReified)
 
-        referenceToJsClass = context.getNameForDescriptor(classifierDescriptor).makeRef()
-    }
-    else {
-        throw IllegalStateException("Can't get reference for $type")
+            context.getNameForDescriptor(classifierDescriptor).makeRef()
+        }
+        else -> {
+            throw IllegalStateException("Can't get reference for $type")
+        }
     }
 
     return referenceToJsClass

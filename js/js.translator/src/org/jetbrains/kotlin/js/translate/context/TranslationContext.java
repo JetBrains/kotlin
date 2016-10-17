@@ -236,6 +236,9 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof MemberDescriptor && isFromCurrentModule(descriptor) && isPublicInlineFunction()) {
+            staticContext.export((MemberDescriptor) descriptor, true);
+        }
         return staticContext.getQualifiedReference(descriptor);
     }
 
@@ -608,12 +611,18 @@ public class TranslationContext {
         staticContext.addClass(classDescriptor);
     }
 
-    public void export(@NotNull DeclarationDescriptor descriptor) {
-        staticContext.export(descriptor);
+    public void export(@NotNull MemberDescriptor descriptor) {
+        staticContext.export(descriptor, false);
     }
 
     public boolean isFromCurrentModule(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getCurrentModule() == DescriptorUtilsKt.getModule(descriptor);
+    }
+
+    public boolean isPublicInlineFunction() {
+        if (!(declarationDescriptor instanceof FunctionDescriptor)) return false;
+        FunctionDescriptor function = (FunctionDescriptor) declarationDescriptor;
+        return function.isInline() && DescriptorUtilsKt.isEffectivelyPublicApi(function);
     }
 
     @NotNull

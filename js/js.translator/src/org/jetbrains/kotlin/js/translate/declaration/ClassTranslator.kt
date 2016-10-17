@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
@@ -301,7 +302,7 @@ class ClassTranslator private constructor(
                     val name = nonConstructorUsageTracker.getNameForCapturedDescriptor(it)!!
                     JsAstUtils.pureFqn(name, closureQualifier)
                 }
-                callSite.invocationArgs.addAll(0, closureArgs.toList())
+                callSite.invocationArgs.addAll(0, closureArgs)
             }
         }
     }
@@ -340,7 +341,7 @@ class ClassTranslator private constructor(
         if (supertypes.size == 1) {
             val type = supertypes[0]
             val supertypeDescriptor = getClassDescriptorForType(type)
-            return listOf(context().getInnerReference(supertypeDescriptor))
+            return listOf(ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context()))
         }
 
         val supertypeConstructors = mutableSetOf<TypeConstructor>()
@@ -356,7 +357,7 @@ class ClassTranslator private constructor(
         for (typeConstructor in sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
                 val supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor)
-                supertypesRefs += context().getInnerReference(supertypeDescriptor)
+                supertypesRefs += ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context())
             }
         }
         return supertypesRefs

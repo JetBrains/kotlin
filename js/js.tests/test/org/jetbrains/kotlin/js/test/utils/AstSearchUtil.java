@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 
 import java.util.Map;
 
@@ -39,6 +40,13 @@ public class AstSearchUtil {
     @NotNull
     public static JsExpression getProperty(@NotNull JsNode searchRoot, @NotNull String name) {
         JsExpression property = findByIdent(collectJsProperties(searchRoot), name);
+        assert property != null: "Property `" + name + "` was not found";
+        return property;
+    }
+
+    @NotNull
+    public static JsExpression getMetadataOrFunction(@NotNull JsNode searchRoot, @NotNull String name) {
+        JsExpression property = findByIdent(CollectUtilsKt.collectNamedFunctionsOrMetadata(searchRoot), name);
         assert property != null: "Property `" + name + "` was not found";
         return property;
     }

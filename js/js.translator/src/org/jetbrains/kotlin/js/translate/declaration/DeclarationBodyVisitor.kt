@@ -62,6 +62,7 @@ class DeclarationBodyVisitor(
             assert(supertypes.size == 1) { "Simple Enum entry must have one supertype" }
             val jsEnumEntryCreation = ClassInitializerTranslator
                     .generateEnumEntryInstanceCreation(context, supertypes[0], enumEntry, enumEntryOrdinal)
+            context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, jsEnumEntryCreation))
             val jsEnumEntryFunction = context.createTopLevelAnonymousFunction(descriptor)
             jsEnumEntryFunction.body.statements.add(JsReturn(jsEnumEntryCreation))
 
@@ -69,12 +70,6 @@ class DeclarationBodyVisitor(
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
             context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 
-            val classRef = context.getInnerReference(descriptor.containingDeclaration)
-            val enumExtName = context.getNameForDescriptor(descriptor)
-            val enumExtFq = JsNameRef(enumExtName, classRef)
-            context.addDeclarationStatement(JsAstUtils.assignment(enumExtFq, enumInstanceFunction.name.makeRef()).makeStmt())
-
-            context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, jsEnumEntryCreation))
             enumInstanceFunction.body.statements.add(JsReturn(enumInstanceName.makeRef()))
         }
 
@@ -92,7 +87,7 @@ class DeclarationBodyVisitor(
     }
 
     override fun addClass(descriptor: ClassDescriptor) {
-        //context.export(descriptor)
+        context.export(descriptor)
     }
 
     override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression) {

@@ -94,7 +94,7 @@ public class DirectiveTestUtils {
         @NotNull
         String getFunctionCode(@NotNull JsNode ast, @NotNull String functionName) {
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            return function.toString();
+            return function.getBody().toString();
         }
 
         @NotNull
@@ -213,7 +213,7 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getProperty(ast, functionName);
+            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
             String message = "Inline metadata has not been generated for function " + functionName;
             assertNotNull(message, InlineMetadata.decompose(property));
         }
@@ -223,7 +223,7 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getProperty(ast, functionName);
+            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
             String message = "Inline metadata has been generated for not effectively public function " + functionName;
             assertTrue(message, property instanceof JsFunction);
         }

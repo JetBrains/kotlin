@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: multiplyNoInline_0
+// CHECK_CONTAINS_NO_CALLS: multiplyNoInline
 
 internal inline fun multiply(a: Int, b: Int): Int {
     return a * b

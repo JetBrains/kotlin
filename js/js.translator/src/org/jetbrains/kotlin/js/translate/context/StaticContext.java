@@ -153,6 +153,9 @@ public final class StaticContext {
     @NotNull
     private final JsObjectLiteral exportObject = rootPackage.objectLiteral;
 
+    @NotNull
+    private final Set<MemberDescriptor> exportedDeclarations = new HashSet<MemberDescriptor>();
+
     //TODO: too many parameters in constructor
     private StaticContext(
             @NotNull JsProgram program,
@@ -527,7 +530,9 @@ public final class StaticContext {
                         return null;
                     }
                     if (getSuperclass((ClassDescriptor) descriptor) == null) {
-                        return rootFunction.getScope();
+                        JsFunction function = new JsFunction(rootFunction.getScope(), new JsBlock(), descriptor.toString());
+                        scopeToFunction.put(function.getScope(), function);
+                        return function.getScope();
                     }
                     return null;
                 }
@@ -555,8 +560,7 @@ public final class StaticContext {
             Rule<JsScope> generateInnerScopesForMembers = new Rule<JsScope>() {
                 @Override
                 public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    JsScope enclosingScope = getEnclosingScope(descriptor);
-                    return enclosingScope.innerObjectScope("Scope for member " + descriptor.getName());
+                    return rootFunction.getScope().innerObjectScope("Scope for member " + descriptor.getName());
                 }
             };
             Rule<JsScope> createFunctionObjectsForCallableDescriptors = new Rule<JsScope>() {
@@ -659,27 +663,40 @@ public final class StaticContext {
         classes.add(classDescriptor);
     }
 
-    public void export(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (descriptor instanceof ConstructorDescriptor) {
-            ConstructorDescriptor constructor = (ConstructorDescriptor) descriptor;
-            container = constructor.getConstructedClass().getContainingDeclaration();
-        }
-        if (!(container instanceof PackageFragmentDescriptor)) {
-            throw new IllegalArgumentException("Declaration " + descriptor + " is not a top-level declaration");
-        }
+    public void export(@NotNull MemberDescriptor descriptor, boolean force) {
+        if (exportedDeclarations.contains(descriptor)) return;
 
-        PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) container;
-        ExportedPackage exportedPackage = rootPackage;
-        for (Name packageName : packageDescriptor.getFqName().pathSegments()) {
-            exportedPackage = exportedPackage.getSubpackage(packageName.asString());
-        }
+        if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary()) return;
 
-        JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
-        if (initializerExpr != null) {
-            JsPropertyInitializer initializer = new JsPropertyInitializer(
-                    getNameForDescriptor(descriptor).makeRef(), initializerExpr);
-            exportedPackage.objectLiteral.getPropertyInitializers().add(initializer);
+        SuggestedName suggestedName = nameSuggestion.suggest(descriptor);
+        if (suggestedName == null) return;
+
+        DeclarationDescriptor container = suggestedName.getScope();
+        if (!DeclarationExporter.shouldBeExported(descriptor, force)) return;
+        exportedDeclarations.add(descriptor);
+
+        if (container instanceof PackageFragmentDescriptor) {
+            PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) container;
+            ExportedPackage exportedPackage = rootPackage;
+            for (Name packageName : packageDescriptor.getFqName().pathSegments()) {
+                exportedPackage = exportedPackage.getSubpackage(packageName.asString());
+            }
+
+            JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
+            if (initializerExpr != null) {
+                JsName propertyName = getNameForDescriptor(descriptor);
+                if (MetadataProperties.getStaticRef(propertyName) == null) {
+                    if (!(initializerExpr instanceof JsNameRef) || ((JsNameRef) initializerExpr).getName() != propertyName) {
+                        MetadataProperties.setStaticRef(propertyName, initializerExpr);
+                    }
+                }
+                JsPropertyInitializer initializer = new JsPropertyInitializer(propertyName.makeRef(), initializerExpr);
+                exportedPackage.objectLiteral.getPropertyInitializers().add(initializer);
+            }
+        }
+        else {
+            JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
+            assert initializerExpr == null : "Should not produce initializer for non-package declaration";
         }
     }
 
@@ -698,11 +715,12 @@ public final class StaticContext {
         rootFunction.getBody().getStatements().addAll(importStatements);
         addClassPrototypes();
         rootFunction.getBody().getStatements().addAll(declarationStatements);
-        rootFunction.getBody().getStatements().addAll(topLevelStatements);
 
         JsName rootPackageName = rootFunction.getScope().declareName(Namer.getRootPackageName());
         rootFunction.getBody().getStatements().add(JsAstUtils.newVar(rootPackageName, exportObject));
         rootFunction.getBody().getStatements().addAll(exportStatements);
+
+        rootFunction.getBody().getStatements().addAll(topLevelStatements);
     }
 
     private void addClassPrototypes() {

@@ -64,7 +64,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     public static JsProgram process(@NotNull TranslationContext context) {
         JsProgram program = context.program();
-        IdentityHashMap<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
+        Map<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
         JsInliner inliner = new JsInliner(functions, new FunctionReader(context), context.bindingTrace());
         inliner.accept(program);
         RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(program, functions);

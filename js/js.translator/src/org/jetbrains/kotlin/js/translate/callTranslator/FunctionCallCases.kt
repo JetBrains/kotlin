@@ -81,7 +81,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
             return JsInvocation(JsNameRef(context.getNameForDescriptor(callableDescriptor)), argumentsInfo.translateArguments)
         }
 
-        val functionRef = ReferenceTranslator.translateAsFQReference(callableDescriptor, context)
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         return JsInvocation(functionRef, argumentsInfo.translateArguments)
     }
 
@@ -101,7 +101,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
             return JsInvocation(JsNameRef(functionName, extensionReceiver), argumentsInfo.translateArguments)
         }
 
-        val functionRef = ReferenceTranslator.translateAsFQReference(callableDescriptor, context)
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
 
         val referenceToCall =
                 if (callableDescriptor.visibility == Visibilities.LOCAL) {
@@ -212,7 +212,7 @@ object ConstructorCallCase : FunctionCallCase() {
     private inline fun FunctionCallInfo.doTranslate(
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {
-        val functionRef = ReferenceTranslator.translateAsFQReference(callableDescriptor, context)
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor

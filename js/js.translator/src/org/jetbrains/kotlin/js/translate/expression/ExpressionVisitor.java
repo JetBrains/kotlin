@@ -518,9 +518,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, @NotNull TranslationContext context) {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), expression.getObjectDeclaration());
-         translateClassOrObject(expression.getObjectDeclaration(), descriptor, context);
+        translateClassOrObject(expression.getObjectDeclaration(), descriptor, context);
 
-        JsExpression constructor = context.getInnerReference(descriptor);
+        JsExpression constructor = ReferenceTranslator.translateAsTypeReference(descriptor, context);
         List<DeclarationDescriptor> closure = context.getClassOrConstructorClosure(descriptor);
         List<JsExpression> closureArgs = new ArrayList<JsExpression>();
         if (closure != null) {
