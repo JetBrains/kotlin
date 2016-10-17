@@ -235,11 +235,13 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
             override fun run(indicator: ProgressIndicator) {
                 var installed = false
+                var message: String? = null
                 val prepareResult = try {
                     pluginDownloader.prepareToInstall(indicator)
                 }
                 catch (e: IOException) {
                     LOG.info(e)
+                    message = e.message
                     false
                 }
 
@@ -256,7 +258,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 }
 
                 if (!installed) {
-                    notifyNotInstalled()
+                    notifyNotInstalled(message)
                 }
             }
 
@@ -266,11 +268,12 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         })
     }
 
-    private fun notifyNotInstalled() {
+    private fun notifyNotInstalled(message: String?) {
+        val fullMessage = message?.let { ": $it" } ?: ""
         ApplicationManager.getApplication().invokeLater {
             val notification = notificationGroup.createNotification(
                     "Kotlin",
-                    "Plugin update was not installed. <a href=\"#\">See the log for more information</a>",
+                    "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
                     NotificationType.INFORMATION) { notification, event ->
 
                 val logFile = File(PathManager.getLogPath(), "idea.log")
