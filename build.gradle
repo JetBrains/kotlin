@@ -5,3 +5,9 @@ if (new File("$project.rootDir/local.properties").exists()) {
   props.load(new FileInputStream("$project.rootDir/local.properties"))
   props.each {prop -> project.ext.set(prop.key, prop.value)}
 }
+
+allprojects {
+    if (path != ":dependencies") {
+        evaluationDependsOn(":dependencies")
+    }
+}
