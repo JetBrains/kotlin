@@ -574,6 +574,12 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/ifElse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inputVarNotUsed.kt")
         public void testInputVarNotUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/inputVarNotUsed.kt");
@@ -1442,6 +1448,18 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
     public static class TakeWhile extends AbstractIntentionTest2 {
         public void testAllFilesPresentInTakeWhile() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain/takeWhile"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ifElse1.kt")
+        public void testIfElse1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/takeWhile/ifElse1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifElse2.kt")
+        public void testIfElse2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/takeWhile/ifElse2.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("nestedLoop.kt")
