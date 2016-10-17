@@ -89,7 +89,7 @@ class JavaToKotlinAction : AnAction() {
                     }
                 }
                 catch (e: IOException) {
-                    MessagesEx.error(psiFile.project, e.message).showLater()
+                    MessagesEx.error(psiFile.project, e.message ?: "").showLater()
                 }
             }
             return result
@@ -137,6 +137,8 @@ class JavaToKotlinAction : AnAction() {
                 val newFiles = saveResults(javaFiles, converterResult!!.results)
 
                 externalCodeUpdate?.invoke()
+
+                PsiDocumentManager.getInstance(project).commitAllDocuments()
 
                 newFiles.singleOrNull()?.let {
                     FileEditorManager.getInstance(project).openFile(it, true)
