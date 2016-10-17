@@ -8278,6 +8278,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("cannotSplitOutFilterIsInstance.kt")
+            public void testCannotSplitOutFilterIsInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/cannotSplitOutFilterIsInstance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("doNotSplitOutFilterIsInstance.kt")
             public void testDoNotSplitOutFilterIsInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/doNotSplitOutFilterIsInstance.kt");
