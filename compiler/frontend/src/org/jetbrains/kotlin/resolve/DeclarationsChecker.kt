@@ -142,16 +142,22 @@ class DeclarationsChecker(
         }
 
         for ((declaration, typeAliasDescriptor) in bodiesResolveContext.typeAliases.entries) {
-            checkTypeAliasDeclaration(typeAliasDescriptor, declaration)
+            checkTypeAliasDeclaration(declaration, typeAliasDescriptor)
             modifiersChecker.checkModifiersForDeclaration(declaration, typeAliasDescriptor)
             exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
         }
     }
 
-    private fun checkTypeAliasDeclaration(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
+    fun checkLocalTypeAliasDeclaration(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
+        checkTypeAliasDeclaration(declaration, typeAliasDescriptor)
+        modifiersChecker.checkModifiersForDeclaration(declaration, typeAliasDescriptor)
+        exposedChecker.checkTypeAlias(declaration, typeAliasDescriptor)
+    }
+
+    private fun checkTypeAliasDeclaration(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val typeReference = declaration.getTypeReference() ?: return
 
-        checkTypeAliasExpansion(typeAliasDescriptor, declaration)
+        checkTypeAliasExpansion(declaration, typeAliasDescriptor)
 
         val expandedType = typeAliasDescriptor.expandedType
         if (expandedType.isError) return
@@ -210,7 +216,7 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkTypeAliasExpansion(typeAliasDescriptor: TypeAliasDescriptor, declaration: KtTypeAlias) {
+    private fun checkTypeAliasExpansion(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
         val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration)
         TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)

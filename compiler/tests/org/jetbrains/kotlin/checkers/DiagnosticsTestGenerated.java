@@ -20700,6 +20700,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localTypeAliasModifiers.kt")
+            public void testLocalTypeAliasModifiers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/localTypeAliasModifiers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localTypeAliasRecursive.kt")
+            public void testLocalTypeAliasRecursive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/localTypeAliasRecursive.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodReference.kt")
             public void testMethodReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/methodReference.kt");

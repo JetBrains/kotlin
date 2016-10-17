@@ -118,6 +118,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         scope.addClassifierDescriptor(typeAliasDescriptor);
         ForceResolveUtil.forceResolveAllContents(typeAliasDescriptor);
 
+        facade.getComponents().declarationsCheckerBuilder.withTrace(context.trace).checkLocalTypeAliasDeclaration(typeAlias, typeAliasDescriptor);
+
         return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(typeAlias, context), context);
     }
 
