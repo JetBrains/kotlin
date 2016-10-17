@@ -114,6 +114,6 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     }
 
     public static KotlinJavaModuleConfigurator getInstance() {
-        return Extensions.findExtension(EP_NAME, KotlinJavaModuleConfigurator.class);
+        return Extensions.findExtension(Companion.getEP_NAME(), KotlinJavaModuleConfigurator.class);
     }
 }

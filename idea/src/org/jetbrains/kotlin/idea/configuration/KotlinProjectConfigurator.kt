@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
-import java.util.Collection;
+interface KotlinProjectConfigurator {
 
-public interface KotlinProjectConfigurator {
-    ExtensionPointName<KotlinProjectConfigurator> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.projectConfigurator");
+    fun isConfigured(module: Module): Boolean
 
-    boolean isConfigured(@NotNull Module module);
+    fun isApplicable(module: Module): Boolean
 
-    boolean isApplicable(@NotNull Module module);
+    @JvmSuppressWildcards fun configure(project: Project, excludeModules: Collection<Module>)
 
-    void configure(@NotNull Project project, Collection<Module> excludeModules);
+    val presentableText: String
 
-    @NotNull String getPresentableText();
+    val name: String
 
-    @NotNull String getName();
+    val targetPlatform: TargetPlatform
 
-    @NotNull
-    TargetPlatform getTargetPlatform();
+    companion object {
+        val EP_NAME = ExtensionPointName.create<KotlinProjectConfigurator>("org.jetbrains.kotlin.projectConfigurator")
+    }
 }

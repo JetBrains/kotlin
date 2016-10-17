@@ -38,9 +38,8 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.TestCompile, PomFile.KotlinGoals.TestCompile, module, true)
     }
 
-    override fun getTargetPlatform(): TargetPlatform {
-        return JvmPlatform
-    }
+    override val targetPlatform: TargetPlatform
+        get() = JvmPlatform
 
     companion object {
         private val NAME = "maven"
