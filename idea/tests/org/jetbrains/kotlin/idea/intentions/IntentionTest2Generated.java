@@ -181,6 +181,18 @@ public class IntentionTest2Generated extends AbstractIntentionTest2 {
             doTest(fileName);
         }
 
+        @TestMetadata("KT13998.kt")
+        public void testKT13998() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any/KT13998.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KT13998_1.kt")
+        public void testKT13998_1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any/KT13998_1.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("none.kt")
         public void testNone() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any/none.kt");
