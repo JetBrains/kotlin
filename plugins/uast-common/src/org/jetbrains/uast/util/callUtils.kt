@@ -29,7 +29,10 @@ fun UElement.isNewArrayWithDimensions() = (this as? UCallExpression)?.kind == Ua
 
 fun UElement.isNewArrayWithInitializer() = (this as? UCallExpression)?.kind == UastCallKind.NEW_ARRAY_WITH_INITIALIZER
 
-fun UElement.isNestedArrayInitializer() = (this as? UCallExpression)?.kind == UastCallKind.NESTED_ARRAY_INITIALIZER
+@Deprecated("Use isArrayInitializer()", ReplaceWith("isArrayInitializer()"))
+fun UElement.isNestedArrayInitializer() = isArrayInitializer()
+
+fun UElement.isArrayInitializer() = (this as? UCallExpression)?.kind == UastCallKind.NESTED_ARRAY_INITIALIZER
 
 fun UElement.isTypeCast() = (this as? UBinaryExpressionWithType)?.operationKind is UastBinaryExpressionWithTypeKind.TypeCast
 

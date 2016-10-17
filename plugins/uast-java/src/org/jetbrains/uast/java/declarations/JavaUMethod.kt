@@ -33,11 +33,14 @@ open class JavaUMethod(
         getLanguagePlugin().convertElement(body, this) as? UExpression
     }
 
-    override val uastAnnotations by lz { psi.annotations.map { SimpleUAnnotation(it, this) } }
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
     
     override val uastParameters by lz {
         psi.parameterList.parameters.map { JavaUParameter(it, this) }
     }
+
+    override val isOverride: Boolean
+        get() = psi.modifierList.findAnnotation("java.lang.Override") != null
 
     override val uastAnchor: UElement
         get() = UIdentifier((psi.originalElement as? PsiNameIdentifierOwner)?.nameIdentifier ?: psi.nameIdentifier, this)

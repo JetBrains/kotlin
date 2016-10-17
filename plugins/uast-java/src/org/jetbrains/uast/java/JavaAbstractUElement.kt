@@ -16,7 +16,11 @@
 
 package org.jetbrains.uast.java
 
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiType
+import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -49,7 +53,10 @@ abstract class JavaAbstractUExpression : JavaAbstractUElement(), UExpression {
         val psi = (this as? PsiElementBacked)?.psi ?: return null
         return JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper.computeConstantExpression(psi)
     }
-    
+
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
+
     override fun getExpressionType(): PsiType? {
         val expression = (this as? PsiElementBacked)?.psi as? PsiExpression ?: return null
         return expression.type

@@ -1,5 +1,6 @@
 package org.jetbrains.uast.java
 
+import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UVariable
 import org.jetbrains.uast.UVariableDeclarationsExpression
@@ -13,4 +14,7 @@ class JavaUVariableDeclarationsExpression(
     constructor(parent: UElement?, variables: List<UVariable>) : this(parent) {
         this.variables = variables
     }
+
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
 }

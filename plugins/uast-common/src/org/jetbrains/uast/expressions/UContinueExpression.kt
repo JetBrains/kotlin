@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -28,7 +29,8 @@ interface UContinueExpression : UExpression {
     val label: String?
 
     override fun accept(visitor: UastVisitor) {
-        visitor.visitContinueExpression(this)
+        if (visitor.visitContinueExpression(this)) return
+        annotations.acceptList(visitor)
         visitor.afterVisitContinueExpression(this)
     }
 

@@ -52,6 +52,9 @@ class KotlinUClass private constructor(
                             override val containingElement: UElement?
                                 get() = containingMethod
 
+                            override val annotations: List<UAnnotation>
+                                get() = emptyList()
+
                             override val expressions by lz {
                                 initializers.map {
                                     getLanguagePlugin().convertOpt<UExpression>(it.body, this) ?: UastEmptyExpression

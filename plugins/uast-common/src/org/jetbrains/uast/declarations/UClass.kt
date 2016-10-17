@@ -34,7 +34,7 @@ interface UClass : UDeclaration, PsiClass {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitClass(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         uastDeclarations.acceptList(visitor)
         visitor.afterVisitClass(this)
     }

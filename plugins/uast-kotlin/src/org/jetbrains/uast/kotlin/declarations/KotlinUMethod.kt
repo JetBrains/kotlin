@@ -19,6 +19,8 @@ package org.jetbrains.uast.kotlin.declarations
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.*
@@ -37,7 +39,10 @@ open class KotlinUMethod(
         val bodyExpression = (kotlinOrigin as? KtFunction)?.bodyExpression ?: return@lz null
         getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
     }
-    
+
+    override val isOverride: Boolean
+        get() = (kotlinOrigin as? KtCallableDeclaration)?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
+
     companion object {
         fun create(psi: KtLightMethod, containingElement: UElement?) = when (psi) {
             is KtLightMethodImpl.KtLightAnnotationMethod -> KotlinUAnnotationMethod(psi, containingElement)

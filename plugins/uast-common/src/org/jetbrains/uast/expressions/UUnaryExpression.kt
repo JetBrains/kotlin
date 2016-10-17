@@ -16,6 +16,7 @@
 package org.jetbrains.uast
 
 import com.intellij.psi.PsiMethod
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -44,6 +45,7 @@ interface UUnaryExpression : UExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitUnaryExpression(this)) return
+        annotations.acceptList(visitor)
         operand.accept(visitor)
         visitor.afterVisitUnaryExpression(this)
     }
@@ -54,6 +56,7 @@ interface UPrefixExpression : UUnaryExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitPrefixExpression(this)) return
+        annotations.acceptList(visitor)
         operand.accept(visitor)
         visitor.afterVisitPrefixExpression(this)
     }
@@ -67,6 +70,7 @@ interface UPostfixExpression : UUnaryExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitPostfixExpression(this)) return
+        annotations.acceptList(visitor)
         operand.accept(visitor)
         visitor.afterVisitPostfixExpression(this)
     }

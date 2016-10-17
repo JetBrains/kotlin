@@ -34,12 +34,24 @@ abstract class AbstractJavaUClass : UClass, JavaUElementWithComments {
     override val uastAnchor: UElement?
         get() = UIdentifier(psi.nameIdentifier, this)
 
-    override val uastAnnotations by lz { psi.annotations.map { SimpleUAnnotation(it, this) } }
-    
-    override val uastFields: List<UVariable> by lz { psi.fields.map { getLanguagePlugin().convert<UVariable>(it, this) } }
-    override val uastInitializers: List<UClassInitializer> by lz { psi.initializers.map { getLanguagePlugin().convert<UClassInitializer>(it, this) } }
-    override val uastMethods: List<UMethod> by lz { psi.methods.map { getLanguagePlugin().convert<UMethod>(it, this) } }
-    override val uastNestedClasses: List<UClass> by lz { psi.innerClasses.map { getLanguagePlugin().convert<UClass>(it, this) } }
+    override val annotations: List<UAnnotation>
+        get() = psi.annotations.map { JavaUAnnotation(it, this) }
+
+    override val uastFields: List<UVariable> by lz {
+        psi.fields.map { getLanguagePlugin().convert<UVariable>(it, this) }
+    }
+
+    override val uastInitializers: List<UClassInitializer> by lz {
+        psi.initializers.map { getLanguagePlugin().convert<UClassInitializer>(it, this) }
+    }
+
+    override val uastMethods: List<UMethod> by lz {
+        psi.methods.map { getLanguagePlugin().convert<UMethod>(it, this) }
+    }
+
+    override val uastNestedClasses: List<UClass> by lz {
+        psi.innerClasses.map { getLanguagePlugin().convert<UClass>(it, this) }
+    }
 
     override fun equals(other: Any?) = this === other
     override fun hashCode() = psi.hashCode()

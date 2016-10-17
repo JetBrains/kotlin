@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -24,8 +25,12 @@ class UNamedExpression(
 ): UExpression, UNamed {
     lateinit var expression: UExpression
 
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitElement(this)) return
+        annotations.acceptList(visitor)
         expression.accept(visitor)
         visitor.afterVisitElement(this)
     }

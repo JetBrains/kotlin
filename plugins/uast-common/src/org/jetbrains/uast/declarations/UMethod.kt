@@ -21,12 +21,17 @@ interface UMethod : UDeclaration, PsiMethod {
      */
     val uastParameters: List<UParameter>
 
+    /**
+     * Returns true, if the method overrides a method of a super class.
+     */
+    val isOverride: Boolean
+
     @Deprecated("Use uastBody instead.", ReplaceWith("uastBody"))
     override fun getBody() = psi.body
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitMethod(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         uastParameters.acceptList(visitor)
         uastBody?.accept(visitor)
         visitor.afterVisitMethod(this)
@@ -47,7 +52,7 @@ interface UAnnotationMethod : UMethod, PsiAnnotationMethod {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitMethod(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         uastParameters.acceptList(visitor)
         uastBody?.accept(visitor)
         uastDefaultValue?.accept(visitor)

@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.visitor.UastVisitor
 
@@ -45,6 +46,7 @@ interface UForEachExpression : ULoopExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitForEachExpression(this)) return
+        annotations.acceptList(visitor)
         iteratedValue.accept(visitor)
         body.accept(visitor)
         visitor.afterVisitForEachExpression(this)

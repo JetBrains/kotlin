@@ -30,6 +30,7 @@ interface UBlockExpression : UExpression {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitBlockExpression(this)) return
+        annotations.acceptList(visitor)
         expressions.acceptList(visitor)
         visitor.afterVisitBlockExpression(this)
     }

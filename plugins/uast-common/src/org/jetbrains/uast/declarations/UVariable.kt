@@ -23,7 +23,7 @@ interface UVariable : UDeclaration, PsiVariable {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitVariable(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         uastInitializer?.accept(visitor)
         visitor.afterVisitVariable(this)
     }
@@ -59,7 +59,7 @@ interface UEnumConstant : UField, UCallExpression, PsiEnumConstant {
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitVariable(this)) return
-        uastAnnotations.acceptList(visitor)
+        annotations.acceptList(visitor)
         methodIdentifier?.accept(visitor)
         classReference?.accept(visitor)
         valueArguments.acceptList(visitor)
