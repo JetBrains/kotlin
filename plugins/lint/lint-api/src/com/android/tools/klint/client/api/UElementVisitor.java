@@ -31,6 +31,7 @@ import com.android.tools.klint.detector.api.JavaContext;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -259,6 +260,7 @@ public class UElementVisitor {
                         @Override
                         public void run() {
                             UastVisitor visitor = v.getVisitor();
+                            ProgressManager.checkCanceled();
                             uFile.accept(visitor);
                         }
                     });
@@ -295,6 +297,7 @@ public class UElementVisitor {
                     @Override
                     public void run() {
                         for (VisitingDetector v : mAllDetectors) {
+                            ProgressManager.checkCanceled();
                             v.getDetector().afterCheckFile(context);
                         }
                     }
@@ -457,6 +460,8 @@ public class UElementVisitor {
         }
 
         private void checkClass(@NonNull UClass node) {
+            ProgressManager.checkCanceled();
+
             if (node instanceof PsiTypeParameter) {
                 // Not included: explained in javadoc for JavaPsiScanner#checkClass
                 return;
@@ -999,6 +1004,10 @@ public class UElementVisitor {
 
         @Override
         public boolean visitSimpleNameReferenceExpression(USimpleNameReferenceExpression node) {
+            if (mVisitReferences || mVisitResources) {
+                ProgressManager.checkCanceled();
+            }
+
             if (mVisitReferences) {
                 List<VisitingDetector> list = mReferenceDetectors.get(node.getIdentifier());
                 if (list != null) {
@@ -1037,6 +1046,8 @@ public class UElementVisitor {
         @Override
         public boolean visitCallExpression(UCallExpression node) {
             boolean result = super.visitCallExpression(node);
+
+            ProgressManager.checkCanceled();
 
             if (UastExpressionUtils.isMethodCall(node)) {
                 visitMethodCallExpression(node);
