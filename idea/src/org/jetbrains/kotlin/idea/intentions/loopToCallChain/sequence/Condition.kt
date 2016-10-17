@@ -83,7 +83,7 @@ class CompositeCondition private constructor(val conditions: List<AtomicConditio
     }
 
     override fun asNegatedExpression(): KtExpression {
-        return asExpression().negate() //TODO?
+        return asExpression().negate()
     }
 
     override fun toAtomicConditions() = conditions
