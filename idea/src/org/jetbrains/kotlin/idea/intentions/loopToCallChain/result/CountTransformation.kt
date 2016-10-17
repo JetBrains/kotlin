@@ -34,9 +34,9 @@ class CountTransformation(
         if (previousTransformation !is FilterTransformationBase) return null
         if (previousTransformation.indexVariable != null) return null
         val newFilter = if (filter == null)
-            previousTransformation.effectiveCondition
+            previousTransformation.effectiveCondition.asExpression()
         else
-            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition, filter)
+            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition.asExpression(), filter)
         return CountTransformation(loop, previousTransformation.inputVariable, initialization, newFilter)
     }
 

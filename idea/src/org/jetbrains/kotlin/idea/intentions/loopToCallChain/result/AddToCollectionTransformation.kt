@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterNotNullTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FlatMapTransformation
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransformation
-import org.jetbrains.kotlin.idea.intentions.negate
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -41,7 +37,9 @@ class AddToCollectionTransformation(
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
         return when (previousTransformation) {
             is FilterTransformation -> {
-                FilterToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.condition, previousTransformation.isInverse)
+                FilterToTransformation.create(
+                        loop, previousTransformation.inputVariable, previousTransformation.indexVariable,
+                        targetCollection, previousTransformation.effectiveCondition, previousTransformation.isFilterNot)
             }
 
             is FilterNotNullTransformation -> {
@@ -201,15 +199,19 @@ class FilterToTransformation private constructor(
         private val inputVariable: KtCallableDeclaration,
         private val indexVariable: KtCallableDeclaration?,
         private val targetCollection: KtExpression,
-        private val condition: KtExpression,
-        private val isInverse: Boolean
+        private val effectiveCondition: Condition,
+        private val isFilterNot: Boolean
 ) : ReplaceLoopResultTransformation(loop) {
 
-    private fun effectiveCondition() = if (isInverse) condition.negate() else condition
+    init {
+        if (isFilterNot) {
+            assert(indexVariable == null)
+        }
+    }
 
     private val functionName = when {
         indexVariable != null -> "filterIndexedTo"
-        isInverse -> "filterNotTo"
+        isFilterNot -> "filterNotTo"
         else -> "filterTo"
     }
 
@@ -218,9 +220,9 @@ class FilterToTransformation private constructor(
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val lambda = if (indexVariable != null)
-            generateLambda(inputVariable, indexVariable, effectiveCondition())
+            generateLambda(inputVariable, indexVariable, effectiveCondition.asExpression())
         else
-            generateLambda(inputVariable, condition)
+            generateLambda(inputVariable, if (isFilterNot) effectiveCondition.asNegatedExpression() else effectiveCondition.asExpression())
         return chainedCallGenerator.generate("$functionName($0) $1:'{}'", targetCollection, lambda)
     }
 
@@ -230,16 +232,16 @@ class FilterToTransformation private constructor(
                 inputVariable: KtCallableDeclaration,
                 indexVariable: KtCallableDeclaration?,
                 targetCollection: KtExpression,
-                condition: KtExpression,
-                isInverse: Boolean
+                condition: Condition,
+                isFilterNot: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
             if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization.initializer, condition, isInverse)
+                val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization.initializer, condition, isFilterNot)
                 return AssignToVariableResultTransformation.createDelegated(transformation, initialization)
             }
             else {
-                return FilterToTransformation(loop, inputVariable, indexVariable, targetCollection, condition, isInverse)
+                return FilterToTransformation(loop, inputVariable, indexVariable, targetCollection, condition, isFilterNot)
             }
         }
     }

@@ -8130,6 +8130,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("doNotSplitOutFilterIsInstance.kt")
+            public void testDoNotSplitOutFilterIsInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/doNotSplitOutFilterIsInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("doNotSplitOutFilterNotNull.kt")
+            public void testDoNotSplitOutFilterNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/doNotSplitOutFilterNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("filterIndexed.kt")
             public void testFilterIndexed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/filterIndexed.kt");
@@ -8286,6 +8298,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("glueTogetherFilterNotNull.kt")
+            public void testGlueTogetherFilterNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/glueTogetherFilterNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifContinue.kt")
             public void testIfContinue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/ifContinue.kt");
@@ -8325,6 +8343,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("mergeMultiple.kt")
             public void testMergeMultiple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/mergeMultiple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitOutFilterIsInstance.kt")
+            public void testSplitOutFilterIsInstance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/splitOutFilterIsInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitOutFilterNotNull.kt")
+            public void testSplitOutFilterNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/splitOutFilterNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitOutFilterNotNull2.kt")
+            public void testSplitOutFilterNotNull2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter/splitOutFilterNotNull2.kt");
                 doTest(fileName);
             }
         }
@@ -8613,6 +8649,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("indexOfLast_ifAssign.kt")
             public void testIndexOfLast_ifAssign() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOf/indexOfLast_ifAssign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KT14303.kt")
+            public void testKT14303() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOf/KT14303.kt");
                 doTest(fileName);
             }
 

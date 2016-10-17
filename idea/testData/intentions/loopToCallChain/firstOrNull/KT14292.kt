@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filterNotNull().firstOrNull{}'"
-// INTENTION_TEXT_2: "Replace with 'asSequence().filterNotNull().firstOrNull{}'"
+// INTENTION_TEXT: "Replace with 'firstOrNull{}'"
+// IS_APPLICABLE_2: false
 
 fun getFirstValue() = "value"
 
