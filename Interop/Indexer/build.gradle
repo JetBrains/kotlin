@@ -24,11 +24,11 @@ model {
 
             binaries.all {
                 cCompiler.args compilerArgsForJniIncludes
-                cCompiler.args "-I$llvmInstallPath/include"
+                cCompiler.args "-I$llvmDir/include"
             }
 
             binaries.withType(SharedLibraryBinarySpec) {
-                linker.args "-L$llvmInstallPath/lib", "-lclang"
+                linker.args "-L$llvmDir/lib", "-lclang"
             }
         }
    }

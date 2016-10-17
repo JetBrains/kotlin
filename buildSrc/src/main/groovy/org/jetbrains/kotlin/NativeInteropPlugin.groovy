@@ -141,10 +141,10 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
                     new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
-            systemProperties "llvmInstallPath" : project.llvmInstallPath
+            systemProperties "llvmInstallPath" : project.llvmDir
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
-            environment "DYLD_LIBRARY_PATH": "${project.llvmInstallPath}/lib"
-            environment "LD_LIBRARY_PATH": "${project.llvmInstallPath}/lib"
+            environment "DYLD_LIBRARY_PATH": "${project.llvmDir}/lib"
+            environment "LD_LIBRARY_PATH": "${project.llvmDir}/lib"
 
             outputs.dir generatedSrcDir
             outputs.dir nativeLibsDir

@@ -19,8 +19,8 @@ repositories {
 kotlinNativeInterop {
     llvm {
         defFile '../backend.native/llvm.def'
-        compilerOpts "-I$llvmInstallPath/include"
-        linkerOpts "-L$llvmInstallPath/lib"
+        compilerOpts "-I$llvmDir/include"
+        linkerOpts "-L$llvmDir/lib"
     }
 
 }
@@ -31,3 +31,7 @@ dependencies {
 }
 
 mainClassName = 'MainKt'
+
+run {
+    environment 'LD_LIBRARY_PATH' : "$llvmDir/lib"
+}

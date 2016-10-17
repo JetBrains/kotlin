@@ -36,8 +36,8 @@ sourceSets {
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
-     compilerOpts "-I$llvmInstallPath/include"
-     linkerOpts "-L$llvmInstallPath/lib"
+     compilerOpts "-I$llvmDir/include"
+     linkerOpts "-L$llvmDir/lib"
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
@@ -86,6 +86,8 @@ task run(type: JavaExec) {
    doFirst {
        args '-runtime', project(':runtime').build.outputs.files.singleFile
    }
+
+   environment 'LD_LIBRARY_PATH' : "$llvmDir/lib"
 }
 
 

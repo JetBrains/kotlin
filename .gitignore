@@ -1,6 +1,6 @@
 .DS_Store
 .idea/shelf
-dependencies
+/dependencies/all
 dist
 translator/src/test/kotlin/tests/*/linked
 out

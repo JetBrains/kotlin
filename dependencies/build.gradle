@@ -1,0 +1,93 @@
+abstract class NativeDep extends DefaultTask {
+
+    private static String getCurrentHostTarget() {
+        String osName = System.properties['os.name']
+        String osArch = System.properties['os.arch']
+
+        // TODO: implement more generally
+        if (osArch in ['x86_64', 'amd64']) {
+            if (osName == 'Mac OS X') {
+                return 'darwin-macos'
+            } else if (osName == 'Linux') {
+                return 'linux-x86-64'
+            } else {
+                throw new Error("Unsupported OS: $osName")
+            }
+        } else {
+            throw new Error("Unsupported arch: $osArch")
+        }
+    }
+
+    protected final String target = getCurrentHostTarget();
+
+    @Input
+    abstract String getFileName()
+
+    protected String getUrl() {
+        return "http://repo.labs.intellij.net/kotlin-native/$fileName"
+    }
+
+    protected File getBaseOutDir() {
+        final File res = project.file("all")
+        res.mkdirs()
+        return res
+    }
+
+    protected File download() {
+        File result = new File(baseOutDir, fileName)
+        ant.get(src: url, dest: result, usetimestamp: true)
+        return result
+    }
+}
+
+class TgzNativeDep extends NativeDep {
+    String baseName
+
+    @Override
+    String getFileName() {
+        return "${baseName}.tar.gz"
+    }
+
+    @OutputDirectory
+    File getOutputDir() {
+        return new File(baseOutDir, baseName)
+    }
+
+    @TaskAction
+    public void downloadAndExtract() {
+        File archived = this.download()
+
+        try {
+            // Builtin Gradle unpacking tools seem to unable to handle symlinks;
+            // Use external "tar" executable as workaround:
+            project.exec {
+                executable "tar"
+                workingDir baseOutDir
+                args "xf", archived
+            }
+        } catch (Throwable e) {
+            project.delete(outputDir)
+            throw e
+        }
+
+        // TODO: do not extract if already extracted
+    }
+}
+
+
+task libffi(type: TgzNativeDep) {
+    baseName = "libffi-3.2.1-2-$target"
+}
+
+task llvm(type: TgzNativeDep) {
+    baseName = "clang+llvm-3.8.0-$target"
+}
+
+
+task update {
+    dependsOn tasks.withType(NativeDep)
+}
+
+tasks.withType(TgzNativeDep) {
+    rootProject.ext.set("${name}Dir", outputDir.path)
+}

@@ -23,10 +23,9 @@ model {
             }
             binaries.all {
                 cCompiler.args compilerArgsForJniIncludes
-                cCompiler.args "-I$ffiIncludePath"
+                cCompiler.args "-I$libffiDir/include"
 
-                String libffiPicPath = "$ffiLibPath/libffi_pic.a"
-                linker.args file(libffiPicPath).exists() ? libffiPicPath : "$ffiLibPath/libffi.a"
+                linker.args "$libffiDir/lib/libffi.a"
             }
         }
    }

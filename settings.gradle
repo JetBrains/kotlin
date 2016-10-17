@@ -1,3 +1,4 @@
+include ':dependencies'
 include ':Interop:Indexer'
 include ':Interop:StubGenerator'
 include ':Interop:Runtime'
