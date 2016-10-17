@@ -39,6 +39,10 @@ import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.psi.PsiElementBacked;
+import org.jetbrains.uast.psi.UElementWithLocation;
+import org.jetbrains.uast.util.UastExpressionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -83,6 +87,51 @@ public class IntellijLintUtils {
     }
 
     TextRange textRange = element.getTextRange();
+    Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
+    Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
+    return Location.create(file, start, end);
+  }
+
+  /**
+   * Gets the location of the given element
+   *
+   * @param file the file containing the location
+   * @param element the element to look up the location for
+   * @return the location of the given element
+   */
+  @NonNull
+  public static Location getUastLocation(@NonNull File file, @NonNull UElement element) {
+    //noinspection ConstantConditions
+    PsiFile containingPsiFile = UastUtils.getContainingFile(element).getPsi();
+    assert containingPsiFile.getVirtualFile() == null
+           || FileUtil.filesEqual(VfsUtilCore.virtualToIoFile(containingPsiFile.getVirtualFile()), file);
+
+    if (element instanceof UClass) {
+      // Point to the name rather than the beginning of the javadoc
+      UClass clz = (UClass)element;
+      UElement nameIdentifier = clz.getUastAnchor();
+      if (nameIdentifier != null) {
+        element = nameIdentifier;
+      }
+    }
+
+    TextRange textRange = null;
+    if (element instanceof PsiElementBacked) {
+      PsiElement psi = ((PsiElementBacked) element).getPsi();
+      if (psi != null) {
+        textRange = psi.getTextRange();
+      }
+    } else if (element instanceof UElementWithLocation) {
+      UElementWithLocation elementWithLocation = (UElementWithLocation) element;
+      textRange = new TextRange(
+              elementWithLocation.getStartOffset(),
+              elementWithLocation.getEndOffset());
+    }
+
+    if (textRange == null) {
+      return Location.NONE;
+    }
+
     Position start = new DefaultPosition(-1, -1, textRange.getStartOffset());
     Position end = new DefaultPosition(-1, -1, textRange.getEndOffset());
     return Location.create(file, start, end);
@@ -164,6 +213,58 @@ public class IntellijLintUtils {
         }
       }
       element = element.getParent();
+    }
+
+    return false;
+  }
+
+  /**
+   * Returns true if the given issue is suppressed at the given element within the given file
+   *
+   * @param element the element to check
+   * @param file the file containing the element
+   * @param issue the issue to check
+   * @return true if the given issue is suppressed
+   */
+  public static boolean isSuppressed(@NonNull UElement element, @NonNull UFile file, @NonNull Issue issue) {
+    // Search upwards for suppress lint and suppress warnings annotations
+    //noinspection ConstantConditions
+    while (element != null && element != file) { // otherwise it will keep going into directories!
+      if (element instanceof UAnnotated) {
+        UAnnotated annotated = (UAnnotated)element;
+        for (UAnnotation annotation : annotated.getAnnotations()) {
+          String fqcn = annotation.getQualifiedName();
+          if (fqcn != null && (fqcn.equals(SUPPRESS_LINT_FQCN) || fqcn.equals(SUPPRESS_WARNINGS_FQCN))) {
+            List<UNamedExpression> parameterList = annotation.getAttributeValues();
+            for (UNamedExpression pair : parameterList) {
+              UExpression v = pair.getExpression();
+              if (v instanceof ULiteralExpression) {
+                ULiteralExpression literal = (ULiteralExpression)v;
+                Object value = literal.getValue();
+                if (value instanceof String) {
+                  if (isSuppressed(issue, (String) value)) {
+                    return true;
+                  }
+                }
+              } else if (UastExpressionUtils.isArrayInitializer(v)) {
+                UCallExpression mv = (UCallExpression)v;
+                for (UExpression mmv : mv.getValueArguments()) {
+                  if (mmv instanceof ULiteralExpression) {
+                    ULiteralExpression literal = (ULiteralExpression) mmv;
+                    Object value = literal.getValue();
+                    if (value instanceof String) {
+                      if (isSuppressed(issue, (String) value)) {
+                        return true;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      element = element.getContainingElement();
     }
 
     return false;

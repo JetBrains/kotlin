@@ -97,19 +97,11 @@ import com.intellij.psi.PsiVariable;
 import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 
-import org.jetbrains.uast.UAnnotation;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UClass;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.UParenthesizedExpression;
-import org.jetbrains.uast.USwitchClauseExpression;
-import org.jetbrains.uast.USwitchExpression;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.java.JavaUAnnotation;
 import org.jetbrains.uast.java.JavaUTypeCastExpression;
+import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
@@ -249,34 +241,29 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
         }
 
         @Override
-        public boolean visitAnnotation(UAnnotation annotation) {
+        public boolean visitAnnotation(@NonNull UAnnotation annotation) {
             String type = annotation.getQualifiedName();
             if (type == null || type.startsWith("java.lang.")) {
                 return false;
             }
 
             if (FQCN_SUPPRESS_LINT.equals(type)) {
-                PsiAnnotationOwner owner = annotation.getOwner();
-                if (owner == null) {
+                UElement parent = annotation.getContainingElement();
+                if (parent == null) {
                     return false;
                 }
-                if (owner instanceof PsiModifierList) {
-                    PsiElement parent = ((PsiModifierList) owner).getParent();
-                    // Only flag local variables and parameters (not classes, fields and methods)
-                    if (!(parent instanceof PsiDeclarationStatement
-                          || parent instanceof PsiLocalVariable
-                          || parent instanceof PsiParameter)) {
-                        return false;
-                    }
-                } else {
+                // Only flag local variables and parameters (not classes, fields and methods)
+                if (!(parent instanceof UVariableDeclarationsExpression
+                      || parent instanceof ULocalVariable
+                      || parent instanceof UParameter)) {
                     return false;
                 }
-                PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
-                if (attributes.length == 1) {
-                    PsiNameValuePair attribute = attributes[0];
-                    PsiAnnotationMemberValue value = attribute.getValue();
-                    if (value instanceof PsiLiteral) {
-                        Object v = ((PsiLiteral) value).getValue();
+                List<UNamedExpression> attributes = annotation.getAttributeValues();
+                if (attributes.size() == 1) {
+                    UNamedExpression attribute = attributes.get(0);
+                    UExpression value = attribute.getExpression();
+                    if (value instanceof ULiteralExpression) {
+                        Object v = ((ULiteralExpression) value).getValue();
                         if (v instanceof String) {
                             String id = (String) v;
                             checkSuppressLint(annotation, id);
@@ -300,9 +287,8 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             } else if (type.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
                 if (CHECK_RESULT_ANNOTATION.equals(type)) {
                     // Check that the return type of this method is not void!
-                    if (annotation.getParent() instanceof PsiModifierList
-                        && annotation.getParent().getParent() instanceof PsiMethod) {
-                        PsiMethod method = (PsiMethod) annotation.getParent().getParent();
+                    if (annotation.getContainingElement() instanceof UMethod) {
+                        UMethod method = (UMethod) annotation.getContainingElement();
                         if (!method.isConstructor()
                             && PsiType.VOID.equals(method.getReturnType())) {
                             mContext.report(ANNOTATION_USAGE, annotation.getPsi(),
@@ -367,8 +353,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                            PERMISSION_ANNOTATION_WRITE.equals(type)) {
                     // Check that if there are no arguments, this is specified on a parameter,
                     // and conversely, on methods and fields there is a valid argument.
-                    if (annotation.getParent() instanceof PsiModifierList
-                        && annotation.getParent().getParent() instanceof PsiMethod) {
+                    if (annotation.getContainingElement() instanceof UMethod) {
                         String value = PermissionRequirement.getAnnotationStringValue(annotation, ATTR_VALUE);
                         String[] anyOf = PermissionRequirement.getAnnotationStringValues(annotation, ATTR_ANY_OF);
                         String[] allOf = PermissionRequirement.getAnnotationStringValues(annotation, ATTR_ALL_OF);
@@ -405,20 +390,16 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                 }
             } else {
                 // Look for typedefs (and make sure they're specified on the right type)
-                PsiJavaCodeReferenceElement referenceElement = annotation
-                        .getNameReferenceElement();
-                if (referenceElement != null) {
-                    PsiElement resolved = referenceElement.resolve();
-                    if (resolved instanceof PsiClass) {
-                        PsiClass cls = (PsiClass) resolved;
-                        if (cls.isAnnotationType() && cls.getModifierList() != null) {
-                            for (PsiAnnotation a : cls.getModifierList().getAnnotations()) {
-                                String name = a.getQualifiedName();
-                                if (INT_DEF_ANNOTATION.equals(name)) {
-                                    checkTargetType(annotation, TYPE_INT, TYPE_LONG, true);
-                                } else if (STRING_DEF_ANNOTATION.equals(type)) {
-                                    checkTargetType(annotation, TYPE_STRING, null, true);
-                                }
+                PsiElement resolved = annotation.resolve();
+                if (resolved != null) {
+                    PsiClass cls = (PsiClass) resolved;
+                    if (cls.isAnnotationType() && cls.getModifierList() != null) {
+                        for (PsiAnnotation a : cls.getModifierList().getAnnotations()) {
+                            String name = a.getQualifiedName();
+                            if (INT_DEF_ANNOTATION.equals(name)) {
+                                checkTargetType(annotation, TYPE_INT, TYPE_LONG, true);
+                            } else if (STRING_DEF_ANNOTATION.equals(type)) {
+                                checkTargetType(annotation, TYPE_STRING, null, true);
                             }
                         }
                     }
@@ -428,75 +409,73 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             return false;
         }
 
-        private void checkTargetType(@NonNull PsiAnnotation node, @NonNull String type1,
+        private void checkTargetType(@NonNull UAnnotation node, @NonNull String type1,
                 @Nullable String type2, boolean allowCollection) {
-            PsiAnnotationOwner owner = node.getOwner();
-            if (owner instanceof PsiModifierList) {
-                PsiElement parent = ((PsiModifierList) owner).getParent();
-                PsiType type;
-                if (parent instanceof PsiDeclarationStatement) {
-                    PsiElement[] elements = ((PsiDeclarationStatement) parent).getDeclaredElements();
-                    if (elements.length > 0) {
-                        PsiElement element = elements[0];
-                        if (element instanceof PsiLocalVariable) {
-                            type = ((PsiLocalVariable)element).getType();
-                        } else {
-                            return;
-                        }
+            UElement parent = node.getContainingElement();
+            PsiType type;
+
+            if (parent instanceof UVariableDeclarationsExpression) {
+                List<UVariable> elements = ((UVariableDeclarationsExpression) parent).getVariables();
+                if (!elements.isEmpty()) {
+                    UVariable element = elements.get(0);
+                    if (element instanceof ULocalVariable) {
+                        type = element.getType();
                     } else {
                         return;
                     }
-                } else if (parent instanceof PsiMethod) {
-                    PsiMethod method = (PsiMethod) parent;
-                    type = method.isConstructor()
-                           ? mContext.getEvaluator().getClassType(method.getContainingClass())
-                           : method.getReturnType();
-                } else if (parent instanceof PsiVariable) {
-                    // Field or local variable or parameter
-                    type = ((PsiVariable)parent).getType();
                 } else {
                     return;
                 }
-                if (type == null) {
-                    return;
-                }
+            } else if (parent instanceof UMethod) {
+                UMethod method = (UMethod) parent;
+                type = method.isConstructor()
+                       ? mContext.getEvaluator().getClassType(method.getContainingClass())
+                       : method.getReturnType();
+            } else if (parent instanceof UVariable) {
+                // Field or local variable or parameter
+                type = ((UVariable) parent).getType();
+            } else {
+                return;
+            }
+            if (type == null) {
+                return;
+            }
 
-                if (allowCollection) {
-                    if (type instanceof PsiArrayType) {
-                        // For example, int[]
-                        type = type.getDeepComponentType();
-                    } else if (type instanceof PsiClassType) {
-                        // For example, List<Integer>
-                        PsiClassType classType = (PsiClassType)type;
-                        if (classType.getParameters().length == 1) {
-                            PsiClass resolved = classType.resolve();
-                            if (resolved != null &&
-                                InheritanceUtil.isInheritor(resolved, false, "java.util.Collection")) {
-                                type = classType.getParameters()[0];
-                            }
+            if (allowCollection) {
+                if (type instanceof PsiArrayType) {
+                    // For example, int[]
+                    type = type.getDeepComponentType();
+                } else if (type instanceof PsiClassType) {
+                    // For example, List<Integer>
+                    PsiClassType classType = (PsiClassType)type;
+                    if (classType.getParameters().length == 1) {
+                        PsiClass resolved = classType.resolve();
+                        if (resolved != null &&
+                            InheritanceUtil.isInheritor(resolved, false, "java.util.Collection")) {
+                            type = classType.getParameters()[0];
                         }
                     }
                 }
+            }
 
-                String typeName = type.getCanonicalText();
-                if (!typeName.equals(type1)
-                    && (type2 == null || !typeName.equals(type2))) {
-                    // Autoboxing? You can put @DrawableRes on a java.lang.Integer for example
-                    if (typeName.equals(getAutoBoxedType(type1))
-                        || type2 != null && typeName.equals(getAutoBoxedType(type2))) {
-                        return;
-                    }
-
-                    String expectedTypes = type2 == null ? type1 : type1 + " or " + type2;
-                    if (typeName.equals(TYPE_STRING)) {
-                        typeName = "String";
-                    }
-                    String message = String.format(
-                            "This annotation does not apply for type %1$s; expected %2$s",
-                            typeName, expectedTypes);
-                    Location location = mContext.getLocation(node);
-                    mContext.report(ANNOTATION_USAGE, node, location, message);
+            String typeName = type.getCanonicalText();
+            if (!typeName.equals(type1)
+                && (type2 == null || !typeName.equals(type2))) {
+                // Autoboxing? You can put @DrawableRes on a java.lang.Integer for example
+                if (typeName.equals(getAutoBoxedType(type1))
+                    || type2 != null && typeName.equals(getAutoBoxedType(type2))) {
+                    return;
                 }
+
+                String expectedTypes = type2 == null ? type1 : type1 + " or " + type2;
+                if (typeName.equals(TYPE_STRING)) {
+                    typeName = "String";
+                }
+                String message = String.format(
+                        "This annotation does not apply for type %1$s; expected %2$s",
+                        typeName, expectedTypes);
+                Location location = mContext.getUastLocation(node);
+                mContext.report(ANNOTATION_USAGE, node, location, message);
             }
         }
 
@@ -504,17 +483,19 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
         public boolean visitSwitchExpression(USwitchExpression switchExpression) {
             UExpression condition = switchExpression.getExpression();
             if (condition != null && PsiType.INT.equals(condition.getExpressionType())) {
-                PsiAnnotation annotation = findIntDefAnnotation(condition);
+                UAnnotation annotation = findIntDefAnnotation(condition);
                 if (annotation != null) {
-                    PsiAnnotationMemberValue value =
+                    UNamedExpression namedValue =
                             annotation.findDeclaredAttributeValue(ATTR_VALUE);
-                    if (value == null) {
-                        value = annotation.findDeclaredAttributeValue(null);
+                    if (namedValue == null) {
+                        namedValue = annotation.findDeclaredAttributeValue(null);
                     }
 
-                    if (value instanceof PsiArrayInitializerMemberValue) {
-                        PsiAnnotationMemberValue[] allowedValues =
-                                ((PsiArrayInitializerMemberValue)value).getInitializers();
+                    UExpression value = (namedValue != null) ? namedValue.getExpression() : null;
+
+                    if (UastExpressionUtils.isArrayInitializer(value)) {
+                        List<UExpression> allowedValues =
+                                ((UCallExpression) value).getValueArguments();
                         switchExpression.accept(new SwitchChecker(switchExpression, allowedValues));
                     }
                 }
@@ -537,15 +518,17 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
          * with a given node
          */
         @Nullable
-        private PsiAnnotation findIntDefAnnotation(@NonNull UExpression expression) {
+        private UAnnotation findIntDefAnnotation(@NonNull UExpression expression) {
             if (expression instanceof UReferenceExpression) {
                 PsiElement resolved = ((UReferenceExpression) expression).resolve();
 
                 if (resolved instanceof PsiModifierListOwner) {
                     PsiAnnotation[] annotations = mContext.getEvaluator().getAllAnnotations(
                             (PsiModifierListOwner)resolved);
-                    PsiAnnotation annotation = SupportAnnotationDetector.findIntDef(
-                            filterRelevantAnnotations(mContext.getEvaluator(), annotations));
+                    PsiAnnotation[] relevantAnnotations =
+                            filterRelevantAnnotations(mContext.getEvaluator(), annotations);
+                    UAnnotation annotation = SupportAnnotationDetector.findIntDef(
+                            JavaUAnnotation.wrap(relevantAnnotations));
                     if (annotation != null) {
                         return annotation;
                     }
@@ -565,10 +548,12 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             } else if (expression instanceof UCallExpression) {
                 PsiMethod method = ((UCallExpression) expression).resolve();
                 if (method != null) {
-                    PsiAnnotation[] annotations = mContext.getEvaluator()
-                            .getAllAnnotations(method);
-                    PsiAnnotation annotation = SupportAnnotationDetector.findIntDef(
-                            filterRelevantAnnotations(mContext.getEvaluator(), annotations));
+                    PsiAnnotation[] annotations =
+                            mContext.getEvaluator().getAllAnnotations(method);
+                    PsiAnnotation[] relevantAnnotations =
+                            filterRelevantAnnotations(mContext.getEvaluator(), annotations);
+                    List<UAnnotation> uAnnotations = JavaUAnnotation.wrap(relevantAnnotations);
+                    UAnnotation annotation = SupportAnnotationDetector.findIntDef(uAnnotations);
                     if (annotation != null) {
                         return annotation;
                     }
@@ -576,13 +561,13 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             } else if (expression instanceof UIfExpression) {
                 UIfExpression ifExpression = (UIfExpression) expression;
                 if (ifExpression.getThenExpression() != null) {
-                    PsiAnnotation result = findIntDefAnnotation(ifExpression.getThenExpression());
+                    UAnnotation result = findIntDefAnnotation(ifExpression.getThenExpression());
                     if (result != null) {
                         return result;
                     }
                 }
                 if (ifExpression.getElseExpression() != null) {
-                    PsiAnnotation result = findIntDefAnnotation(ifExpression.getElseExpression());
+                    UAnnotation result = findIntDefAnnotation(ifExpression.getElseExpression());
                     if (result != null) {
                         return result;
                     }
@@ -597,16 +582,17 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             return null;
         }
 
-        private void ensureUniqueValues(@NonNull PsiAnnotation node) {
-            PsiAnnotationMemberValue value = node.findAttributeValue(ATTR_VALUE);
-            if (value == null) {
-                value = node.findAttributeValue(null);
+        private void ensureUniqueValues(@NonNull UAnnotation node) {
+            UNamedExpression namedValue = node.findAttributeValue(ATTR_VALUE);
+            if (namedValue == null) {
+                namedValue = node.findAttributeValue(null);
             }
-            if (value == null) {
+            if (namedValue == null) {
                 return;
             }
+            UExpression value = namedValue.getExpression();
 
-            if (!(value instanceof PsiArrayInitializerMemberValue)) {
+            if (!(UastExpressionUtils.isArrayInitializer(value))) {
                 return;
             }
 
@@ -644,8 +630,8 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                         Location secondary = mContext.getLocation(prevConstant);
                         secondary.setMessage("Previous same value");
                         location.setSecondary(secondary);
-                        PsiElement scope = getAnnotationScope(node);
-                        mContext.report(UNIQUE, scope, location, message);
+                        UElement scope = getAnnotationScope(node);
+                        mContext.reportUast(UNIQUE, scope, location, message);
                         break;
                     }
                     valueToIndex.put(number, index);
@@ -697,7 +683,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             }
         }
 
-        private boolean checkSuppressLint(@NonNull PsiAnnotation node, @NonNull String id) {
+        private boolean checkSuppressLint(@NonNull UAnnotation node, @NonNull String id) {
             IssueRegistry registry = mContext.getDriver().getRegistry();
             Issue issue = registry.getIssue(id);
             // Special-case the ApiDetector issue, since it does both source file analysis
@@ -707,8 +693,8 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                 || issue == ApiDetector.UNSUPPORTED) {
                 // This issue doesn't have AST access: annotations are not
                 // available for local variables or parameters
-                PsiElement scope = getAnnotationScope(node);
-                mContext.report(INSIDE_METHOD, scope, mContext.getLocation(node), String.format(
+                UElement scope = getAnnotationScope(node);
+                mContext.report(INSIDE_METHOD, scope, mContext.getUastLocation(node), String.format(
                         "The `@SuppressLint` annotation cannot be used on a local " +
                         "variable with the lint check '%1$s': move out to the " +
                         "surrounding method", id));
@@ -721,19 +707,19 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
         private class SwitchChecker extends AbstractUastVisitor {
 
             private final USwitchExpression mSwitchExpression;
-            private final PsiAnnotationMemberValue[] mAllowedValues;
-            private final List<PsiElement> mFields;
+            private final List<UExpression> mAllowedValues;
+            private final List<Object> mFields;
             private final List<Integer> mSeenValues;
 
             private boolean mReported = false;
 
             private SwitchChecker(USwitchExpression switchExpression,
-                    PsiAnnotationMemberValue[] allowedValues) {
+                    List<UExpression> allowedValues) {
                 mSwitchExpression = switchExpression;
                 mAllowedValues = allowedValues;
 
-                mFields = Lists.newArrayListWithCapacity(allowedValues.length);
-                for (PsiAnnotationMemberValue allowedValue : allowedValues) {
+                mFields = Lists.newArrayListWithCapacity(allowedValues.size());
+                for (UExpression allowedValue : allowedValues) {
                     if (allowedValue instanceof ExternalReferenceExpression) {
                         ExternalReferenceExpression externalRef =
                                 (ExternalReferenceExpression) allowedValue;
@@ -743,17 +729,17 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                         if (resolved instanceof PsiField) {
                             mFields.add(resolved);
                         }
-                    } else if (allowedValue instanceof PsiReferenceExpression) {
-                        PsiElement resolved = ((PsiReferenceExpression) allowedValue).resolve();
+                    } else if (allowedValue instanceof UReferenceExpression) {
+                        PsiElement resolved = ((UReferenceExpression) allowedValue).resolve();
                         if (resolved != null) {
                             mFields.add(resolved);
                         }
-                    } else if (allowedValue instanceof PsiLiteral) {
+                    } else if (allowedValue instanceof ULiteralExpression) {
                         mFields.add(allowedValue);
                     }
                 }
 
-                mSeenValues = Lists.newArrayListWithCapacity(allowedValues.length);
+                mSeenValues = Lists.newArrayListWithCapacity(allowedValues.size());
             }
 
             @Override
@@ -807,9 +793,9 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                             // So instead, manually check for equals. These lists tend to
                             // be very short anyway.
                             boolean found = false;
-                            ListIterator<PsiElement> iterator = mFields.listIterator();
+                            ListIterator<Object> iterator = mFields.listIterator();
                             while (iterator.hasNext()) {
-                                PsiElement field = iterator.next();
+                                Object field = iterator.next();
                                 if (field.equals(resolved)) {
                                     iterator.remove();
                                     found = true;
@@ -825,7 +811,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                                     if (resolved instanceof PsiField) {
                                         iterator = mFields.listIterator();
                                         while (iterator.hasNext()) {
-                                            PsiElement field = iterator.next();
+                                            Object field = iterator.next();
                                             if (field.equals(resolved)) {
                                                 iterator.remove();
                                                 found = true;
@@ -842,8 +828,8 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                                     mSeenValues.add(cv);
                                 }
                             } else {
-                                List<String> list = computeFieldNames(mSwitchExpression,
-                                                                      Arrays.asList(mAllowedValues));
+                                List<String> list = computeFieldNames(
+                                        mSwitchExpression, Collections.singletonList(mAllowedValues));
                                 // Keep error message in sync with {@link #getMissingCases}
                                 String message = "Unexpected constant; expected one of: " + Joiner
                                         .on(", ").join(list);
@@ -874,9 +860,9 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                 // Any missing switch constants? Before we flag them, look to see if any
                 // of them have the same values: those can be omitted
                 if (!mFields.isEmpty()) {
-                    ListIterator<PsiElement> iterator = mFields.listIterator();
+                    ListIterator<Object> iterator = mFields.listIterator();
                     while (iterator.hasNext()) {
-                        PsiElement next = iterator.next();
+                        Object next = iterator.next();
                         if (next instanceof PsiField) {
                             Integer cv = getConstantValue((PsiField)next);
                             if (mSeenValues.contains(cv)) {
@@ -938,38 +924,14 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
     }
 
     /**
-     * Given an error message produced by this lint detector for the {@link #SWITCH_TYPE_DEF} issue
-     * type, returns the list of missing enum cases. <p> Intended for IDE quickfix implementations.
-     *
-     * @param errorMessage the error message associated with the error
-     * @param format       the format of the error message
-     * @return the list of enum cases, or null if not recognized
-     */
-    @Nullable
-    public static List<String> getMissingCases(@NonNull String errorMessage,
-            @NonNull TextFormat format) {
-        errorMessage = format.toText(errorMessage);
-
-        String substring = findSubstring(errorMessage, " missing case ", null);
-        if (substring == null) {
-            substring = findSubstring(errorMessage, "expected one of: ", null);
-        }
-        if (substring != null) {
-            return Splitter.on(",").trimResults().splitToList(substring);
-        }
-
-        return null;
-    }
-
-    /**
      * Returns the node to use as the scope for the given annotation node.
      * You can't annotate an annotation itself (with {@code @SuppressLint}), but
      * you should be able to place an annotation next to it, as a sibling, to only
      * suppress the error on this annotated element, not the whole surrounding class.
      */
     @NonNull
-    private static PsiElement getAnnotationScope(@NonNull PsiAnnotation node) {
-        PsiElement scope = PsiTreeUtil.getParentOfType(node, PsiAnnotation.class, true);
+    private static UElement getAnnotationScope(@NonNull UAnnotation node) {
+        UElement scope = UastUtils.getParentOfType(node, UAnnotation.class, true);
         if (scope == null) {
             scope = node;
         }

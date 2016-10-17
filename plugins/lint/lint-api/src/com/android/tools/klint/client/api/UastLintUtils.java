@@ -23,16 +23,7 @@ import com.android.resources.ResourceType;
 import com.android.tools.klint.detector.api.ConstantEvaluator;
 import com.android.tools.klint.detector.api.JavaContext;
 import com.google.common.base.Joiner;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiLocalVariable;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
+import com.intellij.psi.*;
 
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
@@ -43,6 +34,35 @@ import java.util.Collections;
 import java.util.List;
 
 public class UastLintUtils {
+    @Nullable
+    public static String getQualifiedName(PsiElement element) {
+        if (element instanceof PsiClass) {
+            return ((PsiClass) element).getQualifiedName();
+        } else if (element instanceof PsiMethod) {
+            PsiClass containingClass = ((PsiMethod) element).getContainingClass();
+            if (containingClass == null) {
+                return null;
+            }
+            String containingClassFqName = getQualifiedName(containingClass);
+            if (containingClassFqName == null) {
+                return null;
+            }
+            return containingClassFqName + "." + ((PsiMethod) element).getName();
+        } else if (element instanceof PsiField) {
+            PsiClass containingClass = ((PsiField) element).getContainingClass();
+            if (containingClass == null) {
+                return null;
+            }
+            String containingClassFqName = getQualifiedName(containingClass);
+            if (containingClassFqName == null) {
+                return null;
+            }
+            return containingClassFqName + "." + ((PsiField) element).getName();
+        } else {
+            return null;
+        }
+    }
+
     @Nullable
     public static PsiElement resolve(ExternalReferenceExpression expression, UElement context) {
         UDeclaration declaration = UastUtils.getParentOfType(context, UDeclaration.class);

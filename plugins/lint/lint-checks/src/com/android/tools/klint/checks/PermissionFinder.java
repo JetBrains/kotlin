@@ -19,45 +19,17 @@ import static com.android.SdkConstants.CLASS_INTENT;
 import static com.android.tools.klint.checks.SupportAnnotationDetector.PERMISSION_ANNOTATION;
 import static com.android.tools.klint.checks.SupportAnnotationDetector.PERMISSION_ANNOTATION_READ;
 import static com.android.tools.klint.checks.SupportAnnotationDetector.PERMISSION_ANNOTATION_WRITE;
-import static org.jetbrains.uast.UastBinaryExpressionWithTypeKind.TYPE_CAST;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.UastLintUtils;
 import com.android.tools.klint.detector.api.JavaContext;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAssignmentExpression;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiConditionalExpression;
-import com.intellij.psi.PsiDeclarationStatement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiExpressionStatement;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiLiteral;
-import com.intellij.psi.PsiLocalVariable;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiNameValuePair;
-import com.intellij.psi.PsiNewExpression;
-import com.intellij.psi.PsiParenthesizedExpression;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiStatement;
-import com.intellij.psi.PsiTypeCastExpression;
 import com.intellij.psi.PsiVariable;
-import com.intellij.psi.util.PsiTreeUtil;
 
-import org.jetbrains.uast.UBinaryExpressionWithType;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.ULiteralExpression;
-import org.jetbrains.uast.UParenthesizedExpression;
-import org.jetbrains.uast.UastCallKind;
-import org.jetbrains.uast.UastLiteralUtils;
-import org.jetbrains.uast.UastUtils;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 
@@ -188,25 +160,24 @@ public class PermissionFinder {
         } else if (node instanceof UReferenceExpression) {
             PsiElement resolved = ((UReferenceExpression) node).resolve();
             if (resolved instanceof PsiField) {
-                PsiField field = (PsiField) resolved;
+                UField field = (UField) mContext.getUastContext().convertElementWithParent(resolved, UField.class);
+                if (field == null) {
+                    return null;
+                }
                 if (mOperation == Operation.ACTION) {
-                    PsiModifierList modifierList = field.getModifierList();
-                    PsiAnnotation annotation = modifierList != null
-                            ? modifierList.findAnnotation(PERMISSION_ANNOTATION) : null;
+                    UAnnotation annotation = field.findAnnotation(PERMISSION_ANNOTATION);
                     if (annotation != null) {
                         return getPermissionRequirement(field, annotation);
                     }
                 } else if (mOperation == Operation.READ || mOperation == Operation.WRITE) {
                     String fqn = mOperation == Operation.READ
                             ? PERMISSION_ANNOTATION_READ : PERMISSION_ANNOTATION_WRITE;
-                    PsiModifierList modifierList = field.getModifierList();
-                    PsiAnnotation annotation = modifierList != null
-                            ? modifierList.findAnnotation(fqn) : null;
+                    UAnnotation annotation = field.findAnnotation(fqn);
                     if (annotation != null) {
-                        PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
-                        PsiNameValuePair o = attributes.length == 1 ? attributes[0] : null;
-                        if (o != null && o.getValue() instanceof PsiAnnotation) {
-                            annotation = (PsiAnnotation) o.getValue();
+                        List<UNamedExpression> attributes = annotation.getAttributeValues();
+                        UNamedExpression o = attributes.size() == 1 ? attributes.get(0) : null;
+                        if (o != null && o.getExpression() instanceof UAnnotation) {
+                            annotation = (UAnnotation) o.getExpression();
                             if (PERMISSION_ANNOTATION.equals(annotation.getQualifiedName())) {
                                 return getPermissionRequirement(field, annotation);
                             }
@@ -242,8 +213,8 @@ public class PermissionFinder {
     @NonNull
     private Result getPermissionRequirement(
             @NonNull PsiField field,
-            @NonNull PsiAnnotation annotation) {
-        PermissionRequirement requirement = PermissionRequirement.create(mContext, annotation);
+            @NonNull UAnnotation annotation) {
+        PermissionRequirement requirement = PermissionRequirement.create(annotation);
         PsiClass containingClass = field.getContainingClass();
         String name = containingClass != null
                 ? containingClass.getName() + "." + field.getName()

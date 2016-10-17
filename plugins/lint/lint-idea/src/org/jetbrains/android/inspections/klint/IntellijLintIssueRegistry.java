@@ -68,6 +68,11 @@ public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
         Implementation implementation = issue.getImplementation();
         EnumSet<Scope> scope = implementation.getScope();
         Class<? extends Detector> detectorClass = implementation.getDetectorClass();
+        if (detectorClass == ApiDetector.class) {
+          issue.setImplementation(IntellijApiDetector.IMPLEMENTATION);
+        } else if (detectorClass == ViewTypeDetector.class) {
+          issue.setImplementation(IntellijViewTypeDetector.IMPLEMENTATION);
+        }
         if (detectorClass == SupportAnnotationDetector.class) {
           // Handled by the ResourceTypeInspection
           continue;
