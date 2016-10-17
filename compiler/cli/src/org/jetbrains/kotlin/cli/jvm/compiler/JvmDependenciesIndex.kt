@@ -121,39 +121,32 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
             request: SearchRequest,
             handler: (VirtualFile, JavaRoot.RootType) -> HandleResult<T>
     ): T? {
-
-        // default to searching with given parameters
-        fun doSearch() = doSearch(request, handler)
-
         // make a decision based on information saved from last class search
-        if (request !is FindClassRequest || lastClassSearch == null) {
-            return doSearch()
+        if (request !is FindClassRequest || lastClassSearch?.first?.classId != request.classId) {
+            return doSearch(request, handler)
         }
         
         val (cachedRequest, cachedResult) = lastClassSearch!!
-        if (cachedRequest.classId != request.classId) {
-            return doSearch()
-        }
-        
-        when (cachedResult) {
+        return when (cachedResult) {
             is SearchResult.NotFound -> {
                 val limitedRootTypes = request.acceptedRootTypes.toHashSet()
                 limitedRootTypes.removeAll(cachedRequest.acceptedRootTypes)
                 if (limitedRootTypes.isEmpty()) {
-                    return null
+                    null
                 }
                 else {
-                    return doSearch(FindClassRequest(request.classId, limitedRootTypes), handler)
+                    doSearch(FindClassRequest(request.classId, limitedRootTypes), handler)
                 }
             }
             is SearchResult.Found -> {
                 if (cachedRequest.acceptedRootTypes == request.acceptedRootTypes) {
-                    return handler(cachedResult.packageDirectory, cachedResult.root.type).result
+                    handler(cachedResult.packageDirectory, cachedResult.root.type).result
+                }
+                else {
+                    doSearch(request, handler)
                 }
             }
         }
-
-        return doSearch()
     }
 
     private fun <T : Any> doSearch(request: SearchRequest, handler: (VirtualFile, JavaRoot.RootType) -> HandleResult<T>): T? {
@@ -195,9 +188,9 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         val cachesLastIndex = caches.lastIndex
         for (cacheIndex in 0..cachesLastIndex) {
             val reverseCacheIndex = cachesLastIndex - cacheIndex
-            val cache = caches[reverseCacheIndex]
-            for (i in 0..cache.rootIndices.size() - 1) {
-                val rootIndex = cache.rootIndices[i]
+            val cacheRootIndices = caches[reverseCacheIndex].rootIndices
+            for (i in 0..cacheRootIndices.size() - 1) {
+                val rootIndex = cacheRootIndices[i]
                 if (rootIndex <= processedRootsUpTo) continue // roots with those indices have been processed by now
 
                 val directoryInRoot = travelPath(rootIndex, packagesPath, reverseCacheIndex, caches) ?: continue
@@ -207,7 +200,7 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
                     return found(directoryInRoot, root, result)
                 }
             }
-            processedRootsUpTo = cache.rootIndices.lastOrNull() ?: processedRootsUpTo
+            processedRootsUpTo = if (cacheRootIndices.isEmpty) processedRootsUpTo else cacheRootIndices.get(cacheRootIndices.size() - 1)
         }
         
         return notFound()
@@ -253,7 +246,7 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     }
 
     private fun cachesPath(path: List<String>): List<Cache> {
-        val caches = ArrayList<Cache>()
+        val caches = ArrayList<Cache>(path.size + 1)
         caches.add(rootCache)
         var currentCache = rootCache
         for (subPackageName in path) {
@@ -278,12 +271,9 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         val acceptedRootTypes: Set<JavaRoot.RootType>
     }
 
-    private interface SearchResult {
-        class Found(val packageDirectory: VirtualFile, val root: JavaRoot) : SearchResult
+    private sealed class SearchResult {
+        class Found(val packageDirectory: VirtualFile, val root: JavaRoot) : SearchResult()
 
-        object NotFound : SearchResult
+        object NotFound : SearchResult()
     }
 }
-
-private fun IntArrayList.lastOrNull() = if (isEmpty) null else get(size() - 1)
-private val IntArrayList.indices: IntRange get() = 0..(size() - 1)
