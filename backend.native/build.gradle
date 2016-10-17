@@ -86,6 +86,8 @@ task run(type: JavaExec) {
    doFirst {
        args '-runtime', project(':runtime').build.outputs.files.singleFile
    }
+
+   environment 'LD_LIBRARY_PATH' : "$llvmDir/lib"
 }
 
 

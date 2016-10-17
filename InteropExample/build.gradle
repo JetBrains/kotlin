@@ -31,3 +31,7 @@ dependencies {
 }
 
 mainClassName = 'MainKt'
+
+run {
+    environment 'LD_LIBRARY_PATH' : "$llvmDir/lib"
+}
