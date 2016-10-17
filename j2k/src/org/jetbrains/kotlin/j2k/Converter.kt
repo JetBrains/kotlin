@@ -660,7 +660,7 @@ class Converter private constructor(
                 result = Identifier.toKotlin(codeRefElement.referenceName!!) + "." + result
                 qualifier = codeRefElement.qualifier
             }
-            return ReferenceElement(Identifier.withNoPrototype(result), typeArgs).assignPrototype(element)
+            return ReferenceElement(Identifier.withNoPrototype(result), typeArgs).assignPrototype(element, CommentsAndSpacesInheritance.NO_SPACES)
         }
         else {
             if (!hasExternalQualifier) {
@@ -668,12 +668,12 @@ class Converter private constructor(
                 if (targetClass != null) {
                     val identifier = constructNestedClassReferenceIdentifier(targetClass, specialContext ?: element)
                     if (identifier != null) {
-                        return ReferenceElement(identifier, typeArgs).assignPrototype(element)
+                        return ReferenceElement(identifier, typeArgs).assignPrototype(element, CommentsAndSpacesInheritance.NO_SPACES)
                     }
                 }
             }
 
-            return ReferenceElement(Identifier.withNoPrototype(element.referenceName!!), typeArgs).assignPrototype(element)
+            return ReferenceElement(Identifier.withNoPrototype(element.referenceName!!), typeArgs).assignPrototype(element, CommentsAndSpacesInheritance.NO_SPACES)
         }
     }
 

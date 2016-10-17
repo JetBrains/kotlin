@@ -65,7 +65,7 @@ class TypeConverter(val converter: Converter) {
         else {
             convertType(variable.type, variableNullability(variable), variableMutability(variable))
         }
-        return result.assignPrototype(variable.typeElement)
+        return result.assignPrototype(variable.typeElement, CommentsAndSpacesInheritance.NO_SPACES)
     }
 
     fun convertMethodReturnType(method: PsiMethod): Type
