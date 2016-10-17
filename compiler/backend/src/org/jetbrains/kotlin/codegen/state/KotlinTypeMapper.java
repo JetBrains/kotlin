@@ -83,6 +83,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getPartFqNameForDeserializedCallable;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -866,12 +867,8 @@ public class KotlinTypeMapper {
 
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
-                KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
-                assert containingFile != null : "Private descriptor accessed outside of corresponding file scope: " + descriptor;
-                JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile);
-                if (fileClassInfo.getWithJvmMultifileClass()) {
-                    return name + "$" + fileClassInfo.getFileClassFqName().shortName().asString();
-                }
+                String partName = getPartSimpleNameForMangling(descriptor);
+                if (partName != null) return name + "$" + partName;
             }
             return name;
         }
@@ -881,6 +878,28 @@ public class KotlinTypeMapper {
         }
 
         return name;
+    }
+
+    @Nullable
+    private String getPartSimpleNameForMangling(@NotNull CallableMemberDescriptor descriptor) {
+        KtFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
+        if (containingFile != null) {
+            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile);
+            if (fileClassInfo.getWithJvmMultifileClass()) {
+                return fileClassInfo.getFileClassFqName().shortName().asString();
+            }
+            return null;
+        }
+
+        descriptor = getDirectMember(descriptor);
+        assert descriptor instanceof DeserializedCallableMemberDescriptor :
+                "Descriptor without sources should be instance of DeserializedCallableMemberDescriptor, but: " +
+                descriptor;
+        ContainingClassesInfo containingClassesInfo =
+                getContainingClassesForDeserializedCallable((DeserializedCallableMemberDescriptor) descriptor);
+        String facadeShortName = containingClassesInfo.getFacadeClassId().getShortClassName().asString();
+        String implShortName = containingClassesInfo.getImplClassId().getShortClassName().asString();
+        return !facadeShortName.equals(implShortName) ? implShortName : null;
     }
 
     @NotNull

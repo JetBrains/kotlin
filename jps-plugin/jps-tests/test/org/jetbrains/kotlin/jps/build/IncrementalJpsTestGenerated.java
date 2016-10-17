@@ -821,6 +821,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publicPropertyWithPrivateSetter")
+        public void testPublicPropertyWithPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetter/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("publicPropertyWithPrivateSetterMultiFileFacade")
+        public void testPublicPropertyWithPrivateSetterMultiFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetterMultiFileFacade/");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeAndRestoreCompanion")
         public void testRemoveAndRestoreCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/removeAndRestoreCompanion/");
