@@ -61,8 +61,6 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.editor.BatchTemplateRunner
-import org.jetbrains.kotlin.idea.spring.beanClass
-import org.jetbrains.kotlin.idea.spring.effectiveBeanClasses
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
@@ -134,7 +132,7 @@ private fun SpringBean.getFactoryFunctionName(factoryBeanClass: KtClass): String
     factoryMethod.stringValue?.let { if (!it.isBlank()) return it }
 
     val existingNames = factoryBeanClass.declarations.mapNotNull { if (it is KtFunction || it is KtClassOrObject) it.name else null }
-    return KotlinNameSuggester.suggestNameByName("create${beanClass()!!.name}") { it !in existingNames }
+    return KotlinNameSuggester.suggestNameByName("create${beanClass!!.name}") { it !in existingNames }
 }
 
 internal val PsiClass.defaultTypeText: String
@@ -303,8 +301,8 @@ private fun createSetterDependency(
         injectionKind: SpringDependencyInjectionKind
 ): BatchTemplateRunner? {
     val templatesHolder = BatchTemplateRunner(currentBean.manager.project)
-    val currentBeanClass = currentBean.beanClass() as? KtLightClass ?: return null
-    val candidateBeanClasses = dependency.effectiveBeanClasses().ifEmpty { return null }
+    val currentBeanClass = currentBean.beanClass as? KtLightClass ?: return null
+    val candidateBeanClasses = dependency.effectiveBeanType.ifEmpty { return null }
     val setter = getOrCreateSetter(dependency, currentBeanClass, candidateBeanClasses, templatesHolder, injectionKind) ?: return null
     currentBean.addProperty().apply {
         name.ensureXmlElementExists()
@@ -357,7 +355,7 @@ private fun createConstructorWithTemplate(
         dependency: SpringBeanPointer<CommonSpringBean>,
         templatesHolder: BatchTemplateRunner
 ) {
-    val beanClass = currentBean.beanClass() as? KtLightClass ?: return
+    val beanClass = currentBean.beanClass as? KtLightClass ?: return
     val ktBeanClass = beanClass.kotlinOrigin as? KtClass ?: return
 
     try {
@@ -417,8 +415,8 @@ private fun createConstructorDependency(
         dependency: SpringBeanPointer<CommonSpringBean>
 ): BatchTemplateRunner? {
     val templatesHolder = BatchTemplateRunner(currentBean.manager.project)
-    val currentBeanClass = currentBean.beanClass() as? KtLightClass ?: return null
-    val candidateBeanClasses = dependency.effectiveBeanClasses().ifEmpty { return null }
+    val currentBeanClass = currentBean.beanClass as? KtLightClass ?: return null
+    val candidateBeanClasses = dependency.effectiveBeanType.ifEmpty { return null }
     var existedConstructor = findExistedConstructor(currentBean, currentBeanClass, candidateBeanClasses)
     if (existedConstructor == null) {
         if (!ensureFileWritable(currentBeanClass)) return null
@@ -487,7 +485,7 @@ fun generateDependenciesFor(
             .firstOrNull { acceptBean(it, false) }
             ?.let { springBean ->
                 if (!springBean.ensureFileWritable()) return emptyList()
-                if (springBean.beanClass() == null) return emptyList()
+                if (springBean.beanClass == null) return emptyList()
                 val dependencies = chooseDependentBeans(getCandidates(springBean, isSetter), project, isSetter)
                 return dependencies.mapNotNull { generateDependency(springBean, it, injectionKind) }
             }
