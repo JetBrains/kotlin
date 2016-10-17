@@ -41,16 +41,15 @@ import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersi
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
 
-abstract class KotlinMavenConfigurator protected constructor(private val stdlibArtifactId: String, private val testArtifactId: String?, private val addJunit: Boolean, private val name: String, private val presentableText: String) : KotlinProjectConfigurator {
+abstract class KotlinMavenConfigurator
+        protected constructor(private val stdlibArtifactId: String,
+                              private val testArtifactId: String?,
+                              private val addJunit: Boolean,
+                              override val name: String,
+                              override val presentableText: String) : KotlinProjectConfigurator {
 
     override fun isApplicable(module: Module): Boolean {
         return KotlinPluginUtil.isMavenModule(module)
-    }
-
-    override fun getPresentableText() = presentableText
-
-    override fun getName(): String {
-        return name
     }
 
     override fun isConfigured(module: Module): Boolean {

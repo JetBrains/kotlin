@@ -38,9 +38,8 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascri
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.TestCompile, PomFile.KotlinGoals.TestJs, module, true)
     }
 
-    override fun getTargetPlatform(): TargetPlatform {
-        return JsPlatform
-    }
+    override val targetPlatform: TargetPlatform
+        get() = JsPlatform
 
     companion object {
         private val NAME = "js maven"
