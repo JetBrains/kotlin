@@ -155,16 +155,41 @@ abstract class FilterTransformationBase : SequenceTransformation {
 
         private fun matchOneTransformation(state: MatchingState): Pair<SequenceTransformation, MatchingState>? {
             val ifStatement = state.statements.firstOrNull() as? KtIfExpression ?: return null
-            if (ifStatement.`else` != null) return null
             val condition = ifStatement.condition ?: return null
-            val then = ifStatement.then ?: return null
+            val thenBranch = ifStatement.then ?: return null
+            val elseBranch = ifStatement.`else`
 
+            if (elseBranch == null) {
+                return matchOneTransformation(state, condition, false, thenBranch, state.statements.drop(1))
+            }
+            else if (state.statements.size == 1) {
+                val thenStatement = thenBranch.blockExpressionsOrSingle().singleOrNull()
+                if (thenStatement is KtBreakExpression || thenStatement is KtContinueExpression) {
+                    return matchOneTransformation(state, condition, false, thenBranch, elseBranch.singletonList())
+                }
+
+                val elseStatement = elseBranch.blockExpressionsOrSingle().singleOrNull()
+                if (elseStatement is KtBreakExpression || elseStatement is KtContinueExpression) {
+                    return matchOneTransformation(state, condition, true, elseBranch, thenBranch.singletonList())
+                }
+            }
+
+            return null
+        }
+
+        private fun matchOneTransformation(
+                state: MatchingState,
+                condition: KtExpression,
+                negateCondition: Boolean,
+                then: KtExpression,
+                restStatements: List<KtExpression>
+        ): Pair<SequenceTransformation, MatchingState>? {
             // we do not allow filter() which uses neither input variable nor index variable (though is technically possible but looks confusing)
             // shouldUseInputVariables = false does not work for us because we sometimes return Result match in this matcher
             if (!state.inputVariable.hasUsages(condition) && (state.indexVariable == null || !state.indexVariable.hasUsages(condition))) return null
 
-            if (state.statements.size == 1) {
-                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, Condition.create(condition))
+            if (restStatements.isEmpty()) {
+                val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, Condition.create(condition, negateCondition))
                 val newState = state.copy(statements = listOf(then))
                 return transformation to newState
             }
@@ -173,15 +198,15 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 when (statement) {
                     is KtContinueExpression -> {
                         if (statement.targetLoop() != state.innerLoop) return null
-                        val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, Condition.create(condition, negated = true))
-                        val newState = state.copy(statements = state.statements.drop(1))
+                        val transformation = createFilterTransformation(state.outerLoop, state.inputVariable, state.indexVariable, Condition.create(condition, !negateCondition))
+                        val newState = state.copy(statements = restStatements)
                         return transformation to newState
                     }
 
                     is KtBreakExpression -> {
                         if (statement.targetLoop() != state.outerLoop) return null
-                        val transformation = TakeWhileTransformation(state.outerLoop, state.inputVariable, condition.negate())
-                        val newState = state.copy(statements = state.statements.drop(1))
+                        val transformation = TakeWhileTransformation(state.outerLoop, state.inputVariable, if (negateCondition) condition else condition.negate())
+                        val newState = state.copy(statements = restStatements)
                         return transformation to newState
                     }
 
