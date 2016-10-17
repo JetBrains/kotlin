@@ -483,9 +483,7 @@ class CollectionTest {
 
         val hasNulls = listOf("foo", null, "bar")
 
-        //        TODO replace with more accurate version when KT-5987 will be fixed
-        //        failsWith(javaClass<IllegalArgumentException>()) {
-        assertFails {
+        assertFailsWith<IllegalArgumentException> {
             // should throw an exception as we have a null
             hasNulls.requireNoNulls()
         }

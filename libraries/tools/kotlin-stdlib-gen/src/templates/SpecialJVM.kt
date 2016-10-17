@@ -257,7 +257,6 @@ fun specialJVM(): List<GenericFunction> {
             """
         }
 
-        // TODO: Use own readonly kotlin.AbstractList
         body(ArraysOfPrimitives) {
             """
             return object : AbstractList<T>(), RandomAccess {

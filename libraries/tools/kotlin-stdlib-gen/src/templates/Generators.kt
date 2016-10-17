@@ -48,7 +48,6 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        // TODO: use build scope function when available
         // TODO: use immutable sets when available
         returns("SELF", Sets, Sequences)
         doc(Sets) {
@@ -490,7 +489,6 @@ fun generators(): List<GenericFunction> {
             while *second* list contains elements for which [predicate] yielded `false`.
             """
         }
-        // TODO: Sequence variant
         returns("Pair<List<T>, List<T>>")
         body {
             """

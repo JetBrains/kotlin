@@ -23,7 +23,7 @@ import org.junit.Test as test
 class TODOTest {
     private class PartiallyImplementedClass {
         public val prop: String get() = TODO()
-        //  fun method1() = TODO() as String // <- doesn't compile in JS
+        fun method1() = TODO() as String
         public fun method2(): Int = TODO()
 
         public fun method3(switch: Boolean, value: String): String {
@@ -56,7 +56,7 @@ class TODOTest {
         val inst = PartiallyImplementedClass()
 
         assertNotImplemented { inst.prop }
-//        assertNotImplemented{ inst.method1() }
+        assertNotImplemented{ inst.method1() }
         assertNotImplemented { inst.method2() }
         assertNotImplemented { inst.method4() }
         assertNotImplementedWithMessage("what if false") { inst.method3(false, "test") }

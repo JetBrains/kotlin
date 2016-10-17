@@ -50,17 +50,14 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
-    // could not be local inside isEmptyAndBlank, because local declarations is not yet supported for JS
-    // TODO: move inside after KT-11030 is implemented
-    class IsEmptyCase(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
-
     @test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
+        class Case(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
 
         val cases = listOf(
-            IsEmptyCase(null,              isNull = true),
-            IsEmptyCase("",                isEmpty = true, isBlank = true),
-            IsEmptyCase("  \r\n\t\u00A0",  isBlank = true),
-            IsEmptyCase(" Some ")
+            Case(null,              isNull = true),
+            Case("",                isEmpty = true, isBlank = true),
+            Case("  \r\n\t\u00A0",  isBlank = true),
+            Case(" Some ")
         )
 
         for (case in cases) {
