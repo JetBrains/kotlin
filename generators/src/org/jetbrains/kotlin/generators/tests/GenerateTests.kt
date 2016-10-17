@@ -221,10 +221,6 @@ fun main(args: Array<String>) {
             model("codegen/box", targetBackend = TargetBackend.JVM)
         }
 
-        testClass<AbstractIrBlackBoxCodegenTest>() {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
-        }
-
         testClass<AbstractIrBlackBoxCodegenTest>("IrOnlyBoxCodegenTestGenerated") {
             model("ir/box", targetBackend = TargetBackend.JVM)
         }
@@ -255,20 +251,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrCfgTestCase>() {
             model("ir/irCfg")
-        }
-
-//      Uncomment the following lines to generate IR generator tests based on existing compiler tests.
-//
-//        testClass<AbstractPsi2IrBoxTestCase>() {
-//            model("codegen/box")
-//        }
-//
-//        testClass<AbstractPsi2IrDiagnosticsTest>() {
-//            model("diagnostics/tests/controlFlowAnalysis")
-//        }
-
-        testClass<AbstractClosureAnnotatorTestCase> {
-            model("ir/closureAnnotator")
         }
 
         testClass<AbstractBytecodeListingTest>() {
@@ -394,6 +376,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKDocLexerTest> {
             model("kdoc/lexer")
+        }
+    }
+
+    testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
+        testClass<AbstractIrBlackBoxCodegenTest>() {
+            model("codegen/box", targetBackend = TargetBackend.JVM)
         }
     }
 

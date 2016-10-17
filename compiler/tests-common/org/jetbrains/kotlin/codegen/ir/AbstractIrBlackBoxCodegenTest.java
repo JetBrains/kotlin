@@ -16,31 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.ir;
 
-import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Processor;
-import kotlin.io.FilesKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest;
-import org.jetbrains.kotlin.codegen.CodegenTestCase;
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtProperty;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractIrBlackBoxCodegenTest extends AbstractBlackBoxCodegenTest {
     @Override

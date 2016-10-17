@@ -43,7 +43,10 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     val elementRenderer = RenderIrElementVisitor()
 
     companion object {
-        val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions { verbose = true }
+        val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions {
+            verbose = true
+            includeAnnotationArguments = true
+        }
     }
 
     override fun visitElement(element: IrElement, data: String) {

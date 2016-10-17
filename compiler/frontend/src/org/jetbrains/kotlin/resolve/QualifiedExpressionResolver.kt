@@ -648,7 +648,7 @@ class QualifiedExpressionResolver {
                     is TypeParameterDescriptor -> TypeParameterQualifier(referenceExpression, descriptor)
                     is TypeAliasDescriptor -> {
                         val classDescriptor = descriptor.classDescriptor ?: return null
-                        TypeAliasQualifier(referenceExpression, classDescriptor)
+                        TypeAliasQualifier(referenceExpression, descriptor, classDescriptor)
                     }
                     else -> return null
                 }
