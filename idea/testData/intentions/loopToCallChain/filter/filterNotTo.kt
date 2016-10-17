@@ -3,7 +3,9 @@
 // IS_APPLICABLE_2: false
 fun foo(list: List<String>, target: MutableList<String>) {
     <caret>for (s in list) {
-        if (s.length == 0) continue
+        if (bar(s)) continue
         target.add(s)
     }
 }
+
+fun bar(string: String): Boolean = TODO()

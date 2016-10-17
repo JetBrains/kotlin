@@ -225,7 +225,7 @@ object FindTransformationMatcher : TransformationMatcher {
         assert(valueIfFound.isPhysical)
         assert(valueIfNotFound.isPhysical)
 
-        val filter = filterTransformation?.effectiveCondition
+        val filter = filterTransformation?.effectiveCondition?.asExpression()
 
         if (indexVariable != null) {
             if (filterTransformation == null) return null // makes no sense, indexVariable must be always null

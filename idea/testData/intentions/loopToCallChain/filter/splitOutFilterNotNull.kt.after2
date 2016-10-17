@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterNotNull().filter{}.forEach{}'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filterNotNull().filter{}.forEach{}'"
+fun foo(list: List<String?>){
+    list
+            .asSequence()
+            .filterNotNull()
+            .filter { it.startsWith("IMG:") }
+            .forEach { println(it.hashCode()) }
+}

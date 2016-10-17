@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -164,8 +163,8 @@ private fun KtExpression.specialNegation(): KtExpression? {
             if (operationReference.getReferencedName() == "!") {
                 val baseExpression = baseExpression
                 if (baseExpression != null) {
-                    val context = baseExpression.analyzeAndGetResult().bindingContext
-                    val type = context.getType(baseExpression)
+                    val bindingContext = baseExpression.analyze(BodyResolveMode.PARTIAL)
+                    val type = bindingContext.getType(baseExpression)
                     if (type != null && KotlinBuiltIns.isBoolean(type)) {
                         return KtPsiUtil.safeDeparenthesize(baseExpression)
                     }
