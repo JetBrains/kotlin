@@ -43,11 +43,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
 
                 return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                        moduleContext,
+                        environment.project,
                         environment.getSourceFiles(),
                         sharedTrace,
                         environment.configuration,
-                        JvmPackagePartProvider(environment)
+                        { scope -> JvmPackagePartProvider(environment, scope) }
                 )
             }
             override fun reportEnvironmentErrors() {
