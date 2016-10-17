@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,69 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.cli.jvm.index
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.IntArrayList
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
-
-data class JavaRoot(val file: VirtualFile, val type: JavaRoot.RootType, val prefixFqName: FqName? = null) {
-    enum class RootType {
-        SOURCE,
-        BINARY
-    }
-
-    companion object RootTypes {
-        val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY)
-        val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
-    }
-}
-
-interface JvmDependenciesIndex {
-
-    val indexedRoots: Sequence<JavaRoot>
-
-    fun <T : Any> findClass(
-            classId: ClassId,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T?
-
-    fun traverseDirectoriesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    )
-
-    fun collectKnownClassNamesInPackage(
-            packageFqName: FqName
-    ): Set<String>
-}
-
-interface JvmDependenciesIndexFactory<out T : JvmDependenciesIndex> {
-    fun makeIndexFor(roots: List<JavaRoot>): T
-}
-
-class JvmStaticDependenciesIndexFactory : JvmDependenciesIndexFactory<JvmDependenciesIndex> {
-    override fun makeIndexFor(roots: List<JavaRoot>) = JvmDependenciesIndexImpl(roots)
-}
-
-class JvmUpdatableDependenciesIndexFactory : JvmDependenciesIndexFactory<JvmDependenciesDynamicCompoundIndex> {
-    override fun makeIndexFor(roots: List<JavaRoot>) = JvmDependenciesDynamicCompoundIndex().apply {
-        addIndex(JvmDependenciesIndexImpl(roots))
-    }
-}
 
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
 class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
-
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
@@ -139,7 +88,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
     override fun collectKnownClassNamesInPackage(
             packageFqName: FqName
     ): Set<String> {
-        var result = hashSetOf<String>()
+        val result = hashSetOf<String>()
         traverseDirectoriesInPackage(packageFqName, continueSearch = {
             dir, rootType ->
 
@@ -322,57 +271,8 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
 
         object NotFound : SearchResult
     }
-}
 
-class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
-
-    private val indices = arrayListOf<JvmDependenciesIndex>()
-    private val lock = ReentrantReadWriteLock()
-
-    fun addIndex(index: JvmDependenciesIndex) {
-        lock.write {
-            indices.add(index)
-        }
-    }
-
-    fun addNewIndexForRoots(roots: Iterable<JavaRoot>): JvmDependenciesIndex? =
-            lock.read {
-                val alreadyIndexed = indexedRoots.toHashSet()
-                val newRoots = roots.filter { !alreadyIndexed.contains(it) }
-                if (newRoots.isEmpty()) null
-                else {
-                    val index = JvmDependenciesIndexImpl(newRoots)
-                    addIndex(index)
-                    index
-                }
-            }
-
-    override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
-
-    override fun <T : Any> findClass(
-            classId: ClassId,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? =
-            lock.read {
-                indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
-            }
-
-    override fun traverseDirectoriesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) {
-        lock.read {
-            indices.forEach { it.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
-        }
-    }
-
-    override fun collectKnownClassNamesInPackage(packageFqName: FqName): Set<String> = lock.read {
-        indices.flatMapTo(hashSetOf()) { it.collectKnownClassNamesInPackage(packageFqName) }
+    private companion object {
+        fun IntArrayList.lastOrNull() = if (isEmpty) null else get(size() - 1)
     }
 }
-
-private fun IntArrayList.lastOrNull() = if (isEmpty) null else get(size() - 1)
-private val IntArrayList.indices: IntRange get() = 0..(size() - 1)
-

@@ -74,6 +74,10 @@ import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.JvmUpdateableDependenciesIndexFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -148,7 +152,7 @@ class KotlinCoreEnvironment private constructor(
         val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
 
         // REPL and kapt2 update classpath dynamically
-        val indexFactory = JvmUpdatableDependenciesIndexFactory()
+        val indexFactory = JvmUpdateableDependenciesIndexFactory()
 
         rootsIndex = indexFactory.makeIndexFor(initialRoots)
         updateClasspathFromRootsIndex(rootsIndex)
