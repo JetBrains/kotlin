@@ -70,7 +70,7 @@ class CompileCppToBitcode extends DefaultTask {
 
         project.exec {
             workingDir objDir
-            executable "$project.llvmInstallPath/bin/clang++"
+            executable "$project.llvmDir/bin/clang++"
             args '-std=c++11'
 
             args compilerArgs
@@ -82,7 +82,7 @@ class CompileCppToBitcode extends DefaultTask {
         }
 
         project.exec {
-            executable "$project.llvmInstallPath/bin/llvm-link"
+            executable "$project.llvmDir/bin/llvm-link"
             args project.fileTree(objDir).include('**/*.bc')
 
             args linkerArgs

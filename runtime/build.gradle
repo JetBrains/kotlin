@@ -17,15 +17,15 @@ task test {
 
     doLast {
         exec {
-	    commandLine "$llvmInstallPath/bin/clang", 'src/test/c/main.c', '-c', '-emit-llvm', '-o', "$buildDir/main.bc"
-	}
+            commandLine "$llvmDir/bin/clang", 'src/test/c/main.c', '-c', '-emit-llvm', '-o', "$buildDir/main.bc"
+        }
         exec {
-	    commandLine "$llvmInstallPath/bin/clang++", build.outFile, "$buildDir/main.bc", '-o', "$buildDir/main"
-	}
-	exec {
-	    workingDir buildDir
-	    commandLine './main'
-	}
+            commandLine "$llvmDir/bin/clang++", build.outFile, "$buildDir/main.bc", '-o', "$buildDir/main"
+        }
+        exec {
+            workingDir buildDir
+            commandLine './main'
+        }
     }
 }
 

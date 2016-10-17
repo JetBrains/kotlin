@@ -75,6 +75,15 @@ class TgzNativeDep extends NativeDep {
 }
 
 
+task libffi(type: TgzNativeDep) {
+    baseName = "libffi-3.2.1-${target}"
+}
+
+task llvm(type: TgzNativeDep) {
+    baseName = "clang+llvm-3.8.0-${target}"
+}
+
+
 task update {
     dependsOn tasks.withType(NativeDep)
 }

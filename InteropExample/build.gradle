@@ -19,8 +19,8 @@ repositories {
 kotlinNativeInterop {
     llvm {
         defFile '../backend.native/llvm.def'
-        compilerOpts "-I$llvmInstallPath/include"
-        linkerOpts "-L$llvmInstallPath/lib"
+        compilerOpts "-I$llvmDir/include"
+        linkerOpts "-L$llvmDir/lib"
     }
 
 }
