@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -29,9 +30,14 @@ class ExceptionWrappingKtVisitorVoid(private val delegate: KtVisitorVoid) : KtVi
     override fun visitDeclaration(dcl: KtDeclaration) {
         try {
             dcl.accept(delegate)
-        } catch (e: KotlinFrontEndException) {
+        }
+        catch (e: ProcessCanceledException) {
             throw e
-        } catch (t: Throwable) {
+        }
+        catch (e: KotlinFrontEndException) {
+            throw e
+        }
+        catch (t: Throwable) {
             throw KotlinFrontEndException("Failed to analyze declaration ${dcl.name}", t, dcl)
         }
     }
