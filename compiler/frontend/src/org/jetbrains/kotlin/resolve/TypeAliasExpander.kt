@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
@@ -51,13 +52,24 @@ class TypeAliasExpander(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        val expandedTypeWithExtraAnnotations = expandedType.replace(
-                newAnnotations = CompositeAnnotations(listOf(annotations, expandedType.annotations)))
+        val expandedTypeWithExtraAnnotations = combineAnnotations(expandedType, annotations)
 
         return if (withAbbreviatedType)
             expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(originalProjection, annotations))
         else
             expandedTypeWithExtraAnnotations
+    }
+
+    private fun combineAnnotations(type: SimpleType, annotations: Annotations): SimpleType {
+        val existingAnnotationTypes = type.annotations.getAllAnnotations().mapTo(hashSetOf<KotlinType>()) { it.annotation.type }
+
+        for (annotation in annotations) {
+            if (annotation.type in existingAnnotationTypes) {
+                reportStrategy.repeatedAnnotation(annotation)
+            }
+        }
+
+        return type.replace(newAnnotations = CompositeAnnotations(listOf(annotations, type.annotations)))
     }
 
     private fun TypeAliasExpansion.createAbbreviation(originalProjection: TypeProjection, annotations: Annotations) =

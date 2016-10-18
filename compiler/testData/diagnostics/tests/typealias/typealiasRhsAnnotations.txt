@@ -3,8 +3,6 @@ package
 public fun test1(/*0*/ a: Alias2 /* = @Ann2 @Ann1 kotlin.String */): Alias2 /* = @Ann2 @Ann1 kotlin.String */
 public fun test2(/*0*/ a: Alias3 /* = @kotlin.ExtensionFunctionType @Ann1 kotlin.String */): Alias3 /* = @kotlin.ExtensionFunctionType @Ann1 kotlin.String */
 public fun test3(/*0*/ la1: LA1 /* = kotlin.collections.List<@Ann2 Alias1 /* = @Ann2 @Ann1 kotlin.String */> */): LA1 /* = kotlin.collections.List<@Ann2 Alias1 /* = @Ann2 @Ann1 kotlin.String */> */
-public fun test4(/*0*/ a: AliasRepeated /* = @Ann1 @Ann1 kotlin.String */): AliasRepeated /* = @Ann1 @Ann1 kotlin.String */
-public fun test4a(/*0*/ a: @Ann1 Alias1 /* = @Ann1 @Ann1 kotlin.String */): @Ann1 Alias1 /* = @Ann1 @Ann1 kotlin.String */
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann1 : kotlin.Annotation {
     public constructor Ann1()
@@ -22,5 +20,4 @@ public fun test4a(/*0*/ a: @Ann1 Alias1 /* = @Ann1 @Ann1 kotlin.String */): @Ann
 public typealias Alias1 = @Ann1 kotlin.String
 public typealias Alias2 = @Ann2 Alias1
 public typealias Alias3 = @kotlin.ExtensionFunctionType Alias1
-public typealias AliasRepeated = @Ann1 Alias1
 public typealias LA1 = kotlin.collections.List<@Ann2 Alias1>
