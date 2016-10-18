@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.backend.jvm.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 interface JvmDescriptorWithExtraFlags {
     val extraFlags: Int
@@ -84,5 +87,25 @@ class JvmPropertyDescriptorImpl(
                         classDescriptor, null, annotations, Modality.FINAL, visibility, extraFlags, false, name,
                         CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
                 ).initialize(type, dispatchReceiverParameter = classDescriptor.thisAsReceiverParameter)
+    }
+}
+
+class JvmFunctionDescriptorImpl(
+        containingDeclaration: DeclarationDescriptor,
+        original: FunctionDescriptor?,
+        annotations: Annotations,
+        name: Name,
+        kind: CallableMemberDescriptor.Kind,
+        source: SourceElement,
+        override val extraFlags: Int
+) : JvmDescriptorWithExtraFlags, FunctionDescriptorImpl(
+        containingDeclaration, original, annotations,
+        name, kind, source
+) {
+    override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, original: FunctionDescriptor?, kind: CallableMemberDescriptor.Kind, newName: Name?, annotations: Annotations, source: SourceElement): FunctionDescriptorImpl {
+        return JvmFunctionDescriptorImpl(
+                newOwner, original, annotations, name, kind,
+                SourceElement.NO_SOURCE, extraFlags
+        )
     }
 }

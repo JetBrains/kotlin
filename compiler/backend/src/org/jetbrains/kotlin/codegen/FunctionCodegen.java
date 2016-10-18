@@ -764,7 +764,7 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean isThereOverriddenInKotlinClass(@NotNull CallableMemberDescriptor descriptor) {
+    public static boolean isThereOverriddenInKotlinClass(@NotNull CallableMemberDescriptor descriptor) {
         return CollectionsKt.any(getAllOverriddenDescriptors(descriptor), new Function1<CallableMemberDescriptor, Boolean>() {
             @Override
             public Boolean invoke(CallableMemberDescriptor descriptor) {
@@ -784,7 +784,7 @@ public class FunctionCodegen {
         };
     }
 
-    private static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
         String name = descriptor.getName().asString();
         List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
         if (parameters.isEmpty()) {

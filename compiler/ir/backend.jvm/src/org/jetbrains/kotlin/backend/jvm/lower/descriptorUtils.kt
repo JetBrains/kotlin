@@ -29,7 +29,7 @@ fun FunctionDescriptor.toStatic(
 ): FunctionDescriptor {
     val newFunction = SimpleFunctionDescriptorImpl.create(
             newOwner, AnnotationsImpl(emptyList()),
-            name, //Name.identifier(typeMapper.mapAsmMethod(this).name),
+            name,
             CallableMemberDescriptor.Kind.DECLARATION, this.source
     )
 
@@ -57,3 +57,5 @@ fun FunctionDescriptor.toStatic(
     )
     return newFunction
 }
+
+fun FunctionDescriptor.isClInit(): Boolean = this.name == InitializersLowering.clinitName
