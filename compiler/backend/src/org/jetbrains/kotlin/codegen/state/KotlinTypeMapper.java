@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.*;
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -83,7 +84,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getPartFqNameForDeserializedCallable;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -301,18 +301,27 @@ public class KotlinTypeMapper {
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 
-        assert containingDeclaration instanceof LazyJavaPackageFragment :
-                "Unexpected package fragment for " + descriptor + ": " + containingDeclaration +
-                " (" + containingDeclaration.getClass().getSimpleName() + ")";
-        LazyJavaPackageFragment packageFragment = (LazyJavaPackageFragment) containingDeclaration;
-
         Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
         assert implClassName != null : "No implClassName for " + descriptor;
+        String implSimpleName = implClassName.asString();
 
-        String facadeSimpleName = packageFragment.getFacadeSimpleNameForPartSimpleName(implClassName.asString());
-        if (facadeSimpleName == null) return null;
+        String facadeSimpleName;
 
-        return ContainingClassesInfo.forPackageMember(packageFragment.getFqName(), facadeSimpleName, implClassName.asString());
+        if (containingDeclaration instanceof LazyJavaPackageFragment) {
+            facadeSimpleName = ((LazyJavaPackageFragment) containingDeclaration).getFacadeSimpleNameForPartSimpleName(implSimpleName);
+            if (facadeSimpleName == null) return null;
+        }
+        else if (containingDeclaration instanceof IncrementalMultifileClassPackageFragment) {
+            facadeSimpleName = ((IncrementalMultifileClassPackageFragment) containingDeclaration).getMultifileClassName().asString();
+        }
+        else {
+            throw new AssertionError("Unexpected package fragment for " + descriptor + ": " +
+                                     containingDeclaration + " (" + containingDeclaration.getClass().getSimpleName() + ")");
+        }
+
+        return ContainingClassesInfo.forPackageMember(
+                ((PackageFragmentDescriptor) containingDeclaration).getFqName(), facadeSimpleName, implSimpleName
+        );
     }
 
     @NotNull
