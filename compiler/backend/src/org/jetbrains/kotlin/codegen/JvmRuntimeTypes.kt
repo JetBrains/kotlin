@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.coroutines.*
+import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-
 import java.util.*
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
@@ -55,93 +55,75 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         this.mutablePropertyReferences = ArrayList<ClassDescriptor>(3)
 
         for (i in 0..2) {
-            propertyReferences.add(createClass(kotlinJvmInternal, "PropertyReference" + i))
-            mutablePropertyReferences.add(createClass(kotlinJvmInternal, "MutablePropertyReference" + i))
+            propertyReferences.add(createClass(kotlinJvmInternal, "PropertyReference$i"))
+            mutablePropertyReferences.add(createClass(kotlinJvmInternal, "MutablePropertyReference$i"))
         }
 
         defaultContinuationSupertype = createNullableAnyContinuation(module)
     }
 
     /**
-     * @param module
-     * *
-     * @return Continuation<Any></Any>?> type
+     * @return `Continuation<Any?>` type
      */
     private fun createNullableAnyContinuation(module: ModuleDescriptor): KotlinType {
-        val classDescriptor = module.resolveTopLevelClass(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, NoLookupLocation.FROM_BACKEND) ?: error(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME + " was not found in built-ins")
+        val classDescriptor = module.resolveTopLevelClass(
+                DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, NoLookupLocation.FROM_BACKEND
+        ) ?: error("${DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME} was not found in built-ins")
 
-
-        return TypeConstructorSubstitution
-                .createByParametersMap(Collections.singletonMap(classDescriptor.declaredTypeParameters[0],
-                                                                TypeProjectionImpl(module.builtIns.nullableAnyType)))
-                .buildSubstitutor().substitute(classDescriptor.defaultType, Variance.INVARIANT)
+        return TypeConstructorSubstitution.createByParametersMap(
+                mapOf(classDescriptor.declaredTypeParameters.single() to TypeProjectionImpl(module.builtIns.nullableAnyType))
+        ).buildSubstitutor().substitute(classDescriptor.defaultType, Variance.INVARIANT)!!
     }
 
-    private fun createClass(packageFragment: PackageFragmentDescriptor, name: String): ClassDescriptor {
-        val descriptor = MutableClassDescriptor(
-                packageFragment, ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE
-        )
-
-        descriptor.modality = Modality.FINAL
-        descriptor.visibility = Visibilities.PUBLIC
-        descriptor.setTypeParameterDescriptors(emptyList<TypeParameterDescriptor>())
-        descriptor.createTypeConstructor()
-
-        return descriptor
-    }
+    private fun createClass(packageFragment: PackageFragmentDescriptor, name: String): ClassDescriptor =
+            MutableClassDescriptor(packageFragment, ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE).apply {
+                modality = Modality.FINAL
+                visibility = Visibilities.PUBLIC
+                setTypeParameterDescriptors(emptyList())
+                createTypeConstructor()
+            }
 
     fun getSupertypesForClosure(descriptor: FunctionDescriptor): Collection<KotlinType> {
-        val receiverParameter = descriptor.extensionReceiverParameter
-
-
-        val parameters = descriptor.valueParameters
         val functionType = createFunctionType(
                 descriptor.builtIns,
                 Annotations.EMPTY,
-                receiverParameter?.type,
-                ExpressionTypingUtils.getValueParametersTypes(parameters),
+                descriptor.extensionReceiverParameter?.type,
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters),
                 null,
                 descriptor.returnType!!
         )
 
         val coroutineControllerType = descriptor.controllerTypeIfCoroutine
-
         if (coroutineControllerType != null) {
-            return Arrays.asList(
-                    lambda.defaultType, functionType, /*coroutineType,*/ defaultContinuationSupertype)
+            return listOf(lambda.defaultType, functionType, /*coroutineType,*/ defaultContinuationSupertype)
         }
 
-        return Arrays.asList<KotlinType>(lambda.defaultType, functionType)
+        return listOf(lambda.defaultType, functionType)
     }
 
     fun getSupertypesForFunctionReference(descriptor: FunctionDescriptor, isBound: Boolean): Collection<KotlinType> {
-        val extensionReceiver = descriptor.extensionReceiverParameter
-        val dispatchReceiver = descriptor.dispatchReceiverParameter
-
-        val receiverType = if (extensionReceiver != null) extensionReceiver.type else dispatchReceiver?.type
-
-
-        val parameters = descriptor.valueParameters
         val functionType = createFunctionType(
                 descriptor.builtIns,
                 Annotations.EMPTY,
-                if (isBound) null else receiverType,
-                ExpressionTypingUtils.getValueParametersTypes(parameters),
+                if (isBound) null else descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type,
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters),
                 null,
                 descriptor.returnType!!
         )
 
-        return Arrays.asList<KotlinType>(functionReference.defaultType, functionType)
+        return listOf(functionReference.defaultType, functionType)
     }
 
-    fun getSupertypeForPropertyReference(
-            descriptor: VariableDescriptorWithAccessors, isMutable: Boolean, isBound: Boolean
-    ): KotlinType {
+    fun getSupertypeForPropertyReference(descriptor: VariableDescriptorWithAccessors, isMutable: Boolean, isBound: Boolean): KotlinType {
         if (descriptor is LocalVariableDescriptor) {
             return (if (isMutable) mutableLocalVariableReference else localVariableReference).defaultType
         }
 
-        val arity = (if (descriptor.extensionReceiverParameter != null) 1 else 0) + (if (descriptor.dispatchReceiverParameter != null) 1 else 0) - if (isBound) 1 else 0
+        val arity =
+                (if (descriptor.extensionReceiverParameter != null) 1 else 0) +
+                (if (descriptor.dispatchReceiverParameter != null) 1 else 0) -
+                if (isBound) 1 else 0
+
         return (if (isMutable) mutablePropertyReferences else propertyReferences)[arity].defaultType
     }
 }
