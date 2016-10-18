@@ -65,10 +65,10 @@
 - [`KT-13931`](https://youtrack.jetbrains.com/issue/KT-13931) Optimize generated code for IntRange#contains
 
 #### Various analysis & diagnostic issues
-- [`KT-10001`](https://youtrack.jetbrains.com/issue/KT-10001) Fix false unnecessary non-null assertion on a pair element
-- [`KT-12811`](https://youtrack.jetbrains.com/issue/KT-12811) DECLARATION_CANT_BE_INLINED on an overridden member of a final class
 - [`KT-435`](https://youtrack.jetbrains.com/issue/KT-435) Use parameter names in error messages when calling a function-valued expression
-- - [`KT-13961`](https://youtrack.jetbrains.com/issue/KT-13961) REDECLARATION not reported on private-in-file 'foo' vs public 'foo' in different file
+- [`KT-10001`](https://youtrack.jetbrains.com/issue/KT-10001) Fix false unnecessary non-null assertion on a pair element
+- [`KT-12811`](https://youtrack.jetbrains.com/issue/KT-12811) Treat function declaration as final if it is a member of a final class
+- [`KT-13961`](https://youtrack.jetbrains.com/issue/KT-13961) Report REDECLARATION on private-in-file 'foo' vs public 'foo' in different file
 ### JS
 
 #### Bugfixes
