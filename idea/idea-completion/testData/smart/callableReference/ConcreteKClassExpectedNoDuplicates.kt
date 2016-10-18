@@ -11,4 +11,5 @@ fun f() {
 // EXIST: { lookupString: "Int", itemText: "Int::class", attributes: "" }
 // EXIST: { lookupString: "object" }
 // EXIST: null
+// EXIST: { lookupString: "kClass = null", itemText: "kClass = null" }
 // NOTHING_ELSE

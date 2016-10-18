@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
@@ -33,12 +34,15 @@ import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.toFuzzyType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -107,7 +111,7 @@ class SmartCompletion(
         return postProcessedItems to postProcessedSearcher
     }
 
-    val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
+    val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
         val parent = expressionWithType.parent
         when (parent) {
             is KtBinaryExpression -> {
@@ -216,6 +220,8 @@ class SmartCompletion(
 
                 ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory.basicFactory, isJvmModule)
 
+                items.addNamedArgumentsWithLiteralValueItems(expectedInfos)
+
                 if (!forBasicCompletion) {
                     LambdaItems.addToCollection(items, expectedInfos)
 
@@ -285,6 +291,47 @@ class SmartCompletion(
                 }
             }
         }
+    }
+
+    private fun MutableCollection<LookupElement>.addNamedArgumentsWithLiteralValueItems(expectedInfos: Collection<ExpectedInfo>) {
+        data class NameAndValue(val name: Name, val value: String, val priority: SmartCompletionItemPriority)
+
+        val nameAndValues = HashMap<NameAndValue, MutableList<ExpectedInfo>>()
+
+        fun addNameAndValue(name: Name, value: String, priority: SmartCompletionItemPriority, expectedInfo: ExpectedInfo) {
+            nameAndValues.getOrPut(NameAndValue(name, value, priority)) { ArrayList() }.add(expectedInfo)
+        }
+
+        for (expectedInfo in expectedInfos) {
+            val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
+            if (argumentData.namedArgumentCandidates.isEmpty()) continue
+            val parameters = argumentData.function.valueParameters
+            if (argumentData.argumentIndex >= parameters.size) continue
+            val parameterName = parameters[argumentData.argumentIndex].name
+
+            if (expectedInfo.fuzzyType?.type?.isBooleanOrNullableBoolean() == true) {
+                addNameAndValue(parameterName, "true", SmartCompletionItemPriority.NAMED_ARGUMENT_TRUE, expectedInfo)
+                addNameAndValue(parameterName, "false", SmartCompletionItemPriority.NAMED_ARGUMENT_FALSE, expectedInfo)
+            }
+            if (expectedInfo.fuzzyType?.type?.isMarkedNullable == true) {
+                addNameAndValue(parameterName, "null", SmartCompletionItemPriority.NAMED_ARGUMENT_NULL, expectedInfo)
+            }
+        }
+
+        for ((nameAndValue, infos) in nameAndValues) {
+            var lookupElement = createNamedArgumentWithValueLookupElement(nameAndValue.name, nameAndValue.value, nameAndValue.priority)
+            lookupElement = lookupElement.addTail(mergeTails(infos.map { it.tail }))
+            add(lookupElement)
+        }
+    }
+
+    private fun createNamedArgumentWithValueLookupElement(name: Name, value: String, priority: SmartCompletionItemPriority): LookupElement {
+        val lookupElement = LookupElementBuilder.create("${name.asString()} = $value")
+                .withIcon(KotlinIcons.PARAMETER)
+                .withInsertHandler({ context, item -> context.document.replaceString(context.startOffset, context.tailOffset, "${name.render()} = $value") })
+        lookupElement.putUserData(SmartCompletionInBasicWeigher.NAMED_ARGUMENT_KEY, Unit)
+        lookupElement.assignSmartCompletionPriority(priority)
+        return lookupElement
     }
 
     private fun calcExpectedInfos(expression: KtExpression): Collection<ExpectedInfo> {

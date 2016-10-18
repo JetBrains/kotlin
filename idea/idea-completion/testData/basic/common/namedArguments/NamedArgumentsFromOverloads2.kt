@@ -10,4 +10,5 @@ fun f() {
 // EXIST: { itemText:"xxP1 =", tailText: " String" }
 // EXIST: { itemText:"xxP2 =", tailText: " ..." }
 // EXIST: { itemText:"xxx =", tailText: " Any?" }
+// EXIST: { itemText:"xxx = null", tailText: null }
 // NOTHING_ELSE

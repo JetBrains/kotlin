@@ -635,6 +635,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NamedBooleanArgument.kt")
+    public void testNamedBooleanArgument() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/NamedBooleanArgument.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedDataClass.kt")
     public void testNestedDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/NestedDataClass.kt");

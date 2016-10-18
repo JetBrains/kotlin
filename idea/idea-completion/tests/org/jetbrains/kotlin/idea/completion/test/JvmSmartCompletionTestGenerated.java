@@ -83,9 +83,21 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("BooleanArgumentExpected.kt")
+    public void testBooleanArgumentExpected() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanArgumentExpected.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("BooleanExpected.kt")
     public void testBooleanExpected() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanExpected.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("BooleanOrNullableArgumentExpected.kt")
+    public void testBooleanOrNullableArgumentExpected() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanOrNullableArgumentExpected.kt");
         doTest(fileName);
     }
 

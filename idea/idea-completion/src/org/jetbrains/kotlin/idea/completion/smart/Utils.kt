@@ -266,6 +266,8 @@ enum class SmartCompletionItemPriority {
     IT,
     TRUE,
     FALSE,
+    NAMED_ARGUMENT_TRUE,
+    NAMED_ARGUMENT_FALSE,
     CLASS_LITERAL,
     THIS,
     DELEGATES_STATIC_MEMBER,
@@ -278,6 +280,7 @@ enum class SmartCompletionItemPriority {
     LAMBDA,
     CALLABLE_REFERENCE,
     NULL,
+    NAMED_ARGUMENT_NULL,
     INHERITOR_INSTANTIATION
 }
 
