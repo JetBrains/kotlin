@@ -422,7 +422,7 @@
             return object instanceof klass;
         }
 
-        if (object.constructor != null) {
+        if (isTrait(klass) && object.constructor != null) {
             metadata = object.constructor.$metadata$;
             if (metadata != null) {
                 return isInheritanceFromTrait(metadata, klass);
@@ -431,6 +431,11 @@
 
         return false;
     };
+
+    function isTrait(klass) {
+        var metadata = klass.$metadata$;
+        return metadata != null && metadata.type === Kotlin.TYPE.TRAIT;
+    }
 
     // TODO Store callable references for members in class
     Kotlin.getCallableRefForMemberFunction = function (klass, memberName) {
