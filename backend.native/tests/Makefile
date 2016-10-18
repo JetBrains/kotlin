@@ -41,5 +41,5 @@ clean:
 
 
 %.BCkt:%.kt
-	${JAVA} -cp ${KOTLIN_NATIVE_CLASSPATH} -Djava.library.path=${BACKEND}/build/nativelibs org.jetbrains.kotlin.cli.bc.K2NativeKt -output $@ -runtime ${RUNTIME}/build/runtime.bc $<
+	${JAVA} -cp ${KOTLIN_NATIVE_CLASSPATH} -Djava.library.path=${BACKEND}/build/nativelibs org.jetbrains.kotlin.cli.bc.K2NativeKt -output $@ -runtime ${RUNTIME}/build/runtime.bc ${RUNTIME}/src/main/kotlin $<
 
