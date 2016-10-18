@@ -27,16 +27,19 @@ import com.intellij.debugger.ui.tree.ValueDescriptor
 import com.intellij.debugger.ui.tree.render.ChildrenBuilder
 import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.settings.XDebuggerSettingsManager
-import com.sun.jdi.ObjectReference
-import com.sun.jdi.ReferenceType
+import com.sun.jdi.*
 import com.sun.jdi.Type
-import com.sun.jdi.Value
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 import com.sun.jdi.Type as JdiType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
+
+private val LOG = Logger.getInstance(KotlinClassWithDelegatedPropertyRenderer::class.java)
+private fun notPreparedClassMessage(referenceType: ReferenceType) =
+    "$referenceType ${referenceType.isPrepared} ${referenceType.sourceName()}"
 
 class KotlinClassWithDelegatedPropertyRenderer(val rendererSettings: NodeRendererSettings) : ClassRenderer() {
     override fun isApplicable(jdiType: Type?): Boolean {
@@ -44,7 +47,19 @@ class KotlinClassWithDelegatedPropertyRenderer(val rendererSettings: NodeRendere
 
         if (jdiType !is ReferenceType) return false
 
-        return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+        if (!jdiType.isPrepared) {
+            LOG.info(notPreparedClassMessage(jdiType))
+            return false
+        }
+
+        try {
+            return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+        }
+        catch (notPrepared: ClassNotPreparedException) {
+            LOG.error(notPreparedClassMessage(jdiType), notPrepared)
+        }
+
+        return false
     }
 
     override fun calcLabel(descriptor: ValueDescriptor,
