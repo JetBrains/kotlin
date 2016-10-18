@@ -46,6 +46,9 @@ class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnot
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
         }
+        if (annotated is KtTypeAlias) {
+            annotated.getTypeReference()?.let { check(it, trace) }
+        }
         if (annotated is KtTypeParameterListOwner && annotated is KtCallableDeclaration) {
             // TODO: support type parameter annotations for type parameters on classes and properties
             annotated.typeParameters.forEach { check(it, trace) }
