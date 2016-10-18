@@ -40,11 +40,11 @@ import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UReturnExpression;
 import org.jetbrains.uast.UastEmptyExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.Collections;
 import java.util.EnumSet;

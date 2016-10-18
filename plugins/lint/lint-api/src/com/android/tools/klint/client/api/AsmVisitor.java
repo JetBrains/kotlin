@@ -22,11 +22,11 @@ import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Detector.ClassScanner;
 import com.google.common.annotations.Beta;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.Collection;

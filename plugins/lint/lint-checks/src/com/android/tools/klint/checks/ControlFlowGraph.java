@@ -21,24 +21,24 @@ import com.android.annotations.Nullable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LineNumberNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicInterpreter;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.FrameNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.IntInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.LabelNode;
+import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.LineNumberNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode;
+import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import org.objectweb.asm.util.Printer;
+//import org.jetbrains.org.objectweb.asm.util.Printer;
 
 /**
  * A {@linkplain ControlFlowGraph} is a graph containing a node for each

@@ -3,9 +3,6 @@ package org.jetbrains.android.inspections.klint;
 import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class AndroidQuickfixContexts {
   public static abstract class Context {
     private final ContextType myType;
