@@ -30,21 +30,13 @@
         this.value = value;
     }
 
-    Entry.prototype.getKey = function () {
-        return this.key;
-    };
-
-    Entry.prototype.getValue = function () {
-        return this.value;
-    };
-
     Entry.prototype.hashCode = function() {
         return mapEntryHashCode(this.key, this.value);
     };
 
     Entry.prototype.equals_za3rmp$ = function(o) {
         // TODO: Check if o is instance of kotlin.Map.Entry
-        return o instanceof Entry && Kotlin.equals(this.key, o.getKey()) && Kotlin.equals(this.value, o.getValue());
+        return o instanceof Entry && Kotlin.equals(this.key, o.key) && Kotlin.equals(this.value, o.value);
     };
 
     Entry.prototype.toString = function() {
@@ -56,7 +48,7 @@
         var it = entries.iterator();
         while (it.hasNext()) {
             var e = it.next();
-            this.put_wn2jw4$(e.getKey(), e.getValue());
+            this.put_wn2jw4$(e.key, e.value);
         }
     }
 
