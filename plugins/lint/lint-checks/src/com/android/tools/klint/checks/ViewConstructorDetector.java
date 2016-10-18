@@ -41,7 +41,7 @@ import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiType;
 
 import org.jetbrains.uast.UClass;
-import org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 
 import java.util.Collections;
 import java.util.List;

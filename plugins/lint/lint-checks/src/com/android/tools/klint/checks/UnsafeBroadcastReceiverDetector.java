@@ -58,7 +58,7 @@ import org.jetbrains.uast.USimpleNameReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
-import org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 import org.w3c.dom.Element;
 
 import java.util.Collection;

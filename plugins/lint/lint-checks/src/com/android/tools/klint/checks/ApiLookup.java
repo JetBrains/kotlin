@@ -887,7 +887,7 @@ public class ApiLookup {
      *            fully qualified name (as returned by Class.getName(), but with
      *            '.' replaced by '/'.
      * @param name the method's name
-     * @param desc the method's descriptor - see {@link org.objectweb.asm.Type}
+     * @param desc the method's descriptor - see {@link Type}
      * @return the minimum API version the method is supported for, or 1 or -1 if
      *         it's unknown.
      */
@@ -929,7 +929,7 @@ public class ApiLookup {
      *            fully qualified name (as returned by Class.getName(), but with
      *            '.' replaced by '/'.
      * @param name the method's name
-     * @param desc the method's descriptor - see {@link org.objectweb.asm.Type}
+     * @param desc the method's descriptor - see {@link Type}
      * @return the API version the API was deprecated in, or 1 or -1 if
      *         it's unknown.
      */

@@ -32,13 +32,13 @@ import com.android.utils.AsmUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.LineNumberNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldNode;
+import org.jetbrains.org.objectweb.asm.tree.LineNumberNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.io.File;
 import java.util.List;
@@ -283,8 +283,8 @@ public class ClassContext extends Context {
      * Detectors should only call this method if an error applies to the whole class
      * scope and there is no specific method or field that applies to the error.
      * If so, use
-     * {@link #report(Issue, org.objectweb.asm.tree.MethodNode, org.objectweb.asm.tree.AbstractInsnNode, Location, String)} or
-     * {@link #report(Issue, org.objectweb.asm.tree.FieldNode, Location, String)}, such that
+     * {@link #report(Issue, MethodNode, AbstractInsnNode, Location, String)} or
+     * {@link #report(Issue, FieldNode, Location, String)}, such that
      * suppress annotations are checked.
      *
      * @param issue the issue to report
