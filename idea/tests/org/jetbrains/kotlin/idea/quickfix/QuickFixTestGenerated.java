@@ -7419,6 +7419,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/renameToUnderscore")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RenameToUnderscore extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRenameToUnderscore() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToUnderscore"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("commonDestructuring.kt")
+        public void testCommonDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/commonDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forDestructuring.kt")
+        public void testForDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/forDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaDestructuring.kt")
+        public void testLambdaDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/lambdaDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParameter.kt")
+        public void testLambdaParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/lambdaParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noActionForCommonVal.kt")
+        public void testNoActionForCommonVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/noActionForCommonVal.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/renameUnresolvedReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

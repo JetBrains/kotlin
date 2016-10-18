@@ -196,6 +196,9 @@ class QuickFixRegistrar : QuickFixContributor {
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddOverrideToEqualsHashCodeToStringActionFactory)
 
         UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.RemoveVariableFactory)
+        UNUSED_VARIABLE.registerFactory(RenameToUnderscoreFix.Factory)
+
+        UNUSED_DESTRUCTURED_PARAMETER_ENTRY.registerFactory(RenameToUnderscoreFix.Factory)
 
         SENSELESS_COMPARISON.registerFactory(SimplifyComparisonFix)
 
@@ -273,6 +276,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix)
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix)
         UNUSED_PARAMETER.registerFactory(RemoveUnusedFunctionParameterFix)
+        UNUSED_PARAMETER.registerFactory(RenameToUnderscoreFix.Factory)
         EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionLiteralSignatureFix)
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix)

@@ -1,0 +1,10 @@
+// "Rename to _" "true"
+fun foo(block: (String, Int) -> Unit) {
+    block("", 1)
+}
+
+fun bar() {
+    foo { _: String, y: Int ->
+        y.hashCode()
+    }
+}
