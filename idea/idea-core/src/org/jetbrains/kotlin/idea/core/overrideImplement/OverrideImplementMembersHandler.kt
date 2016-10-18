@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.overrideImplement
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
 import com.intellij.lang.LanguageCodeInsightActionHandler
@@ -65,6 +66,8 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
     fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>() ?: return
+
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val members = collectMembersToGenerate(classOrObject)
         if (members.isEmpty() && !implementAll) {

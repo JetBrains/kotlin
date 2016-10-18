@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -44,6 +45,7 @@ object AddOverrideToEqualsHashCodeToStringActionFactory : KotlinSingleIntentionA
     }
 
     private fun KtNamedFunction.doInvoke() {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(this)) return
         addModifier(OVERRIDE_KEYWORD)
         removeModifier(PUBLIC_KEYWORD)
     }

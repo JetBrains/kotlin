@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
@@ -69,6 +70,7 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
         override fun getFamilyName(): String = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val declaration = descriptor.psiElement.getParentOfType<KtNamedDeclaration>(true)
                               ?: throw IllegalStateException("Can't find declaration")
             declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**  */"), declaration.firstChild)

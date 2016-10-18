@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
@@ -32,6 +33,7 @@ open class AddModifierFix(val modifierListOwner: KtModifierListOwner,
     override fun getFamilyName() = text
 
     final override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         addModifier(modifierListOwner, modifier)
     }
 }

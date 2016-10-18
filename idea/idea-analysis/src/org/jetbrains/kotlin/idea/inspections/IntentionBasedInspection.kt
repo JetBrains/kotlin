@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
@@ -167,6 +168,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
         override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
             assert(startElement == endElement)
             if (!isAvailable(project, file, startElement, endElement)) return
+            if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
             val editor = startElement.findExistingEditor()
             editor?.caretModel?.moveToOffset(startElement.textOffset)

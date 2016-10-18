@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
 import com.intellij.openapi.diagnostic.Logger
@@ -204,6 +205,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
                                 UIUtil.invokeLaterIfNeeded {
                                     project.executeWriteCommand(text) {
                                         importsToDelete.forEach { import ->
+                                            if (!FileModificationService.getInstance().preparePsiElementForWrite(import)) return@forEach
                                             try {
                                                 import.delete()
                                             }

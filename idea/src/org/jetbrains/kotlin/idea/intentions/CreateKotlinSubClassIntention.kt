@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightUtil
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateClassKind
 import com.intellij.codeInsight.intention.impl.CreateClassDialog
 import com.intellij.openapi.application.ApplicationManager
@@ -79,6 +80,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     override fun applyTo(element: KtClass, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
+
         val name = element.name ?: throw IllegalStateException("This intention should not be applied to anonymous classes")
         val baseClass = element
         if (baseClass.isSealed()) {
