@@ -155,6 +155,7 @@ class DeserializedTypeAliasDescriptor(
     override lateinit var underlyingType: SimpleType private set
     override lateinit var expandedType: SimpleType private set
     private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
+    private lateinit var defaultTypeImpl: SimpleType private set
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
@@ -165,7 +166,11 @@ class DeserializedTypeAliasDescriptor(
         this.underlyingType = underlyingType
         this.expandedType = expandedType
         typeConstructorParameters = computeConstructorTypeParameters()
+        defaultTypeImpl = computeDefaultType()
     }
+
+    override fun getDefaultType(): SimpleType =
+            defaultTypeImpl
 
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor {
         if (substitutor.isEmpty) return this

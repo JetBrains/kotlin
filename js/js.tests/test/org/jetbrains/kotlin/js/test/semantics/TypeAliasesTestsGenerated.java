@@ -77,6 +77,12 @@ public class TypeAliasesTestsGenerated extends AbstractTypeAliasesTests {
         doTest(fileName);
     }
 
+    @TestMetadata("typeAliasInAnonymousObjectType.kt")
+    public void testTypeAliasInAnonymousObjectType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasInAnonymousObjectType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("typeAliasObject.kt")
     public void testTypeAliasObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasObject.kt");

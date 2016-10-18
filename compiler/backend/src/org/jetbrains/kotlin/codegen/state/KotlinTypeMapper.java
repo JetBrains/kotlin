@@ -639,9 +639,13 @@ public class KotlinTypeMapper {
 
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
-        if (descriptor instanceof ConstructorDescriptor) {
+        if (descriptor instanceof TypeAliasConstructorDescriptor) {
+            return mapToCallableMethod(((TypeAliasConstructorDescriptor) descriptor).getUnderlyingConstructorDescriptor(), superCall);
+        }
+
+        if (descriptor instanceof ClassConstructorDescriptor) {
             JvmMethodSignature method = mapSignatureSkipGeneric(descriptor);
-            Type owner = mapClass(((ConstructorDescriptor) descriptor).getContainingDeclaration());
+            Type owner = mapClass(((ClassConstructorDescriptor) descriptor).getContainingDeclaration());
             String defaultImplDesc = mapDefaultMethod(descriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
             return new CallableMethod(owner, owner, defaultImplDesc, method, INVOKESPECIAL, null, null, null);
         }

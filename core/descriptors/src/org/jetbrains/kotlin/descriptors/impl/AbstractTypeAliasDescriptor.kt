@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.TypeUtils
 
 abstract class AbstractTypeAliasDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -57,15 +59,15 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun getVisibility() = visibilityImpl
 
-    override fun getDefaultType(): SimpleType =
-            TODO("typealias getDefaultType")
-
     override fun getTypeConstructor(): TypeConstructor =
             typeConstructor
 
     override fun toString(): String = "typealias ${name.asString()}"
 
     protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
+
+    protected fun computeDefaultType(): SimpleType =
+            TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty)
 
     private val typeConstructor = object : TypeConstructor {
         override fun getDeclarationDescriptor(): TypeAliasDescriptor =

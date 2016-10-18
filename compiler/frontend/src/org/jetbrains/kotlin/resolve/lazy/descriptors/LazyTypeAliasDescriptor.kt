@@ -41,9 +41,11 @@ class LazyTypeAliasDescriptor(
 
     private lateinit var underlyingTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
+    private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()
+    override fun getDefaultType(): SimpleType = defaultTypeImpl()
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,
@@ -53,6 +55,7 @@ class LazyTypeAliasDescriptor(
         super.initialize(declaredTypeParameters)
         this.underlyingTypeImpl = lazyUnderlyingType
         this.expandedTypeImpl = lazyExpandedType
+        this.defaultTypeImpl = storageManager.createLazyValue { computeDefaultType() }
     }
 
     private val lazyTypeConstructorParameters =
