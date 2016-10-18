@@ -1807,6 +1807,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("primaryConstructorDoc.java")
+        public void testPrimaryConstructorDoc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/primaryConstructorDoc.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("quoted.java")
         public void testQuoted() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/quoted.java");

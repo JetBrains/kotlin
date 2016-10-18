@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.j2k.append
 abstract class Member(var annotations: Annotations, val modifiers: Modifiers) : Element()
 
 class ClassBody (
+        val primaryConstructor: PrimaryConstructor?,
         val primaryConstructorSignature: PrimaryConstructorSignature?,
         val baseClassParams: List<DeferredElement<Expression>>?,
         val members: List<Member>,
