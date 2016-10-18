@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -58,7 +59,10 @@ internal class AnonymousTemplateEditingListener(private val psiFile: PsiFile, pr
         if (classDescriptor != null) {
             if (classDescriptor!!.kind == ClassKind.CLASS) {
                 val placeToInsert = classRef!!.textRange.endOffset
-                PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)!!.insertString(placeToInsert, "()")
+
+                runWriteAction {
+                    PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)!!.insertString(placeToInsert, "()")
+                }
 
                 var hasConstructorsParameters = false
                 for (cd in classDescriptor!!.constructors) {
