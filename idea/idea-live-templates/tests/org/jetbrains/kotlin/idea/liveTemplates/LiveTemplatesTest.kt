@@ -213,6 +213,14 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         checkAfter()
     }
 
+    fun testObject_ForClass() {
+        start()
+
+        typeAndNextTab("A")
+
+        checkAfter()
+    }
+
     private fun doTestIfnInn() {
         start()
 
@@ -272,7 +280,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
             CommandProcessor.getInstance().executeCommand(
                     project,
                     {
-                        ApplicationManager.getApplication().runWriteAction { templateState!!.nextTab() }
+                        templateState!!.nextTab()
                     },
                     "nextTab",
                     null)
