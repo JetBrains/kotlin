@@ -1261,10 +1261,13 @@ public class KotlinTypeMapper {
     }
 
     private void writeAdditionalConstructorParameters(@NotNull ClassConstructorDescriptor descriptor, @NotNull JvmSignatureWriter sw) {
+        boolean isSynthesized = descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED;
+        //if (isSynthesized) return;
+
         MutableClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
         ClassDescriptor captureThis = getDispatchReceiverParameterForConstructorCall(descriptor, closure);
-        if (captureThis != null) {
+        if (!isSynthesized && captureThis != null) {
             writeParameter(sw, JvmMethodParameterKind.OUTER, captureThis.getDefaultType(), descriptor);
         }
 
@@ -1274,12 +1277,16 @@ public class KotlinTypeMapper {
         }
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (descriptor.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED &&
-            (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY)) {
-            writeParameter(
-                    sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getStringType(), descriptor);
-            writeParameter(
-                    sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getIntType(), descriptor);
+
+        if (!isSynthesized) {
+            if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
+                writeParameter(
+                        sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getStringType(),
+                        descriptor);
+                writeParameter(
+                        sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getIntType(),
+                        descriptor);
+            }
         }
 
         if (closure == null) return;

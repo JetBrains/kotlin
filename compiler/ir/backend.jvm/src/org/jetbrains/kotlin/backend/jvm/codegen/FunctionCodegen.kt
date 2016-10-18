@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -41,6 +42,15 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
     val descriptor = irFunction.descriptor
 
     fun generate() {
+        try {
+            doGenerate()
+        }
+        catch (e: Throwable) {
+            throw RuntimeException("${e.message} + while generating code for:\n${irFunction.dump()}", e)
+        }
+    }
+
+    private fun doGenerate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
         val isStatic = isStaticMethod(classCodegen.descriptor.getMemberOwnerKind(), descriptor) || DescriptorUtils.isStaticDeclaration(descriptor)
         val frameMap = createFrameMapWithReceivers(classCodegen.state, descriptor, signature, isStatic)

@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.backend.jvm.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
@@ -33,6 +36,8 @@ class SpecialDescriptorsFactory(
         val builtIns: KotlinBuiltIns
 ) {
     private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
+    private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
+    private val innerClassConstructors = HashMap<ClassConstructorDescriptor, ClassConstructorDescriptor>()
 
     fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
             singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
@@ -51,6 +56,47 @@ class SpecialDescriptorsFactory(
                 Annotations.EMPTY // TODO file annotations
         )
     }
+
+    fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
+            if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
+            else outerThisDescriptors.getOrPut(innerClassDescriptor) {
+                val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor) ?:
+                                           throw AssertionError("No containing class for inner class $innerClassDescriptor")
+
+                JvmPropertyDescriptorImpl.createFinalField(
+                        Name.identifier("this$0"), outerClassDescriptor.defaultType, innerClassDescriptor,
+                        Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
+                )
+            }
+
+    fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): ClassConstructorDescriptor {
+        val innerClass = innerClassConstructor.containingDeclaration
+        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
+
+        return innerClassConstructors.getOrPut(innerClassConstructor) {
+            createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
+        }
+    }
+
+    private fun createInnerClassConstructorWithOuterThisParameter(oldDescriptor: ClassConstructorDescriptor): ClassConstructorDescriptor {
+        val classDescriptor = oldDescriptor.containingDeclaration
+        val outerThisType = (classDescriptor.containingDeclaration as ClassDescriptor).defaultType
+
+        val newDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
+                classDescriptor, oldDescriptor.annotations, oldDescriptor.isPrimary, oldDescriptor.source
+        )
+
+        val outerThisValueParameter = newDescriptor.createValueParameter(0, "\$outer", outerThisType)
+
+        val newValueParameters =
+                listOf(outerThisValueParameter) +
+                oldDescriptor.valueParameters.map { it.copy(newDescriptor, it.name, it.index + 1) }
+        newDescriptor.initialize(newValueParameters, oldDescriptor.visibility)
+        newDescriptor.returnType = oldDescriptor.returnType
+        return newDescriptor
+    }
+
+
 
     private fun createEnumEntryFieldDescriptor(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(enumEntryDescriptor.kind == ClassKind.ENUM_ENTRY) { "Should be enum entry: $enumEntryDescriptor" }

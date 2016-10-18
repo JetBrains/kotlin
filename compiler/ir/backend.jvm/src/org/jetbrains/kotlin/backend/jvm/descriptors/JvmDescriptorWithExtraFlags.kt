@@ -70,5 +70,19 @@ class JvmPropertyDescriptorImpl(
                         containingDeclaration, null, annotations, modality, visibility, extraFlags, false, name,
                         CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
                 ).initialize(type)
+
+        fun createFinalField(
+                name: Name,
+                type: KotlinType,
+                classDescriptor: ClassDescriptor,
+                annotations: Annotations,
+                visibility: Visibility,
+                extraFlags: Int,
+                source: SourceElement
+        ): PropertyDescriptorImpl =
+                JvmPropertyDescriptorImpl(
+                        classDescriptor, null, annotations, Modality.FINAL, visibility, extraFlags, false, name,
+                        CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
+                ).initialize(type, dispatchReceiverParameter = classDescriptor.thisAsReceiverParameter)
     }
 }

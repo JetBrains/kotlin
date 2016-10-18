@@ -127,6 +127,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("innerClassWithDelegatingConstructor.kt")
+        public void testInnerClassWithDelegatingConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/innerClassWithDelegatingConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localClasses.kt")
         public void testLocalClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/localClasses.kt");

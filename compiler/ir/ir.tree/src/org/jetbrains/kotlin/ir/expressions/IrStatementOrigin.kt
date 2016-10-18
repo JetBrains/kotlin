@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrStatementOrigin {
-    abstract class IrStatementOriginImpl(val debugName: String): IrStatementOrigin {
-        override fun toString(): String = debugName
-    }
+abstract class IrStatementOriginImpl(val debugName: String): IrStatementOrigin {
+    override fun toString(): String = debugName
+}
 
+interface IrStatementOrigin {
     object SAFE_CALL : IrStatementOriginImpl("SAFE_CALL")
     
     object UMINUS : IrStatementOriginImpl("UMINUS")

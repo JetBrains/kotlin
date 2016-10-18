@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 fun PropertyDescriptorImpl.initialize(
         type: KotlinType,
@@ -35,3 +36,13 @@ fun PropertyDescriptorImpl.initialize(
     initialize(getter, setter)
     return this
 }
+
+fun CallableMemberDescriptor.createValueParameter(index: Int, name: String, type: KotlinType): ValueParameterDescriptor =
+        ValueParameterDescriptorImpl(
+                this, null,
+                index,
+                Annotations.EMPTY,
+                Name.identifier(name),
+                type,
+                false, false, false, false, null, SourceElement.NO_SOURCE
+        )

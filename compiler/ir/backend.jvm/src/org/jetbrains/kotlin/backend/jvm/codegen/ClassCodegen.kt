@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -200,6 +201,9 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
     }
     else if (visibility == Visibilities.PROTECTED) {
         flags = flags.or(Opcodes.ACC_PROTECTED)
+    }
+    else if (visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
+        // default visibility
     }
     else {
         throw RuntimeException("Unsupported visibility $visibility for descriptor $this")

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
 interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
@@ -26,10 +27,10 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
+    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
-    object DEFAULT_IMPLS_DELEGATION : IrStatementOrigin.IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
-
+    object DEFAULT_IMPLS_DELEGATION : IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
 }

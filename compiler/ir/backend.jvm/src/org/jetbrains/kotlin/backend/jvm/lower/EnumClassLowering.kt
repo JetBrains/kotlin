@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmPropertyDescriptorImpl
+import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -137,8 +138,8 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val valueParameters =
                     listOf(
-                            loweredConstructorDescriptor.createSpecialParameter(0, "name", context.builtIns.stringType),
-                            loweredConstructorDescriptor.createSpecialParameter(1, "ordinal", context.builtIns.intType)
+                            loweredConstructorDescriptor.createValueParameter(0, "name", context.builtIns.stringType),
+                            loweredConstructorDescriptor.createValueParameter(1, "ordinal", context.builtIns.intType)
                     ) +
                     constructorDescriptor.valueParameters.map {
                         lowerConstructorValueParameter(loweredConstructorDescriptor, it)
@@ -151,16 +152,6 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             return loweredConstructorDescriptor
         }
-
-        private fun ClassConstructorDescriptor.createSpecialParameter(index: Int, name: String, type: KotlinType): ValueParameterDescriptor =
-                ValueParameterDescriptorImpl(
-                        this, null,
-                        index,
-                        Annotations.EMPTY,
-                        Name.identifier(name),
-                        type,
-                        false, false, false, false, null, SourceElement.NO_SOURCE
-                )
 
         private fun lowerConstructorValueParameter(
                 loweredConstructorDescriptor: ClassConstructorDescriptor,

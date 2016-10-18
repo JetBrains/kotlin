@@ -109,6 +109,12 @@ public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest
             doTest(fileName);
         }
 
+        @TestMetadata("innerClass1.kt")
+        public void testInnerClass1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/innerClass1.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mutable1.kt")
         public void testMutable1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/mutable1.kt");
