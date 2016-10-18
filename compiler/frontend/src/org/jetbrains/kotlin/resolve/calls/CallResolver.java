@@ -187,7 +187,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksFromCandidatesAndResolvedCall(
+    private <D extends FunctionDescriptor> OverloadResolutionResults<D> computeTasksFromCandidatesAndResolvedCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull KtReferenceExpression referenceExpression,
             @NotNull Collection<ResolutionCandidate<D>> candidates
@@ -197,7 +197,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksFromCandidatesAndResolvedCall(
+    private <D extends FunctionDescriptor> OverloadResolutionResults<D> computeTasksFromCandidatesAndResolvedCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull TracingStrategy tracing
