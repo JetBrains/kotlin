@@ -5,12 +5,12 @@ val receiverAndReturnType = { Int.(<!SYNTAX!><!>)<!SYNTAX!>: Int ->  5<!> }
 val receiverAndReturnTypeWithParameter = { Int.(<!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
 
 val returnType = { (<!SYNTAX!><!>): Int -> 5 }
-val returnTypeWithParameter = { (<!COMPONENT_FUNCTION_MISSING!>b: Int<!>): Int -> 5 }
+val returnTypeWithParameter = { (<!COMPONENT_FUNCTION_MISSING!><!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>: Int<!>): Int -> 5 }
 
 val receiverWithFunctionType = { ((Int)<!SYNTAX!><!> <!SYNTAX!>-> Int).() -><!> }
 
-val parenthesizedParameters = { <!CANNOT_INFER_PARAMETER_TYPE!>(a: Int)<!> -> }
-val parenthesizedParameters2 = { <!CANNOT_INFER_PARAMETER_TYPE!>(b)<!> -> }
+val parenthesizedParameters = { <!CANNOT_INFER_PARAMETER_TYPE!>(<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>: Int)<!> -> }
+val parenthesizedParameters2 = { <!CANNOT_INFER_PARAMETER_TYPE!>(<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>)<!> -> }
 
 val none = { -> }
 

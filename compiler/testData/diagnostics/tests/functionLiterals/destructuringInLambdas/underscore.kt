@@ -46,7 +46,7 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { (<!REDECLARATION!>`_`<!>, <!REDECLARATION!>`_`<!>) ->
+    foo { (<!REDECLARATION, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>`_`<!>, <!REDECLARATION!>`_`<!>) ->
         _ checkType { _<String>() }
     }
 

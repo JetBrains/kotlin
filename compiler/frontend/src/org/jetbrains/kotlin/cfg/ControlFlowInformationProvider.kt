@@ -602,11 +602,17 @@ class ControlFlowInformationProvider private constructor(
     ) {
         element.nameIdentifier ?: return
         if (!VariableUseState.isUsed(variableUseState)) {
-            if (!element.isSingleUnderscore && KtPsiUtil.isRemovableVariableDeclaration(element)) {
-                report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
-            }
-            else if (element is KtParameter) {
-                processUnusedParameter(ctxt, element, variableDescriptor)
+            if (element.isSingleUnderscore) return
+            when {
+                // KtDestructuringDeclarationEntry -> KtDestructuringDeclaration -> KtParameter -> KtParameterList
+                element is KtDestructuringDeclarationEntry && element.parent?.parent?.parent is KtParameterList ->
+                    report(Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY.on(element, variableDescriptor), ctxt)
+
+                KtPsiUtil.isRemovableVariableDeclaration(element) ->
+                    report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+
+                element is KtParameter ->
+                    processUnusedParameter(ctxt, element, variableDescriptor)
             }
         }
         else if (variableUseState === ONLY_WRITTEN_NEVER_READ && KtPsiUtil.isRemovableVariableDeclaration(element)) {
@@ -626,7 +632,6 @@ class ControlFlowInformationProvider private constructor(
 
     private fun processUnusedParameter(ctxt: VariableUseContext, element: KtParameter, variableDescriptor: VariableDescriptor) {
         val owner = element.parent?.parent
-        if (element.isSingleUnderscore) return
         when (owner) {
             is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
                 val containingClass = owner.getContainingClassOrObject()

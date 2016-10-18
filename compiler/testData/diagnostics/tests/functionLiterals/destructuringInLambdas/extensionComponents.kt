@@ -31,7 +31,7 @@ fun bar() {
     }
 
     // From KEEP: Component-functions are resolved in the scope that contains the lambda
-    foobaz { (<!COMPONENT_FUNCTION_MISSING!>a<!>, <!COMPONENT_FUNCTION_MISSING!>b<!>) ->
+    foobaz { (<!COMPONENT_FUNCTION_MISSING, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, <!COMPONENT_FUNCTION_MISSING, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>) ->
     }
 
     // From KEEP: Component-functions are resolved in the scope that contains the lambda
