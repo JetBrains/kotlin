@@ -581,6 +581,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("multifileClassAddTopLevelFunWithDefault")
+        public void testMultifileClassAddTopLevelFunWithDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassAddTopLevelFunWithDefault/");
+            doTest(fileName);
+        }
+
         @TestMetadata("multifileClassFileAdded")
         public void testMultifileClassFileAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassFileAdded/");

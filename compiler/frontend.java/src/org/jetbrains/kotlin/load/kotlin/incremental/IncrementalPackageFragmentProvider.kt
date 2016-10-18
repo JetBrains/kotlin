@@ -93,6 +93,9 @@ class IncrementalPackageFragmentProvider(
             )
         }
 
+        val multifileClassName: Name
+            get() = multifileClassFqName.shortName()
+
         override fun getMemberScope() = memberScope()
     }
 }
