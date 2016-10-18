@@ -28,10 +28,6 @@
 
         <fileset dir="${basedir}/${intermediate-sources}/stdlib/js">
             <include name="**/*.kt" />
-
-            <!-- JVM specific -->
-            <exclude name="**/*JVM.kt" />
-            <exclude name="kotlin/jvm/**" />
         </fileset>
     </union>
 </project>

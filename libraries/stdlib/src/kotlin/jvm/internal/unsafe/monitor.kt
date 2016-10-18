@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmVersion
 package kotlin.jvm.internal.unsafe
 
 private fun monitorEnter(@Suppress("UNUSED_PARAMETER") monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")

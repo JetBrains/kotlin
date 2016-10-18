@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
+@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
