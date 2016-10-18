@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmVersion
 package test.reflection
 
 import kotlin.test.*

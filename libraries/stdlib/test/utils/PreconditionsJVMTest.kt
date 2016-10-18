@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmVersion
 package test.utils
 
 import org.junit.Test as test

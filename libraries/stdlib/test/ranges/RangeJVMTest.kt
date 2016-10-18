@@ -1,6 +1,6 @@
+@file:kotlin.jvm.JvmVersion
 package test.ranges
 
-import kotlin.ranges.LongProgression.Companion
 import java.lang.Double as jDouble
 import java.lang.Float as jFloat
 import org.junit.Test as test

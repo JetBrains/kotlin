@@ -1,6 +1,6 @@
+@file:kotlin.jvm.JvmVersion
 package test.text
 
-import kotlin.*
 import kotlin.test.*
 import org.junit.Test as test
 

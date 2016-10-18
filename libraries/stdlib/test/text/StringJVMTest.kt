@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmVersion
 package test.text
 
 import test.collections.assertArrayNotSameButEquals

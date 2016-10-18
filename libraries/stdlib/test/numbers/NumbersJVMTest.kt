@@ -1,3 +1,4 @@
+@file:kotlin.jvm.JvmVersion
 package test.numbers
 
 import java.math.BigDecimal
