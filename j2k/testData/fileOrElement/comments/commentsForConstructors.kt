@@ -19,3 +19,21 @@ internal class B// this constructor will disappear
     fun foo() {
     }
 }
+
+internal class CtorComment {
+    var myA: String
+
+    /*
+     * The magic of comments
+     */
+    // single line magic comments
+    init {
+        myA = "a"
+    }
+}
+
+/*
+     * The magic of comments
+     */
+// single line magic comments
+internal class CtorComment2
