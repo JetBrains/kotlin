@@ -13,6 +13,7 @@
 
     - Nested destructuring is not supported
     - Destructuring in named functions/constructors is not supported
+    - Is not supported for JS target
         
 ### Compiler
 
@@ -69,9 +70,10 @@
 - [`KT-10001`](https://youtrack.jetbrains.com/issue/KT-10001) Fix false unnecessary non-null assertion on a pair element
 - [`KT-12811`](https://youtrack.jetbrains.com/issue/KT-12811) Treat function declaration as final if it is a member of a final class
 - [`KT-13961`](https://youtrack.jetbrains.com/issue/KT-13961) Report REDECLARATION on private-in-file 'foo' vs public 'foo' in different file
+
 ### JS
 
-#### Bugfixes
+#### Feature support
 - [`KT-13544`](https://youtrack.jetbrains.com/issue/KT-13544) Support type aliases in JS
 - [`KT-13345`](https://youtrack.jetbrains.com/issue/KT-13345) Support class literals in JS
 
