@@ -73,8 +73,6 @@
 
 #### Bugfixes
 - [`KT-13544`](https://youtrack.jetbrains.com/issue/KT-13544) Support type aliases in JS
-- [`KT-12707`](https://youtrack.jetbrains.com/issue/KT-12707) Subclasses call wrong super constructor
-- [`KT-13836`](https://youtrack.jetbrains.com/issue/KT-13836) Calling secondary constructor via type alias generates incorrect call in JS
 - [`KT-13345`](https://youtrack.jetbrains.com/issue/KT-13345) Support class literals in JS
 
 #### Library updates
