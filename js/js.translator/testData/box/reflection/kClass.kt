@@ -1,14 +1,13 @@
 package foo
 
 fun box(): String {
-    check(A::class, A()::class)
-    check(B::class, B()::class)
-    check(O::class, (O)::class)
-    assertNotEquals(null, I::class)
-    check(E::class, E.X::class)
-    check(E::class, E.Y::class, shouldBeEqual = false)
+    check(A::class, A().jsClass.kotlin)
+    check(B::class, B().jsClass.kotlin)
+    check(O::class, (O).jsClass.kotlin)
+    check(E::class, E.X.jsClass.kotlin)
+    check(E::class, E.Y.jsClass.kotlin, shouldBeEqual = false)
 // TODO uncomment after KT-13338 is fixed
-//    check(E::class, E.Z::class)
+//    check(E::class, E.Z.jsClass.kotlin)
 
     return "OK"
 }

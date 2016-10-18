@@ -29,7 +29,6 @@ interface JsClass<T : Any> {
 @Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"))
 fun <T : Any> jsClass(): JsClass<T> = noImpl
 
-@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"))
 val <T : Any> T.jsClass: JsClass<T>
     get() = js("Object").getPrototypeOf(this).constructor
 

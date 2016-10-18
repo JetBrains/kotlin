@@ -27,16 +27,6 @@ fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.<!NO_REFLECTION_IN_CLASS_PATH!>constructors<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>nestedClasses<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>objectInstance<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>typeParameters<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>supertypes<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>visibility<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isFinal<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isOpen<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isAbstract<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isSealed<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isData<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isInner<!>
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>isCompanion<!>
 
     k.<!NO_REFLECTION_IN_CLASS_PATH!>annotations<!>
 

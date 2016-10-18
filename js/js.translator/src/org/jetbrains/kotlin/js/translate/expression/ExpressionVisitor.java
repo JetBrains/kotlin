@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -40,13 +41,14 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,8 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatem
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
@@ -213,20 +216,23 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitClassLiteralExpression(
             @NotNull KtClassLiteralExpression expression, TranslationContext context
     ) {
-        KtExpression receiverExpression = expression.getReceiverExpression();
-        assert receiverExpression != null : "Class literal expression should have a left-hand side";
+        KotlinType expressionType = context.bindingContext().getType(expression);
+        assert expressionType != null;
 
-        DoubleColonLHS lhs = context.bindingContext().get(DOUBLE_COLON_LHS, receiverExpression);
-        assert lhs != null : "Class literal expression should have LHS resolved";
+        ClassifierDescriptor expressionClassifier = expressionType.getConstructor().getDeclarationDescriptor();
+        assert expressionClassifier != null && DescriptorUtils.getFqName(expressionClassifier).asString().equals("kotlin.reflect.KClass")
+                : "::class expression should be type checked to a KClass: " + expressionType;
 
-        if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObject()) {
-            JsExpression receiver = translateAsExpression(receiverExpression, context);
-            return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
+        KotlinType type = CollectionsKt.single(expressionType.getArguments()).getType();
+        JsNameRef referenceToJsClass = UtilsKt.getReferenceToJsClass(type, context);
+
+        ClassifierDescriptor typeClassifier = type.getConstructor().getDeclarationDescriptor();
+        if (typeClassifier != null && DescriptorUtils.isEnumEntry(typeClassifier)) {
+            return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), referenceToJsClass);
         }
 
-        return new JsInvocation(context.namer().kotlin(GET_KCLASS), UtilsKt.getReferenceToJsClass(lhs.getType(), context));
+        return new JsInvocation(context.namer().kotlin(GET_KCLASS), referenceToJsClass);
     }
-
 
     @Override
     @NotNull

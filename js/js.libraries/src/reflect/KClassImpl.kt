@@ -33,20 +33,6 @@ internal class KClassImpl<T : Any>(
         get() = TODO()
     override val constructors: Collection<KFunction<T>>
         get() = TODO()
-    override val isAbstract: Boolean
-        get() = TODO()
-    override val isCompanion: Boolean
-        get() = TODO()
-    override val isData: Boolean
-        get() = TODO()
-    override val isFinal: Boolean
-        get() = TODO()
-    override val isInner: Boolean
-        get() = TODO()
-    override val isOpen: Boolean
-        get() = TODO()
-    override val isSealed: Boolean
-        get() = TODO()
     override val members: Collection<KCallable<*>>
         get() = TODO()
     override val nestedClasses: Collection<KClass<*>>
@@ -55,12 +41,6 @@ internal class KClassImpl<T : Any>(
         get() = TODO()
     override val qualifiedName: String?
         get() = TODO()
-    override val supertypes: List<KType>
-        get() = TODO()
-    override val typeParameters: List<KTypeParameter>
-        get() = TODO()
-    override val visibility: KVisibility?
-        get() = TODO()
 
     override fun equals(other: Any?): Boolean {
         return other is KClassImpl<*> && jClass == other.jClass
@@ -68,10 +48,6 @@ internal class KClassImpl<T : Any>(
 
     override fun hashCode(): Int {
         return hashCode
-    }
-
-    override fun isInstance(value: Any?): Boolean {
-        TODO()
     }
 
     override fun toString(): String {

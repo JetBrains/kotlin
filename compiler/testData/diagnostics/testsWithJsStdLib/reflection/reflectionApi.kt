@@ -31,16 +31,6 @@ fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.<!UNSUPPORTED!>constructors<!>
     k.<!UNSUPPORTED!>nestedClasses<!>
     k.<!UNSUPPORTED!>objectInstance<!>
-    k.<!UNSUPPORTED!>typeParameters<!>
-    k.<!UNSUPPORTED!>supertypes<!>
-    k.<!UNSUPPORTED!>visibility<!>
-    k.<!UNSUPPORTED!>isFinal<!>
-    k.<!UNSUPPORTED!>isOpen<!>
-    k.<!UNSUPPORTED!>isAbstract<!>
-    k.<!UNSUPPORTED!>isSealed<!>
-    k.<!UNSUPPORTED!>isData<!>
-    k.<!UNSUPPORTED!>isInner<!>
-    k.<!UNSUPPORTED!>isCompanion<!>
 
     k.<!UNSUPPORTED!>annotations<!>
 
