@@ -16,6 +16,7 @@ class LazyValTest {
     }
 }
 
+@JvmVersion
 class SynchronizedLazyValTest {
     @Volatile var result = 0
     val a by lazy(this) {
@@ -24,7 +25,7 @@ class SynchronizedLazyValTest {
 
     @test fun doTest() {
         synchronized(this) {
-            // thread { a } // not available in js // TODO: Make this test JVM-only
+            kotlin.concurrent.thread { a } // not available in js
             result = 1
             a
         }

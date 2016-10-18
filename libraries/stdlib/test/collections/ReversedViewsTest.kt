@@ -64,6 +64,20 @@ class ReversedViewsTest {
         assertEquals(listOf(9, 8, 7), reversed.subList(1, 4))
     }
 
+    @test fun testMutableSubList() {
+        val original = arrayListOf(1, 2, 3, 4)
+        val reversedSubList = original.asReversed().subList(1, 3)
+
+        assertEquals(listOf(3, 2), reversedSubList)
+        reversedSubList.clear()
+        assertEquals(emptyList<Int>(), reversedSubList)
+        assertEquals(listOf(1, 4), original)
+
+        reversedSubList.add(100)
+        assertEquals(listOf(100), reversedSubList)
+        assertEquals(listOf(1, 100, 4), original)
+    }
+
     @test fun testMutableSimple() {
         assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed())
         assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed().toList())
