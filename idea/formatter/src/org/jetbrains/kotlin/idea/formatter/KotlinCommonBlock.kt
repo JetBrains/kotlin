@@ -337,8 +337,8 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .set(Indent.getNormalIndent()),
 
         strategy("Indent for parts")
-                .`in`(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION)
-                .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
+                .`in`(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
+                .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD)
                 .set(Indent.getContinuationWithoutFirstIndent()),
 
         strategy("Chained calls")
