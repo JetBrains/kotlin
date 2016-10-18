@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -30,6 +31,8 @@ class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Specify type explicitly"
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
+
         val declaration = declarationByElement(element)!!
         val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration)
         SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration, type)

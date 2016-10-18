@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -77,6 +78,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = "Add variance"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
             val typeParameter = descriptor.psiElement as? KtTypeParameter
                                 ?: throw AssertionError("Add variance fix is used on ${descriptor.psiElement.text}")
             addModifier(typeParameter, if (variance == Variance.IN_VARIANCE) KtTokens.IN_KEYWORD else KtTokens.OUT_KEYWORD)

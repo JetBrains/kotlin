@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.CodeInsightUtilBase
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -42,6 +44,7 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         val objectDeclaration = descriptor.psiElement.getStrictParentOfType<KtObjectDeclaration>() ?: return
         val classDescriptor = objectDeclaration.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
         classDescriptor.findDeclaredEquals(false)?.source?.getPsi()?.delete()
@@ -61,6 +64,7 @@ sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         KotlinGenerateEqualsAndHashcodeAction().doInvoke(project, null, descriptor.psiElement.parent as KtClass)
     }
 }

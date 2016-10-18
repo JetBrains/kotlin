@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -116,6 +117,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
+
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? CallableDescriptor ?: return
             runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -47,6 +48,8 @@ class KotlinSuppressIntentionAction private constructor(
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
+
         val id = "\"$suppressKey\""
         when (suppressAt) {
             is KtModifierListOwner ->

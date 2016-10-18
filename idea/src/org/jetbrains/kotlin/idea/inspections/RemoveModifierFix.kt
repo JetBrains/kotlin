@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
@@ -33,6 +34,7 @@ class RemoveModifierFix(val text: String) : LocalQuickFix {
         val modifierKeyword = descriptor.psiElement.node.elementType as KtModifierKeywordToken
         val modifierListOwner = descriptor.psiElement.getParentOfType<KtModifierListOwner>(true)
                                 ?: throw IllegalStateException("Can't find modifier list owner for modifier")
+        if (!FileModificationService.getInstance().preparePsiElementForWrite(modifierListOwner)) return
         removeModifier(modifierListOwner, modifierKeyword)
     }
 }

@@ -83,6 +83,8 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
               getExpressionForIntroduceCall() != null
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
+
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
         val exclExclExpression = KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
         modifiedExpression.replace(exclExclExpression)
