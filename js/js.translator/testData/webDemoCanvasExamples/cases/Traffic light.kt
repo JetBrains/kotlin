@@ -61,7 +61,7 @@ fun main(args: Array<String>) {
     state.addShape(Button(PATH_TO_IMAGES + "ud.png", v(455.0, 120.0), v(50.0, 120.0)))
 }
 
-fun v(x: Double, y: Double) = Vector(x.toInt(), y.toInt())
+fun v(x: Double, y: Double) = Vector(x, y)
 fun v(x: Int, y: Int) = Vector(x, y)
 
 class Image(val src: String, override var pos: Vector, var imageSize: Vector) : Shape() {
@@ -482,8 +482,9 @@ abstract class Shape() {
 
 }
 
-class Vector(val x: Int = 0, val y: Int = 0) {
-    constructor(x: Double, y: Double) : this(x.toInt(), y.toInt())
+class Vector(val x: Double = 0.0, val y: Double = 0.0) {
+    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
+
     operator fun plus(v: Vector) = v(x + v.x, y + v.y)
     operator fun unaryMinus() = v(-x, -y)
     operator fun minus(v: Vector) = v(x - v.x, y - v.y)

@@ -306,14 +306,15 @@ class RadialGradientGenerator(val context: CanvasRenderingContext2D) {
     }
 }
 
-fun v(x: Int, y: Int) = Vector(x, y)
-fun v(x: Double, y: Double) = Vector(x.toInt(), y.toInt())
+fun v(x: Double, y: Double) = Vector(x, y)
+fun v(x: Int, y: Int) = Vector(x.toDouble(), y.toDouble())
 
-class Vector(val x: Int = 0.0, val y: Int = 0.0) {
+class Vector(val x: Double = 0.0, val y: Double = 0.0) {
+    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
+
     operator fun plus(v: Vector) = v(x + v.x, y + v.y)
     operator fun unaryMinus() = v(-x, -y)
     operator fun minus(v: Vector) = v(x - v.x, y - v.y)
-    operator fun times(koef: Int) = v(x * koef, y * koef)
     operator fun times(koef: Double) = v(x * koef, y * koef)
     infix fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
     fun rotatedBy(theta: Double): Vector {
