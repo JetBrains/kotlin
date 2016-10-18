@@ -63,7 +63,7 @@ import com.android.resources.ResourceType;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.sdklib.repositoryv2.AndroidSdkHandler;
+import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.klint.client.api.*;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.ClassContext;
