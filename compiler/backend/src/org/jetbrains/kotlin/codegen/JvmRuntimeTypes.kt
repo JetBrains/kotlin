@@ -33,42 +33,36 @@ import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import java.util.*
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
-    private val lambda: ClassDescriptor
-    private val functionReference: ClassDescriptor
-    private val propertyReferences: MutableList<ClassDescriptor>
-    private val mutablePropertyReferences: MutableList<ClassDescriptor>
-    private val localVariableReference: ClassDescriptor
-    private val mutableLocalVariableReference: ClassDescriptor
-    private val defaultContinuationSupertype: KotlinType
+    private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
 
-    init {
-        val kotlinJvmInternal = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
+    private fun klass(name: String) = lazy { createClass(kotlinJvmInternalPackage, name) }
 
-        this.lambda = createClass(kotlinJvmInternal, "Lambda")
-        this.functionReference = createClass(kotlinJvmInternal, "FunctionReference")
-        this.localVariableReference = createClass(kotlinJvmInternal, "LocalVariableReference")
-        this.mutableLocalVariableReference = createClass(kotlinJvmInternal, "MutableLocalVariableReference")
-        this.propertyReferences = ArrayList<ClassDescriptor>(3)
-        this.mutablePropertyReferences = ArrayList<ClassDescriptor>(3)
+    private val lambda: ClassDescriptor by klass("Lambda")
+    private val functionReference: ClassDescriptor by klass("FunctionReference")
+    private val localVariableReference: ClassDescriptor by klass("LocalVariableReference")
+    private val mutableLocalVariableReference: ClassDescriptor by klass("MutableLocalVariableReference")
 
-        for (i in 0..2) {
-            propertyReferences.add(createClass(kotlinJvmInternal, "PropertyReference$i"))
-            mutablePropertyReferences.add(createClass(kotlinJvmInternal, "MutablePropertyReference$i"))
-        }
-
-        defaultContinuationSupertype = createNullableAnyContinuation(module)
+    private val propertyReferences: List<ClassDescriptor> by lazy {
+        (0..2).map { i -> createClass(kotlinJvmInternalPackage, "PropertyReference$i") }
     }
+
+    private val mutablePropertyReferences: List<ClassDescriptor> by lazy {
+        (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
+    }
+
+    private val defaultContinuationSupertype: KotlinType by lazy { createNullableAnyContinuation(module) }
 
     /**
      * @return `Continuation<Any?>` type
      */
     private fun createNullableAnyContinuation(module: ModuleDescriptor): KotlinType {
+        // TODO: create a synthesized class descriptor here instead of looking at the classpath, or report a proper diagnostic
+        // This code will throw when compiling with "-no-stdlib" because no built-ins would be found in the classpath either
         val classDescriptor = module.resolveTopLevelClass(
                 DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, NoLookupLocation.FROM_BACKEND
-        ) ?: error("${DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME} was not found in built-ins")
+        ) ?: throw AssertionError("${DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME} was not found in built-ins")
 
         return TypeConstructorSubstitution.createByParametersMap(
                 mapOf(classDescriptor.declaredTypeParameters.single() to TypeProjectionImpl(module.builtIns.nullableAnyType))
