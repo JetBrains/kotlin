@@ -503,25 +503,28 @@ class ClassTranslator private constructor(
                     .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .mapNotNull { it as? CallableMemberDescriptor }
             for (member in members) {
-                if (member.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
+                if (member.kind.isReal) continue
                 if (member.modality == Modality.ABSTRACT || member.overriddenDescriptors.size != 1) continue
 
-                val overriddenFunction = generateSequence(member) { it.overriddenDescriptors.firstOrNull() }
-                                                 .drop(1)
-                                                 .dropWhile { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                                                              DescriptorUtils.isInterface(it.containingDeclaration) }
-                                                 .firstOrNull() ?: continue
+                val overriddenMember = generateSequence(member) { it.overriddenDescriptors.firstOrNull() }
+                         .drop(1)
+                         .dropWhile { !it.kind.isReal && DescriptorUtils.isInterface(it.containingDeclaration) }
+                         .firstOrNull() ?: continue
 
-                if (overriddenFunction.modality == Modality.ABSTRACT) continue
+                if (overriddenMember.modality == Modality.ABSTRACT) continue
 
-                val interfaceDescriptor = overriddenFunction.containingDeclaration as ClassDescriptor
+                val interfaceDescriptor = overriddenMember.containingDeclaration as ClassDescriptor
                 if (interfaceDescriptor.kind != ClassKind.INTERFACE) continue
 
                 val directContainer = member.overriddenDescriptors.first().containingDeclaration as ClassDescriptor
 
-                when (member) {
-                    is FunctionDescriptor -> addDefaultMethodFromInterface(member, directContainer, descriptor, context)
-                    is PropertyDescriptor -> addDefaultPropertyFromInterface(member, directContainer,  descriptor, context)
+                when (overriddenMember) {
+                    is FunctionDescriptor -> {
+                        addDefaultMethodFromInterface(overriddenMember, directContainer, descriptor,context)
+                    }
+                    is PropertyDescriptor -> {
+                        addDefaultPropertyFromInterface(overriddenMember, directContainer,  descriptor, context)
+                    }
                 }
             }
         }
@@ -532,12 +535,13 @@ class ClassTranslator private constructor(
                 descriptor: ClassDescriptor,
                 context: StaticContext
         ) {
-            val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
-            val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
-            val functionName = context.getNameForDescriptor(function)
-            val classFunction = JsNameRef(functionName, classPrototype)
-            val interfaceFunction = JsNameRef(functionName, interfacePrototype)
-            context.declarationStatements += JsAstUtils.assignment(classFunction, interfaceFunction).makeStmt()
+            for (name in generateAllNames(function, context)) {
+                val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
+                val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
+                val classFunction = JsNameRef(name, classPrototype)
+                val interfaceFunction = JsNameRef(name, interfacePrototype)
+                context.declarationStatements += JsAstUtils.assignment(classFunction, interfaceFunction).makeStmt()
+            }
         }
 
         private fun addDefaultPropertyFromInterface(
@@ -546,15 +550,35 @@ class ClassTranslator private constructor(
                 descriptor: ClassDescriptor,
                 context: StaticContext
         ) {
-            val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
-            val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
-            val functionName = context.getNameForDescriptor(property)
-            val nameLiteral = context.program.getStringLiteral(functionName.ident)
+            for (name in generateAllNames(property, context)) {
+                val classPrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(descriptor), null))
+                val interfacePrototype = JsAstUtils.prototypeOf(pureFqn(context.getInnerNameForDescriptor(interfaceDescriptor), null))
+                val nameLiteral = context.program.getStringLiteral(name.ident)
 
-            val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), interfacePrototype, nameLiteral)
-            val defineProperty = JsAstUtils.defineProperty(classPrototype, functionName.ident, getPropertyDescriptor, context.program)
+                val getPropertyDescriptor = JsInvocation(JsNameRef("getOwnPropertyDescriptor", "Object"), interfacePrototype, nameLiteral)
+                val defineProperty = JsAstUtils.defineProperty(classPrototype, name.ident, getPropertyDescriptor, context.program)
 
-            context.declarationStatements += defineProperty.makeStmt()
+                context.declarationStatements += defineProperty.makeStmt()
+            }
+        }
+
+        private fun generateAllNames(member: CallableMemberDescriptor, context: StaticContext): Sequence<JsName> {
+            return (generateBridges(member) + member)
+                    .map { context.getNameForDescriptor(it) }
+                    .distinctBy { it.ident }
+        }
+
+        private fun generateBridges(member: CallableMemberDescriptor): Sequence<CallableMemberDescriptor> = when (member) {
+            is FunctionDescriptor -> {
+                generateBridgesForFunctionDescriptor(member, identity()) { false }
+                        .map { it.from }
+                        .asSequence()
+            }
+            is PropertyDescriptor -> generateBridgesForFunctionDescriptor(member.getter!!, identity()) { false }
+                    .map { it.from }
+                    .map { (it as PropertyAccessorDescriptor).correspondingProperty }
+                    .asSequence()
+            else -> error("Expected either be function or property: $member")
         }
     }
 
