@@ -53,12 +53,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object ReplacementEngine {
-    fun performCallReplacement(
+    fun <TCallElement : KtElement> performCallReplacement(
             element: KtSimpleNameExpression,
             bindingContext: BindingContext,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
-            callElement: KtElement,
-            callKindHandler: CallKindHandler,
+            callElement: TCallElement,
+            callKindHandler: CallKindHandler<TCallElement>,
             replacement: ReplacementExpression
     ): KtElement {
         val project = element.project
@@ -66,7 +66,7 @@ object ReplacementEngine {
         val descriptor = resolvedCall.resultingDescriptor
 
         val qualifiedExpression = callElement.getQualifiedExpressionForSelector()
-        val elementToBeReplaced = callKindHandler.elementToReplace
+        val elementToBeReplaced = callKindHandler.elementToReplace(callElement)
 
         val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
@@ -142,7 +142,7 @@ object ReplacementEngine {
         commentSaver.restore(resultRange)
 
         @Suppress("UNCHECKED_CAST")
-        return callKindHandler.unwrapResult(resultRange.last as KtElement)
+        return callKindHandler.unwrapResult(resultRange.last as TCallElement)
     }
 
     private fun ConstructedExpressionWrapper.processValueParameterUsages(

@@ -20,28 +20,28 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
-interface CallKindHandler {
-    val elementToReplace: KtElement
+interface CallKindHandler<TCallElement : KtElement> {
+    fun elementToReplace(callElement: TCallElement): KtElement
 
     fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean
 
-    fun wrapGeneratedExpression(expression: KtExpression): KtElement
+    fun wrapGeneratedExpression(expression: KtExpression): TCallElement
 
-    fun unwrapResult(result: KtElement): KtElement
+    fun unwrapResult(result: TCallElement): TCallElement
 }
 
-class CallExpressionHandler(callElement: KtExpression) : CallKindHandler {
-    override val elementToReplace = callElement.getQualifiedExpressionForSelectorOrThis()
+object CallExpressionHandler : CallKindHandler<KtExpression> {
+    override fun elementToReplace(callElement: KtExpression) = callElement.getQualifiedExpressionForSelectorOrThis()
 
     override fun precheckReplacementPattern(pattern: ReplacementExpression) = true
 
     override fun wrapGeneratedExpression(expression: KtExpression) = expression
 
-    override fun unwrapResult(result: KtElement) = result
+    override fun unwrapResult(result: KtExpression) = result
 }
 
-class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandler {
-    override val elementToReplace = annotationEntry
+object AnnotationEntryHandler : CallKindHandler<KtAnnotationEntry> {
+    override fun elementToReplace(callElement: KtAnnotationEntry) = callElement
 
     override fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean {
         //TODO
@@ -54,8 +54,7 @@ class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandl
         return createByPattern("@Dummy($0)", expression) { KtPsiFactory(expression).createAnnotationEntry(it) }
     }
 
-    override fun unwrapResult(result: KtElement): KtAnnotationEntry {
-        result as KtAnnotationEntry
+    override fun unwrapResult(result: KtAnnotationEntry): KtAnnotationEntry {
         val text = result.valueArguments.single().getArgumentExpression()!!.text
         return result.replaced(KtPsiFactory(result).createAnnotationEntry("@" + text))
     }

@@ -46,15 +46,18 @@ class CallableUsageReplacementStrategy(
             }
             else {
                 // copy replacement expression because it is modified by performCallReplacement
-                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+                @Suppress("UNCHECKED_CAST")
+                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement,
+                                                         callTypeHandler as CallKindHandler<KtElement>,
+                                                         replacement.copy())
             }
         }
     }
 
-    private fun callTypeHandler(callElement: KtElement): CallKindHandler? {
+    private fun callTypeHandler(callElement: KtElement): CallKindHandler<*>? {
         return when (callElement) {
-            is KtExpression -> CallExpressionHandler(callElement)
-            is KtAnnotationEntry -> AnnotationEntryHandler(callElement)
+            is KtExpression -> CallExpressionHandler
+            is KtAnnotationEntry -> AnnotationEntryHandler
             else -> null
         }
     }
