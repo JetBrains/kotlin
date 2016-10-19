@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -220,19 +219,17 @@ public class RangeCodegenUtil {
             @NotNull KtExpression rangeExpression,
             @NotNull BindingContext bindingContext
     ) {
-        if (rangeExpression instanceof KtBinaryExpression) {
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) rangeExpression;
-            if (binaryExpression.getOperationReference().getReferencedNameElementType() == KtTokens.RANGE) {
-                KotlinType kotlinType = bindingContext.getType(rangeExpression);
-                assert kotlinType != null;
-                DeclarationDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
-
-                // noinspection ConstantConditions
-                if (DescriptorUtilsKt.getBuiltIns(descriptor).getIntegralRanges().contains(descriptor)) {
-                    if ("LongRange".equals(descriptor.getName().asString())) {
-                        return argumentType == Type.LONG_TYPE;
-                    }
-
+        if (rangeExpression instanceof KtBinaryExpression &&
+            ((KtBinaryExpression) rangeExpression).getOperationReference().getReferencedNameElementType() == KtTokens.RANGE) {
+            KotlinType kotlinType = bindingContext.getType(rangeExpression);
+            assert kotlinType != null;
+            DeclarationDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
+            if (descriptor != null) {
+                FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
+                if (fqName.equals(KotlinBuiltIns.FQ_NAMES.longRange)) {
+                    return argumentType == Type.LONG_TYPE;
+                }
+                if (fqName.equals(KotlinBuiltIns.FQ_NAMES.charRange) || fqName.equals(KotlinBuiltIns.FQ_NAMES.intRange)) {
                     return AsmUtil.isIntPrimitive(argumentType);
                 }
             }

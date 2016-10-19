@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +67,6 @@ public abstract class KotlinBuiltIns {
     private final ModuleDescriptorImpl builtInsModule;
     private final PackageFragmentDescriptor builtInsPackageFragment;
     private final PackageFragmentDescriptor collectionsPackageFragment;
-    private final PackageFragmentDescriptor rangesPackageFragment;
     private final PackageFragmentDescriptor annotationPackageFragment;
 
     private final Set<PackageFragmentDescriptor> builtInsPackageFragments;
@@ -106,7 +104,7 @@ public abstract class KotlinBuiltIns {
 
         builtInsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, BUILT_INS_PACKAGE_FQ_NAME);
         collectionsPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
-        rangesPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
+        createPackage(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
         annotationPackageFragment = createPackage(packageFragmentProvider, packageNameToPackageFragment, ANNOTATION_PACKAGE_FQ_NAME);
         createPackage(packageFragmentProvider, packageNameToPackageFragment, COROUTINES_PACKAGE_FQ_NAME);
 
@@ -189,6 +187,10 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
         public final FqName comparable = fqName("Comparable");
 
+        public final FqNameUnsafe charRange = rangesFqName("CharRange");
+        public final FqNameUnsafe intRange = rangesFqName("IntRange");
+        public final FqNameUnsafe longRange = rangesFqName("LongRange");
+
         public final FqName deprecated = fqName("Deprecated");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
@@ -253,6 +255,11 @@ public abstract class KotlinBuiltIns {
         @NotNull
         private static FqName collectionsFqName(@NotNull String simpleName) {
             return COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
+        }
+
+        @NotNull
+        private static FqNameUnsafe rangesFqName(@NotNull String simpleName) {
+            return RANGES_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe();
         }
 
         @NotNull
@@ -398,15 +405,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getBoolean() {
         return getPrimitiveClassDescriptor(BOOLEAN);
-    }
-
-    @NotNull
-    public Set<DeclarationDescriptor> getIntegralRanges() {
-        return SetsKt.<DeclarationDescriptor>setOf(
-                getBuiltInClassByName("CharRange", rangesPackageFragment),
-                getBuiltInClassByName("IntRange", rangesPackageFragment),
-                getBuiltInClassByName("LongRange", rangesPackageFragment)
-        );
     }
 
     @NotNull
