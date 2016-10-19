@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -68,7 +69,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         val packageFragmentProvider = emptyModule.builtIns.builtInsModule.packageFragmentProvider
 
         for (packageFqName in listOf<FqName>(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
-            val loaded = packageFragmentProvider.getPackageFragments(packageFqName).single()
+            val loaded = packageFragmentProvider.getPackageFragments(packageFqName).filterIsInstance<BuiltInsPackageFragment>().single()
             RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                     loaded, configuration,
                     File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt"))
