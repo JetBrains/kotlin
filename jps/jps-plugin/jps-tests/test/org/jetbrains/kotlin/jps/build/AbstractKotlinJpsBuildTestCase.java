@@ -39,7 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
+public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
     public static final String TEST_DATA_PATH = "jps-plugin/testData/";
 
     static {
@@ -47,18 +47,6 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     }
 
     protected File workDir;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        System.setProperty("kotlin.jps.tests", "true");
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        System.clearProperty("kotlin.jps.tests");
-        super.tearDown();
-    }
 
     protected static File copyTestDataToTmpDir(File testDataDir) throws IOException {
         assert testDataDir.exists() : "Cannot find source folder " + testDataDir.getAbsolutePath();
