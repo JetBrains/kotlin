@@ -1906,6 +1906,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/destructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringIndexClash.kt")
+        public void testDestructuringIndexClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/destructuringIndexClash.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/extension.kt");
