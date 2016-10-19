@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.codeInsight.generate
 
 import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractGenerateTestSupportMethodActionTest : AbstractCodeInsightActionTest() {
     private fun setUpTestSourceRoot() {
@@ -32,6 +34,11 @@ abstract class AbstractGenerateTestSupportMethodActionTest : AbstractCodeInsight
             module.project.save()
         }
     }
+
+    override fun createAction(fileText: String) =
+            (super.createAction(fileText) as KotlinGenerateTestSupportActionBase).apply {
+                testFrameworkToUse = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEST_FRAMEWORK:")
+            }
 
     override fun doTest(path: String) {
         setUpTestSourceRoot()

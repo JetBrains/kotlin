@@ -1,13 +1,9 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp
 // CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// TEST_FRAMEWORK: JUnit4
 import org.junit.Before
 
 class A {
-    @org.testng.annotations.BeforeMethod
-    fun setUp() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     @Before
     fun setUp() {
         throw UnsupportedOperationException()
