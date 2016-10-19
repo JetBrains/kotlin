@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.replacement.ReplacementExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 internal interface CallKindHandler {
     val elementToReplace: KtElement
 
-    fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression): Boolean
+    fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean
 
     fun wrapGeneratedExpression(expression: KtExpression): KtElement
 
@@ -33,7 +34,7 @@ internal interface CallKindHandler {
 internal class CallExpressionHandler(callElement: KtExpression) : CallKindHandler {
     override val elementToReplace = callElement.getQualifiedExpressionForSelectorOrThis()
 
-    override fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression) = true
+    override fun precheckReplacementPattern(pattern: ReplacementExpression) = true
 
     override fun wrapGeneratedExpression(expression: KtExpression) = expression
 
@@ -43,7 +44,7 @@ internal class CallExpressionHandler(callElement: KtExpression) : CallKindHandle
 internal class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandler {
     override val elementToReplace = annotationEntry
 
-    override fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression): Boolean {
+    override fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean {
         //TODO
         return true
     }

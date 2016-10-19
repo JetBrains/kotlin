@@ -16,57 +16,34 @@
 
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
-import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.core.asExpression
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.replacement.ReplacementBuilder
+import org.jetbrains.kotlin.idea.replacement.ReplacementExpression
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>)
 
 object ReplaceWithAnnotationAnalyzer {
-    val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
-    val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
-
-    data class ReplacementExpression(
-            val expression: KtExpression,
-            val fqNamesToImport: Collection<FqName>
-    ) {
-        fun copy() = ReplacementExpression(expression.copied(), fqNamesToImport)
-    }
-
     fun analyzeCallableReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
@@ -85,7 +62,7 @@ object ReplaceWithAnnotationAnalyzer {
             resolutionFacade: ResolutionFacade
     ): ReplacementExpression? {
         val psiFactory = KtPsiFactory(resolutionFacade.project)
-        var expression = try {
+        val expression = try {
             psiFactory.createExpression(annotation.pattern)
         }
         catch(t: Throwable) {
@@ -98,69 +75,8 @@ object ReplaceWithAnnotationAnalyzer {
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
                                        listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
 
-        var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
-
-        val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
-        expression.forEachDescendantOfType<KtCallExpression> {
-            if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
-                typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
-            }
-        }
-
-        if (typeArgsToAdd.isNotEmpty()) {
-            for ((callExpr, typeArgs) in typeArgsToAdd) {
-                callExpr.addAfter(typeArgs, callExpr.calleeExpression)
-            }
-
-            // reanalyze expression - new usages of type parameters may be added
-            bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
-        }
-
-        val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
-        val importFqNames = importFqNames(annotation).toMutableSet()
-
-        expression.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
-            val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
-
-            //TODO: other types of references ('[]' etc)
-            if (expression.mainReference.canBeResolvedViaImport(target)) {
-                importFqNames.add(target.importableFqName!!)
-            }
-
-            if (expression.getReceiverExpression() == null) {
-                if (target is ValueParameterDescriptor && target.containingDeclaration == symbolDescriptor) {
-                    expression.putCopyableUserData(PARAMETER_USAGE_KEY, target.name)
-                }
-                else if (target is TypeParameterDescriptor && target.containingDeclaration == symbolDescriptor) {
-                    expression.putCopyableUserData(TYPE_PARAMETER_USAGE_KEY, target.name)
-                }
-
-                val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall != null && resolvedCall.isReallySuccess()) {
-                    val receiver = if (resolvedCall.resultingDescriptor.isExtension)
-                        resolvedCall.extensionReceiver
-                    else
-                        resolvedCall.dispatchReceiver
-                    if (receiver is ImplicitReceiver) {
-                        val receiverExpression = receiver.asExpression(scope, psiFactory)
-                        if (receiverExpression != null) {
-                            receiversToAdd.add(expression to receiverExpression)
-                        }
-                    }
-                }
-            }
-        }
-
-        // add receivers in reverse order because arguments of a call were processed after the callee's name
-        for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
-            val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
-            if (expressionToReplace == expression) {
-                expression = newExpr
-            }
-        }
-
-        return ReplacementExpression(expression, importFqNames)
+        return ReplacementBuilder(symbolDescriptor, resolutionFacade)
+                .buildReplacementExpression(expression, scope, importFqNames(annotation), copyExpression = false)
     }
 
     fun analyzeClassReplacement(
@@ -230,19 +146,6 @@ object ReplaceWithAnnotationAnalyzer {
                 .map(::FqNameUnsafe)
                 .filter(FqNameUnsafe::isSafe)
                 .map(FqNameUnsafe::toSafe)
-    }
-
-    private fun analyzeInContext(
-            expression: KtExpression,
-            module: ModuleDescriptor,
-            scope: LexicalScope,
-            resolutionFacade: ResolutionFacade
-    ): BindingContext {
-        val trace = BindingTraceContext()
-        val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
-        PreliminaryDeclarationVisitor.createForExpression(expression, trace)
-        expressionTypingServices.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace, false)
-        return trace.bindingContext
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<ImportingScope>): LexicalScope? {

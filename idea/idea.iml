@@ -55,5 +55,6 @@
     <orderEntry type="module" module-name="formatter" />
     <orderEntry type="module" module-name="idea-maven" />
     <orderEntry type="library" scope="TEST" name="native-platform-uberjar" level="project" />
+    <orderEntry type="module" module-name="idea-replacement-engine" />
   </component>
 </module>

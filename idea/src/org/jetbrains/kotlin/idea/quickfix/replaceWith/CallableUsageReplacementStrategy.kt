@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.replacement.ReplacementExpression
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -55,7 +56,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class CallableUsageReplacementStrategy(
-        private val replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
+        private val replacement: ReplacementExpression
 ) : UsageReplacementStrategy {
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
@@ -95,7 +96,7 @@ private fun performCallReplacement(
         resolvedCall: ResolvedCall<out CallableDescriptor>,
         callElement: KtElement,
         callKindHandler: CallKindHandler,
-        replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
+        replacement: ReplacementExpression
 ): KtElement {
     val project = element.project
     val psiFactory = KtPsiFactory(project)
@@ -196,7 +197,7 @@ private fun ConstructedExpressionWrapper.processValueParameterUsages(
 
         val parameterName = parameter.name
         val usages = expression.collectDescendantsOfType<KtExpression> {
-            it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
+            it[ReplacementExpression.PARAMETER_USAGE_KEY] == parameterName
         }
         usages.forEach {
             val usageArgument = it.parent as? KtValueArgument
@@ -235,7 +236,7 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
     for ((index, typeParameter) in typeParameters.withIndex()) {
         val parameterName = typeParameter.name
         val usages = expression.collectDescendantsOfType<KtExpression> {
-            it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
+            it[ReplacementExpression.TYPE_PARAMETER_USAGE_KEY] == parameterName
         }
 
         val factory = KtPsiFactory(callElement)
@@ -353,13 +354,13 @@ private fun argumentForParameter(
             val (expression, parameterUsages) = defaultValue
 
             for ((param, usages) in parameterUsages) {
-                usages.forEach { it.put(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY, param.name) }
+                usages.forEach { it.put(ReplacementExpression.PARAMETER_USAGE_KEY, param.name) }
             }
 
             val expressionCopy = expression.copied()
 
             // clean up user data in original
-            expression.forEachDescendantOfType<KtExpression> { it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY) }
+            expression.forEachDescendantOfType<KtExpression> { it.clear(ReplacementExpression.PARAMETER_USAGE_KEY) }
 
             return Argument(expressionCopy, null/*TODO*/, isDefaultValue = true)
         }
@@ -430,8 +431,8 @@ private fun postProcessInsertedCode(range: PsiChildRange): PsiChildRange {
         // clean up user data
         it.forEachDescendantOfType<KtExpression> {
             it.clear(USER_CODE_KEY)
-            it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY)
-            it.clear(ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY)
+            it.clear(ReplacementExpression.PARAMETER_USAGE_KEY)
+            it.clear(ReplacementExpression.TYPE_PARAMETER_USAGE_KEY)
             it.clear(PARAMETER_VALUE_KEY)
             it.clear(RECEIVER_VALUE_KEY)
             it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
