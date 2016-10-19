@@ -92,13 +92,15 @@ internal interface ContextUtils {
     /**
      * Returns pointer to first element of given array.
      *
+     * Note: this function doesn't depend on the context
+     *
      * @param arrayPtr pointer to array
      */
     private fun getPtrToFirstElem(arrayPtr: CompileTimeValue): CompileTimeValue {
         val indices = longArrayOf(0, 0).map { LLVMConstInt(LLVMInt32Type(), it, 0) }.toTypedArray()
         val indicesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *indices)[0] // TODO: dispose
 
-        return compileTimeValue(LLVMBuildGEP(context.llvmBuilder, arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size, ""))
+        return compileTimeValue(LLVMConstGEP(arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size))
     }
 
     /**
