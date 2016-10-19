@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWi
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -55,7 +56,9 @@ import org.jetbrains.kotlin.utils.identity
  */
 class ClassTranslator private constructor(
         private val classDeclaration: KtClassOrObject,
-        context: TranslationContext
+        context: TranslationContext,
+        private val enumInitializerName: JsName?,
+        private val ordinal: Int?
 ) : AbstractTranslator(context) {
 
     private val descriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
@@ -73,12 +76,13 @@ class ClassTranslator private constructor(
         val context = context().newDeclaration(descriptor)
 
         val constructorFunction = context.defineTopLevelFunction(descriptor)
+        val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
 
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
         nonConstructorContext.startDeclaration()
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
         translatePropertiesAsConstructorParameters(nonConstructorContext)
-        val bodyVisitor = DeclarationBodyVisitor(descriptor, nonConstructorContext)
+        val bodyVisitor = DeclarationBodyVisitor(descriptor, nonConstructorContext, enumInitFunction)
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
         constructorFunction.body.statements += bodyVisitor.initializerStatements
         delegationTranslator.generateDelegated()
@@ -104,6 +108,10 @@ class ClassTranslator private constructor(
         if (isObjectLike()) {
             addObjectMethods()
         }
+
+        if (descriptor.kind == ClassKind.ENUM_CLASS) {
+            generateEnumStandardMethods(bodyVisitor.enumEntries)
+        }
     }
 
     private fun translatePrimaryConstructor(
@@ -116,8 +124,13 @@ class ClassTranslator private constructor(
             if (isObjectLike()) {
                 addObjectCache(constructorFunction.body.statements)
             }
-            ClassInitializerTranslator(classDeclaration, constructorContext, constructorFunction)
-                    .generateInitializeMethod(delegationTranslator)
+            ClassInitializerTranslator(classDeclaration, constructorContext, constructorFunction).apply {
+                if (ordinal != null) {
+                    setOrdinal(ordinal)
+                }
+                generateInitializeMethod(delegationTranslator)
+            }
+
             primaryConstructor = ConstructorInfo(constructorFunction, constructorContext, descriptor)
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
@@ -126,10 +139,19 @@ class ClassTranslator private constructor(
         }
     }
 
+    private fun createEnumInitFunction(): JsFunction {
+        val function = context().createTopLevelAnonymousFunction(descriptor)
+        function.name = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + "_initFields")
+        val emptyFunction = context().createTopLevelAnonymousFunction(descriptor)
+        function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
+        context().addDeclarationStatement(function.makeStmt())
+        return function
+    }
+
     private fun addEnumClassParameters(constructorFunction: JsFunction) {
         val nameParamName = constructorFunction.scope.declareFreshName("name")
         val ordinalParamName = constructorFunction.scope.declareFreshName("ordinal")
-        constructorFunction.parameters += listOf(JsParameter(nameParamName), JsParameter(ordinalParamName))
+        constructorFunction.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
 
         constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef())
         constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef())
@@ -200,6 +222,12 @@ class ClassTranslator private constructor(
         // Add parameter for outer instance
         val leadingArgs = mutableListOf<JsExpression>()
 
+        if (descriptor.kind == ClassKind.ENUM_CLASS) {
+            val nameParamName = constructorInitializer.scope.declareFreshName("name")
+            val ordinalParamName = constructorInitializer.scope.declareFreshName("ordinal")
+            constructorInitializer.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
+            leadingArgs += listOf(nameParamName.makeRef(), ordinalParamName.makeRef())
+        }
         if (outerClassName != null) {
             constructorInitializer.parameters.add(0, JsParameter(outerClassName))
             leadingArgs += outerClassName.makeRef()
@@ -242,9 +270,7 @@ class ClassTranslator private constructor(
 
         secondaryConstructors += ConstructorInfo(constructorInitializer, context, constructorDescriptor, compositeSuperCallGenerator)
 
-        if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-            context.export(constructorDescriptor)
-        }
+        context.export(constructorDescriptor)
     }
 
     private val allConstructors: Sequence<ConstructorInfo>
@@ -387,17 +413,26 @@ class ClassTranslator private constructor(
         val instanceFun = JsFunction(context().rootFunction.scope, JsBlock(), "Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
 
-        val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsLiteral.NULL)
-        val instanceCreationBlock = JsBlock()
-        val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
-        instanceFun.body.statements += instanceCreatedGuard
+        if (enumInitializerName == null) {
+            val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsLiteral.NULL)
+            val instanceCreationBlock = JsBlock()
+            val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
+            instanceFun.body.statements += instanceCreatedGuard
 
-        val objectRef = context().getInnerReference(descriptor)
-        instanceCreationBlock.statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsNew(objectRef)).makeStmt()
+            val objectRef = context().getInnerReference(descriptor)
+            instanceCreationBlock.statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsNew(objectRef)).makeStmt()
+        }
+        else {
+            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
+        }
 
         instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef())
 
         context().addDeclarationStatement(instanceFun.makeStmt())
+    }
+
+    private fun generateEnumStandardMethods(entries: List<ClassDescriptor>) {
+        EnumTranslator(context(), descriptor, entries).generateStandardMethods()
     }
 
     private fun generatedBridgeMethods() {
@@ -450,7 +485,11 @@ class ClassTranslator private constructor(
 
     companion object {
         @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext) {
-            return ClassTranslator(classDeclaration, context).translate()
+            return ClassTranslator(classDeclaration, context, null, null).translate()
+        }
+
+        @JvmStatic fun translate(classDeclaration: KtEnumEntry, context: TranslationContext, enumInitializerName: JsName, ordinal: Int) {
+            return ClassTranslator(classDeclaration, context, enumInitializerName, ordinal).translate()
         }
 
         @JvmStatic fun addInterfaceDefaultMembers(descriptor: ClassDescriptor, context: StaticContext) {

@@ -28,6 +28,10 @@ class Enum<T : Enum<T>> : Comparable<Enum<T>> {
 
     override fun compareTo(other: Enum<T>) = ordinal.compareTo(other.ordinal)
 
+    override fun equals(other: Any?) = this === other
+
+    override fun hashCode(): Int = js("Kotlin.identityHashCode(this)")
+
     override fun toString() = name
 }
 

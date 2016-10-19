@@ -56,7 +56,11 @@ fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
     return visitor.matched
 }
 
-fun JsExpression.toInvocationWith(leadingExtraArgs: List<JsExpression>, parameterCount: Int, thisExpr: JsExpression): JsExpression {
+fun JsExpression.toInvocationWith(
+        leadingExtraArgs: List<JsExpression>,
+        parameterCount: Int,
+        thisExpr: JsExpression
+): JsExpression {
     val qualifier: JsExpression
     fun padArguments(arguments: List<JsExpression>) = arguments + (1..(parameterCount - arguments.size))
             .map { Namer.getUndefinedExpression() }

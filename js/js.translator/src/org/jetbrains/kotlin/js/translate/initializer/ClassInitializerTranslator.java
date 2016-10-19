@@ -64,6 +64,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     private final ClassDescriptor classDescriptor;
 
+    private int ordinal;
+
     public ClassInitializerTranslator(
             @NotNull KtClassOrObject classDeclaration,
             @NotNull TranslationContext context,
@@ -76,6 +78,10 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         classDescriptor = BindingUtils.getClassDescriptor(bindingContext(), classDeclaration);
 
         fillInitFunction(classDeclaration, context);
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 
     @NotNull
@@ -153,15 +159,27 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     ) {
         ResolvedCall<FunctionDescriptor> superCall = getSuperCall(context.bindingContext(), classDeclaration);
 
+        JsExpression nameArg = context.program().getStringLiteral(classDeclaration.getName());
+        JsExpression ordinalArg = context.program().getNumberLiteral(ordinal);
+        List<JsExpression> additionalArgs = Arrays.asList(nameArg, ordinalArg);
+
         if (superCall == null) {
             ClassDescriptor classDescriptor = getClassDescriptorForType(enumClassType);
             JsNameRef reference = context.getInnerReference(classDescriptor);
-            JsExpression nameArg = context.program().getStringLiteral(classDeclaration.getName());
-            JsExpression ordinalArg = context.program().getNumberLiteral(ordinal);
-            return new JsNew(reference, Arrays.asList(nameArg, ordinalArg));
+            return new JsNew(reference, additionalArgs);
         }
 
-        return CallTranslator.translate(context, superCall);
+        JsExpression call = CallTranslator.translate(context, superCall);
+        if (call instanceof JsInvocation) {
+            JsInvocation invocation = (JsInvocation) call;
+            invocation.getArguments().addAll(0, additionalArgs);
+        }
+        else if (call instanceof JsNew) {
+            JsNew invocation = (JsNew) call;
+            invocation.getArguments().addAll(0, additionalArgs);
+        }
+
+        return call;
     }
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
@@ -172,15 +190,16 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             ResolvedCall<FunctionDescriptor> superCall = getSuperCall(bindingContext(), classDeclaration);
             if (superCall == null) {
                 if (DescriptorUtils.isEnumEntry(classDescriptor)) {
-                    addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
+                    addCallToSuperMethod(getAdditionalArgumentsForEnumConstructor(), initializer);
                 }
                 return;
             }
 
             if (classDeclaration instanceof KtEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
-                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, Collections.<JsExpression>emptyList(), 0,
-                                                                           JsLiteral.THIS);
+
+                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(
+                        expression, getAdditionalArgumentsForEnumConstructor(), 0, JsLiteral.THIS);
                 initFunction.getBody().getStatements().add(fixedInvocation.makeStmt());
             }
             else {
@@ -233,6 +252,14 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 }
             }
         }
+    }
+
+    @NotNull
+    private List<JsExpression> getAdditionalArgumentsForEnumConstructor() {
+        List<JsExpression> additionalArguments = new ArrayList<JsExpression>();
+        additionalArguments.add(program().getStringLiteral(classDescriptor.getName().asString()));
+        additionalArguments.add(program().getNumberLiteral(ordinal));
+        return additionalArguments;
     }
 
     private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, @NotNull JsFunction initializer) {

@@ -25,16 +25,19 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,
-        private val context: TranslationContext
+        private val context: TranslationContext,
+        private val enumInitializer: JsFunction?
 ) : AbstractDeclarationVisitor() {
     private var enumEntryOrdinal: Int = 0
-    val initializerStatements = ArrayList<JsStatement>()
+    val initializerStatements = mutableListOf<JsStatement>()
+    val enumEntries = mutableListOf<ClassDescriptor>()
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject, context: TranslationContext) {
         super.visitClassOrObject(classOrObject, context)
@@ -48,29 +51,31 @@ class DeclarationBodyVisitor(
     }
 
     override fun visitEnumEntry(enumEntry: KtEnumEntry, context: TranslationContext) {
+        val enumInitializer = this.enumInitializer!!
         val descriptor = getClassDescriptor(context.bindingContext(), enumEntry)
         val supertypes = getSupertypesWithoutFakes(descriptor)
+        enumEntries += descriptor
 
         if (enumEntry.getBody() != null || supertypes.size > 1) {
-            ClassTranslator.translate(enumEntry, context)
+            ClassTranslator.translate(enumEntry, context, enumInitializer.name, enumEntryOrdinal)
+            enumInitializer.body.statements += JsNew(context.getInnerReference(descriptor)).makeStmt()
         }
         else {
-            // Simplify by omitting _getInstance() function
             val enumName = context.getInnerNameForDescriptor(descriptor)
             val enumInstanceName = context.createGlobalName(enumName.ident + "_instance")
 
             assert(supertypes.size == 1) { "Simple Enum entry must have one supertype" }
             val jsEnumEntryCreation = ClassInitializerTranslator
                     .generateEnumEntryInstanceCreation(context, supertypes[0], enumEntry, enumEntryOrdinal)
-            context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, jsEnumEntryCreation))
-            val jsEnumEntryFunction = context.createTopLevelAnonymousFunction(descriptor)
-            jsEnumEntryFunction.body.statements.add(JsReturn(jsEnumEntryCreation))
+            context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, null))
+            enumInitializer.body.statements += JsAstUtils.assignment(pureFqn(enumInstanceName, null), jsEnumEntryCreation).makeStmt()
 
             val enumInstanceFunction = context.createTopLevelAnonymousFunction(descriptor)
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
             context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 
-            enumInstanceFunction.body.statements.add(JsReturn(enumInstanceName.makeRef()))
+            enumInstanceFunction.body.statements += JsInvocation(pureFqn(enumInitializer.name, null)).makeStmt()
+            enumInstanceFunction.body.statements += JsReturn(enumInstanceName.makeRef())
         }
 
         enumEntryOrdinal++
