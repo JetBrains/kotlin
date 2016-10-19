@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.junit.Assert
 
@@ -77,8 +77,7 @@ abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase()
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> =
                 module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter {
                     (it is CallableMemberDescriptor && isFromFacade(it, facadeFqName) || it is TypeAliasDescriptor) &&
-                    it.module != module.builtIns.builtInsModule
+                    !KotlinBuiltIns.isBuiltIn(it)
                 }.sortedWith(MemberComparator.INSTANCE)
     }
 }
-

@@ -238,17 +238,11 @@ object ReplaceWithAnnotationAnalyzer {
             scope: LexicalScope,
             resolutionFacade: ResolutionFacade
     ): BindingContext {
-        val traceContext = BindingTraceContext()
-        val frontendService = if (module.builtIns.builtInsModule == module) {
-            // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
-            resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
-        }
-        else {
-            resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
-        }
-        PreliminaryDeclarationVisitor.createForExpression(expression, traceContext)
-        frontendService.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
-        return traceContext.bindingContext
+        val trace = BindingTraceContext()
+        val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
+        PreliminaryDeclarationVisitor.createForExpression(expression, trace)
+        expressionTypingServices.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace, false)
+        return trace.bindingContext
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<ImportingScope>): LexicalScope? {

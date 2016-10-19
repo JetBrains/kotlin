@@ -26,22 +26,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.container.ComponentProvider;
+import org.jetbrains.kotlin.container.DslKt;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
-import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +51,7 @@ import java.util.Set;
 public class TypeUnifierTest extends KotlinTestWithEnvironment {
     private Set<TypeConstructor> variables;
 
-    private KotlinBuiltIns builtIns;
+    private ModuleDescriptor module;
     private ImportingScope builtinsImportingScope;
     private TypeResolver typeResolver;
     private TypeParameterDescriptor x;
@@ -64,17 +66,17 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     public void setUp() throws Exception {
         super.setUp();
 
-        ModuleDescriptorImpl module = KotlinTestUtils.createEmptyModule();
-        builtIns = module.getBuiltIns();
+        ComponentProvider container = JvmResolveUtil.createContainer(getEnvironment());
+        module = DslKt.getService(container, ModuleDescriptor.class);
+
         builtinsImportingScope = ScopeUtilsKt.chainImportingScopes(
-                // builtIns.builtinsPackageFragments.map { it.memberScope.memberScopeAsImportingScope() }
-                CollectionsKt.map(builtIns.getBuiltInsPackageFragments(), new Function1<PackageFragmentDescriptor, ImportingScope>() {
+                CollectionsKt.map(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES, new Function1<FqName, ImportingScope>() {
                     @Override
-                    public ImportingScope invoke(PackageFragmentDescriptor packageFragment) {
-                        return ScopeUtilsKt.memberScopeAsImportingScope(packageFragment.getMemberScope());
+                    public ImportingScope invoke(FqName fqName) {
+                        return ScopeUtilsKt.memberScopeAsImportingScope(module.getPackage(fqName).getMemberScope());
                     }
                 }), null);
-        typeResolver = InjectionKt.createContainerForTests(getProject(), module).getTypeResolver();
+        typeResolver = DslKt.getService(container, TypeResolver.class);
         x = createTypeVariable("X");
         y = createTypeVariable("Y");
         variables = Sets.newHashSet(x.getTypeConstructor(), y.getTypeConstructor());
@@ -82,8 +84,8 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
 
     private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                builtIns.getBuiltInsModule(), Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
-                Name.identifier(name), 0);
+                module, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT, Name.identifier(name), 0
+        );
     }
 
     public void testNoVariables() throws Exception {
@@ -207,16 +209,18 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     }
 
     private TypeProjection makeType(String typeStr) {
-        LexicalScope withX = new LexicalScopeImpl(builtinsImportingScope, builtIns.getBuiltInsModule(),
-                                                  false, null, LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                                                  new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-                                                      @Override
-                                                      public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                                          handler.addClassifierDescriptor(x);
-                                                          handler.addClassifierDescriptor(y);
-                                                          return Unit.INSTANCE;
-                                                      }
-                                                  });
+        LexicalScope withX = new LexicalScopeImpl(
+                builtinsImportingScope, module,
+                false, null, LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                    @Override
+                    public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                        handler.addClassifierDescriptor(x);
+                        handler.addClassifierDescriptor(y);
+                        return Unit.INSTANCE;
+                    }
+                }
+        );
 
         KtTypeProjection projection = KtPsiFactoryKt
                 .KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
