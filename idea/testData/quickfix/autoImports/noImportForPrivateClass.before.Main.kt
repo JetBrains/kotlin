@@ -4,6 +4,7 @@
 // ACTION: Create parameter 'PrivateClass'
 // ACTION: Create property 'PrivateClass'
 // ACTION: Rename reference
+// ACTION: Add dependency on module...
 // ERROR: Unresolved reference: PrivateClass
 
 fun test() {

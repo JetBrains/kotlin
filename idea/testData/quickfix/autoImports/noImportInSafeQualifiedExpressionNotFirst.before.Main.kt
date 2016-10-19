@@ -5,6 +5,7 @@
 // ACTION: Create class 'SomeTest'
 // ACTION: Replace safe access expression with 'if' expression
 // ACTION: Rename reference
+// ACTION: Add dependency on module...
 
 package testing
 
