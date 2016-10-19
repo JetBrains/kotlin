@@ -15,6 +15,11 @@
  */
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the read-only [Collection] interface.
+ *
+* @param E the type of elements contained in the collection. The collection is covariant on its element type.
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractCollection<out E> protected constructor() : Collection<E> {
     abstract override val size: Int

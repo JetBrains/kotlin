@@ -20,6 +20,14 @@
 
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the read-only [Map] interface.
+ *
+ * The implementor is required to implement [entries] property, which should return read-only set of map entries.
+ *
+ * @param K the type of map keys. The map is invariant on its key type.
+ * @param V the type of map values. The map is covariant on its value type.
+*/
 @SinceKotlin("1.1")
 public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> {
 
@@ -48,6 +56,12 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
         return true
     }
 
+
+    /**
+     * Compares this map with other instance with the ordered structural equality.
+     *
+     * @return true, if [other] instance is a [Map] of the same size, all entries of which are contained in the [entries] set of this map.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Map<*, *>) return false
@@ -58,11 +72,23 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
 
     override operator fun get(key: K): V? = implFindEntry(key)?.value
 
+
+    /**
+     * Returns the hash code value for this map.
+     *
+     * It is the same as the hashCode of [entries] set.
+     */
     override fun hashCode(): Int = entries.hashCode()
 
     override fun isEmpty(): Boolean = size == 0
     override val size: Int get() = entries.size
 
+    /**
+     * Returns a read-only [Set] of all keys in this map.
+     *
+     * Accessing this property first time creates a keys view from [entries].
+     * All subsequent accesses just return the created instance.
+     */
     private @Volatile var _keys: Set<K>? = null
     override val keys: Set<K> get() {
         if (_keys == null) {
@@ -89,6 +115,12 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
 
     private fun toString(o: Any?): String = if (o === this) "(this Map)" else o.toString()
 
+    /**
+     * Returns a read-only [Collection] of all values in this map.
+     *
+     * Accessing this property first time creates a values view from [entries].
+     * All subsequent accesses just return the created instance.
+     */
     private @Volatile var _values: Collection<V>? = null
     override val values: Collection<V> get() {
         if (_values == null) {
