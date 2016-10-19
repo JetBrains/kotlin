@@ -127,10 +127,22 @@ abstract class KotlinGenerateTestSupportActionBase(
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val klass = findTargetClass(editor, file) ?: return
-        val frameworks = findSuitableFrameworks(klass)
-                .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
-        chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
+
+        if (testFrameworkToUse != null) {
+            val frameworkToUse = findSuitableFrameworks(klass).first { it.name == testFrameworkToUse }
+            if (isApplicableTo(frameworkToUse, klass)) {
+                doGenerate(editor, file, klass, frameworkToUse)
+            }
+        }
+        else {
+            val frameworks = findSuitableFrameworks(klass)
+                    .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
+
+            chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
+        }
     }
+
+    var testFrameworkToUse: String? = null
 
     private val DUMMY_NAME = "__KOTLIN_RULEZZZ__"
 
