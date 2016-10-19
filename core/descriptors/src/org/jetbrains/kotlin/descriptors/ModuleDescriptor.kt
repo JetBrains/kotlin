@@ -43,7 +43,10 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     val defaultImports: List<ImportPath>
 
-    val effectivelyExcludedImports: List<FqName>
+    /**
+     * @return dependent modules in the same order in which this module depends on them. Does not include `this`
+     */
+    val allDependentModules: List<ModuleDescriptor>
 
     fun <T> getCapability(capability: Capability<T>): T?
 

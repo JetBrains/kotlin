@@ -20,18 +20,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isChildOf
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
 
@@ -55,28 +48,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
     }
 
-    override val effectivelyExcludedImports: List<FqName> by storageManager.createLazyValue {
-        val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
-        val dependencies = this.dependencies.sure { "Dependencies of module $id were not set" }
-        val builtinTypeAliases = dependencies.allDependencies.filter { it != this }.flatMap {
-            packagesWithAliases.map(it::getPackage).flatMap {
-                it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
-            }
-        }
-
-        val nonKotlinDefaultImportedPackages =
-                defaultImports
-                    .filter { it.isAllUnder }
-                    .mapNotNull {
-                        it.fqnPart().check { !it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
-                    }
-        val nonKotlinAliasedTypeFqNames =
-                builtinTypeAliases
-                    .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
-                    .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
-
-        nonKotlinAliasedTypeFqNames
-    }
+    override val allDependentModules: List<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)
 

@@ -64,12 +64,6 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public List<FqName> getEffectivelyExcludedImports() {
-                return emptyList();
-            }
-
-            @NotNull
-            @Override
             public Annotations getAnnotations() {
                 return Annotations.Companion.getEMPTY();
             }
@@ -92,6 +86,12 @@ public class ErrorUtils {
             @Override
             public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
                 throw new IllegalStateException("Should not be called!");
+            }
+
+            @NotNull
+            @Override
+            public List<ModuleDescriptor> getAllDependentModules() {
+                return emptyList();
             }
 
             @Override
