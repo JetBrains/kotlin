@@ -17,28 +17,17 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.replacement.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.replacement.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 class DeprecatedSymbolUsageInWholeProjectFix(
@@ -46,8 +35,6 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         replaceWith: ReplaceWith,
         private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
-
-    private val LOG = Logger.getInstance(DeprecatedSymbolUsageInWholeProjectFix::class.java)
 
     override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
 
@@ -62,19 +49,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
         val psiElement = targetPsiElement()!!
-
-        ProgressManager.getInstance().run(
-                object : Task.Modal(project, "Applying '$text'", true) {
-                    override fun run(indicator: ProgressIndicator) {
-                        val usages = runReadAction {
-                            val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
-                            ReferencesSearch.search(psiElement, searchScope)
-                                    .filterIsInstance<KtSimpleNameReference>()
-                                    .map { ref -> ref.expression }
-                        }
-                        replaceUsages(project, usages, replacementStrategy)
-                    }
-                })
+        replacementStrategy.replaceUsagesInWholeProject(psiElement, progressTitle = "Applying '$text'", commandName = text)
     }
 
     private fun targetPsiElement(): KtDeclaration? {
@@ -84,37 +59,6 @@ class DeprecatedSymbolUsageInWholeProjectFix(
             is KtProperty -> referenceTarget
             is KtConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
             else -> null
-        }
-    }
-
-    private fun replaceUsages(project: Project, usages: Collection<KtSimpleNameExpression>, replacementStrategy: UsageReplacementStrategy) {
-        UIUtil.invokeLaterIfNeeded {
-            project.executeWriteCommand(text) {
-                // we should delete imports later to not affect other usages
-                val importsToDelete = arrayListOf<KtImportDirective>()
-
-                for (usage in usages) {
-                    try {
-                        if (!usage.isValid) continue // TODO: nested calls
-
-                        //TODO: keep the import if we don't know how to replace some of the usages
-                        val importDirective = usage.getStrictParentOfType<KtImportDirective>()
-                        if (importDirective != null) {
-                            if (!importDirective.isAllUnder && importDirective.targetDescriptors().size == 1) {
-                                importsToDelete.add(importDirective)
-                            }
-                            continue
-                        }
-
-                        replacementStrategy.createReplacer(usage)?.invoke()
-                    }
-                    catch (e: Throwable) {
-                        LOG.error(e)
-                    }
-                }
-
-                importsToDelete.forEach { it.delete() }
-            }
         }
     }
 
@@ -136,6 +80,5 @@ class DeprecatedSymbolUsageInWholeProjectFix(
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
         }
-
     }
 }
