@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.facet
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
@@ -23,6 +24,11 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.getLibraryProperties
@@ -95,24 +101,42 @@ internal fun getLibraryLanguageLevel(
     return getDefaultLanguageLevel(module, minVersion)
 }
 
-internal fun KotlinFacetConfiguration.VersionInfo.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
-    if (targetPlatformKind == null) {
-        targetPlatformKind = getDefaultTargetPlatform(module, rootModel)
+internal fun KotlinFacetConfiguration.Settings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
+    val project = module.project
+
+    with(versionInfo) {
+        if (targetPlatformKind == null) {
+            targetPlatformKind = getDefaultTargetPlatform(module, rootModel)
+        }
+
+        if (languageLevel == null) {
+            languageLevel = getDefaultLanguageLevel(module)
+        }
+
+        if (apiLevel == null) {
+            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+        }
     }
 
-    if (languageLevel == null) {
-        languageLevel = getDefaultLanguageLevel(module)
-    }
+    with(compilerInfo) {
+        if (commonCompilerArguments == null) {
+            commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.copy()
+        }
 
-    if (apiLevel == null) {
-        apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+        if (compilerSettings == null) {
+            compilerSettings = CompilerSettings(KotlinCompilerSettings.getInstance(project).settings)
+        }
+
+        if (k2jsCompilerArguments == null) {
+            k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance (project).settings.copy()
+        }
     }
 }
 
-internal fun Module.getKotlinVersionInfo(rootModel: ModuleRootModel? = null): KotlinFacetConfiguration.VersionInfo {
-    val versionInfo = KotlinFacet.get(this)?.configuration?.state?.versionInfo ?: KotlinFacetConfiguration.VersionInfo()
-    versionInfo.initializeIfNeeded(this, rootModel)
-    return versionInfo
+internal fun Module.getKotlinSettings(rootModel: ModuleRootModel? = null): KotlinFacetConfiguration.Settings {
+    val settings = KotlinFacet.get(this)?.configuration?.state ?: KotlinFacetConfiguration.Settings()
+    settings.initializeIfNeeded(this, rootModel)
+    return settings
 }
 
 val KotlinFacetConfiguration.TargetPlatform.mavenLibraryId: String
