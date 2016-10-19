@@ -55,8 +55,7 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
                 trace,
                 environment.configuration,
                 { scope -> JvmPackagePartProvider(environment, scope) },
-                { storageManager, files -> ScriptMutableDeclarationProviderFactory() },
-                GlobalSearchScope.EMPTY_SCOPE
+                { storageManager, files -> ScriptMutableDeclarationProviderFactory() }
         )
 
         this.module = container.get<ModuleDescriptorImpl>()

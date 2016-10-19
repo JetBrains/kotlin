@@ -23,12 +23,22 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
 object JvmResolveUtil {
+    @JvmStatic
+    @JvmOverloads
+    fun createContainer(environment: KotlinCoreEnvironment, files: Collection<KtFile> = emptyList()): ComponentProvider =
+            TopDownAnalyzerFacadeForJVM.createContainer(
+                    environment.project, files, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                    environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory
+            )
+
     @JvmStatic
     fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
             analyzeAndCheckForErrors(setOf(file), environment)

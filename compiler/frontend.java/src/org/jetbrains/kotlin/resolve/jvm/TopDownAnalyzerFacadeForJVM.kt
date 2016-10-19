@@ -95,7 +95,7 @@ object TopDownAnalyzerFacadeForJVM {
             configuration: CompilerConfiguration,
             packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
             declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
-            sourceModuleSearchScope: GlobalSearchScope
+            sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): ComponentProvider {
         val moduleContext = createModuleContext(project, configuration)
 

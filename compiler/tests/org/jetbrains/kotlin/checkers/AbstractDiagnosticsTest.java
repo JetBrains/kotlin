@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.frontend.java.di.InjectionKt;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
+import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
@@ -301,6 +303,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         }
         else {
             configuration = getEnvironment().getConfiguration();
+            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT;
         }
 
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
@@ -326,14 +329,19 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         }
 
         GlobalSearchScope moduleContentScope = GlobalSearchScope.allScope(moduleContext.getProject());
-        ComponentProvider container = InjectionKt.createContainerForTopDownSingleModuleAnalyzerForJvm(
+        SingleModuleClassResolver moduleClassResolver = new SingleModuleClassResolver();
+        ComponentProvider container = InjectionKt.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 moduleTrace,
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
                 moduleContentScope,
+                LookupTracker.Companion.getDO_NOTHING(),
                 new JvmPackagePartProvider(getEnvironment(), moduleContentScope),
-                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
+                languageVersionSettings,
+                moduleClassResolver
         );
+        InjectionKt.initJvmBuiltInsForTopDownAnalysis(container, moduleContext.getModule(), languageVersionSettings);
+        moduleClassResolver.setResolver(DslKt.getService(container, JavaDescriptorResolver.class));
 
         ModuleDescriptorImpl moduleDescriptor = (ModuleDescriptorImpl) moduleContext.getModule();
         moduleDescriptor.initialize(new CompositePackageFragmentProvider(Arrays.asList(

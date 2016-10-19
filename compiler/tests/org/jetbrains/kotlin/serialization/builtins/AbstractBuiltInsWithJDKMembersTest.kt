@@ -16,63 +16,43 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownSingleModuleAnalyzerForJvm
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JvmBuiltIns
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
 
 abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() {
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
-    }
+    private val configuration = RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
+            DescriptorRenderer.withOptions {
+                withDefinedIn = false
+                overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
+                verbose = true
+                includeAnnotationArguments = true
+                modifiers = DescriptorRendererModifier.ALL
+            })
+
+    override fun createEnvironment(): KotlinCoreEnvironment =
+            createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
 
     protected fun doTest(builtinVersionName: String) {
-        val configuration = RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
-                DescriptorRenderer.withOptions {
-                    withDefinedIn = false
-                    overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-                    verbose = true
-                    includeAnnotationArguments = true
-                    modifiers = DescriptorRendererModifier.ALL
-                })
+        val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
-        val jvmBuiltIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
-        val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", jvmBuiltIns)
-
-        val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
-                ModuleContext(emptyModule, environment.project), CliLightClassGenerationSupport.CliBindingTrace(),
-                DeclarationProviderFactory.EMPTY, GlobalSearchScope.allScope(environment.project), PackagePartProvider.Empty
-        )
-
-        emptyModule.initialize(container.get<JavaDescriptorResolver>().packageFragmentProvider)
-        emptyModule.setDependencies(emptyModule)
-
-        val packageFragmentProvider = emptyModule.builtIns.builtInsModule.packageFragmentProvider
-
-        for (packageFqName in listOf<FqName>(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
-            val loaded = packageFragmentProvider.getPackageFragments(packageFqName).filterIsInstance<BuiltInsPackageFragment>().single()
+        for (packageFqName in listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
+            val loaded =
+                    module.packageFragmentProvider.getPackageFragments(packageFqName).filterIsInstance<BuiltInsPackageFragment>().single()
             RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                     loaded, configuration,
-                    File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt"))
+                    File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt")
+            )
         }
     }
 }
