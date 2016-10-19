@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -50,6 +51,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
+    @Nullable
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
     private final Project project;
     private JPanel contentPane;
@@ -67,6 +69,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
     private JComboBox moduleKindComboBox;
+    private JPanel k2jvmPanel;
+    private JPanel k2jsPanel;
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -75,12 +79,18 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
     }
 
-    public KotlinCompilerConfigurableTab(Project project) {
-        this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
-        this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings();
-        this.compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
-        this.compilerWorkspaceSettings = ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class);
+    public KotlinCompilerConfigurableTab(
+            Project project,
+            CommonCompilerArguments commonCompilerArguments,
+            K2JSCompilerArguments k2jsCompilerArguments,
+            CompilerSettings compilerSettings,
+            @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings
+    ) {
         this.project = project;
+        this.commonCompilerArguments = commonCompilerArguments;
+        this.k2jsCompilerArguments = k2jsCompilerArguments;
+        this.compilerSettings = compilerSettings;
+        this.compilerWorkspaceSettings = compilerWorkspaceSettings;
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -99,6 +109,24 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         });
 
         fillModuleKindList();
+
+        if (compilerWorkspaceSettings == null) {
+            keepAliveCheckBox.setVisible(false);
+            k2jvmPanel.setVisible(false);
+        }
+    }
+
+    public void setTargetPlatform(@Nullable KotlinFacetConfiguration.TargetPlatform targetPlatform) {
+        k2jsPanel.setVisible(targetPlatform == KotlinFacetConfiguration.TargetPlatform.JS);
+    }
+
+    @SuppressWarnings("unused")
+    public KotlinCompilerConfigurableTab(Project project) {
+        this(project,
+             KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
+             Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
+             KotlinCompilerSettings.getInstance(project).getSettings(),
+             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class));
     }
 
     @SuppressWarnings("unchecked")
@@ -146,8 +174,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(copyRuntimeFilesCheckBox, compilerSettings.getCopyJsLibraryFiles()) ||
                ComparingUtils.isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
-               ComparingUtils.isModified(enablePreciseIncrementalCheckBox, compilerWorkspaceSettings.getPreciseIncrementalEnabled()) ||
-               ComparingUtils.isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()) ||
+               (compilerWorkspaceSettings != null &&
+                (ComparingUtils.isModified(enablePreciseIncrementalCheckBox, compilerWorkspaceSettings.getPreciseIncrementalEnabled()) ||
+                 ComparingUtils.isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()))) ||
 
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
@@ -167,12 +196,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
         compilerSettings.setOutputDirectoryForJsLibraryFiles(outputDirectory.getText());
 
-        compilerWorkspaceSettings.setPreciseIncrementalEnabled(enablePreciseIncrementalCheckBox.isSelected());
+        if (compilerWorkspaceSettings != null) {
+            compilerWorkspaceSettings.setPreciseIncrementalEnabled(enablePreciseIncrementalCheckBox.isSelected());
 
-        boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
-        compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
-        if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
-            PluginStartupComponent.getInstance().resetAliveFlag();
+            boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
+            compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
+            if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
+                PluginStartupComponent.getInstance().resetAliveFlag();
+            }
         }
 
         k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
@@ -198,8 +229,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
         outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
-        enablePreciseIncrementalCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());
-        keepAliveCheckBox.setSelected(compilerWorkspaceSettings.getEnableDaemon());
+        if (compilerWorkspaceSettings != null) {
+            enablePreciseIncrementalCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());
+            keepAliveCheckBox.setSelected(compilerWorkspaceSettings.getEnableDaemon());
+        }
 
         generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourceMap);
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);

@@ -25,10 +25,11 @@ import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
 
-class KotlinFacetEditorTab(
+class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
         private val editorContext: FacetEditorContext,
-        validatorsManager: FacetValidatorsManager
+        validatorsManager: FacetValidatorsManager,
+        private val compilerTab: KotlinFacetEditorCompilerTab
 ) : FacetEditorTab() {
     class DescriptionListCellRenderer : DefaultListCellRenderer() {
         override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
@@ -50,8 +51,6 @@ class KotlinFacetEditorTab(
             return ValidationResult.OK
         }
     }
-
-
 
     private val languageVersionComboBox =
             JComboBox<KotlinFacetConfiguration.LanguageLevel>(KotlinFacetConfiguration.LanguageLevel.values()).apply {
@@ -83,11 +82,16 @@ class KotlinFacetEditorTab(
 
         targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
+            updateCompilerTab()
         }
 
-        configuration.state.versionInfo.initializeIfNeeded(editorContext.module, editorContext.rootModel)
+        updateCompilerTab()
 
         reset()
+    }
+
+    private fun updateCompilerTab() {
+        compilerTab.compilerConfigurable.setTargetPlatform(chosenPlatform)
     }
 
     override fun isModified(): Boolean {
@@ -131,4 +135,7 @@ class KotlinFacetEditorTab(
     override fun disposeUIResources() {
 
     }
+
+    val chosenPlatform: KotlinFacetConfiguration.TargetPlatform?
+        get() = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
 }

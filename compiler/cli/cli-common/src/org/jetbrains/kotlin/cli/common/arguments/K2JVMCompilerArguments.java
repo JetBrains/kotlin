@@ -98,6 +98,12 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String[] friendPaths;
 
     @Override
+    public CommonCompilerArguments copy() {
+        // No need to copy these arguments yet
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     @NotNull
     public String executableScriptFileName() {
         return "kotlinc-jvm";

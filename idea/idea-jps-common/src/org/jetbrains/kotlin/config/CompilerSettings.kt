@@ -21,6 +21,16 @@ class CompilerSettings {
     var copyJsLibraryFiles: Boolean = true
     var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
+    constructor()
+
+    constructor(settings: CompilerSettings) {
+        additionalArguments = settings.additionalArguments
+        scriptTemplates = settings.scriptTemplates
+        scriptTemplatesClasspath = settings.scriptTemplatesClasspath
+        copyJsLibraryFiles = settings.copyJsLibraryFiles
+        outputDirectoryForJsLibraryFiles = settings.outputDirectoryForJsLibraryFiles
+    }
+
     companion object {
         private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
         private val DEFAULT_OUTPUT_DIRECTORY = "lib"
