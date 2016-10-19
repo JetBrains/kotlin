@@ -49,3 +49,28 @@ fun CString.Companion.fromString(str: String?): CString? {
 fun NativeArray<Int8Box>.asCString() = CString.fromArray(this)
 fun Int8Box.asCString() = CString.fromArray(NativeArray.byRefToFirstElem(this, Int8Box))
 fun String.toCString() = CString.fromString(this)
+
+class MemScope private constructor(private val arena: Arena) : Placement by arena {
+    val memScope: Placement
+        get() = this
+
+    companion object {
+        internal inline fun <R> use(block: MemScope.()->R): R {
+            val memScope = MemScope(Arena())
+            try {
+                return memScope.block()
+            } finally {
+                memScope.arena.clear()
+            }
+        }
+    }
+}
+
+/**
+ * Runs given [block] providing allocation of memory
+ * which will be automatically disposed at the end of this scope.
+ */
+inline fun <R> memScoped(block: MemScope.()->R): R {
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") // TODO: it is a hack
+    return MemScope.use(block)
+}
