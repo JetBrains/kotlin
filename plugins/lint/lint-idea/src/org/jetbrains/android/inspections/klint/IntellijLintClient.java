@@ -7,7 +7,7 @@ import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
-import com.android.sdklib.repositoryv2.AndroidSdkHandler;
+import com.android.sdklib.repository.local.LocalSdk;
 import com.android.tools.idea.gradle.util.Projects;
 import com.android.tools.idea.rendering.AppResourceRepository;
 import com.android.tools.idea.rendering.LocalResourceRepository;
@@ -334,10 +334,10 @@ public class IntellijLintClient extends LintClient implements Disposable {
 
   @Nullable
   @Override
-  public AndroidSdkHandler getSdk() {
+  public LocalSdk getSdk() {
     if (mSdk == null) {
       Module module = getModule();
-      AndroidSdkHandler sdk = getLocalSdk(module);
+      LocalSdk sdk = getLocalSdk(module);
       if (sdk != null) {
         mSdk = sdk;
       } else {
@@ -359,13 +359,13 @@ public class IntellijLintClient extends LintClient implements Disposable {
   }
 
   @Nullable
-  private static AndroidSdkHandler getLocalSdk(@Nullable Module module) {
+  private static LocalSdk getLocalSdk(@Nullable Module module) {
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       if (facet != null) {
         AndroidSdkData sdkData = facet.getSdkData();
         if (sdkData != null) {
-          return sdkData.getSdkHandler();
+          return sdkData.getLocalSdk();
         }
       }
     }
