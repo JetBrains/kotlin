@@ -507,6 +507,44 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 """)
     }
 
+    fun testChainCallContinueWithDot() {
+        doCharTypeTest(
+                '.',
+                """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |    <caret>
+                |}
+                """,
+                """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |            .<caret>
+                |}
+                """)
+    }
+
+    fun testChainCallContinueWithSafeCall() {
+        doCharTypeTest(
+                '.',
+                """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |    ?<caret>
+                |}
+                """,
+                """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |            ?.<caret>
+                |}
+                """)
+    }
+
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
