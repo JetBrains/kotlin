@@ -107,6 +107,15 @@ class StubGenerator(
         return withOutput({ oldOut("    $it") }, action)
     }
 
+    private fun <R> block(header: String, body: () -> R): R {
+        out("$header {")
+        val res = indent {
+            body()
+        }
+        out("}")
+        return res
+    }
+
     /**
      * Returns the expression which could be used for this type in C code.
      *
@@ -418,8 +427,7 @@ class StubGenerator(
         }
 
         val className = decl.kotlinName
-        out("class $className(ptr: NativePtr) : NativeStruct(ptr) {")
-        indent {
+        block("class $className(ptr: NativePtr) : NativeStruct(ptr)") {
             out("")
             out("companion object : Type<$className>(${def.size}, ::$className)")
             out("")
@@ -435,7 +443,6 @@ class StubGenerator(
                 }
             }
         }
-        out("}")
     }
 
     /**
@@ -443,9 +450,9 @@ class StubGenerator(
      */
     private fun generateForwardStruct(s: StructDecl) {
         val className = s.kotlinName
-        out("class $className(ptr: NativePtr) : NativeRef(ptr) {")
-        out("    companion object : Type<$className>(::$className)")
-        out("}")
+        block("class $className(ptr: NativePtr) : NativeRef(ptr)") {
+            out("companion object : Type<$className>(::$className)")
+        }
     }
 
     /**
@@ -459,26 +466,23 @@ class StubGenerator(
 
         val baseRefType = getKotlinTypeForRefTo(e.baseType)
 
-        out("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType}) {")
-        indent {
+        block("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType})") {
             e.values.forEach {
                 out("${it.name}(${it.value}),")
             }
             out(";")
             out("")
-            out("companion object {")
-            out("    fun byValue(value: ${e.baseType.kotlinType}) = ${e.kotlinName}.values().find { it.value == value }!!")
-            out("}")
+            block("companion object") {
+                out("fun byValue(value: ${e.baseType.kotlinType}) = ${e.kotlinName}.values().find { it.value == value }!!")
+            }
             out("")
-            out("class ref(ptr: NativePtr) : NativeRef(ptr) {")
-            out("    companion object : TypeWithSize<ref>(${baseRefType.typeExpr}.size, ::ref)")
-            out("    var value: ${e.kotlinName}")
-            out("        get() = byValue(${baseRefType.typeExpr}.byPtr(ptr).value)")
-            out("        set(value) { ${baseRefType.typeExpr}.byPtr(ptr).value = value.value }")
-            out("}")
-
+            block("class ref(ptr: NativePtr) : NativeRef(ptr)") {
+                out("companion object : TypeWithSize<ref>(${baseRefType.typeExpr}.size, ::ref)")
+                out("var value: ${e.kotlinName}")
+                out("    get() = byValue(${baseRefType.typeExpr}.byPtr(ptr).value)")
+                out("    set(value) { ${baseRefType.typeExpr}.byPtr(ptr).value = value.value }")
+            }
         }
-        out("}")
     }
 
     /**
@@ -646,10 +650,8 @@ class StubGenerator(
 
         val constructorArgsStr = constructorArgs.joinToString(", ")
 
-        out("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgsStr) {")
-        indent {
-            out("override fun invoke(function: $kotlinFunctionType, args: NativeArray<NativePtrBox>, ret: NativePtr) {")
-            indent {
+        block("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgsStr)") {
+            block("override fun invoke(function: $kotlinFunctionType, args: NativeArray<NativePtrBox>, ret: NativePtr)") {
                 val args = type.parameterTypes.mapIndexed { i, paramType ->
                     val refType = getKotlinTypeForRefTo(paramType)
                     val ref = "args[$i].value.asRef(${refType.typeExpr})!!"
@@ -671,9 +673,7 @@ class StubGenerator(
                 }
 
             }
-            out("}")
         }
-        out("}")
     }
 
     /**
@@ -734,8 +734,7 @@ class StubGenerator(
             out("")
         }
 
-        out("object externals {")
-        indent {
+        block("object externals") {
             out("init { System.loadLibrary(\"$libName\") }")
             functionsToBind.forEach {
                 try {
@@ -748,7 +747,6 @@ class StubGenerator(
                 }
             }
         }
-        out("}")
     }
 
     /**
@@ -819,16 +817,16 @@ class StubGenerator(
         }
         val jniFuncName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
 
-        out("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args) {")
+        block("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args)") {
 
-        if (cReturnType == "void") {
-            out("    $callExpr;")
-        } else if (funcReturnType is RecordType) {
-            out("    *(${funcReturnType.decl.spelling}*)retValPlacement = $callExpr;")
-            out("    return ($cReturnType) retValPlacement;")
-        } else {
-            out("    return ($cReturnType) ($callExpr);")
+            if (cReturnType == "void") {
+                out("$callExpr;")
+            } else if (funcReturnType is RecordType) {
+                out("*(${funcReturnType.decl.spelling}*)retValPlacement = $callExpr;")
+                out("return ($cReturnType) retValPlacement;")
+            } else {
+                out("return ($cReturnType) ($callExpr);")
+            }
         }
-        out("}")
     }
 }
