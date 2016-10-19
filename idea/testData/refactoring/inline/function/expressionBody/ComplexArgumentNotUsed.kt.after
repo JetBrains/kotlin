@@ -1,0 +1,10 @@
+fun g() {
+}
+
+fun complexFun(): Int {
+}
+
+fun main(args: Array<String>) {
+    complexFun()
+    g()
+}

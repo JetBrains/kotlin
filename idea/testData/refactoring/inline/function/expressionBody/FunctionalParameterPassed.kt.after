@@ -1,0 +1,8 @@
+fun bar(p1: String, p2: String?, p3: () -> Boolean)
+
+fun foo(i: I) {
+    bar("foo", null) {
+        println("bar")
+        println("baz")
+    }
+}

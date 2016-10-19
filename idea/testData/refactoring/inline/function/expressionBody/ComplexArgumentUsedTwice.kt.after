@@ -1,0 +1,7 @@
+fun complexFun(): Int {
+}
+
+fun main(args: Array<String>) {
+    val p = complexFun()
+    p + p
+}
