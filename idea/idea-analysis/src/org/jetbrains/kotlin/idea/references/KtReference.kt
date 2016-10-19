@@ -80,7 +80,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
         if (targetDescriptors.isNotEmpty()) {
-            return targetDescriptors.flatMap { target -> resolveToPsiElements(target) }
+            return targetDescriptors.flatMap { target -> resolveToPsiElements(target) }.toSet()
         }
 
         val labelTargets = getLabelTargets(context)
