@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
@@ -144,6 +146,14 @@ private fun TranslationContext.createCallInfo(
             }
         }
     }
+
+    if (dispatchReceiver == null) {
+        val container = resolvedCall.resultingDescriptor.containingDeclaration
+        if (DescriptorUtils.isObject(container)) {
+            dispatchReceiver = ReferenceTranslator.translateAsValueReference(container, this)
+        }
+    }
+
     return object : AbstractCallInfo(), CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall

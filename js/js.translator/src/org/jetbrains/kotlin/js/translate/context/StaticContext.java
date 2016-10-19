@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
 
@@ -752,10 +753,16 @@ public final class StaticContext {
     }
 
     private void addInterfaceDefaultMethods() {
-        for (ClassDescriptor classDescriptor : classes) {
-            if (classDescriptor.getKind() != ClassKind.INTERFACE) {
-                ClassTranslator.addInterfaceDefaultMembers(classDescriptor, this);
+        List<ClassDescriptor> orderedClasses = DFS.topologicalOrder(classes, new DFS.Neighbors<ClassDescriptor>() {
+            @NotNull
+            @Override
+            public Iterable<? extends ClassDescriptor> getNeighbors(ClassDescriptor current) {
+                return DescriptorUtils.getSuperclassDescriptors(current);
             }
+        });
+        Collections.reverse(orderedClasses);
+        for (ClassDescriptor classDescriptor : orderedClasses) {
+            ClassTranslator.addInterfaceDefaultMembers(classDescriptor, this);
         }
     }
 

@@ -180,6 +180,12 @@ class ClassTranslator private constructor(
 
         metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("type"), typeRef)
         metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("classIndex"), typeIndex)
+
+        val simpleName = descriptor.name
+        if (!simpleName.isSpecial) {
+            val simpleNameProp = JsPropertyInitializer(JsNameRef("simpleName"), program().getStringLiteral(simpleName.identifier))
+            metadataLiteral.propertyInitializers += simpleNameProp
+        }
     }
 
     private fun generateSecondaryConstructor(classContext: TranslationContext, constructor: KtSecondaryConstructor) {
@@ -506,12 +512,16 @@ class ClassTranslator private constructor(
                                                               DescriptorUtils.isInterface(it.containingDeclaration) }
                                                  .firstOrNull() ?: continue
 
+                if (overriddenFunction.modality == Modality.ABSTRACT) continue
+
                 val interfaceDescriptor = overriddenFunction.containingDeclaration as ClassDescriptor
                 if (interfaceDescriptor.kind != ClassKind.INTERFACE) continue
 
+                val directContainer = member.overriddenDescriptors.first().containingDeclaration as ClassDescriptor
+
                 when (member) {
-                    is FunctionDescriptor -> addDefaultMethodFromInterface(member, interfaceDescriptor, descriptor, context)
-                    is PropertyDescriptor -> addDefaultPropertyFromInterface(member, interfaceDescriptor,  descriptor, context)
+                    is FunctionDescriptor -> addDefaultMethodFromInterface(member, directContainer, descriptor, context)
+                    is PropertyDescriptor -> addDefaultPropertyFromInterface(member, directContainer,  descriptor, context)
                 }
             }
         }

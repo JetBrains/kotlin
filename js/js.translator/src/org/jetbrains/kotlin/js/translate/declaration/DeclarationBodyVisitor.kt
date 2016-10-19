@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
-import java.util.*
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,
@@ -77,6 +76,8 @@ class DeclarationBodyVisitor(
             enumInstanceFunction.body.statements += JsInvocation(pureFqn(enumInitializer.name, null)).makeStmt()
             enumInstanceFunction.body.statements += JsReturn(enumInstanceName.makeRef())
         }
+
+        context.export(descriptor)
 
         enumEntryOrdinal++
     }
