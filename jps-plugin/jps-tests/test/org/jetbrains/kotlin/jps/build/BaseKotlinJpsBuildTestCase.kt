@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.jps.build
 import org.jetbrains.jps.builders.JpsBuildTestCase
 
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
+    @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
         JpsUtils.resetCaches()
         System.setProperty("kotlin.jps.tests", "true")
     }
 
+    @Throws(Exception::class)
     override fun tearDown() {
         JpsUtils.resetCaches()
         System.clearProperty("kotlin.jps.tests")
