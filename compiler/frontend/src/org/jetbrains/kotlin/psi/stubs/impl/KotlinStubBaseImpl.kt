@@ -28,15 +28,18 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 import java.lang.reflect.Method
 import java.util.ArrayList
 
+val STUB_TO_STRING_PREFIX = "KotlinStub$"
+
 open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
         val stubInterface = this.javaClass.interfaces.filter { it.name.contains("Stub") }.single()
         val propertiesValues = renderPropertyValues(stubInterface)
         if (propertiesValues.isEmpty()) {
-            return ""
+            return "$STUB_TO_STRING_PREFIX$stubType"
         }
-        return propertiesValues.joinToString(separator = ", ", prefix = "[", postfix = "]")
+        val properties = propertiesValues.joinToString(separator = ", ", prefix = "[", postfix = "]")
+        return "$STUB_TO_STRING_PREFIX$stubType$properties"
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {
