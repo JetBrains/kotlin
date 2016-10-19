@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.stubs;
+package org.jetbrains.kotlin.idea.stubs
 
-import com.intellij.psi.impl.DebugUtil;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.stubs.StubElement
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
-import java.io.File;
+import java.io.File
 
-public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTestCase {
-    protected void doTest(@NotNull String sourcePath) {
-        KtFile file = (KtFile) myFixture.configureByFile(sourcePath);
-        KtFileStubBuilder jetStubBuilder = new KtFileStubBuilder();
-        StubElement lighterTree = jetStubBuilder.buildStubTree(file);
-        String stubTree = serializeStubToString(lighterTree);
-        String expectedFile = sourcePath.replace(".kt", ".expected");
-        KotlinTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
+abstract class AbstractStubBuilderTest : LightCodeInsightFixtureTestCase() {
+    protected fun doTest(sourcePath: String) {
+        val file = myFixture.configureByFile(sourcePath) as KtFile
+        val jetStubBuilder = KtFileStubBuilder()
+        val lighterTree = jetStubBuilder.buildStubTree(file)
+        val stubTree = serializeStubToString(lighterTree)
+        val expectedFile = sourcePath.replace(".kt", ".expected")
+        KotlinTestUtils.assertEqualsToFile(File(expectedFile), stubTree)
     }
 
-    @NotNull
-    public static String serializeStubToString(@NotNull StubElement stubElement) {
-        return DebugUtil.stubTreeToString(stubElement).replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>");
+    companion object {
+        fun serializeStubToString(stubElement: StubElement<*>): String {
+            return DebugUtil.stubTreeToString(stubElement).replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>")
+        }
     }
 }
