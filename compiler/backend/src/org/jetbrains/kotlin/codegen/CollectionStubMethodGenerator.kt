@@ -93,7 +93,7 @@ class CollectionStubMethodGenerator(
             // to construct the needed MutableCollection type. Since getAllSupertypes() may return several types which correspond to the
             // Collection class descriptor, we find the most specific one (which is guaranteed to exist by front-end)
             val readOnlyCollectionType = TypeUtils.getAllSupertypes(parentType).findMostSpecificTypeForClass(readOnlyClass)
-            val mutableCollectionType = newType(mutableClass, readOnlyCollectionType.arguments)
+            val mutableCollectionType = newType(mutableClass.declarationDescriptor as ClassDescriptor, readOnlyCollectionType.arguments)
 
             child.addSupertype(parentType)
             child.addSupertype(mutableCollectionType)
@@ -105,7 +105,7 @@ class CollectionStubMethodGenerator(
                 if (method.modality == Modality.ABSTRACT || isDefaultInJdk(method)) {
                     // If the fake override is abstract and it's _declared_ as abstract in the class, skip it because the method is already
                     // present in the bytecode (abstract) and we don't want a duplicate signature error
-                    if (method.findOverriddenFromDirectSuperClass(descriptor)?.kind == DECLARATION) continue
+                    if (method.findOverriddenFromDirectSuperClass(descriptor.typeConstructor)?.kind == DECLARATION) continue
 
                     // If the substituted signature differs from the original one in MutableCollection, we should also generate a stub with
                     // the original (erased) signature. It doesn't really matter if this is a bridge method delegating to the first stub or
@@ -195,53 +195,52 @@ class CollectionStubMethodGenerator(
         }
 
     private data class CollectionClassPair(
-            val readOnlyClass: ClassDescriptor,
-            val mutableClass: ClassDescriptor
+            val readOnlyClass: TypeConstructor,
+            val mutableClass: TypeConstructor
     )
 
     private fun findRelevantSuperCollectionClasses(): Collection<CollectionClassPair> {
-        fun pair(readOnlyClass: ClassDescriptor, mutableClass: ClassDescriptor) = CollectionClassPair(readOnlyClass, mutableClass)
+        fun pair(readOnlyClass: TypeConstructor, mutableClass: TypeConstructor) = CollectionClassPair(readOnlyClass, mutableClass)
 
         val collectionClasses = with(descriptor.builtIns) {
             listOf(
-                    pair(collection, mutableCollection),
-                    pair(set, mutableSet),
-                    pair(list, mutableList),
-                    pair(map, mutableMap),
-                    pair(mapEntry, mutableMapEntry),
-                    pair(iterable, mutableIterable),
-                    pair(iterator, mutableIterator),
-                    pair(listIterator, mutableListIterator)
-            )
+                    collection to mutableCollection,
+                    set to mutableSet,
+                    list to mutableList,
+                    map to mutableMap,
+                    mapEntry to mutableMapEntry,
+                    iterable to mutableIterable,
+                    iterator to mutableIterator,
+                    listIterator to mutableListIterator
+            ).map { (readOnly, mutable) ->
+                pair(readOnly.typeConstructor, mutable.typeConstructor)
+            }
         }
 
-        val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.defaultType).classes().toHashSet()
+        val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.defaultType).mapTo(HashSet(), KotlinType::constructor)
 
         val ourSuperCollectionClasses = collectionClasses.filter { (readOnlyClass, mutableClass) ->
             readOnlyClass in allSuperClasses && mutableClass !in allSuperClasses
         }
-        if (ourSuperCollectionClasses.isEmpty()) return listOf()
+        if (ourSuperCollectionClasses.isEmpty()) return emptySet()
 
         // Filter out built-in classes which are overridden by other built-in classes in the list, to avoid duplicating methods.
-        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet<ClassDescriptor>()) { (readOnlyClass) ->
-            readOnlyClass.typeConstructor.supertypes.classes()
+        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet()) { (readOnlyClass) ->
+            readOnlyClass.supertypes.map(KotlinType::constructor)
         }
         return ourSuperCollectionClasses.filter { (readOnlyClass) -> readOnlyClass !in redundantClasses }
     }
 
-    private fun Collection<KotlinType>.classes(): Collection<ClassDescriptor> =
-            this.map { it.constructor.declarationDescriptor as ClassDescriptor }
-
     private fun findFakeOverridesForMethodsFromMutableCollection(
             klass: ClassDescriptor,
-            mutableCollectionClass: ClassDescriptor
+            mutableCollectionTypeConstructor: TypeConstructor
     ): List<FunctionDescriptor> {
         val result = ArrayList<FunctionDescriptor>()
 
         generateOverridesInAClass(klass, object : NonReportingOverrideStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
-                val foundOverriddenFromDirectSuperClass = fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass) ?: return
+                val foundOverriddenFromDirectSuperClass = fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionTypeConstructor) ?: return
                 if (foundOverriddenFromDirectSuperClass.kind == DECLARATION) {
                     // For regular classes there should no be fake overrides having return types incompatible with return types of their
                     // overridden, while here it's possible to create declaration like `fun remove(e: E): ImmutableCollection<E>`
@@ -284,9 +283,9 @@ class CollectionStubMethodGenerator(
         return result
     }
 
-    private fun Collection<KotlinType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KotlinType {
-        val types = this.filter { it.constructor.declarationDescriptor == klass }
-        if (types.isEmpty()) error("No supertype of $klass in $this")
+    private fun Collection<KotlinType>.findMostSpecificTypeForClass(typeConstructor: TypeConstructor): KotlinType {
+        val types = this.filter { it.constructor == typeConstructor }
+        if (types.isEmpty()) error("No supertype of $typeConstructor in $this")
         if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
@@ -320,9 +319,10 @@ class CollectionStubMethodGenerator(
         return Pair(child, newTypeParameters)
     }
 
-    private fun FunctionDescriptor.findOverriddenFromDirectSuperClass(classDescriptor: ClassDescriptor): FunctionDescriptor? {
-        return this.overriddenDescriptors.firstOrNull { it.containingDeclaration == classDescriptor }
-    }
+    private fun FunctionDescriptor.findOverriddenFromDirectSuperClass(typeConstructor: TypeConstructor): FunctionDescriptor? =
+            this.overriddenDescriptors.firstOrNull {
+                (it.containingDeclaration as? ClassDescriptor)?.typeConstructor == typeConstructor
+            }
 
     private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KotlinType {
         return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, typeArguments)
