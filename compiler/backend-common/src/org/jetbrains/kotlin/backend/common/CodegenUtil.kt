@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
@@ -58,7 +59,7 @@ object CodegenUtil {
                                 // this is the actual member of delegateExpressionType that we are delegating to
                                 (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) +
                                  scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
-                                        .firstOrNull { doesOverride(it, overriddenDescriptor) }
+                                        .firstOrNull { it == overriddenDescriptor || OverridingUtil.overrides(it, overriddenDescriptor) }
                              }
 
                     assert(actualDelegates.size <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
@@ -66,10 +67,6 @@ object CodegenUtil {
                     actualDelegates.firstOrNull()
                 }
     }
-
-    private fun doesOverride(overrideCandidate: CallableMemberDescriptor, overriddenDescriptor: CallableMemberDescriptor) =
-        (listOf(overrideCandidate.original) + DescriptorUtils.getAllOverriddenDescriptors(overrideCandidate))
-                .contains(overriddenDescriptor.original)
 
     @JvmStatic
     fun getDelegatePropertyIfAny(
