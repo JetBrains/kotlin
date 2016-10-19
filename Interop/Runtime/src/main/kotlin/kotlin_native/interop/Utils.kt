@@ -2,15 +2,6 @@ package kotlin_native.interop
 
 fun <T : NativeRef> malloc(type: NativeRef.TypeWithSize<T>) = type.byPtr(bridge.malloc(type.size))
 
-inline fun <T : NativeRef, R> malloc(type: NativeRef.TypeWithSize<T>, action: (T) -> R): R {
-    val ref = malloc(type)
-    try {
-        return action(ref)
-    } finally {
-        free(ref)
-    }
-}
-
 fun free(ptr: NativePtr?) {
     if (ptr != null) {
         bridge.free(ptr)
@@ -28,6 +19,14 @@ fun <T : NativeRef> Placement.allocNativeArrayOf(elemType: NativeRef.Type<T>, va
 }
 
 fun <T : NativeRef> mallocNativeArrayOf(elemType: NativeRef.Type<T>, vararg elements: T?) = heap.allocNativeArrayOf(elemType, *elements)
+
+fun Placement.allocNativeArrayOf(elements: ByteArray): NativeArray<Int8Box> {
+    val res = this.alloc(array[elements.size](Int8Box))
+    elements.forEachIndexed { i, element ->
+        res[i].value = element
+    }
+    return res
+}
 
 fun CString.Companion.fromString(str: String?): CString? {
     if (str == null) {

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
+import kotlin_native.interop.Int8Box
+import kotlin_native.interop.NativeArray
 import kotlin_native.interop.mallocNativeArrayOf
 import llvm.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -74,4 +76,13 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? 
     if (paramTypes.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
     val paramTypesPtr = mallocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0] // TODO: dispose
     return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
+}
+
+/**
+ * Represents [size] bytes contained in this array as [ConstArray].
+ */
+internal fun NativeArray<Int8Box>.asCompileTimeValue(size: Int): ConstArray {
+    return ConstArray(int8Type, (0 .. size-1).map {
+        Int8(this[it].value)
+    })
 }
