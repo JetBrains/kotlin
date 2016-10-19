@@ -1,11 +1,14 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
-import kotlin_native.interop.mallocNativeArrayOf
+import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.native.hash.GlobalHash
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
@@ -15,6 +18,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
  */
 internal interface ContextUtils {
     val context: Context
+
+    val runtime: Runtime
+        get() = context.runtime
+
+    val llvmTargetData: LLVMOpaqueTargetData?
+        get() = runtime.targetData
 
     /**
      * All fields of the class instance.
@@ -73,7 +82,7 @@ internal interface ContextUtils {
             val module = context.llvmModule
             val globalName = this.typeInfoSymbolName
             val globalPtr = LLVMGetNamedGlobal(module, globalName) ?:
-                            LLVMAddGlobal(module, context.runtime.typeInfoType, globalName)
+                            LLVMAddGlobal(module, runtime.typeInfoType, globalName)
 
             return compileTimeValue(globalPtr)
         }
@@ -92,13 +101,18 @@ internal interface ContextUtils {
     /**
      * Returns pointer to first element of given array.
      *
+     * Note: this function doesn't depend on the context
+     *
      * @param arrayPtr pointer to array
      */
     private fun getPtrToFirstElem(arrayPtr: CompileTimeValue): CompileTimeValue {
         val indices = longArrayOf(0, 0).map { LLVMConstInt(LLVMInt32Type(), it, 0) }.toTypedArray()
-        val indicesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *indices)[0] // TODO: dispose
 
-        return compileTimeValue(LLVMBuildGEP(context.llvmBuilder, arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size, ""))
+        memScoped {
+            val indicesNativeArrayPtr = allocNativeArrayOf(LLVMOpaqueValue, *indices)[0]
+
+            return compileTimeValue(LLVMConstGEP(arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size))
+        }
     }
 
     /**
@@ -112,4 +126,43 @@ internal interface ContextUtils {
             Zero(pointerType(elemType))
         }
     }
+
+    /**
+     * Converts this [GlobalHash] to compile-time value of [runtime]-defined `GlobalHash` type.
+     *
+     * These types must be defined identically.
+     */
+    private fun GlobalHash.asCompileTimeValue(): Struct {
+        val size = GlobalHash.size
+        assert(size.toLong() == LLVMStoreSizeOfType(llvmTargetData, runtime.globalhHashType))
+
+        return Struct(runtime.globalhHashType, bits.asCompileTimeValue(size))
+        // TODO: implement such transformation more generally using LLVM bitcast
+        // (seems to require some investigation)
+    }
+
+    /**
+     * Converts this string to the sequence of bytes to be used for hashing/storing to binary/etc.
+     *
+     * TODO: share this implementation
+     */
+    private fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
+
+    val String.localHash: LocalHash
+        get() = LocalHash(localHash(stringAsBytes(this)))
+
+    val String.globalHash: CompileTimeValue
+        get() = memScoped {
+            val hash = globalHash(stringAsBytes(this@globalHash), memScope)
+            hash.asCompileTimeValue()
+        }
+
+    val FqName.globalHash: CompileTimeValue
+        get() = this.toString().globalHash
+
+    val Name.localHash: LocalHash
+        get() = this.toString().localHash
+
+    val FqName.localHash: LocalHash
+        get() = this.toString().localHash
 }

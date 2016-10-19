@@ -34,6 +34,12 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 
     override fun visitClass(declaration: IrClass) {
         super.visitClass(declaration)
+
+        if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
+            // do not generate any RTTI for annotation classes as a workaround for link errors
+            return
+        }
+
         generator.generate(declaration.descriptor)
     }
 
@@ -48,6 +54,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
+            // do not generate any code for annotation classes as a workaround for NotImplementedError
+            return
+        }
+
+        super.visitClass(declaration)
     }
 
     override fun visitSetVariable(expression: IrSetVariable) {

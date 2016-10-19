@@ -76,7 +76,11 @@ build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
    classpath sourceSets.cli_bc.runtimeClasspath
+
    args 'tests/codegen/function/sum.kt'
+
+   args project(':runtime').file('src/main/kotlin')
+
    args '-output', "$buildDir/out.bc"
 
    jvmArgs '-ea'
