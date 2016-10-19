@@ -95,6 +95,18 @@ public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTe
         doTest(fileName);
     }
 
+    @TestMetadata("Override.txt")
+    public void testOverride() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/Override.txt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OverrideInterface.txt")
+    public void testOverrideInterface() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/OverrideInterface.txt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PostProcessing.txt")
     public void testPostProcessing() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/PostProcessing.txt");
