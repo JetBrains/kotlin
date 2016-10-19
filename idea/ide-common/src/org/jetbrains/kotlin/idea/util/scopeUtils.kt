@@ -82,7 +82,7 @@ fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFaca
 
 fun KtElement.getResolutionScope(): LexicalScope {
     val resolutionFacade = getResolutionFacade()
-    val context = resolutionFacade.analyze(this, BodyResolveMode.PARTIAL)
+    val context = resolutionFacade.analyze(this, BodyResolveMode.FULL)
     return getResolutionScope(context, resolutionFacade)
 }
 
