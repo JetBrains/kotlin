@@ -43,9 +43,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
+import org.jetbrains.kotlin.psi.*;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
@@ -227,8 +225,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             LtGtTypingUtils.handleKotlinAutoCloseLT(editor);
             return Result.STOP;
         }
-
-        if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
+        else if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 
             int offset = editor.getCaretModel().getOffset();
@@ -239,9 +236,13 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 return Result.STOP;
             }
         }
-
-        if (c == ':') {
-            if (autoIndentCase(editor, project, file)) {
+        else if (c == ':') {
+            if (autoIndentCase(editor, project, file, KtClassOrObject.class)) {
+                return Result.STOP;
+            }
+        }
+        else if (c == '.') {
+            if (autoIndentCase(editor, project, file, KtQualifiedExpression.class)) {
                 return Result.STOP;
             }
         }
@@ -290,14 +291,14 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
         }
     }
 
-    private static boolean autoIndentCase(Editor editor, Project project, PsiFile file) {
+    private static boolean autoIndentCase(Editor editor, Project project, PsiFile file, Class<?> kclass) {
         int offset = editor.getCaretModel().getOffset();
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
         PsiElement currElement = file.findElementAt(offset - 1);
         if (currElement != null) {
             PsiElement parent = currElement.getParent();
-            if (parent != null && parent instanceof KtClassOrObject) {
-                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - 1);
+            if (parent != null && kclass.isInstance(parent)) {
+                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - currElement.getText().length());
                 return true;
             }
         }
