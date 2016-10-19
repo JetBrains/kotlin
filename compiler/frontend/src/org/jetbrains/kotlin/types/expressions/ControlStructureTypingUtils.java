@@ -189,23 +189,35 @@ public class ControlStructureTypingUtils {
         return function;
     }
 
+    public static class ControlStructureDataFlowInfo extends MutableDataFlowInfoForArguments {
+        public final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap;
+
+        ControlStructureDataFlowInfo(
+                @NotNull DataFlowInfo initialDataFlowInfo,
+                @NotNull Map<ValueArgument, DataFlowInfo> map
+        ) {
+            super(initialDataFlowInfo);
+            dataFlowInfoForArgumentsMap = map;
+        }
+
+
+        @Override
+        public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
+            dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
+        }
+
+        @NotNull
+        @Override
+        public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
+            return dataFlowInfoForArgumentsMap.get(valueArgument);
+        }
+    }
+
     private static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
             @NotNull DataFlowInfo initialDataFlowInfo,
-            Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
+            @NotNull Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
-        return new MutableDataFlowInfoForArguments(initialDataFlowInfo) {
-
-            @Override
-            public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
-                dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
-            }
-
-            @NotNull
-            @Override
-            public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
-                return dataFlowInfoForArgumentsMap.get(valueArgument);
-            }
-        };
+        return new ControlStructureDataFlowInfo(initialDataFlowInfo, dataFlowInfoForArgumentsMap);
     }
 
     public static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForIfCall(
