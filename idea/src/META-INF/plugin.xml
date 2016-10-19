@@ -146,7 +146,6 @@
 
     <action id="IntroduceTypeParameter" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.IntroduceTypeParameterAction"
             text="T_ype Parameter...">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift Y"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunctionToScope"/>
     </action>
 
