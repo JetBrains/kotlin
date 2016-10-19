@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
@@ -81,11 +82,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return normalizedOutputWithoutExitCode + exitCode;
     }
 
-    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) throws Exception {
+    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler, BinaryVersion version) throws Exception {
         System.setProperty("java.awt.headless", "true");
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
-                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent(), JvmMetadataVersion.INSTANCE
+                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent(), version
         );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
@@ -151,11 +152,22 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     protected void doJvmTest(@NotNull String fileName) throws Exception {
-        doTest(fileName, new K2JVMCompiler());
+        doTest(fileName, new K2JVMCompiler(), JvmMetadataVersion.INSTANCE);
     }
 
     protected void doJsTest(@NotNull String fileName) throws Exception {
-        doTest(fileName, new K2JSCompiler());
+        doTest(fileName, new K2JSCompiler(), new BinaryVersion() {
+            @Override
+            public boolean isCompatible() {
+                throw new UnsupportedOperationException();
+            }
+
+            @NotNull
+            @Override
+            public String toString() {
+                return String.valueOf(KotlinJavascriptMetadataUtils.ABI_VERSION);
+            }
+        });
     }
 
     public static String removePerfOutput(String output) {
