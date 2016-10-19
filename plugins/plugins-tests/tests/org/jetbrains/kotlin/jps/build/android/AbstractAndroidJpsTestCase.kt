@@ -17,23 +17,18 @@
 package org.jetbrains.kotlin.jps.build.android
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.android.model.JpsAndroidSdkProperties
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.android.model.JpsAndroidSdkType
 import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
 import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.kotlin.jps.build.BaseKotlinJpsBuildTestCase
 import java.io.File
 
-abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
+abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
 
     private val SDK_NAME = "Android API 23 Platform"
-
-    override fun setUp() {
-        super.setUp()
-        System.setProperty("kotlin.jps.tests", "true")
-    }
 
     fun doTest(path: String) {
         addJdkAndAndroidSdk()
