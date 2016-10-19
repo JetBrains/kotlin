@@ -229,12 +229,12 @@ class StubGenerator(
      *
      * @param kotlinType the name of Kotlin type to be used for this value in Kotlin.
      * @param kotlinConv the function such that `kotlinConv(name)` converts variable `name` to pass it into JNI stub
-     * @param convFree the function such that `convFree(name)` is the statement that frees the result of conversion
+     * @param memScoped the conversion allocates memory and should be placed into `memScoped {}` block
      * @param kotlinJniBridgeType the name of Kotlin type to be used for this value in JNI stub
      */
     class OutValueBinding(val kotlinType: String,
                           val kotlinConv: ((String) -> String)? = null,
-                          val convFree: ((String) -> String)? = null,
+                          val memScoped: Boolean = false,
                           val kotlinJniBridgeType: String = kotlinType)
 
     /**
@@ -312,8 +312,8 @@ class StubGenerator(
                     )
                     is Int8Type -> return OutValueBinding(
                             kotlinType = "String?",
-                            kotlinConv = { name -> "CString.fromString($name).getNativePtr().asLong()" },
-                            convFree = { name -> "free(NativePtr.byValue($name))" },
+                            kotlinConv = { name -> "$name?.toCString(memScope).getNativePtr().asLong()" },
+                            memScoped = true,
                             kotlinJniBridgeType = "Long"
                     )
                 }
@@ -564,8 +564,9 @@ class StubGenerator(
             "$name: " + paramBindings[i].kotlinType
         }.joinToString(", ")
 
-        out("fun ${func.name}($args): ${retValBinding.kotlinType} {")
-        indent {
+        val header = "fun ${func.name}($args): ${retValBinding.kotlinType}"
+
+        fun generateBody() {
             val externalParamNames = paramNames.mapIndexed { i: Int, name: String ->
                 val binding = paramBindings[i]
                 val externalParamName: String
@@ -581,13 +582,6 @@ class StubGenerator(
 
             }
             out("val res = externals.${func.name}(" + externalParamNames.joinToString(", ") + ")")
-            paramNames.forEachIndexed { i, name ->
-                val binding = paramBindings[i]
-                if (binding.convFree != null) {
-                    assert(binding.kotlinConv != null)
-                    out(binding.convFree.invoke(externalParamNames[i]))
-                }
-            }
 
             if (dumpShims) {
                 val returnValueRepresentation  = retValBinding.conv("res")
@@ -599,9 +593,18 @@ class StubGenerator(
             }
 
             out("return " + retValBinding.conv("res"))
-
         }
-        out("}")
+
+        block(header) {
+            val memScoped = paramBindings.any { it.memScoped }
+            if (memScoped) {
+                block("memScoped") {
+                    generateBody()
+                }
+            } else {
+                generateBody()
+            }
+        }
     }
 
     private fun getFfiStructType(elementTypes: List<Type>) =

@@ -32,13 +32,15 @@ fun Placement.allocNativeArrayOf(elements: ByteArray): NativeArray<Int8Box> {
 }
 
 fun CString.Companion.fromString(str: String?): CString? {
-    if (str == null) {
-        return null
-    }
+    return str?.toCString(heap)
+}
 
-    val bytes = str.toByteArray() // TODO: encoding
+fun Int8Box.asCString() = CString.fromArray(NativeArray.byRefToFirstElem(this, Int8Box))
+
+fun String.toCString(retValPlacement: Placement): CString {
+    val bytes = this.toByteArray() // TODO: encoding
     val len = bytes.size
-    val nativeBytes = malloc(NativeArray of Int8Box length (len + 1))
+    val nativeBytes = retValPlacement.alloc(array[len + 1](Int8Box))
 
     bytes.forEachIndexed { i, byte ->
         nativeBytes[i].value = byte
@@ -47,10 +49,6 @@ fun CString.Companion.fromString(str: String?): CString? {
 
     return CString.fromArray(nativeBytes)
 }
-
-fun NativeArray<Int8Box>.asCString() = CString.fromArray(this)
-fun Int8Box.asCString() = CString.fromArray(NativeArray.byRefToFirstElem(this, Int8Box))
-fun String.toCString() = CString.fromString(this)
 
 class MemScope private constructor(private val arena: Arena) : Placement by arena {
     val memScope: Placement
