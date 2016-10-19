@@ -57,6 +57,9 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractCopyPas
         myFixture.editor.selectionModel.setSelection(0, fileText.length)
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
+        configureByDependencyIfExists(testName + ".dependency.kt")
+        configureByDependencyIfExists(testName + ".dependency.java")
+
         configureTargetFile(testName + ".to.kt")
 
         ConvertTextJavaCopyPasteProcessor.conversionPerformed = false
