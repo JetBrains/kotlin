@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix.replaceWith
+package org.jetbrains.kotlin.idea.replacement
 
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.replacement.ReplacementExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
-internal interface CallKindHandler {
+interface CallKindHandler {
     val elementToReplace: KtElement
 
     fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean
@@ -31,7 +30,7 @@ internal interface CallKindHandler {
     fun unwrapResult(result: KtElement): KtElement
 }
 
-internal class CallExpressionHandler(callElement: KtExpression) : CallKindHandler {
+class CallExpressionHandler(callElement: KtExpression) : CallKindHandler {
     override val elementToReplace = callElement.getQualifiedExpressionForSelectorOrThis()
 
     override fun precheckReplacementPattern(pattern: ReplacementExpression) = true
@@ -41,7 +40,7 @@ internal class CallExpressionHandler(callElement: KtExpression) : CallKindHandle
     override fun unwrapResult(result: KtElement) = result
 }
 
-internal class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandler {
+class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandler {
     override val elementToReplace = annotationEntry
 
     override fun precheckReplacementPattern(pattern: ReplacementExpression): Boolean {

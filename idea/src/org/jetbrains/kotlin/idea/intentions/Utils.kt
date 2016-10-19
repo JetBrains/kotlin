@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -36,26 +38,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import java.lang.IllegalArgumentException
-
-fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
-    if (type.isError) return
-    setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
-}
-
-fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
-    val typeReference = KtPsiFactory(project).createType(typeString)
-    setTypeReference(typeReference)
-    if (shortenReferences) {
-        ShortenReferences.DEFAULT.process(getTypeReference()!!)
-    }
-}
-
-fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
-    if (type.isError) return
-    val typeReference = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-    setReceiverTypeReference(typeReference)
-    ShortenReferences.DEFAULT.process(receiverTypeReference!!)
-}
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {

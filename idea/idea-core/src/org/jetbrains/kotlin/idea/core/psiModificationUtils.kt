@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -33,10 +34,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 @Suppress("UNCHECKED_CAST")
@@ -294,3 +297,24 @@ fun KtNamedFunction.getOrCreateValueParameterList(): KtParameterList {
     val anchor = nameIdentifier ?: funKeyword!!
     return addAfter(parameterList, anchor) as KtParameterList
 }
+
+fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
+    if (type.isError) return
+    setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
+}
+
+fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
+    val typeReference = KtPsiFactory(project).createType(typeString)
+    setTypeReference(typeReference)
+    if (shortenReferences) {
+        ShortenReferences.DEFAULT.process(getTypeReference()!!)
+    }
+}
+
+fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
+    if (type.isError) return
+    val typeReference = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    setReceiverTypeReference(typeReference)
+    ShortenReferences.DEFAULT.process(receiverTypeReference!!)
+}
+
