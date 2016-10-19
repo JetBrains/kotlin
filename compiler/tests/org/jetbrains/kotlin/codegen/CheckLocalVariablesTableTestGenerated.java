@@ -53,6 +53,12 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         doTest(fileName);
     }
 
+    @TestMetadata("destructuringInlineLambda.kt")
+    public void testDestructuringInlineLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/destructuringInlineLambda.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineLambdaWithItParam.kt")
     public void testInlineLambdaWithItParam() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");

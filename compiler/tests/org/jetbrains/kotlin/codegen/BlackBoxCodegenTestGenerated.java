@@ -5775,6 +5775,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/stdlibUsages.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withIndexed.kt")
+        public void testWithIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam/withIndexed.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/diagnostics")

@@ -216,8 +216,8 @@ public class FunctionCodegen {
                     new Label(),
                     new Label(),
                     contextKind,
-                    typeMapper
-            );
+                    typeMapper,
+                    0);
 
             mv.visitEnd();
             return;
@@ -457,8 +457,11 @@ public class FunctionCodegen {
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
         generateLocalVariableTable(
-                mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), typeMapper);
+                mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), typeMapper,
+                (functionFakeIndex >= 0 ? 1 : 0) + (lambdaFakeIndex >= 0 ? 1 : 0)
+        );
 
+        //TODO: it's best to move all below logic to 'generateLocalVariableTable' method
         if (context.isInlineMethodContext() && functionFakeIndex != -1) {
             mv.visitLocalVariable(
                     JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION + functionDescriptor.getName().asString(),
@@ -499,11 +502,13 @@ public class FunctionCodegen {
             @NotNull Label methodBegin,
             @NotNull Label methodEnd,
             @NotNull OwnerKind ownerKind,
-            @NotNull KotlinTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper,
+            int shiftForDestructuringVariables
     ) {
         generateLocalVariablesForParameters(mv, jvmMethodSignature, thisType, methodBegin, methodEnd,
                                             functionDescriptor.getValueParameters(),
-                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor), typeMapper);
+                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor), typeMapper, shiftForDestructuringVariables
+        );
     }
 
     public static void generateLocalVariablesForParameters(
@@ -515,6 +520,22 @@ public class FunctionCodegen {
             Collection<ValueParameterDescriptor> valueParameters,
             boolean isStatic,
             KotlinTypeMapper typeMapper
+    ) {
+        generateLocalVariablesForParameters(
+                mv, jvmMethodSignature, thisType, methodBegin, methodEnd, valueParameters, isStatic, typeMapper, 0
+        );
+    }
+
+    private static void generateLocalVariablesForParameters(
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmMethodSignature,
+            @Nullable Type thisType,
+            @NotNull Label methodBegin,
+            @NotNull Label methodEnd,
+            Collection<ValueParameterDescriptor> valueParameters,
+            boolean isStatic,
+            KotlinTypeMapper typeMapper,
+            int shiftForDestructuringVariables
     ) {
         Iterator<ValueParameterDescriptor> valueParameterIterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> params = jvmMethodSignature.getValueParameters();
@@ -557,6 +578,7 @@ public class FunctionCodegen {
             shift += type.getSize();
         }
 
+        shift += shiftForDestructuringVariables;
         for (ValueParameterDescriptor parameter : valueParameters) {
             List<VariableDescriptor> destructuringVariables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(parameter);
             if (destructuringVariables == null) continue;
