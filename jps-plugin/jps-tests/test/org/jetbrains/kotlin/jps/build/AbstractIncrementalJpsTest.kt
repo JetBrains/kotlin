@@ -31,7 +31,6 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
-import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
@@ -55,10 +54,7 @@ import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+import java.io.*
 import java.util.*
 import kotlin.reflect.jvm.javaField
 
@@ -66,7 +62,7 @@ abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
         private val checkDumpsCaseInsensitively: Boolean = false,
         private val allowNoBuildLogFileInTestData: Boolean = false
-) : JpsBuildTestCase() {
+) : BaseKotlinJpsBuildTestCase() {
     companion object {
         init {
             disableJava6FileManager()
@@ -120,7 +116,6 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun setUp() {
         super.setUp()
-        System.setProperty("kotlin.jps.tests", "true")
         lookupsDuringTest = hashSetOf()
         IncrementalCompilation.setIsExperimental(enableExperimentalIncrementalCompilation)
 

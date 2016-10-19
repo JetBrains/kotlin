@@ -35,6 +35,7 @@
     <orderEntry type="library" scope="TEST" name="junit-plugin" level="project" />
     <orderEntry type="module" module-name="annotation-processing" scope="TEST" />
     <orderEntry type="module" module-name="build-common" scope="TEST" />
+    <orderEntry type="module" module-name="jps-tests" scope="TEST" />
     <orderEntry type="module" module-name="lint-checks" scope="TEST" />
   </component>
 </module>
