@@ -15,15 +15,30 @@
  */
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the read-only [Set] interface.
+ *
+ * This class is intended to help implementing read-only sets so it doesn't support concurrent modification tracking.
+ *
+ * @param E the type of elements contained in the set. The set is covariant on its element type.
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractSet<out E> protected constructor() : AbstractCollection<E>(), Set<E> {
 
+    /**
+     * Compares this set with other set instance with the unordered structural equality.
+     *
+     * @return true, if [other] instance is a [Set] of the same size, all elements of which are contained in this set.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Set<*>) return false
         return setEquals(this, other)
     }
 
+    /**
+     * Returns the hash code value for this set.
+     */
     override fun hashCode(): Int = unorderedHashCode(this)
 
     internal companion object {

@@ -20,6 +20,13 @@
 
 package kotlin.collections
 
+/**
+ * Provides a skeletal implementation of the read-only [List] interface.
+ *
+ * This class is intended to help implementing read-only lists so it doesn't support concurrent modification tracking.
+ *
+ * @param E the type of elements contained in the list. The list is covariant on its element type.
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractList<out E> protected constructor() : AbstractCollection<E>(), List<E> {
     abstract override val size: Int
@@ -54,6 +61,11 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         override val size: Int get() = _size
     }
 
+    /**
+     * Compares this list with other list instance with the ordered structural equality.
+     *
+     * @return true, if [other] instance is a [List] of the same size, which contains the same elements in the same order.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false
@@ -61,6 +73,9 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         return orderedEquals(this, other)
     }
 
+    /**
+     * Returns the hash code value for this list.
+     */
     override fun hashCode(): Int = orderedHashCode(this)
 
     private open inner class IteratorImpl : Iterator<E> {
@@ -76,7 +91,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
     }
 
     /**
-     * Implementation of `MutableListIterator` for abstract lists.
+     * Implementation of [ListIterator] for abstract lists.
      */
     private open inner class ListIteratorImpl(index: Int) : IteratorImpl(), ListIterator<E> {
 
