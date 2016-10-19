@@ -20,9 +20,9 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsLiteral
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.NamePredicate
-import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
-import java.util.Arrays
+import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
@@ -86,7 +86,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             when {
                 DescriptorUtils.isEnumClass(descriptor.containingDeclaration) -> EnumEqualsIntrinsic
 
-                JsDescriptorUtils.isBuiltin(descriptor) ||
+                KotlinBuiltIns.isBuiltIn(descriptor) ||
                 TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
 
                 else -> null

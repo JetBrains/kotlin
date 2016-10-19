@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
@@ -74,7 +77,7 @@ object BuiltinSpecialProperties {
 
     private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
         if (fqNameOrNull() in SPECIAL_FQ_NAMES && valueParameters.isEmpty()) return true
-        if (!isFromBuiltins()) return false
+        if (!KotlinBuiltIns.isBuiltIn(this)) return false
 
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
     }
@@ -83,7 +86,7 @@ object BuiltinSpecialProperties {
             GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
 
     fun CallableMemberDescriptor.getBuiltinSpecialPropertyGetterName(): String? {
-        assert(isFromBuiltins()) { "This method is defined only for builtin members, but $this found" }
+        assert(KotlinBuiltIns.isBuiltIn(this)) { "This method is defined only for builtin members, but $this found" }
 
         val descriptor = propertyIfAccessor.firstOverridden { hasBuiltinSpecialPropertyFqName(it) } ?: return null
         return PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[descriptor.fqNameSafe]?.asString()
@@ -178,7 +181,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
     }
 
     fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
-        if (!isFromBuiltins()) return false
+        if (!KotlinBuiltIns.isBuiltIn(this)) return false
         return getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false || doesOverrideBuiltinWithDifferentJvmName()
     }
 
@@ -240,8 +243,7 @@ object BuiltinMethodsWithDifferentJvmName {
     }
 
     fun isBuiltinFunctionWithDifferentNameInJvm(functionDescriptor: SimpleFunctionDescriptor): Boolean {
-        if (!functionDescriptor.isFromBuiltins()) return false
-        return functionDescriptor.firstOverridden {
+        return KotlinBuiltIns.isBuiltIn(functionDescriptor) && functionDescriptor.firstOverridden {
             SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(functionDescriptor.computeJvmSignature())
         } != null
     }
@@ -279,7 +281,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenSpecialBuiltin(): T? {
     if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
 
     return firstOverridden {
-        it.isFromBuiltins() && it.getSpecialSignatureInfo() != null
+        KotlinBuiltIns.isBuiltIn(it) && it.getSpecialSignatureInfo() != null
     } as T?
 }
 
@@ -295,7 +297,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor
     if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
 
     return firstOverridden {
-        it.isFromBuiltins() && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
+        KotlinBuiltIns.isBuiltIn(it) && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
     }?.original as T?
 }
 
@@ -311,13 +313,9 @@ fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor
 
 private fun getOverriddenBuiltinThatAffectsJvmName(
         callableMemberDescriptor: CallableMemberDescriptor
-): CallableMemberDescriptor? {
-    val overriddenBuiltin = callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName() ?: return null
-
-    if (callableMemberDescriptor.isFromBuiltins()) return overriddenBuiltin
-
-    return null
-}
+): CallableMemberDescriptor? =
+        if (KotlinBuiltIns.isBuiltIn(callableMemberDescriptor)) callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName()
+        else null
 
 fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
         specialCallableDescriptor: CallableDescriptor
@@ -334,9 +332,7 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
                     TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
 
             if (doesOverrideBuiltinDeclaration) {
-                val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
-                if (superClassDescriptor.builtIns.isBuiltInPackageFragment(containingPackageFragment)) return false
-                return true
+                return !KotlinBuiltIns.isBuiltIn(superClassDescriptor)
             }
         }
 
@@ -348,12 +344,8 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 
 // Util methods
 val CallableMemberDescriptor.isFromJava: Boolean
-    get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
+    get() = propertyIfAccessor.let { descriptor ->
+        (descriptor as? JavaCallableMemberDescriptor)?.containingDeclaration is JavaClassDescriptor
+    }
 
-fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
-    val fqNameUnsafe = propertyIfAccessor.fqNameUnsafe
-    return fqNameUnsafe.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
-            this.module == this.builtIns.builtInsModule
-}
-
-fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
+fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || KotlinBuiltIns.isBuiltIn(this)

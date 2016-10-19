@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.reference
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import com.google.dart.compiler.backend.js.ast.JsLiteral
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -27,7 +28,9 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.ArrayList
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import java.util.*
 
 object CallableReferenceTranslator {
 
@@ -50,8 +53,8 @@ object CallableReferenceTranslator {
 
     private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         return when {
-        // TODO Support for callable reference to builtin functions and members
-            JsDescriptorUtils.isBuiltin(descriptor) ->
+            // TODO Support for callable reference to builtin functions and members
+            KotlinBuiltIns.isBuiltIn(descriptor) ->
                 reportNotSupported(context, expression)
             isConstructor(descriptor) ->
                 translateForConstructor(descriptor, context)
@@ -66,8 +69,8 @@ object CallableReferenceTranslator {
 
     private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         return when {
-        // TODO Support for callable reference to builtin properties
-            JsDescriptorUtils.isBuiltin(descriptor) ->
+            // TODO Support for callable reference to builtin properties
+            KotlinBuiltIns.isBuiltIn(descriptor) ->
                 reportNotSupported(context, expression)
             isExtension(descriptor) ->
                 translateForExtensionProperty(descriptor, context)

@@ -60,7 +60,8 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
             subDescriptor: CallableDescriptor,
             subClassDescriptor: ClassDescriptor?
     ): Boolean {
-        if (superDescriptor !is CallableMemberDescriptor || subDescriptor !is FunctionDescriptor || subDescriptor.isFromBuiltins()) {
+        if (superDescriptor !is CallableMemberDescriptor || subDescriptor !is FunctionDescriptor ||
+            KotlinBuiltIns.isBuiltIn(subDescriptor)) {
             return false
         }
 

@@ -288,8 +288,8 @@ public abstract class KotlinBuiltIns {
         return builtInsPackageFragment;
     }
 
-    public boolean isBuiltInPackageFragment(@Nullable PackageFragmentDescriptor packageFragment) {
-        return packageFragment != null && packageFragment.getContainingDeclaration() == getBuiltInsModule();
+    public static boolean isBuiltIn(@NotNull DeclarationDescriptor descriptor) {
+        return DescriptorUtils.getParentOfType(descriptor, BuiltInsPackageFragment.class, false) != null;
     }
 
     @NotNull

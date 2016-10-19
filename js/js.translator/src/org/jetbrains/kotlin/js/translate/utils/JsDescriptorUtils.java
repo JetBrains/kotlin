@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -154,11 +154,6 @@ public final class JsDescriptorUtils {
                !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
     }
 
-    public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {
-        PackageFragmentDescriptor containingPackageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class);
-        return org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns(descriptor).isBuiltInPackageFragment(containingPackageFragment);
-    }
-
     @Nullable
     public static Name getNameIfStandardType(@NotNull KtExpression expression, @NotNull TranslationContext context) {
         KotlinType type = context.bindingContext().getType(expression);
@@ -175,7 +170,7 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static String getExternalModuleName(@NotNull DeclarationDescriptor descriptor) {
-        if (isBuiltin(descriptor)) return Namer.KOTLIN_LOWER_NAME;
+        if (KotlinBuiltIns.isBuiltIn(descriptor)) return Namer.KOTLIN_LOWER_NAME;
 
         PsiElement element = descriptorToDeclaration(descriptor);
         if (element == null && descriptor instanceof PropertyAccessorDescriptor) {

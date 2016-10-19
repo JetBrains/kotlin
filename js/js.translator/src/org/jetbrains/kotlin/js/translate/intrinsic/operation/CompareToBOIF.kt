@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.common.collect.ImmutableSet
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsNumberLiteral
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
     val COMPARE_TO_CHAR = pattern("Int|Short|Byte|Double|Float.compareTo(Char)")
@@ -69,7 +69,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (descriptor.isDynamic()) return CompareToIntrinsic
 
-        if (!JsDescriptorUtils.isBuiltin(descriptor)) return null
+        if (!KotlinBuiltIns.isBuiltIn(descriptor)) return null
 
         return when {
             COMPARE_TO_CHAR.apply(descriptor) ->
