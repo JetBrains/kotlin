@@ -56,6 +56,13 @@ public class ForTestCompileRuntime {
         return assertExists(new File("dist/kotlinc/lib/kotlin-script-runtime.jar"));
     }
 
+    // TODO: Do not use these classes, remove them after stdlib tests are merged in the same build as the compiler
+    @NotNull
+    @Deprecated
+    public static File[] runtimeClassesForTests() {
+        return new File[] { assertExists(new File("dist/classes/builtins")), assertExists(new File("dist/classes/stdlib")) };
+    }
+
     @NotNull
     private static File assertExists(@NotNull File file) {
         if (!file.exists()) {

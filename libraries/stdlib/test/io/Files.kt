@@ -184,7 +184,7 @@ class FilesTest {
         assertEquals(File("../../test"), File("test").relativeTo(File("dir/dir")))
     }
 
-/*
+    @Suppress("INVISIBLE_MEMBER")
     private fun checkFilePathComponents(f: File, root: File, elements: List<String>) {
         assertEquals(root, f.root)
         val components = f.toComponents()
@@ -212,7 +212,6 @@ class FilesTest {
         checkFilePathComponents(File("."), File(""), listOf("."))
         checkFilePathComponents(File(".."), File(""), listOf(".."))
     }
-*/
 
     @test fun fileRoot() {
         val rooted = File("/foo/bar")
