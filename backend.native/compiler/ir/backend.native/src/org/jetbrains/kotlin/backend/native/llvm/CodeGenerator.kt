@@ -11,6 +11,10 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null
 
     fun function(declaration: IrFunction) {
+        if (declaration.descriptor.isExternal) {
+            return
+        }
+
         index = 0
         currentFunction = declaration.descriptor
         val fn = LLVMAddFunction(context.llvmModule, declaration.descriptor.symbolName, getLlvmFunctionType(declaration.descriptor))
