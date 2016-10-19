@@ -19,15 +19,13 @@ package com.android.tools.klint.checks;
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.ide.common.repository.GradleVersion;
-import com.android.repository.Revision;
-import com.android.repository.api.LocalPackage;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.sdklib.repositoryv2.AndroidSdkHandler;
+import com.android.sdklib.repository.legacy.descriptors.PkgType;
+import com.android.sdklib.repository.legacy.local.LocalPkgInfo;
+import com.android.sdklib.repository.legacy.local.LocalSdk;
 import com.android.tools.klint.client.api.IssueRegistry;
 import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.LintDriver;
@@ -39,6 +37,49 @@ import com.intellij.psi.util.MethodSignatureUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.android.inspections.klint.IntellijLintUtils;
 import org.jetbrains.annotations.NotNull;
+import com.android.tools.klint.GradleVersion;
+import com.android.tools.klint.client.api.*;
+import com.android.tools.klint.detector.api.Category;
+import com.android.tools.klint.detector.api.ClassContext;
+import com.android.tools.klint.detector.api.Context;
+import com.android.tools.klint.detector.api.DefaultPosition;
+import com.android.tools.klint.detector.api.Detector;
+import com.android.tools.klint.detector.api.Detector.ClassScanner;
+import com.android.tools.klint.detector.api.Implementation;
+import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.klint.detector.api.JavaContext;
+import com.android.tools.klint.detector.api.LintUtils;
+import com.android.tools.klint.detector.api.Location;
+import com.android.tools.klint.detector.api.Location.SearchHints;
+import com.android.tools.klint.detector.api.Position;
+import com.android.tools.klint.detector.api.ResourceXmlDetector;
+import com.android.tools.klint.detector.api.Scope;
+import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.XmlContext;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiAnnotationParameterList;
+import com.intellij.psi.PsiArrayInitializerMemberValue;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLiteral;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiNameValuePair;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.PsiResourceListElement;
+import com.intellij.psi.PsiType;
+
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.expressions.UTypeReferenceExpression;
@@ -223,16 +264,15 @@ public class ApiDetector extends ResourceXmlDetector
                                "Can't find API database; API check not performed");
             } else {
                 // See if you don't have at least version 23.0.1 of platform tools installed
-                AndroidSdkHandler sdk = context.getClient().getSdk();
+                LocalSdk sdk = context.getClient().getSdk();
                 if (sdk == null) {
                     return;
                 }
-                LocalPackage pkgInfo = sdk.getLocalPackage(SdkConstants.FD_PLATFORM_TOOLS,
-                                                           context.getClient().getRepositoryLogger());
+                LocalPkgInfo pkgInfo = sdk.getPkgInfo(PkgType.PKG_PLATFORM_TOOLS);
                 if (pkgInfo == null) {
                     return;
                 }
-                Revision revision = pkgInfo.getVersion();
+                FullRevision revision = pkgInfo.getDesc().getFullRevision();
 
                 // The platform tools must be at at least the same revision
                 // as the compileSdkVersion!
@@ -325,7 +365,7 @@ public class ApiDetector extends ResourceXmlDetector
                         // the resources differently.
                         if (name.equals(ATTR_PADDING_START)) {
                             BuildToolInfo buildToolInfo = context.getProject().getBuildTools();
-                            Revision buildTools = buildToolInfo != null
+                            FullRevision buildTools = buildToolInfo != null
                                                   ? buildToolInfo.getRevision() : null;
                             boolean isOldBuildTools = buildTools != null &&
                                                       (buildTools.getMajor() < 23 || buildTools.getMajor() == 23
