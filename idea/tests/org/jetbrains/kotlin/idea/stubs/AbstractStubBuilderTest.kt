@@ -22,6 +22,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import org.jetbrains.kotlin.psi.stubs.impl.STUB_TO_STRING_PREFIX
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 import java.io.File
@@ -38,7 +39,21 @@ abstract class AbstractStubBuilderTest : LightCodeInsightFixtureTestCase() {
 
     companion object {
         fun serializeStubToString(stubElement: StubElement<*>): String {
-            return DebugUtil.stubTreeToString(stubElement).replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>")
+            val treeStr = DebugUtil.stubTreeToString(stubElement).replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>")
+
+            // Nodes are stored in form "NodeType:Node" and have too many repeating information for Kotlin stubs
+            // Remove all repeating information (See KotlinStubBaseImpl.toString())
+            return treeStr
+                    .lines().map {
+                        if (it.contains(STUB_TO_STRING_PREFIX)) {
+                            it.takeWhile { it.isWhitespace() } + it.substringAfter("KotlinStub$")
+                        }
+                        else {
+                            it
+                        }
+                    }
+                    .joinToString(separator = "\n")
+                    .replace(", [", "[")
         }
     }
 }
