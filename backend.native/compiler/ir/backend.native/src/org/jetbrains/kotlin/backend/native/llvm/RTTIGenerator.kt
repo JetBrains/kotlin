@@ -1,7 +1,8 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
 
-import kotlin_native.interop.mallocNativeArrayOf
+import kotlin_native.interop.allocNativeArrayOf
+import kotlin_native.interop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.native.implementation
 import org.jetbrains.kotlin.backend.native.implementedInterfaces
@@ -59,13 +60,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun createStructFor(className: FqName, fields: List<PropertyDescriptor>): LLVMOpaqueType? {
         val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), "kclass:" + className)
         val fieldTypes = fields.map { getLLVMType(it.returnType!!) }.toTypedArray()
-        val fieldTypesNativeArrayPtr = if (fieldTypes.size > 0) {
-            mallocNativeArrayOf(LLVMOpaqueType, *fieldTypes)[0] // TODO: dispose
-        } else {
-            null
-        }
 
-        LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
+        memScoped {
+            val fieldTypesNativeArrayPtr = if (fieldTypes.size > 0) {
+                allocNativeArrayOf(LLVMOpaqueType, *fieldTypes)[0]
+            } else {
+                null
+            }
+
+            LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
+        }
         return classType
     }
 

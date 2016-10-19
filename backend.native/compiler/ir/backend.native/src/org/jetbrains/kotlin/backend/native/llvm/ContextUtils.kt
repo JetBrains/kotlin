@@ -107,9 +107,12 @@ internal interface ContextUtils {
      */
     private fun getPtrToFirstElem(arrayPtr: CompileTimeValue): CompileTimeValue {
         val indices = longArrayOf(0, 0).map { LLVMConstInt(LLVMInt32Type(), it, 0) }.toTypedArray()
-        val indicesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *indices)[0] // TODO: dispose
 
-        return compileTimeValue(LLVMConstGEP(arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size))
+        memScoped {
+            val indicesNativeArrayPtr = allocNativeArrayOf(LLVMOpaqueValue, *indices)[0]
+
+            return compileTimeValue(LLVMConstGEP(arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size))
+        }
     }
 
     /**

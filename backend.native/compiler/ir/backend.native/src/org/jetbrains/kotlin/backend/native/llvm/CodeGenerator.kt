@@ -66,9 +66,11 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun load(value:LLVMOpaqueValue, varName: String):LLVMOpaqueValue = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
     fun store(value:LLVMOpaqueValue, ptr:LLVMOpaqueValue):LLVMOpaqueValue = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
     fun call(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String): LLVMOpaqueValue? {
-        val rargs = malloc(array[args.size](Ref to LLVMOpaqueValue))
-        args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
-        return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), rargs[0], args.size, result)
+        memScoped {
+            val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
+            args.forEachIndexed { i, llvmOpaqueValue -> rargs[i].value = args[i] }
+            return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), rargs[0], args.size, result)
+        }
     }
 }
 

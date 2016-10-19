@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
-import kotlin_native.interop.Int8Box
-import kotlin_native.interop.NativeArray
-import kotlin_native.interop.mallocNativeArrayOf
+import kotlin_native.interop.*
 import llvm.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -24,9 +22,12 @@ internal class ConstArray(val elemType: LLVMOpaqueType?, val elements: List<Comp
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
         val values = elements.map { it.getLlvmValue() }.toTypedArray()
-        val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
 
-        return LLVMConstArray(elemType, valuesNativeArrayPtr, values.size)
+        memScoped {
+            val valuesNativeArrayPtr = allocNativeArrayOf(LLVMOpaqueValue, *values)[0]
+
+            return LLVMConstArray(elemType, valuesNativeArrayPtr, values.size)
+        }
     }
 }
 
@@ -36,8 +37,10 @@ internal open class Struct(val type: LLVMOpaqueType?, val elements: List<Compile
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
         val values = elements.map { it.getLlvmValue() }.toTypedArray()
-        val valuesNativeArrayPtr = mallocNativeArrayOf(LLVMOpaqueValue, *values)[0] // FIXME: dispose
-        return LLVMConstNamedStruct(type, valuesNativeArrayPtr, values.size)
+        memScoped {
+            val valuesNativeArrayPtr = allocNativeArrayOf(LLVMOpaqueValue, *values)[0]
+            return LLVMConstNamedStruct(type, valuesNativeArrayPtr, values.size)
+        }
     }
 }
 
@@ -74,8 +77,11 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? 
 
     val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
     if (paramTypes.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
-    val paramTypesPtr = mallocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0] // TODO: dispose
-    return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
+
+    memScoped {
+        val paramTypesPtr = allocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0]
+        return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
+    }
 }
 
 /**
