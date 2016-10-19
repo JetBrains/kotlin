@@ -7,7 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
-public final class JsConditional extends JsExpressionImpl {
+public final class JsConditional extends JsExpression {
     private JsExpression testExpression;
     private JsExpression elseExpression;
     private JsExpression thenExpression;

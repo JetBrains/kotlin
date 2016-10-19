@@ -8,7 +8,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class JsBinaryOperation extends JsExpressionImpl {
+public final class JsBinaryOperation extends JsExpression {
     private JsExpression arg1;
     private JsExpression arg2;
 

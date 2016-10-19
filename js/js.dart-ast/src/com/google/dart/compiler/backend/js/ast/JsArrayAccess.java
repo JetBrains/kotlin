@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a javascript expression for array access.
  */
-public final class JsArrayAccess extends JsExpressionImpl {
+public final class JsArrayAccess extends JsExpression {
     private JsExpression arrayExpression;
     private JsExpression indexExpression;
 

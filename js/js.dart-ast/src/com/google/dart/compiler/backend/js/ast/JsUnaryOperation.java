@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public abstract class JsUnaryOperation extends JsExpressionImpl {
+public abstract class JsUnaryOperation extends JsExpression {
 
     private JsExpression arg;
 

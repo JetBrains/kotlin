@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
+public final class JsInvocation extends JsExpression.JsExpressionHasArguments {
     @NotNull
     private JsExpression qualifier;
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.any
@@ -30,6 +29,5 @@ fun JsExpression.canHaveOwnSideEffect(vars: Set<JsName>) = when (this) {
     is JsLiteral -> false
     is JsBinaryOperation -> operator.isAssignment
     is JsNameRef -> name !in vars && sideEffects != SideEffectKind.PURE
-    is HasMetadata -> sideEffects != SideEffectKind.PURE
-    else -> true
+    else -> sideEffects != SideEffectKind.PURE
 }

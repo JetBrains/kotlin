@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
 import com.intellij.openapi.util.Factory;
@@ -619,13 +618,11 @@ public final class StaticContext {
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
-        if (expression instanceof HasMetadata) {
-            if (descriptor instanceof FunctionDescriptor ||
-                descriptor instanceof PackageFragmentDescriptor ||
-                descriptor instanceof ClassDescriptor
-            ) {
-                MetadataProperties.setSideEffects((HasMetadata) expression, SideEffectKind.PURE);
-            }
+        if (descriptor instanceof FunctionDescriptor ||
+            descriptor instanceof PackageFragmentDescriptor ||
+            descriptor instanceof ClassDescriptor
+        ) {
+            MetadataProperties.setSideEffects(expression, SideEffectKind.PURE);
         }
         return expression;
     }

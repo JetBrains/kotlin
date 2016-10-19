@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
+public final class JsNew extends JsExpression.JsExpressionHasArguments {
     private JsExpression constructorExpression;
 
     public JsNew(JsExpression constructorExpression) {

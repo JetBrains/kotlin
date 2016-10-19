@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -84,7 +86,7 @@ fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpressio
         // This is useful when passing AST to TemporaryAssignmentElimination. It can bring
         // property assignment like `obj.propertyName = $tmp` to places where `$tmp` gets its value,
         // but only when it's sure that no side effects possible.
-        (ref as? HasMetadata)?.let { it.sideEffects = SideEffectKind.PURE }
+        ref.sideEffects = SideEffectKind.PURE
         JsAstUtils.assignment(ref, value!!)
     }
 }

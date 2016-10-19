@@ -28,13 +28,12 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = pureFqn("defineProperty", null);
-    public static final JsNameRef CREATE_OBJECT = pureFqn("create", null);
+    private static final JsNameRef CREATE_OBJECT = pureFqn("create", null);
 
     private static final JsNameRef VALUE = new JsNameRef("value");
     private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), JsLiteral.TRUE);
@@ -206,11 +205,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression equalsForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return invokeMethod(left, Namer.EQUALS_METHOD_NAME, right);
-    }
-
-    @NotNull
     public static JsExpression compareForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
         return invokeMethod(left, Namer.COMPARE_TO_METHOD_NAME, right);
     }
@@ -267,7 +261,7 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
     }
 
-    public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
+    private static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
         assert (selector instanceof JsInvocation || selector instanceof JsNameRef);
         if (selector instanceof JsInvocation) {
             setQualifier(((JsInvocation) selector).getQualifier(), receiver);
@@ -396,16 +390,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         return new JsVars(new JsVars.JsVar(name, expr));
-    }
-
-    public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
-        List<JsExpression> arguments = invocation.getArguments();
-        assert arguments.isEmpty() : "Arguments already set.";
-        arguments.addAll(newArgs);
-    }
-
-    public static void setArguments(@NotNull HasArguments invocation, JsExpression... arguments) {
-        setArguments(invocation, Arrays.asList(arguments));
     }
 
     public static void setParameters(@NotNull JsFunction function, @NotNull List<JsParameter> newParams) {

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Map;
 
-public class JsDocComment extends JsExpressionImpl {
+public class JsDocComment extends JsExpression {
     private final Map<String, Object> tags;
 
     public JsDocComment(Map<String, Object> tags) {
