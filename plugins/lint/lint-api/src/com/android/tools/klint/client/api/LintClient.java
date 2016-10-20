@@ -37,9 +37,12 @@ import com.android.ide.common.repository.ResourceVisibilityLookup;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.prefs.AndroidLocation;
+import com.android.repository.api.ProgressIndicator;
+import com.android.repository.api.ProgressIndicatorAdapter;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkVersionInfo;
+import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Issue;
@@ -741,9 +744,12 @@ public abstract class LintClient {
     @NonNull
     public IAndroidTarget[] getTargets() {
         if (mTargets == null) {
-            LocalSdk sdkHandler = getSdk();
+            AndroidSdkHandler sdkHandler = getSdk();
             if (sdkHandler != null) {
-                mTargets = sdkHandler.getTargets();
+                ProgressIndicator logger = getRepositoryLogger();
+                Collection<IAndroidTarget> targets = sdkHandler.getAndroidTargetManager(logger)
+                        .getTargets(logger);
+                mTargets = targets.toArray(new IAndroidTarget[targets.size()]);
             } else {
                 mTargets = new IAndroidTarget[0];
             }
@@ -752,7 +758,7 @@ public abstract class LintClient {
         return mTargets;
     }
 
-    protected LocalSdk mSdk;
+    protected AndroidSdkHandler mSdk;
 
     /**
      * Returns the SDK installation (used to look up platforms etc)
@@ -760,11 +766,11 @@ public abstract class LintClient {
      * @return the SDK if known
      */
     @Nullable
-    public LocalSdk getSdk() {
+    public AndroidSdkHandler getSdk() {
         if (mSdk == null) {
             File sdkHome = getSdkHome();
             if (sdkHome != null) {
-                mSdk = new LocalSdk(sdkHome);
+                mSdk = AndroidSdkHandler.getInstance(sdkHome);
             }
         }
 
@@ -1216,5 +1222,34 @@ public abstract class LintClient {
      */
     public static boolean isGradle() {
         return CLIENT_GRADLE.equals(sClientName);
+    }
+
+    @NonNull
+    public ProgressIndicator getRepositoryLogger() {
+        return new LintClient.RepoLogger();
+    }
+
+    private static final class RepoLogger extends ProgressIndicatorAdapter {
+        // Intentionally not logging these: the SDK manager is
+        // logging events such as package.xml parsing
+        //   Parsing /path/to/sdk//build-tools/19.1.0/package.xml
+        //   Parsing /path/to/sdk//build-tools/20.0.0/package.xml
+        //   Parsing /path/to/sdk//build-tools/21.0.0/package.xml
+        // which we don't want to spam on the console.
+        // It's also warning about packages that it's encountering
+        // multiple times etc; that's not something we should include
+        // in lint command line output.
+
+        @Override
+        public void logError(@NonNull String s, @Nullable Throwable e) {
+        }
+
+        @Override
+        public void logInfo(@NonNull String s) {
+        }
+
+        @Override
+        public void logWarning(@NonNull String s, @Nullable Throwable e) {
+        }
     }
 }

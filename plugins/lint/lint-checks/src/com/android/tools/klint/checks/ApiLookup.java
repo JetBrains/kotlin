@@ -24,9 +24,8 @@ import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.sdklib.repository.descriptors.PkgType;
-import com.android.sdklib.repository.local.LocalPkgInfo;
-import com.android.sdklib.repository.local.LocalSdk;
+import com.android.repository.api.LocalPackage;
+import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.klint.client.api.LintClient;
 //import com.android.tools.klint.client.api.SdkWrapper;
 import com.android.tools.klint.detector.api.LintUtils;
@@ -143,11 +142,12 @@ public class ApiLookup {
     @VisibleForTesting
     @Nullable
     static String getPlatformVersion(@NonNull LintClient client) {
-        LocalSdk sdk = client.getSdk();
+        AndroidSdkHandler sdk = client.getSdk();
         if (sdk != null) {
-            LocalPkgInfo pkgInfo = sdk.getPkgInfo(PkgType.PKG_PLATFORM_TOOLS);
+            LocalPackage pkgInfo = sdk
+                    .getLocalPackage(SdkConstants.FD_PLATFORM_TOOLS, client.getRepositoryLogger());
             if (pkgInfo != null) {
-                return pkgInfo.getDesc().getFullRevision().toShortString();
+                return pkgInfo.getVersion().toShortString();
             }
         }
         return null;
