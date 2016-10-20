@@ -81,8 +81,8 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
     return PsiUtilCore.toPsiElementArray(resultStatements)
 }
 
-private fun addSymbolAfterDeclaration(container: PsiElement, declaration: KtProperty, isLastStatemnt: Boolean) {
-    if (isLastStatemnt) {
+private fun addSymbolAfterDeclaration(container: PsiElement, declaration: KtProperty, isLastStatement: Boolean) {
+    if (isLastStatement) {
         container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
     }
     else {
