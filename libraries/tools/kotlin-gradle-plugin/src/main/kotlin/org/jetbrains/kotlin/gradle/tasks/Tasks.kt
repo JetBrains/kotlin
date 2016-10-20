@@ -534,7 +534,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 kaptAnnotationsFileUpdater = AnnotationFileUpdater(kaptAnnotationsFile)
             }
 
-            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
             pluginOptions.addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
         }
 
