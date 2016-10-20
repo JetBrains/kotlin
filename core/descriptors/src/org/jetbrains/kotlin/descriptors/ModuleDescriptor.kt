@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ModuleDescriptor : DeclarationDescriptor {
@@ -40,8 +39,6 @@ interface ModuleDescriptor : DeclarationDescriptor {
     fun getPackage(fqName: FqName): PackageViewDescriptor
 
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
-
-    val defaultImports: List<ImportPath>
 
     /**
      * @return dependent modules in the same order in which this module depends on them. Does not include `this`

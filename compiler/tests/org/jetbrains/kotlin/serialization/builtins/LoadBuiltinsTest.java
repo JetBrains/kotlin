@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
-import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -109,9 +107,8 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @NotNull
     private static PackageFragmentProvider createBuiltInsPackageFragmentProvider() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
-                KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, Collections.<ImportPath>emptyList(), DefaultBuiltIns.getInstance()
-        );
+        ModuleDescriptorImpl builtInsModule =
+                new ModuleDescriptorImpl(KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, DefaultBuiltIns.getInstance());
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,

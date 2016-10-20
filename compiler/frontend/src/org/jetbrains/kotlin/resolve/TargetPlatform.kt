@@ -110,7 +110,7 @@ fun TargetPlatform.createModule(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
-) = ModuleDescriptorImpl(name, storageManager, defaultImports, builtIns, capabilities)
+) = ModuleDescriptorImpl(name, storageManager, builtIns, capabilities)
 
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit)

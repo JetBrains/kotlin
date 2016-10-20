@@ -45,7 +45,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
         fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val builtIns = JvmBuiltIns(storageManager)
-            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, emptyList(), builtIns)
+            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)

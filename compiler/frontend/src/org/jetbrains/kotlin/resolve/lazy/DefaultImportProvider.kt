@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
@@ -31,11 +32,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class DefaultImportProvider(
         storageManager: StorageManager,
-        private val moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
+        private val targetPlatform: TargetPlatform
 ) {
-    // TODO: get rid of ModuleDescriptor#defaultImports
     val defaultImports: List<ImportPath>
-        get() = moduleDescriptor.defaultImports
+        get() = targetPlatform.defaultImports
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)

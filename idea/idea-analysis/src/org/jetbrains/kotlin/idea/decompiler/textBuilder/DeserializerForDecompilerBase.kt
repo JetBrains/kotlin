@@ -60,7 +60,7 @@ abstract class DeserializerForDecompilerBase(
     protected fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor =
             MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
 
-    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, emptyList(), builtIns)
+    private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, builtIns)
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)
