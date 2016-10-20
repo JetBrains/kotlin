@@ -63,5 +63,6 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, resultT
         override val externalArgument: KotlinCallArgument? get() = throw UnsupportedOperationException()
         override val isInfixCall: Boolean get() = throw UnsupportedOperationException()
         override val isOperatorCall: Boolean get() = throw UnsupportedOperationException()
+        override val isSupertypeConstructorCall: Boolean get() = throw UnsupportedOperationException()
     }
 }

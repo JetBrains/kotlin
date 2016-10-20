@@ -81,6 +81,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
             CheckReceivers
     ),
     FUNCTION(
+            CheckInstantiationOfAbstractClass,
             CheckVisibility,
             MapTypeArguments,
             MapArguments,
