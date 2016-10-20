@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.Task
 
-interface KotlinCompile<T> : Task {
+interface KotlinCompile<T : KotlinCommonOptions> : Task {
     val kotlinOptions: T
 
     fun kotlinOptions(fn: T.() -> Unit) {
