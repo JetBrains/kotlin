@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -33,21 +32,16 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -572,113 +566,4 @@ object ReplacementEngine {
     // these keys are used on KtValueArgument
     private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
     private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
-
-    private open class ConstructedExpressionWrapper(
-            var expression: KtExpression,
-            val bindingContext: BindingContext
-    ) {
-        val psiFactory = KtPsiFactory(expression)
-
-        fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
-            assert(expression.isAncestor(oldExpression))
-            val result = oldExpression.replace(newExpression) as KtExpression
-            if (oldExpression == expression) {
-                expression = result
-            }
-            return result
-        }
-    }
-
-    private class ConstructedExpressionWrapperWithIntroduceFeature(
-            expression: KtExpression,
-            bindingContext: BindingContext,
-            val expressionToBeReplaced: KtExpression
-    ) : ConstructedExpressionWrapper(expression, bindingContext) {
-        val addedStatements = ArrayList<KtExpression>()
-
-        fun introduceValue(
-                value: KtExpression,
-                valueType: KotlinType?,
-                usages: Collection<KtExpression>,
-                nameSuggestion: String? = null,
-                safeCall: Boolean = false
-        ) {
-            assert(usages.all { expression.isAncestor(it, strict = true) })
-
-            fun replaceUsages(name: Name) {
-                val nameInCode = psiFactory.createExpression(name.render())
-                for (usage in usages) {
-                    usage.replace(nameInCode)
-                }
-            }
-
-            fun suggestName(validator: (String) -> Boolean): Name {
-                val name = if (nameSuggestion != null)
-                    KotlinNameSuggester.suggestNameByName(nameSuggestion, validator)
-                else
-                    KotlinNameSuggester.suggestNamesByExpressionOnly(value, bindingContext, validator, "t").first()
-                return Name.identifier(name)
-            }
-
-            // checks that name is used (without receiver) inside expression being constructed but not inside usages that will be replaced
-            fun isNameUsed(name: String) = collectNameUsages(expression, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
-
-            if (!safeCall) {
-                val block = expressionToBeReplaced.parent as? KtBlockExpression
-                if (block != null) {
-                    val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
-
-                    if (usages.isNotEmpty()) {
-                        var explicitType: KotlinType? = null
-                        if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                            val valueTypeWithoutExpectedType = value.computeTypeInContext(
-                                    resolutionScope,
-                                    expressionToBeReplaced,
-                                    dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
-                            )
-                            if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
-                                explicitType = valueType
-                            }
-                        }
-
-                        val name = suggestName { name ->
-                            resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
-                        }
-
-                        var declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
-                        declaration = block.addBefore(declaration, expressionToBeReplaced) as KtVariableDeclaration
-                        block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
-
-                        if (explicitType != null) {
-                            declaration.setType(explicitType)
-                        }
-
-                        replaceUsages(name)
-
-                        addedStatements.add(declaration)
-                    }
-                    else {
-                        addedStatements.add(block.addBefore(value, expressionToBeReplaced) as KtExpression)
-                        block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
-                    }
-                    return
-                }
-            }
-
-            val dot = if (safeCall) "?." else "."
-
-            expression = if (!isNameUsed("it")) {
-                replaceUsages(Name.identifier("it"))
-                psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
-            }
-            else {
-                val name = suggestName { !isNameUsed(it) }
-                replaceUsages(name)
-                psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
-            }
-        }
-
-        private fun collectNameUsages(scope: KtExpression, name: String)
-                = scope.collectDescendantsOfType<KtSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
-    }
 }
