@@ -51,7 +51,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 )
             }
             override fun reportEnvironmentErrors() {
-                TODO("implement me")
+
+                //TODO("implement me")
             }
         })
 
