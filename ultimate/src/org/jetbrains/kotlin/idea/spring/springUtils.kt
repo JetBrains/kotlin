@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.idea.spring
 
 import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.spring.CommonSpringModel
-import com.intellij.spring.model.CommonSpringBean
-import com.intellij.spring.model.SpringBeanPointer
 import com.intellij.spring.model.jam.utils.JamAnnotationTypeUtil
 import com.intellij.spring.model.utils.SpringModelUtils
 
@@ -37,7 +34,3 @@ internal fun PsiModifierListOwner.isAnnotatedWith(annotationFqName: String): Boo
 
 internal val PsiElement.springModel: CommonSpringModel?
     get() = SpringModelUtils.getInstance().getSpringModel(this)
-
-internal fun CommonSpringBean.beanClass() = (beanType as? PsiClassType)?.resolve()
-
-internal fun SpringBeanPointer<*>.effectiveBeanClasses() = effectiveBeanTypes.mapNotNull { (it as? PsiClassType)?.resolve() }.toTypedArray()
