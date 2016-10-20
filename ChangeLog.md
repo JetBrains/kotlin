@@ -36,6 +36,8 @@
 - [`KT-13926`](https://youtrack.jetbrains.com/issue/KT-13926) Report error on usages of classes deprecated with DeprecationLevel.HIDDEN
 - [`KT-14298`](https://youtrack.jetbrains.com/issue/KT-14298) Add `-api-version` command line option
 - [`KT-5044`](https://youtrack.jetbrains.com/issue/KT-5044) Generate more efficient bytecode for `in` on ranges with `double`, `float` and `long` element type
+- [`KT-14357`](https://youtrack.jetbrains.com/issue/KT-14357) Fixed CompilationException in case of try-catch used in false condition
+- [`KT-14012`](https://youtrack.jetbrains.com/issue/KT-14012) Fixed internal error on every first compilation after the source code change
 
 ### Reflection
 
@@ -77,6 +79,10 @@
 - [`KT-12966`](https://youtrack.jetbrains.com/issue/KT-12966) Fixed possible deadlock in IDE
 - [`KT-13136`](https://youtrack.jetbrains.com/issue/KT-13136) Reduced plugin memory usage on projects with large number of modules
 - [`KT-13861`](https://youtrack.jetbrains.com/issue/KT-13861) Correct Parameter Info for SAM adapters
+- [`KT-13981`](https://youtrack.jetbrains.com/issue/KT-13981), [`KT-5117`](https://youtrack.jetbrains.com/issue/KT-5117) Add indent before colon of super types list on new line
+- [`KT-7718`](https://youtrack.jetbrains.com/issue/KT-7718) Fixed indent in constructor delegate call
+- [`KT-13584`](https://youtrack.jetbrains.com/issue/KT-13584) Fixed IDE misbehavior (exceptions, index corruption) after Java to Kotlin conversion
+- [`KT-12402`](https://youtrack.jetbrains.com/issue/KT-12402) Fixed resolve of databinding classes inside the IDE
 
 #### IDE. Code Completion
 
@@ -163,6 +169,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-14342`](https://youtrack.jetbrains.com/issue/KT-14342) Add quickfixes for `lateinit` errors
 - [`KT-14199`](https://youtrack.jetbrains.com/issue/KT-14199) Add Library: Fix exception due to resolution being run in the "dumb mode"
 - Convert Receiver to Parameter: Fix this replacement
+- [`KT-10871`](https://youtrack.jetbrains.com/issue/KT-10871), [`KT-12625`](https://youtrack.jetbrains.com/issue/KT-12625) Inspection to highlight redundant calls of conversion methods
 
 ##### Issues fixed
 
@@ -189,8 +196,12 @@ Pull Up: Show member dependencies in the refactoring dialog
 
 - [`KT-13534`](https://youtrack.jetbrains.com/issue/KT-13534) Debugger didn't step into 'for' body if there's inline function call in range expression
 - [`KT-13751`](https://youtrack.jetbrains.com/issue/KT-13751) Fix behavior of "step over" for inline calls
+-  [`KT-12924`](https://youtrack.jetbrains.com/issue/KT-12924) Fixed "Step over" diving into recursive call
+- [`KT-14068`](https://youtrack.jetbrains.com/issue/KT-14068) Fixed showing toString() method result in watches when type has delegated properties
 
 #### Android Lint
+
+- Lint diagnostics updated to Android Studio 2.2
 
 ###### Issues fixed
 
@@ -210,10 +221,13 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-14003`](https://youtrack.jetbrains.com/issue/KT-14003) kotlinc shebang uses env
 - [`KT-13638`](https://youtrack.jetbrains.com/issue/KT-13638) Changed the way "Configure Kotlin in project" sets up Maven build
 - [`KT-13478`](https://youtrack.jetbrains.com/issue/KT-13478) Fixed creating Maven project by archetype
+- [`KT-14253`](https://youtrack.jetbrains.com/issue/KT-14253) Fixed problem when switching from kapt2 to kapt
+- Improvements to the use of local connections in compiler daemon
 
 #### JavaScript
 
 - [`KT-2752`](https://youtrack.jetbrains.com/issue/KT-2752) Support for @JsName annotation
+- [`KT-13345`](https://youtrack.jetbrains.com/issue/KT-13345) Basic support for class literals
 - [`KT-7500`](https://youtrack.jetbrains.com/issue/KT-7500) Remove intrinsic for Long.equals, because it's applied incorrectly for nullable longs
 - [`KT-13576`](https://youtrack.jetbrains.com/issue/KT-13576) Implement Long.hashCode function
 - [`KT-12810`](https://youtrack.jetbrains.com/issue/KT-12810) Support special modifiers(e.g. getter and setter) in IDL
@@ -226,6 +240,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-12707`](https://youtrack.jetbrains.com/issue/KT-12707) Proper translation of a constructor in subclass that calls secondary constructor of parent class
 - [`KT-8385`](https://youtrack.jetbrains.com/issue/KT-8385) Fix exception during translation of for expression with iterator having generic type constrained by Iterable
 - [`KT-13830`](https://youtrack.jetbrains.com/issue/KT-13830) Support case when LHS of augmented assignment is something different than qualified expression or array access
+- [`KT-14194`](https://youtrack.jetbrains.com/issue/KT-14194) HashMap.putAll no longer calls getKey/getValue
 
 #### J2K
 
