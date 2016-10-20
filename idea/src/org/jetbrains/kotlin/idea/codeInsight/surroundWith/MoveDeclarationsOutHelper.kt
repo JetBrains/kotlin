@@ -53,13 +53,12 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
         statements.forEachIndexed { i, statement ->
             if (needToDeclareOut(statement, lastStatementOffset, scope)) {
                 if (statement is KtProperty && statement.initializer != null) {
-                    val isLastStatement = i == statements.size - 1
-                    var declaration = createVariableAssignment(statement, generateDefaultInitializers, isLastStatement)
-                    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
-                    addSymbolAfterDeclaration(container, declaration, isLastStatement)
-
-                    propertiesDeclarations.add(declaration)
-                    addToResultStatements(statement, resultStatements, isLastStatement)
+                    if (i == statements.size - 1) {
+                        kotlinStyleDeclareOut(container, dummyFirstStatement, resultStatements, propertiesDeclarations, statement)
+                    }
+                    else {
+                        declareOut(container, dummyFirstStatement, generateDefaultInitializers, resultStatements, propertiesDeclarations, statement)
+                    }
                 }
                 else {
                     val newStatement = container.addBefore(statement, dummyFirstStatement)
@@ -81,33 +80,24 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
     return PsiUtilCore.toPsiElementArray(resultStatements)
 }
 
-private fun addSymbolAfterDeclaration(container: PsiElement, declaration: KtProperty, isLastStatement: Boolean) {
-    if (isLastStatement) {
-        container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
-    }
-    else {
-        container.addAfter(KtPsiFactory(declaration).createNewLine(), declaration)
-    }
+private fun kotlinStyleDeclareOut(container: PsiElement, dummyFirstStatement: PsiElement, resultStatements: ArrayList<PsiElement>,
+                                  propertiesDeclarations: ArrayList<KtProperty>, statement: KtProperty) {
+    var declaration = KtPsiFactory(statement).createProperty(statement.name!!, null, statement.isVar, null)
+    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
+    container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
+    propertiesDeclarations.add(declaration)
+    val initializer = statement.initializer
+    resultStatements.add(statement.replace(initializer!!))
 }
 
-private fun addToResultStatements(property: KtProperty, resultStatements: MutableList<PsiElement>, isLastStatemnt: Boolean) {
-    if (isLastStatemnt) {
-        val initializer = property.initializer
-        resultStatements.add(property.replace(initializer!!))
-    }
-    else {
-        val assignment = createVariableAssignment(property)
-        resultStatements.add(property.replace(assignment))
-    }
-}
-
-private fun createVariableAssignment(property: KtProperty, generateDefaultInitializers: Boolean, isLast: Boolean): KtProperty {
-    if (isLast) {
-        return KtPsiFactory(property).createProperty(property.name!!, null, property.isVar, null)
-    }
-    else {
-        return createVariableDeclaration(property, generateDefaultInitializers)
-    }
+private fun declareOut(container: PsiElement, dummyFirstStatement: PsiElement, generateDefaultInitializers: Boolean, resultStatements: ArrayList<PsiElement>,
+                       propertiesDeclarations: ArrayList<KtProperty>, statement: KtProperty) {
+    var declaration = createVariableDeclaration(statement, generateDefaultInitializers)
+    declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
+    container.addAfter(KtPsiFactory(declaration).createNewLine(), declaration)
+    propertiesDeclarations.add(declaration)
+    val assignment = createVariableAssignment(statement)
+    resultStatements.add(statement.replace(assignment))
 }
 
 private fun createVariableAssignment(property: KtProperty): KtBinaryExpression {
