@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * * All usages of type parameters (of our callable) should be marked with [TYPE_PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding type parameter)
  * Use [ReplacementBuilder.buildReplacementExpression].
  */
-//TODO: should it be data class?
-data class ReplacementExpression(
+class ReplacementExpression(
         val expression: KtExpression,
         val fqNamesToImport: Collection<FqName>
 ) {
