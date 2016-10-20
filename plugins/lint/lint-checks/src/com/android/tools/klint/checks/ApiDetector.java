@@ -55,16 +55,15 @@ import static com.android.utils.SdkUtils.getResourceFieldName;
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
+import com.android.ide.common.repository.GradleVersion;
+import com.android.repository.Revision;
+import com.android.repository.api.LocalPackage;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.BuildToolInfo;
 import com.android.sdklib.SdkVersionInfo;
-import com.android.sdklib.repository.FullRevision;
-import com.android.sdklib.repository.descriptors.PkgType;
-import com.android.sdklib.repository.local.LocalPkgInfo;
-import com.android.sdklib.repository.local.LocalSdk;
-import com.android.tools.klint.GradleVersion;
+import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.klint.client.api.*;
 import com.android.tools.klint.detector.api.Category;
 import com.android.tools.klint.detector.api.ClassContext;
@@ -107,7 +106,6 @@ import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiResourceListElement;
 import com.intellij.psi.PsiType;
 
-import com.sun.tools.javac.main.Option;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.expressions.UTypeReferenceExpression;
@@ -331,15 +329,16 @@ public class ApiDetector extends ResourceXmlDetector
                                "Can't find API database; API check not performed");
             } else {
                 // See if you don't have at least version 23.0.1 of platform tools installed
-                LocalSdk sdk = context.getClient().getSdk();
+                AndroidSdkHandler sdk = context.getClient().getSdk();
                 if (sdk == null) {
                     return;
                 }
-                LocalPkgInfo pkgInfo = sdk.getPkgInfo(PkgType.PKG_PLATFORM_TOOLS);
+                LocalPackage pkgInfo = sdk.getLocalPackage(SdkConstants.FD_PLATFORM_TOOLS,
+                                                           context.getClient().getRepositoryLogger());
                 if (pkgInfo == null) {
                     return;
                 }
-                FullRevision revision = pkgInfo.getDesc().getFullRevision();
+                Revision revision = pkgInfo.getVersion();
 
                 // The platform tools must be at at least the same revision
                 // as the compileSdkVersion!
@@ -432,7 +431,7 @@ public class ApiDetector extends ResourceXmlDetector
                         // the resources differently.
                         if (name.equals(ATTR_PADDING_START)) {
                             BuildToolInfo buildToolInfo = context.getProject().getBuildTools();
-                            FullRevision buildTools = buildToolInfo != null
+                            Revision buildTools = buildToolInfo != null
                                                   ? buildToolInfo.getRevision() : null;
                             boolean isOldBuildTools = buildTools != null &&
                                                       (buildTools.getMajor() < 23 || buildTools.getMajor() == 23
