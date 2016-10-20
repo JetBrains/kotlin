@@ -82,12 +82,14 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
 
 private fun kotlinStyleDeclareOut(container: PsiElement, dummyFirstStatement: PsiElement, resultStatements: ArrayList<PsiElement>,
                                   propertiesDeclarations: ArrayList<KtProperty>, statement: KtProperty) {
-    var declaration = KtPsiFactory(statement).createProperty(statement.name!!, statement.typeReference?.text, statement.isVar, null)
+    val name = statement.name ?: return
+    var declaration = KtPsiFactory(statement).createProperty(name, statement.typeReference?.text, statement.isVar, null)
     declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
     container.addAfter(KtPsiFactory(declaration).createEQ(), declaration)
     propertiesDeclarations.add(declaration)
-    val initializer = statement.initializer
-    resultStatements.add(statement.replace(initializer!!))
+    statement.initializer?.let {
+        resultStatements.add(statement.replace(it))
+    }
 }
 
 private fun declareOut(container: PsiElement, dummyFirstStatement: PsiElement, generateDefaultInitializers: Boolean, resultStatements: ArrayList<PsiElement>,
