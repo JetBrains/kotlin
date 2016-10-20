@@ -202,4 +202,22 @@ class KaptIT: BaseGradleIT() {
             assertCompiledKotlinSources(project.relativize(internalDummyUserKt, internalDummyTestKt))
         }
     }
+
+    @Test
+    fun testKotlinCompilerNotCalledStubsIC() {
+        val options = defaultBuildOptions().copy(incremental = true)
+        val project = Project("kaptStubs", GRADLE_VERSION)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val javaDummy = project.projectDir.getFileByName("JavaDummy.java")
+        javaDummy.modify { it + " " }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(emptyList())
+        }
+    }
 }
