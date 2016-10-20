@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import com.sampullara.cli.Argument
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KProperty1
+import kotlin.reflect.declaredMemberProperties
 import kotlin.reflect.memberProperties
 
 // Additional properties that should be included in interface
@@ -41,14 +39,23 @@ interface AdditionalGradleProperties {
 
 fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()->Unit)->Unit) {
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
-    val additionalGradleOptions = gradleOptions<AdditionalGradleProperties>()
+
+    // common interface
+    val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions")
+    val commonOptions = gradleOptions<CommonCompilerArguments>()
+    val additionalOptions = gradleOptions<AdditionalGradleProperties>()
+    withPrinterToFile(File(srcDir, commonInterfaceFqName)) {
+        generateInterface(commonInterfaceFqName,
+                          commonOptions + additionalOptions)
+    }
 
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
-    val optionsFromK2JVMCompilerArguments = gradleOptions<K2JVMCompilerArguments>()
+    val jvmOptions = gradleOptions<K2JVMCompilerArguments>()
     withPrinterToFile(File(srcDir, jvmInterfaceFqName)) {
         generateInterface(jvmInterfaceFqName,
-                          optionsFromK2JVMCompilerArguments + additionalGradleOptions)
+                          jvmOptions,
+                          parentType = commonInterfaceFqName)
     }
 
     // generate jvm impl
@@ -58,16 +65,16 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
         generateImpl(jvmImplFqName,
                      jvmInterfaceFqName,
                      k2JvmCompilerArgumentsFqName,
-                     optionsFromK2JVMCompilerArguments)
+                     commonOptions + jvmOptions)
     }
 
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
-    val optionsFromK2JSCompilerArguments = gradleOptions<K2JSCompilerArguments>()
+    val jsOptions = gradleOptions<K2JSCompilerArguments>()
     withPrinterToFile(File(srcDir, jsInterfaceFqName)) {
         generateInterface(jsInterfaceFqName,
-                          optionsFromK2JSCompilerArguments +
-                          additionalGradleOptions)
+                          jsOptions,
+                          parentType = commonInterfaceFqName)
     }
 
     val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
@@ -76,7 +83,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
         generateImpl(jsImplFqName,
                      jsInterfaceFqName,
                      k2JsCompilerArgumentsFqName,
-                     optionsFromK2JSCompilerArguments)
+                     commonOptions + jsOptions)
     }
 }
 
@@ -96,15 +103,16 @@ fun main(args: Array<String>) {
 }
 
 private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
-        T::class.memberProperties.filter { it.findAnnotation<GradleOption>() != null }.sortedBy { it.name }
+        T::class.declaredMemberProperties.filter { it.findAnnotation<GradleOption>() != null }.sortedBy { it.name }
 
 private fun File(baseDir: File, fqName: FqName): File {
     val fileRelativePath = fqName.asString().replace(".", "/") + ".kt"
     return File(baseDir, fileRelativePath)
 }
 
-private fun Printer.generateInterface(type: FqName, properties: List<KProperty1<*, *>>) {
-    generateDeclaration("interface", type) {
+private fun Printer.generateInterface(type: FqName, properties: List<KProperty1<*, *>>, parentType: FqName? = null) {
+    val afterType = parentType?.let { " : $it" }
+    generateDeclaration("interface", type, afterType = afterType) {
         for (property in properties) {
             println()
             generateDoc(property)
@@ -135,7 +143,7 @@ private fun Printer.generateImpl(
         }
 
         println()
-        println("open fun updateArguments(args: $argsType) {")
+        println("internal open fun updateArguments(args: $argsType) {")
         withIndent {
             for (property in properties) {
                 val backingField = property.backingField()
