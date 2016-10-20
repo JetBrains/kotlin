@@ -31,9 +31,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -66,7 +63,7 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                 members.add(newFunction)
                 it.body = null
 
-                val mapping: Map<DeclarationDescriptor, ValueParameterDescriptor> =
+                val mapping: Map<ValueDescriptor, ValueDescriptor> =
                         (
                                 listOf(it.descriptor.dispatchReceiverParameter!!, it.descriptor.extensionReceiverParameter).filterNotNull() +
                                 it.descriptor.valueParameters
@@ -132,12 +129,4 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
         }
     }
 
-}
-
-class VariableRemapper(val mapping: Map<DeclarationDescriptor, VariableDescriptor>): IrElementTransformerVoid() {
-
-    override fun visitGetValue(expression: IrGetValue): IrExpression =
-            mapping[expression.descriptor]?.let { loweredParameter ->
-                IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
-            } ?: expression
 }

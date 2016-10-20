@@ -46,7 +46,7 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
             doGenerate()
         }
         catch (e: Throwable) {
-            throw RuntimeException("${e.message} + while generating code for:\n${irFunction.dump()}", e)
+            throw RuntimeException("${e.message} while generating code for:\n${irFunction.dump()}", e)
         }
     }
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
+import java.util.*
 
 class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -42,13 +43,16 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private inner class InnerClassTransformer(val irClass: IrClass) {
         val classDescriptor = irClass.descriptor
 
-        private lateinit var outerThisFieldDescriptor: PropertyDescriptor
+        lateinit var outerThisFieldDescriptor: PropertyDescriptor
+
+        val oldConstructorParameterToNew = HashMap<ValueDescriptor, ValueDescriptor>()
 
         fun lowerInnerClass() {
             if (!irClass.descriptor.isInner) return
 
             createOuterThisField()
             lowerConstructors()
+            lowerConstructorParameterUsages()
             lowerOuterThisReferences()
         }
 
@@ -78,6 +82,10 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val newDescriptor = context.specialDescriptorsFactory.getInnerClassConstructorWithOuterThisParameter(oldDescriptor)
             val outerThisValueParameter = newDescriptor.valueParameters[0]
+
+            oldDescriptor.valueParameters.forEach { oldValueParameter ->
+                oldConstructorParameterToNew[oldValueParameter] = newDescriptor.valueParameters[oldValueParameter.index + 1]
+            }
 
             val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
 
@@ -109,6 +117,10 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     newDescriptor,
                     blockBody
             )
+        }
+
+        private fun lowerConstructorParameterUsages() {
+            irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
         }
 
         private fun lowerOuterThisReferences() {
@@ -179,7 +191,7 @@ class InnerClassConstructorCallsLowering(val context: JvmBackendContext) : BodyL
 
                 newCall.putValueArgument(0, dispatchReceiver)
                 for (i in 1 .. newCallee.valueParameters.lastIndex) {
-                    newCall.putValueArgument(i, expression.getValueArgument(i))
+                    newCall.putValueArgument(i, expression.getValueArgument(i - 1))
                 }
 
                 return newCall
@@ -200,7 +212,7 @@ class InnerClassConstructorCallsLowering(val context: JvmBackendContext) : BodyL
 
                 newCall.putValueArgument(0, dispatchReceiver)
                 for (i in 1 .. newCallee.valueParameters.lastIndex) {
-                    newCall.putValueArgument(i, expression.getValueArgument(i))
+                    newCall.putValueArgument(i, expression.getValueArgument(i - 1))
                 }
 
                 return newCall
