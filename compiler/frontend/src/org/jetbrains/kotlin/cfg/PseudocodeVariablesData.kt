@@ -203,7 +203,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             val declaredOutsideThisDeclaration =
                     declaredIn == null //declared outside this pseudocode
                     || declaredIn.blockScopeForContainingDeclaration != instruction.blockScope.blockScopeForContainingDeclaration
-            return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration)
+            return VariableControlFlowState.create(isInitialized = declaredOutsideThisDeclaration)
         }
 
         private fun mergeIncomingEdgesDataForInitializers(
