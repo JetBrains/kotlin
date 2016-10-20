@@ -16,7 +16,7 @@ fun fff(): Int {
     var d = 3
     when(d) {
         4 -> <!UNUSED_EXPRESSION!>21<!>
-        return 2 -> <!UNREACHABLE_CODE!>return 47<!>
+        return 2<!UNREACHABLE_CODE!><!> -> <!UNREACHABLE_CODE!>return 47<!>
         <!UNREACHABLE_CODE!>bar() -> 45<!>
         <!UNREACHABLE_CODE!>444 -> true<!>
     }

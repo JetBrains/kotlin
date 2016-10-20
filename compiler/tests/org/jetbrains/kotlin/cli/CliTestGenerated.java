@@ -253,6 +253,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("returnAsWhenKey.args")
+        public void testReturnAsWhenKey() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/returnAsWhenKey.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("sanitized-name.clash.args")
         public void testSanitized_name_clash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/sanitized-name.clash.args");

@@ -42,7 +42,12 @@ class UnreachableCodeImpl(
 
     override fun getUnreachableTextRanges(element: KtElement): List<TextRange> {
         return if (element.hasChildrenInSet(reachableElements)) {
-            element.getLeavesOrReachableChildren().removeReachableElementsWithMeaninglessSiblings().mergeAdjacentTextRanges()
+            with (element.getLeavesOrReachableChildren().removeReachableElementsWithMeaninglessSiblings().mergeAdjacentTextRanges()) {
+                if (isNotEmpty()) this
+                // Specific case like condition in when:
+                // element is dead but its only child is alive and has the same text range
+                else listOf(element.textRange.endOffset.let { TextRange(it, it) })
+            }
         }
         else {
             listOf(element.textRange!!)
