@@ -94,7 +94,6 @@ private fun declareOut(container: PsiElement, dummyFirstStatement: PsiElement, g
                        propertiesDeclarations: ArrayList<KtProperty>, statement: KtProperty) {
     var declaration = createVariableDeclaration(statement, generateDefaultInitializers)
     declaration = container.addBefore(declaration, dummyFirstStatement) as KtProperty
-    container.addAfter(KtPsiFactory(declaration).createNewLine(), declaration)
     propertiesDeclarations.add(declaration)
     val assignment = createVariableAssignment(statement)
     resultStatements.add(statement.replace(assignment))
