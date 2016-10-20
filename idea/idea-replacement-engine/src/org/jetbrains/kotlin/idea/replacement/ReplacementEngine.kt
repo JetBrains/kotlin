@@ -552,8 +552,8 @@ object ReplacementEngine {
         callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
     }
 
-    internal operator fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
-    internal operator fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
+    private operator fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
+    private operator fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
     private fun <T: Any> KtElement.clear(key: Key<T>) = putCopyableUserData(key, null)
     private fun <T: Any> KtElement.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
     private fun KtElement.mark(key: Key<Unit>) = putCopyableUserData(key, Unit)
