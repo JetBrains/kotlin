@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
@@ -33,18 +35,22 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 class DefaultImportProvider(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
-        private val targetPlatform: TargetPlatform
+        private val targetPlatform: TargetPlatform,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     val defaultImports: List<ImportPath>
         get() = targetPlatform.defaultImports
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
-        val builtinTypeAliases = moduleDescriptor.allDependentModules.flatMap { dependentModule ->
-            packagesWithAliases.map(dependentModule::getPackage).flatMap {
-                it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
-            }
-        }
+        val builtinTypeAliases = moduleDescriptor.allDependentModules
+                .flatMap { dependentModule ->
+                    packagesWithAliases.map(dependentModule::getPackage).flatMap {
+                        it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
+                    }
+                }
+                .filter { it.checkSinceKotlinVersionAccessibility(languageVersionSettings) }
+
 
         val nonKotlinDefaultImportedPackages =
                 defaultImports

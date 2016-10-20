@@ -1270,6 +1270,24 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("exceptionTypeAliases.kt")
+        public void testExceptionTypeAliases() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/exceptionTypeAliases.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exceptionTypeAliasesInvisibleWithApiVersion1_0.kt")
+        public void testExceptionTypeAliasesInvisibleWithApiVersion1_0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/exceptionTypeAliasesInvisibleWithApiVersion1_0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exceptionTypeAliasesInvisibleWithoutFeature.kt")
+        public void testExceptionTypeAliasesInvisibleWithoutFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/exceptionTypeAliasesInvisibleWithoutFeature.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeAliasSamAdapterConstructors.kt")
         public void testTypeAliasSamAdapterConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/typeAliasSamAdapterConstructors.kt");

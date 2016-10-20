@@ -1,0 +1,4 @@
+package
+
+public val barException: java.lang.Exception
+public val fooException: java.lang.Exception
