@@ -5,8 +5,11 @@
 #include "TypeInfo.h"
 
 typedef enum {
+  // Allocation guaranteed to be frame local.
   SCOPE_FRAME = 0,
+  // Allocation is generic global allocation.
   SCOPE_GLOBAL = 1,
+  // Allocation shall take place in current arena.
   SCOPE_ARENA = 2
 } PlacementHint;
 
@@ -22,7 +25,7 @@ typedef enum {
   CONTAINER_TAG_INVALID = 3,
   // Actual value to increment/decrement conatiner by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << 2,
-  //
+  // Mask for container type.
   CONTAINER_TAG_MASK = (CONTAINER_TAG_INCREMENT - 1)
 } ContainerTag;
 
@@ -37,12 +40,13 @@ struct ObjHeader {
 
 // Header of value type array objects.
 struct ArrayHeader : public ObjHeader {
+  // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
 };
 
 // Header of all container objects. Contains reference counter.
 struct ContainerHeader {
-  // Reference counter of container. Maybe use some upper bit of counter for
+  // Reference counter of container. Uses two lower bits of counter for
   // container type (for polymorphism in ::Release()).
   volatile uint32_t ref_count_;
 };
@@ -55,7 +59,27 @@ struct ArenaContainerHeader : public ContainerHeader {
   uint8_t* end_;
 };
 
-// Thos two operations are implemented by translator when storing references
+inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
+  // Instance size is negative.
+  return reinterpret_cast<uint8_t*>(obj + 1) - obj->type_info_->instanceSize_ * index;
+}
+
+// Optimized version not accessing type info.
+inline uint8_t* ByteArrayAddressOfElementAt(ArrayHeader* obj, int32_t index) {
+  return reinterpret_cast<uint8_t*>(obj + 1) + index;
+}
+
+inline const uint8_t* ByteArrayAddressOfElementAt(const ArrayHeader* obj, int32_t index) {
+  return reinterpret_cast<const uint8_t*>(obj + 1) + index;
+}
+
+inline uint32_t ArraySizeBytes(const ArrayHeader* obj) {
+  // Instance size is negative.
+  return -obj->type_info_->instanceSize_ * obj->count_;
+}
+
+
+// Those two operations are implemented by translator when storing references
 // to objects.
 inline void AddRef(ContainerHeader* header) {
   // Looking at container type we may want to skip AddRef() totally
@@ -141,12 +165,9 @@ class Container {
 // Container for a single object.
 class ObjectContainer : public Container {
  public:
+  // Single instance.
   explicit ObjectContainer(const TypeInfo* type_info) {
-    Init(type_info, 1);
-  }
-
-  ObjectContainer(const TypeInfo* type_info, uint32_t elements) {
-    Init(type_info, elements);
+    Init(type_info);
   }
 
   // Object container shalln't have any dtor, as it's being freed by ::Release().
@@ -156,8 +177,26 @@ class ObjectContainer : public Container {
   }
 
  private:
+  void Init(const TypeInfo* type_info);
+};
+
+
+class ArrayContainer : public Container {
+ public:
+  ArrayContainer(const TypeInfo* type_info, uint32_t elements) {
+    Init(type_info, elements);
+  }
+
+  // Array container shalln't have any dtor, as it's being freed by ::Release().
+  ArrayHeader* GetPlace() const {
+    return reinterpret_cast<ArrayHeader*>(
+        reinterpret_cast<uint8_t*>(header_) + sizeof(ContainerHeader));
+  }
+
+ private:
   void Init(const TypeInfo* type_info, uint32_t elements);
 };
+
 
 // Class representing arena-style placement container.
 // Container is used for reference counting,

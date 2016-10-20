@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "Assert.h"
 #include "Memory.h"
 
 void FreeObject(ContainerHeader* header) {
@@ -16,16 +17,28 @@ ArenaContainer::ArenaContainer(uint32_t size) {
     header->end_ = header->current_ + size;
 }
 
-void ObjectContainer::Init(const TypeInfo* type_info, uint32_t elements) {
+void ObjectContainer::Init(const TypeInfo* type_info) {
+  RuntimeAssert(type_info->instanceSize_ >= 0, "Must be an object");
   header_ = reinterpret_cast<ContainerHeader*>(
       calloc(sizeof(ContainerHeader) + sizeof(ObjHeader) +
-             type_info->size_ * elements, 1));
+             type_info->instanceSize_, 1));
   header_->ref_count_ = CONTAINER_TAG_INCREMENT;
   SetMeta(GetPlace(), type_info);
 }
 
+void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
+  RuntimeAssert(type_info->instanceSize_ < 0, "Must be an array");
+  header_ = reinterpret_cast<ContainerHeader*>(
+      calloc(sizeof(ContainerHeader) + sizeof(ArrayHeader) -
+             type_info->instanceSize_ * elements, 1));
+  header_->ref_count_ = CONTAINER_TAG_INCREMENT;
+  GetPlace()->count_ = elements;
+  SetMeta(GetPlace(), type_info);
+}
+
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
-  int size = type_info->size_ + sizeof(ObjHeader);
+  RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
+  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
   ObjHeader* result = reinterpret_cast<ObjHeader*>(Place(size));
   if (!result) {
       return nullptr;
@@ -35,7 +48,8 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
 }
 
 ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, int count) {
-  int size = sizeof(ArrayHeader) + type_info->size_ * count;
+  RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
+  uint32_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
   ArrayHeader* result = reinterpret_cast<ArrayHeader*>(Place(size));
   if (!result) {
     return nullptr;
@@ -55,11 +69,13 @@ void InitMemory() {
 
 // Now we ignore all placement hints and always allocate heap space for new object.
 void* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
+  RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
   return ObjectContainer(type_info).GetPlace();
 }
 
 void* AllocArrayInstance(const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
-  return ObjectContainer(type_info, elements).GetPlace();
+  RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
+  return ArrayContainer(type_info, elements).GetPlace();
 }
 
 #ifdef __cplusplus

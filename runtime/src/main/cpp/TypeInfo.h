@@ -6,6 +6,8 @@
 #include "Names.h"
 
 // An element of sorted by hash in-place array representing methods.
+// For systems where introspection is not needed - only open methods are in
+// this table.
 struct MethodTableRecord {
     MethodNameHash nameSignature_;
     void* methodEntryPoint_;
@@ -17,11 +19,13 @@ struct FieldTableRecord {
     int fieldOffset_;
 };
 
-// This struct represents runtime type information and by itself is compile time
+// This struct represents runtime type information and by itself is the compile time
 // constant.
 struct TypeInfo {
     ClassNameHash name_;
-    int size_;
+    // Negative value marks array class/string, and it is negated element size.
+    int32_t instanceSize_;
+    // Must be pointer to Any for array classes, and null for Any.
     const TypeInfo* superType_;
     const int* objOffsets_;
     int objOffsetsCount_;
@@ -29,9 +33,9 @@ struct TypeInfo {
     int implementedInterfacesCount_;
     void* const* vtable_; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
     const MethodTableRecord* openMethods_;
-    int openMethodsCount_;
+    uint32_t openMethodsCount_;
     const FieldTableRecord* fields_;
-    int fieldsCount_;
+    uint32_t fieldsCount_;
 };
 
 #ifdef __cplusplus
