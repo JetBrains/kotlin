@@ -24,12 +24,12 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                         INIT: in: {} out: {}          USE: in: {} out: {}
+  1 <START>                                         INIT: in: {} out: {}            USE: in: {} out: {}
   2 mark({ var v: Any bar { v.hashCode() } })
     v(var v: Any)                                   INIT: in: {} out: {v=D}
     mark({ v.hashCode() })                          INIT: in: {v=D} out: {v=D}
     jmp?(L2)
-    d({ v.hashCode() })                             INIT: in: {v=-} out: {v=-}    USE: in: {v=READ} out: {v=READ}
+    d({ v.hashCode() })                             INIT: in: {v=I?} out: {v=I?}    USE: in: {v=READ} out: {v=READ}
 L2 [after local declaration]:
     r({ v.hashCode() }) -> <v0>                     INIT: in: {v=D} out: {v=D}
     mark(bar { v.hashCode() })
@@ -39,7 +39,7 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                        USE: in: {} out: {}
+    <SINK>                                                                          USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { v.hashCode() }
@@ -47,8 +47,8 @@ sink:
 L3:
   3 <START>                                    INIT: in: {v=D} out: {v=D}
   4 mark(v.hashCode())
-    mark(v.hashCode())                                                       USE: in: {v=READ} out: {v=READ}
-    r(v) -> <v0>                                                             USE: in: {} out: {v=READ}
+    mark(v.hashCode())                                                         USE: in: {v=READ} out: {v=READ}
+    r(v) -> <v0>                                                               USE: in: {} out: {v=READ}
     mark(hashCode())
     call(hashCode(), hashCode|<v0>) -> <v1>
 L4:
@@ -56,5 +56,5 @@ L4:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {v=-} out: {v=-}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {v=I?} out: {v=I?}    USE: in: {} out: {}
 =====================

@@ -94,7 +94,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         ) {
             instruction: Instruction, incomingEdgesData: Collection<InitControlFlowInfo> ->
 
-            val enterInstructionData = mergeIncomingEdgesDataForInitializers(incomingEdgesData)
+            val enterInstructionData = mergeIncomingEdgesDataForInitializers(instruction, incomingEdgesData, blockScopeVariableInfo)
             val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
                     instruction, enterInstructionData, blockScopeVariableInfo)
             Edges(enterInstructionData, exitInstructionData)
@@ -207,7 +207,9 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         }
 
         private fun mergeIncomingEdgesDataForInitializers(
-                incomingEdgesData: Collection<InitControlFlowInfo>
+                instruction: Instruction,
+                incomingEdgesData: Collection<InitControlFlowInfo>,
+                blockScopeVariableInfo: BlockScopeVariableInfo
         ): InitControlFlowInfo {
             if (incomingEdgesData.size == 1) return incomingEdgesData.single()
             val variablesInScope = linkedSetOf<VariableDescriptor>()
@@ -220,7 +222,8 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 var initState: InitState? = null
                 var isDeclared = true
                 for (edgeData in incomingEdgesData) {
-                    val varControlFlowState = edgeData[variable] ?: VariableControlFlowState.create(isInitialized = false)
+                    val varControlFlowState = edgeData[variable]
+                                              ?: getDefaultValueForInitializers(variable, instruction, blockScopeVariableInfo)
                     initState = initState?.merge(varControlFlowState.initState) ?: varControlFlowState.initState
                     if (!varControlFlowState.isDeclared) {
                         isDeclared = false
