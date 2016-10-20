@@ -569,7 +569,7 @@ object ReplacementEngine {
     private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
     private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
 
-    // these keys are used on JetValueArgument
+    // these keys are used on KtValueArgument
     private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
     private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
 
