@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/returnAsWhenKey.kt:5:17: warning: unreachable code
+        return 0 -> return 1
+                ^
+compiler/testData/cli/jvm/returnAsWhenKey.kt:5:21: warning: unreachable code
+        return 0 -> return 1
+                    ^
+OK
