@@ -65,7 +65,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (kind in PrimitiveType.onlyNumeric) {
             val className = kind.capitalized
             generateDoc(kind)
-            out.println("public class $className private () : Number, Comparable<$className> {")
+            out.println("public class $className private constructor() : Number(), Comparable<$className> {")
 
             out.print("    companion object ")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
@@ -95,8 +95,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * A constant holding the "not a number" value of $className.
          */
         public val NaN: $className
-    }
-""")
+    }""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
@@ -110,8 +109,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * A constant holding the maximum value an instance of $className can have.
          */
         public const val MAX_VALUE: $className = $maxValue
-    }
-""")
+    }""")
             }
 
             generateCompareTo(kind)
@@ -139,11 +137,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateCompareTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
-            out.println("/**")
-            out.println(" * Compares this value with the specified value for order.")
-            out.println(" * Returns zero if this value is equal to the specified other value, a negative number if its less than other, ")
-            out.println(" * or a positive number if its greater than other.")
-            out.println(" */")
+            out.println("""
+    /**
+     * Compares this value with the specified value for order.
+     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
+     * or a positive number if its greater than other.
+     */""")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")
