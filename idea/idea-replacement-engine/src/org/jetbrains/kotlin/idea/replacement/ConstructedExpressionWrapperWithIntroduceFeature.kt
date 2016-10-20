@@ -42,11 +42,13 @@ internal open class ConstructedExpressionWrapper(
 
     fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
         assert(expression.isAncestor(oldExpression))
-        val result = oldExpression.replace(newExpression) as KtExpression
         if (oldExpression == expression) {
-            expression = result
+            expression = newExpression
+            return expression
         }
-        return result
+        else {
+            return oldExpression.replace(newExpression) as KtExpression
+        }
     }
 }
 
