@@ -235,8 +235,9 @@ public class SourceNavigationHelper {
             @NotNull Collection<KtNamedDeclaration> candidates,
             @NotNull Project project
     ) {
-        MutableModuleContext newModuleContext =
-                ContextKt.ContextForNewModule(project, Name.special("<library module>"), DefaultBuiltIns.getInstance());
+        MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
+                ContextKt.ProjectContext(project), Name.special("<library module>"), DefaultBuiltIns.getInstance()
+        );
 
         newModuleContext.setDependencies(newModuleContext.getModule(), newModuleContext.getModule().getBuiltIns().getBuiltInsModule());
 

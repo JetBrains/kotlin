@@ -49,7 +49,7 @@ class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() 
 
     override fun getModuleDescriptor(): ModuleDescriptor {
         val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.absolutePath
-        val module = KotlinTestUtils.createEmptyModule("<module for stdlib>", JsPlatform, JsPlatform.builtIns)
+        val module = KotlinTestUtils.createEmptyModule("<module for stdlib>", JsPlatform.builtIns)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
         assert(metadata.size == 1)
 

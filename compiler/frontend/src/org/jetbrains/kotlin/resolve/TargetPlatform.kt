@@ -16,20 +16,15 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import java.util.*
 
@@ -112,15 +107,6 @@ abstract class PlatformConfigurator(
         useInstance(platformToKotlinClassMap)
     }
 }
-
-@JvmOverloads
-fun TargetPlatform.createModule(
-        name: Name,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
-) = ModuleDescriptorImpl(name, storageManager, builtIns, capabilities)
-
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit)
         = composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)

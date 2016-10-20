@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -89,8 +88,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     @NotNull
     @Override
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return TargetPlatformKt.createModule(
-                JsPlatform.INSTANCE, Name.special(moduleName), storageManager, JsPlatform.INSTANCE.getBuiltIns());
+        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, JsPlatform.INSTANCE.getBuiltIns());
     }
 
     @NotNull

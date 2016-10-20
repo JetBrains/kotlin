@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 object TopDownAnalyzerFacadeForJS {
     @JvmStatic
     fun analyzeFiles(files: Collection<KtFile>, config: JsConfig): JsAnalysisResult {
-        val context =
-                ContextForNewModule(ProjectContext(config.project), Name.special("<${config.moduleId}>"), JsPlatform, JsPlatform.builtIns)
+        val context = ContextForNewModule(ProjectContext(config.project), Name.special("<${config.moduleId}>"), JsPlatform.builtIns)
         context.setDependencies(
                 listOf(context.module) +
                 config.moduleDescriptors.map { it.data } +

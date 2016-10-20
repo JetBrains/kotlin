@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -956,11 +955,11 @@ public class KotlinTestUtils {
 
     @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
-        return createEmptyModule(name, TargetPlatform.Default.INSTANCE, DefaultBuiltIns.getInstance());
+        return createEmptyModule(name, DefaultBuiltIns.getInstance());
     }
 
     @NotNull
-    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull TargetPlatform platform, KotlinBuiltIns builtIns) {
+    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull KotlinBuiltIns builtIns) {
         return new ModuleDescriptorImpl(Name.special(name), LockBasedStorageManager.NO_LOCKS, builtIns);
     }
 

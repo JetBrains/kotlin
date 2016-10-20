@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -47,7 +46,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
     fun testAllListedSignaturesExistInJdk() {
         val jvmBuiltIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
-        val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", JvmPlatform, jvmBuiltIns)
+        val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", jvmBuiltIns)
 
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 ModuleContext(emptyModule, environment.project), CliLightClassGenerationSupport.CliBindingTrace(),

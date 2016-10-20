@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -56,7 +55,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                 })
 
         val jvmBuiltIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
-        val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", JvmPlatform, jvmBuiltIns)
+        val emptyModule = KotlinTestUtils.createEmptyModule("<empty>", jvmBuiltIns)
 
         val container = createContainerForTopDownSingleModuleAnalyzerForJvm(
                 ModuleContext(emptyModule, environment.project), CliLightClassGenerationSupport.CliBindingTrace(),

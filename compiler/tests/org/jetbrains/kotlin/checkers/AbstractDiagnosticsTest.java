@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
@@ -465,9 +464,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
     @NotNull
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        JvmBuiltIns builtIns = new JvmBuiltIns(storageManager);
-        return TargetPlatformKt.createModule(
-                JvmPlatform.INSTANCE, Name.special(moduleName), storageManager, builtIns);
+        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, new JvmBuiltIns(storageManager));
     }
 
     @NotNull

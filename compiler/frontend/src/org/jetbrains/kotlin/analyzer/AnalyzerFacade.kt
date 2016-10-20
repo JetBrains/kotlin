@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.createModule
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -161,7 +160,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             modules.forEach {
                 module ->
                 descriptorByModule[module] =
-                        targetPlatform.createModule(module.name, storageManager, builtIns, module.capabilities)
+                        ModuleDescriptorImpl(module.name, storageManager, builtIns, module.capabilities)
             }
             return ResolverForProjectImpl(debugName, descriptorByModule, delegateResolver)
         }

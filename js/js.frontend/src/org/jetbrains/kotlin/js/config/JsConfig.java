@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
-import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -133,9 +132,9 @@ public abstract class JsConfig {
                 "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION +
                 ", but metadata.abiVersion = " + metadata.getAbiVersion();
 
-        ModuleDescriptorImpl moduleDescriptor = TargetPlatformKt.createModule(
-                JsPlatform.INSTANCE, Name.special("<" + metadata.getModuleName() + ">"), storageManager,
-                JsPlatform.INSTANCE.getBuiltIns());
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
+                Name.special("<" + metadata.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
+        );
 
         JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
                 metadata.getBody(), storageManager, moduleDescriptor, new CompilerDeserializationConfiguration(
