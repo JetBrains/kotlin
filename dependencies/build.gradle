@@ -35,7 +35,8 @@ abstract class NativeDep extends DefaultTask {
 
     protected File download() {
         File result = new File(baseOutDir, fileName)
-        ant.get(src: url, dest: result, usetimestamp: true)
+	if (!result.exists())
+            ant.get(src: url, dest: result, usetimestamp: true)
         return result
     }
 }
