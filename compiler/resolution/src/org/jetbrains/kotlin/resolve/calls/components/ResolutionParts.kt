@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
@@ -29,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCa
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -36,6 +34,17 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
+internal object CheckInstantiationOfAbstractClass : ResolutionPart {
+    override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
+        if (candidateDescriptor is ConstructorDescriptor && !kotlinCall.isSupertypeConstructorCall) {
+            if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
+                return listOf(InstantiationOfAbstractClass)
+            }
+        }
+
+        return emptyList()
+    }
+}
 
 internal object CheckVisibility : ResolutionPart {
     override fun SimpleKotlinResolutionCandidate.process(): List<KotlinCallDiagnostic> {
@@ -212,6 +221,10 @@ fun <D : CallableDescriptor> D.safeSubstitute(substitutor: TypeSubstitutor): D =
 
 fun UnwrappedType.substitute(substitutor: TypeSubstitutor): UnwrappedType = substitutor.substitute(this, Variance.INVARIANT)!!.unwrap()
 
+
+object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
+}
 
 class UnstableSmartCast(val expressionArgument: ExpressionKotlinCallArgument, val targetType: UnwrappedType) :
         KotlinCallDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR) {

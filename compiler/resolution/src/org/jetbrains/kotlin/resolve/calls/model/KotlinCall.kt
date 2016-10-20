@@ -37,6 +37,7 @@ interface KotlinCall {
 
     val isInfixCall: Boolean
     val isOperatorCall: Boolean
+    val isSupertypeConstructorCall: Boolean
 }
 
 private fun SimpleKotlinCallArgument.checkReceiverInvariants() {
