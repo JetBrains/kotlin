@@ -17,9 +17,14 @@ class MavenPluginComponent : KotlinMavenPluginExtension {
         return true
     }
 
-    override fun getPluginArguments(project: MavenProject, execution: MojoExecution): MutableList<String> {
+    override fun getCompilerPluginId() = TestCommandLineProcessor.TestPluginId
+
+    override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.info("Configuring test plugin with arguments")
 
-        return mutableListOf("plugin:${TestCommandLineProcessor.TestPluginId}:${TestCommandLineProcessor.MyTestOption.name}=my-special-value")
+        return listOf(PluginOption(
+                TestCommandLineProcessor.TestPluginId,
+                TestCommandLineProcessor.MyTestOption.name,
+                "my-special-value"))
     }
 }
