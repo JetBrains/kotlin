@@ -57,7 +57,6 @@ fun <D> Pseudocode.traverse(
 
 fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
         traversalOrder: TraversalOrder,
-        mergeDataWithLocalDeclarations: Boolean,
         mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
         updateEdge: (Instruction, Instruction, I) -> I,
         initialInfo: I
@@ -70,7 +69,7 @@ fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
     while (changed[0]) {
         changed[0] = false
         collectDataFromSubgraph(
-                traversalOrder, mergeDataWithLocalDeclarations, edgesMap,
+                traversalOrder, edgesMap,
                 mergeEdges, updateEdge, Collections.emptyList<Instruction>(), changed, false)
     }
     return edgesMap
@@ -78,7 +77,6 @@ fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
 
 private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
         traversalOrder: TraversalOrder,
-        mergeDataWithLocalDeclarations: Boolean,
         edgesMap: MutableMap<Instruction, Edges<I>>,
         mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
         updateEdge: (Instruction, Instruction, I) -> I,
@@ -98,30 +96,23 @@ private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
 
         if (instruction is LocalFunctionDeclarationInstruction) {
             val subroutinePseudocode = instruction.body
-            val previous = if (mergeDataWithLocalDeclarations) previousInstructions else Collections.emptyList()
             subroutinePseudocode.collectDataFromSubgraph(
-                    traversalOrder, mergeDataWithLocalDeclarations,
-                    edgesMap, mergeEdges, updateEdge, previous, changed, true)
-            if (mergeDataWithLocalDeclarations) {
-                val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
-                val previousValue = edgesMap.get(instruction)
-                val newValue = edgesMap.get(lastInstruction)
-                val updatedValue =
-                        if (newValue == null)
-                            null
-                        else
-                            Edges(updateEdge(lastInstruction, instruction, newValue.incoming),
-                                  updateEdge(lastInstruction, instruction, newValue.outgoing))
-                updateEdgeDataForInstruction(instruction, previousValue, updatedValue, edgesMap, changed)
-                continue
+                    traversalOrder, edgesMap, mergeEdges, updateEdge, previousInstructions, changed, true)
+            val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
+            val previousValue = edgesMap[instruction]
+            val newValue = edgesMap[lastInstruction]
+            val updatedValue = newValue?.let {
+                Edges(updateEdge(lastInstruction, instruction, it.incoming), updateEdge(lastInstruction, instruction, it.outgoing))
             }
+            updateEdgeDataForInstruction(instruction, previousValue, updatedValue, edgesMap, changed)
+            continue
         }
-        val previousDataValue = edgesMap.get(instruction)
+        val previousDataValue = edgesMap[instruction]
 
         val incomingEdgesData = HashSet<I>()
 
         for (previousInstruction in previousInstructions) {
-            val previousData = edgesMap.get(previousInstruction)
+            val previousData = edgesMap[previousInstruction]
             if (previousData != null) {
                 incomingEdgesData.add(updateEdge(
                         previousInstruction, instruction, previousData.outgoing))

@@ -89,9 +89,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
         val blockScopeVariableInfo = pseudocodeVariableDataCollector.blockScopeVariableInfo
 
-        return pseudocodeVariableDataCollector.collectData(
-                TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true, InitControlFlowInfo()
-        ) {
+        return pseudocodeVariableDataCollector.collectData(TraversalOrder.FORWARD, InitControlFlowInfo()) {
             instruction: Instruction, incomingEdgesData: Collection<InitControlFlowInfo> ->
 
             val enterInstructionData = mergeIncomingEdgesDataForInitializers(instruction, incomingEdgesData, blockScopeVariableInfo)
@@ -148,9 +146,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     // variable use
 
     val variableUseStatusData: Map<Instruction, Edges<UseControlFlowInfo>>
-        get() = pseudocodeVariableDataCollector.collectData(
-                TraversalOrder.BACKWARD, true, UseControlFlowInfo()
-        ) {
+        get() = pseudocodeVariableDataCollector.collectData(TraversalOrder.BACKWARD, UseControlFlowInfo()) {
             instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
             val enterResult: UseControlFlowInfo
 

@@ -40,12 +40,11 @@ class PseudocodeVariableDataCollector(
 
     fun <I : ControlFlowInfo<*>> collectData(
             traversalOrder: TraversalOrder,
-            mergeDataWithLocalDeclarations: Boolean,
             initialInfo: I,
             instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
     ): Map<Instruction, Edges<I>> {
         return pseudocode.collectData(
-                traversalOrder, mergeDataWithLocalDeclarations,
+                traversalOrder,
                 instructionDataMergeStrategy,
                 { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
                 initialInfo
