@@ -20,8 +20,7 @@ package kotlin
  * Represents a 16-bit Unicode character.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-public class Char private () : Comparable<Char> {
-
+public class Char private constructor() : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
@@ -46,19 +45,19 @@ public class Char private () : Comparable<Char> {
     public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
-    public override fun toByte(): Byte
+    public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
-    public override fun toChar(): Char
+    public fun toChar(): Char
     /** Returns the value of this character as a `Short`. */
-    public override fun toShort(): Short
+    public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
-    public override fun toInt(): Int
+    public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
-    public override fun toLong(): Long
+    public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
-    public override fun toFloat(): Float
+    public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
-    public override fun toDouble(): Double
+    public fun toDouble(): Double
 
     companion object {
         /**
