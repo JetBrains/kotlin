@@ -9,6 +9,8 @@ import java.util.List;
 public interface KotlinMavenPluginExtension {
     boolean isApplicable(@NotNull MavenProject project, @NotNull MojoExecution execution);
 
+    String getCompilerPluginId();
+
     @NotNull
-    List<String> getPluginArguments(@NotNull MavenProject project, @NotNull MojoExecution execution);
+    List<PluginOption> getPluginOptions(@NotNull MavenProject project, @NotNull MojoExecution execution);
 }

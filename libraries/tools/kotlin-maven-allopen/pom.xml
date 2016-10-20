@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven.version>3.0.5</maven.version>
+        <allopen.src>${basedir}/../../../plugins/allopen/allopen-cli/src</allopen.src>
+        <allopen.maven.plugin.src>${basedir}/src/main/kotlin</allopen.maven.plugin.src>
+        <allopen.maven.plugin.resources>${basedir}/src/main/resources</allopen.maven.plugin.resources>
+        <allopen.target-src>${basedir}/target/src/main/kotlin</allopen.target-src>
+        <allopen.target-resources>${basedir}/target/resource</allopen.target-resources>
+    </properties>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>kotlin-maven-allopen</artifactId>
+    <packaging>jar</packaging>
+
+    <description>All-open plugin for Maven</description>
+
+    <repositories>
+        <repository>
+            <id>jetbrains-utils</id>
+            <url>http://repository.jetbrains.com/utils</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${allopen.target-src}</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${allopen.target-resources}</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${allopen.target-src}</outputDirectory>
+                            <resources>
+                                <resource><directory>${allopen.src}</directory></resource>
+                                <resource><directory>${allopen.maven.plugin.src}</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${allopen.target-resources}/META-INF</outputDirectory>
+                            <resources>
+                                <resource><directory>${allopen.src}/META-INF</directory></resource>
+                                <resource><directory>${allopen.maven.plugin.resources}/META-INF</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${project.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${allopen.target-src}</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <version>1.7.1</version>
+                <executions>
+                    <execution>
+                        <id>process-classes</id>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>process-test-classes</id>
+                        <goals>
+                            <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

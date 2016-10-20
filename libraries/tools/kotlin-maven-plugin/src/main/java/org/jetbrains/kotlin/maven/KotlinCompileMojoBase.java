@@ -24,10 +24,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -43,9 +40,9 @@ import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
     @Component
@@ -70,16 +67,14 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private List<String> compilerPlugins;
 
     /**
-     * A classpaths required for kotlin compiler plugin(s). Useful if you don't use extensions due to some reason
+     * A list of plugin options in format (pluginId):(parameter)=(value)
      */
     @Parameter
-    private List<String> compilerPluginsClassPaths;
+    private List<String> pluginOptions;
 
-    /**
-     * A list of plugin options in format plugin:(pluginId):(parameter)=(value)
-     */
-    @Parameter
-    private List<String> pluginArguments;
+    private List<String> getAppliedCompilerPlugins() {
+        return (compilerPlugins == null) ? Collections.<String>emptyList() : compilerPlugins;
+    }
 
     protected List<String> getSourceFilePaths() {
         if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
@@ -141,6 +136,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
      */
     @Parameter
     public List<String> args;
+
+    private final static Pattern OPTION_PATTERN = Pattern.compile("([^:]+):([^=]+)=(.*)");
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -223,12 +220,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
-    protected List<String> getCompilerPluginsClassPaths() {
+    private List<String> getCompilerPluginClassPaths() {
         ArrayList<String> result = new ArrayList<String>();
-
-        if (compilerPluginsClassPaths != null) {
-            result.addAll(compilerPluginsClassPaths);
-        }
 
         List<File> files = new ArrayList<File>();
 
@@ -252,38 +245,88 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         return result;
     }
 
-    protected List<String> getCompilerPluginArguments() throws ComponentLookupException {
-        return configureCompilerPlugins();
+    @NotNull
+    private Map<String, KotlinMavenPluginExtension> loadCompilerPlugins() throws PluginNotFoundException {
+        Map<String, KotlinMavenPluginExtension> loadedPlugins = new HashMap<String, KotlinMavenPluginExtension>();
+        for (String pluginName : getAppliedCompilerPlugins()) {
+            getLog().debug("Looking for plugin " + pluginName);
+            try {
+                KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginName);
+                loadedPlugins.put(pluginName, extension);
+                getLog().debug("Got plugin instance" + pluginName + " of type " + extension.getClass().getName());
+
+            } catch (ComponentLookupException e) {
+                getLog().debug("Unable to get plugin instance" + pluginName);
+                throw new PluginNotFoundException(pluginName, e);
+            }
+        }
+        return loadedPlugins;
     }
 
-    private List<String> configureCompilerPlugins() throws ComponentLookupException {
+    @NotNull
+    private List<String> renderCompilerPluginOptions(@NotNull List<PluginOption> options) {
+        List<String> renderedOptions = new ArrayList<String>(options.size());
+        for (PluginOption option : options) {
+            renderedOptions.add(option.toString());
+        }
+        return renderedOptions;
+    }
+
+    @NotNull
+    private List<PluginOption> getCompilerPluginOptions() throws PluginNotFoundException, PluginOptionIllegalFormatException {
         if (mojoExecution == null) {
             throw new IllegalStateException("No mojoExecution injected");
         }
 
-        List<String> pluginArguments = new ArrayList<String>();
+        List<PluginOption> pluginOptions = new ArrayList<PluginOption>();
 
-        if (this.pluginArguments != null) {
-            pluginArguments.addAll(this.pluginArguments);
-        }
+        Map<String, KotlinMavenPluginExtension> plugins = loadCompilerPlugins();
 
-        if (compilerPlugins != null) {
-            for (String pluginId : compilerPlugins) {
-                getLog().debug("Looking for plugin " + pluginId);
-                KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginId);
-                getLog().debug("Got plugin instance" + pluginId + " of type " + extension.getClass().getName());
+        // Get options for extension-provided compiler plugins
 
-                if (extension.isApplicable(project, mojoExecution)) {
-                    getLog().info("Applying plugin " + pluginId);
-                    pluginArguments.addAll(extension.getPluginArguments(project, mojoExecution));
-                    // TODO here we can use artifact resolver to build exact dependency tree
+        for (Map.Entry<String, KotlinMavenPluginExtension> pluginEntry : plugins.entrySet()) {
+            String pluginName = pluginEntry.getKey();
+            KotlinMavenPluginExtension plugin = pluginEntry.getValue();
 
-                    container.getComponentDescriptor(KotlinMavenPluginExtension.class.getName(), pluginId).getRealm();
-                }
+            if (plugin.isApplicable(project, mojoExecution)) {
+                List<PluginOption> optionsForPlugin = plugin.getPluginOptions(project, mojoExecution);
+                getLog().info("Options for plugin " + pluginName + ": " + optionsForPlugin);
+                pluginOptions.addAll(optionsForPlugin);
             }
         }
 
-        return pluginArguments;
+        if (this.pluginOptions != null) {
+            pluginOptions.addAll(parseUserProvidedPluginOptions(this.pluginOptions, plugins));
+        }
+
+        return pluginOptions;
+    }
+
+    @NotNull
+    private static List<PluginOption> parseUserProvidedPluginOptions(
+            @NotNull List<String> rawOptions,
+            @NotNull Map<String, KotlinMavenPluginExtension> plugins
+    ) throws PluginOptionIllegalFormatException, PluginNotFoundException {
+        List<PluginOption> pluginOptions = new ArrayList<PluginOption>(rawOptions.size());
+
+        for (String rawOption : rawOptions) {
+            Matcher matcher = OPTION_PATTERN.matcher(rawOption);
+            if (!matcher.matches()) {
+                throw new PluginOptionIllegalFormatException(rawOption);
+            }
+
+            String pluginName = matcher.group(1);
+            String key = matcher.group(2);
+            String value = matcher.group(3);
+            KotlinMavenPluginExtension plugin = plugins.get(pluginName);
+            if (plugin == null) {
+                throw new PluginNotFoundException(pluginName);
+            }
+
+            pluginOptions.add(new PluginOption(plugin.getCompilerPluginId(), key, value));
+        }
+
+        return pluginOptions;
     }
 
     private void configureCompilerArguments(@NotNull A arguments, @NotNull CLICompiler<A> compiler) throws MojoExecutionException {
@@ -324,26 +367,45 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             getLog().info("Method inlining is turned off");
         }
 
-        try {
-            List<String> pluginArguments = getCompilerPluginArguments();
-            if (pluginArguments != null && !pluginArguments.isEmpty()) {
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
-                }
-
-                arguments.pluginOptions = pluginArguments.toArray(new String[pluginArguments.size()]);
+        List<String> pluginClassPaths = getCompilerPluginClassPaths();
+        if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(pluginClassPaths));
             }
-        } catch (ComponentLookupException e) {
-            throw new MojoExecutionException("Failed to lookup kotlin compiler plugins", e);
+            arguments.pluginClasspaths = pluginClassPaths.toArray(new String[pluginClassPaths.size()]);
         }
 
-        List<String> classPaths = getCompilerPluginsClassPaths();
+        List<String> pluginArguments;
+        try {
+            pluginArguments = renderCompilerPluginOptions(getCompilerPluginOptions());
+        } catch (PluginNotFoundException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (PluginOptionIllegalFormatException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
 
-        if (classPaths != null && !classPaths.isEmpty()) {
+        if (!pluginArguments.isEmpty()) {
             if (getLog().isDebugEnabled()) {
-                getLog().debug("Plugin classpaths are: " + Joiner.on(", ").join(classPaths));
+                getLog().debug("Plugin options are: " + Joiner.on(", ").join(pluginArguments));
             }
-            arguments.pluginClasspaths = classPaths.toArray(new String[classPaths.size()]);
+
+            arguments.pluginOptions = pluginArguments.toArray(new String[pluginArguments.size()]);
+        }
+    }
+
+    public static class PluginNotFoundException extends Exception {
+        PluginNotFoundException(String pluginId, Throwable cause) {
+            super("Plugin not found: " + pluginId, cause);
+        }
+
+        PluginNotFoundException(String pluginId) {
+            super("Plugin not found: " + pluginId);
+        }
+    }
+
+    public static class PluginOptionIllegalFormatException extends Exception {
+        PluginOptionIllegalFormatException(String option) {
+            super("Plugin option has an illegal format: " + option);
         }
     }
 }

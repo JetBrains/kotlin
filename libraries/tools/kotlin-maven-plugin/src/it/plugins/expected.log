@@ -7,8 +7,8 @@
 [INFO] Compiling Kotlin sources from [/use-test-extension/src/main/kotlin]
 [INFO] Module name is use-test-extension
 [INFO] Applicability test for project use-test-extension
-[INFO] Applying plugin test-me
 [INFO] Configuring test plugin with arguments
+[INFO] Options for plugin test-me: [plugin:org.jetbrains.kotlin.test.test-plugin:test-option=my-special-value]
 [INFO] Plugin applied
 [INFO] Option value: my-special-value
 [INFO] Kotlin Compiler version @snapshot@

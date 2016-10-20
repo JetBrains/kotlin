@@ -2,52 +2,62 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>kotlin-compiler-extensions-test</artifactId>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <version>0.1-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>use-test-extension</artifactId>
-
-
-    <properties>
-        <kotlin.version>0.1-SNAPSHOT</kotlin.version>
-    </properties>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>test-allopen-simple</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
+            <artifactId>kotlin-runtime</artifactId>
             <version>${kotlin.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <phase>test-compile</phase>
+                        <phase>process-test-sources</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
@@ -56,15 +66,19 @@
 
                 <configuration>
                     <compilerPlugins>
-                        <plugin>test-me</plugin>
+                        <plugin>all-open</plugin>
                     </compilerPlugins>
+
+                    <pluginOptions>
+                        <option>all-open:annotation=test.AllOpen</option>
+                    </pluginOptions>
                 </configuration>
 
                 <dependencies>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>test-extension</artifactId>
-                        <version>${project.version}</version>
+                        <artifactId>kotlin-maven-allopen</artifactId>
+                        <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

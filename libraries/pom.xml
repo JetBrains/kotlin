@@ -96,6 +96,7 @@
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kotlin-annotation-processing</module>
         <module>tools/kotlin-allopen</module>
+        <module>tools/kotlin-maven-allopen</module>
 
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-api</module>
