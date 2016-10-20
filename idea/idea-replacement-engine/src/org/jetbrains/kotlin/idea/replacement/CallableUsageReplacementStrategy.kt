@@ -34,9 +34,9 @@ class CallableUsageReplacementStrategy(
         if (!resolvedCall.isReallySuccess()) return null
 
         val callElement = resolvedCall.call.callElement
-        val callTypeHandler = callTypeHandler(callElement) ?: return null
+        if (callElement !is KtExpression && callElement !is KtAnnotationEntry) return null
 
-        if (!callTypeHandler.precheckReplacementPattern(replacement)) return null
+        //TODO: precheck pattern correctness for annotation entry
 
         return {
             if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
@@ -46,18 +46,8 @@ class CallableUsageReplacementStrategy(
             else {
                 // copy replacement expression because it is modified by performCallReplacement
                 @Suppress("UNCHECKED_CAST")
-                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement,
-                                                         callTypeHandler as CallKindHandler<KtElement>,
-                                                         replacement.copy())
+                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement, replacement.copy())
             }
-        }
-    }
-
-    private fun callTypeHandler(callElement: KtElement): CallKindHandler<*>? {
-        return when (callElement) {
-            is KtExpression -> CallExpressionHandler
-            is KtAnnotationEntry -> AnnotationEntryHandler
-            else -> null
         }
     }
 }

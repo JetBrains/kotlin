@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.idea.replacement
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -34,8 +36,9 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-internal open class ConstructedExpressionWrapper(
+internal abstract class ConstructedCodeHolder<TElement>(
         var expression: KtExpression,
+        val elementToBeReplaced: TElement,
         val bindingContext: BindingContext
 ) {
     val psiFactory = KtPsiFactory(expression)
@@ -50,14 +53,68 @@ internal open class ConstructedExpressionWrapper(
             return oldExpression.replace(newExpression) as KtExpression
         }
     }
+
+    abstract fun finish(postProcessing: (PsiChildRange) -> PsiChildRange): TElement
 }
 
-internal class ConstructedExpressionWrapperWithIntroduceFeature(
+internal class ConstructedAnnotationEntryHolder(
         expression: KtExpression,
-        bindingContext: BindingContext,
-        val expressionToBeReplaced: KtExpression
-) : ConstructedExpressionWrapper(expression, bindingContext) {
-    val addedStatements = ArrayList<KtExpression>()
+        elementToBeReplaced: KtAnnotationEntry,
+        bindingContext: BindingContext
+) : ConstructedCodeHolder<KtAnnotationEntry>(expression, elementToBeReplaced, bindingContext) {
+
+    override fun finish(postProcessing: (PsiChildRange) -> PsiChildRange): KtAnnotationEntry {
+        val dummyAnnotationEntry = createByPattern("@Dummy($0)", expression) { psiFactory.createAnnotationEntry(it) }
+        val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
+        var range = PsiChildRange.singleElement(replaced)
+        range = postProcessing(range)
+
+        assert(range.first == range.last)
+        assert(range.first is KtAnnotationEntry)
+        val annotationEntry = range.first as KtAnnotationEntry
+        val text = annotationEntry.valueArguments.single().getArgumentExpression()!!.text
+        return annotationEntry.replaced(psiFactory.createAnnotationEntry("@" + text))
+    }
+}
+
+internal class ConstructedExpressionHolder(
+        expression: KtExpression,
+        expressionToBeReplaced: KtExpression,
+        bindingContext: BindingContext
+) : ConstructedCodeHolder<KtExpression>(expression, expressionToBeReplaced, bindingContext) {
+
+    private data class StatementToInsert<TStatement : KtExpression>(val statement: TStatement, val postProcessing: (TStatement) -> Unit)
+
+    private val statementsToInsert = ArrayList<StatementToInsert<*>>()
+
+    private fun <TStatement : KtExpression> addStatementToInsert(statement: TStatement, postProcessing: (TStatement) -> Unit = {}) {
+        statementsToInsert.add(StatementToInsert(statement, postProcessing))
+    }
+
+    override fun finish(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression {
+        val insertedStatements = ArrayList<KtExpression>()
+        for (toInsert in statementsToInsert.asReversed()) { //TODO: do we need it?
+            val block = elementToBeReplaced.parent as KtBlockExpression //TODO
+
+            val inserted = block.addBefore(toInsert.statement, elementToBeReplaced) as KtExpression
+            block.addBefore(psiFactory.createNewLine(), elementToBeReplaced)
+            insertedStatements.add(inserted)
+
+            @Suppress("UNCHECKED_CAST")
+            (toInsert.postProcessing as (KtExpression) -> Unit).invoke(inserted)
+        }
+
+        val replaced = elementToBeReplaced.replace(expression)
+
+        var range = if (insertedStatements.isEmpty())
+            PsiChildRange.singleElement(replaced)
+        else
+            PsiChildRange(insertedStatements.first(), replaced)
+
+        range = postProcessing(range)
+
+        return range.last as KtExpression
+    }
 
     fun introduceValue(
             value: KtExpression,
@@ -87,17 +144,17 @@ internal class ConstructedExpressionWrapperWithIntroduceFeature(
         fun isNameUsed(name: String) = collectNameUsages(expression, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
 
         if (!safeCall) {
-            val block = expressionToBeReplaced.parent as? KtBlockExpression
+            val block = elementToBeReplaced.parent as? KtBlockExpression
             if (block != null) {
-                val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
+                val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade())
 
                 if (usages.isNotEmpty()) {
                     var explicitType: KotlinType? = null
                     if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
                         val valueTypeWithoutExpectedType = value.computeTypeInContext(
                                 resolutionScope,
-                                expressionToBeReplaced,
-                                dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
+                                elementToBeReplaced,
+                                dataFlowInfo = bindingContext.getDataFlowInfo(elementToBeReplaced)
                         )
                         if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
                             explicitType = valueType
@@ -108,21 +165,18 @@ internal class ConstructedExpressionWrapperWithIntroduceFeature(
                         resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
                     }
 
-                    var declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
-                    declaration = block.addBefore(declaration, expressionToBeReplaced) as KtVariableDeclaration
-                    block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
-
-                    if (explicitType != null) {
-                        declaration.setType(explicitType)
-                    }
+                    val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
+                    addStatementToInsert(declaration,
+                                         postProcessing = {
+                                             if (explicitType != null) {
+                                                 it.setType(explicitType!!)
+                                             }
+                                         })
 
                     replaceUsages(name)
-
-                    addedStatements.add(declaration)
                 }
                 else {
-                    addedStatements.add(block.addBefore(value, expressionToBeReplaced) as KtExpression)
-                    block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
+                    addStatementToInsert(value)
                 }
                 return
             }
