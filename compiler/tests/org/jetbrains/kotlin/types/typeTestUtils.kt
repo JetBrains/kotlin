@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 
-fun KotlinBuiltIns.builtInPackageAsLexicalScope()
-        = LexicalScope.Empty(builtInsPackageScope.memberScopeAsImportingScope(), builtInsModule)
+fun ModuleDescriptor.builtInPackageAsLexicalScope(): LexicalScope.Empty {
+    val packageView = getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+    return LexicalScope.Empty(packageView.memberScope.memberScopeAsImportingScope(), this)
+}
