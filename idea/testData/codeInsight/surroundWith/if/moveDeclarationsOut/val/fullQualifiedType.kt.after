@@ -1,5 +1,5 @@
 fun foo() {
-    val a = if (<caret>) {
+    val a: kotlin.test.Asserter? = if (<caret>) {
         null
     }
 

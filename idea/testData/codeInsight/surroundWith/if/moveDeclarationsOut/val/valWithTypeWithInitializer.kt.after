@@ -1,5 +1,5 @@
 fun foo() {
-    val a = if () {
+    val a: String = if () {
         "aaa"
     }
 

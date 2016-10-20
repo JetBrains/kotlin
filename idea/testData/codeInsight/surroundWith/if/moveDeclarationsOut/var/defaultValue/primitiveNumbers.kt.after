@@ -5,7 +5,7 @@ fun foo() {
     var d: Long = 0
     var e: Short = 0
     var f: Double = 0.0
-    var g = if () {
+    var g: Float = if () {
         a = 1
         b = 1
         c = 1

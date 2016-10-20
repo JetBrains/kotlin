@@ -1,5 +1,5 @@
 fun foo() {
-    var a = if (<caret>) {
+    var a: Boolean = if (<caret>) {
         true
     }
     a = true
