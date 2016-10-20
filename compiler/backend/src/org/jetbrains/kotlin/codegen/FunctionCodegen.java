@@ -46,9 +46,11 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
@@ -563,7 +565,7 @@ public class FunctionCodegen {
 
                 parameterName =
                         destructuringVariables == null
-                        ? parameter.getName().asString()
+                        ? computeParameterName(i, parameter)
                         : "$" + joinParameterNames(destructuringVariables);
             }
             else {
@@ -583,7 +585,7 @@ public class FunctionCodegen {
             List<VariableDescriptor> destructuringVariables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(parameter);
             if (destructuringVariables == null) continue;
 
-            for (VariableDescriptor entry : destructuringVariables) {
+            for (VariableDescriptor entry : CodegenUtilKt.filterOutDescriptorsWithSpecialNames(destructuringVariables)) {
                 Type type = typeMapper.mapType(entry.getType());
                 mv.visitLocalVariable(entry.getName().asString(), type.getDescriptor(), null, methodBegin, methodEnd, shift);
                 shift += type.getSize();
@@ -591,10 +593,21 @@ public class FunctionCodegen {
         }
     }
 
+    private static String computeParameterName(int i, ValueParameterDescriptor parameter) {
+        PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
+        if (element instanceof KtParameter && UnderscoreUtilKt.isSingleUnderscore((KtParameter) element)) {
+            return "$noName_" + i;
+        }
+
+        return parameter.getName().asString();
+    }
+
     private static String joinParameterNames(@NotNull List<VariableDescriptor> variables) {
         return org.jetbrains.kotlin.utils.StringsKt.join(CollectionsKt.map(variables, new Function1<VariableDescriptor, String>() {
             @Override
             public String invoke(VariableDescriptor descriptor) {
+                // stub for anonymous destructuring declaration entry
+                if (descriptor.getName().isSpecial()) return "$_$";
                 return descriptor.getName().asString();
             }
         }), "_");

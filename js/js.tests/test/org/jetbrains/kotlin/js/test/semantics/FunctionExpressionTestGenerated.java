@@ -52,4 +52,10 @@ public class FunctionExpressionTestGenerated extends AbstractFunctionExpressionT
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("underscoreParameters.kt")
+    public void testUnderscoreParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/underscoreParameters.kt");
+        doTest(fileName);
+    }
 }

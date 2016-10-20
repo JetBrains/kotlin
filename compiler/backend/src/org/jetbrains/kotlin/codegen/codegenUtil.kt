@@ -255,3 +255,5 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
             }
             else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
         }
+
+fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }

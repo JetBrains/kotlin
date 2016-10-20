@@ -44,7 +44,7 @@ class ClosureGenerationStrategy(
         for (parameterDescriptor in codegen.context.functionDescriptor.valueParameters) {
             if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
 
-            for (entry in parameterDescriptor.destructuringVariables) {
+            for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
                 codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
             }
 

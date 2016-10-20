@@ -842,6 +842,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
                 doSingleBreakpointTest(fileName);
             }
+
+            @TestMetadata("underscoreNames.kt")
+            public void testUnderscoreNames() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/underscoreNames.kt");
+                doSingleBreakpointTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer")

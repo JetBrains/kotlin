@@ -118,4 +118,10 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/localFun.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("underscoreNames.kt")
+    public void testUnderscoreNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
+        doTest(fileName);
+    }
 }
