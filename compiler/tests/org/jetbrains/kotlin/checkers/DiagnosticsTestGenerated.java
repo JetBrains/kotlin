@@ -3600,6 +3600,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localObjectInConstructor.kt")
+            public void testLocalObjectInConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/localObjectInConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nestedTryFinally.kt")
             public void testNestedTryFinally() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinally.kt");

@@ -888,6 +888,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localObjectInConstructor.kt")
+            public void testLocalObjectInConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/localObjectInConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("referenceToPropertyInitializer.kt")
             public void testReferenceToPropertyInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");

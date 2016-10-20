@@ -17,10 +17,10 @@ L0:
     jmp?(L2)
     v(var a : Int get() { return field } set(v: Int) { field = v })                       INIT: in: {} out: {a=D}
     jmp?(L3)                                                                              INIT: in: {a=D} out: {a=D}                        USE: in: {field=ONLY_WRITTEN_NEVER_READ, field=READ} out: {field=ONLY_WRITTEN_NEVER_READ, field=READ}
-    d(get() { return field })                                                             INIT: in: {a=-} out: {a=-}                        USE: in: {field=READ} out: {field=READ}
+    d(get() { return field })                                                             INIT: in: {a=I?} out: {a=I?}                      USE: in: {field=READ} out: {field=READ}
 L3 [after local declaration]:
     jmp?(L6)                                                                              INIT: in: {a=D} out: {a=D}
-    d(set(v: Int) { field = v })                                                          INIT: in: {a=-, field=I?} out: {a=-, field=I?}    USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ}
+    d(set(v: Int) { field = v })                                                          INIT: in: {a=I?, field=I} out: {a=I?, field=I}    USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ}
 L1:
 L2 [after local class]:
 L6 [after local declaration]:
@@ -28,7 +28,7 @@ L6 [after local declaration]:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                INIT: in: {field=I?} out: {field=I?}              USE: in: {} out: {}
+    <SINK>                                                                                INIT: in: {field=I} out: {field=I}                USE: in: {} out: {}
 =====================
 == get_a ==
 get() {
@@ -37,15 +37,15 @@ get() {
 ---------------------
 L4:
   3 <START>                   INIT: in: {a=D} out: {a=D}
-  4 mark({ return field })                                  USE: in: {field=READ} out: {field=READ}
-    r(field) -> <v0>                                        USE: in: {} out: {field=READ}
+  4 mark({ return field })                                    USE: in: {field=READ} out: {field=READ}
+    r(field) -> <v0>                                          USE: in: {} out: {field=READ}
     ret(*|<v0>) L5
 L5:
   3 <END>
 error:
     <ERROR>                   INIT: in: {} out: {}
 sink:
-    <SINK>                    INIT: in: {a=-} out: {a=-}    USE: in: {} out: {}
+    <SINK>                    INIT: in: {a=I?} out: {a=I?}    USE: in: {} out: {}
 =====================
 == set_a ==
 set(v: Int) {
@@ -65,5 +65,5 @@ L8:
 error:
     <ERROR>                                    INIT: in: {} out: {}
 sink:
-    <SINK>                                     INIT: in: {a=-, field=I?, v=I?} out: {a=-, field=I?, v=I?}    USE: in: {} out: {}
+    <SINK>                                     INIT: in: {a=I?, field=I, v=I?} out: {a=I?, field=I, v=I?}    USE: in: {} out: {}
 =====================
