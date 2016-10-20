@@ -4,7 +4,7 @@ TESTS := sum \
 
 BIN_TESTS=$(foreach t, ${TESTS},${t}_test)
 
-VPATH=codegen/function
+VPATH=codegen/function:${TOP}/runtime/build
 
 LLC=llc-mp-3.8
 CC=clang-mp-3.8
@@ -19,7 +19,7 @@ KOTLIN_NATIVE_CLASSPATH=${BACKEND_CLASSES}/bc_frontend:${BACKEND_CLASSES}/cli_bc
 
 
 define PROTO
-$(1)_test: main.c $1-test.c $1.S
+$(1)_test:  $1-test.c $1.S runtime.S main.c
 	$(CC) -o $$@ $$^
 
 ${1}_run:${1}_test
@@ -35,6 +35,8 @@ run:$(foreach test,${TESTS},${test}_run)
 clean:
 	${RM} *.o *.S *.BCkt ${BIN_TESTS}
 
+%.S:%.bc
+	${LLC} -o $@ $<
 
 %.S:%.BCkt
 	${LLC} -o $@ $<
