@@ -53,7 +53,6 @@ import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.UNKNOWN_EXTERN
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
-import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getContainingDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSuperclass;
 
 /**
@@ -366,7 +365,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    public JsName getNameForPackage(@NotNull final FqName packageFqName) {
+    private JsName getNameForPackage(@NotNull final FqName packageFqName) {
         return ContainerUtil.getOrCreate(packageNames, packageFqName, new Factory<JsName>() {
             @Override
             public JsName create() {
@@ -409,9 +408,24 @@ public final class StaticContext {
 
     @NotNull
     public JsName importDeclaration(@NotNull String suggestedName, @NotNull JsExpression declaration) {
-        JsName result = rootFunction.getScope().declareFreshName(suggestedName);
+        // Adding prefix is a workaround for a problem with scopes.
+        // Consider we declare name `foo` in functions's local scope, then call top-level function `foo`
+        // from another module. It's imported into global scope under name `foo`. If we could somehow
+        // declare all names in global scope before running translator, we would have got `foo_1` for local variable,
+        // since local scope inherited from global scope.
+        // TODO: remove prefix when problem with scopes is solved
+
+        JsName result = rootFunction.getScope().declareFreshName("imported$" + suggestedName);
         importStatements.add(JsAstUtils.newVar(result, declaration));
         return result;
+    }
+
+    @NotNull
+    private JsName localOrImportedName(@NotNull DeclarationDescriptor descriptor, @NotNull String suggestedName) {
+        ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
+        return module != currentModule ?
+                importDeclaration(suggestedName, getQualifiedReference(descriptor)) :
+                rootFunction.getScope().declareFreshName(suggestedName);
     }
 
     private final class InnerNameGenerator extends Generator<JsName> {
@@ -431,12 +445,7 @@ public final class StaticContext {
                             return getInnerNameForDescriptor(((ConstructorDescriptor) descriptor).getConstructedClass());
                         }
                     }
-                    JsName result = rootFunction.getScope().declareFreshName(getSuggestedName(descriptor));
-                    ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
-                    if (module != currentModule) {
-                        importStatements.add(JsAstUtils.newVar(result, getQualifiedReference(descriptor)));
-                    }
-                    return result;
+                    return localOrImportedName(descriptor, getSuggestedName(descriptor));
                 }
             });
         }
@@ -449,12 +458,7 @@ public final class StaticContext {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     String suggested = getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_FUNCTION_SUFFIX;
-                    JsName result = rootFunction.getScope().declareFreshName(suggested);
-                    ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
-                    if (module != currentModule) {
-                        importStatements.add(JsAstUtils.newVar(result, getQualifiedReference(descriptor)));
-                    }
-                    return result;
+                    return localOrImportedName(descriptor, suggested);
                 }
             });
         }
@@ -506,18 +510,6 @@ public final class StaticContext {
         }
 
         return suggestedName;
-    }
-
-    @NotNull
-    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
-        JsScope scope = getEnclosingScope(descriptor);
-        return fresh ? scope.declareFreshName(name) : scope.declareName(name);
-    }
-
-    @NotNull
-    private JsScope getEnclosingScope(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
-        return getScopeForDescriptor(containingDeclaration.getOriginal());
     }
 
     private final class ScopeGenerator extends Generator<JsScope> {

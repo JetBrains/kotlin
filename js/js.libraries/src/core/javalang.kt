@@ -30,7 +30,8 @@ class StringBuilder(content: String = "") : Appendable, CharSequence {
 
     private var string: String = content
 
-    override val length: Int = string.length
+    override val length: Int
+        get() = string.asDynamic().length
 
     override fun get(index: Int): Char = string[index]
 
@@ -57,8 +58,7 @@ class StringBuilder(content: String = "") : Appendable, CharSequence {
     }
 
     fun reverse(): StringBuilder {
-        val nativeString: dynamic = string
-        string = nativeString.split("").reverse().join("")
+        string = string.asDynamic().split("").reverse().join("")
         return this
     }
 

@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -41,7 +40,6 @@ import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject;
 
 public final class TranslationUtils {
 
@@ -84,8 +82,9 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression translateExclForBinaryEqualLikeExpr(@NotNull JsBinaryOperation baseBinaryExpression) {
-        return new JsBinaryOperation(notOperator(baseBinaryExpression.getOperator()), baseBinaryExpression.getArg1(),
-                                     baseBinaryExpression.getArg2());
+        JsBinaryOperator negatedOperator = notOperator(baseBinaryExpression.getOperator());
+        assert negatedOperator != null : "Can't negate operator: " + baseBinaryExpression.getOperator();
+        return new JsBinaryOperation(negatedOperator, baseBinaryExpression.getArg1(), baseBinaryExpression.getArg2());
     }
 
     public static boolean isEqualLikeOperator(@NotNull JsBinaryOperator operator) {
@@ -153,8 +152,7 @@ public final class TranslationUtils {
                                   context.getNameForDescriptor(descriptor);
 
         if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && !(containingDescriptor instanceof PackageFragmentDescriptor)) {
-            JsName backingFieldMangledName = context.getNameForBackingField(descriptor);
-            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName.getIdent());
+            backingFieldName = context.getNameForBackingField(descriptor);
         }
 
         JsExpression receiver;
@@ -262,31 +260,6 @@ public final class TranslationUtils {
         }
 
         return ensureNotNull;
-    }
-
-    @NotNull
-    public static String getSuggestedNameForInnerDeclaration(StaticContext context, DeclarationDescriptor descriptor) {
-        String suggestedName = "";
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        //noinspection ConstantConditions
-        if (containingDeclaration != null &&
-            !(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
-            !(containingDeclaration instanceof AnonymousFunctionDescriptor) &&
-            !(containingDeclaration instanceof ConstructorDescriptor && isAnonymousObject(containingDeclaration.getContainingDeclaration()))) {
-            suggestedName = context.getNameForDescriptor(containingDeclaration).getIdent();
-        }
-
-        if (!suggestedName.isEmpty() && !suggestedName.endsWith("$")) {
-            suggestedName += "$";
-        }
-
-        if (descriptor.getName().isSpecial()) {
-            suggestedName += "f";
-        }
-        else {
-            suggestedName += context.getNameForDescriptor(descriptor).getIdent();
-        }
-        return suggestedName;
     }
 
     public static boolean isSimpleNameExpressionNotDelegatedLocalVar(@Nullable KtExpression expression, @NotNull TranslationContext context) {

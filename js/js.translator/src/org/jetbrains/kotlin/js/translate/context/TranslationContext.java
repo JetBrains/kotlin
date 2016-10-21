@@ -230,11 +230,6 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name) {
-        return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, false);
-    }
-
-    @NotNull
     public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof MemberDescriptor && isFromCurrentModule(descriptor) && isPublicInlineFunction()) {
             staticContext.export((MemberDescriptor) descriptor, true);
@@ -620,9 +615,15 @@ public class TranslationContext {
     }
 
     public boolean isPublicInlineFunction() {
-        if (!(declarationDescriptor instanceof FunctionDescriptor)) return false;
-        FunctionDescriptor function = (FunctionDescriptor) declarationDescriptor;
-        return function.isInline() && DescriptorUtilsKt.isEffectivelyPublicApi(function);
+        DeclarationDescriptor descriptor = declarationDescriptor;
+        while (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor function = (FunctionDescriptor) descriptor;
+            if (function.isInline() && DescriptorUtilsKt.isEffectivelyPublicApi(function)) {
+                return true;
+            }
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return false;
     }
 
     @NotNull
