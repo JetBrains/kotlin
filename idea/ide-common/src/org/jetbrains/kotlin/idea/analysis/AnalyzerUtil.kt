@@ -38,11 +38,11 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false,
-        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT,
+        expressionTypingServices: ExpressionTypingServices = contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
 ): KotlinTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
-    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
+    return  expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement, contextExpression, contextDependency)
 }
 
 @JvmOverloads fun KtExpression.analyzeInContext(
@@ -52,9 +52,10 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false,
-        contextDependency: ContextDependency = ContextDependency.INDEPENDENT
+        contextDependency: ContextDependency = ContextDependency.INDEPENDENT,
+        expressionTypingServices: ExpressionTypingServices = contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
 ): BindingContext {
-    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement, contextDependency)
+    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement, contextDependency, expressionTypingServices)
     return trace.bindingContext
 }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.replacement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
@@ -32,17 +33,13 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 
 class ReplacementBuilder(
@@ -128,7 +125,6 @@ class ReplacementBuilder(
     //TODO: there can be expected type and maybe something else
     private fun analyzeInContext(expression: KtExpression, scope: LexicalScope): BindingContext {
         val module = scope.ownerDescriptor.module
-        val traceContext = BindingTraceContext()
         val frontendService = if (module.builtIns.builtInsModule == module) {
             // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
             resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
@@ -136,8 +132,6 @@ class ReplacementBuilder(
         else {
             resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
         }
-        PreliminaryDeclarationVisitor.createForExpression(expression, traceContext)
-        frontendService.getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
-        return traceContext.bindingContext
+        return expression.analyzeInContext(scope, expressionTypingServices = frontendService)
     }
 }
