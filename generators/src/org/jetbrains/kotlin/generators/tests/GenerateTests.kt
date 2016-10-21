@@ -1209,6 +1209,10 @@ fun main(args: Array<String>) {
         testClass<AbstractTypeAliasesTests>() {
             model("codegen/box/typealias/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractBinaryOpTests>() {
+            model("codegen/box/binaryOp", targetBackend = TargetBackend.JS)
+        }
     }
 }
 

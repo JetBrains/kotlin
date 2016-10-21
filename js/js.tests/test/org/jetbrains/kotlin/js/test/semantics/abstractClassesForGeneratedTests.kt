@@ -60,3 +60,5 @@ abstract class AbstractLocalClassesTest : BorrowedTest("localClasses/")
 abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
 
 abstract class AbstractTypeAliasesTests : BorrowedTest("typealias/")
+
+abstract class AbstractBinaryOpTests : BorrowedTest("binaryOp/")
