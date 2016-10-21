@@ -197,11 +197,6 @@ public abstract class KotlinBuiltIns {
         public final FqName mutableMap = collectionsFqName("MutableMap");
         public final FqName mutableMapEntry = mutableMap.child(Name.identifier("MutableEntry"));
 
-        private final FqNameUnsafe _collection = collection.toUnsafe();
-        private final FqNameUnsafe _list = list.toUnsafe();
-        private final FqNameUnsafe _set = set.toUnsafe();
-        private final FqNameUnsafe _iterable = iterable.toUnsafe();
-
         public final FqNameUnsafe kClass = reflect("KClass");
         public final FqNameUnsafe kCallable = reflect("KCallable");
         public final FqNameUnsafe kProperty0 = reflect("KProperty0");
@@ -355,7 +350,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getPrimitiveClassDescriptor(@NotNull PrimitiveType type) {
+    private ClassDescriptor getPrimitiveClassDescriptor(@NotNull PrimitiveType type) {
         return getBuiltInClassByName(type.getTypeName().asString());
     }
 
@@ -504,11 +499,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getString() {
         return getBuiltInClassByName("String");
-    }
-
-    @NotNull
-    public ClassDescriptor getCharSequence() {
-        return getBuiltInClassByName("CharSequence");
     }
 
     @NotNull
@@ -708,6 +698,7 @@ public abstract class KotlinBuiltIns {
             }
             return arrayType.getArguments().get(0).getType();
         }
+        //noinspection SuspiciousMethodCalls
         KotlinType primitiveType = kotlinArrayTypeToPrimitiveKotlinType.get(TypeUtils.makeNotNullable(arrayType));
         if (primitiveType == null) {
             throw new IllegalStateException("not array: " + arrayType);
@@ -795,6 +786,10 @@ public abstract class KotlinBuiltIns {
     private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
+    }
+
+    private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqName fqName) {
+        return isConstructedFromGivenClass(type, fqName.toUnsafe());
     }
 
     private static boolean classFqNameEquals(@NotNull ClassifierDescriptor descriptor, @NotNull FqNameUnsafe fqName) {
@@ -918,19 +913,23 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isCollectionOrNullableCollection(@NotNull KotlinType type) {
-        return isConstructedFromGivenClass(type, FQ_NAMES._collection);
+        return isConstructedFromGivenClass(type, FQ_NAMES.collection);
     }
 
     public static boolean isListOrNullableList(@NotNull KotlinType type) {
-        return isConstructedFromGivenClass(type, FQ_NAMES._list);
+        return isConstructedFromGivenClass(type, FQ_NAMES.list);
     }
 
     public static boolean isSetOrNullableSet(@NotNull KotlinType type) {
-        return isConstructedFromGivenClass(type, FQ_NAMES._set);
+        return isConstructedFromGivenClass(type, FQ_NAMES.set);
+    }
+
+    public static boolean isMapOrNullableMap(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.map);
     }
 
     public static boolean isIterableOrNullableIterable(@NotNull KotlinType type) {
-        return isConstructedFromGivenClass(type, FQ_NAMES._iterable);
+        return isConstructedFromGivenClass(type, FQ_NAMES.iterable);
     }
 
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
