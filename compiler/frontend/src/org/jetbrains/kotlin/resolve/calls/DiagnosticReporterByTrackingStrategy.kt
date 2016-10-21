@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -32,9 +34,13 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 class DiagnosticReporterByTrackingStrategy(
+        val constantExpressionEvaluator: ConstantExpressionEvaluator,
         val context: BasicCallResolutionContext,
         val trace: BindingTrace,
         val psiKotlinCall: PSIKotlinCall
@@ -137,6 +143,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val constraintError = diagnostic as NewConstraintError
                 (constraintError.position as? ArgumentConstraintPosition)?.let {
                     val expression = it.argument.psiExpression ?: return
+                    if (reportConstantTypeMismatch(constraintError, expression)) return
                     trace.report(Errors.TYPE_MISMATCH.on(expression, constraintError.upperType, constraintError.lowerType))
                 }
                 (constraintError.position as? ExplicitTypeParameterConstraintPosition)?.let {
@@ -153,4 +160,16 @@ class DiagnosticReporterByTrackingStrategy(
             }
         }
     }
+
+    private fun reportConstantTypeMismatch(constraintError: NewConstraintError, expression: KtExpression): Boolean {
+        if (expression is KtConstantExpression) {
+            val builtIns = context.scope.ownerDescriptor.builtIns
+            val constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, trace, context.expectedType)
+            val hasConstantTypeError = CompileTimeConstantChecker(context, builtIns, true)
+                    .checkConstantExpressionType(constantValue, expression, constraintError.upperType)
+            if (hasConstantTypeError) return true
+        }
+        return false
+    }
+
 }

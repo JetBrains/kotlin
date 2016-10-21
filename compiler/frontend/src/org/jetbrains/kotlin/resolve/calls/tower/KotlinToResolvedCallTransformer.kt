@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.*
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
+import org.jetbrains.kotlin.resolve.calls.REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.isFakeElement
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -49,7 +52,8 @@ class KotlinToResolvedCallTransformer(
         private val callCheckers: Iterable<CallChecker>,
         private val languageFeatureSettings: LanguageVersionSettings,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
-        private val argumentTypeResolver: ArgumentTypeResolver
+        private val argumentTypeResolver: ArgumentTypeResolver,
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
 
     fun <D : CallableDescriptor> transformAndReport(
@@ -185,7 +189,7 @@ class KotlinToResolvedCallTransformer(
                 reported = true
             }
         }
-        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(context, reportTrackedTrace, completedCall.kotlinCall.psiKotlinCall)
+        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, context, reportTrackedTrace, completedCall.kotlinCall.psiKotlinCall)
 
         for (diagnostic in completedCall.resolutionStatus.diagnostics) {
             reported = false
