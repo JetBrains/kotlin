@@ -21,7 +21,7 @@ import com.intellij.facet.ui.FacetEditorTab
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
 
 class KotlinFacetEditorCompilerTab(
-        compilerInfo: KotlinFacetConfiguration.CompilerInfo,
+        compilerInfo: KotlinCompilerInfo,
         editorContext: FacetEditorContext
 ) : FacetEditorTab() {
     val compilerConfigurable = KotlinCompilerConfigurableTab(

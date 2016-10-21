@@ -25,5 +25,5 @@ interface KotlinVersionInfoProvider {
     }
 
     fun getCompilerVersion(module: Module): String?
-    fun getLibraryVersions(module: Module, targetPlatform: KotlinFacetConfiguration.TargetPlatform): Collection<String>
+    fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>): Collection<String>
 }

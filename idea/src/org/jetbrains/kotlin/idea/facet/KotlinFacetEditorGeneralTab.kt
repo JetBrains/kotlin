@@ -41,9 +41,9 @@ class KotlinFacetEditorGeneralTab(
 
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val apiLevel = apiVersionComboBox.selectedItem as? KotlinFacetConfiguration.LanguageLevel? ?: return ValidationResult.OK
-            val languageLevel = languageVersionComboBox.selectedItem as? KotlinFacetConfiguration.LanguageLevel? ?: return ValidationResult.OK
-            val targetPlatform = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
+            val apiLevel = apiVersionComboBox.selectedItem as? LanguageLevel? ?: return ValidationResult.OK
+            val languageLevel = languageVersionComboBox.selectedItem as? LanguageLevel? ?: return ValidationResult.OK
+            val targetPlatform = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
             if (languageLevel < apiLevel || libraryLevel < apiLevel) {
                 return ValidationResult("Language version/Runtime version may not be less than API version", null)
@@ -53,17 +53,17 @@ class KotlinFacetEditorGeneralTab(
     }
 
     private val languageVersionComboBox =
-            JComboBox<KotlinFacetConfiguration.LanguageLevel>(KotlinFacetConfiguration.LanguageLevel.values()).apply {
+            JComboBox<LanguageLevel>(LanguageLevel.values()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
     private val apiVersionComboBox =
-            JComboBox<KotlinFacetConfiguration.LanguageLevel>(KotlinFacetConfiguration.LanguageLevel.values()).apply {
+            JComboBox<LanguageLevel>(LanguageLevel.values()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
     private val targetPlatformComboBox =
-            JComboBox<KotlinFacetConfiguration.TargetPlatform>(KotlinFacetConfiguration.TargetPlatform.values()).apply {
+            JComboBox<TargetPlatformKind<*>>(TargetPlatformKind.ALL_PLATFORMS.toTypedArray()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
@@ -75,7 +75,7 @@ class KotlinFacetEditorGeneralTab(
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform }
+        ) { targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
 
         validatorsManager.registerValidator(libraryValidator)
         validatorsManager.registerValidator(versionValidator)
@@ -97,7 +97,7 @@ class KotlinFacetEditorGeneralTab(
     override fun isModified(): Boolean {
         return with(configuration.state.versionInfo) {
             languageVersionComboBox.selectedItem != languageLevel
-            || targetPlatformComboBox.selectedItem != targetPlatformKind
+            || targetPlatformComboBox.selectedItem != targetPlatformKindKind
             || apiVersionComboBox.selectedItem != apiLevel
         }
     }
@@ -105,16 +105,16 @@ class KotlinFacetEditorGeneralTab(
     override fun reset() {
         with(configuration.state.versionInfo) {
             languageVersionComboBox.selectedItem = languageLevel
-            targetPlatformComboBox.selectedItem = targetPlatformKind
+            targetPlatformComboBox.selectedItem = targetPlatformKindKind
             apiVersionComboBox.selectedItem = apiLevel
         }
     }
 
     override fun apply() {
         with(configuration.state.versionInfo) {
-            languageLevel = languageVersionComboBox.selectedItem as KotlinFacetConfiguration.LanguageLevel?
-            targetPlatformKind = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
-            apiLevel = apiVersionComboBox.selectedItem as KotlinFacetConfiguration.LanguageLevel?
+            languageLevel = languageVersionComboBox.selectedItem as LanguageLevel?
+            targetPlatformKindKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+            apiLevel = apiVersionComboBox.selectedItem as LanguageLevel?
         }
     }
 
@@ -136,6 +136,6 @@ class KotlinFacetEditorGeneralTab(
 
     }
 
-    val chosenPlatform: KotlinFacetConfiguration.TargetPlatform?
-        get() = targetPlatformComboBox.selectedItem as KotlinFacetConfiguration.TargetPlatform?
+    val chosenPlatform: TargetPlatformKind<*>?
+        get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
 }
