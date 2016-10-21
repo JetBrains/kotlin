@@ -1,10 +1,11 @@
 TESTS := sum \
          sum_foo_bar \
-         arithmetic
+         arithmetic \
+         initialization
 
 BIN_TESTS=$(foreach t, ${TESTS},${t}_test)
 
-VPATH=codegen/function:${TOP}/runtime/build
+VPATH=codegen/function:codegen/object:${TOP}/runtime/build
 
 LLC=llc-mp-3.8
 CC=clang-mp-3.8
