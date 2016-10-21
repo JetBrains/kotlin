@@ -20,16 +20,34 @@
 
 package kotlin.collections
 
+/**
+ * The implementation of the [MutableSet] interface, backed by a [LinkedHashMap] instance.
+ *
+ * This implementation preserves the insertion order of elements during the iteration.
+ */
 public open class LinkedHashSet<E> : HashSet<E> {
 
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 
+    /**
+     * Constructs a new empty [LinkedHashSet].
+     */
     constructor() : super(LinkedHashMap<E, Any>())
 
-    constructor(c: Collection<E>) : super(LinkedHashMap<E, Any>()) {
-        addAll(c)
+    /**
+     * Constructs a new [LinkedHashSet] filled with the elements of the specified collection.
+     */
+    constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
+        addAll(elements)
     }
-
+    /**
+     * Constructs a new empty [LinkedHashSet].
+     *
+     * @param  initialCapacity the initial capacity (ignored)
+     * @param  loadFactor      the load factor (ignored)
+     *
+     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     */
     constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
 
 //    public override fun clone(): Any {
@@ -38,6 +56,10 @@ public open class LinkedHashSet<E> : HashSet<E> {
 
 }
 
+/**
+ * Creates a new instance of the specialized implementation of [LinkedHashSet] with the specified [String] elements,
+ * which elements the keys as properties of JS object without hashing them.
+ */
 public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> {
     return LinkedHashSet(linkedStringMapOf<Any>()).apply { addAll(elements) }
 }

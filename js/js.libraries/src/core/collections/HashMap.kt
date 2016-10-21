@@ -23,6 +23,11 @@ package kotlin.collections
 import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
 
+/**
+ * Hash table based implementation of the [MutableMap] interface.
+ *
+ * This implementation makes no guarantees regarding the order of enumeration of [keys], [elements] and [entries] collections.
+ */
 public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 
     private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
@@ -60,14 +65,28 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
         this.equality = internalMap.equality
     }
 
+    /**
+     * Constructs an empty [HashMap] instance.
+     */
     constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
 
+    /**
+     * Constructs an empty [HashMap] instance.
+     *
+     * @param  initialCapacity the initial capacity (ignored)
+     * @param  loadFactor      the load factor (ignored)
+     *
+     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     */
     constructor(initialCapacity: Int, loadFactor: Float = 0f) : this() {
         // This implementation of HashMap has no need of load factors or capacities.
         require(initialCapacity >= 0) { "Negative initial capacity" }
         require(loadFactor >= 0) { "Non-positive load factor" }
     }
 
+    /**
+     * Constructs an instance of [HashMap] filled with the contents of the specified [original] map.
+     */
     constructor(original: Map<out K, V>) : this() {
         this.putAll(original)
     }
@@ -101,7 +120,10 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
 
 }
 
-
+/**
+ * Constructs the specialized implementation of [HashMap] with [String] keys, which stores the keys as properties of
+ * JS object without hashing them.
+ */
 public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
     return HashMap<String, V>(InternalStringMap(EqualityComparator.HashCode)).apply { putAll(pairs) }
 }

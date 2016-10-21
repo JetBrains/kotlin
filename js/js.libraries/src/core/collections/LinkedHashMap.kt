@@ -21,6 +21,12 @@ package kotlin.collections
 
 import kotlin.collections.MutableMap.MutableEntry
 
+/**
+ * Hash table based implementation of the [MutableMap] interface, which additionally preserves the insertion order
+ * of entries during the iteration.
+ *
+ * The insertion order is preserved by maintaining a doubly-linked list of all of its entries.
+ */
 public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
     /**
@@ -160,6 +166,9 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
    */
     private val map: HashMap<K, ChainEntry<K, V>>
 
+    /**
+     * Constructs an empty [LinkedHashMap] instance.
+     */
     constructor() : super()  {
         map = HashMap<K, ChainEntry<K, V>>()
     }
@@ -168,10 +177,21 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         map = backingMap as HashMap<K, ChainEntry<K, V>>
     }
 
+    /**
+     * Constructs an empty [LinkedHashMap] instance.
+     *
+     * @param  initialCapacity the initial capacity (ignored)
+     * @param  loadFactor      the load factor (ignored)
+     *
+     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     */
     constructor(initialCapacity: Int, loadFactor: Float = 0f) : super(initialCapacity, loadFactor) {
         map = HashMap<K, ChainEntry<K, V>>()
     }
 
+    /**
+     * Constructs an instance of [LinkedHashMap] filled with the contents of the specified [original] map.
+     */
     constructor(original: Map<out K, V>) {
         map = HashMap<K, ChainEntry<K, V>>()
         this.putAll(original)
@@ -231,7 +251,10 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
 }
 
-
+/**
+ * Constructs the specialized implementation of [LinkedHashMap] with [String] keys, which stores the keys as properties of
+ * JS object without hashing them.
+ */
 public fun <V> linkedStringMapOf(vararg pairs: Pair<String, V>): LinkedHashMap<String, V> {
     return LinkedHashMap<String, V>(stringMapOf<Any>()).apply { putAll(pairs) }
 }
