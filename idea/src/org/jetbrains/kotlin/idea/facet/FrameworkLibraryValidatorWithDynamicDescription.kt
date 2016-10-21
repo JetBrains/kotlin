@@ -34,16 +34,14 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getTargetPlatform: () -> KotlinFacetConfiguration.TargetPlatform
+        private val getTargetPlatform: () -> TargetPlatformKind<*>
 ) : FrameworkLibraryValidator() {
-    private val KotlinFacetConfiguration.TargetPlatform.libraryDescription: CustomLibraryDescription
+    private val TargetPlatformKind<*>.libraryDescription: CustomLibraryDescription
         get() {
             val project = context.module.project
             return when (this) {
-                KotlinFacetConfiguration.TargetPlatform.JVM_1_6, KotlinFacetConfiguration.TargetPlatform.JVM_1_8 ->
-                    JavaRuntimeLibraryDescription(project)
-                KotlinFacetConfiguration.TargetPlatform.JS ->
-                    JSLibraryStdDescription(project)
+                is JVMPlatform -> JavaRuntimeLibraryDescription(project)
+                is JSPlatform -> JSLibraryStdDescription(project)
             }
         }
 

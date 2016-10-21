@@ -39,14 +39,11 @@ import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 private fun getRuntimeLibraryVersions(
         module: Module,
         rootModel: ModuleRootModel?,
-        targetPlatform: KotlinFacetConfiguration.TargetPlatform
+        targetPlatform: TargetPlatformKind<*>
 ): Collection<String> {
     val presentationProvider = when (targetPlatform) {
-        KotlinFacetConfiguration.TargetPlatform.JS ->
-            JSLibraryStdPresentationProvider.getInstance()
-        KotlinFacetConfiguration.TargetPlatform.JVM_1_6,
-        KotlinFacetConfiguration.TargetPlatform.JVM_1_8 ->
-            JavaRuntimePresentationProvider.getInstance()
+        is JSPlatform -> JSLibraryStdPresentationProvider.getInstance()
+        is JVMPlatform -> JavaRuntimePresentationProvider.getInstance()
     }
 
     KotlinVersionInfoProvider.EP_NAME
@@ -63,40 +60,40 @@ private fun getRuntimeLibraryVersions(
             .toList()
 }
 
-private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): KotlinFacetConfiguration.TargetPlatform {
-    if (getRuntimeLibraryVersions(module, rootModel, KotlinFacetConfiguration.TargetPlatform.JS).any()) {
-        return KotlinFacetConfiguration.TargetPlatform.JS
+private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
+    if (getRuntimeLibraryVersions(module, rootModel, JSPlatform).any()) {
+        return JSPlatform
     }
 
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
     val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
     return when {
-        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> KotlinFacetConfiguration.TargetPlatform.JVM_1_6
-        else -> KotlinFacetConfiguration.TargetPlatform.JVM_1_8
+        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> JVMPlatform[JVMVersion.JVM_1_6]
+        else -> JVMPlatform[JVMVersion.JVM_1_8]
     }
 }
 
 private fun getDefaultLanguageLevel(
         module: Module,
         explicitVersion: String? = null
-): KotlinFacetConfiguration.LanguageLevel {
+): LanguageLevel {
     val libVersion = explicitVersion
                      ?: KotlinVersionInfoProvider.EP_NAME.extensions
                              .mapNotNull { it.getCompilerVersion(module) }
                              .minWith(VersionComparatorUtil.COMPARATOR)
                      ?: bundledRuntimeVersion()
     return when {
-        libVersion.startsWith("1.0") -> KotlinFacetConfiguration.LanguageLevel.KOTLIN_1_0
-        else -> KotlinFacetConfiguration.LanguageLevel.KOTLIN_1_1
+        libVersion.startsWith("1.0") -> LanguageLevel.KOTLIN_1_0
+        else -> LanguageLevel.KOTLIN_1_1
     }
 }
 
 internal fun getLibraryLanguageLevel(
         module: Module,
         rootModel: ModuleRootModel?,
-        targetPlatform: KotlinFacetConfiguration.TargetPlatform?
-): KotlinFacetConfiguration.LanguageLevel {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: KotlinFacetConfiguration.TargetPlatform.JVM_1_8)
+        targetPlatform: TargetPlatformKind<*>?
+): LanguageLevel {
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: JVMPlatform[JVMVersion.JVM_1_8])
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }
@@ -105,8 +102,8 @@ internal fun KotlinFacetConfiguration.Settings.initializeIfNeeded(module: Module
     val project = module.project
 
     with(versionInfo) {
-        if (targetPlatformKind == null) {
-            targetPlatformKind = getDefaultTargetPlatform(module, rootModel)
+        if (targetPlatformKindKind == null) {
+            targetPlatformKindKind = getDefaultTargetPlatform(module, rootModel)
         }
 
         if (languageLevel == null) {
@@ -114,7 +111,7 @@ internal fun KotlinFacetConfiguration.Settings.initializeIfNeeded(module: Module
         }
 
         if (apiLevel == null) {
-            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKindKind!!))
         }
     }
 
@@ -139,13 +136,10 @@ internal fun Module.getKotlinSettings(rootModel: ModuleRootModel? = null): Kotli
     return settings
 }
 
-val KotlinFacetConfiguration.TargetPlatform.mavenLibraryId: String
+val TargetPlatformKind<*>.mavenLibraryId: String
     get() {
         return when (this) {
-            KotlinFacetConfiguration.TargetPlatform.JVM_1_6,
-            KotlinFacetConfiguration.TargetPlatform.JVM_1_8 ->
-                KotlinJavaMavenConfigurator.STD_LIB_ID
-            KotlinFacetConfiguration.TargetPlatform.JS ->
-                KotlinJavascriptMavenConfigurator.STD_LIB_ID
+            is JVMPlatform -> KotlinJavaMavenConfigurator.STD_LIB_ID
+            is JSPlatform -> KotlinJavascriptMavenConfigurator.STD_LIB_ID
         }
     }

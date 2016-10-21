@@ -20,6 +20,7 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider
+import org.jetbrains.kotlin.idea.facet.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.mavenLibraryId
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
@@ -30,7 +31,7 @@ class MavenKotlinVersionInfoProvider : KotlinVersionInfoProvider {
         return mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
     }
 
-    override fun getLibraryVersions(module: Module, targetPlatform: KotlinFacetConfiguration.TargetPlatform): Collection<String> {
+    override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>): Collection<String> {
         val projectsManager = MavenProjectsManager.getInstance(module.project)
         val mavenProject = projectsManager.findProject(module) ?: return emptyList()
         return mavenProject.findDependencies(KotlinMavenConfigurator.GROUP_ID, targetPlatform.mavenLibraryId).map { it.version }.distinct()
