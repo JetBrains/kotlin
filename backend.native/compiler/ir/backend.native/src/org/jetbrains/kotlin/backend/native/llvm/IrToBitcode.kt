@@ -1,15 +1,16 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
+import kotlin_native.interop.*
 import llvm.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
@@ -20,8 +21,9 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
 
     val context = Context(module, runtime, llvmModule) // TODO: dispose
 
-    module.accept(RTTIGeneratorVisitor(context), null)
-    module.accept(CodeGeneratorVisitor(context), null)
+    module.acceptVoid(RTTIGeneratorVisitor(context))
+    context.runtime.importRuntime(llvmModule)
+    module.acceptVoid(CodeGeneratorVisitor(context))
     LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 
@@ -46,7 +48,31 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 }
 
 internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
+
     val generator = CodeGenerator(context)
+
+    override fun visitConstructor(declaration: IrConstructor) {
+        generator.initFunction(declaration)
+        val thisValue = generator.variable("this")
+        //super.visitConstructor(declaration)
+        /**
+         *   %this = alloca i8*
+         *   store i8* %0, i8** %this <- prolog
+         *
+         *   %tmp0 = load i8*, i8** %this <- epilog
+         *   ret i8* %tmp0
+         */
+        LLVMBuildRet(context.llvmBuilder, generator.load(thisValue!!, generator.tmpVariable()))
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+        evaluateCall(generator.tmpVariable(), expression)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?) {
+        super.visitConstructor(declaration, data)
+    }
+
     override fun visitFunction(declaration: IrFunction) {
         generator.function(declaration)
         declaration.acceptChildrenVoid(this)
@@ -73,7 +99,30 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateExpression(tmpVariableName: String, value: IrExpression?): LLVMOpaqueValue? {
         when (value) {
             is IrCall -> return evaluateCall(tmpVariableName, value)
-            is IrGetValue -> return generator.load(generator.variable(value.descriptor.name.asString())!!, tmpVariableName)
+            is IrGetValue -> {
+                when (value.descriptor) {
+                    is LocalVariableDescriptor, is ValueParameterDescriptor -> {
+                        val variable = generator.variable(value.descriptor.name.asString())
+                        return generator.load(variable!!, tmpVariableName)
+                    }
+                    is LazyClassReceiverParameterDescriptor -> {
+                        TODO()
+                    }
+                    else -> {
+                        TODO()
+                    }
+                }
+
+            }
+            is IrGetField -> {
+                if (value.descriptor.dispatchReceiverParameter != null) {
+                    val thisPtr =  generator.load(generator.thisVariable(), generator.tmpVariable())
+                    val typedPtr = generator.bitcast(pointerType(generator.classType(generator.currentClass!!)), thisPtr, generator.tmpVariable())
+                    val fieldPtr = LLVMBuildStructGEP(generator.context.llvmBuilder, typedPtr, generator.indexInClass(value.descriptor), generator.tmpVariable())
+                    return generator.load(fieldPtr!!, generator.tmpVariable())
+                }
+                TODO()
+            }
             null -> return null
             else -> {
                 TODO()
@@ -81,11 +130,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
     }
 
-    private fun evaluateCall(tmpVariableName: String, value: IrCall?): LLVMOpaqueValue? {
-        /* TODO: should we count on receiver?
-         * val tmp = tmpVar()
-         * val lhs = evaluateExpression(tmp, value.dispatchReceiver!!)
-         */
+
+    private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMOpaqueValue? {
         val args = mutableListOf<LLVMOpaqueValue?>()
         value!!.acceptChildrenVoid(object:IrElementVisitorVoid{
             override fun visitElement(element: IrElement) {
@@ -93,8 +139,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 args.add(evaluateExpression(tmp, element as IrExpression))
             }
         })
-        when (value.descriptor) {
-            is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value, args)
+        when {
+            value is IrDelegatingConstructorCall -> return generator.superCall(tmpVariableName, value.descriptor, args)
+            value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
             else -> {
                 TODO()
             }
@@ -104,7 +151,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateSimpleFunctionCall(tmpVariableName: String, value: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
-        return generator.call(value.descriptor as org.jetbrains.kotlin.descriptors.FunctionDescriptor, args, tmpVariableName)
+        return generator.call(value.descriptor as FunctionDescriptor, args, tmpVariableName)
     }
 
 
@@ -112,9 +159,23 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when {
             descriptor.isOperator -> return evaluateOperatorCall(tmpVariableName, callee, args)
+            descriptor is ClassConstructorDescriptor -> return evaluateConstructorCall(tmpVariableName, callee, args)
             else -> {
                 return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
             }
+        }
+    }
+
+    private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        memScoped {
+            val params = allocNativeArrayOf(LLVMOpaqueValue, generator.typeInfoValue((callee.descriptor as ClassConstructorDescriptor).containingDeclaration), Int32(1).getLlvmValue())
+            val thisValue = LLVMBuildCall(context.llvmBuilder, context.runtime.allocInstanceFunction, params[0], 2, variableName)
+
+
+            val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()
+            constructorParams += thisValue
+            constructorParams += args
+            return generator.call(callee.descriptor as FunctionDescriptor, constructorParams, variableName)
         }
     }
 

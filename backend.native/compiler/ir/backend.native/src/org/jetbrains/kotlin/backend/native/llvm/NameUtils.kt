@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.native.llvm
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -20,6 +21,13 @@ internal val FunctionDescriptor.symbolName: String
         }
         return "kfun:" + this.fqNameSafe.toString() // FIXME: add signature
     }
+
+internal val ClassDescriptor.symbolName: String
+    get() = when (this.kind) {
+        CLASS -> "kclass:"
+        INTERFACE -> "kinf:"
+        else -> TODO("fixme")
+    } + fqNameSafe
 
 internal val ClassDescriptor.typeInfoSymbolName: String
     get() = "ktype:" + this.fqNameSafe.toString()

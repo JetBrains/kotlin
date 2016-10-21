@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.native.llvm
 
 import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
@@ -75,12 +76,17 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? 
             function.extensionReceiverParameter.singletonOrEmptyList() +
             function.valueParameters
 
-    val paramTypes = params.map { getLLVMType(it.type) }.toTypedArray()
-    if (paramTypes.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
+    var extraParam = listOf<LLVMOpaqueType?>()
+    if (function is ClassConstructorDescriptor) {
+        extraParam += pointerType(LLVMInt8Type())
+    }
+    val paramTypes:List<LLVMOpaqueType?> = params.map { getLLVMType(it.type) }
+    extraParam += paramTypes
 
+    if (extraParam.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
     memScoped {
-        val paramTypesPtr = allocNativeArrayOf(LLVMOpaqueType, *paramTypes)[0]
-        return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
+        val paramTypesPtr = mallocNativeArrayOf(LLVMOpaqueType, *extraParam.toTypedArray())[0] // TODO: dispose
+        return LLVMFunctionType(returnType, paramTypesPtr, extraParam.size, 0)
     }
 }
 
