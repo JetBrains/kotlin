@@ -277,6 +277,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("skipSimpleGetterLocalVal.kt")
+        public void testSkipSimpleGetterLocalVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/skipSimpleGetterLocalVal.kt");
+            doStepIntoTest(fileName);
+        }
+
+        @TestMetadata("skipSimpleGetterMethodWithProperty.kt")
+        public void testSkipSimpleGetterMethodWithProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/skipSimpleGetterMethodWithProperty.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("stepIntoFromInlineFun.kt")
         public void testStepIntoFromInlineFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/stepIntoFromInlineFun.kt");
