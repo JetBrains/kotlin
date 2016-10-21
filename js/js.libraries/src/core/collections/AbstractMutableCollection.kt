@@ -16,7 +16,11 @@
 
 package kotlin.collections
 
-
+/**
+ * Provides a skeletal implementation of the [MutableCollection] interface.
+ *
+ * @param E the type of elements contained in the collection. The collection is invariant on its element type.
+ */
 public abstract class AbstractMutableCollection<E> protected constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
     abstract override fun add(element: E): Boolean
