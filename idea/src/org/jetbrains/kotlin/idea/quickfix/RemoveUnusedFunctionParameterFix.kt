@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 
 class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
@@ -38,8 +40,12 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter> {
-            return RemoveUnusedFunctionParameterFix(Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement)
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter>? {
+            val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
+            val parameterOwner = parameter.parent.parent
+            if (parameterOwner is KtFunctionLiteral ||
+                    (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+            return RemoveUnusedFunctionParameterFix(parameter)
         }
     }
 }

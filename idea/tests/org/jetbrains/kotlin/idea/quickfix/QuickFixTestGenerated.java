@@ -7439,6 +7439,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionExpressionParameterNoRemoveParameter.kt")
+        public void testFunctionExpressionParameterNoRemoveParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/functionExpressionParameterNoRemoveParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaDestructuring.kt")
         public void testLambdaDestructuring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/lambdaDestructuring.kt");
@@ -7448,6 +7454,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/lambdaParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParameterNoRemoveParameter.kt")
+        public void testLambdaParameterNoRemoveParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/lambdaParameterNoRemoveParameter.kt");
             doTest(fileName);
         }
 
