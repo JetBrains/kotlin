@@ -391,6 +391,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LabeledExpression.after.kt")
+        public void testLabeledExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LabeledExpression.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LambdaArrow.after.kt")
         public void testLambdaArrow() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.kt");
@@ -508,12 +514,6 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("ReturnExpression.after.kt")
         public void testReturnExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ReturnExpression.after.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("LabeledExpression.after.kt")
-        public void testLabeledExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LabeledExpression.after.kt");
             doTest(fileName);
         }
 
