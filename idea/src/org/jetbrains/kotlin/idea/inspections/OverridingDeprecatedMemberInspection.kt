@@ -22,10 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.deprecatedByOverriddenMessage
 import org.jetbrains.kotlin.resolve.getDeprecation
 
@@ -41,6 +38,7 @@ class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
             }
 
             private fun registerProblemIfNeeded(declaration: KtDeclaration, targetForProblem: PsiElement) {
+                if (declaration is KtDestructuringDeclarationEntry) return
                 val accessorDescriptor = declaration.resolveToDescriptor() as? CallableMemberDescriptor ?: return
 
                 val message = accessorDescriptor.getDeprecation()?.deprecatedByOverriddenMessage() ?: return
