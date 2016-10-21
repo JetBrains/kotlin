@@ -29,7 +29,7 @@ struct TypeInfo {
     const TypeInfo* superType_;
     const int* objOffsets_;
     int objOffsetsCount_;
-    TypeInfo* const* implementedInterfaces_;
+    const TypeInfo* const* implementedInterfaces_;
     int implementedInterfacesCount_;
     void* const* vtable_; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
     const MethodTableRecord* openMethods_;

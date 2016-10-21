@@ -8,4 +8,4 @@ package kotlin_native
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class SymbolName(val name: String)
+annotation class SymbolName(val name: kotlin.String)

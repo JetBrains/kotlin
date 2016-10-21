@@ -64,15 +64,6 @@ inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
   return reinterpret_cast<uint8_t*>(obj + 1) - obj->type_info_->instanceSize_ * index;
 }
 
-// Optimized version not accessing type info.
-inline uint8_t* ByteArrayAddressOfElementAt(ArrayHeader* obj, int32_t index) {
-  return reinterpret_cast<uint8_t*>(obj + 1) + index;
-}
-
-inline const uint8_t* ByteArrayAddressOfElementAt(const ArrayHeader* obj, int32_t index) {
-  return reinterpret_cast<const uint8_t*>(obj + 1) + index;
-}
-
 inline uint32_t ArraySizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
   return -obj->type_info_->instanceSize_ * obj->count_;
