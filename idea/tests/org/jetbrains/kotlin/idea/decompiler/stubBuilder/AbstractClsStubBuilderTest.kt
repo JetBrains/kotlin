@@ -73,7 +73,7 @@ fun VirtualFile.findClassFileByName(className: String): VirtualFile {
     val files = LinkedHashSet<VirtualFile>()
     VfsUtilCore.iterateChildrenRecursively(
             this,
-            { virtualFile -> virtualFile.isDirectory || virtualFile.name.equals("$className.class") },
+            { virtualFile -> virtualFile.isDirectory || virtualFile.name == "$className.class" },
             { virtualFile -> if (!virtualFile.isDirectory) files.addIfNotNull(virtualFile); true })
 
     return files.single()

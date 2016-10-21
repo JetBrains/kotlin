@@ -51,20 +51,23 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             isTopLevelClass && it.asSingleFqName() in ANNOTATIONS_COPIED_TO_TYPES
         }
 
-        val effectiveParent =
-                if (type.nullable) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
-                else typeReference
-
-        fun createTypeParameterStub(name: Name) {
-            createTypeAnnotationStubs(effectiveParent, annotations)
-            createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), effectiveParent)
-        }
-
         when {
-            type.hasClassName() -> createClassReferenceTypeStub(effectiveParent, type, annotations)
-            type.hasTypeParameter() -> createTypeParameterStub(c.typeParameters[type.typeParameter])
-            type.hasTypeParameterName() -> createTypeParameterStub(c.nameResolver.getName(type.typeParameterName))
+            type.hasClassName() ->
+                createClassReferenceTypeStub(typeReference, type, annotations)
+            type.hasTypeParameter() ->
+                createTypeParameterStub(typeReference, type, c.typeParameters[type.typeParameter], annotations)
+            type.hasTypeParameterName() ->
+                createTypeParameterStub(typeReference, type, c.nameResolver.getName(type.typeParameterName), annotations)
         }
+    }
+
+    private fun nullableTypeParent(parent: KotlinStubBaseImpl<*>, type: Type): KotlinStubBaseImpl<*> =
+            if (type.nullable) KotlinPlaceHolderStubImpl<KtNullableType>(parent, KtStubElementTypes.NULLABLE_TYPE)
+            else parent
+
+    private fun createTypeParameterStub(parent: KotlinStubBaseImpl<*>, type: Type, name: Name, annotations: List<ClassId>) {
+        createTypeAnnotationStubs(parent, annotations)
+        createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), nullableTypeParent(parent, type))
     }
 
     private fun createClassReferenceTypeStub(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassId>) {
@@ -72,7 +75,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
             if (id == DynamicTypeFactory.id) {
-                KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
+                KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
         }
@@ -84,13 +87,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val extension = annotations.any { annotation ->
                 annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType
             }
-            createFunctionTypeStub(parent, type, extension)
+            createFunctionTypeStub(nullableTypeParent(parent, type), type, extension)
             return
         }
+
         createTypeAnnotationStubs(parent, annotations)
+
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
-        createStubForTypeName(classId, parent) {
+        createStubForTypeName(classId, nullableTypeParent(parent, type)) {
             userTypeStub, index ->
             outerTypeChain.getOrNull(index)?.let { createTypeArgumentListStub(userTypeStub, it.argumentList) }
         }
