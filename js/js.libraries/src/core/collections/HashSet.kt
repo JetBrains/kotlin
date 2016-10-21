@@ -20,20 +20,36 @@
 
 package kotlin.collections
 
-
+/**
+ * The implementation of the [MutableSet] interface, backed by a [HashMap] instance.
+ */
 public open class HashSet<E> : AbstractMutableSet<E> {
 
     private val map: HashMap<E, Any>
 
+    /**
+     * Constructs a new empty [HashSet].
+     */
     constructor() {
         map = HashMap<E, Any>()
     }
 
-    constructor(c: Collection<E>) {
-        map = HashMap<E, Any>(c.size)
-        addAll(c)
+    /**
+     * Constructs a new [HashSet] filled with the elements of the specified collection.
+     */
+    constructor(elements: Collection<E>) {
+        map = HashMap<E, Any>(elements.size)
+        addAll(elements)
     }
 
+    /**
+     * Constructs a new empty [HashSet].
+     *
+     * @param  initialCapacity the initial capacity (ignored)
+     * @param  loadFactor      the load factor (ignored)
+     *
+     * @throws IllegalArgumentException if the initial capacity or load factor are negative
+     */
     constructor(initialCapacity: Int, loadFactor: Float = 0.0f) {
         map = HashMap<E, Any>(initialCapacity, loadFactor)
     }
@@ -73,6 +89,10 @@ public open class HashSet<E> : AbstractMutableSet<E> {
 
 }
 
+/**
+ * Creates a new instance of the specialized implementation of [HashSet] with the specified [String] elements,
+ * which elements the keys as properties of JS object without hashing them.
+ */
 public fun stringSetOf(vararg elements: String): HashSet<String> {
     return HashSet(stringMapOf<Any>()).apply { addAll(elements) }
 }

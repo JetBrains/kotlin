@@ -16,9 +16,23 @@
 
 package kotlin.collections
 
+/**
+ * Provides a [MutableList] implementation, which uses a resizable array as its backing storage.
+ *
+ * This implementation doesn't provide a way to manage capacity, as backing JS array is resizeable itself.
+ * There is no speed advantage to pre-allocating array sizes in JavaScript, so this implementation does not include any of the
+ * capacity and "growth increment" concepts.
+ */
 public open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), RandomAccess {
 
+    /**
+     * Creates an empty [ArrayList].
+     * @param capacity initial capacity (ignored)
+     */
     public constructor(capacity: Int = 0) : this(emptyArray()) {}
+    /**
+     * Creates an [ArrayList] filled from the [elements] collection.
+     */
     public constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
 
     /** Does nothing in this ArrayList implementation. */
