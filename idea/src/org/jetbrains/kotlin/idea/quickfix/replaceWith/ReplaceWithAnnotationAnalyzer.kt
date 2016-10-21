@@ -76,7 +76,7 @@ object ReplaceWithAnnotationAnalyzer {
                                        listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
 
         return ReplacementBuilder(symbolDescriptor, resolutionFacade)
-                .buildReplacementExpression(expression, scope, importFqNames(annotation), copyExpression = false)
+                .buildReplacementExpression(expression, scope, importFqNames = importFqNames(annotation), copyExpression = false)
     }
 
     fun analyzeClassReplacement(

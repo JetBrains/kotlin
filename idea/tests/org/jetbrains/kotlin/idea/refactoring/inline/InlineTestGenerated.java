@@ -69,6 +69,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExplicitReturnType.kt")
+            public void testExplicitReturnType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/ExplicitReturnType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FromUsage.kt")
             public void testFromUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/FromUsage.kt");

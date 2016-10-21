@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import java.util.*
 
@@ -49,13 +51,14 @@ class ReplacementBuilder(
     fun buildReplacementExpression(
             expression: KtExpression,
             resolutionScope: LexicalScope,
+            expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
             importFqNames: Collection<FqName> = emptyList(),
             copyExpression: Boolean = true
     ): ReplacementExpression {
         @Suppress("NAME_SHADOWING")
         var expression = if (copyExpression) expression.copied() else expression
 
-        var bindingContext = analyzeInContext(expression, resolutionScope)
+        var bindingContext = analyzeInContext(expression, resolutionScope, expectedType)
 
         val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
         expression.forEachDescendantOfType<KtCallExpression> {
@@ -70,7 +73,7 @@ class ReplacementBuilder(
             }
 
             // reanalyze expression - new usages of type parameters may be added
-            bindingContext = analyzeInContext(expression, resolutionScope)
+            bindingContext = analyzeInContext(expression, resolutionScope, expectedType)
         }
 
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
@@ -122,8 +125,7 @@ class ReplacementBuilder(
         return ReplacementExpression(expression, resultImportFqNames)
     }
 
-    //TODO: there can be expected type and maybe something else
-    private fun analyzeInContext(expression: KtExpression, scope: LexicalScope): BindingContext {
+    private fun analyzeInContext(expression: KtExpression, scope: LexicalScope, expectedType: KotlinType): BindingContext {
         val module = scope.ownerDescriptor.module
         val frontendService = if (module.builtIns.builtInsModule == module) {
             // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
@@ -132,6 +134,6 @@ class ReplacementBuilder(
         else {
             resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
         }
-        return expression.analyzeInContext(scope, expressionTypingServices = frontendService)
+        return expression.analyzeInContext(scope, expectedType = expectedType, expressionTypingServices = frontendService)
     }
 }
