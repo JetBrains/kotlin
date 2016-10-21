@@ -25,13 +25,16 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.replacement.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.replacement.ReplacementBuilder
 import org.jetbrains.kotlin.idea.replacement.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 
 class KotlinInlineFunctionHandler: InlineActionHandler() {
@@ -53,8 +56,15 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
             descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
         else
             TypeUtils.NO_EXPECTED_TYPE
+
+        val expression = bodyExpression.copied()
+
+        fun analyzeExpression(): BindingContext {
+            return expression.analyzeInContext(bodyExpression.getResolutionScope(), contextExpression = bodyExpression, expectedType = expectedType)
+        }
+
         val replacement = ReplacementBuilder(descriptor, element.getResolutionFacade())
-                .buildReplacementExpression(bodyExpression, bodyExpression.getResolutionScope(), expectedType)
+                .buildReplacementCode(expression, emptyList(), ::analyzeExpression)
 
         val commandName = RefactoringBundle.message("inline.command", element.name)
         CallableUsageReplacementStrategy(replacement)

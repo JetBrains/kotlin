@@ -19,49 +19,41 @@ package org.jetbrains.kotlin.idea.replacement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.core.asExpression
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import java.util.*
 
 class ReplacementBuilder(
         private val targetCallable: CallableDescriptor,
         private val resolutionFacade: ResolutionFacade
 ) {
-    fun buildReplacementExpression(
-            expression: KtExpression,
-            resolutionScope: LexicalScope,
-            expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
-            importFqNames: Collection<FqName> = emptyList(),
-            copyExpression: Boolean = true
-    ): ReplacementExpression {
-        @Suppress("NAME_SHADOWING")
-        var expression = if (copyExpression) expression.copied() else expression
+    private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
-        var bindingContext = analyzeInContext(expression, resolutionScope, expectedType)
+    fun buildReplacementCode(
+            mainExpression: KtExpression?,
+            statementsBefore: List<KtExpression>,
+            analyze: () -> BindingContext,
+            importFqNames: Collection<FqName> = emptyList()
+    ): ReplacementCode {
+        var bindingContext = analyze()
+
+        val result = MutableReplacementCode(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
 
         val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
-        expression.forEachDescendantOfType<KtCallExpression> {
+        result.forEachDescendantOfType<KtCallExpression> {
             if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
                 typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
             }
@@ -73,28 +65,25 @@ class ReplacementBuilder(
             }
 
             // reanalyze expression - new usages of type parameters may be added
-            bindingContext = analyzeInContext(expression, resolutionScope, expectedType)
+            bindingContext = analyze()
         }
 
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
-        val resultImportFqNames = importFqNames.toMutableSet()
 
-        val psiFactory = KtPsiFactory(expression)
-
-        expression.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
+        result.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
             if (expression.mainReference.canBeResolvedViaImport(target)) {
-                resultImportFqNames.add(target.importableFqName!!)
+                result.fqNamesToImport.add(target.importableFqName!!)
             }
 
             if (expression.getReceiverExpression() == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(ReplacementExpression.PARAMETER_USAGE_KEY, target.name)
+                    expression.putCopyableUserData(ReplacementCode.PARAMETER_USAGE_KEY, target.name)
                 }
                 else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(ReplacementExpression.TYPE_PARAMETER_USAGE_KEY, target.name)
+                    expression.putCopyableUserData(ReplacementCode.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)
@@ -104,6 +93,7 @@ class ReplacementBuilder(
                     else
                         resolvedCall.dispatchReceiver
                     if (receiver is ImplicitReceiver) {
+                        val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
                         val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
@@ -116,24 +106,10 @@ class ReplacementBuilder(
         // add receivers in reverse order because arguments of a call were processed after the callee's name
         for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
-            if (expressionToReplace == expression) {
-                expression = newExpr
-            }
+            result.replaceExpression(expressionToReplace,
+                                              psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
         }
 
-        return ReplacementExpression(expression, resultImportFqNames)
-    }
-
-    private fun analyzeInContext(expression: KtExpression, scope: LexicalScope, expectedType: KotlinType): BindingContext {
-        val module = scope.ownerDescriptor.module
-        val frontendService = if (module.builtIns.builtInsModule == module) {
-            // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
-            resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
-        }
-        else {
-            resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
-        }
-        return expression.analyzeInContext(scope, expectedType = expectedType, expressionTypingServices = frontendService)
+        return result.toNonMutable()
     }
 }

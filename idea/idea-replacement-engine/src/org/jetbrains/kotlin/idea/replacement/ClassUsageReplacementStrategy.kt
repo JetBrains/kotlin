@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ClassUsageReplacementStrategy(
         typeReplacement: KtUserType?,
-        constructorReplacement: ReplacementExpression?,
+        constructorReplacement: ReplacementCode?,
         project: Project
 ) : UsageReplacementStrategy {
 

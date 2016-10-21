@@ -52,8 +52,11 @@ object ReplacementEngine {
             bindingContext: BindingContext,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             callElement: TCallElement,
-            replacement: ReplacementExpression
+            replacement: ReplacementCode
     ): KtElement {
+        @Suppress("NAME_SHADOWING")
+        val replacement = replacement.toMutable()
+
         val project = element.project
         val psiFactory = KtPsiFactory(project)
         val descriptor = resolvedCall.resultingDescriptor
@@ -82,34 +85,34 @@ object ReplacementEngine {
         receiver?.mark(RECEIVER_VALUE_KEY)
 
         val codeHolder = when (elementToBeReplaced) {
-            is KtExpression -> ConstructedExpressionHolder(replacement.expression, elementToBeReplaced, bindingContext)
-            is KtAnnotationEntry -> ConstructedAnnotationEntryHolder(replacement.expression, elementToBeReplaced, bindingContext)
+            is KtExpression -> ConstructedExpressionHolder(replacement, elementToBeReplaced, bindingContext)
+            is KtAnnotationEntry -> ConstructedAnnotationEntryHolder(replacement, elementToBeReplaced, bindingContext)
             else -> error("Unsupported element")
         }
 
         //TODO: this@
-        for (thisExpression in replacement.expression.collectDescendantsOfType<KtThisExpression>()) {
+        for (thisExpression in replacement.collectDescendantsOfType<KtThisExpression>()) {
             if (receiver != null) {
-                codeHolder.replaceExpression(thisExpression, receiver)
+                replacement.replaceExpression(thisExpression, receiver)
             }
             else {
                 thisExpression.mark(RECEIVER_VALUE_KEY)
             }
         }
 
-        val introduceValuesForParameters = codeHolder.processValueParameterUsages(resolvedCall, project)
+        val introduceValuesForParameters = processValueParameterUsages(replacement, resolvedCall, bindingContext, project)
 
-        codeHolder.processTypeParameterUsages(resolvedCall)
+        processTypeParameterUsages(replacement, resolvedCall)
 
         if (qualifiedExpression is KtSafeQualifiedExpression) {
-            (codeHolder as ConstructedExpressionHolder).wrapExpressionForSafeCall(receiver!!, receiverType)
+            (codeHolder as ConstructedExpressionHolder).wrapCodeForSafeCall(receiver!!, receiverType)
         }
         else if (callElement is KtBinaryExpression && callElement.operationToken == KtTokens.IDENTIFIER) {
-            codeHolder.keepInfixFormIfPossible()
+            keepInfixFormIfPossible(replacement)
         }
 
         if (receiver != null && codeHolder is ConstructedExpressionHolder) {
-            val thisReplaced = codeHolder.expression.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
+            val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
             if (receiver.shouldKeepValue(thisReplaced.size)) {
                 codeHolder.introduceValue(receiver, receiverType, thisReplaced)
             }
@@ -117,7 +120,7 @@ object ReplacementEngine {
 
         if (codeHolder is ConstructedExpressionHolder) {
             for ((parameter, value, valueType) in introduceValuesForParameters) {
-                val usagesReplaced = codeHolder.expression.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
+                val usagesReplaced = replacement.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
                 codeHolder.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.name.asString())
             }
         }
@@ -133,8 +136,10 @@ object ReplacementEngine {
         }
     }
 
-    private fun ConstructedCodeHolder<*>.processValueParameterUsages(
+    private fun processValueParameterUsages(
+            replacement: MutableReplacementCode,
             resolvedCall: ResolvedCall<out CallableDescriptor>,
+            bindingContext: BindingContext,
             project: Project
     ): Collection<IntroduceValueForParameter> {
         val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
@@ -147,8 +152,8 @@ object ReplacementEngine {
             argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
             val parameterName = parameter.name
-            val usages = expression.collectDescendantsOfType<KtExpression> {
-                it[ReplacementExpression.PARAMETER_USAGE_KEY] == parameterName
+            val usages = replacement.collectDescendantsOfType<KtExpression> {
+                it[ReplacementCode.PARAMETER_USAGE_KEY] == parameterName
             }
             usages.forEach {
                 val usageArgument = it.parent as? KtValueArgument
@@ -158,7 +163,7 @@ object ReplacementEngine {
                 if (argument.isDefaultValue) {
                     usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                 }
-                replaceExpression(it, argument.expression)
+                replacement.replaceExpression(it, argument.expression)
             }
 
             //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
@@ -176,7 +181,7 @@ object ReplacementEngine {
             val value: KtExpression,
             val valueType: KotlinType?)
 
-    private fun ConstructedCodeHolder<*>.processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>) {
+    private fun processTypeParameterUsages(replacement: MutableReplacementCode, resolvedCall: ResolvedCall<out CallableDescriptor>) {
         val typeParameters = resolvedCall.resultingDescriptor.original.typeParameters
 
         val callElement = resolvedCall.call.callElement
@@ -186,8 +191,8 @@ object ReplacementEngine {
 
         for ((index, typeParameter) in typeParameters.withIndex()) {
             val parameterName = typeParameter.name
-            val usages = expression.collectDescendantsOfType<KtExpression> {
-                it[ReplacementExpression.TYPE_PARAMETER_USAGE_KEY] == parameterName
+            val usages = replacement.collectDescendantsOfType<KtExpression> {
+                it[ReplacementCode.TYPE_PARAMETER_USAGE_KEY] == parameterName
             }
 
             val factory = KtPsiFactory(callElement)
@@ -209,7 +214,7 @@ object ReplacementEngine {
                     val arguments =
                             if (typeElement is KtUserType && KotlinBuiltIns.isArray(type)) typeElement.typeArgumentList?.text.orEmpty()
                             else ""
-                    replaceExpression(usage, KtPsiFactory(usage).createExpression(
+                    replacement.replaceExpression(usage, KtPsiFactory(usage).createExpression(
                             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(typeClassifier) + arguments
                     ))
                 }
@@ -218,36 +223,54 @@ object ReplacementEngine {
                 }
                 else {
                     //TODO: tests for this?
-                    replaceExpression(usage, KtPsiFactory(usage).createExpression(typeElement.text))
+                    replacement.replaceExpression(usage, KtPsiFactory(usage).createExpression(typeElement.text))
                 }
             }
         }
     }
 
-    private fun ConstructedExpressionHolder.wrapExpressionForSafeCall(receiver: KtExpression, receiverType: KotlinType?) {
-        val qualified = expression as? KtQualifiedExpression
-        if (qualified != null) {
-            if (qualified.receiverExpression[RECEIVER_VALUE_KEY]) {
-                if (qualified is KtSafeQualifiedExpression) return // already safe
-                val selector = qualified.selectorExpression
-                if (selector != null) {
-                    expression = psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
-                    return
+    private fun ConstructedExpressionHolder.wrapCodeForSafeCall(receiver: KtExpression, receiverType: KotlinType?) {
+        if (replacement.statementsBefore.isEmpty()) {
+            val qualified = replacement.mainExpression as? KtQualifiedExpression
+            if (qualified != null) {
+                if (qualified.receiverExpression[RECEIVER_VALUE_KEY]) {
+                    if (qualified is KtSafeQualifiedExpression) return // already safe
+                    val selector = qualified.selectorExpression
+                    if (selector != null) {
+                        replacement.mainExpression = KtPsiFactory(receiver).createExpressionByPattern("$0?.$1", receiver, selector)
+                        return
+                    }
                 }
             }
         }
 
         if (elementToBeReplaced.isUsedAsExpression(bindingContext)) {
-            val thisReplaced = expression.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
+            val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
             introduceValue(receiver, receiverType, thisReplaced, safeCall = true)
         }
         else {
-            expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver, expression)
+            val ifExpression = KtPsiFactory(receiver).buildExpression {
+                appendFixedText("if (")
+                appendExpression(receiver)
+                appendFixedText("!=null) {")
+                replacement.statementsBefore.forEach {
+                    appendExpression(it)
+                    appendFixedText("\n")
+                }
+                replacement.mainExpression?.let {
+                    appendExpression(it)
+                    appendFixedText("\n")
+                }
+                appendFixedText("}")
+            }
+            replacement.mainExpression = ifExpression
+            replacement.statementsBefore.clear()
         }
     }
 
-    private fun ConstructedCodeHolder<*>.keepInfixFormIfPossible() {
-        val dotQualified = expression as? KtDotQualifiedExpression ?: return
+    private fun keepInfixFormIfPossible(replacement: MutableReplacementCode) {
+        if (replacement.statementsBefore.isNotEmpty()) return
+        val dotQualified = replacement.mainExpression as? KtDotQualifiedExpression ?: return
         val receiver = dotQualified.receiverExpression
         if (!receiver[RECEIVER_VALUE_KEY]) return
         val call = dotQualified.selectorExpression as? KtCallExpression ?: return
@@ -255,7 +278,7 @@ object ReplacementEngine {
         val argument = call.valueArguments.singleOrNull() ?: return
         if (argument.getArgumentName() != null) return
         val argumentExpression = argument.getArgumentExpression() ?: return
-        expression = psiFactory.createExpressionByPattern("$0 ${nameExpression.text} $1", receiver, argumentExpression)
+        replacement.mainExpression = KtPsiFactory(receiver).createExpressionByPattern("$0 ${nameExpression.text} $1", receiver, argumentExpression)
     }
 
     private fun KtExpression?.shouldKeepValue(usageCount: Int): Boolean {
@@ -305,13 +328,13 @@ object ReplacementEngine {
                 val (expression, parameterUsages) = defaultValue
 
                 for ((param, usages) in parameterUsages) {
-                    usages.forEach { it.put(ReplacementExpression.PARAMETER_USAGE_KEY, param.name) }
+                    usages.forEach { it.put(ReplacementCode.PARAMETER_USAGE_KEY, param.name) }
                 }
 
                 val expressionCopy = expression.copied()
 
                 // clean up user data in original
-                expression.forEachDescendantOfType<KtExpression> { it.clear(ReplacementExpression.PARAMETER_USAGE_KEY) }
+                expression.forEachDescendantOfType<KtExpression> { it.clear(ReplacementCode.PARAMETER_USAGE_KEY) }
 
                 return Argument(expressionCopy, null/*TODO*/, isDefaultValue = true)
             }
@@ -382,8 +405,8 @@ object ReplacementEngine {
             // clean up user data
             it.forEachDescendantOfType<KtExpression> {
                 it.clear(USER_CODE_KEY)
-                it.clear(ReplacementExpression.PARAMETER_USAGE_KEY)
-                it.clear(ReplacementExpression.TYPE_PARAMETER_USAGE_KEY)
+                it.clear(ReplacementCode.PARAMETER_USAGE_KEY)
+                it.clear(ReplacementCode.TYPE_PARAMETER_USAGE_KEY)
                 it.clear(PARAMETER_VALUE_KEY)
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)

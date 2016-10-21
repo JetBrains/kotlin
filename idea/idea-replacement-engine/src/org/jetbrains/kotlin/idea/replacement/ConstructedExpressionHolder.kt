@@ -36,35 +36,27 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-internal abstract class ConstructedCodeHolder<TElement>(
-        var expression: KtExpression,
+internal abstract class ConstructedCodeHolder<TElement : KtElement>(
+        val replacement: MutableReplacementCode,
         val elementToBeReplaced: TElement,
         val bindingContext: BindingContext
 ) {
-    val psiFactory = KtPsiFactory(expression)
-
-    fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
-        assert(expression.isAncestor(oldExpression))
-        if (oldExpression == expression) {
-            expression = newExpression
-            return expression
-        }
-        else {
-            return oldExpression.replace(newExpression) as KtExpression
-        }
-    }
+    val psiFactory = KtPsiFactory(elementToBeReplaced)
 
     abstract fun finish(postProcessing: (PsiChildRange) -> PsiChildRange): TElement
 }
 
 internal class ConstructedAnnotationEntryHolder(
-        expression: KtExpression,
+        replacement: MutableReplacementCode,
         elementToBeReplaced: KtAnnotationEntry,
         bindingContext: BindingContext
-) : ConstructedCodeHolder<KtAnnotationEntry>(expression, elementToBeReplaced, bindingContext) {
+) : ConstructedCodeHolder<KtAnnotationEntry>(replacement, elementToBeReplaced, bindingContext) {
 
     override fun finish(postProcessing: (PsiChildRange) -> PsiChildRange): KtAnnotationEntry {
-        val dummyAnnotationEntry = createByPattern("@Dummy($0)", expression) { psiFactory.createAnnotationEntry(it) }
+        assert(replacement.mainExpression != null)
+        assert(replacement.statementsBefore.isEmpty())
+
+        val dummyAnnotationEntry = createByPattern("@Dummy($0)", replacement.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
         val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
         var range = PsiChildRange.singleElement(replaced)
         range = postProcessing(range)
@@ -78,10 +70,10 @@ internal class ConstructedAnnotationEntryHolder(
 }
 
 internal class ConstructedExpressionHolder(
-        expression: KtExpression,
+        replacement: MutableReplacementCode,
         expressionToBeReplaced: KtExpression,
         bindingContext: BindingContext
-) : ConstructedCodeHolder<KtExpression>(expression, expressionToBeReplaced, bindingContext) {
+) : ConstructedCodeHolder<KtExpression>(replacement, expressionToBeReplaced, bindingContext) {
 
     private data class StatementToInsert<TStatement : KtExpression>(val statement: TStatement, val postProcessing: (TStatement) -> Unit)
 
@@ -104,7 +96,9 @@ internal class ConstructedExpressionHolder(
             (toInsert.postProcessing as (KtExpression) -> Unit).invoke(inserted)
         }
 
-        val replaced = elementToBeReplaced.replace(expression)
+        val replaced = elementToBeReplaced.replace(replacement.mainExpression!!) //TODO: support null here
+
+        //TODO: support code.statementsBefore
 
         var range = if (insertedStatements.isEmpty())
             PsiChildRange.singleElement(replaced)
@@ -123,7 +117,7 @@ internal class ConstructedExpressionHolder(
             nameSuggestion: String? = null,
             safeCall: Boolean = false
     ) {
-        assert(usages.all { expression.isAncestor(it, strict = true) })
+        assert(usages.all { replacement.containsStrictlyInside(it) })
 
         fun replaceUsages(name: Name) {
             val nameInCode = psiFactory.createExpression(name.render())
@@ -140,8 +134,8 @@ internal class ConstructedExpressionHolder(
             return Name.identifier(name)
         }
 
-        // checks that name is used (without receiver) inside expression being constructed but not inside usages that will be replaced
-        fun isNameUsed(name: String) = collectNameUsages(expression, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
+        // checks that name is used (without receiver) inside code being constructed but not inside usages that will be replaced
+        fun isNameUsed(name: String) = collectNameUsages(replacement, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
 
         if (!safeCall) {
             val block = elementToBeReplaced.parent as? KtBlockExpression
@@ -182,19 +176,24 @@ internal class ConstructedExpressionHolder(
             }
         }
 
+        //TODO: handle mainExpression == null and statementsBefore!
+
         val dot = if (safeCall) "?." else "."
 
-        expression = if (!isNameUsed("it")) {
+        replacement.mainExpression = if (!isNameUsed("it")) {
             replaceUsages(Name.identifier("it"))
-            psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
+            psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, replacement.mainExpression!!)
         }
         else {
             val name = suggestName { !isNameUsed(it) }
             replaceUsages(name)
-            psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
+            psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, replacement.mainExpression!!)
         }
     }
 
-    private fun collectNameUsages(scope: KtExpression, name: String)
-            = scope.collectDescendantsOfType<KtSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
+    private fun collectNameUsages(scope: MutableReplacementCode, name: String): List<KtSimpleNameExpression> {
+        return scope.expressions.flatMap { expression ->
+            expression.collectDescendantsOfType<KtSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
+        }
+    }
 }

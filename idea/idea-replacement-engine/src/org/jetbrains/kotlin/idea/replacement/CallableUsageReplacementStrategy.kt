@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class CallableUsageReplacementStrategy(
-        private val replacement: ReplacementExpression
+        private val replacement: ReplacementCode
 ) : UsageReplacementStrategy {
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
@@ -44,9 +44,8 @@ class CallableUsageReplacementStrategy(
                 createReplacer(nameExpression)!!.invoke()
             }
             else {
-                // copy replacement expression because it is modified by performCallReplacement
                 @Suppress("UNCHECKED_CAST")
-                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement, replacement.copy())
+                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement, replacement)
             }
         }
     }

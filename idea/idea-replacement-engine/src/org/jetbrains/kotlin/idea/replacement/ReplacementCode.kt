@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.idea.replacement
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.replacement.ReplacementExpression.Companion.PARAMETER_USAGE_KEY
-import org.jetbrains.kotlin.idea.replacement.ReplacementExpression.Companion.TYPE_PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.replacement.ReplacementCode.Companion.PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.replacement.ReplacementCode.Companion.TYPE_PARAMETER_USAGE_KEY
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
@@ -31,14 +30,13 @@ import org.jetbrains.kotlin.psi.KtExpression
  * * All external symbols to be imported should be either referenced via fully-qualified form or included into [fqNamesToImport]
  * * All usages of value parameters (of our callable) should be marked with [PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding parameter)
  * * All usages of type parameters (of our callable) should be marked with [TYPE_PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding type parameter)
- * Use [ReplacementBuilder.buildReplacementExpression].
+ * Use [ReplacementBuilder.buildReplacementCode].
  */
-class ReplacementExpression(
-        val expression: KtExpression,
+class ReplacementCode(
+        val mainExpression: KtExpression?,
+        val statementsBefore: List<KtExpression>,
         val fqNamesToImport: Collection<FqName>
 ) {
-    fun copy() = ReplacementExpression(expression.copied(), fqNamesToImport)
-
     companion object {
         val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
         val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")

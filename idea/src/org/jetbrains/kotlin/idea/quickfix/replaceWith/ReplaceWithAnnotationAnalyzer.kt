@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.replacement.ReplacementBuilder
-import org.jetbrains.kotlin.idea.replacement.ReplacementExpression
+import org.jetbrains.kotlin.idea.replacement.ReplacementCode
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>)
@@ -48,7 +50,7 @@ object ReplaceWithAnnotationAnalyzer {
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
             resolutionFacade: ResolutionFacade
-    ): ReplacementExpression? {
+    ): ReplacementCode? {
         val originalDescriptor = (if (symbolDescriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
         else
@@ -60,7 +62,7 @@ object ReplaceWithAnnotationAnalyzer {
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
             resolutionFacade: ResolutionFacade
-    ): ReplacementExpression? {
+    ): ReplacementCode? {
         val psiFactory = KtPsiFactory(resolutionFacade.project)
         val expression = try {
             psiFactory.createExpression(annotation.pattern)
@@ -75,8 +77,20 @@ object ReplaceWithAnnotationAnalyzer {
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
                                        listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
 
+        val expressionTypingServices = if (module.builtIns.builtInsModule == module) {
+            // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
+            resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
+        }
+        else {
+            resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
+        }
+
+        fun analyzeExpression(): BindingContext {
+            return expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
+        }
+
         return ReplacementBuilder(symbolDescriptor, resolutionFacade)
-                .buildReplacementExpression(expression, scope, importFqNames = importFqNames(annotation), copyExpression = false)
+                .buildReplacementCode(expression, emptyList(), ::analyzeExpression, importFqNames = importFqNames(annotation))
     }
 
     fun analyzeClassReplacement(
