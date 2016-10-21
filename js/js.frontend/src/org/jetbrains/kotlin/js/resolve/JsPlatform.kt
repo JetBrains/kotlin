@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import com.google.common.collect.ImmutableList
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -24,14 +23,8 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object JsPlatform : TargetPlatform("JS") {
-    override val defaultImports: List<ImportPath> = ImmutableList.of(
+    override val defaultImports: List<ImportPath> = Default.defaultImports + listOf(
             ImportPath("java.lang.*"),
-            ImportPath("kotlin.*"),
-            ImportPath("kotlin.annotation.*"),
-            ImportPath("kotlin.collections.*"),
-            ImportPath("kotlin.ranges.*"),
-            ImportPath("kotlin.sequences.*"),
-            ImportPath("kotlin.text.*"),
             ImportPath("kotlin.js.*")
     )
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
+import java.util.*
 
 abstract class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
@@ -39,7 +40,15 @@ abstract class TargetPlatform(val platformName: String) {
     abstract val defaultImports: List<ImportPath>
 
     object Default : TargetPlatform("Default") {
-        override val defaultImports = emptyList<ImportPath>()
+        override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
+            add(ImportPath("kotlin.*"))
+            add(ImportPath("kotlin.annotation.*"))
+            add(ImportPath("kotlin.collections.*"))
+            add(ImportPath("kotlin.ranges.*"))
+            add(ImportPath("kotlin.sequences.*"))
+            add(ImportPath("kotlin.text.*"))
+        }
+
         override val platformConfigurator =
                 object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
                                               IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY) {

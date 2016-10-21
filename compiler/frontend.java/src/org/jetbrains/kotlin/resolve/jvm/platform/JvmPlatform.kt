@@ -27,15 +27,11 @@ import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
     override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
+        addAll(Default.defaultImports)
+
         add(ImportPath("java.lang.*"))
-        add(ImportPath("kotlin.*"))
-        add(ImportPath("kotlin.annotation.*"))
         add(ImportPath("kotlin.jvm.*"))
-        add(ImportPath("kotlin.collections.*"))
         add(ImportPath("kotlin.coroutines.*"))
-        add(ImportPath("kotlin.ranges.*"))
-        add(ImportPath("kotlin.sequences.*"))
-        add(ImportPath("kotlin.text.*"))
         add(ImportPath("kotlin.io.*"))
 
         fun addAllClassifiersFromScope(scope: MemberScope) {
