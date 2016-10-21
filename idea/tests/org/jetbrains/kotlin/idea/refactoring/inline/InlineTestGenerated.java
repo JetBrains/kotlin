@@ -93,6 +93,39 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("idea/testData/refactoring/inline/function/returnAtEnd")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReturnAtEnd extends AbstractInlineTest {
+            public void testAllFilesPresentInReturnAtEnd() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/returnAtEnd"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("CallArgument.kt")
+            public void testCallArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/CallArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MultipleStatements.kt")
+            public void testMultipleStatements() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/MultipleStatements.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SingleStatement.kt")
+            public void testSingleStatement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/SingleStatement.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ValIntializer.kt")
+            public void testValIntializer() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ValIntializer.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/refactoring/inline/inlineTypeAlias")

@@ -62,7 +62,6 @@ object ReplacementEngine {
         val descriptor = resolvedCall.resultingDescriptor
         val file = element.getContainingKtFile()
 
-        val qualifiedExpression = callElement.getQualifiedExpressionForSelector()
         val elementToBeReplaced = when (callElement) {
             is KtExpression -> callElement.getQualifiedExpressionForSelectorOrThis()
             else -> callElement
@@ -84,12 +83,6 @@ object ReplacementEngine {
 
         receiver?.mark(RECEIVER_VALUE_KEY)
 
-        val codeHolder = when (elementToBeReplaced) {
-            is KtExpression -> ConstructedExpressionHolder(replacement, elementToBeReplaced, bindingContext)
-            is KtAnnotationEntry -> ConstructedAnnotationEntryHolder(replacement, elementToBeReplaced, bindingContext)
-            else -> error("Unsupported element")
-        }
-
         //TODO: this@
         for (thisExpression in replacement.collectDescendantsOfType<KtThisExpression>()) {
             if (receiver != null) {
@@ -104,24 +97,24 @@ object ReplacementEngine {
 
         processTypeParameterUsages(replacement, resolvedCall)
 
-        if (qualifiedExpression is KtSafeQualifiedExpression) {
-            (codeHolder as ConstructedExpressionHolder).wrapCodeForSafeCall(receiver!!, receiverType)
+        if (elementToBeReplaced is KtSafeQualifiedExpression) {
+            wrapCodeForSafeCall(replacement, receiver!!, receiverType, elementToBeReplaced, bindingContext)
         }
         else if (callElement is KtBinaryExpression && callElement.operationToken == KtTokens.IDENTIFIER) {
             keepInfixFormIfPossible(replacement)
         }
 
-        if (receiver != null && codeHolder is ConstructedExpressionHolder) {
-            val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
-            if (receiver.shouldKeepValue(thisReplaced.size)) {
-                codeHolder.introduceValue(receiver, receiverType, thisReplaced)
+        if (elementToBeReplaced is KtExpression) {
+            if (receiver != null) {
+                val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
+                if (receiver.shouldKeepValue(thisReplaced.size)) {
+                    replacement.introduceValue(receiver, receiverType, thisReplaced, elementToBeReplaced)
+                }
             }
-        }
 
-        if (codeHolder is ConstructedExpressionHolder) {
             for ((parameter, value, valueType) in introduceValuesForParameters) {
                 val usagesReplaced = replacement.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
-                codeHolder.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.name.asString())
+                replacement.introduceValue(value, valueType, usagesReplaced, elementToBeReplaced, nameSuggestion = parameter.name.asString())
             }
         }
 
@@ -129,11 +122,17 @@ object ReplacementEngine {
                 .flatMap { file.resolveImportReference(it) }
                 .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
-        return codeHolder.finish { range ->
+        val replacementPerformer = when (elementToBeReplaced) {
+            is KtExpression -> ExpressionReplacementPerformer(replacement, elementToBeReplaced)
+            is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(replacement, elementToBeReplaced)
+            else -> error("Unsupported element")
+        }
+
+        return replacementPerformer.doIt(postProcessing = { range ->
             val newRange = postProcessInsertedCode(range)
             commentSaver.restore(newRange)
             newRange
-        }
+        })
     }
 
     private fun processValueParameterUsages(
@@ -229,7 +228,13 @@ object ReplacementEngine {
         }
     }
 
-    private fun ConstructedExpressionHolder.wrapCodeForSafeCall(receiver: KtExpression, receiverType: KotlinType?) {
+    private fun wrapCodeForSafeCall(
+            replacement: MutableReplacementCode,
+            receiver: KtExpression,
+            receiverType: KotlinType?,
+            expressionToBeReplaced: KtExpression,
+            bindingContext: BindingContext
+    ) {
         if (replacement.statementsBefore.isEmpty()) {
             val qualified = replacement.mainExpression as? KtQualifiedExpression
             if (qualified != null) {
@@ -244,9 +249,9 @@ object ReplacementEngine {
             }
         }
 
-        if (elementToBeReplaced.isUsedAsExpression(bindingContext)) {
+        if (expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
             val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
-            introduceValue(receiver, receiverType, thisReplaced, safeCall = true)
+            replacement.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
         }
         else {
             val ifExpression = KtPsiFactory(receiver).buildExpression {

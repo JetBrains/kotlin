@@ -58,7 +58,6 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
             try {
                 runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
 
-                TestCase.assertTrue(afterFileExists)
                 UsefulTestCase.assertEmpty(expectedErrors)
                 KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
                 for ((extraPsiFile, extraFile) in extraFilesToPsi) {

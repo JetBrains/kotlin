@@ -23,13 +23,26 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.*
 
 internal class MutableReplacementCode(
         var mainExpression: KtExpression?,
         val statementsBefore: MutableList<KtExpression>,
         val fqNamesToImport: MutableCollection<FqName>
 ) {
+    private val _postInsertionActions = HashMap<KtExpression, SmartList<(KtExpression) -> KtExpression>>()
+
+    val postInsertionActions: Map<KtExpression, List<(KtExpression) -> KtExpression>>
+        get() = _postInsertionActions
+
+    fun <TStatement : KtExpression> addPostInsertionAction(statementBefore: TStatement, action: (TStatement) -> TStatement) {
+        assert(statementBefore in statementsBefore)
+        @Suppress("UNCHECKED_CAST")
+        _postInsertionActions.getOrPut(statementBefore) { SmartList() }.add(action as (KtExpression) -> KtExpression)
+    }
+
     fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
         assert(oldExpression in this)
 

@@ -33,16 +33,19 @@ import org.jetbrains.kotlin.idea.replacement.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.replacement.ReplacementBuilder
 import org.jetbrains.kotlin.idea.replacement.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 
 class KotlinInlineFunctionHandler: InlineActionHandler() {
     override fun isEnabledForLanguage(language: Language) = language == KotlinLanguage.INSTANCE
 
+    //TODO: overrides etc
     override fun canInlineElement(element: PsiElement): Boolean {
         return element is KtNamedFunction
-               && element.hasBody() && !element.hasBlockBody() // TODO support multiline functions
+               && element.hasBody()
                && element.getUseScope() is GlobalSearchScope // TODO support local functions
     }
 
@@ -50,21 +53,42 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
         element as KtNamedFunction
 
         val descriptor = element.resolveToDescriptor() as SimpleFunctionDescriptor
-
         val bodyExpression = element.bodyExpression!!
-        val expectedType = if (element.hasDeclaredReturnType())
+        val bodyCopy = bodyExpression.copied()
+
+        val expectedType = if (!element.hasBlockBody() && element.hasDeclaredReturnType())
             descriptor.returnType ?: TypeUtils.NO_EXPECTED_TYPE
         else
             TypeUtils.NO_EXPECTED_TYPE
 
-        val expression = bodyExpression.copied()
-
-        fun analyzeExpression(): BindingContext {
-            return expression.analyzeInContext(bodyExpression.getResolutionScope(), contextExpression = bodyExpression, expectedType = expectedType)
+        fun analyzeBodyCopy(): BindingContext {
+            return bodyCopy.analyzeInContext(bodyExpression.getResolutionScope(),
+                                             contextExpression = bodyExpression,
+                                             expectedType = expectedType)
         }
 
-        val replacement = ReplacementBuilder(descriptor, element.getResolutionFacade())
-                .buildReplacementCode(expression, emptyList(), ::analyzeExpression)
+        val replacementBuilder = ReplacementBuilder(descriptor, element.getResolutionFacade())
+        val replacement = if (element.hasBlockBody()) {
+            bodyCopy as KtBlockExpression
+            val statements = bodyCopy.statements
+            if (statements.isEmpty()) {
+                //TODO
+                throw UnsupportedOperationException()
+            }
+            else {
+                //TODO: check no other return's
+                val lastReturn = statements.last() as? KtReturnExpression
+                if (lastReturn == null) {
+                    //TODO
+                    throw UnsupportedOperationException()
+                }
+
+                replacementBuilder.buildReplacementCode(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
+            }
+        }
+        else {
+            replacementBuilder.buildReplacementCode(bodyCopy, emptyList(), ::analyzeBodyCopy)
+        }
 
         val commandName = RefactoringBundle.message("inline.command", element.name)
         CallableUsageReplacementStrategy(replacement)
