@@ -53,6 +53,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationsOnNullableTypes")
+    public void testAnnotationsOnNullableTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationsOnNullableTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassMembers")
     public void testClassMembers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassMembers/");
