@@ -138,6 +138,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/SafeCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SingleStatement.kt")
             public void testSingleStatement() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/SingleStatement.kt");

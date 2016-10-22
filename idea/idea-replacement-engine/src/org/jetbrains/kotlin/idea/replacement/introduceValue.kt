@@ -101,17 +101,29 @@ internal fun MutableReplacementCode.introduceValue(
         }
     }
     else {
-        //TODO: handle mainExpression == null and statementsBefore!
+        val useIt = !isNameUsed("it")
+        val name = if (useIt) Name.identifier("it") else suggestName { !isNameUsed(it) }
+        replaceUsages(name)
 
-        mainExpression = if (!isNameUsed("it")) {
-            replaceUsages(Name.identifier("it"))
-            psiFactory.createExpressionByPattern("$0?.let { $1 }", value, mainExpression!!)
+        mainExpression = psiFactory.buildExpression {
+            appendExpression(value)
+            appendFixedText("?.let{")
+
+            if (!useIt) {
+                appendName(name)
+                appendFixedText("->")
+            }
+
+            for (statement in statementsBefore) {
+                appendExpression(statement)
+                appendFixedText("\n")
+            }
+
+            appendExpression(mainExpression!!) //TODO: mainExpression == null
+
+            appendFixedText("}")
         }
-        else {
-            val name = suggestName { !isNameUsed(it) }
-            replaceUsages(name)
-            psiFactory.createExpressionByPattern("$0?.let { $1 -> $2 }", value, name, mainExpression!!)
-        }
+        statementsBefore.clear() //TODO: postInsertActions!
     }
 }
 

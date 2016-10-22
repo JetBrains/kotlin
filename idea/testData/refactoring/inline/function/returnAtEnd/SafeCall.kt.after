@@ -1,0 +1,19 @@
+fun f(s: String?) {
+    if (s != null) {
+        println(1)
+        s.hashCode() * 1
+    }
+    val substring = s?.substring(1)
+    if (substring != null) {
+        println(2)
+        substring.hashCode() * 2
+    }
+    val s1 = s?.let {
+        println(3)
+        it.hashCode() * 3
+    }
+    val s2 = s?.substring(1)?.let {
+        println(4)
+        it.hashCode() * 4
+    }
+}
