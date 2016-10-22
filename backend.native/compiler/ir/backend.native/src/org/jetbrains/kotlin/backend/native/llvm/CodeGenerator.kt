@@ -48,8 +48,13 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun initFunction(declaration: IrConstructor) {
         function(declaration)
         val thisPtr = bitcast(pointerType(classType(declaration.descriptor.containingDeclaration)), load(thisVariable(), tmpVariable()), tmpVariable())
-        declaration.descriptor.valueParameters.forEachIndexed { i, descriptor ->
+
+        declaration.descriptor.containingDeclaration.fields.forEachIndexed { i, descriptor ->
             val name = descriptor.name.asString()
+
+            if (!declaration.descriptor.valueParameters.any { it -> it.name.asString() == name })
+                return@forEachIndexed
+
             val ptr = LLVMBuildStructGEP(context.llvmBuilder, thisPtr, i, tmpVariable())
             val value = load(variable(name)!!, tmpVariable())
 
