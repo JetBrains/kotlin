@@ -98,6 +98,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReturnAtEnd extends AbstractInlineTest {
+            @TestMetadata("AddBlockToControlStatement.kt")
+            public void testAddBlockToControlStatement() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/AddBlockToControlStatement.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInReturnAtEnd() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/returnAtEnd"), Pattern.compile("^(\\w+)\\.kt$"), true);
             }

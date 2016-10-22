@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.idea.replacement
 
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
@@ -95,11 +97,36 @@ internal class ExpressionReplacementPerformer(
      * Returns statement in a block to insert statement before it
      */
     private fun findOrCreateBlockToInsertStatement(): KtExpression {
-        //TODO: 1. There can be no block above at all
-        //TODO: 2. Create block for control statements without block
-        //TODO: 3. Sometimes it's not correct because of side effects
-        return elementToBeReplaced.parentsWithSelf
-                .filterIsInstance<KtExpression>()
-                .firstOrNull { it.parent is KtBlockExpression }!!
+        //TODO: Convert expression function body into block body
+        //TODO: Sometimes it's not correct because of side effects
+
+        for (element in elementToBeReplaced.parentsWithSelf) {
+            val parent = element.parent
+            when (element) {
+                is KtContainerNodeForControlStructureBody -> { // control statement without block
+                    return element.expression!!.replaceWithBlock()
+                }
+
+                is KtExpression -> {
+                    if (parent is KtWhenEntry) { // when entry without block
+                        return element.replaceWithBlock()
+                    }
+
+                    if (parent is KtBlockExpression) return element
+                }
+            }
+        }
+
+        //TODO
+        throw UnsupportedOperationException()
+    }
+
+    private fun KtExpression.replaceWithBlock(): KtExpression {
+        elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)
+        val blockExpression = this.replaced(KtPsiFactory(this).createSingleStatementBlock(this))
+        elementToBeReplaced = blockExpression.findDescendantOfType<KtExpression> { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
+        return blockExpression.statements.single()
     }
 }
+
+private val ELEMENT_TO_BE_REPLACED_KEY = Key<Unit>("ELEMENT_TO_BE_REPLACED_KEY")
