@@ -106,6 +106,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                         return generator.load(variable!!, tmpVariableName)
                     }
                     is LazyClassReceiverParameterDescriptor -> {
+                        if (value.descriptor.name.asString() == "<this>") {
+                            return generator.load(generator.thisVariable(), tmpVariableName)
+                        }
                         TODO()
                     }
                     else -> {
