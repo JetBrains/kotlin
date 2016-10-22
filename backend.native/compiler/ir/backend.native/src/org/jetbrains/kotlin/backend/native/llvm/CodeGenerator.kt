@@ -49,6 +49,9 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         function(declaration)
         val thisPtr = bitcast(pointerType(classType(declaration.descriptor.containingDeclaration)), load(thisVariable(), tmpVariable()), tmpVariable())
 
+        /**
+         * TODO: check shadowing.
+         */
         declaration.descriptor.containingDeclaration.fields.forEachIndexed { i, descriptor ->
             val name = descriptor.name.asString()
 
