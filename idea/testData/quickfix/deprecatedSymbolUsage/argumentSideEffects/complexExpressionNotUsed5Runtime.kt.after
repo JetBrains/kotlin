@@ -8,7 +8,10 @@ fun oldFun(p1: Int, p2: Int): Boolean {
 fun newFun(p: Int) = false
 
 fun foo(list: List<Int>) {
-    list.filter { !bar().let { p1 -> newFun(it) } }
+    list.filter {
+        bar()
+        !newFun(it)
+    }
 }
 
 fun bar(): Int = 0

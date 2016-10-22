@@ -7,6 +7,9 @@ fun oldFun(p: Int?): Int {
 
 fun newFun(): Int = 0
 
-fun foo(): Int = bar().<caret>let { newFun() }
+fun foo(): Int {
+    bar()
+    <caret>return newFun()
+}
 
 fun bar(): Int? = 0

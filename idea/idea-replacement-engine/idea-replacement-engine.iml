@@ -17,7 +17,7 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
-    <orderEntry type="module" module-name="idea" scope="RUNTIME" />
+    <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="formatter" />
   </component>
 </module>

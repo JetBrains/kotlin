@@ -8,7 +8,8 @@ fun oldFun(p: Int?): Int {
 fun newFun(p1: Int?, p2: Int?): Int = 0
 
 fun foo(): Int {
-    return bar().let { newFun(it, it) }
+    val p = bar()
+    return newFun(p, p)
 }
 
 fun bar(): Int? = null

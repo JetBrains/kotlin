@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.replacement
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -64,11 +65,14 @@ internal class ExpressionReplacementPerformer(
         val insertedStatements = ArrayList<KtExpression>()
         val toInsertedStatementMap = HashMap<KtExpression, KtExpression>()
         for (statement in replacement.statementsBefore) {
+            // copy the statement if it can get invalidated by findOrCreateBlockToInsertStatement()
+            val statementToUse = if (statement.isPhysical) statement.copy() else statement
             val anchor = findOrCreateBlockToInsertStatement()
             val block = anchor.parent as KtBlockExpression
 
-            val inserted = block.addBefore(statement, anchor) as KtExpression
+            val inserted = block.addBefore(statementToUse, anchor) as KtExpression
             block.addBefore(psiFactory.createNewLine(), anchor)
+            block.addBefore(psiFactory.createNewLine(), inserted)
             toInsertedStatementMap.put(statement, inserted)
             insertedStatements.add(inserted)
         }
@@ -97,7 +101,6 @@ internal class ExpressionReplacementPerformer(
      * Returns statement in a block to insert statement before it
      */
     private fun findOrCreateBlockToInsertStatement(): KtExpression {
-        //TODO: Convert expression function body into block body
         //TODO: Sometimes it's not correct because of side effects
 
         for (element in elementToBeReplaced.parentsWithSelf) {
@@ -112,6 +115,13 @@ internal class ExpressionReplacementPerformer(
                         return element.replaceWithBlock()
                     }
 
+                    if (parent is KtDeclarationWithBody) {
+                        withElementToBeReplacedPreserved {
+                            ConvertToBlockBodyIntention.convert(parent)
+                        }
+                        return (parent.bodyExpression as KtBlockExpression).statements.single()
+                    }
+
                     if (parent is KtBlockExpression) return element
                 }
             }
@@ -122,10 +132,18 @@ internal class ExpressionReplacementPerformer(
     }
 
     private fun KtExpression.replaceWithBlock(): KtExpression {
-        elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)
-        val blockExpression = this.replaced(KtPsiFactory(this).createSingleStatementBlock(this))
-        elementToBeReplaced = blockExpression.findDescendantOfType<KtExpression> { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
+        val blockExpression = withElementToBeReplacedPreserved {
+            this.replaced(KtPsiFactory(this).createSingleStatementBlock(this))
+        }
         return blockExpression.statements.single()
+    }
+
+    private fun <TElement : KtElement> withElementToBeReplacedPreserved(action: () -> TElement): TElement {
+        elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)
+        val result = action()
+        elementToBeReplaced = result.findDescendantOfType<KtExpression> { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
+        elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, null)
+        return result
     }
 }
 

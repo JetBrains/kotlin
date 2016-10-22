@@ -87,6 +87,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/SafeCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Simple.kt");
@@ -108,9 +114,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/returnAtEnd"), Pattern.compile("^(\\w+)\\.kt$"), true);
             }
 
+            @TestMetadata("Bug1.kt")
+            public void testBug1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/Bug1.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("CallArgument.kt")
             public void testCallArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/CallArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ConvertToBlockBody.kt")
+            public void testConvertToBlockBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ConvertToBlockBody.kt");
                 doTest(fileName);
             }
 

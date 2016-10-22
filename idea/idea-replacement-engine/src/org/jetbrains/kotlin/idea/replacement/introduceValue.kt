@@ -51,7 +51,9 @@ internal fun MutableReplacementCode.introduceValue(
     fun replaceUsages(name: Name) {
         val nameInCode = psiFactory.createExpression(name.render())
         for (usage in usages) {
-            usage.replace(nameInCode)
+            // there can be parenthesis around the expression which will become unnecessary
+            val usageToReplace = (usage.parent as? KtParenthesizedExpression) ?: usage
+            usageToReplace.replace(nameInCode)
         }
     }
 
@@ -67,54 +69,49 @@ internal fun MutableReplacementCode.introduceValue(
     fun isNameUsed(name: String) = collectNameUsages(this, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
 
     if (!safeCall) {
-        val block = expressionToBeReplaced.parent as? KtBlockExpression
-        if (block != null) {
-            val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
+        val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
 
-            if (usages.isNotEmpty()) {
-                var explicitType: KotlinType? = null
-                if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                    val valueTypeWithoutExpectedType = value.computeTypeInContext(
-                            resolutionScope,
-                            expressionToBeReplaced,
-                            dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
-                    )
-                    if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
-                        explicitType = valueType
-                    }
+        if (usages.isNotEmpty()) {
+            var explicitType: KotlinType? = null
+            if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
+                val valueTypeWithoutExpectedType = value.computeTypeInContext(
+                        resolutionScope,
+                        expressionToBeReplaced,
+                        dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
+                )
+                if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
+                    explicitType = valueType
                 }
-
-                val name = suggestName { name ->
-                    resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
-                }
-
-                val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
-                statementsBefore.add(0, declaration)
-                if (explicitType != null) {
-                    addPostInsertionAction(declaration) { it.setType(explicitType!!); it }
-                }
-
-                replaceUsages(name)
             }
-            else {
-                statementsBefore.add(0, value)
+
+            val name = suggestName { name ->
+                resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
             }
-            return
+
+            val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
+            statementsBefore.add(0, declaration)
+            if (explicitType != null) {
+                addPostInsertionAction(declaration) { it.setType(explicitType!!); it }
+            }
+
+            replaceUsages(name)
+        }
+        else {
+            statementsBefore.add(0, value)
         }
     }
-
-    //TODO: handle mainExpression == null and statementsBefore!
-
-    val dot = if (safeCall) "?." else "."
-
-    mainExpression = if (!isNameUsed("it")) {
-        replaceUsages(Name.identifier("it"))
-        psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, mainExpression!!)
-    }
     else {
-        val name = suggestName { !isNameUsed(it) }
-        replaceUsages(name)
-        psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, mainExpression!!)
+        //TODO: handle mainExpression == null and statementsBefore!
+
+        mainExpression = if (!isNameUsed("it")) {
+            replaceUsages(Name.identifier("it"))
+            psiFactory.createExpressionByPattern("$0?.let { $1 }", value, mainExpression!!)
+        }
+        else {
+            val name = suggestName { !isNameUsed(it) }
+            replaceUsages(name)
+            psiFactory.createExpressionByPattern("$0?.let { $1 -> $2 }", value, name, mainExpression!!)
+        }
     }
 }
 
