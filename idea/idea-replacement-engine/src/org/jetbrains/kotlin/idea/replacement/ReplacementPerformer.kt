@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 internal abstract class ReplacementPerformer<TElement : KtElement>(
@@ -45,6 +46,9 @@ internal class AnnotationEntryReplacementPerformer(
 
         val dummyAnnotationEntry = createByPattern("@Dummy($0)", replacement.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
         val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
+
+        replacement.performPostInsertionActions(replaced.singletonList())
+
         var range = PsiChildRange.singleElement(replaced)
         range = postProcessing(range)
 
@@ -63,7 +67,6 @@ internal class ExpressionReplacementPerformer(
 
     override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression {
         val insertedStatements = ArrayList<KtExpression>()
-        val toInsertedStatementMap = HashMap<KtExpression, KtExpression>()
         for (statement in replacement.statementsBefore) {
             // copy the statement if it can get invalidated by findOrCreateBlockToInsertStatement()
             val statementToUse = if (statement.isPhysical) statement.copy() else statement
@@ -73,16 +76,12 @@ internal class ExpressionReplacementPerformer(
             val inserted = block.addBefore(statementToUse, anchor) as KtExpression
             block.addBefore(psiFactory.createNewLine(), anchor)
             block.addBefore(psiFactory.createNewLine(), inserted)
-            toInsertedStatementMap.put(statement, inserted)
             insertedStatements.add(inserted)
         }
 
         val replaced = elementToBeReplaced.replace(replacement.mainExpression!!) //TODO: support null here
 
-        for ((statement, actions) in replacement.postInsertionActions) {
-            val inserted = toInsertedStatementMap[statement]!!
-            actions.forEach { it(inserted) }
-        }
+        replacement.performPostInsertionActions(insertedStatements + replaced.singletonList())
 
         var range = if (insertedStatements.isEmpty()) {
             PsiChildRange.singleElement(replaced)

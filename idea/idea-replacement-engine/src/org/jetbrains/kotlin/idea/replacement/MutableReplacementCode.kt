@@ -16,31 +16,40 @@
 
 package org.jetbrains.kotlin.idea.replacement
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.*
+
+private val POST_INSERTION_ACTION: Key<(KtElement) -> Unit> = Key("POST_INSERTION_ACTION")
 
 internal class MutableReplacementCode(
         var mainExpression: KtExpression?,
         val statementsBefore: MutableList<KtExpression>,
         val fqNamesToImport: MutableCollection<FqName>
 ) {
-    private val _postInsertionActions = HashMap<KtExpression, SmartList<(KtExpression) -> KtExpression>>()
-
-    val postInsertionActions: Map<KtExpression, List<(KtExpression) -> KtExpression>>
-        get() = _postInsertionActions
-
-    fun <TStatement : KtExpression> addPostInsertionAction(statementBefore: TStatement, action: (TStatement) -> TStatement) {
-        assert(statementBefore in statementsBefore)
+    fun <TElement : KtElement> addPostInsertionAction(element: TElement, action: (TElement) -> Unit) {
+        assert(element in this)
         @Suppress("UNCHECKED_CAST")
-        _postInsertionActions.getOrPut(statementBefore) { SmartList() }.add(action as (KtExpression) -> KtExpression)
+        element.putCopyableUserData(POST_INSERTION_ACTION, action as (KtElement) -> Unit)
+    }
+
+    fun performPostInsertionActions(elements: Collection<PsiElement>) {
+        for (element in elements) {
+            element.forEachDescendantOfType<KtElement> {
+                val action = it.getCopyableUserData(POST_INSERTION_ACTION)
+                if (action != null) {
+                    it.putCopyableUserData(POST_INSERTION_ACTION, null)
+                    action.invoke(it)
+                }
+            }
+        }
     }
 
     fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {

@@ -91,7 +91,7 @@ internal fun MutableReplacementCode.introduceValue(
             val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
             statementsBefore.add(0, declaration)
             if (explicitType != null) {
-                addPostInsertionAction(declaration) { it.setType(explicitType!!); it }
+                addPostInsertionAction(declaration) { it.setType(explicitType!!) }
             }
 
             replaceUsages(name)
@@ -123,7 +123,7 @@ internal fun MutableReplacementCode.introduceValue(
 
             appendFixedText("}")
         }
-        statementsBefore.clear() //TODO: postInsertActions!
+        statementsBefore.clear()
     }
 }
 
