@@ -44,8 +44,7 @@ class CallableUsageReplacementStrategy(
                 createReplacer(nameExpression)!!.invoke()
             }
             else {
-                @Suppress("UNCHECKED_CAST")
-                ReplacementEngine.performCallReplacement(usage, bindingContext, resolvedCall, callElement, replacement)
+                CallReplacementEngine(usage, bindingContext, resolvedCall, callElement, replacement).performReplacement()
             }
         }
     }
