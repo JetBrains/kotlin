@@ -80,6 +80,7 @@ public class DescriptorResolver {
     private final LanguageVersionSettings languageVersionSettings;
     private final FunctionsTypingVisitor functionsTypingVisitor;
     private final DestructuringDeclarationResolver destructuringDeclarationResolver;
+    private final ModifiersChecker modifiersChecker;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -92,7 +93,8 @@ public class DescriptorResolver {
             @NotNull OverloadChecker overloadChecker,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull FunctionsTypingVisitor functionsTypingVisitor,
-            @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver
+            @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver,
+            @NotNull ModifiersChecker modifiersChecker
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -105,6 +107,7 @@ public class DescriptorResolver {
         this.languageVersionSettings = languageVersionSettings;
         this.functionsTypingVisitor = functionsTypingVisitor;
         this.destructuringDeclarationResolver = destructuringDeclarationResolver;
+        this.modifiersChecker = modifiersChecker;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -300,6 +303,8 @@ public class DescriptorResolver {
                     scope, destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                     ExpressionTypingContext.newContext(trace, scope, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
             );
+
+            modifiersChecker.withTrace(trace).checkModifiersForDestructuringDeclaration(destructuringDeclaration);
         }
         else {
             destructuringVariables = null;

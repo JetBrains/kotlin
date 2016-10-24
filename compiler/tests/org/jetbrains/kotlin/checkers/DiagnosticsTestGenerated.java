@@ -7712,6 +7712,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("modifiers.kt")
+                public void testModifiers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/modifiers.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("noExpectedType.kt")
                 public void testNoExpectedType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas/noExpectedType.kt");
