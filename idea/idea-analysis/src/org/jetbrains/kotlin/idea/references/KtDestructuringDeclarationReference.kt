@@ -47,7 +47,8 @@ class KtDestructuringDeclarationReference(element: KtDestructuringDeclarationEnt
 
     override val resolvesByNames: Collection<Name>
         get() {
-            val componentIndex = (element.parent as KtDestructuringDeclaration).entries.indexOf(element) + 1
+            val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
+            val componentIndex = destructuringParent.entries.indexOf(element) + 1
             return listOf(Name.identifier("component$componentIndex"))
         }
 }

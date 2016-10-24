@@ -6575,6 +6575,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/optimizeImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("destructuringAtTop.kt")
+        public void testDestructuringAtTop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/optimizeImports/destructuringAtTop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fileRuntime.kt")
         public void testFileRuntime() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/optimizeImports/fileRuntime.kt");
