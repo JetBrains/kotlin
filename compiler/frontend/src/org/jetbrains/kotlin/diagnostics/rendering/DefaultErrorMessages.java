@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -517,11 +518,14 @@ public class DefaultErrorMessages {
         MAP.put(UNSAFE_IMPLICIT_INVOKE_CALL, "Reference has a nullable type ''{0}'', use explicit ''?.invoke()'' to make a function-like call instead", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
-        MAP.put(UNSUPPORTED_FEATURE, "The feature is only available since Kotlin {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
+        MAP.put(UNSUPPORTED_FEATURE, "The feature is {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
             @NotNull
             @Override
             public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
-                return feature.getSinceVersion().getVersionString() + ": " + feature.getPresentableText();
+                LanguageVersion version = feature.getSinceVersion();
+                return version != null
+                       ? "only available since Kotlin " + version.getVersionString() + ": " + feature.getPresentableText()
+                       : "experimental and should be turned on explicitly via a command line option or in IDE settings: " + feature.getPresentableText();
             }
         });
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);

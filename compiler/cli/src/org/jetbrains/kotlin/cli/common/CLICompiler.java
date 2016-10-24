@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -248,33 +249,46 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
-        LanguageVersion languageVersion = parseVersion(configuration, arguments.languageVersion, "language");
-        LanguageVersion apiVersion = parseVersion(configuration, arguments.apiVersion, "API");
-        if (languageVersion != null || apiVersion != null) {
-            if (languageVersion == null) {
-                // If only "-api-version" is specified, language version is assumed to be the latest
-                languageVersion = LanguageVersion.LATEST;
-            }
-            if (apiVersion == null) {
-                // If only "-language-version" is specified, API version is assumed to be equal to the language version
-                // (API version cannot be greater than the language version)
-                apiVersion = languageVersion;
-            }
-
-            if (apiVersion.compareTo(languageVersion) > 0) {
-                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                        CompilerMessageSeverity.ERROR,
-                        "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
-                        "-language-version (" + languageVersion.getVersionString() + ")",
-                        CompilerMessageLocation.NO_LOCATION
-                );
-            }
-
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-                              new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion)));
-        }
+        setupLanguageVersionSettings(configuration, arguments);
     }
 
+    private static void setupLanguageVersionSettings(
+            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments
+    ) {
+        LanguageVersion languageVersion = parseVersion(configuration, arguments.languageVersion, "language");
+        LanguageVersion apiVersion = parseVersion(configuration, arguments.apiVersion, "API");
+
+        if (languageVersion == null) {
+            // If only "-api-version" is specified, language version is assumed to be the latest
+            languageVersion = LanguageVersion.LATEST;
+        }
+        if (apiVersion == null) {
+            // If only "-language-version" is specified, API version is assumed to be equal to the language version
+            // (API version cannot be greater than the language version)
+            apiVersion = languageVersion;
+        }
+
+        if (apiVersion.compareTo(languageVersion) > 0) {
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    CompilerMessageSeverity.ERROR,
+                    "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
+                    "-language-version (" + languageVersion.getVersionString() + ")",
+                    CompilerMessageLocation.NO_LOCATION
+            );
+        }
+
+        List<LanguageFeature> extraLanguageFeatures = new ArrayList<LanguageFeature>(0);
+        if (arguments.multiPlatform) {
+            extraLanguageFeatures.add(LanguageFeature.MultiPlatformProjects);
+        }
+
+        configuration.put(
+                CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
+                new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
+        );
+    }
+
+    @Nullable
     private static LanguageVersion parseVersion(
             @NotNull CompilerConfiguration configuration, @Nullable String value, @NotNull String versionOf
     ) {

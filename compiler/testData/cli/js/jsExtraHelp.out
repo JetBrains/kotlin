@@ -3,6 +3,7 @@ where advanced options include:
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)
   -Xplugin <path>            Load plugins from the given classpath
+  -Xmulti-platform           Enable experimental language support for multi-platform projects
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.module.Module
-import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-enum class LanguageFeature(val sinceVersion: LanguageVersion) {
-    // Note: names of these entries are also used in diagnostic tests
+enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
+    // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
     BoundCallableReferences(KOTLIN_1_1),
     LocalDelegatedProperties(KOTLIN_1_1),
@@ -34,7 +32,10 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     DestructuringLambdaParameters(KOTLIN_1_1),
     SingleUnderscoreForParameterName(KOTLIN_1_1),
     DslMarkersSupport(KOTLIN_1_1),
-    UnderscoresInNumericLiterals(KOTLIN_1_1)
+    UnderscoresInNumericLiterals(KOTLIN_1_1),
+
+    // Experimental features
+    MultiPlatformProjects(null),
     ;
 
     val presentableText: String
@@ -74,15 +75,22 @@ interface LanguageVersionSettings {
     val apiVersion: ApiVersion
 }
 
-class LanguageVersionSettingsImpl(
+class LanguageVersionSettingsImpl @JvmOverloads constructor(
         private val languageVersion: LanguageVersion,
-        override val apiVersion: ApiVersion
+        override val apiVersion: ApiVersion,
+        additionalFeatures: Collection<LanguageFeature> = emptySet()
 ) : LanguageVersionSettings {
+    private val additionalFeatures = additionalFeatures.toSet()
+
     override fun supportsFeature(feature: LanguageFeature): Boolean {
-        return languageVersion >= feature.sinceVersion
+        val since = feature.sinceVersion
+        return (since != null && languageVersion >= since) || feature in additionalFeatures
     }
 
-    override fun toString() = "Language = $languageVersion, API = $apiVersion"
+    override fun toString() = buildString {
+        append("Language = $languageVersion, API = $apiVersion")
+        additionalFeatures.forEach { feature -> append(" +$feature") }
+    }
 
     companion object {
         @JvmField

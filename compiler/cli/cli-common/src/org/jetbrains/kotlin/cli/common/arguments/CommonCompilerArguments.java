@@ -64,6 +64,9 @@ public abstract class CommonCompilerArguments {
     @ValueDescription("<path>")
     public String[] pluginClasspaths;
 
+    @Argument(value = "Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
+    public boolean multiPlatform;
+
     @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;
