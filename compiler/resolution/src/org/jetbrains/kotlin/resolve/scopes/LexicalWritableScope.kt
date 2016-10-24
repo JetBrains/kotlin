@@ -25,10 +25,12 @@ class LexicalWritableScope(
         parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
-        override val implicitReceiver: ReceiverParameterDescriptor?,
         redeclarationChecker: LocalRedeclarationChecker,
         override val kind: LexicalScopeKind
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
+
+    override val implicitReceiver: ReceiverParameterDescriptor?
+        get() = null
 
     private var canWrite: Boolean = true
     private var lastSnapshot: Snapshot? = null

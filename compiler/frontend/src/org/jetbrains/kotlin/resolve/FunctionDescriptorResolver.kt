@@ -145,8 +145,8 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             expectedFunctionType: KotlinType
     ) {
-        val headerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
-                                              TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER)
+        val headerScope = LexicalWritableScope(scope, functionDescriptor, true,
+                                               TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
@@ -298,7 +298,7 @@ class FunctionDescriptorResolver(
         val parameterScope = LexicalWritableScope(
                 scope,
                 constructorDescriptor,
-                false, null,
+                false,
                 TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
                 LexicalScopeKind.CONSTRUCTOR_HEADER
         )

@@ -186,7 +186,7 @@ public class ExpressionTypingServices {
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         TraceBasedLocalRedeclarationChecker redeclarationChecker
                 = new TraceBasedLocalRedeclarationChecker(context.trace, expressionTypingComponents.overloadChecker);
-        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null, redeclarationChecker,
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, redeclarationChecker,
                                                               LexicalScopeKind.CODE_BLOCK);
 
         KotlinTypeInfo r;
