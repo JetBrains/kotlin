@@ -37,6 +37,17 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
+/**
+ * Modifies [MutableReplacementCode] introducing a variable initialized by [value] and replacing all of [usages] with its use.
+ * The variable must be initialized (and so the value is calculated) before any other code in [MutableReplacementCode].
+ * @param value Value to use for variable initialization
+ * @param valueType Type of the value
+ * @param usages Usages to be replaced. This collection can be empty and in this case the actual variable is not needed.
+ * But the expression [value] must be calculated because it may have side effects.
+ * @param expressionToBeReplaced Expression to be replaced by the [MutableReplacementCode].
+ * @param nameSuggestion Name suggestion for the variable.
+ * @param safeCall If true, then the whole code must not be executed if the [value] evaluates to null.
+ */
 internal fun MutableReplacementCode.introduceValue(
         value: KtExpression,
         valueType: KotlinType?,
