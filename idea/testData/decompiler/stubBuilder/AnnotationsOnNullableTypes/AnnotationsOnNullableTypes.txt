@@ -31,8 +31,9 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=C]
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=C]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
