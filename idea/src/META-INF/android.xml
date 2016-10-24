@@ -17,6 +17,12 @@
                          level="ERROR"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
+
+        <intentionAction>
+            <className>org.jetbrains.kotlin.android.intentions.KotlinAndroidAddStringResource</className>
+            <category>Kotlin Android</category>
+        </intentionAction>
+
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

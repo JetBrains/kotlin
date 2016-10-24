@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="ide-common" />
     <orderEntry type="module" module-name="idea-analysis" />
+    <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
