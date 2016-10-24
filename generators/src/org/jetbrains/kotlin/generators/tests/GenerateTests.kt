@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
+import org.jetbrains.kotlin.android.intentions.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractAnnotationProcessingTest
@@ -1152,6 +1153,10 @@ fun main(args: Array<String>) {
     testGroup("idea/idea-android/tests", "idea/testData") {
         testClass<AbstractConfigureProjectTest>() {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+        }
+
+        testClass<AbstractAndroidResourceIntentionTest> {
+            model("android/resourceIntentions", extension = "test", singleClass = true)
         }
     }
 
