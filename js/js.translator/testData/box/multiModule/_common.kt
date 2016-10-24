@@ -12,7 +12,7 @@ fun checkJsNames(base: String, o: Any) {
 
 fun getAllProperties(o: dynamic): Array<String> = js("""
     var properties = [];
-    for (property in o) {
+    for (var property in o) {
         properties.push(property);
     }
     return properties;

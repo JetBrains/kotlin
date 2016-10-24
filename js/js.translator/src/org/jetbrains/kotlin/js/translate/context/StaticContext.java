@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
-import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
+import org.jetbrains.kotlin.js.translate.declaration.InterfaceFunctionCopier;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
 
@@ -742,17 +741,7 @@ public final class StaticContext {
     }
 
     private void addInterfaceDefaultMethods() {
-        List<ClassDescriptor> orderedClasses = DFS.topologicalOrder(classes, new DFS.Neighbors<ClassDescriptor>() {
-            @NotNull
-            @Override
-            public Iterable<? extends ClassDescriptor> getNeighbors(ClassDescriptor current) {
-                return DescriptorUtils.getSuperclassDescriptors(current);
-            }
-        });
-        Collections.reverse(orderedClasses);
-        for (ClassDescriptor classDescriptor : orderedClasses) {
-            ClassTranslator.addInterfaceDefaultMembers(classDescriptor, this);
-        }
+        new InterfaceFunctionCopier(this).copyInterfaceFunctions(classes);
     }
 
     public boolean isBuiltinModule() {
