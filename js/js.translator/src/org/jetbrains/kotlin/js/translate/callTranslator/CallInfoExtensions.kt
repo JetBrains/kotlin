@@ -95,12 +95,3 @@ val FunctionCallInfo.functionName: JsName
     get() = context.getNameForDescriptor(callableDescriptor)
 
 fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.hasSpreadOperator
-
-fun TranslationContext.aliasOrValue(callableDescriptor: CallableDescriptor, value: (CallableDescriptor) -> JsExpression): JsExpression {
-    val alias = getAliasForDescriptor(callableDescriptor)
-    if (alias != null) {
-        return alias
-    } else {
-        return value(callableDescriptor)
-    }
-}

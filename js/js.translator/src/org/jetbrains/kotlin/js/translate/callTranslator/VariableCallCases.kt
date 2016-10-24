@@ -54,7 +54,7 @@ object NativeVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
         val descriptor = resolvedCall.resultingDescriptor
         return if (descriptor is PropertyDescriptor && TranslationUtils.shouldAccessViaFunctions(descriptor)) {
-            val methodRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptorIfNeeded()) }
+            val methodRef = ReferenceTranslator.translateAsValueReference(getAccessDescriptorIfNeeded(), context)
             JsInvocation(methodRef, *additionalArguments.toTypedArray())
         }
         else {
@@ -77,7 +77,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
 
         val descriptor = resolvedCall.resultingDescriptor
         if (descriptor is PropertyDescriptor && TranslationUtils.shouldAccessViaFunctions(descriptor)) {
-            val methodRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptorIfNeeded()) }
+            val methodRef = ReferenceTranslator.translateAsValueReference(getAccessDescriptorIfNeeded(), context)
             return JsInvocation(methodRef, *additionalArguments.toTypedArray())
         }
 
@@ -119,7 +119,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.extensionReceiver(): JsExpression {
-        val functionRef = context.aliasOrValue(callableDescriptor) { context.getQualifiedReference(getAccessDescriptorIfNeeded()) }
+        val functionRef = ReferenceTranslator.translateAsValueReference(getAccessDescriptorIfNeeded(), context)
         return  JsInvocation(functionRef, extensionReceiver!!, *additionalArguments.toTypedArray())
     }
 

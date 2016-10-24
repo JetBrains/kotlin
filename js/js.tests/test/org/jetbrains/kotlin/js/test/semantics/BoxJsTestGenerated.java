@@ -3269,9 +3269,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/extensionProperty"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("externalExtensionProperty.kt")
+        public void testExternalExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/extensionProperty/externalExtensionProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inClass.kt")
         public void testInClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/extensionProperty/inClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateExtensionProperty.kt")
+        public void testPrivateExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/extensionProperty/privateExtensionProperty.kt");
             doTest(fileName);
         }
 
