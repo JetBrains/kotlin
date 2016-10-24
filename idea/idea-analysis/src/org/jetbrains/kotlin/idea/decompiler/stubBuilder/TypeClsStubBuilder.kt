@@ -92,10 +92,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val shouldBuildAsFunctionType = isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
-            val extension = annotations.any { annotation ->
-                annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType
-            }
-            createFunctionTypeStub(nullableTypeParent(parent, type), type, extension)
+            val (extensionAnnotations, notExtensionAnnotations) =
+                    annotations.partition { it.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+
+
+            createTypeAnnotationStubs(parent, notExtensionAnnotations)
+
+            val isExtension = extensionAnnotations.isNotEmpty()
+            createFunctionTypeStub(nullableTypeParent(parent, type), type, isExtension)
+
             return
         }
 
@@ -252,6 +257,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         when (typeParameterProto.variance) {
             Variance.IN -> modifiers.add(KtTokens.IN_KEYWORD)
             Variance.OUT -> modifiers.add(KtTokens.OUT_KEYWORD)
+            Variance.INV -> { /* do nothing */ }
+            null ->  { /* do nothing */ }
         }
         if (typeParameterProto.reified) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)

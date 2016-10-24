@@ -11,13 +11,13 @@ public class AnnotationsOnNullableTypes {
 
     fun returnArgument(): B<@A C?> = null!!
 
-    val lambdaType: @A() (() -> C)? = null       // TODO: Annotation is lost in stubs
+    val lambdaType: @A() (() -> C)? = null
 
     val lambdaParameter: (@A C?) -> C = null!!
 
     val lambdaReturnValue: () -> @A C? = null!!
 
-    val lambdaReceiver: @A C.() -> C = null!!   // TODO: Annotation is lost in stubs
+    val lambdaReceiver: @A C.() -> C = null!!
 }
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
