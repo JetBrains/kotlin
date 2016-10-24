@@ -28,7 +28,7 @@ class CallableUsageReplacementStrategy(
         private val replacement: ReplacementCode
 ) : UsageReplacementStrategy {
 
-    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
+    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.isReallySuccess()) return null

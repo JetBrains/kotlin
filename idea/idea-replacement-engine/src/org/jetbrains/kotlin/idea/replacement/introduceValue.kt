@@ -125,7 +125,9 @@ internal fun MutableReplacementCode.introduceValue(
                 appendFixedText("\n")
             }
 
-            appendExpression(mainExpression!!) //TODO: mainExpression == null
+            if (mainExpression != null) {
+                appendExpression(mainExpression)
+            }
 
             appendFixedText("}")
         }

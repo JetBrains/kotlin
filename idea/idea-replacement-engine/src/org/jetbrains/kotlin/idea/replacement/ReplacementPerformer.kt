@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.idea.replacement
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 internal abstract class ReplacementPerformer<TElement : KtElement>(
@@ -32,7 +36,7 @@ internal abstract class ReplacementPerformer<TElement : KtElement>(
 ) {
     protected val psiFactory = KtPsiFactory(elementToBeReplaced)
 
-    abstract fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): TElement
+    abstract fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): TElement?
 }
 
 internal class AnnotationEntryReplacementPerformer(
@@ -65,7 +69,7 @@ internal class ExpressionReplacementPerformer(
         expressionToBeReplaced: KtExpression
 ) : ReplacementPerformer<KtExpression>(replacement, expressionToBeReplaced) {
 
-    override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression {
+    override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression? {
         val insertedStatements = ArrayList<KtExpression>()
         for (statement in replacement.statementsBefore) {
             // copy the statement if it can get invalidated by findOrCreateBlockToInsertStatement()
@@ -79,21 +83,44 @@ internal class ExpressionReplacementPerformer(
             insertedStatements.add(inserted)
         }
 
-        val replaced = elementToBeReplaced.replace(replacement.mainExpression!!) //TODO: support null here
-
-        replacement.performPostInsertionActions(insertedStatements + replaced.singletonList())
-
-        var range = if (insertedStatements.isEmpty()) {
-            PsiChildRange.singleElement(replaced)
+        val replaced = if (replacement.mainExpression != null) {
+            elementToBeReplaced.replace(replacement.mainExpression!!)
         }
         else {
-            val statement = insertedStatements.first()
-            PsiChildRange(statement, replaced.parentsWithSelf.first { it.parent == statement.parent })
+            val bindingContext = elementToBeReplaced.analyze(BodyResolveMode.FULL)
+            val canDropElementToBeReplaced = !elementToBeReplaced.isUsedAsExpression(bindingContext)
+            if (canDropElementToBeReplaced) {
+                elementToBeReplaced.delete()
+                null
+            }
+            else {
+                elementToBeReplaced.replace(psiFactory.createExpression("Unit"))
+            }
+        }
+
+        replacement.performPostInsertionActions(insertedStatements + replaced.singletonOrEmptyList())
+
+        var range = if (replaced != null) {
+            if (insertedStatements.isEmpty()) {
+                PsiChildRange.singleElement(replaced)
+            }
+            else {
+                val statement = insertedStatements.first()
+                PsiChildRange(statement, replaced.parentsWithSelf.first { it.parent == statement.parent })
+            }
+        }
+        else {
+            if (insertedStatements.isEmpty()) {
+                PsiChildRange.EMPTY
+            }
+            else {
+                PsiChildRange(insertedStatements.first(), insertedStatements.last())
+            }
         }
 
         range = postProcessing(range)
 
-        return range.last as KtExpression //TODO: return value not correct!
+        return range.last as KtExpression? //TODO: return value not correct!
     }
 
     /**

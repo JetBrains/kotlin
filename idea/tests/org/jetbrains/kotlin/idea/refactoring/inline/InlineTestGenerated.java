@@ -43,6 +43,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
+        @TestMetadata("EmptyFunction.kt")
+        public void testEmptyFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/EmptyFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnitReturnType.kt")
+        public void testUnitReturnType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/UnitReturnType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("idea/testData/refactoring/inline/function/expressionBody")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

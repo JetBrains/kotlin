@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 interface UsageReplacementStrategy {
-    fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)?
+    fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)?
 }
 
 private val LOG = Logger.getInstance(UsageReplacementStrategy::class.java)

@@ -36,7 +36,7 @@ class ClassUsageReplacementStrategy(
 
     private val constructorReplacementStrategy = constructorReplacement?.let(::CallableUsageReplacementStrategy)
 
-    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
+    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
         if (usage !is KtNameReferenceExpression) return null
 
         constructorReplacementStrategy?.createReplacer(usage)?.let { return it }

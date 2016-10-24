@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -237,10 +238,10 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
 ): Boolean {
     val bindingContext = expressionToChange.analyze(BodyResolveMode.FULL)
 
-    // analyze the closest block which is not used as expression
+    // analyze the closest block whose value is not used
     val block = expressionToChange.parents
                         .filterIsInstance<KtBlockExpression>()
-                        .firstOrNull { bindingContext[BindingContext.USED_AS_EXPRESSION, it] != true }
+                        .firstOrNull { !it.isUsedAsExpression(bindingContext) }
                 ?: return true
 
     // we declare these keys locally to avoid possible race-condition problems if this code is executed in 2 threads simultaneously
@@ -386,7 +387,7 @@ private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolea
 
         is KtContainerNode -> {
             val containerExpression = parent.parent as KtExpression
-            return containerExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, containerExpression] == true
+            return containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
         }
 
         else -> return true

@@ -1,0 +1,29 @@
+class C {
+
+    fun <T> doIt(p: () -> T): T = TODO()
+
+    fun g(p: String?, other: C) {
+        println(1)
+        println(2)
+
+        p?.let {
+            println(3)
+            println(4)
+        }
+
+        if (other != null) {
+            println(5)
+            println(6)
+        }
+    }
+
+    fun h() {
+        println(7)
+        println(8)
+    }
+
+    fun x() = doIt {
+        println(9)
+        println(10)
+    }
+}

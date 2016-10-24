@@ -71,19 +71,13 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
         val replacement = if (element.hasBlockBody()) {
             bodyCopy as KtBlockExpression
             val statements = bodyCopy.statements
-            if (statements.isEmpty()) {
-                //TODO
-                throw UnsupportedOperationException()
+            //TODO: check no other return's!
+            val lastReturn = statements.lastOrNull() as? KtReturnExpression
+            if (lastReturn != null) {
+                replacementBuilder.buildReplacementCode(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
             }
             else {
-                //TODO: check no other return's
-                val lastReturn = statements.last() as? KtReturnExpression
-                if (lastReturn == null) {
-                    //TODO
-                    throw UnsupportedOperationException()
-                }
-
-                replacementBuilder.buildReplacementCode(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
+                replacementBuilder.buildReplacementCode(null, statements, ::analyzeBodyCopy)
             }
         }
         else {

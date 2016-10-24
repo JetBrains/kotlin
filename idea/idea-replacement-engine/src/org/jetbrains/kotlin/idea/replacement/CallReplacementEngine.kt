@@ -56,7 +56,7 @@ class CallReplacementEngine<TCallElement : KtElement>(
     private val project = nameExpression.project
     private val psiFactory = KtPsiFactory(project)
 
-    fun performReplacement(): KtElement {
+    fun performReplacement(): KtElement? {
         val descriptor = resolvedCall.resultingDescriptor
         val file = nameExpression.getContainingKtFile()
 
@@ -128,7 +128,9 @@ class CallReplacementEngine<TCallElement : KtElement>(
 
         return replacementPerformer.doIt(postProcessing = { range ->
             val newRange = postProcessInsertedCode(range)
-            commentSaver.restore(newRange)
+            if (!newRange.isEmpty) {
+                commentSaver.restore(newRange)
+            }
             newRange
         })
     }
@@ -356,6 +358,7 @@ class CallReplacementEngine<TCallElement : KtElement>(
 
     private fun postProcessInsertedCode(range: PsiChildRange): PsiChildRange {
         val elements = range.filterIsInstance<KtElement>().toList()
+        if (elements.isEmpty()) return PsiChildRange.EMPTY
 
         elements.forEach {
             introduceNamedArguments(it)
