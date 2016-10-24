@@ -85,7 +85,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
     override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {
         val commentSaver = CommentSaver(element)
 
-        val (@Suppress("UNUSED_VARIABLE") baseTypeRef, baseType, singleFunction) = extractData(element)!!
+        val (baseTypeRef, baseType, singleFunction) = extractData(element)!!
 
         val returnSaver = ReturnSaver(singleFunction)
 
@@ -141,7 +141,8 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             }
         }
         else {
-            ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, callee.endOffset)
+            val endOffset = (callee.parent as? KtCallExpression)?.typeArgumentList?.endOffset ?: callee.endOffset
+            ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, endOffset)
         }
     }
 
