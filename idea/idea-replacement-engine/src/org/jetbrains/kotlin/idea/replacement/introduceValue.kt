@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 internal fun MutableReplacementCode.introduceValue(
         value: KtExpression,
@@ -69,20 +72,8 @@ internal fun MutableReplacementCode.introduceValue(
     fun isNameUsed(name: String) = collectNameUsages(this, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
 
     if (!safeCall) {
-        val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
-
         if (usages.isNotEmpty()) {
-            var explicitType: KotlinType? = null
-            if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                val valueTypeWithoutExpectedType = value.computeTypeInContext(
-                        resolutionScope,
-                        expressionToBeReplaced,
-                        dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
-                )
-                if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
-                    explicitType = valueType
-                }
-            }
+            val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
 
             val name = suggestName { name ->
                 resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
@@ -90,8 +81,12 @@ internal fun MutableReplacementCode.introduceValue(
 
             val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
             statementsBefore.add(0, declaration)
+
+            val explicitType = valueType?.check {
+                variableNeedsExplicitType(value, valueType, expressionToBeReplaced, resolutionScope, bindingContext)
+            }
             if (explicitType != null) {
-                addPostInsertionAction(declaration) { it.setType(explicitType!!) }
+                addPostInsertionAction(declaration) { it.setType(explicitType) }
             }
 
             replaceUsages(name)
@@ -125,6 +120,22 @@ internal fun MutableReplacementCode.introduceValue(
         }
         statementsBefore.clear()
     }
+}
+
+private fun variableNeedsExplicitType(
+        initializer: KtExpression,
+        initializerType: KotlinType,
+        context: KtExpression,
+        resolutionScope: LexicalScope,
+        bindingContext: BindingContext
+): Boolean {
+    if (ErrorUtils.containsErrorType(initializerType)) return false
+    val valueTypeWithoutExpectedType = initializer.computeTypeInContext(
+            resolutionScope,
+            context,
+            dataFlowInfo = bindingContext.getDataFlowInfo(context)
+    )
+    return valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)
 }
 
 private fun collectNameUsages(scope: MutableReplacementCode, name: String): List<KtSimpleNameExpression> {
