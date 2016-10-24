@@ -59,6 +59,21 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/asJava/lightClasses/compilationErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompilationErrors extends AbstractCompilerLightClassTest {
+        public void testAllFilesPresentInCompilationErrors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("TopLevelDestructuring.kt")
+        public void testTopLevelDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/TopLevelDestructuring.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/delegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
