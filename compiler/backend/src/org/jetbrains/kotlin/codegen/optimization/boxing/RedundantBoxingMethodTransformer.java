@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -114,7 +115,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             if (CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
                 @Override
                 public Boolean invoke(BasicValue input) {
-                    if (input == BasicValue.UNINITIALIZED_VALUE) return false;
+                    if (input == StrictBasicValue.UNINITIALIZED_VALUE) return false;
                     return input == null ||
                            !(input instanceof BoxedBasicValue) ||
                            !((BoxedBasicValue) input).isSafeToRemove() ||

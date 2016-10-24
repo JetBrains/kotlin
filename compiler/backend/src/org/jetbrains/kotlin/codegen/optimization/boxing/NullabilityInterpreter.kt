@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import org.jetbrains.kotlin.codegen.optimization.common.BasicValueWrapper
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -31,21 +31,21 @@ class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
     override fun isExactValue(value: BasicValue) = super.isExactValue(value) || value is NotNullBasicValue
 
     override fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?) =
-            NotNullBasicValue(BasicValue(type))
+            NotNullBasicValue(type)
 }
 
 private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
     when (insn.opcode) {
         Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW ->
             if (value?.type?.sort == Type.OBJECT || value?.type?.sort == Type.ARRAY)
-                NotNullBasicValue(value)
+                NotNullBasicValue(value.type)
             else
                 value
 
         else -> value
     }
 
-class NotNullBasicValue(wrappedValue: BasicValue?) : BasicValueWrapper(wrappedValue) {
+class NotNullBasicValue(type: Type?) : StrictBasicValue(type) {
     override fun equals(other: Any?): Boolean = other is NotNullBasicValue
     // We do not differ not-nullable values, so we should always return the same hashCode
     // Actually it doesn't really matter because analyzer is not supposed to store values in hashtables
