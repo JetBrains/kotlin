@@ -34,7 +34,6 @@ class KotlinWordSelectionFilter : Condition<PsiElement>{
         if (elementType == KtTokens.REGULAR_STRING_PART || elementType == KtTokens.ESCAPE_SEQUENCE) return true
 
         if (e is KtContainerNode) return false
-        if (e.parent.firstChild.nextSibling == null && e.parent !is KtContainerNode) return false // skip nodes with the same range as their parent
 
         return when (e.node.elementType) {
             BLOCK, KDocElementTypes.KDOC_SECTION -> false
