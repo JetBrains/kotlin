@@ -956,6 +956,19 @@ class ArraysTest {
         assertEquals(listOf(2), arrayOf("a", null, "test").mapIndexedNotNull { index, it -> it?.run { if (index != 0) length / index else null  } })
     }
 
+    @test fun flattenArray() {
+        val arr1: Array<Array<Int>> = arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6))
+        val arr2: Array<out Array<Int>> = arr1
+        val arr3: Array<out Array<out Int>> = arr1
+        val arr4: Array<Array<out Int>> = arr1 as Array<Array<out Int>>
+
+        val expected = listOf(1, 2, 3, 4, 5, 6)
+        assertEquals(expected, arr1.flatten())
+        assertEquals(expected, arr2.flatten())
+        assertEquals(expected, arr3.flatten())
+        assertEquals(expected, arr4.flatten())
+    }
+
     @test fun asListPrimitives() {
         // Array of primitives
         val arr = intArrayOf(1, 2, 3, 4, 2, 5)
