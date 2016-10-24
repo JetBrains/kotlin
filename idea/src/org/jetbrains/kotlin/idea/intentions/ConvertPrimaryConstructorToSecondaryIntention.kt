@@ -62,10 +62,10 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         val commentSaver = CommentSaver(element)
         val initializerMap = mutableMapOf<KtProperty, String>()
         for (property in klass.getProperties()) {
+            if (property.isIndependent(klass, context)) continue
             if (property.typeReference == null) {
                 SpecifyTypeExplicitlyIntention().applyTo(property, editor)
             }
-            if (property.isIndependent(klass, context)) continue
             val initializer = property.initializer!!
             initializerMap[property] = initializer.text
             initializer.delete()

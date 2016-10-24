@@ -6,8 +6,8 @@ class My {
         println(y)
     }
 
-    val x: Int = 1
+    val x = 1
 
-    val y: Int = 2
+    val y = 2
 
 }
