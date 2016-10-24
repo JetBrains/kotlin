@@ -6,6 +6,6 @@ fun foo(x: Int) {
             this.y = y
         }
 
-        val z: Int = x
+        val z = x
     }
 }
