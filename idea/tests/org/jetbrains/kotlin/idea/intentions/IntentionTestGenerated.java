@@ -4537,6 +4537,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("initWithoutAssignments.kt")
+        public void testInitWithoutAssignments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/initWithoutAssignments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("paramsAndProperties.kt")
         public void testParamsAndProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/paramsAndProperties.kt");

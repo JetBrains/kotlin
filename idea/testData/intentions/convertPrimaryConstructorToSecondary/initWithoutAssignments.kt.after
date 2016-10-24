@@ -1,0 +1,13 @@
+fun println(arg: Int) = arg
+
+class My {
+    constructor() {
+        println(x)
+        println(y)
+    }
+
+    val x: Int = 1
+
+    val y: Int = 2
+
+}

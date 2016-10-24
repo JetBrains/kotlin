@@ -89,32 +89,32 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                             superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))
                         }
                     }
-                    if (element.valueParameters.firstOrNull { it.hasValOrVar() } != null || initializerMap.isNotEmpty()) {
-                        val valueParameterInitializers = element.valueParameters.filter { it.hasValOrVar() }.joinToString(separator = "\n") {
+                    val valueParameterInitializers = element.valueParameters.filter { it.hasValOrVar() }.joinToString(separator = "\n") {
+                        val name = it.name!!
+                        "this.$name = $name"
+                    }
+                    val classBodyInitializers = klass.declarations.filter {
+                        (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
+                    }.joinToString(separator = "\n") {
+                        if (it is KtProperty) {
                             val name = it.name!!
-                            "this.$name = $name"
-                        }
-                        val classBodyInitializers = klass.declarations.filter {
-                            (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
-                        }.joinToString(separator = "\n") {
-                            if (it is KtProperty) {
-                                val name = it.name!!
-                                val text = initializerMap[it]
-                                if (text != null) {
-                                    "${THIS_KEYWORD.value}.$name = $text"
-                                }
-                                else {
-                                    ""
-                                }
+                            val text = initializerMap[it]
+                            if (text != null) {
+                                "${THIS_KEYWORD.value}.$name = $text"
                             }
                             else {
-                                ((it as KtAnonymousInitializer).body as? KtBlockExpression)?.statements?.joinToString(separator = "\n") {
-                                    it.text
-                                } ?: ""
+                                ""
                             }
                         }
-                        blockBody(listOf(valueParameterInitializers, classBodyInitializers)
-                                          .filter(String::isNotEmpty).joinToString(separator = "\n"))
+                        else {
+                            ((it as KtAnonymousInitializer).body as? KtBlockExpression)?.statements?.joinToString(separator = "\n") {
+                                it.text
+                            } ?: ""
+                        }
+                    }
+                    val allInitializers = listOf(valueParameterInitializers, classBodyInitializers).filter(String::isNotEmpty)
+                    if (allInitializers.isNotEmpty()) {
+                        blockBody(allInitializers.joinToString(separator = "\n"))
                     }
                 }.asString()
         )
