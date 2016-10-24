@@ -51,6 +51,14 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
 
     public void testDocComment() { doTest(); }
 
+    public void testDocCommentOneLine() { doTest(); }
+
+    public void testDocCommentTagName() { doTest(); }
+
+    public void testDocCommentTagText() { doTest(); }
+
+    public void testDocCommentTagLink() { doTest(); }
+
     public void testFunctionWithLineCommentBefore() { doTest(); }
 
     public void testFunctionWithLineCommentAfter() { doTest(); }
