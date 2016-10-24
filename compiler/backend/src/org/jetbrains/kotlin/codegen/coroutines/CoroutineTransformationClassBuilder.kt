@@ -20,6 +20,7 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.analyzeLiveness
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
@@ -32,7 +33,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 class CoroutineTransformationClassBuilder(private val delegate: ClassBuilder) : DelegatingClassBuilder() {
     override fun getDelegate() = delegate
@@ -231,7 +231,7 @@ class CoroutineTransformerMethodVisitor(
                             .map { Pair(it, frame.getLocal(it)) }
                             .filter {
                                 val (index, value) = it
-                                value != BasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index)
+                                value != StrictBasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index)
                             }
 
             for ((index, basicValue) in variablesToSpill) {

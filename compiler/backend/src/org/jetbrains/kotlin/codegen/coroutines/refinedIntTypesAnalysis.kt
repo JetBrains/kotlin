@@ -153,7 +153,7 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
                 "int type expected, but ${current.getLocal(it.index)?.type} was found in basic frames"
             }
 
-            current.setLocal(it.index, BasicValue(it.value))
+            current.setLocal(it.index, StrictBasicValue(it.value))
         }
 
         current

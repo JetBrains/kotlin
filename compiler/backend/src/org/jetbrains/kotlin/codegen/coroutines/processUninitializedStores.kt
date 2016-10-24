@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.optimization.common.CustomFramesMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
+import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -114,7 +115,7 @@ internal fun processUninitializedStores(methodNode: MethodNode) {
 
 private class UninitializedNewValue(
         val newInsn: TypeInsnNode, val internalName: String
-) : BasicValue(Type.getObjectType(internalName)) {
+) : StrictBasicValue(Type.getObjectType(internalName)) {
     override fun toString() = "UninitializedNewValue(internalName='$internalName')"
 }
 
@@ -129,7 +130,7 @@ private class UninitializedNewValueFrame(nLocals: Int, nStack: Int) : Frame<Basi
             val value = pop() as UninitializedNewValue
 
             // uninitialized value become initialized after <init> call
-            push(BasicValue(value.type))
+            push(StrictBasicValue(value.type))
         }
     }
 }
@@ -175,14 +176,14 @@ private class UninitializedNewValueMarkerInterpreter : OptimizationBasicInterpre
 
     override fun merge(v: BasicValue, w: BasicValue): BasicValue {
         if (v === w) return v
-        if (v === BasicValue.UNINITIALIZED_VALUE || w === BasicValue.UNINITIALIZED_VALUE) {
-            return BasicValue.UNINITIALIZED_VALUE
+        if (v === StrictBasicValue.UNINITIALIZED_VALUE || w === StrictBasicValue.UNINITIALIZED_VALUE) {
+            return StrictBasicValue.UNINITIALIZED_VALUE
         }
 
         if (v is UninitializedNewValue || w is UninitializedNewValue) {
             if ((v as? UninitializedNewValue)?.newInsn !== (w as? UninitializedNewValue)?.newInsn) {
                 // Merge of two different ANEW result is possible, but such values should not be used further
-                return BasicValue.UNINITIALIZED_VALUE
+                return StrictBasicValue.UNINITIALIZED_VALUE
             }
 
             return v
