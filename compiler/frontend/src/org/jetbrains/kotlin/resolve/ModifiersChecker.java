@@ -206,7 +206,7 @@ public class ModifiersChecker {
             for (KtDestructuringDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
                 ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null, languageVersionSettings);
-                UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace, /* allowSingleUnderscore = */ true);
+                UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace, languageVersionSettings, /* allowSingleUnderscore = */ true);
             }
         }
 

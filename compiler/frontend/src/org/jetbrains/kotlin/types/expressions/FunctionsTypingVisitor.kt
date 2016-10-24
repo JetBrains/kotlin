@@ -146,7 +146,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         expression.valueParameters.forEach {
             components.identifierChecker.checkDeclaration(it, context.trace)
-            UnderscoreChecker.checkNamed(it, context.trace, allowSingleUnderscore = true)
+            UnderscoreChecker.checkNamed(it, context.trace, components.languageVersionSettings, allowSingleUnderscore = true)
         }
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
