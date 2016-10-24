@@ -17,7 +17,7 @@ public class AnnotationsOnNullableTypes {
 
     val lambdaReturnValue: () -> @A C? = null!!
 
-    val lambdaReceiver: @A C.() -> C = null!!   // TODO: Annotation is lost in stubs
+    val lambdaReceiver: @A C?.() -> C = null!!
 }
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)

@@ -31,8 +31,9 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=C]
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=C]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -54,11 +55,6 @@ PsiJetFileStubImpl[package=]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=A]
           NULLABLE_TYPE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
