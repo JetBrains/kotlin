@@ -313,7 +313,11 @@ public class DescriptorResolver {
         Name parameterName;
 
         if (destructuringDeclaration == null) {
-            parameterName = UnderscoreUtilKt.isSingleUnderscore(valueParameter)
+            // NB: val/var for parameter is only allowed in primary constructors where single underscore names are still prohibited.
+            // The problem with val/var is that when lazy resolve try to find their descriptor, it searches through the member scope
+            // of containing class where, it can not find a descriptor with special name.
+            // Thus, to preserve behavior, we don't use a special name for val/var.
+            parameterName = !valueParameter.hasValOrVar() && UnderscoreUtilKt.isSingleUnderscore(valueParameter)
                             ? Name.special("<anonymous parameter " + index + ">")
                             : KtPsiUtil.safeName(valueParameter.getName());
         }

@@ -19,7 +19,22 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: _<
 
     val <!UNDERSCORE_IS_RESERVED!>_<!> = 56
 
+    fun localFun(<!UNDERSCORE_IS_RESERVED!>_<!>: String) = 1
+
     <!UNDERSCORE_IS_RESERVED!>__<!>@ return if (y != null) __(____, y) else __(`_`, ______)
+}
+
+
+class A1(val <!UNDERSCORE_IS_RESERVED, UNDERSCORE_IS_RESERVED!>_<!>: String)
+class A2(<!UNDERSCORE_IS_RESERVED!>_<!>: String) {
+    class B {
+        typealias <!UNDERSCORE_IS_RESERVED!>_<!> = CharSequence
+    }
+    val <!UNDERSCORE_IS_RESERVED!>_<!>: Int = 1
+
+    fun <!UNDERSCORE_IS_RESERVED!>_<!>() {}
+
+    fun foo(<!UNDERSCORE_IS_RESERVED!>_<!>: Double) {}
 }
 
 // one underscore parameters for named function are still prohibited
