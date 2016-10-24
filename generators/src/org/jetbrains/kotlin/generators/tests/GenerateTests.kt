@@ -931,7 +931,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("local"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("local", "compilationErrors"), pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

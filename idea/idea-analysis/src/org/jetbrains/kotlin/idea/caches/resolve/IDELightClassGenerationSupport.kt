@@ -282,8 +282,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                         ForceResolveUtil.forceResolveAllContents(descriptor)
                     }
                 }
-                else if (declaration is KtClassOrObject || declaration is KtTypeAlias) {
-                    // Do nothing: we are not interested in classes or type aliases
+                else if (declaration is KtClassOrObject || declaration is KtTypeAlias || declaration is KtDestructuringDeclaration) {
+                    // Do nothing: we are not interested in classes or type aliases,
+                    // and all destructuring declarations are erroneous at top level
                 }
                 else {
                     LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.name + "\n" + file.text)
