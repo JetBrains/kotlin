@@ -4084,6 +4084,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nestedLambda.kt")
+        public void testNestedLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/nestedLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedLambdaWithReceiver.kt")
+        public void testNestedLambdaWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/nestedLambdaWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullable.kt")
         public void testNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/nullable.kt");
