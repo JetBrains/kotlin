@@ -7,7 +7,7 @@ fun box(): String {
     try {
         if ((a!! + 3) == 3) return "fail1"
     }
-    catch (e: Throwable) {
+    catch (e: NullPointerException) {
         return "OK"
     }
     return "fail2"
