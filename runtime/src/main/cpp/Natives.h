@@ -41,6 +41,7 @@ extern "C" {
 #endif
 
 // TODO: those must be compiler intrinsics afterwards.
+  // Arrays.kt
 ArrayHeader* Kotlin_ByteArray_clone(const ArrayHeader* obj);
 KByte Kotlin_ByteArray_get(const ArrayHeader* obj, KInt index);
 void Kotlin_ByteArray_set(ArrayHeader* obj, KInt index, KByte value);
@@ -56,6 +57,10 @@ KInt Kotlin_IntArray_get(const ArrayHeader* obj, KInt index);
 void Kotlin_IntArray_set(ArrayHeader* obj, KInt index, KInt value);
 KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* obj);
 
+// io/Console.kt
+void Kotlin_io_Console_print(const ArrayHeader* obj);
+
+// String.kt
 KInt Kotlin_String_compareTo(const ArrayHeader* obj, const ArrayHeader* other);
 KChar Kotlin_String_get(const ArrayHeader* obj, KInt index);
 ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array);

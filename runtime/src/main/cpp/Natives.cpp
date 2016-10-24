@@ -1,4 +1,5 @@
 #include <string.h>
+#include <unistd.h>
 
 #include "Assert.h"
 #include "Exceptions.h"
@@ -8,6 +9,7 @@
 
 extern "C" {
 
+// Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
 KByte Kotlin_ByteArray_get(const ArrayHeader* obj, KInt index) {
   if (static_cast<uint32_t>(index) >= obj->count_) {
@@ -93,6 +95,14 @@ KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* array) {
   return array->count_;
 }
 
+// io/Console.kt
+void Kotlin_io_Console_print(const ArrayHeader* array) {
+  RuntimeAssert(array->type_info_ == theStringTypeInfo, "Must use a string");
+  // TODO: system stdout must be aware about UTF-8.
+  write(STDOUT_FILENO, ByteArrayAddressOfElementAt(array, 0), array->count_);
+}
+
+// String.kt
 KInt Kotlin_String_compareTo(const ArrayHeader* obj, const ArrayHeader* other) {
   return memcmp(ByteArrayAddressOfElementAt(obj, 0),
                 ByteArrayAddressOfElementAt(other, 0),
