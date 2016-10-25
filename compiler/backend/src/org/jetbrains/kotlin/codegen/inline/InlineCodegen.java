@@ -325,7 +325,7 @@ public class InlineCodegen extends CallGenerator {
         assert callableDescriptor instanceof DeserializedCallableMemberDescriptor : "Not a deserialized function or proper: " + callableDescriptor;
 
         KotlinTypeMapper.ContainingClassesInfo containingClasses =
-                KotlinTypeMapper.getContainingClassesForDeserializedCallable((DeserializedCallableMemberDescriptor) callableDescriptor);
+                state.getTypeMapper().getContainingClassesForDeserializedCallable((DeserializedCallableMemberDescriptor) callableDescriptor);
 
         final ClassId containerId = containingClasses.getImplClassId();
 
