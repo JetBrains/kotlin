@@ -98,7 +98,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         val implementing = mapValues(clazz.interfaces) { convertFqName(it) }
 
         val fields = mapValues<FieldNode, JCTree>(clazz.fields) { convertField(it) }
-        val methods = mapValues<MethodNode, JCTree>(clazz.methods) { convertMethod(it, simpleName) }
+        val methods = mapValues<MethodNode, JCTree>(clazz.methods) { convertMethod(it, clazz, simpleName) }
         val nestedClasses = mapValues<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
             if (innerClass.outerName != clazz.name) return@mapValues null
             val innerClassNode = classes.firstOrNull { it.name == innerClass.name } ?: return@mapValues null
@@ -122,7 +122,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         return treeMaker.VarDef(modifiers, name, type, initializer)
     }
 
-    private fun convertMethod(method: MethodNode, containingClassSimpleName: Name): JCMethodDecl? {
+    private fun convertMethod(method: MethodNode, containingClass: ClassNode, containingClassSimpleName: Name): JCMethodDecl? {
         if (isSynthetic(method.access)) return null
 
         val modifiers = convertModifiers(method.access, ElementKind.METHOD, method.visibleAnnotations, method.invisibleAnnotations)
@@ -132,9 +132,10 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         val receiverParameter = null
 
         val returnType = Type.getReturnType(method.desc)
-        val returnTypeExpr = convertFqName(returnType.className)
+        val returnTypeExpr = if (isConstructor) null else convertFqName(returnType.className)
 
         val parametersInfo = method.getParametersInfo()
+        @Suppress("NAME_SHADOWING")
         val parameters = mapValues(parametersInfo) { info ->
             val modifiers = convertModifiers(info.access, ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
             val name = name(info.name)
@@ -148,7 +149,20 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
 
         val body = if (defaultValue != null) {
             null
-        } else if (isConstructor || returnType == Type.VOID_TYPE) {
+        } else if (isConstructor) {
+            var statements = JavacList.nil<JCStatement>()
+
+            for (field in containingClass.fields) {
+                if ((field.access and Opcodes.ACC_FINAL) == 0) continue
+                val type = Type.getType(field.desc)
+                val assignment = treeMaker.Assign(
+                        convertFqName("this.${field.name}"),
+                        convertLiteralExpression(getDefaultValue(type)))
+                statements = statements.append(treeMaker.Exec(assignment))
+            }
+
+            treeMaker.Block(0, statements)
+        } else if (returnType == Type.VOID_TYPE) {
             treeMaker.Block(0, JavacList.nil())
         } else {
             val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(returnType)))
