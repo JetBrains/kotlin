@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
+import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -73,6 +74,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final GenerationState.GenerateClassFilter filter;
     private final JvmRuntimeTypes runtimeTypes;
     private final JvmFileClassesProvider fileClassesProvider;
+    private final TypeMappingConfiguration<Type> typeMappingConfiguration;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -80,6 +82,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.filter = state.getGenerateDeclaredClassFilter();
         this.runtimeTypes = state.getJvmRuntimeTypes();
         this.fileClassesProvider = state.getFileClassesProvider();
+        this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
     }
 
     @NotNull
@@ -224,8 +227,12 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
         Name descriptorName = safeIdentifier(classDescriptor.getName());
-        return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? descriptorName
-                        .asString() : base + '/' + descriptorName : base + '$' + descriptorName;
+        if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
+            return base.isEmpty() ? descriptorName.asString() : base + '/' + descriptorName;
+        }
+        else {
+            return typeMappingConfiguration.getInnerClassNameFactory().invoke(base, descriptorName.asString());
+        }
     }
 
     @Override

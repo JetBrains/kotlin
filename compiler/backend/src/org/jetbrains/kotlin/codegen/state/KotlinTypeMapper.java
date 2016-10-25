@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function2;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,10 +98,30 @@ public class KotlinTypeMapper {
     private final String moduleName;
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
+        private final Function2<String, String, String> defaultClassNameFactory
+                = TypeMappingConfiguration.Companion.getDEFAULT_INNER_CLASS_NAME_FACTORY();
+
+        private final Function2<String, String, String> innerClassNameFactory = new Function2<String, String, String>() {
+            @Override
+            public String invoke(String outer, String inner) {
+                if (classBuilderMode == ClassBuilderMode.KAPT3) {
+                    return outer + '/' + inner;
+                }
+
+                return defaultClassNameFactory.invoke(outer, inner);
+            }
+        };
+
         @NotNull
         @Override
         public KotlinType commonSupertype(@NotNull Collection<KotlinType> types) {
             return CommonSupertypes.commonSupertype(types);
+        }
+
+        @NotNull
+        @Override
+        public Function2<String, String, String> getInnerClassNameFactory() {
+            return innerClassNameFactory;
         }
 
         @Nullable
@@ -129,6 +150,11 @@ public class KotlinTypeMapper {
         this.fileClassesProvider = fileClassesProvider;
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
+    }
+
+    @NotNull
+    public TypeMappingConfiguration<Type> getTypeMappingConfiguration() {
+        return typeMappingConfiguration;
     }
 
     @NotNull
@@ -238,7 +264,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public static ContainingClassesInfo getContainingClassesForDeserializedCallable(
+    public ContainingClassesInfo getContainingClassesForDeserializedCallable(
             @NotNull DeserializedCallableMemberDescriptor deserializedDescriptor
     ) {
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
@@ -257,12 +283,14 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private static ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
+    private ClassId getContainerClassIdForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
         if (isInterface(classDescriptor)) {
             FqName relativeClassName = classId.getRelativeClassName();
             //TODO test nested trait fun inlining
-            classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
+            String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory()
+                    .invoke(relativeClassName.shortName().asString(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
+            classId = new ClassId(classId.getPackageFqName(), Name.identifier(defaultImplsClassName));
         }
         return classId;
     }
@@ -422,7 +450,9 @@ public class KotlinTypeMapper {
 
     @NotNull
     public Type mapDefaultImpls(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.DEFAULT_IMPLS_SUFFIX);
+        String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory().invoke(
+                mapType(descriptor).getInternalName(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
+        return Type.getObjectType(defaultImplsClassName);
     }
 
     @NotNull

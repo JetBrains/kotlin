@@ -33,6 +33,11 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
+
+    /**
+     * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
+     * This is false for KAPT3 mode.
+     */
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
 
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
