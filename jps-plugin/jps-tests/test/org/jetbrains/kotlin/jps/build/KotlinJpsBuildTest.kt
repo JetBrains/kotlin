@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -191,6 +192,13 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     annotation class WorkingDir(val name: String)
 
+    enum class LibraryDependency {
+        NONE,
+        JVM_MOCK_RUNTIME,
+        JVM_FULL_RUNTIME,
+        JS_STDLIB,
+    }
+
     override fun setUp() {
         super.setUp()
         val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
@@ -209,25 +217,30 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     override fun doGetProjectDir(): File = workDir
 
-    private fun initProject() {
+    private fun initProject(libraryDependency: LibraryDependency = NONE) {
         addJdk(JDK_NAME)
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
+
+        when (libraryDependency) {
+            NONE -> {}
+            JVM_MOCK_RUNTIME -> addKotlinMockRuntimeDependency()
+            JVM_FULL_RUNTIME -> addKotlinRuntimeDependency()
+            JS_STDLIB -> addKotlinJavaScriptStdlibDependency()
+        }
     }
 
     fun doTest() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         makeAll().assertSuccessful()
     }
 
     fun doTestWithRuntime() {
-        initProject()
-        addKotlinRuntimeDependency()
+        initProject(JVM_FULL_RUNTIME)
         makeAll().assertSuccessful()
     }
 
     fun doTestWithKotlinJavaScriptLibrary() {
-        initProject()
-        addKotlinJavaScriptStdlibDependency()
+        initProject(JS_STDLIB)
         createKotlinJavaScriptLibraryArchive()
         addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         makeAll().assertSuccessful()
@@ -261,8 +274,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testKotlinJavaScriptProject() {
-        initProject()
-        addKotlinJavaScriptStdlibDependency()
+        initProject(JS_STDLIB)
         makeAll().assertSuccessful()
 
         assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
@@ -270,8 +282,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testKotlinJavaScriptProjectWithTwoModules() {
-        initProject()
-        addKotlinJavaScriptStdlibDependency()
+        initProject(JS_STDLIB)
         makeAll().assertSuccessful()
 
         assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
@@ -310,8 +321,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
-        initProject()
-        addKotlinJavaScriptStdlibDependency()
+        initProject(JS_STDLIB)
         addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
         makeAll().assertSuccessful()
 
@@ -341,8 +351,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testKotlinJavaScriptProjectWithLibraryAndErrors() {
-        initProject()
-        addKotlinJavaScriptStdlibDependency()
+        initProject(JS_STDLIB)
         createKotlinJavaScriptLibraryArchive()
         addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         makeAll().assertFailed()
@@ -506,7 +515,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCircularDependenciesDifferentPackages() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
 
         // Check that outputs are located properly
@@ -520,7 +529,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCircularDependenciesSamePackage() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertSuccessful()
 
@@ -535,7 +544,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCircularDependenciesSamePackageWithTests() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertSuccessful()
 
@@ -550,14 +559,14 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testInternalFromAnotherModule() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertFailed()
         result.checkErrors()
     }
 
     fun testInternalFromSpecialRelatedModule() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         makeAll().assertSuccessful()
 
         val classpath = listOf("out/production/module1", "out/test/module2").map { File(workDir, it).toURI().toURL() }.toTypedArray()
@@ -566,21 +575,21 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCircularDependenciesInternalFromAnotherModule() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertFailed()
         result.checkErrors()
     }
 
     fun testCircularDependenciesWrongInternalFromTests() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertFailed()
         result.checkErrors()
     }
 
     fun testCircularDependencyWithReferenceToOldVersionLib() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
 
         val libraryJar = MockLibraryUtil.compileLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib", false, false)
 
@@ -604,8 +613,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testAccessToInternalInProductionFromTests() {
-        initProject()
-
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertSuccessful()
     }
@@ -651,7 +659,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testCancelLongKotlinCompilation() {
         generateLongKotlinFile("Foo.kt", "foo", "Foo")
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
 
         val INITIAL_DELAY = 2000
 
@@ -675,7 +683,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCancelKotlinCompilation() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         makeAll().assertSuccessful()
 
         val module = myProject.modules.get(0)
@@ -704,7 +712,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testFileDoesNotExistWarning() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
 
         AbstractKotlinJpsBuildTestCase.addDependency(
                 JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "LibraryWithBadRoots",
@@ -729,7 +737,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testCodeInKotlinPackage() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
 
         val result = makeAll()
         result.assertFailed()
@@ -739,7 +747,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testDoNotCreateUselessKotlinIncrementalCaches() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         makeAll().assertSuccessful()
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
@@ -748,7 +756,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testDoNotCreateUselessKotlinIncrementalCachesForDependentTargets() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         makeAll().assertSuccessful()
 
         checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
@@ -759,7 +767,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testKotlinProjectWithEmptyProductionOutputDir() {
-        initProject()
+        initProject(JVM_MOCK_RUNTIME)
         val result = makeAll()
         result.assertFailed()
         result.checkErrors()
