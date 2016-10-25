@@ -182,7 +182,13 @@ public class FunctionCodegen {
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);
 
-        generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignatureSkipGeneric(functionDescriptor));
+        JvmMethodSignature mappedSignature = typeMapper.mapSignatureSkipGeneric(functionDescriptor);
+
+        if (state.getClassBuilderMode().generateMethodParameters) {
+            generateParameters(functionDescriptor, mv, mappedSignature);
+        }
+
+        generateParameterAnnotations(functionDescriptor, mv, mappedSignature);
 
         generateBridges(functionDescriptor);
 
@@ -236,6 +242,27 @@ public class FunctionCodegen {
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        }
+    }
+
+    private void generateParameters(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature
+    ) {
+        Iterator<ValueParameterDescriptor> iterator = functionDescriptor.getValueParameters().iterator();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
+
+        for (JvmMethodParameterSignature parameterSignature : kotlinParameterTypes) {
+            JvmMethodParameterKind kind = parameterSignature.getKind();
+
+            if (kind == JvmMethodParameterKind.VALUE) {
+                ValueParameterDescriptor parameter = iterator.next();
+                mv.visitParameter(parameter.getName().asString(), 0);
+            }
+            else if (kind == JvmMethodParameterKind.RECEIVER) {
+                mv.visitParameter("$receiver", 0);
+            }
         }
     }
 
