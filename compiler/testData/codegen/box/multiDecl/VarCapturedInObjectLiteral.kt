@@ -1,3 +1,5 @@
+// TODO: enable JS backend when issue KT-14535 is fixed
+// TARGET_BACKEND: JVM
 class A {
     operator fun component1() = 1
     operator fun component2() = 2

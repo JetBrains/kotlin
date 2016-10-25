@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
@@ -39,8 +42,14 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val lambda = invokingContext.getFunctionObject(descriptor)
         val functionContext = invokingContext.newFunctionBodyWithUsageTracker(lambda, descriptor)
-
         FunctionTranslator.addParameters(lambda.parameters, descriptor, functionContext)
+
+        descriptor.valueParameters.forEach {
+            if (it is ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
+                lambda.body.statements.add(it.translate(functionContext))
+            }
+        }
+
         val functionBody = translateFunctionBody(descriptor, declaration, functionContext)
         lambda.body.statements.addAll(functionBody.statements)
         lambda.functionDescriptor = descriptor
@@ -61,6 +70,15 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         lambda.isLocal = true
         return invokingContext.define(descriptor, lambda).apply { sideEffects = SideEffectKind.PURE }
+    }
+
+    fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {
+        val destructuringDeclaration =
+                (DescriptorToSourceUtils.descriptorToDeclaration(this) as? KtParameter)?.destructuringDeclaration
+                ?: error("Destructuring declaration for descriptor $this not found")
+
+        val jsParameter = JsParameter(context.getNameForDescriptor(this))
+        return DestructuringDeclarationTranslator.translate(destructuringDeclaration, jsParameter.name, null, context)
     }
 }
 

@@ -79,6 +79,10 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
 
         JsNameRef multiObjNameRef = multiObjectName.makeRef();
         for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
+            VariableDescriptor descriptor = BindingContextUtils.getNotNull( context().bindingContext(), BindingContext.VARIABLE, entry);
+            // Do not call `componentX` for destructuring entry called _
+            if (descriptor.getName().isSpecial()) continue;
+
             ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
             JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);
@@ -86,7 +90,7 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
             if (CallExpressionTranslator.shouldBeInlined(candidateDescriptor)) {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());
             }
-            VariableDescriptor descriptor = BindingContextUtils.getNotNull( context().bindingContext(), BindingContext.VARIABLE, entry);
+
             JsName name =  context().getNameForDescriptor(descriptor);
             jsVars.add(new JsVars.JsVar(name, entryInitializer));
         }

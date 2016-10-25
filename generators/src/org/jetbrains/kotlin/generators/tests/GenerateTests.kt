@@ -1213,6 +1213,14 @@ fun main(args: Array<String>) {
         testClass<AbstractBinaryOpTests>() {
             model("codegen/box/binaryOp", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractLambdaDestructuringTests>() {
+            model("codegen/box/destructuringDeclInLambdaParam/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractMultiDeclarationTests>() {
+            model("codegen/box/multiDecl/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 

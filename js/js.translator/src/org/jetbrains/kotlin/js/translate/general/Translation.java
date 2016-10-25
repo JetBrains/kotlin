@@ -253,6 +253,9 @@ public final class Translation {
         StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
 
+        // Prohibit using "_" as a variable name
+        program.getRootScope().declareName("_");
+
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
         JsBlock rootBlock = rootFunction.getBody();
         List<JsStatement> statements = rootBlock.getStatements();
