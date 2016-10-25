@@ -368,18 +368,7 @@
 
             <sources dir="${js.stdlib.output.dir}">
                 <file name="builtins.js"/>
-            </sources>
-
-            <sources dir="${stdlib.js.dir}">
-                <file name="merge-builtins.js"/>
-            </sources>
-
-            <sources dir="${js.stdlib.output.dir}">
                 <file name="${compiled.stdlib.js}"/>
-            </sources>
-
-            <sources dir="${stdlib.js.dir}">
-                <file name="merge.js"/>
             </sources>
 
             <externs dir="${stdlib.js.dir}">
@@ -411,6 +400,15 @@
         <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
         <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
+
+        <replaceregexp file="${js.stdlib.output.dir}/builtins.js"
+                       match="module.exports,\s*require\([^)]+\)"
+                       replace="Kotlin, Kotlin"
+                       byline="true" encoding="UTF-8" />
+        <replaceregexp file="${js.stdlib.output.dir}/${compiled.stdlib.js}"
+                       match="module.exports,\s*require\([^)]+\)"
+                       replace="Kotlin, Kotlin"
+                       byline="true" encoding="UTF-8" />
 
         <condition property="jdk17" value="${env.JDK_17}" else="${env.JAVA_HOME}">
             <isset property="env.JDK_17" />

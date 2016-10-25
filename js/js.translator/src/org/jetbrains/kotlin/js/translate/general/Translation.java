@@ -269,6 +269,9 @@ public final class Translation {
 
         mayBeGenerateTests(files, config, rootBlock, context);
 
+        JsName rootPackageName = program.getRootScope().declareName(Namer.getRootPackageName());
+        rootFunction.getParameters().add(new JsParameter((rootPackageName)));
+
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
         List<String> importedModuleList = new ArrayList<String>();
@@ -288,7 +291,7 @@ public final class Translation {
             }
         }
 
-        statements.add(new JsReturn(program.getRootScope().declareName(Namer.getRootPackageName()).makeRef()));
+        statements.add(new JsReturn(rootPackageName.makeRef()));
 
         JsBlock block = program.getGlobalBlock();
         block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,

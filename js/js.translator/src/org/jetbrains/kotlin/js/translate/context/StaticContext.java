@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -146,13 +145,10 @@ public final class StaticContext {
     private final Set<ClassDescriptor> classes = new HashSet<ClassDescriptor>();
 
     @NotNull
-    private final ExportedPackage rootPackage = new ExportedPackage("");
-
-    @NotNull
-    private final JsObjectLiteral exportObject = rootPackage.objectLiteral;
-
-    @NotNull
     private final Set<MemberDescriptor> exportedDeclarations = new HashSet<MemberDescriptor>();
+
+    @NotNull
+    private final Map<FqName, JsName> localPackageNames = new HashMap<FqName, JsName>();
 
     //TODO: too many parameters in constructor
     private StaticContext(
@@ -665,11 +661,7 @@ public final class StaticContext {
         exportedDeclarations.add(descriptor);
 
         if (container instanceof PackageFragmentDescriptor) {
-            PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) container;
-            ExportedPackage exportedPackage = rootPackage;
-            for (Name packageName : packageDescriptor.getFqName().pathSegments()) {
-                exportedPackage = exportedPackage.getSubpackage(packageName.asString());
-            }
+            JsExpression packageRef = getLocalPackageReference(((PackageFragmentDescriptor) container).getFqName());
 
             JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
             if (initializerExpr != null) {
@@ -679,14 +671,31 @@ public final class StaticContext {
                         MetadataProperties.setStaticRef(propertyName, initializerExpr);
                     }
                 }
-                JsPropertyInitializer initializer = new JsPropertyInitializer(propertyName.makeRef(), initializerExpr);
-                exportedPackage.objectLiteral.getPropertyInitializers().add(initializer);
+                exportStatements.add(JsAstUtils.assignment(new JsNameRef(propertyName, packageRef), initializerExpr).makeStmt());
             }
         }
         else {
             JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
             assert initializerExpr == null : "Should not produce initializer for non-package declaration";
         }
+    }
+
+    private JsExpression getLocalPackageReference(FqName packageName) {
+        if (packageName.isRoot()) {
+            return rootFunction.getScope().declareName(Namer.getRootPackageName()).makeRef();
+        }
+        JsName name = localPackageNames.get(packageName);
+        if (name == null) {
+            name = rootFunction.getScope().declareFreshName("package$" + packageName.shortName().asString());
+            localPackageNames.put(packageName, name);
+
+            JsExpression parentRef = getLocalPackageReference(packageName.parent());
+            JsExpression selfRef = new JsNameRef(packageName.shortName().asString(), parentRef);
+            JsExpression rhs = JsAstUtils.or(selfRef, JsAstUtils.assignment(selfRef.deepCopy(), new JsObjectLiteral(false)));
+
+            exportStatements.add(JsAstUtils.newVar(name, rhs));
+        }
+        return name.makeRef();
     }
 
     @NotNull
@@ -704,11 +713,7 @@ public final class StaticContext {
         rootFunction.getBody().getStatements().addAll(importStatements);
         addClassPrototypes();
         rootFunction.getBody().getStatements().addAll(declarationStatements);
-
-        JsName rootPackageName = rootFunction.getScope().declareName(Namer.getRootPackageName());
-        rootFunction.getBody().getStatements().add(JsAstUtils.newVar(rootPackageName, exportObject));
         rootFunction.getBody().getStatements().addAll(exportStatements);
-
         rootFunction.getBody().getStatements().addAll(topLevelStatements);
     }
 
@@ -752,26 +757,5 @@ public final class StaticContext {
             }
         }
         return false;
-    }
-
-    private static class ExportedPackage {
-        @NotNull final String name;
-        @NotNull final Map<String, ExportedPackage> subpackages = new HashMap<String, ExportedPackage>();
-        @NotNull final JsObjectLiteral objectLiteral = new JsObjectLiteral(true);
-
-        public ExportedPackage(@NotNull String name) {
-            this.name = name;
-        }
-
-        @NotNull
-        public ExportedPackage getSubpackage(@NotNull String name) {
-            ExportedPackage subpackage = subpackages.get(name);
-            if (subpackage == null) {
-                subpackage = new ExportedPackage(name);
-                subpackages.put(name, subpackage);
-                objectLiteral.getPropertyInitializers().add(new JsPropertyInitializer(new JsNameRef(name), subpackage.objectLiteral));
-            }
-            return subpackage;
-        }
     }
 }

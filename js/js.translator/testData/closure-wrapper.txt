@@ -8,11 +8,8 @@
     }
 }(this, function () {
     var Kotlin = {};
-    function require() {
-        return Kotlin;
-    }
-    var module = {};
+
 %output%
-    Kotlin.modules.kotlin = Kotlin;
+
     return Kotlin;
 }));

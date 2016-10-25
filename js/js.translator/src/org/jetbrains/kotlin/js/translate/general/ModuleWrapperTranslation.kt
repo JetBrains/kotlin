@@ -55,7 +55,7 @@ object ModuleWrapperTranslation {
 
         val amdBody = JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program))
         val commonJsBody = JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program))
-        val plainInvocation = makePlainInvocation(factoryName.makeRef(), importedModules, program)
+        val plainInvocation = makePlainInvocation(moduleId, factoryName.makeRef(), importedModules, program)
 
         val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
             JsArrayAccess(rootName.makeRef(), program.getStringLiteral(moduleId))
@@ -79,7 +79,7 @@ object ModuleWrapperTranslation {
         val defineName = scope.declareName("define")
         val invocationArgs = listOf(
                 program.getStringLiteral(moduleId),
-                JsArrayLiteral(importedModules.map { program.getStringLiteral(it) }),
+                JsArrayLiteral(listOf(program.getStringLiteral("exports")) + importedModules.map { program.getStringLiteral(it) }),
                 function
         )
 
@@ -93,16 +93,15 @@ object ModuleWrapperTranslation {
         val requireName = scope.declareName("require")
 
         val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), program.getStringLiteral(it)) }
-        val invocation = JsInvocation(function, invocationArgs)
-        val assignment = JsAstUtils.assignment(JsNameRef("exports", moduleName.makeRef()), invocation)
-        return listOf(assignment.makeStmt())
+        val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
+        return listOf(invocation.makeStmt())
     }
 
     private fun wrapPlain(
             moduleId: String, function: JsExpression,
             importedModules: List<String>, program: JsProgram
     ): List<JsStatement> {
-        val invocation = makePlainInvocation(function, importedModules, program)
+        val invocation = makePlainInvocation(moduleId, function, importedModules, program)
 
         val statement = if (Namer.requiresEscaping(moduleId)) {
             JsAstUtils.assignment(makePlainModuleRef(moduleId, program), invocation).makeStmt()
@@ -114,9 +113,18 @@ object ModuleWrapperTranslation {
         return listOf(statement)
     }
 
-    private fun makePlainInvocation(function: JsExpression, importedModules: List<String>, program: JsProgram): JsInvocation {
+    private fun makePlainInvocation(
+            moduleId: String,
+            function: JsExpression,
+            importedModules: List<String>,
+            program: JsProgram
+    ): JsInvocation {
         val invocationArgs = importedModules.map { makePlainModuleRef(it, program) }
-        return JsInvocation(function, invocationArgs)
+        val moduleRef = makePlainModuleRef(moduleId, program)
+        val testModuleDefined = JsAstUtils.typeOfIs(moduleRef, program.getStringLiteral("undefined"))
+        val selfArg = JsConditional(testModuleDefined, JsObjectLiteral(false), moduleRef.deepCopy())
+
+        return JsInvocation(function, listOf(selfArg) + invocationArgs)
     }
 
     private fun makePlainModuleRef(moduleId: String, program: JsProgram): JsExpression {
