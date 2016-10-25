@@ -24,6 +24,7 @@ import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.SharedNameTable
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -55,6 +56,7 @@ class JCTreeConverter(
 
         private val BLACKLISTED_ANNOTATATIONS = listOf(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
+                "java.lang.Synthetic", //
                 "java.lang.annotation.", // Java annotations
                 "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
                 "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
@@ -132,8 +134,17 @@ class JCTreeConverter(
 
     private fun convertMethod(method: MethodNode, containingClass: ClassNode, containingClassSimpleName: Name): JCMethodDecl? {
         if (isSynthetic(method.access)) return null
+        val descriptor = origins[method]?.descriptor as? CallableDescriptor ?: return null
 
-        val modifiers = convertModifiers(method.access, ElementKind.METHOD, method.visibleAnnotations, method.invisibleAnnotations)
+        val isOverridden = descriptor.overriddenDescriptors.isNotEmpty()
+        val visibleAnnotations = if (isOverridden) {
+            (method.visibleAnnotations ?: emptyList()) + AnnotationNode(Type.getType(Override::class.java).descriptor)
+        } else {
+            method.visibleAnnotations
+        }
+
+        val modifiers = convertModifiers(method.access, ElementKind.METHOD, visibleAnnotations, method.invisibleAnnotations)
+
         val isConstructor = method.name == "<init>"
         val name = if (isConstructor) containingClassSimpleName else name(method.name)
         val typeParameters = JavacList.nil<JCTypeParameter>()
@@ -156,6 +167,8 @@ class JCTreeConverter(
         val defaultValue = method.annotationDefault?.let { convertLiteralExpression(it) }
 
         val body = if (defaultValue != null) {
+            null
+        } else if ((method.access and Opcodes.ACC_ABSTRACT) > 0) {
             null
         } else if (isConstructor) {
             // We already checked it in convertClass()
