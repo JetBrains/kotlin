@@ -31,6 +31,7 @@ import org.jetbrains.jps.model.library.JpsTypedLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.jps.BothJdkClasspathPatcherKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -78,6 +79,10 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
         JpsTypedLibrary<JpsSdk<JpsDummyElement>> jdk = myModel.getGlobal().addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE);
         jdk.addRoot(JpsPathUtil.pathToUrl(path), JpsOrderRootType.COMPILED);
         return jdk.getProperties();
+    }
+
+    protected JpsLibrary addKotlinMockRuntimeDependency() {
+        return addDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false, "kotlin-mock-runtime", ForTestCompileRuntime.mockRuntimeJarForTests());
     }
 
     protected JpsLibrary addKotlinRuntimeDependency() {
