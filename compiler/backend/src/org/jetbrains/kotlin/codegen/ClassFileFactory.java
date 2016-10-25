@@ -58,6 +58,10 @@ public class ClassFileFactory implements OutputFileCollection {
         this.builderFactory = builderFactory;
     }
 
+    public GenerationState getGenerationState() {
+        return state;
+    }
+
     @NotNull
     public ClassBuilder newVisitor(
             @NotNull JvmDeclarationOrigin origin,
