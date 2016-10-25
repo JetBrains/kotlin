@@ -1,0 +1,191 @@
+JetFile: CommentsBindingInLambda.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la1')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BLOCK
+          PsiComment(EOL_COMMENT)('// start')
+          PsiWhiteSpace('\n    ')
+          PsiComment(EOL_COMMENT)('// start 1')
+          PsiWhiteSpace('\n    ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n\n    ')
+          PsiComment(EOL_COMMENT)('// middle')
+          PsiWhiteSpace('\n\n    ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n\n    ')
+          PsiComment(EOL_COMMENT)('// end')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la2')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BLOCK
+          PsiComment(BLOCK_COMMENT)('/**/')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la3')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BLOCK
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' ')
+            PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la4')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BLOCK
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' Should be under block ')
+            PsiElement(KDOC_END)('*/')
+          PsiWhiteSpace('\n\n    ')
+          PROPERTY
+            KDoc
+              PsiElement(KDOC_START)('/**')
+              KDOC_SECTION
+                PsiElement(KDOC_TEXT)(' Should be under property ')
+              PsiElement(KDOC_END)('*/')
+            PsiWhiteSpace('\n    ')
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('some')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la5')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BLOCK
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' ')
+            PsiElement(KDOC_END)('*/')
+          PsiWhiteSpace('\n    ')
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' ')
+            PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la6')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    PsiComment(BLOCK_COMMENT)('/*1*/')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiComment(BLOCK_COMMENT)('/*2*/')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiComment(BLOCK_COMMENT)('/*3*/')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiComment(BLOCK_COMMENT)('/*4*/')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('la7')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        BLOCK
+          PsiComment(BLOCK_COMMENT)('/**/')
+        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

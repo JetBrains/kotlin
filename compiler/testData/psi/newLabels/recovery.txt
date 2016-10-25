@@ -33,9 +33,9 @@ JetFile: recovery.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
-              PsiComment(EOL_COMMENT)('// should be no space after c')
-              PsiWhiteSpace('\n        ')
               BLOCK
+                PsiComment(EOL_COMMENT)('// should be no space after c')
+                PsiWhiteSpace('\n        ')
                 RETURN
                   PsiElement(return)('return')
                   PsiWhiteSpace(' ')
@@ -61,9 +61,9 @@ JetFile: recovery.kt
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')
-                  PsiComment(EOL_COMMENT)('// no label identifier')
-                  PsiWhiteSpace('\n        ')
                   BLOCK
+                    PsiComment(EOL_COMMENT)('// no label identifier')
+                    PsiWhiteSpace('\n        ')
                     RETURN
                       PsiElement(return)('return')
                       PsiWhiteSpace(' ')
@@ -94,9 +94,9 @@ JetFile: recovery.kt
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace(' ')
-          PsiComment(EOL_COMMENT)('// should be no space after loop2')
-          PsiWhiteSpace('\n        ')
           BLOCK
+            PsiComment(EOL_COMMENT)('// should be no space after loop2')
+            PsiWhiteSpace('\n        ')
             RETURN
               PsiElement(return)('return')
               PsiErrorElement:Label must be named

@@ -61,9 +61,9 @@ JetFile: lambda.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
-              PsiComment(EOL_COMMENT)('// parsed as array access')
-              PsiWhiteSpace('\n        ')
               BLOCK
+                PsiComment(EOL_COMMENT)('// parsed as array access')
+                PsiWhiteSpace('\n        ')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('print')

@@ -127,6 +127,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("CommentsBindingInLambda.kt")
+        public void testCommentsBindingInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/CommentsBindingInLambda.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("CommentsBindingInStatementBlock.kt")
+        public void testCommentsBindingInStatementBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/CommentsBindingInStatementBlock.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Constructors.kt")
         public void testConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/Constructors.kt");
@@ -538,6 +550,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("LineCommentForFirstDeclaration.kt")
         public void testLineCommentForFirstDeclaration() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/LineCommentForFirstDeclaration.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("LineCommentsInBlock.kt")
+        public void testLineCommentsInBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/LineCommentsInBlock.kt");
             doParsingTest(fileName);
         }
 

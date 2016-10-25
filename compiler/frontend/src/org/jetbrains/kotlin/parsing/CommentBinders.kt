@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.parsing
 
 import com.intellij.lang.WhitespacesAndCommentsBinder
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
-import com.intellij.openapi.util.text.StringUtil
 
 object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
-
-    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         if (tokens.isEmpty()) return 0
 
         // 1. bind doc comment
@@ -53,8 +53,8 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
 }
 
 object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
-
-    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         if (tokens.isEmpty()) return 0
 
         for (idx in tokens.indices.reversed()) {
@@ -67,8 +67,8 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
 
 // Binds comments on the same line
 object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
-
-    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         if (tokens.isEmpty()) return 0
 
         var result = 0
@@ -87,8 +87,30 @@ object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
     }
 }
 
+private class AllCommentsBinder(val isTrailing: Boolean) : WhitespacesAndCommentsBinder {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+        if (tokens.isEmpty()) return 0
+
+        val size = tokens.size
+
+        // Skip comment if needed. Expect that there can't be several consecutive comments
+        val endToken = tokens[if (isTrailing) size - 1 else 0]
+        val shift = if (endToken == KtTokens.WHITE_SPACE) 1 else 0
+
+        return if (isTrailing) size - shift else shift
+    }
+}
+
+@JvmField
+val PRECEDING_ALL_COMMENTS_BINDER: WhitespacesAndCommentsBinder = AllCommentsBinder(false)
+
+@JvmField
+val TRAILING_ALL_COMMENTS_BINDER: WhitespacesAndCommentsBinder = AllCommentsBinder(true)
+
 object DoNotBindAnything : WhitespacesAndCommentsBinder {
-    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+    override fun getEdgePosition(
+            tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         return 0
     }
 }
