@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.inliner
+package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement

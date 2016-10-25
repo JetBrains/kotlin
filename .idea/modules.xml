@@ -44,7 +44,6 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" filepath="$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-android/idea-android.iml" filepath="$PROJECT_DIR$/idea/idea-android/idea-android.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-android/idea-android-output-parser/idea-android-output-parser.iml" filepath="$PROJECT_DIR$/idea/idea-android/idea-android-output-parser/idea-android-output-parser.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/idea/idea-code-inliner/idea-replacement-engine.iml" filepath="$PROJECT_DIR$/idea/idea-code-inliner/idea-replacement-engine.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" filepath="$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-core/idea-core.iml" filepath="$PROJECT_DIR$/idea/idea-core/idea-core.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" filepath="$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" group="ide" />

@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.inliner.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.inliner.CodeToInlineBuilder
-import org.jetbrains.kotlin.idea.inliner.replaceUsagesInWholeProject
+import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.codeInliner.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction

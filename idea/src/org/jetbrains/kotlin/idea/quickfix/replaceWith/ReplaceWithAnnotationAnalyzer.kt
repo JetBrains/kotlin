@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.inliner.CodeToInlineBuilder
-import org.jetbrains.kotlin.idea.inliner.CodeToInline
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName

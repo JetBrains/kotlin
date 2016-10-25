@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.inliner
+package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.inliner.CodeToInline.Companion.PARAMETER_USAGE_KEY
-import org.jetbrains.kotlin.idea.inliner.CodeToInline.Companion.TYPE_PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline.Companion.PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline.Companion.TYPE_PARAMETER_USAGE_KEY
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression

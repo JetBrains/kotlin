@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.inliner
+package org.jetbrains.kotlin.idea.codeInliner
 
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
