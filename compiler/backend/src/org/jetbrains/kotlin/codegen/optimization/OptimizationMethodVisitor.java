@@ -92,7 +92,10 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
         // In case of empty instructions list MethodNode.accept doesn't call visitLocalVariables of delegate
         // So we just do it here
-        if (methodNode.instructions.size() == 0) {
+        if (methodNode.instructions.size() == 0
+            // MethodNode does not create a list of variables for abstract methods, so we would get NPE in accept() instead
+            && (!(delegate instanceof MethodNode) || (methodNode.access & Opcodes.ACC_ABSTRACT) == 0)
+        ) {
             List<LocalVariableNode> localVariables = methodNode.localVariables;
             // visits local variables
             int n = localVariables == null ? 0 : localVariables.size();
