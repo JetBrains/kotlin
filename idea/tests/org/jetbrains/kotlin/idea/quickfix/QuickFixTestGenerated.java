@@ -8405,6 +8405,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullableInCondition.kt")
+        public void testNullableInCondition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/nullableInCondition.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectQualifier.kt")
         public void testObjectQualifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/surroundWithNullCheck/objectQualifier.kt");
