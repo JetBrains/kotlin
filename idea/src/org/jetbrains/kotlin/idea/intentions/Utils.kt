@@ -271,14 +271,14 @@ fun KtDotQualifiedExpression.replaceFirstReceiver(
         safeAccess: Boolean = false
 ): KtExpression {
     val receiver = receiverExpression
+    if (safeAccess) {
+        operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
+    }
     when (receiver) {
         is KtDotQualifiedExpression -> {
             receiver.replaceFirstReceiver(factory, newReceiver, safeAccess)
         }
         else -> {
-            if (safeAccess) {
-                operationTokenNode.psi.replace(factory.createSafeCallNode().psi)
-            }
             receiver.replace(newReceiver)
         }
     }
