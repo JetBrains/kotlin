@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -1220,8 +1217,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 else if (descriptor instanceof CallableMemberDescriptor) {
                     ResolvedCall<? extends CallableDescriptor> call = CallUtilKt.getResolvedCall(expr, bindingContext);
                     if (call != null) {
-                        lookupReceiver(call.getDispatchReceiver());
-                        lookupReceiver(call.getExtensionReceiver());
+                        lookupReceivers(call);
+                    }
+                    if (call instanceof VariableAsFunctionResolvedCall) {
+                        lookupReceivers(((VariableAsFunctionResolvedCall) call).getVariableCall());
                     }
                 }
                 else if (descriptor instanceof VariableDescriptor) {
@@ -1232,6 +1231,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                     lookupInContext(descriptor);
                 }
+            }
+
+            private void lookupReceivers(@NotNull ResolvedCall<? extends CallableDescriptor> call) {
+                lookupReceiver(call.getDispatchReceiver());
+                lookupReceiver(call.getExtensionReceiver());
             }
 
             private void lookupReceiver(@Nullable ReceiverValue value) {
