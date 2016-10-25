@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 object GenerationUtils {
@@ -39,12 +40,16 @@ object GenerationUtils {
             compileFiles(listOf(ktFile), environment).factory
 
     @JvmStatic
-    fun compileFiles(files: List<KtFile>, environment: KotlinCoreEnvironment?): GenerationState {
-        val configuration = environment?.configuration ?: KotlinTestUtils.newConfiguration()
+    fun compileFiles(files: List<KtFile>, environment: KotlinCoreEnvironment): GenerationState =
+            compileFiles(files, environment.configuration) { scope -> JvmPackagePartProvider(environment, scope) }
 
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration) { scope ->
-            if (environment == null) PackagePartProvider.Empty else JvmPackagePartProvider(environment, scope)
-        }
+    @JvmStatic
+    fun compileFiles(
+            files: List<KtFile>,
+            configuration: CompilerConfiguration,
+            packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+    ): GenerationState {
+        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider)
         analysisResult.throwIfError()
 
         val state = GenerationState(

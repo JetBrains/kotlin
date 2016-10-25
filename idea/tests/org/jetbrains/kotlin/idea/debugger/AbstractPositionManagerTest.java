@@ -42,12 +42,18 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -136,7 +142,20 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
             breakpoints.addAll(extractBreakpointsInfo(file, file.getText()));
         }
 
-        GenerationState state = GenerationUtils.compileFiles(files, null);
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
+        // TODO: delete this once JvmIDEVirtualFileFinder supports loading .kotlin_builtins files
+        configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_TO_DEPENDENCIES, true);
+
+        GenerationState state = GenerationUtils.compileFiles(
+                files,
+                configuration,
+                new Function1<GlobalSearchScope, PackagePartProvider>() {
+                    @Override
+                    public PackagePartProvider invoke(GlobalSearchScope scope) {
+                        return PackagePartProvider.Empty.INSTANCE;
+                    }
+                }
+        );
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 
