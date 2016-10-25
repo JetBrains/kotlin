@@ -3,6 +3,9 @@ public final class User {
     private final java.lang.String secondName;
     private final int age;
 
+    public final void procedure() {
+    }
+
     public final java.lang.String getFirstName() {
         return null;
     }
@@ -16,7 +19,6 @@ public final class User {
     }
 
     public void User(java.lang.String firstName, java.lang.String secondName, int age) {
-        return null;
     }
 
     public final java.lang.String component1() {

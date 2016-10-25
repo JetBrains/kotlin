@@ -126,7 +126,8 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         if (isSynthetic(method.access)) return null
 
         val modifiers = convertModifiers(method.access, ElementKind.METHOD, method.visibleAnnotations, method.invisibleAnnotations)
-        val name = if (method.name == "<init>") containingClassSimpleName else name(method.name)
+        val isConstructor = method.name == "<init>"
+        val name = if (isConstructor) containingClassSimpleName else name(method.name)
         val typeParameters = JavacList.nil<JCTypeParameter>()
         val receiverParameter = null
 
@@ -147,6 +148,8 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
 
         val body = if (defaultValue != null) {
             null
+        } else if (isConstructor || returnType == Type.VOID_TYPE) {
+            treeMaker.Block(0, JavacList.nil())
         } else {
             val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(returnType)))
             treeMaker.Block(0, JavacList.of(returnStatement))
