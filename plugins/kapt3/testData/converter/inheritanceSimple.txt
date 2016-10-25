@@ -1,3 +1,4 @@
+
 public abstract interface Context {
 }
 
@@ -15,9 +16,7 @@ public enum Result extends java.lang.Enum {
     public static final Result SUCCESS;
     public static final Result ERROR;
     
-    protected /*missing*/ Result(@java.lang.Synthetic()
-    java.lang.String $enum_name_or_ordinal$0, @java.lang.Synthetic()
-    int $enum_name_or_ordinal$1) {
+    protected /*missing*/ Result(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1) {
         super(null, 0);
         this.SUCCESS = null;
         this.ERROR = null;
@@ -37,9 +36,7 @@ public enum Result extends java.lang.Enum {
 
 public abstract class BaseClass {
     
-    public abstract Result doJob() {
-        return null;
-    }
+    public abstract Result doJob();
     
     public /*missing*/ BaseClass(Context context, int num, boolean bool) {
         super();
@@ -51,6 +48,7 @@ public abstract class BaseClass {
 
 public final class Inheritor extends BaseClass {
     
+    @java.lang.Override()
     public Result doJob() {
         return null;
     }
