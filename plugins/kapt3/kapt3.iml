@@ -13,5 +13,7 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
+    <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
