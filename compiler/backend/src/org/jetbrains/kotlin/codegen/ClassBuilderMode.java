@@ -62,4 +62,12 @@ public class ClassBuilderMode {
             /* bodies = */ false,
             /* metadata = */ true,
             /* sourceRetention = */ true);
+
+    /**
+     * Function signatures + metadata (to support incremental compilation with kapt)
+     */
+    public final static ClassBuilderMode KAPT3 = new ClassBuilderMode(
+            /* bodies = */ false,
+            /* metadata = */ true,
+            /* sourceRetention = */ true);
 }

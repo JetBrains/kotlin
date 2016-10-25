@@ -273,7 +273,7 @@ public class InlineCodegen extends CallGenerator {
         assert functionDescriptor instanceof DeserializedSimpleFunctionDescriptor : "Not a deserialized function: " + functionDescriptor;
 
         KotlinTypeMapper.ContainingClassesInfo containingClasses =
-                KotlinTypeMapper.getContainingClassesForDeserializedCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor);
+                state.getTypeMapper().getContainingClassesForDeserializedCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
         final ClassId containerId = containingClasses.getImplClassId();
 

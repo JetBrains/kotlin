@@ -42,6 +42,13 @@ private fun <T : Any> JvmTypeFactory<T>.boxTypeIfNeeded(possiblyPrimitiveType: T
         if (needBoxedType) boxType(possiblyPrimitiveType) else possiblyPrimitiveType
 
 interface TypeMappingConfiguration<out T : Any> {
+    companion object {
+        val DEFAULT_INNER_CLASS_NAME_FACTORY = fun(outer: String, inner: String) = outer + "$" + inner
+    }
+
+    val innerClassNameFactory: (outer: String, inner: String) -> String
+        get() = DEFAULT_INNER_CLASS_NAME_FACTORY
+
     fun commonSupertype(types: Collection<@JvmSuppressWildcards KotlinType>): KotlinType
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
@@ -126,7 +133,7 @@ fun <T : Any> mapType(
                         factory.javaLangClassType
                     else
                         typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
-                        ?: factory.createObjectType(computeInternalName(descriptor.original))
+                        ?: factory.createObjectType(computeInternalName(descriptor.original, typeMappingConfiguration.innerClassNameFactory))
 
             writeGenericType(kotlinType, jvmType, mode)
 
@@ -179,7 +186,10 @@ private fun <T : Any> mapBuiltInType(
     return null
 }
 
-internal fun computeInternalName(klass: ClassDescriptor): String {
+internal fun computeInternalName(
+        klass: ClassDescriptor,
+        innerClassNameFactory: (outer: String, inner: String) -> String = TypeMappingConfiguration.DEFAULT_INNER_CLASS_NAME_FACTORY
+): String {
     val container = klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
@@ -190,8 +200,8 @@ internal fun computeInternalName(klass: ClassDescriptor): String {
 
     assert(container is ClassDescriptor) { "Unexpected container: $container for $klass" }
 
-    val containerInternalName = computeInternalName(container as ClassDescriptor)
-    return if (klass.kind == ClassKind.ENUM_ENTRY) containerInternalName else containerInternalName + "$" + name
+    val containerInternalName = computeInternalName(container as ClassDescriptor, innerClassNameFactory)
+    return if (klass.kind == ClassKind.ENUM_ENTRY) containerInternalName else innerClassNameFactory(containerInternalName, name)
 }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
