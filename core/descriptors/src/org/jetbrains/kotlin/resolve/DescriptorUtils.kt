@@ -336,3 +336,18 @@ val DeclarationDescriptor.isExtensionProperty: Boolean
 
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
         generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())
+
+fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor> {
+    val set = hashSetOf<ClassifierDescriptor>()
+
+    fun ClassifierDescriptor.doGetAllSuperClassesAndInterfaces(): Sequence<ClassifierDescriptor> =
+        if (original in set) {
+            emptySequence()
+        }
+        else {
+            set += original
+            sequenceOf(original) + typeConstructor.supertypes.asSequence().flatMap { it.constructor.declarationDescriptor?.doGetAllSuperClassesAndInterfaces() ?: sequenceOf() }
+        }
+
+    return doGetAllSuperClassesAndInterfaces()
+}

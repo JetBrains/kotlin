@@ -644,6 +644,8 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, KtModifierKeywordToken, String> INAPPLICABLE_MODIFIER = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION = DiagnosticFactory1.create(ERROR);
+
     // Labels
 
     DiagnosticFactory0<KtSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);

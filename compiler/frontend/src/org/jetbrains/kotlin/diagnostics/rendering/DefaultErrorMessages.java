@@ -396,6 +396,9 @@ public class DefaultErrorMessages {
 
         MAP.put(INAPPLICABLE_MODIFIER, "''{0}'' modifier is inapplicable. The reason is that {1}", TO_STRING, STRING);
 
+        MAP.put(DSL_SCOPE_VIOLATION, "''{0}'' can't be called in this context by implicit receiver. " +
+                                     "Use the explicit one if necessary", COMPACT);
+
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
         MAP.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')");

@@ -15843,6 +15843,123 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DslMarker extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInDslMarker() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/dslMarker"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("annotatedTypeArgument.kt")
+                public void testAnnotatedTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/annotatedTypeArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inheritedMarker.kt")
+                public void testInheritedMarker() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/inheritedMarker.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("insideTopLevelExtension.kt")
+                public void testInsideTopLevelExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/insideTopLevelExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("insideTopLevelExtensionAnnotatedType.kt")
+                public void testInsideTopLevelExtensionAnnotatedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/insideTopLevelExtensionAnnotatedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("markersIntersection.kt")
+                public void testMarkersIntersection() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/markersIntersection.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedWithSameReceiver.kt")
+                public void testNestedWithSameReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/nestedWithSameReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("properties.kt")
+                public void testProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/properties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleAnnotatedClasses.kt")
+                public void testSimpleAnnotatedClasses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/simpleAnnotatedClasses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleAnnotatedTypes.kt")
+                public void testSimpleAnnotatedTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/simpleAnnotatedTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutedReceiverAnnotatedClasses.kt")
+                public void testSubstitutedReceiverAnnotatedClasses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/substitutedReceiverAnnotatedClasses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutedReceiverAnnotatedType.kt")
+                public void testSubstitutedReceiverAnnotatedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/substitutedReceiverAnnotatedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("threeImplicitReceivers.kt")
+                public void testThreeImplicitReceivers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/threeImplicitReceivers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("threeImplicitReceivers2.kt")
+                public void testThreeImplicitReceivers2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/threeImplicitReceivers2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("twoImplicitReceivers.kt")
+                public void testTwoImplicitReceivers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/twoImplicitReceivers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("twoLanguages.kt")
+                public void testTwoLanguages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/twoLanguages.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("useOfExtensions.kt")
+                public void testUseOfExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/useOfExtensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("usingWith.kt")
+                public void testUsingWith() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/usingWith.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("usingWithThis.kt")
+                public void testUsingWithThis() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/usingWithThis.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/invoke")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

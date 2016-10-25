@@ -107,3 +107,22 @@ public annotation class UnsafeVariance
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public annotation class SinceKotlin(val version: String)
+
+/**
+ * When applied to annotation class X specifies that X defines a DSL language
+ *
+ * The general rule:
+ * - an implicit receiver may *belong to a DSL @X* if marked with a corresponding DSL marker annotation
+ * - two implicit receivers of the same DSL are not accessible in the same scope
+ * - the closest one wins
+ * - other available receivers are resolved as usual, but if the resulting resolved call binds to such a receiver, it's a compilation error
+ *
+ * Marking rules: an implicit receiver is considered marked with @Ann if
+ * - its type is marked, or
+ * - its type's classifier is marked
+ * - or any of its superclasses/superinterfaces
+ */
+@Target(ANNOTATION_CLASS)
+@Retention(BINARY)
+@MustBeDocumented
+public annotation class DslMarker

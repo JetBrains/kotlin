@@ -26,4 +26,8 @@ public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
 
     @NotNull
     SimpleType getDefaultType();
+
+    @NotNull
+    @Override
+    ClassifierDescriptor getOriginal();
 }

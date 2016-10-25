@@ -72,7 +72,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
         CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker(), SafeCallChecker(),
         DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
-        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker
+        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker)
