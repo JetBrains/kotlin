@@ -77,7 +77,7 @@ class Kapt3AnalysisCompletedHandlerExtension(
     }
 }
 
-private class Kapt3BuilderFactory : ClassBuilderFactory {
+class Kapt3BuilderFactory : ClassBuilderFactory {
     val compiledClasses = mutableListOf<ClassNode>()
     val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
 
