@@ -83,7 +83,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                     val writeInstructions = pseudocode.collectWriteInstructions(descriptor)
                     if (writeInstructions.isEmpty()) return false // incorrect code - do not report
 
-                    return writeInstructions.none { canReach(it, writeInstructions) }
+                    return writeInstructions.none { it.owner !== pseudocode || canReach(it, writeInstructions) }
                 }
             }
 
