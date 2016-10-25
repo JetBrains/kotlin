@@ -845,14 +845,13 @@ public class FunctionCodegen {
             return;
         }
 
-        int flags = getVisibilityAccessFlag(functionDescriptor) |
-                    getDeprecatedAccessFlag(functionDescriptor) |
-                    ACC_SYNTHETIC;
+        // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
+        // $default methods are never protected to be accessible from subclass nested classes
+        int visibilityFlag = Visibilities.isPrivate(functionDescriptor.getVisibility()) ? AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
+        int flags =  visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor)) {
             flags |= ACC_STATIC | ACC_BRIDGE;
         }
-        // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
-        flags &= ~ACC_PRIVATE;
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind);
 
