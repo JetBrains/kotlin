@@ -94,6 +94,8 @@ class KotlinScriptConfigurationManager(
         // TODO: it seems invokeLater leads to inconsistent behaviour (at least in tests)
         ApplicationManager.getApplication().invokeLater {
             runWriteAction {
+                if (project.isDisposed) return@runWriteAction
+
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 dumbService.runWhenSmart {
                     ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
