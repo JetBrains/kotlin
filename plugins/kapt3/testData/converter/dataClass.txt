@@ -1,4 +1,4 @@
-public final synchronized class User {
+public final class User {
     private final java.lang.String firstName;
     private final java.lang.String secondName;
     private final int age;
