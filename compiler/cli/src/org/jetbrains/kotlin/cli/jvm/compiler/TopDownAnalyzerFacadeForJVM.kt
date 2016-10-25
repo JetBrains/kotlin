@@ -56,9 +56,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -82,7 +80,8 @@ object TopDownAnalyzerFacadeForJVM {
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): AnalysisResult {
         val container = createContainer(
-            project, files, trace, configuration, packagePartProvider, declarationProviderFactory, sourceModuleSearchScope
+            project, files, trace, configuration, packagePartProvider, declarationProviderFactory, CompilerEnvironment,
+            sourceModuleSearchScope
         )
 
         val module = container.get<ModuleDescriptor>()
@@ -122,6 +121,7 @@ object TopDownAnalyzerFacadeForJVM {
         configuration: CompilerConfiguration,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
+        targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): ComponentProvider {
         val createBuiltInsFromModule = configuration.getBoolean(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES)
@@ -172,7 +172,8 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                 dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker, expectActualTracker,
-                packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
+                packagePartProvider(dependencyScope), moduleClassResolver, targetEnvironment, jvmTarget, languageVersionSettings,
+                configureJavaClassFinder
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
@@ -200,8 +201,8 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
             moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker, expectActualTracker,
-            partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder,
-            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
+            partProvider, moduleClassResolver, targetEnvironment, jvmTarget, languageVersionSettings, configureJavaClassFinder,
+            configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get()
@@ -269,12 +270,6 @@ object TopDownAnalyzerFacadeForJVM {
             return resolver.resolveClass(javaClass)
         }
     }
-
-    fun createContextWithSealedModule(project: Project, configuration: CompilerConfiguration): MutableModuleContext =
-        createModuleContext(project, configuration, false).apply {
-            setDependencies(module, module.builtIns.builtInsModule)
-            (module.builtIns as JvmBuiltIns).initialize(module, configuration.languageVersionSettings)
-        }
 
     private fun createModuleContext(
         project: Project,

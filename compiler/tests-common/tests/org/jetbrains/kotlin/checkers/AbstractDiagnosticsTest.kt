@@ -383,6 +383,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             moduleClassResolver,
+            CompilerEnvironment,
             jvmTarget,
             languageVersionSettings
         )
