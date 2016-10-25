@@ -29,10 +29,22 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
+import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
 class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origins: Map<Any, JvmDeclarationOrigin>) {
     private companion object {
+        private val VISIBILITY_MODIFIERS = Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED
+        private val MODALITY_MODIFIERS = Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT
+
+        private val CLASS_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or Opcodes.ACC_DEPRECATED
+
+        private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
+                Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED
+
+        private val FIELD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
+                Opcodes.ACC_STATIC or Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT
+
         private val BLACKLISTED_ANNOTATATIONS = listOf(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
                 "java.lang.annotation.", // Java annotations
@@ -79,7 +91,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         if (isSynthetic(clazz.access)) return null
 
         val descriptor = origins[clazz]?.descriptor as? ClassDescriptor ?: return null
-        val modifiers = convertModifiers(clazz.access, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+        val modifiers = convertModifiers(clazz.access, ElementKind.CLASS, clazz.visibleAnnotations, clazz.invisibleAnnotations)
         val simpleName = name(descriptor.name.asString())
         val typeParams = JavacList.nil<JCTypeParameter>()
         val extending = if (clazz.superName == "java/lang/Object") null else convertFqName(clazz.superName)
@@ -99,7 +111,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
     private fun convertField(field: FieldNode): JCVariableDecl? {
         if (isSynthetic(field.access)) return null
 
-        val modifiers = convertModifiers(field.access, field.visibleAnnotations, field.invisibleAnnotations)
+        val modifiers = convertModifiers(field.access, ElementKind.FIELD, field.visibleAnnotations, field.invisibleAnnotations)
         val name = name(field.name)
         val type = convertFqName(Type.getType(field.desc).className)
         val value = field.value
@@ -113,7 +125,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
     private fun convertMethod(method: MethodNode, containingClassSimpleName: Name): JCMethodDecl? {
         if (isSynthetic(method.access)) return null
 
-        val modifiers = convertModifiers(method.access, method.visibleAnnotations, method.invisibleAnnotations)
+        val modifiers = convertModifiers(method.access, ElementKind.METHOD, method.visibleAnnotations, method.invisibleAnnotations)
         val name = if (method.name == "<init>") containingClassSimpleName else name(method.name)
         val typeParameters = JavacList.nil<JCTypeParameter>()
         val receiverParameter = null
@@ -123,7 +135,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
 
         val parametersInfo = method.getParametersInfo()
         val parameters = mapValues(parametersInfo) { info ->
-            val modifiers = convertModifiers(info.access, info.visibleAnnotations, info.invisibleAnnotations)
+            val modifiers = convertModifiers(info.access, ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
             val name = name(info.name)
             val type = convertFqName(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
@@ -146,6 +158,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
 
     private fun convertModifiers(
             access: Int,
+            kind: ElementKind,
             visibleAnnotations: List<AnnotationNode>?,
             invisibleAnnotations: List<AnnotationNode>?
     ): JCModifiers {
@@ -156,7 +169,14 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
             convertAnnotation(anno)?.let { list.prepend(it) } ?: list
         } ?: annotations
 
-        return treeMaker.Modifiers(access.toLong(), annotations)
+        val flags = when (kind) {
+            ElementKind.CLASS -> access and CLASS_MODIFIERS
+            ElementKind.METHOD -> access and METHOD_MODIFIERS
+            ElementKind.FIELD -> access and FIELD_MODIFIERS
+            ElementKind.PARAMETER -> access and Opcodes.ACC_FINAL
+            else -> throw IllegalArgumentException("Invalid element kind: $kind")
+        }
+        return treeMaker.Modifiers(flags.toLong(), annotations)
     }
 
     private fun convertAnnotation(annotation: AnnotationNode): JCAnnotation? {
