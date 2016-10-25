@@ -34,10 +34,11 @@ abstract class AbstractJCTreeConverterTest : CodegenTestCase() {
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
         val classBuilderFactory = Kapt3BuilderFactory()
-        CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
+        val factory = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
+        val typeMapper = factory.generationState.typeMapper
 
         val kaptRunner = KaptRunner()
-        val converter = JCTreeConverter(kaptRunner.context, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
+        val converter = JCTreeConverter(kaptRunner.context, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
         val javaFiles = converter.convert()
 
         KotlinTestUtils.assertEqualsToFile(txtFile, javaFiles.joinToString("\n\n////////////////////\n\n"))

@@ -23,8 +23,10 @@ import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import com.sun.tools.javac.util.SharedNameTable
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -32,12 +34,18 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
-class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origins: Map<Any, JvmDeclarationOrigin>) {
+class JCTreeConverter(
+        context: Context,
+        val typeMapper: KotlinTypeMapper,
+        val classes: List<ClassNode>,
+        val origins: Map<Any, JvmDeclarationOrigin>
+) {
     private companion object {
         private val VISIBILITY_MODIFIERS = Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED
         private val MODALITY_MODIFIERS = Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT
 
-        private val CLASS_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or Opcodes.ACC_DEPRECATED
+        private val CLASS_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
+                Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM
 
         private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
                 Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED
@@ -72,7 +80,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         // Nested classes will be processed during the outer classes conversion
         if (descriptor.containingDeclaration is ClassDescriptor) return null
 
-        val classDeclaration = convert(clazz)
+        val classDeclaration = convertClass(clazz)
 
         val packageAnnotations = JavacList.nil<JCAnnotation>()
         val packageName = ktFile.packageFqName.asString()
@@ -87,7 +95,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
     /**
      * Returns false for the inner classe or if the origin for the class was not found.
      */
-    private fun convert(clazz: ClassNode): JCClassDecl? {
+    private fun convertClass(clazz: ClassNode): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
 
         val descriptor = origins[clazz]?.descriptor as? ClassDescriptor ?: return null
@@ -102,7 +110,7 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         val nestedClasses = mapValues<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
             if (innerClass.outerName != clazz.name) return@mapValues null
             val innerClassNode = classes.firstOrNull { it.name == innerClass.name } ?: return@mapValues null
-            convert(innerClassNode)
+            convertClass(innerClassNode)
         }
 
         return treeMaker.ClassDef(modifiers, simpleName, typeParams, extending, implementing, fields + methods + nestedClasses)
@@ -150,7 +158,20 @@ class JCTreeConverter(context: Context, val classes: List<ClassNode>, val origin
         val body = if (defaultValue != null) {
             null
         } else if (isConstructor) {
-            var statements = JavacList.nil<JCStatement>()
+            // We already checked it in convertClass()
+            val declaration = origins[containingClass]?.descriptor as ClassDescriptor
+            val superClass = declaration.getSuperClassOrAny()
+            val superClassConstructor = superClass.constructors.firstOrNull { it.visibility.isVisible(null, it, declaration) }
+
+            var statements = if (superClassConstructor != null) {
+                val args = mapValues(superClassConstructor.valueParameters) { param ->
+                    convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
+                }
+                val call = treeMaker.Apply(JavacList.nil(), convertSimpleName("super"), args)
+                JavacList.of<JCStatement>(treeMaker.Exec(call))
+            } else {
+                JavacList.nil<JCStatement>()
+            }
 
             for (field in containingClass.fields) {
                 if ((field.access and Opcodes.ACC_FINAL) == 0) continue
