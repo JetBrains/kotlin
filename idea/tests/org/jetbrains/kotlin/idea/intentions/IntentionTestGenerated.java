@@ -1308,6 +1308,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheckWithSelectorChain.kt")
+            public void testIsCheckWithSelectorChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckWithSelectorChain.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("lhsEqualsNull.kt")
             public void testLhsEqualsNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/lhsEqualsNull.kt");

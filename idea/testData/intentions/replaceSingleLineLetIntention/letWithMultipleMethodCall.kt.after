@@ -3,5 +3,5 @@
 
 fun foo() {
     val foo: String? = null
-    foo?.to("").to("")
+    foo?.hashCode()?.hashCode()
 }
