@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -61,7 +58,19 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onTypeArguments(diagnostic: KotlinCallDiagnostic) {
+        val psiCallElement = psiKotlinCall.psiCall.callElement
+        val reportElement =
+                if (psiCallElement is KtCallExpression)
+                    psiCallElement.typeArgumentList ?: psiCallElement.calleeExpression ?: psiCallElement
+                else
+                    psiCallElement
 
+        when (diagnostic) {
+            is WrongCountOfTypeArguments -> {
+                val expectedTypeArgumentsCount = diagnostic.descriptor.typeParameters.size
+                trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reportElement, expectedTypeArgumentsCount, diagnostic.descriptor))
+            }
+        }
     }
 
     override fun onCallName(diagnostic: KotlinCallDiagnostic) {

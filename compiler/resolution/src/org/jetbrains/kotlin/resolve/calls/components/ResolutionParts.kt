@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.RUNTIME_ERROR
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -141,7 +140,6 @@ internal object CreteDescriptorWithFreshTypeVariables : ResolutionPart {
             return emptyList()
         }
 
-        // add explicit type parameter
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val typeArgument = typeArgumentMappingByOriginal.getTypeArgument(typeParameter)

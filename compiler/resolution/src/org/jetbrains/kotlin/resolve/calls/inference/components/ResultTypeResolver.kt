@@ -16,16 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.CommonSupertypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.FixationOrderCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.singleBestRepresentative
 import java.util.*
 
 class ResultTypeResolver(val commonSupertypeCalculator: CommonSupertypeCalculator) {
@@ -76,14 +75,22 @@ class ResultTypeResolver(val commonSupertypeCalculator: CommonSupertypeCalculato
 
     private fun convertLowerTypesWithKnowledgeOfNumberTypes(lowerConstraints: Collection<Constraint>): Collection<UnwrappedType> {
         if (lowerConstraints.isEmpty()) return emptyList()
-        if (lowerConstraints.size == 1) return listOf(lowerConstraints.first().type)
 
-        val (numberLowerBounds, generalLowerBounds) = lowerConstraints.map { it.type }.partition { it.constructor is IntegerValueTypeConstructor }
+        val (numberLowerBounds, generalLowerBounds) = lowerConstraints.map { it.type }.partition { it.isNumberValueType() }
 
         val numberType = commonSupertypeForNumberTypes(numberLowerBounds) ?: return generalLowerBounds
         return generalLowerBounds + numberType
     }
 
+    private fun KotlinType.isNumberValueType() =
+            constructor is IntegerValueTypeConstructor ||
+            (constructor is IntersectionTypeConstructor && constructor.supertypes.all { it.isPrimitiveIntegerType() } )
+
+    private fun KotlinType.isPrimitiveIntegerType() =
+            KotlinBuiltIns.isByte(this) ||
+            KotlinBuiltIns.isShort(this) ||
+            KotlinBuiltIns.isInt(this) ||
+            KotlinBuiltIns.isLong(this)
 
     private fun commonSupertypeForNumberTypes(numberLowerBounds: Collection<UnwrappedType>): UnwrappedType? {
         if (numberLowerBounds.isEmpty()) return null

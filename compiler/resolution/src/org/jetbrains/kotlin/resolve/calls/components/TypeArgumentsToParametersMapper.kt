@@ -28,19 +28,16 @@ class TypeArgumentsToParametersMapper {
         abstract fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument
 
         object NoExplicitArguments : TypeArgumentsMapping(emptyList()) {
-            override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument {
-                return TypeArgumentPlaceholder
-            }
+            override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
+                    TypeArgumentPlaceholder
         }
 
         class TypeArgumentsMappingImpl(
                 diagnostics: List<KotlinCallDiagnostic>,
                 private val typeParameterToArgumentMap: Map<TypeParameterDescriptor, TypeArgument>
         ): TypeArgumentsMapping(diagnostics) {
-            override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument {
-                return typeParameterToArgumentMap[typeParameterDescriptor] ?:
-                       error("No argument for parameter: $typeParameterDescriptor. Reported diagnostics: $diagnostics")
-            }
+            override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
+                    typeParameterToArgumentMap[typeParameterDescriptor] ?: TypeArgumentPlaceholder
         }
     }
 
