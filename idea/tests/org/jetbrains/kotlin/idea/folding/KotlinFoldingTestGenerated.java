@@ -100,6 +100,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             doSettingsFoldingTest(fileName);
         }
 
+        @TestMetadata("customRegionsNotFullBlock.kt")
+        public void testCustomRegionsNotFullBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegionsNotFullBlock.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
