@@ -139,16 +139,10 @@ public final class StaticContext {
     private final List<JsStatement> importStatements = new ArrayList<JsStatement>();
 
     @NotNull
-    private final List<JsStatement> exportStatements = new ArrayList<JsStatement>();
+    private final DeclarationExporter exporter = new DeclarationExporter(this);
 
     @NotNull
     private final Set<ClassDescriptor> classes = new HashSet<ClassDescriptor>();
-
-    @NotNull
-    private final Set<MemberDescriptor> exportedDeclarations = new HashSet<MemberDescriptor>();
-
-    @NotNull
-    private final Map<FqName, JsName> localPackageNames = new HashMap<FqName, JsName>();
 
     //TODO: too many parameters in constructor
     private StaticContext(
@@ -649,53 +643,7 @@ public final class StaticContext {
     }
 
     public void export(@NotNull MemberDescriptor descriptor, boolean force) {
-        if (exportedDeclarations.contains(descriptor)) return;
-
-        if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary()) return;
-
-        SuggestedName suggestedName = nameSuggestion.suggest(descriptor);
-        if (suggestedName == null) return;
-
-        DeclarationDescriptor container = suggestedName.getScope();
-        if (!DeclarationExporter.shouldBeExported(descriptor, force)) return;
-        exportedDeclarations.add(descriptor);
-
-        if (container instanceof PackageFragmentDescriptor) {
-            JsExpression packageRef = getLocalPackageReference(((PackageFragmentDescriptor) container).getFqName());
-
-            JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
-            if (initializerExpr != null) {
-                JsName propertyName = getNameForDescriptor(descriptor);
-                if (MetadataProperties.getStaticRef(propertyName) == null) {
-                    if (!(initializerExpr instanceof JsNameRef) || ((JsNameRef) initializerExpr).getName() != propertyName) {
-                        MetadataProperties.setStaticRef(propertyName, initializerExpr);
-                    }
-                }
-                exportStatements.add(JsAstUtils.assignment(new JsNameRef(propertyName, packageRef), initializerExpr).makeStmt());
-            }
-        }
-        else {
-            JsExpression initializerExpr = DeclarationExporter.exportDeclaration(this, descriptor, exportStatements);
-            assert initializerExpr == null : "Should not produce initializer for non-package declaration";
-        }
-    }
-
-    private JsExpression getLocalPackageReference(FqName packageName) {
-        if (packageName.isRoot()) {
-            return rootFunction.getScope().declareName(Namer.getRootPackageName()).makeRef();
-        }
-        JsName name = localPackageNames.get(packageName);
-        if (name == null) {
-            name = rootFunction.getScope().declareFreshName("package$" + packageName.shortName().asString());
-            localPackageNames.put(packageName, name);
-
-            JsExpression parentRef = getLocalPackageReference(packageName.parent());
-            JsExpression selfRef = new JsNameRef(packageName.shortName().asString(), parentRef);
-            JsExpression rhs = JsAstUtils.or(selfRef, JsAstUtils.assignment(selfRef.deepCopy(), new JsObjectLiteral(false)));
-
-            exportStatements.add(JsAstUtils.newVar(name, rhs));
-        }
-        return name.makeRef();
+        exporter.export(descriptor, force);
     }
 
     @NotNull
@@ -713,7 +661,7 @@ public final class StaticContext {
         rootFunction.getBody().getStatements().addAll(importStatements);
         addClassPrototypes();
         rootFunction.getBody().getStatements().addAll(declarationStatements);
-        rootFunction.getBody().getStatements().addAll(exportStatements);
+        rootFunction.getBody().getStatements().addAll(exporter.getStatements());
         rootFunction.getBody().getStatements().addAll(topLevelStatements);
     }
 

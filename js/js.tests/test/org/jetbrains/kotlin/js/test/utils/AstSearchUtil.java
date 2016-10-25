@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectNamedFunctions;
-import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectJsProperties;
 
 public class AstSearchUtil {
     @NotNull
@@ -35,13 +34,6 @@ public class AstSearchUtil {
         JsFunction function = findByIdent(collectNamedFunctions(searchRoot), name);
         assert function != null: "Function `" + name + "` was not found";
         return function;
-    }
-
-    @NotNull
-    public static JsExpression getProperty(@NotNull JsNode searchRoot, @NotNull String name) {
-        JsExpression property = findByIdent(collectJsProperties(searchRoot), name);
-        assert property != null: "Property `" + name + "` was not found";
-        return property;
     }
 
     @NotNull
