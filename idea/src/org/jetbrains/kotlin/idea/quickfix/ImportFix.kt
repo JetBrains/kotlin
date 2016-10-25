@@ -28,6 +28,7 @@ import com.intellij.packageDependencies.DependencyValidationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -62,7 +63,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -393,14 +393,24 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
         if (!element.isImportDirectiveExpression() && !isSelectorInQualified(element)) {
             val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-            indicesHelper.getKotlinCallablesByName(name)
-                    .filter { it.canBeReferencedViaImport() && !isTopLevelDeclaration(it) }
-                    .filterTo(result, filterByCallType)
+            val processor = { descriptor: CallableDescriptor ->
+                if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
+                    result.add(descriptor)
+                }
+            }
+
+            indicesHelper.processKotlinCallablesByName(
+                    name,
+                    filter = { declaration -> (declaration.parent as? KtClassBody)?.parent is KtObjectDeclaration },
+                    processor = processor
+            )
 
             if (!ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())) {
-                indicesHelper.getJvmCallablesByName(name)
-                        .filter { it.canBeReferencedViaImport() }
-                        .filterTo(result, filterByCallType)
+                indicesHelper.processJvmCallablesByName(
+                        name,
+                        filter = { it.hasModifierProperty(PsiModifier.STATIC) },
+                        processor = processor
+                )
             }
         }
         return result

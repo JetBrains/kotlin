@@ -206,28 +206,41 @@ class KotlinIndicesHelper(
                 .toSet()
     }
 
-    fun getJvmCallablesByName(name: String): Collection<CallableDescriptor> {
+    fun processJvmCallablesByName(
+            name: String,
+            filter: (PsiMember) -> Boolean,
+            processor: (CallableDescriptor) -> Unit
+    ) {
         val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scopeWithoutKotlin).asSequence() +
                                PsiShortNamesCache.getInstance(project).getMethodsByName(name, scopeWithoutKotlin).asSequence()
-        return javaDeclarations
-                .filterNot { it is KtLightElement<*,*> }
-                .mapNotNull { (it as PsiMember).getJavaMemberDescriptor(resolutionFacade) as? CallableDescriptor }
-                .filter(descriptorFilter)
-                .toSet()
+        val processed = HashSet<CallableDescriptor>()
+        for (javaDeclaration in javaDeclarations) {
+            ProgressManager.checkCanceled()
+            if (javaDeclaration is KtLightElement<*, *>) continue
+            if (!filter(javaDeclaration as PsiMember)) continue
+            val descriptor = javaDeclaration.getJavaMemberDescriptor(resolutionFacade) as? CallableDescriptor ?: continue
+            if (!processed.add(descriptor)) continue
+            if (!descriptorFilter(descriptor)) continue
+            processor(descriptor)
+        }
     }
 
-    fun getKotlinCallablesByName(name: String): Collection<CallableDescriptor> {
-        val functions = KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
-                .asSequence()
-                .map { it.descriptor as? CallableDescriptor }
-        val properties = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope)
-                .asSequence()
-                .map { it.descriptor as? CallableDescriptor }
-
-        return (functions + properties)
-                .filterNotNull()
-                .filter(descriptorFilter)
-                .toSet()
+    fun processKotlinCallablesByName(
+            name: String,
+            filter: (KtCallableDeclaration) -> Boolean,
+            processor: (CallableDescriptor) -> Unit
+    ) {
+        val functions: Sequence<KtCallableDeclaration> = KotlinFunctionShortNameIndex.getInstance().get(name, project, scope).asSequence()
+        val properties: Sequence<KtCallableDeclaration> = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
+        val processed = HashSet<CallableDescriptor>()
+        for (declaration in functions + properties) {
+            ProgressManager.checkCanceled()
+            if (!filter(declaration)) continue
+            val descriptor = declaration.descriptor as? CallableDescriptor ?: continue
+            if (!processed.add(descriptor)) continue
+            if (!descriptorFilter(descriptor)) continue
+            processor(descriptor)
+        }
     }
 
     fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
