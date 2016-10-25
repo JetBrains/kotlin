@@ -23,8 +23,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.replacement.UsageReplacementStrategy
-import org.jetbrains.kotlin.idea.replacement.replaceUsagesInWholeProject
+import org.jetbrains.kotlin.idea.inliner.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.inliner.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer

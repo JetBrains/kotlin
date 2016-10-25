@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 private val POST_INSERTION_ACTION: Key<(KtElement) -> Unit> = Key("POST_INSERTION_ACTION")
 
-internal class MutableReplacementCode(
+internal class MutableCodeToInline(
         var mainExpression: KtExpression?,
         val statementsBefore: MutableList<KtExpression>,
         val fqNamesToImport: MutableCollection<FqName>
@@ -81,22 +81,22 @@ internal class MutableReplacementCode(
     }
 }
 
-internal fun ReplacementCode.toMutable(): MutableReplacementCode {
-    return MutableReplacementCode(
+internal fun CodeToInline.toMutable(): MutableCodeToInline {
+    return MutableCodeToInline(
             mainExpression?.copied(),
             statementsBefore.map { it.copied() }.toMutableList(),
             fqNamesToImport.toMutableSet())
 }
 
-internal fun MutableReplacementCode.toNonMutable(): ReplacementCode {
-    return ReplacementCode(mainExpression, statementsBefore, fqNamesToImport)
+internal fun MutableCodeToInline.toNonMutable(): CodeToInline {
+    return CodeToInline(mainExpression, statementsBefore, fqNamesToImport)
 }
 
-internal inline fun <reified T : PsiElement> MutableReplacementCode.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
+internal inline fun <reified T : PsiElement> MutableCodeToInline.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
     return expressions.flatMap { it.collectDescendantsOfType<T>({ true }, predicate) }
 }
 
-internal inline fun <reified T : PsiElement> MutableReplacementCode.forEachDescendantOfType(noinline action: (T) -> Unit) {
+internal inline fun <reified T : PsiElement> MutableCodeToInline.forEachDescendantOfType(noinline action: (T) -> Unit) {
     expressions.forEach { it.forEachDescendantOfType<T>(action) }
 }
 

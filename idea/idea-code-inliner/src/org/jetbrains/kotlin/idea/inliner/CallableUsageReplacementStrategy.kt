@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class CallableUsageReplacementStrategy(
-        private val replacement: ReplacementCode
+        private val replacement: CodeToInline
 ) : UsageReplacementStrategy {
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
@@ -44,7 +44,7 @@ class CallableUsageReplacementStrategy(
                 createReplacer(nameExpression)!!.invoke()
             }
             else {
-                CallReplacementEngine(usage, bindingContext, resolvedCall, callElement, replacement).performReplacement()
+                CodeInliner(usage, bindingContext, resolvedCall, callElement, replacement).doInline()
             }
         }
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
@@ -45,18 +45,18 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-class CallReplacementEngine<TCallElement : KtElement>(
+class CodeInliner<TCallElement : KtElement>(
         private val nameExpression: KtSimpleNameExpression,
         private val bindingContext: BindingContext,
         private val resolvedCall: ResolvedCall<out CallableDescriptor>,
         private val callElement: TCallElement,
-        replacement: ReplacementCode
+        codeToInline: CodeToInline
 ) {
-    private val replacement = replacement.toMutable()
+    private val codeToInline = codeToInline.toMutable()
     private val project = nameExpression.project
     private val psiFactory = KtPsiFactory(project)
 
-    fun performReplacement(): KtElement? {
+    fun doInline(): KtElement? {
         val descriptor = resolvedCall.resultingDescriptor
         val file = nameExpression.getContainingKtFile()
 
@@ -82,9 +82,9 @@ class CallReplacementEngine<TCallElement : KtElement>(
         receiver?.mark(RECEIVER_VALUE_KEY)
 
         //TODO: this@
-        for (thisExpression in replacement.collectDescendantsOfType<KtThisExpression>()) {
+        for (thisExpression in codeToInline.collectDescendantsOfType<KtThisExpression>()) {
             if (receiver != null) {
-                replacement.replaceExpression(thisExpression, receiver)
+                codeToInline.replaceExpression(thisExpression, receiver)
             }
             else {
                 thisExpression.mark(RECEIVER_VALUE_KEY)
@@ -104,25 +104,25 @@ class CallReplacementEngine<TCallElement : KtElement>(
 
         if (elementToBeReplaced is KtExpression) {
             if (receiver != null) {
-                val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
+                val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
                 if (receiver.shouldKeepValue(thisReplaced.size)) {
-                    replacement.introduceValue(receiver, receiverType, thisReplaced, elementToBeReplaced)
+                    codeToInline.introduceValue(receiver, receiverType, thisReplaced, elementToBeReplaced)
                 }
             }
 
             for ((parameter, value, valueType) in introduceValuesForParameters) {
-                val usagesReplaced = replacement.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
-                replacement.introduceValue(value, valueType, usagesReplaced, elementToBeReplaced, nameSuggestion = parameter.name.asString())
+                val usagesReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
+                codeToInline.introduceValue(value, valueType, usagesReplaced, elementToBeReplaced, nameSuggestion = parameter.name.asString())
             }
         }
 
-        replacement.fqNamesToImport
+        codeToInline.fqNamesToImport
                 .flatMap { file.resolveImportReference(it) }
                 .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
         val replacementPerformer = when (elementToBeReplaced) {
-            is KtExpression -> ExpressionReplacementPerformer(replacement, elementToBeReplaced)
-            is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(replacement, elementToBeReplaced)
+            is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
+            is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(codeToInline, elementToBeReplaced)
             else -> error("Unsupported element")
         }
 
@@ -146,8 +146,8 @@ class CallReplacementEngine<TCallElement : KtElement>(
             argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
             val parameterName = parameter.name
-            val usages = replacement.collectDescendantsOfType<KtExpression> {
-                it[ReplacementCode.PARAMETER_USAGE_KEY] == parameterName
+            val usages = codeToInline.collectDescendantsOfType<KtExpression> {
+                it[CodeToInline.PARAMETER_USAGE_KEY] == parameterName
             }
             usages.forEach {
                 val usageArgument = it.parent as? KtValueArgument
@@ -157,7 +157,7 @@ class CallReplacementEngine<TCallElement : KtElement>(
                 if (argument.isDefaultValue) {
                     usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                 }
-                replacement.replaceExpression(it, argument.expression)
+                codeToInline.replaceExpression(it, argument.expression)
             }
 
             //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
@@ -185,8 +185,8 @@ class CallReplacementEngine<TCallElement : KtElement>(
 
         for ((index, typeParameter) in typeParameters.withIndex()) {
             val parameterName = typeParameter.name
-            val usages = replacement.collectDescendantsOfType<KtExpression> {
-                it[ReplacementCode.TYPE_PARAMETER_USAGE_KEY] == parameterName
+            val usages = codeToInline.collectDescendantsOfType<KtExpression> {
+                it[CodeToInline.TYPE_PARAMETER_USAGE_KEY] == parameterName
             }
 
             val type = resolvedCall.typeArguments[typeParameter]!!
@@ -207,7 +207,7 @@ class CallReplacementEngine<TCallElement : KtElement>(
                     val arguments =
                             if (typeElement is KtUserType && KotlinBuiltIns.isArray(type)) typeElement.typeArgumentList?.text.orEmpty()
                             else ""
-                    replacement.replaceExpression(usage, psiFactory.createExpression(
+                    codeToInline.replaceExpression(usage, psiFactory.createExpression(
                             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(typeClassifier) + arguments
                     ))
                 }
@@ -216,21 +216,21 @@ class CallReplacementEngine<TCallElement : KtElement>(
                 }
                 else {
                     //TODO: tests for this?
-                    replacement.replaceExpression(usage, psiFactory.createExpression(typeElement.text))
+                    codeToInline.replaceExpression(usage, psiFactory.createExpression(typeElement.text))
                 }
             }
         }
     }
 
     private fun wrapCodeForSafeCall(receiver: KtExpression, receiverType: KotlinType?, expressionToBeReplaced: KtExpression) {
-        if (replacement.statementsBefore.isEmpty()) {
-            val qualified = replacement.mainExpression as? KtQualifiedExpression
+        if (codeToInline.statementsBefore.isEmpty()) {
+            val qualified = codeToInline.mainExpression as? KtQualifiedExpression
             if (qualified != null) {
                 if (qualified.receiverExpression[RECEIVER_VALUE_KEY]) {
                     if (qualified is KtSafeQualifiedExpression) return // already safe
                     val selector = qualified.selectorExpression
                     if (selector != null) {
-                        replacement.mainExpression = psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
+                        codeToInline.mainExpression = psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
                         return
                     }
                 }
@@ -238,32 +238,32 @@ class CallReplacementEngine<TCallElement : KtElement>(
         }
 
         if (expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
-            val thisReplaced = replacement.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
-            replacement.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
+            val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
+            codeToInline.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
         }
         else {
             val ifExpression = psiFactory.buildExpression {
                 appendFixedText("if (")
                 appendExpression(receiver)
                 appendFixedText("!=null) {")
-                replacement.statementsBefore.forEach {
+                codeToInline.statementsBefore.forEach {
                     appendExpression(it)
                     appendFixedText("\n")
                 }
-                replacement.mainExpression?.let {
+                codeToInline.mainExpression?.let {
                     appendExpression(it)
                     appendFixedText("\n")
                 }
                 appendFixedText("}")
             }
-            replacement.mainExpression = ifExpression
-            replacement.statementsBefore.clear()
+            codeToInline.mainExpression = ifExpression
+            codeToInline.statementsBefore.clear()
         }
     }
 
     private fun keepInfixFormIfPossible() {
-        if (replacement.statementsBefore.isNotEmpty()) return
-        val dotQualified = replacement.mainExpression as? KtDotQualifiedExpression ?: return
+        if (codeToInline.statementsBefore.isNotEmpty()) return
+        val dotQualified = codeToInline.mainExpression as? KtDotQualifiedExpression ?: return
         val receiver = dotQualified.receiverExpression
         if (!receiver[RECEIVER_VALUE_KEY]) return
         val call = dotQualified.selectorExpression as? KtCallExpression ?: return
@@ -271,7 +271,7 @@ class CallReplacementEngine<TCallElement : KtElement>(
         val argument = call.valueArguments.singleOrNull() ?: return
         if (argument.getArgumentName() != null) return
         val argumentExpression = argument.getArgumentExpression() ?: return
-        replacement.mainExpression = psiFactory.createExpressionByPattern("$0 ${nameExpression.text} $1", receiver, argumentExpression)
+        codeToInline.mainExpression = psiFactory.createExpressionByPattern("$0 ${nameExpression.text} $1", receiver, argumentExpression)
     }
 
     private fun KtExpression?.shouldKeepValue(usageCount: Int): Boolean {
@@ -317,13 +317,13 @@ class CallReplacementEngine<TCallElement : KtElement>(
                 val (expression, parameterUsages) = defaultValue
 
                 for ((param, usages) in parameterUsages) {
-                    usages.forEach { it.put(ReplacementCode.PARAMETER_USAGE_KEY, param.name) }
+                    usages.forEach { it.put(CodeToInline.PARAMETER_USAGE_KEY, param.name) }
                 }
 
                 val expressionCopy = expression.copied()
 
                 // clean up user data in original
-                expression.forEachDescendantOfType<KtExpression> { it.clear(ReplacementCode.PARAMETER_USAGE_KEY) }
+                expression.forEachDescendantOfType<KtExpression> { it.clear(CodeToInline.PARAMETER_USAGE_KEY) }
 
                 return Argument(expressionCopy, null/*TODO*/, isDefaultValue = true)
             }
@@ -395,8 +395,8 @@ class CallReplacementEngine<TCallElement : KtElement>(
             // clean up user data
             it.forEachDescendantOfType<KtExpression> {
                 it.clear(USER_CODE_KEY)
-                it.clear(ReplacementCode.PARAMETER_USAGE_KEY)
-                it.clear(ReplacementCode.TYPE_PARAMETER_USAGE_KEY)
+                it.clear(CodeToInline.PARAMETER_USAGE_KEY)
+                it.clear(CodeToInline.TYPE_PARAMETER_USAGE_KEY)
                 it.clear(PARAMETER_VALUE_KEY)
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)

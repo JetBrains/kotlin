@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ClassUsageReplacementStrategy(
         typeReplacement: KtUserType?,
-        constructorReplacement: ReplacementCode?,
+        constructorReplacement: CodeToInline?,
         project: Project
 ) : UsageReplacementStrategy {
 

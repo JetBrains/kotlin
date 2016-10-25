@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -36,21 +36,21 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import java.util.*
 
-class ReplacementBuilder(
+class CodeToInlineBuilder(
         private val targetCallable: CallableDescriptor,
         private val resolutionFacade: ResolutionFacade
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
-    fun buildReplacementCode(
+    fun prepareCodeToInline(
             mainExpression: KtExpression?,
             statementsBefore: List<KtExpression>,
             analyze: () -> BindingContext,
             importFqNames: Collection<FqName> = emptyList()
-    ): ReplacementCode {
+    ): CodeToInline {
         var bindingContext = analyze()
 
-        val result = MutableReplacementCode(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
+        val result = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
 
         val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
         result.forEachDescendantOfType<KtCallExpression> {
@@ -80,10 +80,10 @@ class ReplacementBuilder(
 
             if (expression.getReceiverExpression() == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(ReplacementCode.PARAMETER_USAGE_KEY, target.name)
+                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
                 }
                 else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(ReplacementCode.TYPE_PARAMETER_USAGE_KEY, target.name)
+                    expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)

@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.replacement.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.replacement.ReplacementBuilder
-import org.jetbrains.kotlin.idea.replacement.replaceUsagesInWholeProject
+import org.jetbrains.kotlin.idea.inliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.inliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.inliner.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -67,21 +67,21 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
                                              expectedType = expectedType)
         }
 
-        val replacementBuilder = ReplacementBuilder(descriptor, element.getResolutionFacade())
+        val replacementBuilder = CodeToInlineBuilder(descriptor, element.getResolutionFacade())
         val replacement = if (element.hasBlockBody()) {
             bodyCopy as KtBlockExpression
             val statements = bodyCopy.statements
             //TODO: check no other return's!
             val lastReturn = statements.lastOrNull() as? KtReturnExpression
             if (lastReturn != null) {
-                replacementBuilder.buildReplacementCode(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
+                replacementBuilder.prepareCodeToInline(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
             }
             else {
-                replacementBuilder.buildReplacementCode(null, statements, ::analyzeBodyCopy)
+                replacementBuilder.prepareCodeToInline(null, statements, ::analyzeBodyCopy)
             }
         }
         else {
-            replacementBuilder.buildReplacementCode(bodyCopy, emptyList(), ::analyzeBodyCopy)
+            replacementBuilder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy)
         }
 
         val commandName = RefactoringBundle.message("inline.command", element.name)

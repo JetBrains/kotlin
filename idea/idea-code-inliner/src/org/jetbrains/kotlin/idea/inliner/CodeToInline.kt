@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.replacement.ReplacementCode.Companion.PARAMETER_USAGE_KEY
-import org.jetbrains.kotlin.idea.replacement.ReplacementCode.Companion.TYPE_PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.inliner.CodeToInline.Companion.PARAMETER_USAGE_KEY
+import org.jetbrains.kotlin.idea.inliner.CodeToInline.Companion.TYPE_PARAMETER_USAGE_KEY
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
- * Represents an expression to replace usages of particular callable.
+ * Represents code to be inlined to replace usages of particular callable.
  * The expression should be preprocessed in the following way:
  * * Type arguments for all calls should be made explicit
  * * All external symbols to be imported should be either referenced via fully-qualified form or included into [fqNamesToImport]
  * * All usages of value parameters (of our callable) should be marked with [PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding parameter)
  * * All usages of type parameters (of our callable) should be marked with [TYPE_PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding type parameter)
- * Use [ReplacementBuilder.buildReplacementCode].
+ * Use [CodeToInlineBuilder.prepareCodeToInline].
  */
-class ReplacementCode(
+class CodeToInline(
         val mainExpression: KtExpression?,
         val statementsBefore: List<KtExpression>,
         val fqNamesToImport: Collection<FqName>

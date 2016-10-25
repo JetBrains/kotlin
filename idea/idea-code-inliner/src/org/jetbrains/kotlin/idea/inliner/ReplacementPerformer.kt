@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.replacement
+package org.jetbrains.kotlin.idea.inliner
 
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 internal abstract class ReplacementPerformer<TElement : KtElement>(
-        protected val replacement: MutableReplacementCode,
+        protected val codeToInline: MutableCodeToInline,
         protected var elementToBeReplaced: TElement
 ) {
     protected val psiFactory = KtPsiFactory(elementToBeReplaced)
@@ -40,18 +40,18 @@ internal abstract class ReplacementPerformer<TElement : KtElement>(
 }
 
 internal class AnnotationEntryReplacementPerformer(
-        replacement: MutableReplacementCode,
+        codeToInline: MutableCodeToInline,
         elementToBeReplaced: KtAnnotationEntry
-) : ReplacementPerformer<KtAnnotationEntry>(replacement, elementToBeReplaced) {
+) : ReplacementPerformer<KtAnnotationEntry>(codeToInline, elementToBeReplaced) {
 
     override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtAnnotationEntry {
-        assert(replacement.mainExpression != null)
-        assert(replacement.statementsBefore.isEmpty())
+        assert(codeToInline.mainExpression != null)
+        assert(codeToInline.statementsBefore.isEmpty())
 
-        val dummyAnnotationEntry = createByPattern("@Dummy($0)", replacement.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
+        val dummyAnnotationEntry = createByPattern("@Dummy($0)", codeToInline.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
         val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
 
-        replacement.performPostInsertionActions(replaced.singletonList())
+        codeToInline.performPostInsertionActions(replaced.singletonList())
 
         var range = PsiChildRange.singleElement(replaced)
         range = postProcessing(range)
@@ -65,13 +65,13 @@ internal class AnnotationEntryReplacementPerformer(
 }
 
 internal class ExpressionReplacementPerformer(
-        replacement: MutableReplacementCode,
+        codeToInline: MutableCodeToInline,
         expressionToBeReplaced: KtExpression
-) : ReplacementPerformer<KtExpression>(replacement, expressionToBeReplaced) {
+) : ReplacementPerformer<KtExpression>(codeToInline, expressionToBeReplaced) {
 
     override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtExpression? {
         val insertedStatements = ArrayList<KtExpression>()
-        for (statement in replacement.statementsBefore) {
+        for (statement in codeToInline.statementsBefore) {
             // copy the statement if it can get invalidated by findOrCreateBlockToInsertStatement()
             val statementToUse = if (statement.isPhysical) statement.copy() else statement
             val anchor = findOrCreateBlockToInsertStatement()
@@ -83,8 +83,8 @@ internal class ExpressionReplacementPerformer(
             insertedStatements.add(inserted)
         }
 
-        val replaced = if (replacement.mainExpression != null) {
-            elementToBeReplaced.replace(replacement.mainExpression!!)
+        val replaced = if (codeToInline.mainExpression != null) {
+            elementToBeReplaced.replace(codeToInline.mainExpression!!)
         }
         else {
             val bindingContext = elementToBeReplaced.analyze(BodyResolveMode.FULL)
@@ -98,7 +98,7 @@ internal class ExpressionReplacementPerformer(
             }
         }
 
-        replacement.performPostInsertionActions(insertedStatements + replaced.singletonOrEmptyList())
+        codeToInline.performPostInsertionActions(insertedStatements + replaced.singletonOrEmptyList())
 
         var range = if (replaced != null) {
             if (insertedStatements.isEmpty()) {

@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.replacement.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.replacement.ClassUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.replacement.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.inliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.inliner.ClassUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.inliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression

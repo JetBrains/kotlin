@@ -44,13 +44,13 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" filepath="$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-android/idea-android.iml" filepath="$PROJECT_DIR$/idea/idea-android/idea-android.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-android/idea-android-output-parser/idea-android-output-parser.iml" filepath="$PROJECT_DIR$/idea/idea-android/idea-android-output-parser/idea-android-output-parser.iml" group="ide" />
+      <module fileurl="file://$PROJECT_DIR$/idea/idea-code-inliner/idea-replacement-engine.iml" filepath="$PROJECT_DIR$/idea/idea-code-inliner/idea-replacement-engine.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" filepath="$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-core/idea-core.iml" filepath="$PROJECT_DIR$/idea/idea-core/idea-core.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" filepath="$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" filepath="$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-maven/idea-maven.iml" filepath="$PROJECT_DIR$/idea/idea-maven/idea-maven.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" filepath="$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/idea/idea-replacement-engine/idea-replacement-engine.iml" filepath="$PROJECT_DIR$/idea/idea-replacement-engine/idea-replacement-engine.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
