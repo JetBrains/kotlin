@@ -1,3 +1,4 @@
+
 public final class User {
     private final java.lang.String firstName;
     private final java.lang.String secondName;
@@ -18,7 +19,10 @@ public final class User {
         return 0;
     }
 
-    public void User(java.lang.String firstName, java.lang.String secondName, int age) {
+    public /*missing*/ User(java.lang.String firstName, java.lang.String secondName, int age) {
+        this.firstName = null;
+        this.secondName = null;
+        this.age = 0;
     }
 
     public final java.lang.String component1() {
