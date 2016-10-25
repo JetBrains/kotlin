@@ -151,10 +151,15 @@ class Demo3 {
     private var state: Boolean = true
 }
 ---------------------
-                                                       <v0>: Demo3                   NEW: magic[IMPLICIT_RECEIVER](run { if (state) state = true println(state) // OK }) -> <v0>
-{ if (state) state = true println(state) // OK }       <v1>: {<: Demo3.() -> Unit}   NEW: r({ if (state) state = true println(state) // OK }) -> <v1>
-run { if (state) state = true println(state) // OK }   <v2>: Unit                    NEW: call(run { if (state) state = true println(state) // OK }, run|<v0>, <v1>) -> <v2>
-true                                                   <v3>: Boolean                 NEW: r(true) -> <v3>
+run                                                    !<v1>: *
+{ if (state) state = true println(state) // OK }       <v0>: *                                                                                                               NEW: r({ if (state) state = true println(state) // OK }) -> <v0>
+run { if (state) state = true println(state) // OK }   <v2>: {<: [ERROR : Type for run {
+        if (state)
+            state = true
+
+        println(state) // OK
+    }]}   NEW: magic[UNRESOLVED_CALL](run { if (state) state = true println(state) // OK }|<v0>, !<v1>) -> <v2>
+true                                                   <v3>: Boolean                                                                                                         NEW: r(true) -> <v3>
 =====================
 == anonymous_0 ==
 {
