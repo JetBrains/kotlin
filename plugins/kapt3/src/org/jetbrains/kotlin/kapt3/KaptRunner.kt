@@ -51,7 +51,7 @@ class KaptError : RuntimeException {
 }
 
 class KaptRunner {
-    private val context = Context()
+    val context = Context()
     private val options: Options
 
     init {
