@@ -169,16 +169,16 @@ true                                                   <v3>: Boolean            
         println(state) // OK
     }
 ---------------------
-                                         <v0>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
-                                         <v2>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
-                                         <v6>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
-state                                    <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
-true                                     <v3>: Boolean   NEW: r(true) -> <v3>
-state = true                             !<v4>: *
-if (state) state = true                  <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
-state                                    <v7>: *         NEW: r(state|<v6>) -> <v7>
-println(state)                           <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
-if (state) state = true println(state)   <v8>: *         COPY
+                                               <v0>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                               <v2>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                               <v6>: Demo3     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                          <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                           <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                   !<v4>: *
+if (state) state = true                        <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                          <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                 <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+if (state) state = true println(state) // OK   <v8>: *         COPY
 =====================
 == exec ==
 fun <T> exec(f: () -> T): T = f()
@@ -211,16 +211,16 @@ true                                                                     <v2>: B
         println(state) // must be initialized
     }
 ---------------------
-                                         <v0>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
-                                         <v2>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
-                                         <v6>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
-state                                    <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
-true                                     <v3>: Boolean   NEW: r(true) -> <v3>
-state = true                             !<v4>: *
-if (state) state = true                  <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
-state                                    <v7>: *         NEW: r(state|<v6>) -> <v7>
-println(state)                           <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
-if (state) state = true println(state)   <v8>: *         COPY
+                                                                <v0>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v0>
+                                                                <v2>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v2>
+                                                                <v6>: Demo4     NEW: magic[IMPLICIT_RECEIVER](state) -> <v6>
+state                                                           <v1>: Boolean   NEW: r(state|<v0>) -> <v1>
+true                                                            <v3>: Boolean   NEW: r(true) -> <v3>
+state = true                                                    !<v4>: *
+if (state) state = true                                         <v5>: *         NEW: merge(if (state) state = true|!<v4>) -> <v5>
+state                                                           <v7>: *         NEW: r(state|<v6>) -> <v7>
+println(state)                                                  <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
+if (state) state = true println(state) // must be initialized   <v8>: *         COPY
 =====================
 == Demo5 ==
 class Demo5 {

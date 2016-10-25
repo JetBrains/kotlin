@@ -1089,7 +1089,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else {
             PsiBuilder.Marker body = mark();
             parseStatements();
+
             body.done(BLOCK);
+            body.setCustomEdgeTokenBinders(CommentBindersKt.PRECEDING_ALL_COMMENTS_BINDER, CommentBindersKt.TRAILING_ALL_COMMENTS_BINDER);
 
             expect(RBRACE, "Expecting '}'");
             literal.done(FUNCTION_LITERAL);
