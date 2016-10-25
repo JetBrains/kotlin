@@ -15,5 +15,6 @@
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="tests-common" scope="TEST" />
   </component>
 </module>
