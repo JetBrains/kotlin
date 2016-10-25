@@ -15941,6 +15941,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("unsupportedFeature.kt")
+                public void testUnsupportedFeature() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/unsupportedFeature.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("useOfExtensions.kt")
                 public void testUseOfExtensions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/dslMarker/useOfExtensions.kt");

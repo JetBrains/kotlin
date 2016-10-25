@@ -29,7 +29,8 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     DataClassInheritance(KOTLIN_1_1),
     InlineProperties(KOTLIN_1_1),
     DestructuringLambdaParameters(KOTLIN_1_1),
-    SingleUnderscoreForParameterName(KOTLIN_1_1)
+    SingleUnderscoreForParameterName(KOTLIN_1_1),
+    DslMarkersSupport(KOTLIN_1_1)
     ;
 
     val presentableText: String
