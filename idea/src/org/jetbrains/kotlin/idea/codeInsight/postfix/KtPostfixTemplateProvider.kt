@@ -23,12 +23,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil.findElementOfClassAtRange
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiverOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -129,12 +132,15 @@ private class KtExpressionPostfixTemplateSelector(
             // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
             if (it is KtFunctionLiteral) return@Condition false
 
-            val context by lazy { it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION) }
+            val bindingContext by lazy { it.analyze(BodyResolveMode.PARTIAL) }
 
-            if (statementsOnly && it.parent !is KtBlockExpression && !it.isUsedAsStatement(context)) return@Condition false
+            if (statementsOnly) {
+                val elementToCheck = it.getQualifiedExpressionForReceiverOrThis()
+                if (elementToCheck.parent !is KtBlockExpression && !elementToCheck.isUsedAsStatement(bindingContext)) return@Condition false
+            }
             if (checkCanBeUsedAsValue && !it.canBeUsedAsValue()) return@Condition false
 
-            typePredicate == null || it.getType(context)?.let { typePredicate(it) } ?: false
+            typePredicate == null || it.getType(bindingContext)?.let { typePredicate(it) } ?: false
         }
 
         private fun KtExpression.canBeUsedAsValue() =
@@ -148,14 +154,39 @@ private class KtExpressionPostfixTemplateSelector(
             get() = (this is KtIfExpression && this.elseKeyword == null)
     }
 
-    override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
-        val expressions = super.getExpressions(context, document, offset)
+    override fun getFilters(offset: Int): Condition<PsiElement> {
+        return myAdditionalCondition
+    }
 
-        if (ApplicationManager.getApplication().isUnitTestMode && expressions.size > 1) {
-            KtPostfixTemplateProvider.previouslySuggestedExpressions = expressions.map { it.text }
+    override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
+        val originalFile = context.containingFile.originalFile
+        val textRange = context.textRange
+        val originalElement = findElementOfClassAtRange(originalFile, textRange.startOffset, textRange.endOffset, context.javaClass)
+                              ?: return emptyList()
+
+        val expressions = originalElement.parentsWithSelf
+                .filterIsInstance<KtExpression>()
+                .takeWhile { !it.isBlockBodyInDeclaration }
+
+        val boundExpression = expressions.firstOrNull { it.parent.endOffset > offset }
+        val boundElementParent = boundExpression?.parent
+        val filteredByOffset = expressions.takeWhile { it != boundElementParent }.toMutableList()
+        if (boundElementParent is KtDotQualifiedExpression && boundExpression == boundElementParent.receiverExpression) {
+            val qualifiedExpressionEnd = boundElementParent.endOffset
+            expressions
+                    .dropWhile { it != boundElementParent }
+                    .filter { it != boundElementParent }
+                    .takeWhile { it.endOffset == qualifiedExpressionEnd }
+                    .toCollection(filteredByOffset)
         }
 
-        return expressions
+        val result = filteredByOffset.filter { myAdditionalCondition.value(it) }
+
+        if (ApplicationManager.getApplication().isUnitTestMode && result.size > 1) {
+            KtPostfixTemplateProvider.previouslySuggestedExpressions = result.map { it.text }
+        }
+
+        return result
     }
 
     override fun getNonFilteredExpressions(
