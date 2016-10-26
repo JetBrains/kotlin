@@ -27,6 +27,7 @@ struct TypeInfo {
     int32_t instanceSize_;
     // Must be pointer to Any for array classes, and null for Any.
     const TypeInfo* superType_;
+    // All object references inside this object.
     const int* objOffsets_;
     int objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;

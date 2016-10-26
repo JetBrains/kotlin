@@ -9,6 +9,22 @@
 
 extern "C" {
 
+// Any.kt
+KBool Kotlin_Any_equals(const ObjHeader* thiz, const ObjHeader* other) {
+  return thiz == other;
+}
+
+KInt Kotlin_Any_hashCode(const ObjHeader* thiz) {
+  // Here we will use different mechanism for stable hashcode, using meta-objects
+  // if moving collector will be used.
+  return reinterpret_cast<uintptr_t>(thiz);
+}
+
+ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz) {
+
+  return nullptr;
+}
+
 // Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
 KByte Kotlin_ByteArray_get(const ArrayHeader* obj, KInt index) {
@@ -97,7 +113,7 @@ KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* array) {
 
 // io/Console.kt
 void Kotlin_io_Console_print(const ArrayHeader* array) {
-  RuntimeAssert(array->type_info_ == theStringTypeInfo, "Must use a string");
+  RuntimeAssert(array->type_info() == theStringTypeInfo, "Must use a string");
   // TODO: system stdout must be aware about UTF-8.
   write(STDOUT_FILENO, ByteArrayAddressOfElementAt(array, 0), array->count_);
 }
@@ -122,7 +138,7 @@ KInt Kotlin_String_getStringLength(const ArrayHeader* array) {
 }
 
 ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
-  RuntimeAssert(array->type_info_ == theByteArrayTypeInfo, "Must use a byte array");
+  RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
   uint32_t length = ArraySizeBytes(array);
   // TODO: support full UTF-8.
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
@@ -136,8 +152,8 @@ ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
 ArrayHeader* Kotlin_String_plusImpl(
     const ArrayHeader* obj, const ArrayHeader* other) {
   // TODO: support UTF-8
-  RuntimeAssert(obj->type_info_ == theStringTypeInfo, "Must be a string");
-  RuntimeAssert(other->type_info_ == theStringTypeInfo, "Must be a string");
+  RuntimeAssert(obj->type_info() == theStringTypeInfo, "Must be a string");
+  RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
   uint32_t result_length = obj->count_ + other->count_;
   ArrayHeader* result = ArrayContainer(
       theStringTypeInfo, result_length).GetPlace();
@@ -150,6 +166,16 @@ ArrayHeader* Kotlin_String_plusImpl(
       ByteArrayAddressOfElementAt(other, 0),
       other->count_);
   return result;
+}
+
+KBool Kotlin_String_equals(
+    const ArrayHeader* thiz, const ObjHeader* other) {
+  if (other == nullptr || other->type_info() != theStringTypeInfo) return 0;
+  const ArrayHeader* otherString = reinterpret_cast<const ArrayHeader*>(other);
+  return thiz->count_ == otherString->count_ &&
+      memcmp(ByteArrayAddressOfElementAt(thiz, 0),
+             ByteArrayAddressOfElementAt(otherString, 0),
+             thiz->count_) == 0;
 }
 
 }

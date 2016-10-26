@@ -32,23 +32,43 @@ typedef enum {
 // Could be made 64-bit for large memory configs.
 typedef uint32_t container_offset_t;
 
+// Header of all container objects. Contains reference counter.
+struct ContainerHeader {
+  // Reference counter of container. Uses two lower bits of counter for
+  // container type (for polymorphism in ::Release()).
+  volatile uint32_t ref_count_;
+};
+
 // Header of every object.
 struct ObjHeader {
   const TypeInfo* type_info_;
   container_offset_t container_offset_negative_;
+
+  const TypeInfo* type_info() const {
+    // TODO: for moving collectors use meta-objects approach:
+    //  - store tag in lower bit TypeInfo, which marks if meta-object is in place
+    //  - when reading type_info_ check if it is unaligned
+    //  - if it is, pointer points to the MetaObject
+    //  - otherwise this is direct pointer to TypeInfo
+    // Meta-object allows storing additional data associated with some objects,
+    // such as stable hash code.
+    return type_info_;
+  }
+
+  void set_type_info(const TypeInfo* type_info) {
+    type_info_ = type_info;
+  }
+
+  ContainerHeader* container() const {
+    return reinterpret_cast<ContainerHeader*>(
+        reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+  }
 };
 
 // Header of value type array objects.
 struct ArrayHeader : public ObjHeader {
   // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
-};
-
-// Header of all container objects. Contains reference counter.
-struct ContainerHeader {
-  // Reference counter of container. Uses two lower bits of counter for
-  // container type (for polymorphism in ::Release()).
-  volatile uint32_t ref_count_;
 };
 
 struct ArenaContainerHeader : public ContainerHeader {
@@ -61,12 +81,13 @@ struct ArenaContainerHeader : public ContainerHeader {
 
 inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
   // Instance size is negative.
-  return reinterpret_cast<uint8_t*>(obj + 1) - obj->type_info_->instanceSize_ * index;
+  return reinterpret_cast<uint8_t*>(obj + 1) -
+      obj->type_info()->instanceSize_ * index;
 }
 
 inline uint32_t ArraySizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
-  return -obj->type_info_->instanceSize_ * obj->count_;
+  return -obj->type_info()->instanceSize_ * obj->count_;
 }
 
 
@@ -135,7 +156,7 @@ class Container {
   void SetMeta(ObjHeader* obj, const TypeInfo* type_info) {
     obj->container_offset_negative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(header_);
-    obj->type_info_ = type_info;
+    obj->set_type_info(type_info);
   }
 
  public:

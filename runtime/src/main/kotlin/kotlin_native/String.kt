@@ -24,4 +24,7 @@ class String {
 
     @SymbolName("Kotlin_String_plusImpl")
     external private fun plusImpl(other:Any): String
+
+    @SymbolName("Kotlin_String_equals")
+    external public override operator fun equals(other: Any?): Boolean
 }
