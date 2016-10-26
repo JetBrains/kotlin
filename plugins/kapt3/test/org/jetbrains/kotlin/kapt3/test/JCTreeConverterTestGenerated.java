@@ -35,15 +35,45 @@ public class JCTreeConverterTestGenerated extends AbstractJCTreeConverterTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/testData/converter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/annotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/dataClass.kt");
         doTest(fileName);
     }
 
+    @TestMetadata("defaultImpls.kt")
+    public void testDefaultImpls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/defaultImpls.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("enums.kt")
+    public void testEnums() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/enums.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("functions.kt")
+    public void testFunctions() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/functions.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/inheritanceSimple.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmStatic.kt")
+    public void testJvmStatic() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/jvmStatic.kt");
         doTest(fileName);
     }
 

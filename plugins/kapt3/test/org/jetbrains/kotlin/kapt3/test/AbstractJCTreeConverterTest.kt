@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.util.text.StringUtil
+import com.sun.tools.javac.comp.CompileStates
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.kapt3.JCTreeConverter
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptRunner
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 
 abstract class AbstractJCTreeConverterTest : CodegenTestCase() {
@@ -38,10 +41,23 @@ abstract class AbstractJCTreeConverterTest : CodegenTestCase() {
         val typeMapper = factory.generationState.typeMapper
 
         val kaptRunner = KaptRunner()
-        val converter = JCTreeConverter(kaptRunner.context, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
-        val javaFiles = converter.convert()
+        try {
+            val converter = JCTreeConverter(kaptRunner.context, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
+            val javaFiles = converter.convert()
 
-        KotlinTestUtils.assertEqualsToFile(txtFile, javaFiles.joinToString("\n\n////////////////////\n\n"))
+            kaptRunner.compiler.enterTrees(javaFiles)
+
+            val actualRaw = javaFiles.joinToString ("\n\n////////////////////\n\n")
+            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
+
+            if (kaptRunner.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
+                error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
+            }
+
+            KotlinTestUtils.assertEqualsToFile(txtFile, actual)
+        } finally {
+            kaptRunner.compiler.close()
+        }
     }
 }
 

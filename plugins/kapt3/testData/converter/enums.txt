@@ -1,0 +1,42 @@
+public enum Enum1 {
+    /*public static final*/ BLACK /* = null */,
+    /*public static final*/ WHITE /* = null */;
+
+    Enum1() {
+    }
+}
+
+////////////////////
+
+
+public abstract @interface Anno1 {
+
+    public abstract java.lang.String value();
+}
+
+////////////////////
+
+
+public enum Enum2 {
+    /*public static final*/ RED /* = null */,
+    /*public static final*/ WHITE /* = null */;
+    private final java.lang.String col = null;
+    private final int col2 = 0;
+
+    final java.lang.String color() {
+        return null;
+    }
+
+    final java.lang.String getCol() {
+        return null;
+    }
+
+    final int getCol2() {
+        return 0;
+    }
+
+    Enum2(@Anno1(value = "first")
+    java.lang.String col, @Anno1(value = "second")
+    int col2) {
+    }
+}

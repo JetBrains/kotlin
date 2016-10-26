@@ -19,7 +19,7 @@ public final class User {
         return 0;
     }
 
-    public /*missing*/ User(java.lang.String firstName, java.lang.String secondName, int age) {
+    public User(java.lang.String firstName, java.lang.String secondName, int age) {
         super();
     }
 
