@@ -2,13 +2,13 @@ package soInlineCallInLastStatementInInlineDex
 
 fun main(args: Array<String>) {
     bar()
-    nop()
-}
+    nop()               // 3
+}                       // 4
 
 inline fun bar() {
     //Breakpoint!
-    nop()
-    foo { 42 }
+    nop()               // 1
+    foo { 42 }          // 2
 }
 
 inline fun foo(f: () -> Unit) {

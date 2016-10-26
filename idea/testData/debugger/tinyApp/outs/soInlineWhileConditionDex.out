@@ -3,14 +3,8 @@ LineBreakpoint created at soInlineWhileConditionDex.kt:5
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 soInlineWhileConditionDex.kt:5
 soInlineWhileConditionDex.kt:7
-soInlineWhileConditionDex.kt:18
-soInlineWhileConditionDex.kt:7
 soInlineWhileConditionDex.kt:8
 soInlineWhileConditionDex.kt:7
-soInlineWhileConditionDex.kt:18
-soInlineWhileConditionDex.kt:7
-soInlineWhileConditionDex.kt:12
-soInlineWhileConditionDex.kt:18
 soInlineWhileConditionDex.kt:12
 soInlineWhileConditionDex.kt:15
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

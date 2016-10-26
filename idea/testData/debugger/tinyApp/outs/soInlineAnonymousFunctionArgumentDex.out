@@ -3,12 +3,8 @@ LineBreakpoint created at soInlineAnonymousFunctionArgumentDex.kt:5
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 soInlineAnonymousFunctionArgumentDex.kt:5
 soInlineAnonymousFunctionArgumentDex.kt:7
-soInlineAnonymousFunctionArgumentDex.kt:15
-soInlineAnonymousFunctionArgumentDex.kt:8
-soInlineAnonymousFunctionArgumentDex.kt:16
-soInlineAnonymousFunctionArgumentDex.kt:15
 soInlineAnonymousFunctionArgumentDex.kt:11
-soInlineAnonymousFunctionArgumentDex.kt:16
+soInlineAnonymousFunctionArgumentDex.kt:12
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
