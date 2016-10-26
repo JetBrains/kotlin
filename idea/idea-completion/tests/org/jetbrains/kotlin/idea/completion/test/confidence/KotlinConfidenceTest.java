@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
@@ -55,6 +56,10 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testNoAutoPopupInString() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -78,8 +83,15 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
 
         try {
             configureByFile(getBeforeFileName());
-            type(getTypeTextFromFile());
-            checkResultByFile(getAfterFileName());
+            String typeText = getTypeTextFromFile();
+            if (typeText != null) {
+                type(typeText);
+                checkResultByFile(getAfterFileName());
+            }
+            else {
+                LookupImpl lookup = getLookup();
+                assertNull("No completion auto-popup expected", lookup);
+            }
         }
         finally {
             CodeInsightSettings.getInstance().SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = completeByChars;
@@ -90,6 +102,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         String text = getEditor().getDocument().getText();
 
         String[] directives = InTextDirectivesUtils.findArrayWithPrefixes(text, TYPE_DIRECTIVE_PREFIX);
+        if (directives.length == 0) return null;
         assertEquals("One directive with \"" + TYPE_DIRECTIVE_PREFIX +"\" expected", 1, directives.length);
 
         return StringUtil.unquoteString(directives[0]);

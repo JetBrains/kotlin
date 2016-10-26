@@ -1,0 +1,4 @@
+fun test() {
+    "a<caret>"
+}
+
