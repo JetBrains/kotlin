@@ -298,7 +298,7 @@ class ResolveElementCache(
 
             is KtAnonymousInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter(), bodyResolveMode.bindingTraceFilter)
 
-            is KtPrimaryConstructor -> constructorAdditionalResolve(resolveSession, resolveElement.parent as KtClass, file, bodyResolveMode.bindingTraceFilter)
+            is KtPrimaryConstructor -> constructorAdditionalResolve(resolveSession, resolveElement.parent as KtClassOrObject, file, bodyResolveMode.bindingTraceFilter)
 
             is KtSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter(), bodyResolveMode.bindingTraceFilter)
 
@@ -519,7 +519,7 @@ class ResolveElementCache(
         return trace
     }
 
-    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: KtClass, file: KtFile, filter : BindingTraceFilter): BindingTrace {
+    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: KtClassOrObject, file: KtFile, filter : BindingTraceFilter): BindingTrace {
         val trace = createDelegatingTrace(klass, filter)
         val scope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(klass)
 
