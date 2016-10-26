@@ -85,15 +85,13 @@ task run(type: JavaExec) {
 
    args '-output', "$buildDir/out.bc"
 
-   jvmArgs '-ea'
+   jvmArgs '-ea', "-Djava.library.path=${llvmDir}/lib:${project.buildDir}/nativelibs"
 
    dependsOn ':runtime:build'
 
    doFirst {
        args '-runtime', project(':runtime').build.outputs.files.singleFile
    }
-
-   environment 'LD_LIBRARY_PATH' : "$llvmDir/lib"
 }
 
 
