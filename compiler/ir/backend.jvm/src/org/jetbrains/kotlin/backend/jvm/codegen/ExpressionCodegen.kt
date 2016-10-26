@@ -85,7 +85,7 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
     }
 }
 
-class VariableInfo(val name: String, val index: Int, val type: Type, val startLabel: Label)
+class VariableInfo(val descriptor: VariableDescriptor, val index: Int, val type: Type, val startLabel: Label)
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class ExpressionCodegen(
@@ -142,7 +142,11 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo) {
         val endLabel = markNewLabel()
         info.variables.forEach {
-            mv.visitLocalVariable(it.name, it.type.descriptor, null, it.startLabel, endLabel, it.index)
+            mv.visitLocalVariable(it.descriptor.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
+        }
+
+        info.variables.reversed().forEach {
+            frame.leave(it.descriptor)
         }
     }
 
@@ -267,7 +271,7 @@ class ExpressionCodegen(
         }
 
         val info = VariableInfo(
-                declaration.descriptor.name.asString(),
+                declaration.descriptor,
                 index,
                 varType,
                 markNewLabel()
