@@ -1,0 +1,57 @@
+
+public final class Test {
+
+    public /*missing*/ Test() {
+        super();
+    }
+
+    public static final class Nested {
+
+        public /*missing*/ Nested() {
+            super();
+        }
+
+        public static final class NestedNested {
+
+            public /*missing*/ NestedNested() {
+                super();
+            }
+        }
+    }
+
+    public final class Inner {
+
+        public /*missing*/ Inner(Test $outer) {
+            super();
+        }
+    }
+
+    public static final class NestedObject {
+        public static final Test.NestedObject INSTANCE = null;
+
+        private /*missing*/ NestedObject() {
+            super();
+        }
+    }
+
+    public static abstract interface NestedInterface {
+    }
+
+    public static enum NestedEnum {
+;
+        public static final Test.NestedEnum BLACK = null;
+        public static final Test.NestedEnum WHITE = null;
+
+        protected /*missing*/ NestedEnum(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1) {
+            super(null, 0);
+        }
+
+        public static Test.NestedEnum[] values() {
+            return null;
+        }
+
+        public static Test.NestedEnum valueOf(java.lang.String p0) {
+            return null;
+        }
+    }
+}

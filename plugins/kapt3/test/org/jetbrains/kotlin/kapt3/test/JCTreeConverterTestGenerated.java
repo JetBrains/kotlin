@@ -46,4 +46,10 @@ public class JCTreeConverterTestGenerated extends AbstractJCTreeConverterTest {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/inheritanceSimple.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("nestedClasses.kt")
+    public void testNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/nestedClasses.kt");
+        doTest(fileName);
+    }
 }
