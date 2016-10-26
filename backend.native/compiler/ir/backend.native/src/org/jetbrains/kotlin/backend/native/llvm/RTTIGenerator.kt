@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
@@ -116,6 +117,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return allMethods.filter { it.modality != Modality.FINAL }
     }
 
+    private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMOpaqueValue?) {
+        val annot = classDesc.annotations.findAnnotation(FqName("kotlin_native.ExportTypeInfo"))
+        if (annot != null) {
+            val nameValue = annot.allValueArguments.values.single() as StringValue
+            // TODO: use LLVMAddAlias?
+            val global = LLVMAddGlobal(context.llvmModule, pointerType(runtime.typeInfoType), nameValue.value)
+            LLVMSetInitializer(global, typeInfoGlobal)
+        }
+    }
+
     fun generate(classDesc: ClassDescriptor) {
 
         val className = classDesc.fqNameSafe
@@ -176,6 +187,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val typeInfoGlobal = classDesc.llvmTypeInfoPtr.getLlvmValue() // TODO: it is a hack
         LLVMSetInitializer(typeInfoGlobal, typeInfo.getLlvmValue())
         LLVMSetGlobalConstant(typeInfoGlobal, 1)
+
+        exportTypeInfoIfRequired(classDesc, typeInfoGlobal)
     }
 
 }
