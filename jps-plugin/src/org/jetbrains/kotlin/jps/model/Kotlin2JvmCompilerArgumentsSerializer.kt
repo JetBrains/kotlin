@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.model;
+package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
+import com.intellij.util.xmlb.XmlSerializer
+import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION
 
-class Kotlin2JvmCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
-    Kotlin2JvmCompilerArgumentsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION);
+internal class Kotlin2JvmCompilerArgumentsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
+                                                                                     KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION) {
+
+    override fun loadExtension(project: JpsProject, componentTag: Element) {
+        val settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments::class.java) ?: K2JVMCompilerArguments()
+        JpsKotlinCompilerSettings.setK2JvmCompilerArguments(project, settings)
     }
 
-    @Override
-    public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        K2JVMCompilerArguments settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments.class);
-        if (settings == null) {
-            settings = new K2JVMCompilerArguments();
-        }
-
-        JpsKotlinCompilerSettings.Companion.setK2JvmCompilerArguments(project, settings);
-    }
-
-    @Override
-    public void saveExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
+    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }

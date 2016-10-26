@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.model;
+package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
-import org.jetbrains.kotlin.config.CompilerSettings;
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
+import com.intellij.util.xmlb.XmlSerializer
+import org.jdom.Element
+import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
 
-class KotlinCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
-    KotlinCompilerSettingsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMPILER_SETTINGS_SECTION);
+internal class KotlinCompilerSettingsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
+                                                                                KOTLIN_COMPILER_SETTINGS_SECTION) {
+
+    override fun loadExtension(project: JpsProject, componentTag: Element) {
+        val settings = XmlSerializer.deserialize(componentTag, CompilerSettings::class.java) ?: CompilerSettings()
+        JpsKotlinCompilerSettings.setCompilerSettings(project, settings)
     }
 
-    @Override
-    public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        CompilerSettings settings = XmlSerializer.deserialize(componentTag, CompilerSettings.class);
-        if (settings == null) {
-            settings = new CompilerSettings();
-        }
-
-        JpsKotlinCompilerSettings.Companion.setCompilerSettings(project, settings);
-    }
-
-    @Override
-    public void saveExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
+    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }
