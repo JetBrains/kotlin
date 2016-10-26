@@ -359,7 +359,7 @@ public class ErrorUtils {
                 ERROR_CLASS,
                 Annotations.Companion.getEMPTY(),
                 Modality.OPEN,
-                Visibilities.INTERNAL,
+                Visibilities.PUBLIC,
                 true,
                 Name.special("<ERROR PROPERTY>"),
                 CallableMemberDescriptor.Kind.DECLARATION,
@@ -386,7 +386,7 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibilities.INTERNAL
+                Visibilities.PUBLIC
         );
         return function;
     }

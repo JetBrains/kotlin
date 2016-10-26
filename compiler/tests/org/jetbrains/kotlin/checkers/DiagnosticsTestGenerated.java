@@ -10779,6 +10779,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt14887.kt")
+                public void testKt14887() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonPublicMember/kt14887.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonPublicMember/localClass.kt");
