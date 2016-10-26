@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
+import org.jetbrains.kotlin.idea.debugger.noStrataLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
@@ -268,12 +269,13 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
 sealed class Action(val position: XSourcePositionImpl? = null,
                     val lineNumber: Int? = null,
                     val stepOverLines: Set<Int>? = null,
-                    val inlineRangeVariables: List<LocalVariable>? = null) {
+                    val inlineRangeVariables: List<LocalVariable>? = null,
+                    val isDexDebug: Boolean = false) {
     class STEP_OVER : Action()
     class STEP_OUT : Action()
     class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position)
-    class STEP_OVER_INLINED(lineNumber: Int, stepOverLines: Set<Int>, inlineVariables: List<LocalVariable>) : Action(
-            lineNumber = lineNumber, stepOverLines = stepOverLines, inlineRangeVariables = inlineVariables)
+    class STEP_OVER_INLINED(lineNumber: Int, stepOverLines: Set<Int>, inlineVariables: List<LocalVariable>, isDexDebug: Boolean) : Action(
+            lineNumber = lineNumber, stepOverLines = stepOverLines, inlineRangeVariables = inlineVariables, isDexDebug = isDexDebug)
 
     fun apply(debugProcess: DebugProcessImpl,
               suspendContext: SuspendContextImpl,
@@ -287,26 +289,32 @@ sealed class Action(val position: XSourcePositionImpl? = null,
             is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
             is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
             is Action.STEP_OVER_INLINED -> KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
-                    KotlinStepOverInlineFilter(stepOverLines!!, lineNumber ?: -1, inlineRangeVariables!!)).contextAction(suspendContext)
+                    KotlinStepOverInlineFilter(
+                            isDexDebug,
+                            debugProcess.project,
+                            stepOverLines!!,
+                            lineNumber ?: -1,
+                            inlineRangeVariables!!)).contextAction(suspendContext)
         }
     }
 }
 
-interface KotlinMethodFilter: MethodFilter {
+interface KotlinMethodFilter : MethodFilter {
     fun locationMatches(context: SuspendContextImpl, location: Location): Boolean
 }
 
 fun getStepOverAction(
         location: Location,
         kotlinSourcePosition: KotlinSteppingCommandProvider.KotlinSourcePosition,
-        frameProxy: StackFrameProxyImpl
+        frameProxy: StackFrameProxyImpl,
+        isDexDebug: Boolean
 ): Action {
     val inlineArgumentsToSkip = runReadAction {
         getInlineCallFunctionArgumentsIfAny(kotlinSourcePosition.sourcePosition)
     }
 
     return getStepOverAction(location, kotlinSourcePosition.file, kotlinSourcePosition.linesRange,
-                             inlineArgumentsToSkip, frameProxy)
+                             inlineArgumentsToSkip, frameProxy, isDexDebug)
 }
 
 fun getStepOverAction(
@@ -314,12 +322,21 @@ fun getStepOverAction(
         file: KtFile,
         range: IntRange,
         inlineFunctionArguments: List<KtElement>,
-        frameProxy: StackFrameProxyImpl
+        frameProxy: StackFrameProxyImpl,
+        isDexDebug: Boolean
 ): Action {
     val computedReferenceType = location.declaringType() ?: return Action.STEP_OVER()
 
+    val project = file.project
+
+    fun Location.ktLineNumber() = noStrataLineNumber(this, isDexDebug, project, true)
+
     fun isLocationSuitable(nextLocation: Location): Boolean {
-        if (nextLocation.method() != location.method() || nextLocation.lineNumber() !in range) {
+        if (nextLocation.method() != location.method()) {
+            return false
+        }
+
+        if (nextLocation.ktLineNumber() !in range) {
             return false
         }
 
@@ -336,21 +353,23 @@ fun getStepOverAction(
                 .dropWhile { it != location }
                 .drop(1)
                 .filter(::isLocationSuitable)
-                .dropWhile { it.lineNumber() == location.lineNumber() }
+                .dropWhile { it.ktLineNumber() == location.ktLineNumber() }
                 .firstOrNull()
 
-        return previousSuitableLocation != null && previousSuitableLocation.lineNumber() > location.lineNumber()
+        return previousSuitableLocation != null && previousSuitableLocation.ktLineNumber() > location.ktLineNumber()
     }
 
     val patchedLocation = if (isBackEdgeLocation()) {
         // Pretend we had already did a backing step
         computedReferenceType.allLineLocations()
                 .filter(::isLocationSuitable)
-                .first { it.lineNumber() == location.lineNumber() }
+                .first { it.ktLineNumber() == location.ktLineNumber() }
     }
     else {
         location
     }
+
+    val patchedLineNumber = patchedLocation.ktLineNumber()
 
     val lambdaArgumentRanges = runReadAction {
         inlineFunctionArguments.filterIsInstance<KtElement>().map {
@@ -367,21 +386,24 @@ fun getStepOverAction(
     // - Lines from other files and from functions that are not in range of current one are definitely inlined
     // - Lines in function arguments of inlined functions are inlined too as we found them starting from the position of inlined call.
     //
-    // This heuristic doesn't work for DEX, because of missing strata information (https://code.google.com/p/android/issues/detail?id=82972)
-    //
     // It also thinks that too many lines are inlined when there's a call of function argument or other
     // inline function in last statement of inline function. The list of inlineRangeVariables is used to overcome it.
     val probablyInlinedLocations = computedReferenceType.allLineLocations()
             .dropWhile { it != patchedLocation }
             .drop(1)
-            .dropWhile { it.lineNumber() == patchedLocation.lineNumber() }
-            .takeWhile { locationAtLine ->
-                !isLocationSuitable(locationAtLine) || lambdaArgumentRanges.any { locationAtLine.lineNumber() in it }
+            .dropWhile { it.ktLineNumber() == patchedLineNumber }
+            .takeWhile { location ->
+                !isLocationSuitable(location) || lambdaArgumentRanges.any { location.ktLineNumber() in it }
             }
-            .dropWhile { it.lineNumber() == patchedLocation.lineNumber() }
+            .dropWhile { it.ktLineNumber() == patchedLineNumber }
 
     if (!probablyInlinedLocations.isEmpty()) {
-        return Action.STEP_OVER_INLINED(patchedLocation.lineNumber(), probablyInlinedLocations.map { it.lineNumber() }.toSet(), inlineRangeVariables)
+        return Action.STEP_OVER_INLINED(
+                patchedLineNumber,
+                probablyInlinedLocations.map { it.ktLineNumber() }.toSet(),
+                inlineRangeVariables,
+                isDexDebug
+        )
     }
 
     return Action.STEP_OVER()

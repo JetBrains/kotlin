@@ -3,9 +3,7 @@ LineBreakpoint created at soInlineCallInLastStatementInInlineDex.kt:10
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 soInlineCallInLastStatementInInlineDex.kt:10
 soInlineCallInLastStatementInInlineDex.kt:11
-soInlineCallInLastStatementInInlineDex.kt:15
-soInlineCallInLastStatementInInlineDex.kt:11
-soInlineCallInLastStatementInInlineDex.kt:16
+soInlineCallInLastStatementInInlineDex.kt:5
 soInlineCallInLastStatementInInlineDex.kt:6
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -55,12 +55,7 @@ public class DebuggerSteppingHelper {
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
             public void contextAction() {
-                // In DEX there's no strata for trying to understand what lines were inlined and no local variables attributes are
-                // preserved that can be used for fine tuning. So do an ordinal 'step over' instead.
-                if (NoStrataPositionManagerHelperKt.isDexDebug(suspendContext.getDebugProcess())) {
-                    debugProcess.createStepOverCommand(suspendContext, true).contextAction();
-                    return;
-                }
+                boolean isDexDebug = NoStrataPositionManagerHelperKt.isDexDebug(suspendContext.getDebugProcess());
 
                 try {
                     StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
@@ -68,7 +63,8 @@ public class DebuggerSteppingHelper {
                         Action action = KotlinSteppingCommandProviderKt.getStepOverAction(
                                 frameProxy.location(),
                                 kotlinSourcePosition,
-                                frameProxy
+                                frameProxy,
+                                isDexDebug
                         );
 
                         createStepRequest(

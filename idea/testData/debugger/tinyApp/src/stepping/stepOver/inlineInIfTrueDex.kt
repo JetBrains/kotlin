@@ -3,10 +3,10 @@ package inlineInIfTrueDex
 fun main(args: Array<String>) {
     val bar = ""
     //Breakpoint!
-    if (inlineCall { true }) {
-        foo()
+    if (inlineCall { true }) {                                    // 1
+        foo()                                                     // 2
     }
-}
+}                                                                 // 3
 
 fun foo() {}
 

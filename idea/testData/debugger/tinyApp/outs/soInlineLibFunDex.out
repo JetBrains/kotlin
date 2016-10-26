@@ -1,0 +1,11 @@
+LineBreakpoint created at soInlineLibFunDex.kt:5
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! soInlineLibFunDex.SoInlineLibFunDexKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+soInlineLibFunDex.kt:5
+soInlineLibFunDex.kt:7
+soInlineLibFunDex.kt:9
+soInlineLibFunDex.kt:10
+soInlineLibFunDex.kt:12
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

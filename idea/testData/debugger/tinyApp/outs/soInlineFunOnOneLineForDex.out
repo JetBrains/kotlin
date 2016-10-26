@@ -1,0 +1,10 @@
+LineBreakpoint created at soInlineFunOnOneLineForDex.kt:17
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! soInlineFunOnOneLineForDex.SoInlineFunOnOneLineForDexKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+soInlineFunOnOneLineForDex.kt:17
+soInlineFunOnOneLineForDex.kt:18
+soInlineFunOnOneLineForDex.kt:8
+soInlineFunOnOneLineForDex.kt:9
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
