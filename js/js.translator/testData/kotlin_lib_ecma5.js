@@ -470,10 +470,9 @@
         };
     };
 
-    Kotlin.getCallableRefForTopLevelProperty = function(packageName, name, isVar) {
-        var getFun = Function("p", "return function " + name + "() { return p['" + name + "']; }")(packageName);
-        var setFun = isVar ? function(value) { packageName[name] = value; } : null;
-        return getPropertyRefClass(getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
+    Kotlin.getCallableRefForTopLevelProperty = function(getter, setter, name) {
+        var getFun = Function("getter", "return function " + name + "() { return getter(); }")(getter, setter);
+        return getPropertyRefClass(getFun, "get", setter, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
     };
 
     Kotlin.getCallableRefForMemberProperty = function(name, isVar) {

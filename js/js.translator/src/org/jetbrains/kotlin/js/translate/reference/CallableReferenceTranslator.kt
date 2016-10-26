@@ -16,20 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.util.*
 
 object CallableReferenceTranslator {
@@ -93,13 +87,54 @@ object CallableReferenceTranslator {
         val packageDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor)
         assert(packageDescriptor is PackageFragmentDescriptor) { "Expected PackageFragmentDescriptor: $packageDescriptor" }
 
-        // TODO: revisit
-        val jsPackageNameRef = context.getQualifiedReference(packageDescriptor)
         val jsPropertyName = context.getNameForDescriptor(descriptor)
         val jsPropertyNameAsString = context.program().getStringLiteral(jsPropertyName.toString())
 
-        return JsInvocation(context.namer().callableRefForTopLevelPropertyReference(), jsPackageNameRef, jsPropertyNameAsString,
-                            isVar(descriptor))
+        val getter = createTopLevelGetterFunction(descriptor, context)
+        val setter = if (descriptor.isVar) createTopLevelSetterFunction(descriptor, context) else JsLiteral.NULL
+
+        return JsInvocation(context.namer().callableRefForTopLevelPropertyReference(), getter, setter, jsPropertyNameAsString)
+    }
+
+    private fun createTopLevelGetterFunction(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
+        val getter = descriptor.getter!!
+        if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && context.isFromCurrentModule(descriptor)) {
+            return context.getInnerReference(getter)
+        }
+
+        val expression = if (TranslationUtils.shouldAccessViaFunctions(descriptor)) {
+            JsInvocation(ReferenceTranslator.translateAsValueReference(getter, context))
+        }
+        else {
+            ReferenceTranslator.translateAsValueReference(descriptor, context)
+        }
+
+        val function = context.createTopLevelFunction(getter)
+        function.body.statements += JsReturn(expression)
+
+        return function
+    }
+
+    private fun createTopLevelSetterFunction(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
+        val setter = descriptor.setter!!
+        if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor) && context.isFromCurrentModule(descriptor)) {
+            return context.getInnerReference(setter)
+        }
+
+        val function = context.createTopLevelFunction(setter)
+        val valueParam = function.scope.declareFreshName("value")
+        function.parameters += JsParameter(valueParam)
+
+        val expression = if (TranslationUtils.shouldAccessViaFunctions(descriptor)) {
+            JsInvocation(ReferenceTranslator.translateAsValueReference(setter, context), valueParam.makeRef())
+        }
+        else {
+            JsAstUtils.assignment(ReferenceTranslator.translateAsValueReference(descriptor, context), valueParam.makeRef())
+        }
+
+        function.body.statements += expression.makeStmt()
+
+        return function
     }
 
     private fun translateForMemberProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
