@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS
+// reason - multifile tests are not supported in JS tests
 //FILE: JavaClass.java
 
 class JavaClass {

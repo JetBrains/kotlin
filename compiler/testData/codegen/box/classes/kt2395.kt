@@ -1,5 +1,5 @@
 // TODO: Enable when JS backend supports Java class library
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 import java.util.AbstractList
 
 class MyList(): AbstractList<String>() {

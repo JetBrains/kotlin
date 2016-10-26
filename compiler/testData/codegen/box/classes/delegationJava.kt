@@ -1,5 +1,5 @@
 // Enable for JS when it supports Java class library.
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 
 class TestJava(r : Runnable) : Runnable by r {}
 class TestRunnable() : Runnable {

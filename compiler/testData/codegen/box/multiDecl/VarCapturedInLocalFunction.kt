@@ -1,3 +1,5 @@
+// TODO: enable JS backend when issue KT-14535 is fixed
+// IGNORE_BACKEND: JS
 class A {
 }
 

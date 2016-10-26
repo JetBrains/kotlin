@@ -1,6 +1,6 @@
 // Won't ever work with JS backend.
 // TODO: Consider rewriting this test without using threads, since the issue is not about threads at all.
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 
 object RefreshQueue {
     val any = Any()
