@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.io.File
 
 private val SCRIPT_NAME_PREFIX: String = "script "
 
@@ -47,7 +45,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
         get() = ModuleOrigin.OTHER
 
     val externalDependencies by lazy {
-        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)?.makeComparable()
+        KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)
     }
 
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
@@ -75,29 +73,8 @@ fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): 
            allJdks.firstOrNull()
 }
 
-private inline fun <T> tryGet(body: () -> T): T? {
-    return try {
-        body()
-    }
-    catch (e: Throwable) {
-        null
-    }
-}
-
-data class ComparableScriptDependencies(
-        override val javaHome: String?,
-        override val classpath: Iterable<File>,
-        override val imports: Iterable<String>,
-        override val sources: Iterable<File>,
-        override val scripts: Iterable<File>
-): KotlinScriptExternalDependencies
-
-fun KotlinScriptExternalDependencies.makeComparable() = ComparableScriptDependencies(
-        tryGet { javaHome }, classpath, imports, sources, tryGet { scripts } ?: listOf()
-)
-
-class ScriptDependenciesModuleInfo(val project: Project, val dependencies: ComparableScriptDependencies?): IdeaModuleInfo {
-    override fun dependencies() = listOf(this) + sdkDependencies(dependencies, project)
+class ScriptDependenciesModuleInfo(val project: Project, val dependencies: KotlinScriptExternalDependencies?): IdeaModuleInfo {
+    override fun dependencies() = (listOf(this) + sdkDependencies(dependencies, project))
 
     override val name = Name.special("<Script dependencies>")
 

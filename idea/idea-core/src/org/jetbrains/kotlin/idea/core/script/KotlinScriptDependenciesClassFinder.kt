@@ -26,7 +26,6 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleSearchScope
-import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
@@ -34,22 +33,23 @@ class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
-    private val myCaches = object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
-        override fun create(file: VirtualFile): PackageDirectoryCache? {
-
-            val scriptClasspath = kotlinScriptConfigurationManager.getScriptClasspath(file)
-            val v = createCache(scriptClasspath)
-            return v
+    private val myCaches by lazy {
+        object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
+            override fun create(file: VirtualFile): PackageDirectoryCache? {
+                val scriptClasspath = kotlinScriptConfigurationManager.getScriptClasspath(file)
+                val v = createCache(scriptClasspath)
+                return v
+            }
         }
     }
 
-    override fun calcClassRoots(): List<VirtualFile> = kotlinScriptConfigurationManager.getAllScriptsClasspath()
+    override fun calcClassRoots(): List<VirtualFile> = kotlinScriptConfigurationManager.getAllScriptsClasspath().toList()
 
     override fun getCache(scope: GlobalSearchScope?): PackageDirectoryCache =
             (scope as? ScriptModuleSearchScope ?:
              (scope as? JavaClassFinderImpl.FilterOutKotlinSourceFilesScope)?.base as? ScriptModuleSearchScope
             )?.let {
-                myCaches.get(it.scriptFile)
+                myCaches[it.scriptFile]
             } ?: super.getCache(scope)
 
     override fun clearCache() {
