@@ -74,7 +74,9 @@ class ClassTranslator private constructor(
         val scope = context().getScopeForDescriptor(descriptor)
         val context = context().newDeclaration(descriptor)
 
-        val constructorFunction = context.defineTopLevelFunction(descriptor)
+        val constructorFunction = context.createTopLevelFunction(descriptor)
+        constructorFunction.name = context.getInnerNameForDescriptor(descriptor)
+        context.addDeclarationStatement(constructorFunction.makeStmt())
         val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
 
         val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
@@ -139,9 +141,9 @@ class ClassTranslator private constructor(
     }
 
     private fun createEnumInitFunction(): JsFunction {
-        val function = context().createTopLevelAnonymousFunction(descriptor)
+        val function = context().createTopLevelFunction(descriptor)
         function.name = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + "_initFields")
-        val emptyFunction = context().createTopLevelAnonymousFunction(descriptor)
+        val emptyFunction = context().createTopLevelFunction(descriptor)
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
         context().addDeclarationStatement(function.makeStmt())
         return function
@@ -211,7 +213,9 @@ class ClassTranslator private constructor(
         }
 
         // Translate constructor body
-        val constructorInitializer = context.defineTopLevelFunction(constructorDescriptor)
+        val constructorInitializer = context.getFunctionObject(constructorDescriptor)
+        constructorInitializer.name = context.getInnerNameForDescriptor(constructorDescriptor)
+        context.addTopLevelStatement(constructorInitializer.makeStmt())
         FunctionTranslator.newInstance(constructor, context, constructorInitializer).translateAsMethodWithoutMetadata()
 
         // Translate super/this call
@@ -415,7 +419,7 @@ class ClassTranslator private constructor(
     private fun addObjectMethods() {
         context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
 
-        val instanceFun = JsFunction(context().rootFunction.scope, JsBlock(), "Instance function: " + descriptor)
+        val instanceFun = context().createTopLevelFunction("Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
 
         if (enumInitializerName == null) {

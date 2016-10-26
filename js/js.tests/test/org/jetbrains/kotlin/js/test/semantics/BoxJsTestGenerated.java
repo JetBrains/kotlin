@@ -777,6 +777,75 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/crossModuleRef")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CrossModuleRef extends AbstractBoxJsTest {
+        public void testAllFilesPresentInCrossModuleRef() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+        }
+
+        @TestMetadata("callableObjectRef.kt")
+        public void testCallableObjectRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/callableObjectRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/constructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/inheritance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/object.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectInInlineClosure.kt")
+        public void testObjectInInlineClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/objectInInlineClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectIsObject.kt")
+        public void testObjectIsObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/objectIsObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelExtension.kt")
+        public void testTopLevelExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/topLevelExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelFunction.kt")
+        public void testTopLevelFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/topLevelFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelMutableProperty.kt")
+        public void testTopLevelMutableProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/topLevelMutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/topLevelProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

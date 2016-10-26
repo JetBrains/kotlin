@@ -69,7 +69,7 @@ class DeclarationBodyVisitor(
             context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, null))
             enumInitializer.body.statements += JsAstUtils.assignment(pureFqn(enumInstanceName, null), jsEnumEntryCreation).makeStmt()
 
-            val enumInstanceFunction = context.createTopLevelAnonymousFunction(descriptor)
+            val enumInstanceFunction = context.createTopLevelFunction(descriptor)
             enumInstanceFunction.name = context.getNameForObjectInstance(descriptor)
             context.addDeclarationStatement(enumInstanceFunction.makeStmt())
 

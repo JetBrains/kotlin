@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
-import com.google.dart.compiler.backend.js.JsReservedIdentifiers;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -27,12 +26,10 @@ import org.jetbrains.kotlin.js.translate.context.UsageTracker;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtParameter;
@@ -76,8 +73,6 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         this.initFunction = initFunction;
         this.context = context.contextWithScope(initFunction);
         classDescriptor = BindingUtils.getClassDescriptor(bindingContext(), classDeclaration);
-
-        fillInitFunction(classDeclaration, context);
     }
 
     public void setOrdinal(int ordinal) {
@@ -88,37 +83,6 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @Override
     protected TranslationContext context() {
         return context;
-    }
-
-    private static void fillInitFunction(KtClassOrObject declaration, TranslationContext context) {
-        //TODO: it's inconsistent that we have scope for class and function for constructor, currently have problems implementing better way
-        ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), declaration);
-        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-
-        String functionName = AnnotationsUtils.getJsName(classDescriptor);
-        if (functionName == null) {
-            Name name = classDescriptor.getName();
-            if (!name.isSpecial()) {
-                functionName = name.asString();
-            }
-        }
-
-        JsFunction ctorFunction;
-        if (primaryConstructor != null) {
-            ctorFunction = context.getFunctionObject(primaryConstructor);
-        }
-        else {
-            ctorFunction = new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + functionName);
-        }
-
-        if (functionName != null) {
-            if (JsReservedIdentifiers.reservedGlobalSymbols.contains(functionName) ||
-                JsFunctionScope.Companion.getRESERVED_WORDS().contains(functionName)
-            ) {
-                functionName += "$";
-            }
-            ctorFunction.setName(ctorFunction.getScope().declareName(functionName));
-        }
     }
 
     public void generateInitializeMethod(DelegationTranslator delegationTranslator) {

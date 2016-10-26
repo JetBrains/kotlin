@@ -259,6 +259,8 @@ public final class Translation {
         JsBlock rootBlock = rootFunction.getBody();
         List<JsStatement> statements = rootBlock.getStatements();
 
+        program.getScope().declareName("_");
+
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
         PackageDeclarationTranslator.translateFiles(files, context);
         staticContext.postProcess();

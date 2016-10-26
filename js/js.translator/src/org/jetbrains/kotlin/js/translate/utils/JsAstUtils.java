@@ -39,8 +39,6 @@ public final class JsAstUtils {
     private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(pureFqn("writable", null), JsLiteral.TRUE);
     private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(pureFqn("enumerable", null), JsLiteral.TRUE);
 
-    public static final String LENDS_JS_DOC_TAG = "lends";
-
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
         DEFINE_PROPERTY.setQualifier(globalObjectReference);

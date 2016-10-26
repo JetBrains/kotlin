@@ -77,9 +77,6 @@ object DefaultFunctionCallCase : FunctionCallCase() {
             val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(context.getNameForDescriptor(callableDescriptor)))
             return JsInvocation(functionCallRef, argumentsInfo.translateArguments)
         }
-        if (isNative) {
-            return JsInvocation(JsNameRef(context.getNameForDescriptor(callableDescriptor)), argumentsInfo.translateArguments)
-        }
 
         val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
         return JsInvocation(functionRef, argumentsInfo.translateArguments)

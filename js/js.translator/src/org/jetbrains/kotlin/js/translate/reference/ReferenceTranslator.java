@@ -91,20 +91,23 @@ public final class ReferenceTranslator {
         if (!shouldTranslateAsFQN(descriptor, context)) {
             if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
                 if (!context.isFromCurrentModule(descriptor)) {
-                    return getLazyReferenceToObject(descriptor, context);
+                    return getPrototypeIfNecessary(descriptor, getLazyReferenceToObject(descriptor, context));
                 }
             }
             return context.getInnerReference(descriptor);
         }
 
-        JsExpression reference = context.getQualifiedReference(descriptor);
+        return getPrototypeIfNecessary(descriptor, context.getQualifiedReference(descriptor));
+    }
+
+    @NotNull
+    private static JsExpression getPrototypeIfNecessary(@NotNull ClassDescriptor descriptor, @NotNull JsExpression reference) {
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
             JsNameRef getPrototypeRef = JsAstUtils.pureFqn("getPrototypeOf", JsAstUtils.pureFqn("Object", null));
             JsInvocation getPrototypeInvocation = new JsInvocation(getPrototypeRef, reference);
             MetadataProperties.setSideEffects(getPrototypeInvocation, SideEffectKind.PURE);
             reference = JsAstUtils.pureFqn("constructor", getPrototypeInvocation);
         }
-
         return reference;
     }
 

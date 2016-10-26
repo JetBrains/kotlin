@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.naming
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils

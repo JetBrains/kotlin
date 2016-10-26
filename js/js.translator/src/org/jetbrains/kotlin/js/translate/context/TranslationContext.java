@@ -59,10 +59,7 @@ public class TranslationContext {
     private final ClassDescriptor classDescriptor;
 
     @NotNull
-    public static TranslationContext rootContext(
-            @NotNull StaticContext staticContext,
-            @NotNull JsFunction rootFunction
-    ) {
+    public static TranslationContext rootContext(@NotNull StaticContext staticContext, @NotNull JsFunction rootFunction) {
         JsBlock block = new JsBlock(staticContext.getTopLevelStatements());
         DynamicContext rootDynamicContext = DynamicContext.rootContext(rootFunction.getScope(), block);
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
@@ -565,11 +562,6 @@ public class TranslationContext {
         return staticContext.getModuleExpressionFor(descriptor);
     }
 
-    @NotNull
-    public JsFunction getRootFunction() {
-        return staticContext.getRootFunction();
-    }
-
     public void addDeclarationStatement(@NotNull JsStatement statement) {
         staticContext.getDeclarationStatements().add(statement);
     }
@@ -579,27 +571,18 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsFunction defineTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
-        JsFunction function = createTopLevelFunction(descriptor);
-        addDeclarationStatement(function.makeStmt());
-        return function;
-    }
-
-    @NotNull
     public JsName createGlobalName(@NotNull String suggestedName) {
         return staticContext.getRootFunction().getScope().declareFreshName(suggestedName);
     }
 
     @NotNull
-    private JsFunction createTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
-        JsFunction function = createTopLevelAnonymousFunction(descriptor);
-        function.setName(staticContext.getInnerNameForDescriptor(descriptor));
-        return function;
+    public JsFunction createTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
+        return createTopLevelFunction(descriptor.toString());
     }
 
     @NotNull
-    public JsFunction createTopLevelAnonymousFunction(@NotNull DeclarationDescriptor descriptor) {
-        return new JsFunction(getRootFunction().getScope(), new JsBlock(), descriptor.toString());
+    public JsFunction createTopLevelFunction(@NotNull String description) {
+        return new JsFunction(staticContext.getRootFunction().getScope(), new JsBlock(), description);
     }
 
     public void addClass(@NotNull ClassDescriptor classDescriptor) {
