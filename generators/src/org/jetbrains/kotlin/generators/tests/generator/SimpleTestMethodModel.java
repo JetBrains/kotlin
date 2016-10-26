@@ -100,7 +100,8 @@ public class SimpleTestMethodModel implements TestMethodModel {
                 fileText = FileUtil.loadFile(file);
             }
             List<String> backends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// TARGET_BACKEND: ");
-            return backends.size() > 0 && !targetBackend.name().equals(backends.get(0));
+            List<String> ignoredBackends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// IGNORE_BACKEND: ");
+            return (!backends.isEmpty() && !backends.contains(targetBackend.name())) || ignoredBackends.contains(targetBackend.name());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
