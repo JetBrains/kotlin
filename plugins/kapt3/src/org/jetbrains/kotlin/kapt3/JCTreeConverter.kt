@@ -46,7 +46,7 @@ class JCTreeConverter(
         private val MODALITY_MODIFIERS = Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT
 
         private val CLASS_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM
+                Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC
 
         private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
                 Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED
@@ -80,7 +80,7 @@ class JCTreeConverter(
         val descriptor = origin.descriptor as? ClassDescriptor ?: return null
 
         // Nested classes will be processed during the outer classes conversion
-        if (descriptor.containingDeclaration is ClassDescriptor) return null
+        if (descriptor.isNested) return null
 
         val classDeclaration = convertClass(clazz)
 
@@ -101,10 +101,13 @@ class JCTreeConverter(
         if (isSynthetic(clazz.access)) return null
 
         val descriptor = origins[clazz]?.descriptor as? ClassDescriptor ?: return null
-        val modifiers = convertModifiers(clazz.access, ElementKind.CLASS, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+        val modifiers = convertModifiers(
+                if (!descriptor.isInner && descriptor.isNested) (clazz.access or Opcodes.ACC_STATIC) else clazz.access,
+                ElementKind.CLASS, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+
         val simpleName = name(descriptor.name.asString())
         val typeParams = JavacList.nil<JCTypeParameter>()
-        val extending = if (clazz.superName == "java/lang/Object") null else convertFqName(clazz.superName)
+        val extending = if (clazz.superName == "java/lang/Object" || clazz.isEnum()) null else convertFqName(clazz.superName)
         val implementing = mapValues(clazz.interfaces) { convertFqName(it) }
 
         val fields = mapValues<FieldNode, JCTree>(clazz.fields) { convertField(it) }
@@ -123,13 +126,14 @@ class JCTreeConverter(
 
         val modifiers = convertModifiers(field.access, ElementKind.FIELD, field.visibleAnnotations, field.invisibleAnnotations)
         val name = name(field.name)
-        val type = convertFqName(Type.getType(field.desc).className)
+        val type = Type.getType(field.desc)
+        val typeExpression = convertFqName(type.className)
         val value = field.value
         val initializer = when (value) {
             is Byte, is Boolean, is Char, is Short, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
-            else -> null
+            else -> if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
         }
-        return treeMaker.VarDef(modifiers, name, type, initializer)
+        return treeMaker.VarDef(modifiers, name, typeExpression, initializer)
     }
 
     private fun convertMethod(method: MethodNode, containingClass: ClassNode, containingClassSimpleName: Name): JCMethodDecl? {
@@ -176,7 +180,7 @@ class JCTreeConverter(
             val superClass = declaration.getSuperClassOrAny()
             val superClassConstructor = superClass.constructors.firstOrNull { it.visibility.isVisible(null, it, declaration) }
 
-            var statements = if (superClassConstructor != null) {
+            val superClassConstructorCall = if (superClassConstructor != null) {
                 val args = mapValues(superClassConstructor.valueParameters) { param ->
                     convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
                 }
@@ -186,16 +190,7 @@ class JCTreeConverter(
                 JavacList.nil<JCStatement>()
             }
 
-            for (field in containingClass.fields) {
-                if ((field.access and Opcodes.ACC_FINAL) == 0) continue
-                val type = Type.getType(field.desc)
-                val assignment = treeMaker.Assign(
-                        convertFqName("this.${field.name}"),
-                        convertLiteralExpression(getDefaultValue(type)))
-                statements = statements.append(treeMaker.Exec(assignment))
-            }
-
-            treeMaker.Block(0, statements)
+            treeMaker.Block(0, superClassConstructorCall)
         } else if (returnType == Type.VOID_TYPE) {
             treeMaker.Block(0, JavacList.nil())
         } else {
@@ -342,4 +337,10 @@ private operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList
     return this.appendList(other)
 }
 
+private val ClassDescriptor.isNested: Boolean
+    get() = containingDeclaration is ClassDescriptor
+
 private fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) > 0
+private fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) > 0
+private fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) > 0
+private fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) > 0

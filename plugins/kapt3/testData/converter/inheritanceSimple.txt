@@ -11,15 +11,13 @@ public final class Context {
 ////////////////////
 
 
-public enum Result extends java.lang.Enum {
+public enum Result {
 ;
-    public static final Result SUCCESS;
-    public static final Result ERROR;
+    public static final Result SUCCESS = null;
+    public static final Result ERROR = null;
     
     protected /*missing*/ Result(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1) {
         super(null, 0);
-        this.SUCCESS = null;
-        this.ERROR = null;
     }
     
     public static Result[] values() {
