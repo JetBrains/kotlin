@@ -1,5 +1,5 @@
 // TODO: Enable for JS when it supports Java class library.
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 class SomeClass { companion object }
 
 fun box() = 

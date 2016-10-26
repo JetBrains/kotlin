@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 // reason - multifile tests are not supported in JS tests
 //FILE: Holder.java
 

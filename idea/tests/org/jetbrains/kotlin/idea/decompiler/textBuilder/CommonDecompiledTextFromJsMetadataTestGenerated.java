@@ -31,21 +31,9 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
-    @TestMetadata("DependencyOnNestedClasses")
-    public void ignoredDependencyOnNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses/");
-        doTest(fileName);
-    }
-
     @TestMetadata("FlexibleTypes")
     public void ignoredFlexibleTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/FlexibleTypes/");
-        doTest(fileName);
-    }
-
-    @TestMetadata("InnerClasses")
-    public void ignoredInnerClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/InnerClasses/");
         doTest(fileName);
     }
 
@@ -55,21 +43,9 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
-    @TestMetadata("NestedClasses")
-    public void ignoredNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");
-        doTest(fileName);
-    }
-
     @TestMetadata("SecondaryConstructors")
     public void ignoredSecondaryConstructors() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
-        doTest(fileName);
-    }
-
-    @TestMetadata("TypeAliases")
-    public void ignoredTypeAliases() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeAliases/");
         doTest(fileName);
     }
 
@@ -113,6 +89,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
+    @TestMetadata("DependencyOnNestedClasses")
+    public void testDependencyOnNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Enum/");
@@ -137,9 +119,21 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
+    @TestMetadata("InnerClasses")
+    public void testInnerClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/InnerClasses/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedClasses")
+    public void testNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");
         doTest(fileName);
     }
 
@@ -152,6 +146,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SimpleClass/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeAliases")
+    public void testTypeAliases() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeAliases/");
         doTest(fileName);
     }
 

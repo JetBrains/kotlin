@@ -1,5 +1,5 @@
-// TODO: Enable when JS backed gets support of Java class library
-// TARGET_BACKEND: JVM
+// TODO: Enable when JS backend gets support of Java class library
+// IGNORE_BACKEND: JS
 fun ok(b: Boolean) = if (b) "OK" else "Fail"
 
 fun box(): String {

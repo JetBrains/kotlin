@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 // reason - Int doesn't overflow in JS, TODO: include after KT-7733 is fixed
 fun box(): String {
     val i1: Int = Int.MAX_VALUE
