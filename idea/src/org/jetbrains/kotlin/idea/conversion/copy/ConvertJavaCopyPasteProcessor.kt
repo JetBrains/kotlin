@@ -86,7 +86,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
         fun doConversion(): Result {
             val dataForConversion = DataForConversion.prepare(data, project)
-            val result = convertCopiedCodeToKotlin(dataForConversion.elementsAndTexts, project)
+            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             val text = if (result.textChanged) result.text else null
             return Result(text, referenceData, result.importsToAdd)
@@ -198,14 +198,14 @@ internal class ConversionResult(
         val textChanged: Boolean
 )
 
-internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, project: Project): ConversionResult {
+internal fun ElementAndTextList.convertCodeToKotlin(project: Project): ConversionResult {
     val converter = JavaToKotlinConverter(
             project,
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
     )
 
-    val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
+    val inputElements = this.toList().filterIsInstance<PsiElement>()
     val results = converter.elementsToKotlin(inputElements).results
     val importsToAdd = LinkedHashSet<FqName>()
 
@@ -213,9 +213,9 @@ internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, projec
     val convertedCodeBuilder = StringBuilder()
     val originalCodeBuilder = StringBuilder()
     var parseContext: ParseContext? = null
-    for (o in elementsAndTexts) {
-        if (o is PsiElement) {
-            val originalText = o.text
+    this.process(object : ElementsAndTextsProcessor {
+        override fun processElement(element: PsiElement) {
+            val originalText = element.text
             originalCodeBuilder.append(originalText)
 
             val result = results[resultIndex++]
@@ -230,11 +230,12 @@ internal fun convertCopiedCodeToKotlin(elementsAndTexts: Collection<Any>, projec
                 convertedCodeBuilder.append(originalText)
             }
         }
-        else {
-            originalCodeBuilder.append(o)
-            convertedCodeBuilder.append(o as String)
+
+        override fun processText(string: String) {
+            originalCodeBuilder.append(string)
+            convertedCodeBuilder.append(string)
         }
-    }
+    })
 
     val convertedCode = convertedCodeBuilder.toString()
     val originalCode = originalCodeBuilder.toString()

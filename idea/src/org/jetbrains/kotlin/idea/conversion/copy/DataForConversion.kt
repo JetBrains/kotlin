@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import java.util.*
 
 data class DataForConversion private constructor(
-        val elementsAndTexts: Collection<Any> /* list consisting of PsiElement's to convert and plain String's */,
-        val importsAndPackage: String
+        val elementsAndTexts: ElementAndTextList /* list consisting of PsiElement's to convert and plain String's */,
+        val importsAndPackage: String,
+        val file: PsiJavaFile
 ) {
     companion object {
         fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
@@ -49,12 +50,12 @@ data class DataForConversion private constructor(
                 file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, newFileText) as PsiJavaFile
             }
 
-            val elementsAndTexts = ArrayList<Any>()
+            val elementsAndTexts = ElementAndTextList()
             for (i in startOffsets.indices) {
                 elementsAndTexts.collectElementsToConvert(file, fileText, TextRange(startOffsets[i], endOffsets[i]))
             }
 
-            return DataForConversion(elementsAndTexts, importsAndPackage)
+            return DataForConversion(elementsAndTexts, importsAndPackage, file)
         }
 
         private fun clipTextIfNeeded(file: PsiJavaFile, fileText: String, startOffsets: IntArray, endOffsets: IntArray): String? {
@@ -207,7 +208,7 @@ data class DataForConversion private constructor(
             return clipTo
         }
 
-        private fun MutableList<Any>.collectElementsToConvert(
+        private fun ElementAndTextList.collectElementsToConvert(
                 file: PsiJavaFile,
                 fileText: String,
                 range: TextRange
@@ -218,8 +219,11 @@ data class DataForConversion private constructor(
             }
             else {
                 add(fileText.substring(range.start, elements.first().range.start))
-                elements.flatMapTo(this) {
-                    if (shouldExpandToChildren(it)) it.allChildren.toList() else listOf(it)
+                elements.forEach {
+                    if (shouldExpandToChildren(it))
+                        this += it.allChildren.toList()
+                    else
+                        this += it
                 }
                 add(fileText.substring(elements.last().range.end, range.end))
             }
