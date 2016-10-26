@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
+import org.jetbrains.kotlin.config.KotlinCompilerInfo
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
 
 class KotlinFacetEditorCompilerTab(

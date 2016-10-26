@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
+import org.jetbrains.kotlin.config.JSPlatform;
+import org.jetbrains.kotlin.config.TargetPlatformKind;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
-import org.jetbrains.kotlin.idea.facet.JSPlatform;
-import org.jetbrains.kotlin.idea.facet.TargetPlatformKind;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.facet
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
@@ -24,11 +23,10 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.getLibraryProperties
@@ -98,7 +96,7 @@ internal fun getLibraryLanguageLevel(
     return getDefaultLanguageLevel(module, minVersion)
 }
 
-internal fun KotlinFacetConfiguration.Settings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
+internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
     val project = module.project
 
     with(versionInfo) {
@@ -130,8 +128,8 @@ internal fun KotlinFacetConfiguration.Settings.initializeIfNeeded(module: Module
     }
 }
 
-internal fun Module.getKotlinSettings(rootModel: ModuleRootModel? = null): KotlinFacetConfiguration.Settings {
-    val settings = KotlinFacet.get(this)?.configuration?.state ?: KotlinFacetConfiguration.Settings()
+internal fun Module.getKotlinSettings(rootModel: ModuleRootModel? = null): KotlinFacetSettings {
+    val settings = KotlinFacet.get(this)?.configuration?.state ?: KotlinFacetSettings()
     settings.initializeIfNeeded(this, rootModel)
     return settings
 }

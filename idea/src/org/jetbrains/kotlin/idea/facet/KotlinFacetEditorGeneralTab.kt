@@ -20,7 +20,9 @@ import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.idea.util.DescriptionAware
+import org.jetbrains.kotlin.config.DescriptionAware
+import org.jetbrains.kotlin.config.LanguageLevel
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*

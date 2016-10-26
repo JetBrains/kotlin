@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.idea.maven.facet
 
 import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.project.MavenProjectsManager
-import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider
-import org.jetbrains.kotlin.idea.facet.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.mavenLibraryId
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
