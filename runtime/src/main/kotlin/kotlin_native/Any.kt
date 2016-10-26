@@ -1,5 +1,6 @@
 package kotlin_native
 
+@ExportTypeInfo("theAnyTypeInfo")
 public open class Any0 {
     // @SymbolName("Kotlin_Any_equals")
     // external public open operator fun equals0(other: Any0?): Boolean

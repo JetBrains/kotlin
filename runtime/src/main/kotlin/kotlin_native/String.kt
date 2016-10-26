@@ -3,6 +3,7 @@ package kotlin_native
 @SymbolName("Kotlin_String_fromUtf8Array")
 external fun fromUtf8Array(array: ByteArray) : String
 
+@ExportTypeInfo("theStringTypeInfo")
 class String {
     @SymbolName("Kotlin_String_hashCode")
     external public override fun hashCode(): Int

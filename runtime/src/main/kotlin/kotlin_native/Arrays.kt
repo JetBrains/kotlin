@@ -1,5 +1,6 @@
 package kotlin_native
 
+@ExportTypeInfo("theByteArrayTypeInfo")
 class ByteArray : Cloneable {
     // Constructors are handled with compiler magic.
     private constructor() {}
@@ -20,6 +21,7 @@ class ByteArray : Cloneable {
     external private fun getArrayLength(): Int
 }
 
+@ExportTypeInfo("theCharArrayTypeInfo")
 class CharArray : Cloneable {
     // Constructors are handled with the compiler magic.
     private constructor() {}
@@ -40,6 +42,7 @@ class CharArray : Cloneable {
     external private fun getArrayLength(): Int
 }
 
+@ExportTypeInfo("theIntArrayTypeInfo")
 class IntArray : Cloneable {
     // Constructors are handled with the compiler magic.
     private constructor() {}
