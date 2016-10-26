@@ -63,10 +63,9 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
             }
         }
 
-        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/" + getTestName(true) + ".kt");
+        val virtualFile = myFixture.copyFileToProject(ktFile.absolutePath, "src/" + getTestName(true) + ".kt")
         myFixture.configureFromExistingVirtualFile(virtualFile)
 
-        myFixture.doHighlighting()
         myFixture.checkHighlighting(true, false, false)
     }
 

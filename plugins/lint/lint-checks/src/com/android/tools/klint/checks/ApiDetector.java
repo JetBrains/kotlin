@@ -2023,7 +2023,7 @@ public class ApiDetector extends ResourceXmlDetector
         public boolean visitTryExpression(UTryExpression statement) {
             List<PsiResourceListElement> resourceList = statement.getResources();
             //noinspection VariableNotUsedInsideIf
-            if (!resourceList.isEmpty()) {
+            if (resourceList != null && !resourceList.isEmpty()) {
                 int api = 19; // minSdk for try with resources
                 int minSdk = getMinSdk(mContext);
 
@@ -2059,53 +2059,6 @@ public class ApiDetector extends ResourceXmlDetector
             }
 
             return super.visitTryExpression(statement);
-        }
-
-        private Location getCatchParametersLocation(JavaContext context, UCatchClause catchClause) {
-            List<UTypeReferenceExpression> types = catchClause.getTypeReferences();
-            if (types.isEmpty()) {
-                return Location.NONE;
-            }
-
-            Location first = context.getUastLocation(types.get(0));
-            if (types.size() < 2) {
-                return first;
-            }
-
-            Location last = context.getUastLocation(types.get(types.size() - 1));
-            File file = first.getFile();
-            Position start = first.getStart();
-            Position end = last.getEnd();
-
-            if (start == null) {
-                return Location.create(file);
-            }
-
-            return Location.create(file, start, end);
-        }
-
-        private boolean isMultiCatchReflectiveOperationException(UCatchClause catchClause) {
-            List<PsiType> types = catchClause.getTypes();
-            if (types.size() < 2) {
-                return false;
-            }
-
-            for (PsiType t : types) {
-                if(!isSubclassOfReflectiveOperationException(t)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private boolean isSubclassOfReflectiveOperationException(PsiType type) {
-            for (PsiType t : type.getSuperTypes()) {
-                if (REFLECTIVE_OPERATION_EXCEPTION.equals(t.getCanonicalText())) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void checkCatchTypeElement(@NonNull UTryExpression statement,
@@ -2236,7 +2189,7 @@ public class ApiDetector extends ResourceXmlDetector
         return false;
     }
 
-    private static int getTargetApi(@Nullable UElement scope) {
+    public static int getTargetApi(@Nullable UElement scope) {
         while (scope != null) {
             if (scope instanceof PsiModifierListOwner) {
                 PsiModifierList modifierList = ((PsiModifierListOwner) scope).getModifierList();
@@ -2737,6 +2690,45 @@ public class ApiDetector extends ResourceXmlDetector
         return null;
     }
 
+
+    public static Location getCatchParametersLocation(JavaContext context, UCatchClause catchClause) {
+        List<UTypeReferenceExpression> types = catchClause.getTypeReferences();
+        if (types.isEmpty()) {
+            return Location.NONE;
+        }
+
+        Location first = context.getUastLocation(types.get(0));
+        if (types.size() < 2) {
+            return first;
+        }
+
+        Location last = context.getUastLocation(types.get(types.size() - 1));
+        File file = first.getFile();
+        Position start = first.getStart();
+        Position end = last.getEnd();
+
+        if (start == null) {
+            return Location.create(file);
+        }
+
+        return Location.create(file, start, end);
+    }
+
+    public static boolean isMultiCatchReflectiveOperationException(UCatchClause catchClause) {
+        List<PsiType> types = catchClause.getTypes();
+        if (types.size() < 2) {
+            return false;
+        }
+
+        for (PsiType t : types) {
+            if(!isSubclassOfReflectiveOperationException(t)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static boolean isAndedWithConditional(UElement element, int api, @Nullable UElement before) {
         if (element instanceof UBinaryExpression) {
             UBinaryExpression inner = (UBinaryExpression) element;
@@ -2780,6 +2772,15 @@ public class ApiDetector extends ResourceXmlDetector
             }
         }
 
+        return false;
+    }
+
+    private static boolean isSubclassOfReflectiveOperationException(PsiType type) {
+        for (PsiType t : type.getSuperTypes()) {
+            if (REFLECTIVE_OPERATION_EXCEPTION.equals(t.getCanonicalText())) {
+                return true;
+            }
+        }
         return false;
     }
 }

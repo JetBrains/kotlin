@@ -1,4 +1,5 @@
-<error descr="The SDK platform-tools version (23) is too old  to check APIs compiled with API 23; please update">// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection</error>
+
+// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
 // INSPECTION_CLASS2: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintInlinedApiInspection
 // INSPECTION_CLASS3: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintOverrideInspection
 
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.app.Activity
 import android.app.ApplicationErrorReport
+import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Build
@@ -25,6 +27,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH
 import android.os.Build.VERSION_CODES.JELLY_BEAN
 import android.os.Bundle
+import android.system.ErrnoException
 import android.widget.TextView
 
 @Suppress("SENSELESS_COMPARISON", "UNUSED_EXPRESSION", "UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION")
@@ -273,6 +276,19 @@ class ApiCallTest: Activity() {
         if (textView.isSuggestionsEnabled) {
             //NO ERROR, annotation
         }
+    }
+
+    fun testCatch() {
+        try {
+
+        } catch (e: <error descr="Class requires API level 21 (current min is 1): android.system.ErrnoException">ErrnoException</error>) {
+
+        }
+    }
+
+    fun testOverload() {
+        // this overloaded addOval available only on API Level 21
+        Path().<error descr="Call requires API level 21 (current min is 1): android.graphics.Path#addOval">addOval</error>(0f, 0f, 0f, 0f, Path.Direction.CW)
     }
 
     // Return type
