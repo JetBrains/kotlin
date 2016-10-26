@@ -43,6 +43,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
+    private boolean isPlatform = false;
+    private boolean isImpl = false;
     // Difference between these hidden kinds:
     // 1. isHiddenToOvercomeSignatureClash prohibit calling such functions even in super-call context
     // 2. isHiddenForResolutionEverywhereBesideSupercalls propagates to it's overrides descriptors while isHiddenToOvercomeSignatureClash does not
@@ -132,6 +134,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setTailrec(boolean isTailrec) {
         this.isTailrec = isTailrec;
+    }
+
+    public void setPlatform(boolean isPlatform) {
+        this.isPlatform = isPlatform;
+    }
+
+    public void setImpl(boolean isImpl) {
+        this.isImpl = isImpl;
     }
 
     public void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
@@ -245,6 +255,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public boolean isSuspend() {
         return isSuspend;
+    }
+
+    @Override
+    public boolean isPlatform() {
+        return isPlatform;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return isImpl;
     }
 
     @Override
@@ -631,6 +651,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setSuspend(isSuspend);
+        substitutedDescriptor.setPlatform(isPlatform);
+        substitutedDescriptor.setImpl(isImpl);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);

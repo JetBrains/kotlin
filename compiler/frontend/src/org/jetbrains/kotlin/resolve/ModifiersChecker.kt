@@ -89,13 +89,17 @@ object ModifierCheckerCore {
             CROSSINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
-            INFIX_KEYWORD     to EnumSet.of(FUNCTION)
+            INFIX_KEYWORD     to EnumSet.of(FUNCTION),
+            PLATFORM_KEYWORD  to EnumSet.of(FUNCTION, CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS), // TODO
+            IMPL_KEYWORD      to EnumSet.of(FUNCTION, CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS) // TODO
     )
 
     val featureDependencies = mapOf(
             COROUTINE_KEYWORD to LanguageFeature.Coroutines,
             SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
-            INLINE_KEYWORD   to LanguageFeature.InlineProperties
+            INLINE_KEYWORD    to LanguageFeature.InlineProperties,
+            PLATFORM_KEYWORD  to LanguageFeature.MultiPlatformProjects,
+            IMPL_KEYWORD      to LanguageFeature.MultiPlatformProjects
     )
 
     val featureDependenciesTargets = mapOf(

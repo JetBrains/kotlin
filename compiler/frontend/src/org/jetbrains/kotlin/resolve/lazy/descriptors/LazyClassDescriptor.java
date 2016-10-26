@@ -88,6 +88,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final ClassKind kind;
     private final boolean isInner;
     private final boolean isData;
+    private final boolean isPlatform;
+    private final boolean isImpl;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -155,6 +157,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
+        this.isPlatform = modifierList != null && modifierList.hasModifier(KtTokens.PLATFORM_KEYWORD);
+        this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<KtAnnotationEntry>();
@@ -489,6 +493,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isCompanionObject() {
         return isCompanionObject;
+    }
+
+    @Override
+    public boolean isPlatform() {
+        return isPlatform;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return isImpl;
     }
 
     @NotNull

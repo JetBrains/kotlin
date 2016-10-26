@@ -154,6 +154,16 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return false;
     }
 
+    @Override
+    public boolean isPlatform() {
+        return false;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return false;
+    }
+
     @Nullable
     @Override
     public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {

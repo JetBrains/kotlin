@@ -3,5 +3,5 @@ open class Foo {
     p<caret> val foo = 1
 }
 
-// EXIST: private, public, protected
+// EXIST: private, public, protected, platform
 // NOTHING_ELSE

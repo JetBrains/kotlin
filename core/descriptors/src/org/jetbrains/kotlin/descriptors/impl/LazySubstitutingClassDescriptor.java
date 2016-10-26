@@ -222,6 +222,16 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isPlatform() {
+        return original.isPlatform();
+    }
+
+    @Override
+    public boolean isImpl() {
+        return original.isImpl();
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
     }

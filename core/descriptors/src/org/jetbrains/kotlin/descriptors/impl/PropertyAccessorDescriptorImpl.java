@@ -102,6 +102,16 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return false;
     }
 
+    @Override
+    public boolean isPlatform() {
+        return false;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return false;
+    }
+
     @NotNull
     @Override
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {

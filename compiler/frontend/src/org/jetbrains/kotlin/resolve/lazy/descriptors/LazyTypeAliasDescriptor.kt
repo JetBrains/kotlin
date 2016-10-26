@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -44,11 +47,14 @@ class LazyTypeAliasDescriptor(
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var defaultTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var classDescriptorImpl: NullableLazyValue<ClassDescriptor>
+    private val isImpl = (source.getPsi() as? KtTypeAlias)?.hasModifier(KtTokens.IMPL_KEYWORD) == true
 
     override val underlyingType: SimpleType get() = underlyingTypeImpl()
     override val expandedType: SimpleType get() = expandedTypeImpl()
     override val classDescriptor: ClassDescriptor? get() = classDescriptorImpl()
     override fun getDefaultType(): SimpleType = defaultTypeImpl()
+
+    override fun isImpl(): Boolean = isImpl
 
     fun initialize(
             declaredTypeParameters: List<TypeParameterDescriptor>,

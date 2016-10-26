@@ -110,6 +110,16 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return false;
     }
 
+    @Override
+    public boolean isPlatform() {
+        return false;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return false;
+    }
+
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {

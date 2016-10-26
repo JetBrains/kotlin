@@ -263,8 +263,9 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     ANNOTATIONS(false),
     INNER(true),
     MEMBER_KIND(true),
-    DATA(true)
-
+    DATA(true),
+    PLATFORM(true),
+    IMPL(true),
     ;
 
     companion object {

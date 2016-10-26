@@ -461,6 +461,20 @@ internal class DescriptorRendererImpl(
         builder.append(renderKeyword(keyword)).append(" ")
     }
 
+    private fun renderPlatform(isPlatform: Boolean, builder: StringBuilder) {
+        if (DescriptorRendererModifier.PLATFORM !in modifiers) return
+        if (isPlatform) {
+            builder.append(renderKeyword("platform")).append(" ")
+        }
+    }
+
+    private fun renderImpl(isImpl: Boolean, builder: StringBuilder) {
+        if (DescriptorRendererModifier.IMPL !in modifiers) return
+        if (isImpl) {
+            builder.append(renderKeyword("impl")).append(" ")
+        }
+    }
+
     private fun renderInner(isInner: Boolean, builder: StringBuilder) {
         if (DescriptorRendererModifier.INNER !in modifiers) return
         if (isInner) {
@@ -525,6 +539,12 @@ internal class DescriptorRendererImpl(
         }
         if (functionDescriptor.isSuspend) {
             builder.append("suspend ")
+        }
+        if (functionDescriptor.isPlatform) {
+            builder.append("platform ")
+        }
+        if (functionDescriptor.isImpl) {
+            builder.append("impl ")
         }
     }
 
@@ -882,6 +902,8 @@ internal class DescriptorRendererImpl(
                   klass.kind.isSingleton && klass.modality == Modality.FINAL)) {
                 renderModality(klass.modality, builder)
             }
+            renderPlatform(klass.isPlatform, builder)
+            renderImpl(klass.isImpl, builder)
             renderInner(klass.isInner, builder)
             renderData(klass.isData, builder)
             renderClassKindPrefix(klass, builder)

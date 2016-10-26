@@ -114,6 +114,16 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isPlatform() {
+        return false;
+    }
+
+    @Override
+    public boolean isImpl() {
+        return false;
+    }
+
+    @Override
     public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return primaryConstructor;
     }
