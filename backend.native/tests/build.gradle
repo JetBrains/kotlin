@@ -9,6 +9,11 @@ public class KonanTest extends DefaultTask {
     def llvmLlc = llvmTool("llc")
     def llvmC = llvmTool("clang")
 
+    public KonanTest(){
+        dependsOn([project.project(":runtime").tasks['build'],
+                   project.parent.tasks['build']])
+    }
+
     @TaskAction
     public void compileBc() {
         def classpathSs = new DefaultCompositeFileTree(new ArrayList<FileTreeInternal>())
