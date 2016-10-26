@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="idea-jps-common" />
   </component>
 </module>

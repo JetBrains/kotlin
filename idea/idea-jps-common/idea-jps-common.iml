@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" name="intellij-core" level="project" />
+    <orderEntry type="module" module-name="cli-common" />
   </component>
 </module>

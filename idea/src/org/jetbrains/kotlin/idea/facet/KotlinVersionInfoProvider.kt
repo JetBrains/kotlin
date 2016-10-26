@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.config.TargetPlatformKind
 
 interface KotlinVersionInfoProvider {
     companion object {
