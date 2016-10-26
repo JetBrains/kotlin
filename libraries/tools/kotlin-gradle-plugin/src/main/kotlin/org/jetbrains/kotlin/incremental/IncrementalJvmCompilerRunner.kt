@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
 import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -319,6 +321,12 @@ internal class IncrementalJvmCompilerRunner(
             }
 
             val generatedClassFiles = compilerOutput.generatedFiles
+            val sourcesWithPossibleRedeclarations = getSourcesWithPossibleRedeclarations(caches, generatedClassFiles)
+            if (sourcesWithPossibleRedeclarations.isNotEmpty()) {
+                dirtySources.addAll(sourcesWithPossibleRedeclarations)
+                continue
+            }
+
             allGeneratedFiles.addAll(generatedClassFiles)
             val compilationResult = updateIncrementalCaches(listOf(targetId), generatedClassFiles,
                     compiledWithErrors = exitCode != ExitCode.OK,
@@ -394,6 +402,26 @@ internal class IncrementalJvmCompilerRunner(
         }
 
         return exitCode
+    }
+
+    private fun getSourcesWithPossibleRedeclarations(caches: IncrementalCachesManager, generatedFiles: List<GeneratedFile<TargetId>>): ArrayList<File> {
+        val result = ArrayList<File>()
+        for (generatedFile in generatedFiles) {
+            if (generatedFile !is GeneratedJvmClass<*>) continue
+
+            val outputClass = generatedFile.outputClass
+            if (outputClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) continue
+            assert(generatedFile.sourceFiles.size == 1) { "KotlinClassHeader.Kind.CLASS cannot be generated from multiple files" }
+
+            val fqName = outputClass.className.fqNameForClassNameWithoutDollars
+            val currentSourceFile = generatedFile.sourceFiles.single()
+            val cachedSourceFile = caches.incrementalCache.getSourceFileIfClass(fqName)
+
+            if (cachedSourceFile != null && cachedSourceFile != currentSourceFile) {
+                result.add(cachedSourceFile)
+            }
+        }
+        return result
     }
 
     private fun compileChanged(
