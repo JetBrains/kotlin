@@ -24,13 +24,16 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -499,6 +502,13 @@ class C(param1: String = "", param2: Int = 0) {
             val bindingContext1 = statement1InFunA.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext)
         }
+    }
+
+    fun testKT14376() {
+        val file = myFixture.configureByText("Test.kt", "object Obj(val x: Int)") as KtFile
+        val nameRef = file.findDescendantOfType<KtNameReferenceExpression>()!!
+        val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext[BindingContext.REFERENCE_TARGET, nameRef]?.fqNameSafe?.asString() == "kotlin.Int")
     }
 
     private fun checkResolveMultiple(mode: BodyResolveMode, vararg expressions: KtExpression): BindingContext {
