@@ -193,33 +193,40 @@ class C(param1: String = "", param2: Int = 0) {
 
             val bindingContext3 = statement2.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             assert(bindingContext3 === bindingContext1)
+
+            val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            assert(bindingContext4 === bindingContext1)
         }
     }
 
     fun testPartialResolveCaching() {
-        doTest { this.testPartialResolveCaching() }
+        doTest { this.testPartialResolveCaching(BodyResolveMode.PARTIAL) }
     }
 
-    private fun Data.testPartialResolveCaching() {
+    fun testPartialForCompletionResolveCaching() {
+        doTest { this.testPartialResolveCaching(BodyResolveMode.PARTIAL_FOR_COMPLETION) }
+    }
+
+    private fun Data.testPartialResolveCaching(mode: BodyResolveMode) {
         val statement1 = statements[0]
         val statement2 = statements[1]
-        val bindingContext1 = statement1.analyze(BodyResolveMode.PARTIAL)
-        val bindingContext2 = statement2.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext1 = statement1.analyze(mode)
+        val bindingContext2 = statement2.analyze(mode)
         assert(bindingContext1 !== bindingContext2)
 
-        val bindingContext3 = statement1.analyze(BodyResolveMode.PARTIAL)
-        val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext3 = statement1.analyze(mode)
+        val bindingContext4 = statement2.analyze(mode)
         assert(bindingContext3 === bindingContext1)
         assert(bindingContext4 === bindingContext2)
 
         file.add(factory.createFunction("fun foo(){}"))
 
-        val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext5 = statement1.analyze(mode)
         assert(bindingContext5 !== bindingContext1)
 
         statement1.parent.addAfter(factory.createExpression("x()"), statement1)
 
-        val bindingContext6 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext6 = statement1.analyze(mode)
         assert(bindingContext6 !== bindingContext5)
     }
 
@@ -227,7 +234,7 @@ class C(param1: String = "", param2: Int = 0) {
         doTest {
             val nonPhysicalFile = KtPsiFactory(project).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
-            nonPhysicalData.testPartialResolveCaching()
+            nonPhysicalData.testPartialResolveCaching(BodyResolveMode.PARTIAL)
         }
     }
 
@@ -262,6 +269,30 @@ class C(param1: String = "", param2: Int = 0) {
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext3 !== bindingContext2)
+        }
+    }
+
+    fun testPartialForCompletionAndPartialAfter() {
+        doTest {
+            val statement = statements[0]
+            val bindingContext1 = statement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            val bindingContext2 = statement.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext2 === bindingContext1)
+
+            val bindingContext3 = statement.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            assert(bindingContext3 !== bindingContext1)
+        }
+    }
+
+    fun testPartialWithDiagnosticsAndPartialAfter() {
+        doTest {
+            val statement = statements[0]
+            val bindingContext1 = statement.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            val bindingContext2 = statement.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext2 === bindingContext1)
+
+            val bindingContext3 = statement.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            assert(bindingContext3 !== bindingContext1)
         }
     }
 

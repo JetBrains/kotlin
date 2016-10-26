@@ -83,11 +83,11 @@ class ResolveElementCache(
             },
             false)
 
-    private class CachedPartialResolve(val bindingContext: BindingContext, file: KtFile, val filter: BindingTraceFilter) {
+    private class CachedPartialResolve(val bindingContext: BindingContext, file: KtFile, val mode: BodyResolveMode) {
         private val modificationStamp: Long? = modificationStamp(file)
 
-        fun isUpToDate(file: KtFile, newFilter: BindingTraceFilter) =
-                modificationStamp == modificationStamp(file) && filter.includesEverythingIn(newFilter)
+        fun isUpToDate(file: KtFile, newMode: BodyResolveMode) =
+                modificationStamp == modificationStamp(file) && mode.doesNotLessThan(newMode)
 
         private fun modificationStamp(file: KtFile): Long? {
             return if (!file.isPhysical) // for non-physical file we don't get MODIFICATION_COUNT increased and must reset data on any modification of the file
@@ -150,15 +150,6 @@ class ResolveElementCache(
                 return bindingContext
             }
 
-            BodyResolveMode.PARTIAL_FOR_COMPLETION -> {
-                if (resolveElement !is KtDeclaration) {
-                    return getElementsAdditionalResolve(resolveElement, null, BodyResolveMode.FULL)
-                }
-
-                // not cached
-                return performElementAdditionalResolve(resolveElement, contextElements, bodyResolveMode).first
-            }
-
             else -> {
                 if (resolveElement !is KtDeclaration) {
                     return getElementsAdditionalResolve(resolveElement, null, BodyResolveMode.FULL)
@@ -168,7 +159,7 @@ class ResolveElementCache(
                 val statementsToResolve = contextElements!!.map { PartialBodyResolveFilter.findStatementToResolve(it, resolveElement) }.distinct()
                 val partialResolveMap = partialBodyResolveCache.value
                 val cachedResults = statementsToResolve.map { partialResolveMap[it ?: resolveElement] }
-                if (cachedResults.all { it != null && it.isUpToDate(file, bodyResolveMode.bindingTraceFilter) }) { // partial resolve is already cached for these statements
+                if (cachedResults.all { it != null && it.isUpToDate(file, bodyResolveMode) }) { // partial resolve is already cached for these statements
                     return CompositeBindingContext.create(cachedResults.map { it!!.bindingContext }.distinct())
                 }
 
@@ -179,7 +170,7 @@ class ResolveElementCache(
                     return bindingContext
                 }
 
-                val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode.bindingTraceFilter)
+                val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
                 for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
                     if (!partialResolveMap.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
@@ -408,7 +399,7 @@ class ResolveElementCache(
         val modifierList = ktAnnotationEntry.getParentOfType<KtModifierList>(true)
         val declaration = modifierList?.getParentOfType<KtDeclaration>(true)
         if (declaration != null) {
-            doResolveAnnotations(getAnnotationsByDeclaration(resolveSession, modifierList!!, declaration))
+            doResolveAnnotations(getAnnotationsByDeclaration(resolveSession, modifierList, declaration))
         }
         else {
             val fileAnnotationList = ktAnnotationEntry.getParentOfType<KtFileAnnotationList>(true)
