@@ -39,7 +39,7 @@ kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
      compilerOpts "-I$llvmDir/include"
-     linkerOpts "-L$llvmDir/lib"
+     linkerOpts "-L$llvmDir/lib -L$libffiDir/lib -lffi"
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'

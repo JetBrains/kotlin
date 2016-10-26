@@ -21,7 +21,7 @@ linkerOpts.osx = \
     -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMTransformUtils \
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
-    -lpthread -lz -lm  -lcurses -lffi
+    -lpthread -lz -lm  -lcurses
 
 linkerOpts.linux=\
     -Wl,--whole-archive \
@@ -31,5 +31,5 @@ linkerOpts.linux=\
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
     -Wl,--no-whole-archive \
-    -lrt -ldl  -lpthread -lz -lm -lffi \
+    -lrt -ldl  -lpthread -lz -lm \
     -Wl,-z,noexecstack
