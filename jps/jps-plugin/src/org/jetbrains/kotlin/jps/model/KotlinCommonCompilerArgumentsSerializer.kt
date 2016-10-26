@@ -14,35 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.model;
+package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
+import com.intellij.util.xmlb.XmlSerializer
+import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
 
-class KotlinCommonCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
-    KotlinCommonCompilerArgumentsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION);
+internal class KotlinCommonCompilerArgumentsSerializer : JpsProjectExtensionSerializer(KOTLIN_COMPILER_SETTINGS_FILE,
+                                                                                       KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION) {
+
+    override fun loadExtension(project: JpsProject, componentTag: Element) {
+        val settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl::class.java)
+                       ?: CommonCompilerArguments.DummyImpl()
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings)
     }
 
-    @Override
-    public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        CommonCompilerArguments settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl.class);
-        if (settings == null) {
-            settings = new CommonCompilerArguments.DummyImpl();
-        }
-
-        JpsKotlinCompilerSettings.Companion.setCommonCompilerArguments(project, settings);
-    }
-
-    @Override
-    public void saveExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
+    override fun saveExtension(project: JpsProject, componentTag: Element) {
     }
 }
