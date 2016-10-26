@@ -39,7 +39,7 @@ class KotlinCommonCompilerArgumentsSerializer extends JpsProjectExtensionSeriali
             settings = new CommonCompilerArguments.DummyImpl();
         }
 
-        JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings);
+        JpsKotlinCompilerSettings.Companion.setCommonCompilerArguments(project, settings);
     }
 
     @Override
