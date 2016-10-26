@@ -287,6 +287,7 @@ internal class IncrementalJvmCompilerRunner(
         BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
+        val allSourcesToCompile = HashSet<File>()
 
         var exitCode = ExitCode.OK
         while (dirtySources.any()) {
@@ -300,7 +301,10 @@ internal class IncrementalJvmCompilerRunner(
                 reporter.report { "compile iteration: ${reporter.pathsAsString(sourcesToCompile)}" }
             }
 
-            val text = sourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
+            // todo: more optimal to save only last iteration, but it will require adding standalone-ic specific logs
+            // (because jps rebuilds all files from last build if it failed and gradle rebuilds everything)
+            allSourcesToCompile.addAll(sourcesToCompile)
+            val text = allSourcesToCompile.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
 
             val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, { caches.incrementalCache }, lookupTracker, messageCollector)
