@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.jps.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class KotlinModelSerializerService extends JpsModelSerializerExtension {
@@ -31,5 +33,11 @@ public class KotlinModelSerializerService extends JpsModelSerializerExtension {
                              new Kotlin2JvmCompilerArgumentsSerializer(),
                              new Kotlin2JsCompilerArgumentsSerializer(),
                              new KotlinCompilerSettingsSerializer());
+    }
+
+    @NotNull
+    @Override
+    public List<? extends JpsFacetConfigurationSerializer<?>> getFacetConfigurationSerializers() {
+        return Collections.singletonList(JpsKotlinFacetConfigurationSerializer.INSTANCE);
     }
 }

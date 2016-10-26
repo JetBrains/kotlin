@@ -214,7 +214,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return ABORT
         }
 
-        val commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project)
+        val commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(chunk.representativeTarget().module)
         commonArguments.verbose = true // Make compiler report source to output files mapping
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)
@@ -618,11 +618,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
 
-        val moduleName = representativeTarget.module.name
+        val representativeModule = representativeTarget.module
+        val moduleName = representativeModule.name
         val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName)
         val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
-        val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
+        val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
 
         KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
         return outputItemCollector
@@ -631,7 +632,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun copyJsLibraryFilesIfNeeded(chunk: ModuleChunk, project: JpsProject) {
         val representativeTarget = chunk.representativeTarget()
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeTarget.module)
         if (compilerSettings.copyJsLibraryFiles) {
             val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
             val libraryFilesToCopy = arrayListOf<String>()
@@ -682,9 +683,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return null
         }
 
-        val project = context.projectDescriptor.project
-        val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
+        val module = chunk.representativeTarget().module
+        val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(module)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(module)
 
         KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size} files"
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
