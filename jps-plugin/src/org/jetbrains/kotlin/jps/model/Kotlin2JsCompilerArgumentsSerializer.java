@@ -39,7 +39,7 @@ class Kotlin2JsCompilerArgumentsSerializer extends JpsProjectExtensionSerializer
             settings = new K2JSCompilerArguments();
         }
 
-        JpsKotlinCompilerSettings.setK2JsCompilerArguments(project, settings);
+        JpsKotlinCompilerSettings.Companion.setK2JsCompilerArguments(project, settings);
     }
 
     @Override

@@ -39,7 +39,7 @@ class KotlinCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
             settings = new CompilerSettings();
         }
 
-        JpsKotlinCompilerSettings.setCompilerSettings(project, settings);
+        JpsKotlinCompilerSettings.Companion.setCompilerSettings(project, settings);
     }
 
     @Override
