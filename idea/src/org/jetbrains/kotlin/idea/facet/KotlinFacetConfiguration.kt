@@ -21,6 +21,8 @@ import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
 import com.intellij.facet.ui.FacetValidatorsManager
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.util.xmlb.annotations.Property
+import com.intellij.util.xmlb.annotations.Transient
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -65,19 +67,32 @@ object JSPlatform : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
 data class KotlinVersionInfo(
         var languageLevel: LanguageLevel? = null,
         var apiLevel: LanguageLevel? = null,
-        var targetPlatformKindKind: TargetPlatformKind<*>? = null
-)
+        @get:Transient var targetPlatformKindKind: TargetPlatformKind<*>? = null
+) {
+    // To be serialized
+    var targetPlatformName: String
+        get() = targetPlatformKindKind?.description ?: ""
+        set(value) {
+            targetPlatformKindKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == value }
+        }
+}
 
 class KotlinCompilerInfo {
-    var commonCompilerArguments: CommonCompilerArguments? = null
+    // To be serialized
+    @Property private var _commonCompilerArguments: CommonCompilerArguments.DummyImpl? = null
+    @get:Transient var commonCompilerArguments: CommonCompilerArguments?
+        get() = _commonCompilerArguments
+        set(value) {
+            _commonCompilerArguments = value as? CommonCompilerArguments.DummyImpl
+        }
     var k2jsCompilerArguments: K2JSCompilerArguments? = null
     var compilerSettings: CompilerSettings? = null
 }
 
 class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<KotlinFacetConfiguration.Settings> {
     class Settings {
-        val versionInfo = KotlinVersionInfo()
-        val compilerInfo = KotlinCompilerInfo()
+        var versionInfo = KotlinVersionInfo()
+        var compilerInfo = KotlinCompilerInfo()
     }
 
     private var settings = Settings()
@@ -93,7 +108,7 @@ class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<Ko
     }
 
     override fun loadState(state: Settings) {
-        this.settings = settings
+        this.settings = state
     }
 
     override fun getState() = settings
