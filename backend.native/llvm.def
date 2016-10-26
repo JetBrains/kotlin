@@ -31,5 +31,5 @@ linkerOpts.linux=\
     -lLLVMBitWriter -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser \
     -lLLVMBitReader -lLLVMMC -lLLVMCore -lLLVMSupport \
     -Wl,--no-whole-archive \
-    -lrt -ldl -ltinfo -lpthread -lz -lm -lffi \
+    -lrt -ldl  -lpthread -lz -lm -lffi \
     -Wl,-z,noexecstack
