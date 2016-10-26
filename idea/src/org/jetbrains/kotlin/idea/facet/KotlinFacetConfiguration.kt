@@ -21,10 +21,8 @@ import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorTab
 import com.intellij.facet.ui.FacetValidatorsManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.util.Key
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.DescriptionAware
-import java.util.*
 
 class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<KotlinFacetConfiguration.Settings> {
     enum class LanguageLevel(override val description: String) : DescriptionAware {
@@ -38,10 +36,14 @@ class KotlinFacetConfiguration : FacetConfiguration, PersistentStateComponent<Ko
         JS("JavaScript")
     }
 
+    data class VersionInfo(
+            var languageLevel: LanguageLevel? = null,
+            var apiLevel: LanguageLevel? = null,
+            var targetPlatformKind: TargetPlatform? = null
+    )
+
     class Settings {
-        var languageLevel: LanguageLevel? = null
-        var apiLevel: LanguageLevel? = null
-        var targetPlatformKind: TargetPlatform? = null
+        val versionInfo = VersionInfo()
     }
 
     private var settings = Settings()
