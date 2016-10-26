@@ -333,6 +333,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
             configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
+            configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
 
             arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }

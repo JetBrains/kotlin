@@ -1,3 +1,7 @@
+/**
+ * NOTE: if this script returns false, the build log with more information can be found at tools/kotlin-maven-plugin/target/it/simple/build.log
+ */
+
 import java.util.regex.Pattern
 
 class State {

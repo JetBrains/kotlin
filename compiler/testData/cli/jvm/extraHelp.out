@@ -9,6 +9,7 @@ where advanced options include:
   -Xskip-metadata-version-check Try loading binary incompatible classes, may cause crashes
   -Xdump-declarations-to <path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
+  -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xinterface-compatibility  Generate DefaultImpls classes for interfaces in JVM target bytecode version 1.8 for binary compatibility with 1.6
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)

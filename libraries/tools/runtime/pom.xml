@@ -107,6 +107,8 @@
                             <args combine.children="append">
                                 <arg>-Xdump-declarations-to</arg>
                                 <arg>${basedir}/target/runtime-declarations.json</arg>
+                                <arg>-cp</arg>
+                                <arg>${basedir}/../../../dist/builtins</arg>
                             </args>
                         </configuration>
                     </execution>
