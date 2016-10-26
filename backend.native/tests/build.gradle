@@ -1,0 +1,84 @@
+import org.gradle.api.internal.file.DefaultCompositeFileTree
+import org.gradle.api.internal.file.FileTreeInternal
+
+
+public class KonanTest extends DefaultTask {
+    protected String source
+    def backendNative = project.project(":backend.native")
+    def runtimeProject = project.project(":runtime")
+    def llvmLlc = llvmTool("llc")
+    def llvmC = llvmTool("clang")
+
+    @TaskAction
+    public void compileBc() {
+        def classpathSs = new DefaultCompositeFileTree(new ArrayList<FileTreeInternal>())
+        project.sourceSets.each{classpathSs += it.output}
+        project.project(":Interop:Runtime").sourceSets.each{ classpathSs += it.output }
+        classpathSs += backendNative.ext.deps
+        def sourceKt = project.file(source)
+        def sourceBc = new File("${sourceKt.absolutePath}.bc")
+        def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
+        println "${runtimeBc}"
+        project.javaexec {
+            main='org.jetbrains.kotlin.cli.bc.K2NativeKt'
+            classpath = classpathSs
+            args "-output", "${sourceBc.absolutePath}",
+                    "-runtime", "${runtimeBc.absolutePath}",
+                    "${sourceKt.absolutePath}"
+            jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
+        }
+        def runtimeS = bc2s(runtimeBc)
+        def sourceS = bc2s(sourceBc)
+        def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
+        def mainC = "main.c"
+        def exe = sourceS.absolutePath.replace(".kt.S", "")
+        project.exec {
+            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+                    "-o", "${exe}"
+
+        }
+        def res = project.exec {
+            commandLine "${exe}"
+        }
+    }
+
+    private File bc2s(File bcFile) {
+        def outputFile = new File("${bcFile.absolutePath.replace(".bc",".S")}")
+        println "${bcFile.absolutePath} -> ${outputFile.absolutePath}"
+        println "tool: ${llvmLlc}"
+        project.exec {
+            commandLine "${llvmLlc}", "-o", "${outputFile.absolutePath}" , "${bcFile}"
+        }
+        return outputFile
+    }
+
+    private String llvmTool(String tool) {
+        return "${project.llvmDir}/bin/${tool}"
+    }
+}
+
+task run() {
+    dependsOn(tasks.withType(KonanTest))
+}
+
+task sum (type:KonanTest) {
+    source = "codegen/function/sum.kt"
+}
+
+/* Investigate
+task objectInitialization(type: KonanTest) {
+    source = "codegen/object/initialization.kt"
+}
+*/
+
+/* task objectBasic(type: KonanTest) {
+    source = "$codegen/klass/basic.kt"
+} */
+
+task aritmetic(type: KonanTest) {
+    source = "codegen/function/arithmetic.kt"
+}
+
+task sum1(type: KonanTest) {
+    source = "codegen/function/sum_foo_bar.kt"
+}

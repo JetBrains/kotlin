@@ -17,6 +17,8 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 def deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
                  "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
                  "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar")
+//export dependencies jars
+ext['deps'] = deps
 
 sourceSets {
     compiler {
