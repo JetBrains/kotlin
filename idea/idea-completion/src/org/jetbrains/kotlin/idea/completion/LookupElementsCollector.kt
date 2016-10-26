@@ -125,10 +125,10 @@ class LookupElementsCollector(
             result = postProcessor(result)
         }
 
-        val psiElement = (result.`object` as? DeclarationLookupObject)?.psiElement
-        if (psiElement != null) {
+        val declarationLookupObject = result.`object` as? DeclarationLookupObject
+        if (declarationLookupObject != null) {
             result = object : LookupElementDecorator<LookupElement>(result) {
-                override fun getPsiElement() = psiElement
+                override fun getPsiElement() = declarationLookupObject.psiElement
             }
         }
 

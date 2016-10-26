@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.BaseDeclarationInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinClassifierInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -55,12 +56,13 @@ class BasicLookupElementFactory(
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, _descriptor)
-        return createLookupElement(_descriptor, declaration, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
+        return createLookupElementUnwrappedDescriptor(_descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
     }
 
     fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
-        val lookupObject = object : DeclarationLookupObjectImpl(null, psiClass) {
+        val lookupObject = object : DeclarationLookupObjectImpl(null) {
+            override val psiElement: PsiElement?
+                get() = psiClass
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
         var element = LookupElementBuilder.create(lookupObject, psiClass.name!!)
@@ -109,20 +111,21 @@ class BasicLookupElementFactory(
         return element.withIconFromLookupObject()
     }
 
-    private fun createLookupElement(
+    private fun createLookupElementUnwrappedDescriptor(
             descriptor: DeclarationDescriptor,
-            declaration: PsiElement?,
             qualifyNestedClasses: Boolean,
             includeClassTypeArguments: Boolean,
             parametersAndTypeGrayed: Boolean
     ): LookupElement {
+        val declarationLazy by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) }
+
         if (descriptor is ClassifierDescriptor &&
-            declaration is PsiClass &&
-            declaration !is KtLightClass) {
+            declarationLazy is PsiClass &&
+            declarationLazy !is KtLightClass) {
             // for java classes we create special lookup elements
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates
-            return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
+            return createLookupElementForJavaClass(declarationLazy, qualifyNestedClasses, includeClassTypeArguments)
         }
 
         if (descriptor is PackageViewDescriptor) {
@@ -132,26 +135,33 @@ class BasicLookupElementFactory(
             return createLookupElementForPackage(descriptor.fqName)
         }
 
-        // for constructor use name and icon of containing class
-        val nameAndIconDescriptor: DeclarationDescriptor
-        val iconDeclaration: PsiElement?
+        val lookupObject: DeclarationLookupObject
+        val name: String
         if (descriptor is ConstructorDescriptor) {
-            nameAndIconDescriptor = descriptor.containingDeclaration
-            iconDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, nameAndIconDescriptor)
+            // for constructor use name and icon of containing class
+            val classifierDescriptor = descriptor.containingDeclaration
+            lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
+                override val psiElement by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, classifierDescriptor) }
+                override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(classifierDescriptor, psiElement, flags)
+            }
+            name = classifierDescriptor.name.asString()
+        }
+        else if (descriptor is SyntheticJavaPropertyDescriptor) {
+            lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
+                override val psiElement by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor.getMethod) }
+                override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, null, flags)
+            }
+            name = descriptor.name.asString()
         }
         else {
-            nameAndIconDescriptor = descriptor
-            iconDeclaration = declaration
+            lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
+                override val psiElement: PsiElement?
+                    get() = declarationLazy
+                override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, psiElement, flags)
+            }
+            name = descriptor.name.asString()
         }
-        val name = nameAndIconDescriptor.name.asString()
 
-        val psiElement = declaration
-                         ?: (descriptor as? SyntheticJavaPropertyDescriptor)
-                                 ?.getMethod
-                                 ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-        val lookupObject = object : DeclarationLookupObjectImpl(descriptor, psiElement) {
-            override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, flags)
-        }
         var element = LookupElementBuilder.create(lookupObject, name)
 
         val insertHandler = insertHandlerProvider.insertHandler(descriptor)

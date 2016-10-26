@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -34,13 +32,8 @@ import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
  * Position will be used for sorting
  */
 abstract class DeclarationLookupObjectImpl(
-        final override val descriptor: DeclarationDescriptor?,
-        final override val psiElement: PsiElement?
+        final override val descriptor: DeclarationDescriptor?
 ): DeclarationLookupObject {
-    init {
-        assert(descriptor != null || psiElement != null)
-    }
-
     override val name: Name?
         get() = descriptor?.name ?: (psiElement as? PsiNamedElement)?.name?.let { Name.identifier(it) }
 
@@ -55,15 +48,27 @@ abstract class DeclarationLookupObjectImpl(
     override fun toString() = super.toString() + " " + (descriptor ?: psiElement)
 
     override fun hashCode(): Int {
-        return if (descriptor != null) descriptor.original.hashCode() else psiElement!!.hashCode()
+        return if (descriptor != null)
+            descriptor.original.hashCode()
+        else
+            psiElement!!.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
         val lookupObject = other as DeclarationLookupObjectImpl
-        return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
+        if (descriptor != null)
+            return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
+        else
+            return lookupObject.descriptor == null && psiElement == lookupObject.psiElement
     }
 
-    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as? PsiDocCommentOwner)?.isDeprecated ?: false
+    override val isDeprecated: Boolean
+        get() {
+            return if (descriptor != null)
+                KotlinBuiltIns.isDeprecated(descriptor)
+            else
+                (psiElement as? PsiDocCommentOwner)?.isDeprecated == true
+        }
 }
