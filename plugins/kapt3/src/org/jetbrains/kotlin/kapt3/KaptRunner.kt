@@ -24,10 +24,8 @@ import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
 import java.io.File
-import java.io.PrintWriter
 import javax.annotation.processing.Processor
 import javax.tools.JavaFileManager
 import com.sun.tools.javac.util.List as JavacList
@@ -52,14 +50,16 @@ class KaptError : RuntimeException {
 
 class KaptRunner {
     val context = Context()
+    val compiler: KaptJavaCompiler
     private val options: Options
 
     init {
         JavacFileManager.preRegister(context)
         KaptJavaCompiler.preRegister(context)
 
+        compiler = JavaCompiler.instance(context) as KaptJavaCompiler
+
         options = Options.instance(context)
-        context.put(Log.outKey, PrintWriter(System.err, true))
     }
 
     fun parseJavaFiles(
@@ -69,7 +69,6 @@ class KaptRunner {
         classpath.forEach { options.put(Option.CLASSPATH, it.canonicalPath) }
 
         val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
-        val compiler = JavaCompiler.instance(context) as KaptJavaCompiler
 
         try {
             val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
@@ -93,7 +92,6 @@ class KaptRunner {
         options.put(Option.D, classOutputDir.canonicalPath)
 
         val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
-        val compiler = JavaCompiler.instance(context) as KaptJavaCompiler
         val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
         try {
