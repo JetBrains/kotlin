@@ -1,31 +1,14 @@
-
 public abstract interface Context {
 }
 
 ////////////////////
 
 
-public final class Context {
-}
-
-////////////////////
-
-
 public enum Result {
-;
-    public static final Result SUCCESS = null;
-    public static final Result ERROR = null;
-    
-    protected /*missing*/ Result(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1) {
-        super(null, 0);
-    }
-    
-    public static Result[] values() {
-        return null;
-    }
-    
-    public static Result valueOf(java.lang.String p0) {
-        return null;
+    /*public static final*/ SUCCESS /* = null */,
+    /*public static final*/ ERROR /* = null */;
+
+    Result() {
     }
 }
 
@@ -33,10 +16,10 @@ public enum Result {
 
 
 public abstract class BaseClass {
-    
+
     public abstract Result doJob();
-    
-    public /*missing*/ BaseClass(Context context, int num, boolean bool) {
+
+    public BaseClass(Context context, int num, boolean bool) {
         super();
     }
 }
@@ -45,13 +28,13 @@ public abstract class BaseClass {
 
 
 public final class Inheritor extends BaseClass {
-    
+
     @java.lang.Override()
     public Result doJob() {
         return null;
     }
-    
-    public /*missing*/ Inheritor(Context context) {
+
+    public Inheritor(Context context) {
         super(null, 0, false);
     }
 }

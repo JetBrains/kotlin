@@ -1,0 +1,54 @@
+public abstract interface IntfWithoutDefaultImpls {
+}
+
+////////////////////
+
+
+public abstract interface IntfWithDefaultImpls {
+
+    public abstract void a();
+
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static void a(IntfWithDefaultImpls $this) {
+        }
+    }
+}
+
+////////////////////
+
+
+public abstract interface Intf {
+    public static final Intf.Companion Companion = null;
+    public static final int WHITE = 2;
+
+    public abstract int getColor();
+
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static int getColor(Intf $this) {
+            return 0;
+        }
+    }
+
+    public static final class Companion {
+        private static final int BLACK = 1;
+        public static final int WHITE = 2;
+
+        public final int getBLACK() {
+            return 0;
+        }
+
+        private Companion() {
+            super();
+        }
+    }
+}

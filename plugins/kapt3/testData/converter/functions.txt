@@ -1,0 +1,22 @@
+
+public final class FunctionsTest {
+    
+    public final kotlin.reflect.KProperty1 f() {
+        return null;
+    }
+
+    public final kotlin.jvm.functions.Function2 f2() {
+        return null;
+    }
+
+    public final void f3() {
+    }
+
+    public final int f4() {
+        return 0;
+    }
+
+    public FunctionsTest() {
+        super();
+    }
+}
