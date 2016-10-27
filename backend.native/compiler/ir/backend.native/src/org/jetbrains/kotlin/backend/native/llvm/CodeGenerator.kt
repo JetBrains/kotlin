@@ -78,7 +78,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     private fun prolog(declaration: IrFunction): LLVMOpaqueValue? {
         index = 0
         currentFunction = declaration.descriptor
-        val fn = LLVMAddFunction(context.llvmModule, declaration.descriptor.symbolName, getLlvmFunctionType(declaration.descriptor))
+        val fn = declaration.descriptor.llvmFunction.getLlvmValue()
         val block = LLVMAppendBasicBlock(fn, "entry")
         LLVMPositionBuilderAtEnd(context.llvmBuilder, block)
         function2variables.put(declaration.descriptor, mutableMapOf())
