@@ -10,6 +10,7 @@ End of files
 Marked as dirty by Kotlin:
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
+  src/companionReferenceImplicit.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
