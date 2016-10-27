@@ -35,7 +35,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 ) {
 
     private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression) =
-            firstClause.isNotNullExpression() &&
+            !firstClause.isNullOrBlockExpression() &&
             (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this)) &&
             !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
 
@@ -67,9 +67,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         }
     }
 
-    private fun KtExpression.isNotNullExpression(): Boolean {
+    private fun KtExpression.isNullOrBlockExpression(): Boolean {
         val innerExpression = this.unwrapBlockOrParenthesis()
-        return innerExpression !is KtBlockExpression && innerExpression.node.elementType != KtNodeTypes.NULL
+        return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
 
     private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
