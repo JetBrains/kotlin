@@ -48,6 +48,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         is KtStatementExpression, is KtDestructuringDeclaration -> false
         is KtIfExpression, is KtWhenExpression, is KtTryExpression -> shouldShowStatementType()
         is KtLoopExpression -> false
+        is KtConstantExpression -> false
         else -> getQualifiedExpressionForSelector() == null && parent !is KtCallableReferenceExpression
     }
 
