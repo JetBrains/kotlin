@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -115,15 +116,15 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
 
     with(compilerInfo) {
         if (commonCompilerArguments == null) {
-            commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.copy()
+            commonCompilerArguments = copyBean(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings)
         }
 
         if (compilerSettings == null) {
-            compilerSettings = CompilerSettings(KotlinCompilerSettings.getInstance(project).settings)
+            compilerSettings = copyBean(KotlinCompilerSettings.getInstance(project).settings)
         }
 
         if (k2jsCompilerArguments == null) {
-            k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance (project).settings.copy()
+            k2jsCompilerArguments = copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
         }
     }
 }
