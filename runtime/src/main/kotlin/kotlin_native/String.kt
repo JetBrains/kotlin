@@ -4,6 +4,9 @@ package kotlin_native
 external fun fromUtf8Array(array: ByteArray) : String
 
 class String {
+    @SymbolName("Kotlin_String_hashCode")
+    external public override fun hashCode(): Int
+
     public operator fun plus(other: Any?): String {
         return plusImpl(other.toString())
     }

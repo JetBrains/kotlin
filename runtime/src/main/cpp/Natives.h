@@ -65,14 +65,17 @@ KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* thiz);
 
 // io/Console.kt
 void Kotlin_io_Console_print(const ArrayHeader* thiz);
+ArrayHeader* Kotlin_io_Console_readLine();
 
 // String.kt
+KInt Kotlin_String_hashCode(const ArrayHeader* thiz);
+KBool Kotlin_String_equals(const ArrayHeader* thiz, const ObjHeader* other);
 KInt Kotlin_String_compareTo(const ArrayHeader* thiz, const ArrayHeader* other);
 KChar Kotlin_String_get(const ArrayHeader* thiz, KInt index);
 ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array);
-ArrayHeader* Kotlin_String_plusImpl(const ArrayHeader* thiz, const ArrayHeader* other);
+ArrayHeader* Kotlin_String_plusImpl(
+    const ArrayHeader* thiz, const ArrayHeader* other);
 KInt Kotlin_String_getStringLength(const ArrayHeader* thiz);
-KBool Kotlin_String_equals(const ArrayHeader* thiz, const ObjHeader* other);
 
 #ifdef __cplusplus
 }

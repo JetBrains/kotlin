@@ -1,7 +1,9 @@
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
 #include "Assert.h"
+#include "City.h"
 #include "Exceptions.h"
 #include "Memory.h"
 #include "Natives.h"
@@ -21,7 +23,6 @@ KInt Kotlin_Any_hashCode(const ObjHeader* thiz) {
 }
 
 ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz) {
-
   return nullptr;
 }
 
@@ -118,23 +119,36 @@ void Kotlin_io_Console_print(const ArrayHeader* array) {
   write(STDOUT_FILENO, ByteArrayAddressOfElementAt(array, 0), array->count_);
 }
 
-// String.kt
-KInt Kotlin_String_compareTo(const ArrayHeader* obj, const ArrayHeader* other) {
-  return memcmp(ByteArrayAddressOfElementAt(obj, 0),
-                ByteArrayAddressOfElementAt(other, 0),
-                obj->count_ < other->count_ ? obj->count_ : other->count_);
+ArrayHeader* Kotlin_io_Console_readLine() {
+  char data[2048];
+  if (!fgets(data, sizeof(data) - 1, stdin)) {
+    return nullptr;
+  }
+  int32_t length = strlen(data);
+  ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
+  memcpy(
+      ByteArrayAddressOfElementAt(result, 0),
+      data, length);
+  return result;
 }
 
-KChar Kotlin_String_get(const ArrayHeader* obj, KInt index) {
+// String.kt
+KInt Kotlin_String_compareTo(const ArrayHeader* thiz, const ArrayHeader* other) {
+  return memcmp(ByteArrayAddressOfElementAt(thiz, 0),
+                ByteArrayAddressOfElementAt(other, 0),
+                thiz->count_ < other->count_ ? thiz->count_ : other->count_);
+}
+
+KChar Kotlin_String_get(const ArrayHeader* thiz, KInt index) {
   // TODO: support full UTF-8.
-  if (static_cast<uint32_t>(index) >= obj->count_) {
+  if (static_cast<uint32_t>(index) >= thiz->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-  return *ByteArrayAddressOfElementAt(obj, index);
+  return *ByteArrayAddressOfElementAt(thiz, index);
 }
 
-KInt Kotlin_String_getStringLength(const ArrayHeader* array) {
-  return array->count_;
+KInt Kotlin_String_getStringLength(const ArrayHeader* thiz) {
+  return thiz->count_;
 }
 
 ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
@@ -150,19 +164,19 @@ ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
 }
 
 ArrayHeader* Kotlin_String_plusImpl(
-    const ArrayHeader* obj, const ArrayHeader* other) {
+    const ArrayHeader* thiz, const ArrayHeader* other) {
   // TODO: support UTF-8
-  RuntimeAssert(obj->type_info() == theStringTypeInfo, "Must be a string");
+  RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
   RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-  uint32_t result_length = obj->count_ + other->count_;
+  uint32_t result_length = thiz->count_ + other->count_;
   ArrayHeader* result = ArrayContainer(
       theStringTypeInfo, result_length).GetPlace();
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(obj, 0),
-      obj->count_);
+      ByteArrayAddressOfElementAt(thiz, 0),
+      thiz->count_);
   memcpy(
-      ByteArrayAddressOfElementAt(result, obj->count_),
+      ByteArrayAddressOfElementAt(result, thiz->count_),
       ByteArrayAddressOfElementAt(other, 0),
       other->count_);
   return result;
@@ -176,6 +190,12 @@ KBool Kotlin_String_equals(
       memcmp(ByteArrayAddressOfElementAt(thiz, 0),
              ByteArrayAddressOfElementAt(otherString, 0),
              thiz->count_) == 0;
+}
+
+KInt Kotlin_String_hashCode(const ArrayHeader* thiz) {
+  // TODO: consider caching strings hashes.
+  // TODO: maybe use some simpler hashing algorithm?
+  return CityHash64(ByteArrayAddressOfElementAt(thiz, 0), thiz->count_);
 }
 
 }
