@@ -233,19 +233,19 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Nullable
     @Override
     public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
-        FqName fqNameBeingRenamed;
+        String fqNameBeingRenamed;
         if (element instanceof KtDeclarationContainer) {
             fqNameBeingRenamed = KotlinRunConfigurationProducer.Companion.getStartClassFqName((KtDeclarationContainer) element);
         }
         else if (element instanceof PsiPackage) {
-            fqNameBeingRenamed = new FqName(((PsiPackage) element).getQualifiedName());
+            fqNameBeingRenamed = ((PsiPackage) element).getQualifiedName();
         }
         else {
             fqNameBeingRenamed = null;
         }
 
         if (fqNameBeingRenamed == null ||
-            !MAIN_CLASS_NAME.equals(fqNameBeingRenamed.asString()) && !MAIN_CLASS_NAME.startsWith(fqNameBeingRenamed.asString() + ".")) {
+            !MAIN_CLASS_NAME.equals(fqNameBeingRenamed) && !MAIN_CLASS_NAME.startsWith(fqNameBeingRenamed + ".")) {
             return null;
         }
 
@@ -279,9 +279,9 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     private void updateMainClassName(PsiElement element) {
         KtDeclarationContainer container = KotlinRunConfigurationProducer.Companion.getEntryPointContainer(element);
-        FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
+        String name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
         if (name != null) {
-            MAIN_CLASS_NAME = name.asString();
+            MAIN_CLASS_NAME = name;
         }
     }
 
