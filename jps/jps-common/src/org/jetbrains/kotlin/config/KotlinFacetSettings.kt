@@ -36,11 +36,7 @@ import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-
-enum class LanguageLevel(override val description: String) : DescriptionAware {
-    KOTLIN_1_0("1.0"),
-    KOTLIN_1_1("1.1")
-}
+import org.jetbrains.kotlin.utils.DescriptionAware
 
 sealed class TargetPlatformKind<out Version : DescriptionAware>(
         val version: Version,
@@ -57,24 +53,19 @@ object NoVersion : DescriptionAware {
     override val description = ""
 }
 
-enum class JVMVersion(override val description: String) : DescriptionAware {
-    JVM_1_6("1.6"),
-    JVM_1_8("1.8")
-}
-
-class JVMPlatform(version: JVMVersion) : TargetPlatformKind<JVMVersion>(version, "JVM") {
+class JVMPlatform(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
     companion object {
-        val JVM_PLATFORMS by lazy { JVMVersion.values().map(::JVMPlatform) }
+        val JVM_PLATFORMS by lazy { JvmTarget.values().map(::JVMPlatform) }
 
-        operator fun get(version: JVMVersion) = JVM_PLATFORMS[version.ordinal]
+        operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
     }
 }
 
 object JSPlatform : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
 
 data class KotlinVersionInfo(
-        var languageLevel: LanguageLevel? = null,
-        var apiLevel: LanguageLevel? = null,
+        var languageLevel: LanguageVersion? = null,
+        var apiLevel: LanguageVersion? = null,
         @get:Transient var targetPlatformKindKind: TargetPlatformKind<*>? = null
 ) {
     // To be serialized
