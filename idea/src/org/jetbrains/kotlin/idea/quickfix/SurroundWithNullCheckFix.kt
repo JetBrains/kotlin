@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class SurroundWithNullCheckFix(
@@ -55,7 +56,7 @@ class SurroundWithNullCheckFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
             val expressionParent = element.getParentOfType<KtExpression>(strict = element is KtOperationReferenceExpression) ?: return null
-            val context = expressionParent.analyze()
+            val context = expressionParent.analyze(BodyResolveMode.PARTIAL)
 
             val parent = element.parent
             val nullableExpression =
@@ -71,6 +72,7 @@ class SurroundWithNullCheckFix(
             val expressionTarget = expressionParent.getParentOfTypesAndPredicate(strict = false, parentClasses = KtExpression::class.java) {
                 !it.isUsedAsExpression(context)
             } ?: return null
+            // Surround declaration (even of local variable) with null check is generally a bad idea
             if (expressionTarget is KtDeclaration) return null
 
             return SurroundWithNullCheckFix(expressionTarget, nullableExpression)
