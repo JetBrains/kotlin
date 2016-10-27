@@ -20,7 +20,6 @@ import com.intellij.util.SmartList;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class CommonCompilerArguments {
@@ -73,44 +72,11 @@ public abstract class CommonCompilerArguments {
 
     public List<String> unknownExtraFlags = new SmartList<String>();
 
-    public CommonCompilerArguments() {
-    }
-
-    protected CommonCompilerArguments(CommonCompilerArguments arguments) {
-        this.languageVersion = arguments.languageVersion;
-        this.apiVersion = arguments.apiVersion;
-        this.suppressWarnings = arguments.suppressWarnings;
-        this.verbose = arguments.verbose;
-        this.version = arguments.version;
-        this.help = arguments.help;
-        this.extraHelp = arguments.extraHelp;
-        this.noInline = arguments.noInline;
-        this.repeat = arguments.repeat;
-        this.pluginClasspaths = arguments.pluginClasspaths != null ? Arrays.copyOf(arguments.pluginClasspaths, arguments.pluginClasspaths.length) : null;
-        this.pluginOptions = arguments.pluginOptions != null ? Arrays.copyOf(arguments.pluginOptions, arguments.pluginOptions.length) : null;
-        this.freeArgs.addAll(arguments.freeArgs);
-        this.unknownExtraFlags.addAll(arguments.unknownExtraFlags);
-    }
-
-    public abstract CommonCompilerArguments copy();
-
     @NotNull
     public String executableScriptFileName() {
         return "kotlinc";
     }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    public static final class DummyImpl extends CommonCompilerArguments {
-        public DummyImpl() {
-        }
-
-        public DummyImpl(DummyImpl arguments) {
-            super(arguments);
-        }
-
-        @Override
-        public CommonCompilerArguments copy() {
-            return new DummyImpl(this);
-        }
-    }
+    public static final class DummyImpl extends CommonCompilerArguments {}
 }
