@@ -137,6 +137,8 @@ private fun getObjectType(value: PsiAnnotationMemberValue): PsiType {
                     return getObjectType(initializer)
                 }
             }
+
+            throw IllegalStateException("Can't resolve a reference ${value.javaClass}: ${value.text} (in ${value.parent.text})")
         }
     }
     
