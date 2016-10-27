@@ -35,40 +35,54 @@ sourceSets {
    }
 }
 
+String[] linkerOpts1() {
+        def libs = ['-lLLVMX86Disassembler',
+                    '-lLLVMX86AsmParser',
+                    '-lLLVMX86CodeGen',
+                    '-lLLVMSelectionDAG',
+                    '-lLLVMAsmPrinter',
+                    '-lLLVMX86Desc',
+                    '-lLLVMMCDisassembler',
+                    '-lLLVMX86Info',
+                    '-lLLVMX86AsmPrinter',
+                    '-lLLVMX86Utils',
+                    '-lLLVMInterpreter',
+                    '-lLLVMCodeGen',
+                    '-lLLVMScalarOpts',
+                    '-lLLVMInstCombine',
+                    '-lLLVMInstrumentation',
+                    '-lLLVMProfileData',
+                    '-lLLVMTransformUtils',
+                    '-lLLVMBitWriter',
+                    '-lLLVMExecutionEngine',
+                    '-lLLVMTarget',
+                    '-lLLVMAnalysis',
+                    '-lLLVMRuntimeDyld',
+                    '-lLLVMObject',
+                    '-lLLVMMCParser',
+                    '-lLLVMBitReader',
+                    '-lLLVMMC',
+                    '-lLLVMCore',
+                    '-lLLVMSupport']
+    List<String> ldflags = new ArrayList<>()
+    if (System.properties['os.name'].startsWith("Linux"))
+        ldflags.addAll(["-L$llvmDir/lib", "-lc++", "-Wl,-whole-archive"]
+                + libs
+                + ["-Wl,-no-whole-archieve", "-L$libffiDir/lib -lffi"])
+    else
+     ldflags.addAll(["-L$llvmDir/lib", "-lc++"] 
+             + libs
+             + ["-L$libffiDir/lib", "-lffi"])
+    ArrayList<String> strldflags = new ArrayList<>()
+    ldflags.forEach{strldflags.add(it.toString())}
+    return strldflags.toArray(new String[0])
+}
+
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
      compilerOpts "-I$llvmDir/include"
-     linkerOpts "-L$llvmDir/lib", "-lc++",
-             "-lLLVMX86Disassembler",
-             "-lLLVMX86AsmParser",
-             "-lLLVMX86CodeGen",
-             "-lLLVMSelectionDAG",
-             "-lLLVMAsmPrinter",
-             "-lLLVMX86Desc",
-             "-lLLVMMCDisassembler",
-             "-lLLVMX86Info",
-             "-lLLVMX86AsmPrinter",
-             "-lLLVMX86Utils",
-             "-lLLVMInterpreter",
-             "-lLLVMCodeGen",
-             "-lLLVMScalarOpts",
-             "-lLLVMInstCombine",
-             "-lLLVMInstrumentation",
-             "-lLLVMProfileData",
-             "-lLLVMTransformUtils",
-             "-lLLVMBitWriter",
-             "-lLLVMExecutionEngine",
-             "-lLLVMTarget",
-             "-lLLVMAnalysis",
-             "-lLLVMRuntimeDyld",
-             "-lLLVMObject",
-             "-lLLVMMCParser",
-             "-lLLVMBitReader",
-             "-lLLVMMC",
-             "-lLLVMCore",
-             "-lLLVMSupport",
-             "-L$libffiDir/lib -lffi"
+     linkerOpts linkerOpts1()
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
