@@ -186,6 +186,7 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 ProtoBufClassKind.COMPANION_OBJECT_NAME -> {
                     if (oldProto.hasCompanionObjectName()) oldProto.companionObjectName.oldToNames()
                     if (newProto.hasCompanionObjectName()) newProto.companionObjectName.newToNames()
+                    isClassAffected = true
                 }
                 ProtoBufClassKind.NESTED_CLASS_NAME_LIST -> {
                     if (classIsSealed) {
