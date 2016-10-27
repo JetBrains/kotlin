@@ -29,7 +29,7 @@ class AnnotationSerializer(private val stringTable: StringTable) {
         val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassDescriptor
                               ?: error("Annotation type is not a class: ${annotation.type}")
         if (ErrorUtils.isError(annotationClass)) {
-            error("Unresolved annotation type: ${annotation.type}")
+            error("Unresolved annotation type: ${annotation.type} at ${annotation.source.containingFile}")
         }
 
         id = stringTable.getFqNameIndex(annotationClass)
