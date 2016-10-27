@@ -38,7 +38,6 @@ fun <D : TypeHolder<D>> D.checkTypePosition(
         reportError: (TypeParameterDescriptor, D, Variance) -> Unit = DO_NOTHING_3,
         customVariance: (TypeParameterDescriptor) -> Variance? = { null }
 ): Boolean {
-
     flexibleBounds?.let {
         return it.first.checkTypePosition(position, reportError, customVariance) and
                     it.second.checkTypePosition(position, reportError, customVariance)

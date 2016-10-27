@@ -275,6 +275,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("typeVarianceConflictInTypeAliasExpansion.kt")
+    public void testTypeVarianceConflictInTypeAliasExpansion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeVarianceConflictInTypeAliasExpansion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("unsupportedFeature.kt")
     public void testUnsupportedFeature() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unsupportedFeature.kt");

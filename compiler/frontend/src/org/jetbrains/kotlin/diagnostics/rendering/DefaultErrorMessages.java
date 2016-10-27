@@ -546,21 +546,25 @@ public class DefaultErrorMessages {
 
         MAP.put(MISPLACED_TYPE_PARAMETER_CONSTRAINTS, "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause");
 
+        MultiRenderer<VarianceConflictDiagnosticData> varianceConflictDataRenderer = new MultiRenderer<VarianceConflictDiagnosticData>() {
+            @NotNull
+            @Override
+            public String[] render(@NotNull VarianceConflictDiagnosticData data) {
+                RenderingContext context =
+                        of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(),
+                           data.getContainingType());
+                return new String[] {
+                        NAME.render(data.getTypeParameter(), context),
+                        RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
+                        RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
+                        RENDER_TYPE.render(data.getContainingType(), context)
+                };
+            }
+        };
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
-                new MultiRenderer<VarianceConflictDiagnosticData>() {
-                    @NotNull
-                    @Override
-                    public String[] render(@NotNull VarianceConflictDiagnosticData data) {
-                        RenderingContext context =
-                                of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(), data.getContainingType());
-                        return new String[] {
-                            NAME.render(data.getTypeParameter(), context),
-                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
-                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
-                            RENDER_TYPE.render(data.getContainingType(), context)
-                        };
-                    }
-                });
+                varianceConflictDataRenderer);
+        MAP.put(TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type {3}",
+                varianceConflictDataRenderer);
 
         MAP.put(FINITE_BOUNDS_VIOLATION, "This type parameter violates the Finite Bound Restriction");
         MAP.put(FINITE_BOUNDS_VIOLATION_IN_JAVA, "Violation of Finite Bound Restriction for {0}", STRING);

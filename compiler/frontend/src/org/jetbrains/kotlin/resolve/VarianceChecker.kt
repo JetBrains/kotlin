@@ -16,30 +16,23 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.EnrichedProjectionKind.*
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.*
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
-import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checkTypePosition
+import org.jetbrains.kotlin.types.getAbbreviatedType
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -167,12 +160,9 @@ class VarianceCheckerCore(
         checkTypePosition(
                 position,
                 {   typeParameterDescriptor, typeBinding, errorPosition ->
-                    diagnosticSink.report(
-                            Errors.TYPE_VARIANCE_CONFLICT.on(
-                                    typeBinding.psiElement,
-                                    VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
-                            )
-                    )
+                    val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
+                    val diagnostic = if (typeBinding.isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
+                    diagnosticSink.report(diagnostic.on(typeBinding.psiElement, varianceConflictDiagnosticData))
                 },
                 customVariance = { it.varianceWithManual() }
         )

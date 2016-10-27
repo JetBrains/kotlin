@@ -28,20 +28,27 @@ import org.jetbrains.kotlin.types.*
 
 interface TypeBinding<out P : PsiElement> : TypeHolder<TypeBinding<P>> {
     val psiElement: P
+    val isInAbbreviation: Boolean
     override val arguments: List<TypeArgumentBinding<P>?>
 }
 
 interface TypeArgumentBinding<out P: PsiElement> : TypeHolderArgument<TypeBinding<P>>
 
 fun KtTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<KtTypeElement>? {
-    val jetType = trace[BindingContext.TYPE, this]
+    val type = trace[BindingContext.TYPE, this]
     val psiElement = typeElement
-    if (jetType == null || psiElement == null) {
-        return null
-    }
-    else {
-        return ExplicitTypeBinding(trace, psiElement, jetType)
-    }
+    return if (type == null || psiElement == null)
+        null
+    else
+        createTypeBindingFromPsi(trace, psiElement, type)
+}
+
+private fun createTypeBindingFromPsi(trace: BindingContext, psiElement: KtTypeElement, type: KotlinType): TypeBinding<KtTypeElement> {
+    val abbreviatedType = type.getAbbreviatedType()
+    return if (abbreviatedType != null)
+        AbbreviatedTypeBinding(type, psiElement)
+    else
+        ExplicitTypeBinding(trace, psiElement, type)
 }
 
 fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext): TypeBinding<PsiElement>?  {
@@ -65,30 +72,30 @@ private class ExplicitTypeBinding(
         override val psiElement: KtTypeElement,
         override val type: KotlinType
 ) : TypeBinding<KtTypeElement> {
+    override val isInAbbreviation: Boolean get() = false
 
     override val arguments: List<TypeArgumentBinding<KtTypeElement>?>
         get() {
             val psiTypeArguments = psiElement.typeArgumentsAsTypes
+            assert(type.getAbbreviatedType() == null) { "Non-abbreviated type expected: $type" }
             val isErrorBinding = run {
                 val sizeIsEqual = psiTypeArguments.size == type.arguments.size
                                   && psiTypeArguments.size == type.constructor.parameters.size
                 type.isError || !sizeIsEqual
             }
 
-        return psiTypeArguments.indices.map { index: Int ->
-            // todo fix for List<*>
-            val jetTypeReference = psiTypeArguments[index]
-            val jetTypeElement = jetTypeReference?.typeElement
-            if (jetTypeElement == null) return@map null
+            return psiTypeArguments.indices.map { index: Int ->
+                // todo fix for List<*>
+                val jetTypeReference = psiTypeArguments[index]
+                val jetTypeElement = jetTypeReference?.typeElement ?: return@map null
 
-            if (isErrorBinding) {
-                val nextJetType = trace[BindingContext.TYPE, jetTypeReference]
-                if (nextJetType == null) return@map null
+                if (isErrorBinding) {
+                    val nextJetType = trace[BindingContext.TYPE, jetTypeReference] ?: return@map null
 
                     return@map TypeArgumentBindingImpl(
                             TypeProjectionImpl(nextJetType),
                             null,
-                            ExplicitTypeBinding(trace, jetTypeElement, nextJetType)
+                            createTypeBindingFromPsi(trace, jetTypeElement, nextJetType)
                     )
                 }
 
@@ -96,9 +103,25 @@ private class ExplicitTypeBinding(
                 return@map TypeArgumentBindingImpl(
                         typeProjection,
                         type.constructor.parameters[index],
-                        ExplicitTypeBinding(trace, jetTypeElement, typeProjection.type)
+                        createTypeBindingFromPsi(trace, jetTypeElement, typeProjection.type)
                 )
             }
+        }
+}
+
+private class AbbreviatedTypeBinding(
+        override val type: KotlinType,
+        override val psiElement: KtTypeElement
+): TypeBinding<KtTypeElement> {
+    override val isInAbbreviation: Boolean get() = true
+
+    override val arguments: List<TypeArgumentBinding<KtTypeElement>?>
+        get() = type.arguments.mapIndexed { index, argument ->
+            TypeArgumentBindingImpl(
+                    argument,
+                    type.constructor.parameters[index],
+                    AbbreviatedTypeBinding(argument.type, psiElement)
+            )
         }
 }
 
@@ -107,6 +130,7 @@ private class NoTypeElementBinding<out P : PsiElement>(
         override val psiElement: P,
         override val type: KotlinType
 ): TypeBinding<P> {
+    override val isInAbbreviation: Boolean get() = false
 
     override val arguments: List<TypeArgumentBinding<P>?>
         get() {
