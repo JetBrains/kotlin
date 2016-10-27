@@ -20,10 +20,10 @@ import com.intellij.codeInsight.template.postfix.templates.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil.findElementOfClassAtRange
+import com.intellij.util.Function
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -112,59 +112,50 @@ internal fun createExpressionSelector(
         checkCanBeUsedAsValue: Boolean = true,
         statementsOnly: Boolean = false,
         typePredicate: ((KotlinType) -> Boolean)? = null
-): PostfixTemplateExpressionSelectorBase = KtExpressionPostfixTemplateSelector(statementsOnly, checkCanBeUsedAsValue, typePredicate)
+): PostfixTemplateExpressionSelector = KtExpressionPostfixTemplateSelector(statementsOnly, checkCanBeUsedAsValue, typePredicate)
 
 private class KtExpressionPostfixTemplateSelector(
-        statementsOnly: Boolean,
-        checkCanBeUsedAsValue: Boolean,
-        typePredicate: ((KotlinType) -> Boolean)?
-) : PostfixTemplateExpressionSelectorBase(createFilter(statementsOnly, checkCanBeUsedAsValue, typePredicate)) {
-    companion object {
-        private fun createFilter(
-                statementsOnly: Boolean,
-                checkCanBeUsedAsValue: Boolean,
-                typePredicate: ((KotlinType) -> Boolean)?
-        ): Condition<PsiElement> = Condition {
-            if (it !is KtExpression) return@Condition false
+        private val statementsOnly: Boolean,
+        private val checkCanBeUsedAsValue: Boolean,
+        private val typePredicate: ((KotlinType) -> Boolean)?
+) : PostfixTemplateExpressionSelector {
 
-            // Can't be independent expressions
-            if (it.isSelector || it.parent is KtUserType || it.isOperationReference || it is KtBlockExpression) return@Condition false
+    private fun filterElement(element: PsiElement): Boolean {
+        if (element !is KtExpression) return false
 
-            // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
-            if (it is KtFunctionLiteral) return@Condition false
+        // Can't be independent expressions
+        if (element.isSelector || element.parent is KtUserType || element.isOperationReference || element is KtBlockExpression) return false
 
-            // No local delegated properties in 1.0.5
-            var context: BindingContext? = null
-            fun getContext(): BindingContext {
-                if (context == null) {
-                    context = it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
-                }
-                return context!!
+        // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
+        if (element is KtFunctionLiteral) return false
+
+        // No local delegated properties in 1.0.5
+        var context: BindingContext? = null
+        fun getContext(): BindingContext {
+            if (context == null) {
+                context = it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             }
-
-            if (statementsOnly) {
-                val elementToCheck = it.getQualifiedExpressionForReceiverOrThis()
-                if (elementToCheck.parent !is KtBlockExpression && !elementToCheck.isUsedAsStatement(getContext())) return@Condition false
-            }
-            if (checkCanBeUsedAsValue && !it.canBeUsedAsValue()) return@Condition false
-
-            typePredicate == null || it.getType(getContext())?.let { typePredicate(it) } ?: false
+            return context!!
         }
 
-        private fun KtExpression.canBeUsedAsValue() =
-                !KtPsiUtil.isAssignment(this) &&
-                !this.isNamedDeclaration &&
-                this !is KtLoopExpression &&
-                // if's only with else may be treated as expressions
-                !isIfWithoutElse
+        if (statementsOnly) {
+            val elementToCheck = element.getQualifiedExpressionForReceiverOrThis()
+            if (elementToCheck.parent !is KtBlockExpression && !elementToCheck.isUsedAsStatement(getContext())) return false
+        }
+        if (checkCanBeUsedAsValue && !element.canBeUsedAsValue()) return false
 
-        private val KtExpression.isIfWithoutElse: Boolean
-            get() = (this is KtIfExpression && this.elseKeyword == null)
+        return typePredicate == null || element.getType(getContext())?.let { typePredicate.invoke(it) } ?: false
     }
 
-    override fun getFilters(offset: Int): Condition<PsiElement> {
-        return myAdditionalCondition
-    }
+    private fun KtExpression.canBeUsedAsValue() =
+            !KtPsiUtil.isAssignment(this) &&
+            !this.isNamedDeclaration &&
+            this !is KtLoopExpression &&
+            // if's only with else may be treated as expressions
+            !isIfWithoutElse
+
+    private val KtExpression.isIfWithoutElse: Boolean
+        get() = (this is KtIfExpression && this.elseKeyword == null)
 
     override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
         val originalFile = context.containingFile.originalFile
@@ -183,12 +174,12 @@ private class KtExpressionPostfixTemplateSelector(
             val qualifiedExpressionEnd = boundElementParent.endOffset
             expressions
                     .dropWhile { it != boundElementParent }
-                    .filter { it != boundElementParent }
+                    .drop(1)
                     .takeWhile { it.endOffset == qualifiedExpressionEnd }
                     .toCollection(filteredByOffset)
         }
 
-        val result = filteredByOffset.filter { myAdditionalCondition.value(it) }
+        val result = filteredByOffset.filter(this::filterElement)
 
         if (ApplicationManager.getApplication().isUnitTestMode && result.size > 1) {
             KtPostfixTemplateProvider.previouslySuggestedExpressions = result.map { it.text }
@@ -197,15 +188,11 @@ private class KtExpressionPostfixTemplateSelector(
         return result
     }
 
-    override fun getNonFilteredExpressions(
-            context: PsiElement,
-            document: Document,
-            offset: Int
-    ) = context.parentsWithSelf
-            .filterIsInstance<KtExpression>()
-            .takeWhile {
-                !it.isBlockBodyInDeclaration
-            }.toList()
+    override fun hasExpression(context: PsiElement, copyDocument: Document, newOffset: Int): Boolean {
+        return !getExpressions(context, copyDocument, newOffset).isEmpty()
+    }
+
+    override fun getRenderer() = Function(PsiElement::getText)
 }
 
 private val KtExpression.isOperationReference: Boolean
