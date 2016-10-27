@@ -555,12 +555,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("inlineOnlyFunInClass.kt")
-            public void testInlineOnlyFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/inlineOnlyFunInClass.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("reifiedFunInClass.kt")
             public void testReifiedFunInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/reifiedFunInClass.kt");
