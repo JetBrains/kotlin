@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.Companion.PARTIAL
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -54,11 +54,13 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
     }
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
+        val context = element.analyze()
+        val type = element.getType(context) ?: return false
+        if (KotlinBuiltIns.isUnit(type)) return false
+
         val condition = element.condition as? KtOperationExpression ?: return false
         val thenClause = element.then ?: return false
         val elseClause = element.`else` ?: return false
-
-        val context = condition.analyze(PARTIAL)
 
         val checkedExpression = condition.checkedExpression() ?: return false
         if (!checkedExpression.isStableVariable(context)) return false

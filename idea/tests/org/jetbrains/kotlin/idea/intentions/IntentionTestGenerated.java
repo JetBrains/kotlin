@@ -1452,6 +1452,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unitResult.kt")
+            public void testUnitResult() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/unitResult.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("willNotInlineClassProperty.kt")
             public void testWillNotInlineClassProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/willNotInlineClassProperty.kt");
