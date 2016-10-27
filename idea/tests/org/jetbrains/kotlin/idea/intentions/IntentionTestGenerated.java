@@ -1308,6 +1308,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheckForUnrelatedType.kt")
+            public void testIsCheckForUnrelatedType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckForUnrelatedType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isCheckWithSelector.kt")
             public void testIsCheckWithSelector() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckWithSelector.kt");

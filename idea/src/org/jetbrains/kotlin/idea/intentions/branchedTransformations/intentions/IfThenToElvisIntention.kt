@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.Companion.PARTIAL
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention::class)
@@ -69,7 +70,10 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                 else -> false
             }
             is KtIsExpression -> {
-                if (!context[BindingContext.TYPE, condition.typeReference].isNotNull()) return false
+                val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return false
+                if (!targetType.isNotNull()) return false
+                val originalType = condition.leftHandSide.getType(context) ?: return false
+                if (!targetType.isSubtypeOf(originalType)) return false
 
                 when (condition.isNegated) {
                     true -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause, context)
