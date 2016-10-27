@@ -8,6 +8,7 @@ Module 'module1' production
     experimental-format-version.txt
     format-version.txt
     class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module1' tests
@@ -15,6 +16,7 @@ Module 'module2' production
     experimental-format-version.txt
     format-version.txt
     class-fq-name-to-source.tab
+    internal-name-to-source.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab
@@ -25,6 +27,7 @@ Module 'module3' production
     experimental-format-version.txt
     format-version.txt
     class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module3' tests
@@ -32,6 +35,7 @@ Module 'module4' production
     experimental-format-version.txt
     format-version.txt
     class-fq-name-to-source.tab
+    internal-name-to-source.tab
     proto.tab
     source-to-classes.tab
 Module 'module4' tests
