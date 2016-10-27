@@ -65,6 +65,12 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("MethodReference.kt")
+    public void testMethodReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MethodReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultiDeclaration.kt")
     public void testMultiDeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclaration.kt");
