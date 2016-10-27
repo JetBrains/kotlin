@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
@@ -26,6 +27,10 @@ import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.Companion.PARTIAL
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.nullability
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention::class)
 
@@ -36,7 +41,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
     private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression) =
             !firstClause.isNullOrBlockExpression() &&
-            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this)) &&
+            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.isNullableExpression()) &&
             !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
 
     private fun KtExpression.checkedExpression() = when (this) {
@@ -71,6 +76,8 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         val innerExpression = this.unwrapBlockOrParenthesis()
         return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
+
+    private fun KtExpression.isNullableExpression() = getType(analyze(PARTIAL))?.nullability() != TypeNullability.NOT_NULL
 
     private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
         val actualReceiver = (unwrapBlockOrParenthesis() as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
