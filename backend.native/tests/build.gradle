@@ -29,7 +29,9 @@ public class KonanTest extends DefaultTask {
             classpath = classpathSs
             args "-output", "${sourceBc.absolutePath}",
                     "-runtime", "${runtimeBc.absolutePath}",
-                    "${sourceKt.absolutePath}"
+                    "${sourceKt.absolutePath}",
+                    project.project(':runtime').file('src/main/kotlin')
+
             jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
         }
         def runtimeS = bc2s(runtimeBc)
