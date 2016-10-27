@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -401,3 +402,10 @@ fun LookupElement.decorateAsStaticMember(
         }
     }
 }
+
+fun ImportableFqNameClassifier.isImportableDescriptorImported(descriptor: DeclarationDescriptor): Boolean {
+    val classification = classify(descriptor.importableFqName!!, false)
+    return classification != ImportableFqNameClassifier.Classification.notImported
+           && classification != ImportableFqNameClassifier.Classification.siblingImported
+}
+

@@ -37,19 +37,15 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
@@ -152,20 +148,6 @@ abstract class CompletionSession(
                                    filter,
                                    filterOutPrivate = !mayIncludeInaccessible,
                                    declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) })
-    }
-
-    protected object TopLevelExtensionsExclude : DescriptorKindExclude() {
-        override fun excludes(descriptor: DeclarationDescriptor): Boolean {
-            if (descriptor !is CallableMemberDescriptor) return false
-            if (descriptor.extensionReceiverParameter == null) return false
-            if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions */
-            val containingPackage = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-            if (containingPackage.fqName.asString().startsWith("kotlinx.android.synthetic.")) return false // TODO: temporary solution for Android synthetic extensions
-            return true
-        }
-
-        override val fullyExcludedDescriptorKinds: Int
-            get() = 0
     }
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
@@ -287,97 +269,18 @@ abstract class CompletionSession(
         return context
     }
 
-    protected data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
-
     protected val referenceVariants: ReferenceVariants? by lazy {
-        if (nameExpression != null && descriptorKindFilter != null) collectReferenceVariants(descriptorKindFilter!!, nameExpression) else null
+        if (nameExpression != null && descriptorKindFilter != null)
+            ReferenceVariantsCollector(referenceVariantsHelper, indicesHelper(true), prefixMatcher,
+                                       nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
+                                       importableFqNameClassifier, configuration
+            ).collectReferenceVariants(descriptorKindFilter!!)
+        else
+            null
     }
 
     protected val referenceVariantsWithNonInitializedVarExcluded: ReferenceVariants? by lazy {
         referenceVariants?.let { ReferenceVariants(referenceVariantsHelper.excludeNonInitializedVariable(it.imported, position), it.notImportedExtensions) }
-    }
-
-    private fun collectReferenceVariants(
-            descriptorKindFilter: DescriptorKindFilter,
-            nameExpression: KtSimpleNameExpression,
-            runtimeReceiver: ExpressionReceiver? = null
-    ): ReferenceVariants {
-        val completeExtensionsFromIndices = descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
-                                            && callTypeAndReceiver !is CallTypeAndReceiver.IMPORT_DIRECTIVE
-        @Suppress("NAME_SHADOWING")
-        val descriptorKindFilter = if (completeExtensionsFromIndices)
-            descriptorKindFilter exclude TopLevelExtensionsExclude // handled via indices
-        else
-            descriptorKindFilter
-
-        fun getReferenceVariants(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-            return referenceVariantsHelper.getReferenceVariants(
-                    nameExpression,
-                    kindFilter,
-                    nameFilter,
-                    filterOutJavaGettersAndSetters = false,
-                    filterOutShadowed = false,
-                    excludeNonInitializedVariable = false,
-                    useReceiverType = runtimeReceiver?.type)
-        }
-
-        var variants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
-
-        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
-        val additionalPropertyNameFilter: ((String) -> Boolean)? = run {
-            getOrSetPrefix?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
-        }
-        if (additionalPropertyNameFilter != null) {
-            variants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES),
-                                             additionalPropertyNameFilter.toNameFilter())
-            variants = variants.distinct()
-        }
-
-        var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
-        if (completeExtensionsFromIndices) {
-            val indicesHelper = indicesHelper(true)
-            val nameFilter = if (additionalPropertyNameFilter != null)
-                descriptorNameFilter or additionalPropertyNameFilter
-            else
-                descriptorNameFilter
-            val extensions = if (runtimeReceiver != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
-            else
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
-
-            val pair = extensions.partition { isImportableDescriptorImported(it) }
-            variants += pair.first
-            notImportedExtensions = pair.second
-        }
-
-        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
-            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, position, runtimeReceiver)
-        else
-            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
-
-        if (shadowedDeclarationsFilter != null) {
-            variants = shadowedDeclarationsFilter.filter(variants)
-            notImportedExtensions = shadowedDeclarationsFilter
-                    .createNonImportedDeclarationsFilter<CallableDescriptor>(importedDeclarations = variants)
-                    .invoke(notImportedExtensions)
-        }
-
-        if (!configuration.javaGettersAndSetters) {
-            variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
-        }
-
-        if (!configuration.dataClassComponentFunctions) {
-            variants = variants.filter { !isDataClassComponentFunction(it) }
-        }
-
-        return ReferenceVariants(variants, notImportedExtensions)
-    }
-
-    private fun isDataClassComponentFunction(descriptor: DeclarationDescriptor): Boolean {
-        return descriptor is FunctionDescriptor &&
-               descriptor.isOperator &&
-               DataClassDescriptorResolver.isComponentLike(descriptor.name) &&
-               descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
     }
 
     protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
@@ -398,7 +301,11 @@ abstract class CompletionSession(
         if (runtimeType == null || runtimeType == type) return null
 
         val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType, bindingContext)
-        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, expressionReceiver)
+        val (variants, notImportedExtensions) = ReferenceVariantsCollector(
+                referenceVariantsHelper, indicesHelper(true), prefixMatcher,
+                nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
+                importableFqNameClassifier, configuration, runtimeReceiver = expressionReceiver
+        ).collectReferenceVariants(descriptorKindFilter!!)
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 
@@ -474,11 +381,5 @@ abstract class CompletionSession(
         }
 
         return callTypeAndReceiver to receiverTypes
-    }
-
-    protected fun isImportableDescriptorImported(descriptor: DeclarationDescriptor): Boolean {
-        val classification = importableFqNameClassifier.classify(descriptor.importableFqName!!, false)
-        return classification != ImportableFqNameClassifier.Classification.notImported
-               && classification != ImportableFqNameClassifier.Classification.siblingImported
     }
 }
