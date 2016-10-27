@@ -22,7 +22,6 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val context = Context(module, runtime, llvmModule) // TODO: dispose
 
     module.acceptVoid(RTTIGeneratorVisitor(context))
-    context.runtime.importRuntime(llvmModule)
     module.acceptVoid(CodeGeneratorVisitor(context))
     memScoped {
         val errorRef = alloc(Int8Box.ref)
@@ -180,7 +179,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         memScoped {
             val params = allocNativeArrayOf(LLVMOpaqueValue, generator.typeInfoValue((callee.descriptor as ClassConstructorDescriptor).containingDeclaration), Int32(1).getLlvmValue())
-            val thisValue = LLVMBuildCall(context.llvmBuilder, context.runtime.allocInstanceFunction, params[0], 2, variableName)
+            val thisValue = LLVMBuildCall(context.llvmBuilder, context.allocInstanceFunction, params[0], 2, variableName)
 
 
             val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()

@@ -34,15 +34,6 @@ class Runtime(private val bitcodeFile: String) {
     val fieldTableRecordType = LLVMGetTypeByName(llvmModule, "struct.FieldTableRecord")
     val methodTableRecordType = LLVMGetTypeByName(llvmModule, "struct.MethodTableRecord")
     val globalhHashType = LLVMGetTypeByName(llvmModule, "struct.GlobalHash")
-    val allocInstanceFunction = LLVMGetNamedFunction(llvmModule, "AllocInstance")
-
-    fun importRuntime(module: LLVMOpaqueModule) {
-        memScoped {
-            val params = allocNativeArrayOf(LLVMOpaqueType, pointerType(typeInfoType), LLVMInt32Type())
-            val functionAllocInstanceType = LLVMFunctionType(pointerType(LLVMInt8Type()),params[0], 2, 0)
-            LLVMAddFunction(module, "AllocInstance", functionAllocInstanceType)
-        }
-    }
 
     val target = LLVMGetTarget(llvmModule)!!.asCString().toString()
 

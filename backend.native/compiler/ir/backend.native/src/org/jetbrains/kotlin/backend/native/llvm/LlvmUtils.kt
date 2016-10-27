@@ -98,3 +98,8 @@ internal fun NativeArray<Int8Box>.asCompileTimeValue(size: Int): ConstArray {
         Int8(this[it].value)
     })
 }
+
+internal fun getFunctionType(ptrToFunction: LLVMOpaqueValue?): LLVMOpaqueType {
+    val typeOfPtrToFunction = LLVMTypeOf(ptrToFunction)
+    return LLVMGetElementType(typeOfPtrToFunction)!!
+}
