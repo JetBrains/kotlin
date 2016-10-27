@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -847,7 +848,9 @@ public class FunctionCodegen {
 
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         // $default methods are never protected to be accessible from subclass nested classes
-        int visibilityFlag = Visibilities.isPrivate(functionDescriptor.getVisibility()) ? AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
+        int visibilityFlag = Visibilities.isPrivate(functionDescriptor.getVisibility()) ||
+                             AnnotationUtilKt.isInlineOnlyOrReified(functionDescriptor) ?
+                             AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags =  visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor)) {
             flags |= ACC_STATIC | ACC_BRIDGE;
