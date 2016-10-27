@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.config
 
-enum class JvmTarget(val string: String) {
+import org.jetbrains.kotlin.utils.DescriptionAware
+
+enum class JvmTarget(override val description: String) : DescriptionAware {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     ;
@@ -26,6 +28,6 @@ enum class JvmTarget(val string: String) {
         val DEFAULT = JVM_1_6
 
         @JvmStatic
-        fun fromString(string: String) = values().find { it.string == string }
+        fun fromString(string: String) = values().find { it.description == string }
     }
 }
