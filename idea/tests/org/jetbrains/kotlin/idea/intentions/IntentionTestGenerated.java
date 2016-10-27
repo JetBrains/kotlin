@@ -4087,6 +4087,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("goodNamedOrder.kt")
+        public void testGoodNamedOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/goodNamedOrder.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inner.kt")
         public void testInner() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/inner.kt");
@@ -4210,6 +4216,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unwrap.kt")
         public void testUnwrap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/unwrap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongNamedOrder.kt")
+        public void testWrongNamedOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/wrongNamedOrder.kt");
             doTest(fileName);
         }
 
