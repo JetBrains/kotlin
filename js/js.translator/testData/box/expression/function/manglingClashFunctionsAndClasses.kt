@@ -1,45 +1,75 @@
+// MODULE: lib
+// FILE: lib.kt
 package foo
 
-public class A
+var log = ""
 
-internal fun A(a: Int){}
-
-public class B(a: Int)
-
-internal fun B(){}
-
-internal fun C(a: Int){}
-
-public class C
-
-internal fun D(){}
-
-public class D(a: Int)
-
-//Testing
-
-internal fun testClass(name: String, f: () -> Unit) {
-    val fs = f.toString()
-
-    if ("$name(" !in fs) throw Exception("Name of class '$name' unexpectedly mangled: $fs")
+public class A {
+    init {
+        log += "class A;"
+    }
 }
 
-internal fun testFun(name: String, f: () -> Unit) {
-    val fs = f.toString()
-
-    if ("$name(" in fs) throw Exception("Name of fun '$name' unexpectedly not mangled: $fs")
+internal fun A(a: Int) {
+    log += "fun A;"
 }
 
+public class B(a: Int) {
+    init {
+        log += "class B;"
+    }
+}
+
+internal fun B() {
+    log += "fun B;"
+}
+
+internal fun C(a: Int) {
+    log += "fun C;"
+}
+
+public class C {
+    init {
+        log += "class C;"
+    }
+}
+
+internal fun D() {
+    log += "fun D;"
+}
+
+public class D(a: Int) {
+    init {
+        log += "class D;"
+    }
+}
+
+fun callInternalFunctions() {
+    A(0)
+    B()
+    C(0)
+    D()
+}
+
+
+// MODULE: main(lib)
+// FILE: main.kt
+package foo
+
+private val currentPackage: dynamic
+    get() = js("\$module\$lib").foo
+
+private fun instantiate(classRef: dynamic, param: dynamic = js("undefined")) = js("new classRef(param)")
 
 fun box(): String {
-    testClass("A") { A() }
-    testFun("A") { A(1) }
-    testFun("B") { B() }
-    testClass("B") { B(1) }
-    testClass("C") { C() }
-    testFun("C") { C(1) }
-    testFun("D") { D() }
-    testClass("D") { D(1) }
+    callInternalFunctions()
+
+    instantiate(currentPackage.A)
+    instantiate(currentPackage.B)
+    instantiate(currentPackage.C)
+    instantiate(currentPackage.D, 123)
+
+    if (log != "fun A;fun B;fun C;fun D;class A;class B;class C;class D;") return "fail: $log"
 
     return "OK"
 }

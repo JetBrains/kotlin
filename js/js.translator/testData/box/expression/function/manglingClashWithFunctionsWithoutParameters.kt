@@ -29,9 +29,6 @@ fun test(testName: String, ff: Any, fb: Any) {
 fun box(): String {
     val a = A()
 
-    test("foo()", { foo() }, { boo() })
-    test("foo(Int)", { foo(1) }, { boo(1) })
-
     test("a.foo()", { a.foo() }, { a.boo() })
     test("a.foo(Int)", { a.foo(1) }, { a.boo(1) })
 

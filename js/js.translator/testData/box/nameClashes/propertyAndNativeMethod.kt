@@ -1,14 +1,23 @@
-package foo
+// MODULE: lib
+// FILE: lib.kt
+package lib
 
 @native fun bar()
 
 val bar = 32
 
-fun createNativeBar() = js("bar = function() { return 23; };")
+// FILE: lib.js
+function bar() {
+    return 23;
+}
+
+// MODULE: main(lib)
+// FILE: main.kt
+package main
+
+import lib.*
 
 fun box(): String {
-    createNativeBar()
-
     assertEquals(23, bar())
     assertEquals(32, bar)
 

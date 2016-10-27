@@ -1,6 +1,9 @@
 package foo
 
+private var log = ""
+
 public fun public_baz(i: Int) {
+    log = "public_baz"
 }
 @native public fun public_baz(a: String) {
 }
@@ -9,6 +12,8 @@ internal fun internal_baz(i: Int) {
 }
 internal @native fun internal_baz(a: String) {
 }
+
+private fun getCurrentPackage(): dynamic = js("_").foo
 
 private fun private_baz(i: Int) {
 }
@@ -174,22 +179,21 @@ fun testMangledPrivate(f: () -> Unit) {
     }
 }
 
-public fun stable_mangled_baz(i: Int) {
+class Dummy {
+    public fun stable_mangled_baz(i: Int) { }
 }
 
 val SIMPLE = "baz"
 val SIMPLE0 = "${SIMPLE}_0"
 val NATIVE = SIMPLE
-val STABLE = { stable_mangled_baz(0) }.extractNames()[1]
+val STABLE = "baz_za3lpa$"
 
 fun box(): String {
     testGroup = "Top Level"
-    test(STABLE) { public_baz(0) }
+
+    getCurrentPackage().`public_baz_za3lpa$`(0)
+    assertEquals("public_baz", log)
     test(NATIVE) { public_baz("native") }
-    test(SIMPLE0) { internal_baz(0) }
-    test(NATIVE) { internal_baz("native") }
-    test(SIMPLE0) { private_baz(0) }
-    test(NATIVE) { private_baz("native") }
 
     testGroup = "Public Class"
     test(STABLE) { PublicClass().public_baz(0) }

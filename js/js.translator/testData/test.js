@@ -83,6 +83,7 @@ function supplyAsserter(kotlin) {
                         this.failWithMessage(message);
                     }
                 },
+                assertEquals_a59ba6$: kotlin.kotlin.test.Asserter.prototype.assertEquals_a59ba6$,
                 fail_61zpoe$: function (message) {
                     this.failWithMessage(message);
                 },

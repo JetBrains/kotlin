@@ -1,12 +1,5 @@
 package foo
 
-public fun equals(a: Any?): Boolean = true
-public fun hashCode(): Int = 0
-public fun toString(): String = ""
-fun equals(a: Any?, b: Any?): Boolean = true
-fun hashCode(i: Int): Int = 0
-fun toString(s: String): String = ""
-
 public class PublicClass {
     override fun equals(a: Any?): Boolean = this === a
     override fun hashCode(): Int = 0
@@ -61,12 +54,12 @@ fun test(expected: String, f: () -> Unit) {
     }
 }
 
-val STABLE_EQUALS = { equals(0) }.extractNames()[1]
-val STABLE_HASH_CODE = { hashCode() }.extractNames()[1]
-val STABLE_TO_STRING = { toString() }.extractNames()[1]
-val STABLE_EQUALS_2 = { equals(0, 0) }.extractNames()[1]
-val STABLE_HASH_CODE_2 = { hashCode(0) }.extractNames()[1]
-val STABLE_TO_STRING_2 = { toString("") }.extractNames()[1]
+val STABLE_EQUALS = "equals_za3rmp$"
+val STABLE_HASH_CODE = "hashCode"
+val STABLE_TO_STRING = "toString"
+val STABLE_EQUALS_2 = "equals_wn2jw4$"
+val STABLE_HASH_CODE_2 = "hashCode_za3lpa$"
+val STABLE_TO_STRING_2 = "toString_61zpoe$"
 
 fun box(): String {
     testGroup = "Public Class"

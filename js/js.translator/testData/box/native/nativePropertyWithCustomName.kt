@@ -2,14 +2,11 @@ package foo
 
 internal val PACKAGE = "kotlin.modules.JS_TESTS.foo"
 
-internal fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
-
-internal @native("\"O\"") val foo: String = noImpl
-internal @native("boo") val bar: String = noImpl
+internal @native @JsName("\"O\"") val foo: String = noImpl
+internal @native @JsName("boo") val bar: String = noImpl
 
 internal class A
-internal @native("__proto__") val Any.proto: String get() = noImpl
-internal @native("__proto__") val A.proto: String get() = noImpl
+internal fun proto(o: Any?): String = js("o.__proto__")
 
 internal fun actual(foo: String, @native("boo") bar: String) = foo + bar
 internal fun expected(foo: String, boo: String) = foo + boo
@@ -19,16 +16,16 @@ fun box(): String {
 
     if (foo + bar != OK) return "$foo + $bar != $OK"
 
-    val actualAsString = funToString("actual_0")
-    val expectedAsString = funToString("expected_0").replace("expected", "actual")
+    val actualAsString = js("actual").toString()
+    val expectedAsString = js("expected").toString().replace("expected", "actual")
     if (actualAsString != expectedAsString) return "$actualAsString != $expectedAsString"
     if (actual("asd", "12345") != "asd12345") return "${actual("asd", "12345")} != \"asd12345\""
 
     val a = A()
     val any: Any = a
-    val protoA = eval("$PACKAGE.A.prototype")
-    if (a.proto != any.proto || a.proto != protoA)
-        return "a.proto != any.proto /*${a.proto != any.proto}*/ || a.proto != $PACKAGE.A.prototype /*${a.proto != protoA}*/"
+    val protoA = js("A.prototype")
+    if (proto(a) != proto(any) || proto(a) != protoA)
+        return "a.proto != any.proto /*${proto(a) != proto(any)}*/ || a.proto != A.prototype /*${proto(a) != protoA}*/"
 
     return OK
 }

@@ -12,7 +12,7 @@ fun testWithInstance() {
     assertEquals("A", A()::class.simpleName)
     assertEquals("B", B()::class.simpleName)
     assertEquals("O", (O)::class.simpleName)
-    assertEquals("Q", R()::class.simpleName)
+    assertEquals("R", R()::class.simpleName)
     assertEquals("E", E.X::class.simpleName)
     assertEquals("Y", E.Y::class.simpleName)
 // TODO uncomment after KT-13338 is fixed
@@ -27,7 +27,7 @@ fun testWithClassReference() {
     assertEquals("B", B::class.simpleName)
     assertEquals("O", O::class.simpleName)
     assertEquals("I", I::class.simpleName)
-    assertEquals("Q", R::class.simpleName)
+    assertEquals("R", R::class.simpleName)
     assertEquals("E", E::class.simpleName)
     assertEquals("undefined", foo.undefined::class.simpleName)
     assertEquals("Nested", Outer.Nested::class.simpleName)
