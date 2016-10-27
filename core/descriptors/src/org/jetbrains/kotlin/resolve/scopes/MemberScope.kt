@@ -175,6 +175,10 @@ class DescriptorKindFilter(
 abstract class DescriptorKindExclude {
     abstract fun excludes(descriptor: DeclarationDescriptor): Boolean
 
+    /**
+     * Bit-mask of descriptor kind's that are fully excluded by this [DescriptorKindExclude].
+     * That is, [excludes] returns true for all descriptor of these kinds.
+     */
     abstract val fullyExcludedDescriptorKinds: Int
 
     override fun toString() = this.javaClass.simpleName
@@ -190,8 +194,8 @@ abstract class DescriptorKindExclude {
         override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.extensionReceiverParameter == null
 
-        override val fullyExcludedDescriptorKinds: Int
-            get() = DescriptorKindFilter.ALL_KINDS_MASK and (DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK).inv()
+        override val fullyExcludedDescriptorKinds
+                = DescriptorKindFilter.ALL_KINDS_MASK and (DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK).inv()
     }
 
     object EnumEntry : DescriptorKindExclude() {

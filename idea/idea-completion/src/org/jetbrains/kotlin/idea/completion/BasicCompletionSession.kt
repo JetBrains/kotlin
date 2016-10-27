@@ -26,9 +26,7 @@ import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
@@ -39,6 +37,8 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -158,7 +158,7 @@ class BasicCompletionSession(
     }
 
     private val ALL = object : CompletionKind {
-        override val descriptorKindFilter: DescriptorKindFilter? by lazy {
+        override val descriptorKindFilter: DescriptorKindFilter by lazy {
             var filter = callTypeAndReceiver.callType.descriptorKindFilter
 
             if (filter.kindMask.and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
@@ -201,9 +201,20 @@ class BasicCompletionSession(
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
 
             val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes { lookupElementFactory ->
-                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded!!
-                collector.addDescriptorElements(imported, lookupElementFactory)
-                collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+                if (prefix.isEmpty() || callTypeAndReceiver.receiver != null) {
+                    addReferenceVariantElements(lookupElementFactory, descriptorKindFilter)
+                }
+                else if (prefix[0].isLowerCase()) {
+                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
+                    flushToResultSet()
+                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
+                }
+                else {
+                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
+                    flushToResultSet()
+                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
+                }
+                referenceVariantsCollector!!.collectingFinished()
             }
 
             KEYWORDS_ONLY.doComplete()
@@ -253,7 +264,11 @@ class BasicCompletionSession(
                 }
 
                 val staticMembersCompletion = StaticMembersCompletion(
-                        prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
+                        prefixMatcher,
+                        resolutionFacade,
+                        lookupElementFactory,
+                        referenceVariantsCollector!!.allCollected.imported,
+                        isJvmModule)
                 if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                     staticMembersCompletion.completeFromImports(file, collector)
                 }
@@ -526,7 +541,7 @@ class BasicCompletionSession(
     }
 
     private val SUPER_QUALIFIER = object : CompletionKind {
-        override val descriptorKindFilter: DescriptorKindFilter?
+        override val descriptorKindFilter: DescriptorKindFilter
             get() = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS
 
         override fun doComplete() {
@@ -536,7 +551,7 @@ class BasicCompletionSession(
                     .mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
 
             if (callTypeAndReceiver.receiver != null) {
-                val referenceVariantsSet = referenceVariants!!.imported.toSet()
+                val referenceVariantsSet = referenceVariantsCollector!!.collectReferenceVariants(descriptorKindFilter).imported.toSet()
                 superClasses = superClasses.filter { it in referenceVariantsSet }
             }
 
@@ -594,4 +609,20 @@ class BasicCompletionSession(
         ).collect(classifierDescriptorCollector, javaClassCollector)
     }
 
+    private fun addReferenceVariantElements(lookupElementFactory: LookupElementFactory, descriptorKindFilter: DescriptorKindFilter) {
+        val (imported, notImported) = referenceVariantsCollector!!.collectReferenceVariants(descriptorKindFilter).excludeNonInitializedVariable()
+        collector.addDescriptorElements(imported, lookupElementFactory)
+        collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+    }
+}
+
+private val USUALLY_START_UPPER_CASE = DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.FUNCTIONS_MASK,
+                                                            listOf(NonSamConstructorFunctionExclude, DescriptorKindExclude.Extensions /* needed for faster getReferenceVariants */))
+private val USUALLY_START_LOWER_CASE = DescriptorKindFilter(DescriptorKindFilter.CALLABLES_MASK or DescriptorKindFilter.PACKAGES_MASK,
+                                                            listOf(SamConstructorDescriptorKindExclude))
+
+private object NonSamConstructorFunctionExclude : DescriptorKindExclude() {
+    override fun excludes(descriptor: DeclarationDescriptor) = descriptor is FunctionDescriptor && descriptor !is SamConstructorDescriptor
+
+    override val fullyExcludedDescriptorKinds: Int get() = 0
 }

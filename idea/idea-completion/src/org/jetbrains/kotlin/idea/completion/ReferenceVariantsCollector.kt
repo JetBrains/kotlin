@@ -32,10 +32,11 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import java.util.*
 
 data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
 
-internal class ReferenceVariantsCollector(
+class ReferenceVariantsCollector(
         private val referenceVariantsHelper: ReferenceVariantsHelper,
         private val indicesHelper: KotlinIndicesHelper,
         private val prefixMatcher: PrefixMatcher,
@@ -50,8 +51,32 @@ internal class ReferenceVariantsCollector(
     private val prefix = prefixMatcher.prefix
     private val descriptorNameFilter = prefixMatcher.asStringNameFilter()
 
+    private val collectedImported = LinkedHashSet<DeclarationDescriptor>()
+    private val collectedNotImportedExtensions = LinkedHashSet<CallableDescriptor>()
+    private var isCollectingFinished = false
+
+    val allCollected: ReferenceVariants
+        get() {
+            assert(isCollectingFinished)
+            return ReferenceVariants(collectedImported, collectedNotImportedExtensions)
+        }
+
+    fun collectingFinished() {
+        assert(!isCollectingFinished)
+        isCollectingFinished = true
+    }
+
     fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
+        assert(!isCollectingFinished)
+        val variants = doCollectReferenceVariants(descriptorKindFilter)
+        collectedImported.addAll(variants.imported)
+        collectedNotImportedExtensions.addAll(variants.notImportedExtensions)
+        return variants
+    }
+
+    private fun doCollectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
         val completeExtensionsFromIndices = descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
+                                            && DescriptorKindExclude.Extensions !in descriptorKindFilter.excludes
                                             && callTypeAndReceiver !is CallTypeAndReceiver.IMPORT_DIRECTIVE
         @Suppress("NAME_SHADOWING")
         val descriptorKindFilter = if (completeExtensionsFromIndices)
@@ -131,8 +156,7 @@ internal class ReferenceVariantsCollector(
             return true
         }
 
-        override val fullyExcludedDescriptorKinds: Int
-            get() = 0
+        override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 
     private fun isDataClassComponentFunction(descriptor: DeclarationDescriptor): Boolean {

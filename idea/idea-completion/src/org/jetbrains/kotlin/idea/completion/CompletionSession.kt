@@ -269,29 +269,28 @@ abstract class CompletionSession(
         return context
     }
 
-    protected val referenceVariants: ReferenceVariants? by lazy {
-        if (nameExpression != null && descriptorKindFilter != null)
-            ReferenceVariantsCollector(referenceVariantsHelper, indicesHelper(true), prefixMatcher,
-                                       nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
-                                       importableFqNameClassifier, configuration
-            ).collectReferenceVariants(descriptorKindFilter!!)
-        else
-            null
+    protected val referenceVariantsCollector = if (nameExpression != null) {
+        ReferenceVariantsCollector(referenceVariantsHelper, indicesHelper(true), prefixMatcher,
+                                   nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
+                                   importableFqNameClassifier, configuration)
+    }
+    else {
+        null
     }
 
-    protected val referenceVariantsWithNonInitializedVarExcluded: ReferenceVariants? by lazy {
-        referenceVariants?.let { ReferenceVariants(referenceVariantsHelper.excludeNonInitializedVariable(it.imported, position), it.notImportedExtensions) }
+    protected fun ReferenceVariants.excludeNonInitializedVariable(): ReferenceVariants {
+        return ReferenceVariants(referenceVariantsHelper.excludeNonInitializedVariable(imported, position), notImportedExtensions)
     }
 
     protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
-        val variants = referenceVariants ?: return null
-        val filter: (DeclarationDescriptor) -> Boolean = { it is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(it) }
+        val variants = referenceVariantsCollector?.allCollected ?: return null
+        val filter = { descriptor: DeclarationDescriptor -> descriptor is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(descriptor) }
         return ReferenceVariants(variants.imported.filter(filter), variants.notImportedExtensions.filter(filter))
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(lookupElementFactory: LookupElementFactory): Pair<ReferenceVariants, LookupElementFactory>? {
         val evaluator = file.getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) ?: return null
-        val referenceVariants = referenceVariants ?: return null
+        val referenceVariants = referenceVariantsCollector?.allCollected ?: return null
 
         val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return null
         val type = bindingContext.getType(explicitReceiver) ?: return null
@@ -337,7 +336,7 @@ abstract class CompletionSession(
 
     protected fun processTopLevelCallables(processor: (CallableDescriptor) -> Unit) {
         val shadowedFilter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
-                ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariants!!.imported)
+                ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariantsCollector!!.allCollected.imported)
         indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) {
             if (shadowedFilter != null) {
                 shadowedFilter(listOf(it)).singleOrNull()?.let(processor)
