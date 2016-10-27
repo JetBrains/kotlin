@@ -66,23 +66,23 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
     val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
     return when {
-        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> JVMPlatform[JVMVersion.JVM_1_6]
-        else -> JVMPlatform[JVMVersion.JVM_1_8]
+        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> JVMPlatform[JvmTarget.JVM_1_6]
+        else -> JVMPlatform[JvmTarget.JVM_1_8]
     }
 }
 
 private fun getDefaultLanguageLevel(
         module: Module,
         explicitVersion: String? = null
-): LanguageLevel {
+): LanguageVersion {
     val libVersion = explicitVersion
                      ?: KotlinVersionInfoProvider.EP_NAME.extensions
                              .mapNotNull { it.getCompilerVersion(module) }
                              .minWith(VersionComparatorUtil.COMPARATOR)
                      ?: bundledRuntimeVersion()
     return when {
-        libVersion.startsWith("1.0") -> LanguageLevel.KOTLIN_1_0
-        else -> LanguageLevel.KOTLIN_1_1
+        libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
+        else -> LanguageVersion.KOTLIN_1_1
     }
 }
 
@@ -90,8 +90,8 @@ internal fun getLibraryLanguageLevel(
         module: Module,
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
-): LanguageLevel {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: JVMPlatform[JVMVersion.JVM_1_8])
+): LanguageVersion {
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: JVMPlatform[JvmTarget.JVM_1_8])
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }

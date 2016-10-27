@@ -20,9 +20,9 @@ import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.config.DescriptionAware
-import org.jetbrains.kotlin.config.LanguageLevel
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.utils.DescriptionAware
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
@@ -43,8 +43,8 @@ class KotlinFacetEditorGeneralTab(
 
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val apiLevel = apiVersionComboBox.selectedItem as? LanguageLevel? ?: return ValidationResult.OK
-            val languageLevel = languageVersionComboBox.selectedItem as? LanguageLevel? ?: return ValidationResult.OK
+            val apiLevel = apiVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
+            val languageLevel = languageVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
             val targetPlatform = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
             if (languageLevel < apiLevel || libraryLevel < apiLevel) {
@@ -55,12 +55,12 @@ class KotlinFacetEditorGeneralTab(
     }
 
     private val languageVersionComboBox =
-            JComboBox<LanguageLevel>(LanguageLevel.values()).apply {
+            JComboBox<LanguageVersion>(LanguageVersion.values()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
     private val apiVersionComboBox =
-            JComboBox<LanguageLevel>(LanguageLevel.values()).apply {
+            JComboBox<LanguageVersion>(LanguageVersion.values()).apply {
                 setRenderer(DescriptionListCellRenderer())
             }
 
@@ -122,9 +122,9 @@ class KotlinFacetEditorGeneralTab(
 
     override fun apply() {
         with(configuration.state.versionInfo) {
-            languageLevel = languageVersionComboBox.selectedItem as LanguageLevel?
+            languageLevel = languageVersionComboBox.selectedItem as LanguageVersion?
             targetPlatformKindKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
-            apiLevel = apiVersionComboBox.selectedItem as LanguageLevel?
+            apiLevel = apiVersionComboBox.selectedItem as LanguageVersion?
         }
     }
 

@@ -137,7 +137,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
             else {
                 val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
-                                   "Supported versions: ${JvmTarget.values().joinToString { it.string }}"
+                                   "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
                 messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, CompilerMessageLocation.NO_LOCATION)
             }
         }

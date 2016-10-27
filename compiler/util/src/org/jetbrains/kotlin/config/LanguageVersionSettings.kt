@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.utils.DescriptionAware
+
 enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     ;
     companion object {
@@ -24,8 +26,11 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     }
 }
 
-enum class LanguageVersion(val versionString: String) {
-    KOTLIN_1_0("1.0");
+enum class LanguageVersion(val versionString: String) : DescriptionAware {
+    KOTLIN_1_0("1.0"),
+
+    override val description: String
+        get() = versionString
 
     override fun toString() = versionString
 
