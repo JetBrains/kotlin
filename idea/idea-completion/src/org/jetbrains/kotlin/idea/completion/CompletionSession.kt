@@ -287,8 +287,7 @@ abstract class CompletionSession(
         return context
     }
 
-    /* TODO: not protected because of KT-9809 */
-    data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
+    protected data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
 
     protected val referenceVariants: ReferenceVariants? by lazy {
         if (nameExpression != null && descriptorKindFilter != null) collectReferenceVariants(descriptorKindFilter!!, nameExpression) else null
