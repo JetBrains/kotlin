@@ -24,6 +24,7 @@ public class KonanTest extends DefaultTask {
         def sourceBc = new File("${sourceKt.absolutePath}.bc")
         def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
         println "${runtimeBc}"
+
         project.javaexec {
             main='org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
@@ -34,15 +35,18 @@ public class KonanTest extends DefaultTask {
 
             jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
         }
+
         def runtimeS = bc2s(runtimeBc)
         def sourceS = bc2s(sourceBc)
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         def mainC = "main.c"
         def exe = sourceS.absolutePath.replace(".kt.S", "")
+
         project.exec {
             commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
                     "-o", "${exe}"
         }
+
         def res = project.exec {
             commandLine "${exe}"
         }
