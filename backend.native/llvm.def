@@ -19,5 +19,4 @@ linkerOpts.osx = \
     -lpthread -lz -lm  -lcurses
 
 linkerOpts.linux=\
-    -lrt -ldl  -lpthread -lz -lm \
-    -Wl,-z,noexecstack
+     -Wl,-z,noexecstack
